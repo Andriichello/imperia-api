@@ -2,12 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
-class User extends BaseModel
+class Customer extends BaseModel
 {
     use HasFactory;
 
@@ -16,7 +13,7 @@ class User extends BaseModel
      *
      * @var string
      */
-    protected $table = 'users';
+    protected $table = 'customers';
 
     /**
      * The attributes that are mass assignable.
@@ -24,14 +21,11 @@ class User extends BaseModel
      * @var array
      */
     protected $fillable = [
-        'login',
-        'password',
-        'role_id',
         'name',
         'surname',
         'phone',
         'email',
-        'api_token',
+        'birthdate',
     ];
 
     /**
@@ -40,14 +34,11 @@ class User extends BaseModel
      * @var array
      */
     protected $with = [
-        'role',
+        'familyMembers',
     ];
 
-    /**
-     * Get the role associated with the user.
-     */
-    public function role()
+    public function familyMembers()
     {
-        return $this->belongsTo(Role::class, 'role_id', 'id');
+        return $this->hasMany(CustomerFamilyMember::class, 'customer_id', 'id');
     }
 }
