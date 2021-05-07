@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Constrainters\Implementations\ApiTokenConstrainter;
+use App\Constrainters\Implementations\IdentifierConstrainter;
+use App\Constrainters\Implementations\NameConstrainter;
+use App\Constrainters\Implementations\PasswordConstrainter;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -24,15 +28,26 @@ class User extends BaseModel
      * @var array
      */
     protected $fillable = [
-        'login',
+        'name',
         'password',
         'role_id',
-        'name',
-        'surname',
-        'phone',
-        'email',
         'api_token',
     ];
+
+    /**
+     * Get array of model's validation rules.
+     *
+     * @var bool $forInsert
+     * @return array
+     */
+    public static function getValidationRules($forInsert = false) {
+        return [
+            'name' => NameConstrainter::getRules(false),
+            'password' => PasswordConstrainter::getRules(false),
+            'role_id' => IdentifierConstrainter::getRules(false),
+            'api_token' => ApiTokenConstrainter::getRules(false),
+        ];
+    }
 
     /**
      * The relationships that should always be loaded.

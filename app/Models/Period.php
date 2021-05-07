@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Constrainters\Constrainter;
+use App\Constrainters\Implementations\IdentifierConstrainter;
+use App\Constrainters\Implementations\WeekdaysConstrainter;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Period extends BaseModel
@@ -26,6 +29,21 @@ class Period extends BaseModel
         'weekdays',
         'is_templatable',
     ];
+
+    /**
+     * Get array of model's validation rules.
+     *
+     * @var bool $forInsert
+     * @return array
+     */
+    public static function getValidationRules($forInsert = false) {
+        return [
+            'beg_datetime_id' => IdentifierConstrainter::getRules(false),
+            'end_datetime_id' => IdentifierConstrainter::getRules(false),
+            'weekdays' => WeekdaysConstrainter::getRules(false),
+            'is_templatable' => Constrainter::getRules(false),
+        ];
+    }
 
     /**
      * The relationships that should always be loaded.

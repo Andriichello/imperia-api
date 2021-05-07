@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Constrainters\Implementations\AmountConstrainter;
+use App\Constrainters\Implementations\DescriptionConstrainter;
+use App\Constrainters\Implementations\IdentifierConstrainter;
+use App\Constrainters\Implementations\NameConstrainter;
 use App\Models\Categories\DiscountCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -29,6 +33,23 @@ class Discount extends BaseModel
         'period_id',
         'category_id',
     ];
+
+    /**
+     * Get array of model's validation rules.
+     *
+     * @var bool $forInsert
+     * @return array
+     */
+    public static function getValidationRules($forInsert = false) {
+        return [
+            'name' => NameConstrainter::getRules(false),
+            'description' => DescriptionConstrainter::getRules(false),
+            'amount' => AmountConstrainter::getRules(false),
+            'percent' => AmountConstrainter::getRules(false),
+            'period_id' => IdentifierConstrainter::getRules(false),
+            'category_id' => IdentifierConstrainter::getRules(false),
+        ];
+    }
 
     /**
      * The relationships that should always be loaded.

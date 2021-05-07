@@ -52,6 +52,6 @@ class SpaceOrderField extends BaseModel
      */
     public function order()
     {
-        return $this->belongsTo(TicketOrder::class, 'order_id', 'id');
+        return $this->belongsTo(SpaceOrder::class, 'order_id', 'id');
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Constrainters\Implementations\DescriptionConstrainter;
+use App\Constrainters\Implementations\NameConstrainter;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class BanquetState extends BaseModel
@@ -24,6 +26,19 @@ class BanquetState extends BaseModel
         'name',
         'description',
     ];
+
+    /**
+     * Get array of model's validation rules.
+     *
+     * @var bool $forInsert
+     * @return array
+     */
+    public static function getValidationRules($forInsert = false) {
+        return [
+            'name' => NameConstrainter::getRules(false),
+            'description' => DescriptionConstrainter::getRules(false),
+        ];
+    }
 
     /**
      * Get banquets associated with the model.

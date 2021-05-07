@@ -29,6 +29,7 @@ class Collection extends BaseCollection
         }
 
         $perPage = $perPage ?: $this->count();
+        $perPage = $perPage > 0 ? $perPage : 1;
         $page = $page ?: LengthAwarePaginator::resolveCurrentPage($pageName);
 
         $paginator = new LengthAwarePaginator(

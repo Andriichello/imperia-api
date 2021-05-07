@@ -11,7 +11,7 @@ class ItemTypeConstrainter extends Constrainter
     {
         $additionalConstrains[] = new Assert\Length([
             'min' => 2,
-            'max' => 35,
+            'max' => 100,
         ]);
         $additionalConstrains[] = new Assert\Regex([
             'pattern' => '([a-z_.]*)',

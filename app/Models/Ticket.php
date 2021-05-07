@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Constrainters\Implementations\DescriptionConstrainter;
+use App\Constrainters\Implementations\IdentifierConstrainter;
+use App\Constrainters\Implementations\NameConstrainter;
+use App\Constrainters\Implementations\PriceConstrainter;
 use App\Models\Categories\ServiceCategory;
 use App\Models\Categories\TicketCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -29,6 +33,22 @@ class Ticket extends BaseModel
         'period_id',
         'category_id',
     ];
+
+    /**
+     * Get array of model's validation rules.
+     *
+     * @var bool $forInsert
+     * @return array
+     */
+    public static function getValidationRules($forInsert = false) {
+        return array(
+            'name' => NameConstrainter::getRules(false),
+            'description' => DescriptionConstrainter::getRules(false),
+            'price' => PriceConstrainter::getRules(false),
+            'period_id' => IdentifierConstrainter::getRules(false),
+            'category_id' => IdentifierConstrainter::getRules(false),
+        );
+    }
 
     /**
      * The relationships that should always be loaded.

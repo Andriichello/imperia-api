@@ -16,9 +16,24 @@ class BaseModel extends Model
      */
     public $appends = ['type'];
 
+    /**
+     * Accessor for the table type.
+     *
+     * @return string
+     */
     public function getTypeAttribute()
     {
         return $this->table;
+    }
+
+    /**
+     * Get array of model's validation rules.
+     *
+     * @var bool $forInsert
+     * @return array
+     */
+    public static function getValidationRules($forInsert = false) {
+        return [];
     }
 
     /**

@@ -2,6 +2,12 @@
 
 namespace App\Models;
 
+use App\Constrainters\Constrainter;
+use App\Constrainters\Implementations\DescriptionConstrainter;
+use App\Constrainters\Implementations\IdentifierConstrainter;
+use App\Constrainters\Implementations\NameConstrainter;
+use App\Constrainters\Implementations\PriceConstrainter;
+use Symfony\Component\Validator\Constraints as Assert;
 use App\Models\Orders\ProductOrder;
 use App\Models\Orders\ServiceOrder;
 use App\Models\Orders\SpaceOrder;
@@ -40,6 +46,25 @@ class Banquet extends BaseModel
         'productOrder',
         'comments',
     ];
+
+    /**
+     * Get array of model's validation rules.
+     *
+     * @var bool $forInsert
+     * @return array
+     */
+    public static function getValidationRules($forInsert = false) {
+        return array(
+            'name' => NameConstrainter::getRules(false),
+            'description' => DescriptionConstrainter::getRules(false),
+            'advance_amount' => PriceConstrainter::getRules(false),
+            'beg_datetime' => Constrainter::getRules(false, [new Assert\DateTime()]),
+            'end_datetime' => Constrainter::getRules(false, [new Assert\DateTime()]),
+            'state_id' => IdentifierConstrainter::getRules(false),
+            'creator_id' => IdentifierConstrainter::getRules(false),
+            'customer_id' => IdentifierConstrainter::getRules(false),
+        );
+    }
 
     /**
      * The accessors to append to the model's array form.

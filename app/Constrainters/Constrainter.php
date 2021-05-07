@@ -2,6 +2,7 @@
 
 namespace App\Constrainters;
 use App\Rules\SymfonyRule;
+use Illuminate\Validation\Rule;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -28,7 +29,7 @@ abstract class Constrainter
      * Get an array of validation rules.
      *
      * @param bool $required
-     * @param Constraint[]|string[] $additionalConstrains
+     * @param array $additionalConstrains
      * @return array
      */
     public static function getRules(bool $required = false, array $additionalConstrains = []): array {
@@ -36,10 +37,10 @@ abstract class Constrainter
 
         $constraints = static::getConstraints(false, $additionalConstrains);
         foreach ($constraints as $constraint) {
-            if (is_string($constraint)) {
-                $rules[] = $constraint;
-            } else {
+            if ($constraint instanceof Constraint) {
                 $rules[] = new SymfonyRule($constraint);
+            } else {
+                $rules[] = $constraint;
             }
         }
 

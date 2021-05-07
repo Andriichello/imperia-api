@@ -19,7 +19,6 @@ class ResourceCollection extends BaseResourceCollection
         $paginator = $items->paginate();
 
         return [
-            'data' => $paginator->all(),
             'pagination' => [
                 'size' => (int)$paginator->perPage(),
                 'pages' => (int)$paginator->lastPage(),
@@ -31,7 +30,8 @@ class ResourceCollection extends BaseResourceCollection
                 'self' => $paginator->url($paginator->currentPage()),
                 'next' => $paginator->nextPageUrl(),
                 'last' => $paginator->url($paginator->lastPage()),
-            ]
+            ],
+            'data' => array_values($paginator->all()),
         ];
     }
 }

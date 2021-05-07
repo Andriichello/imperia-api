@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Constrainters\Constrainter;
+use App\Constrainters\Implementations\CommentTextConstrainter;
+use App\Constrainters\Implementations\IdentifierConstrainter;
+use App\Constrainters\Implementations\NameConstrainter;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Comment extends BaseModel
@@ -27,6 +31,22 @@ class Comment extends BaseModel
         'container_id',
         'container_type',
     ];
+
+    /**
+     * Get array of model's validation rules.
+     *
+     * @var bool $forInsert
+     * @return array
+     */
+    public static function getValidationRules($forInsert = false) {
+        return [
+            'text' => CommentTextConstrainter::getRules(false),
+            'target_id' => IdentifierConstrainter::getRules(false),
+            'target_type' => NameConstrainter::getRules(false),
+            'container_id' => IdentifierConstrainter::getRules(false),
+            'container_type' => NameConstrainter::getRules(false),
+        ];
+    }
 
     /**
      * Get the target model.

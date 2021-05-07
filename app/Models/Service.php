@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Constrainters\Implementations\DescriptionConstrainter;
+use App\Constrainters\Implementations\IdentifierConstrainter;
+use App\Constrainters\Implementations\NameConstrainter;
+use App\Constrainters\Implementations\PriceConstrainter;
 use App\Models\Categories\ServiceCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -29,6 +33,23 @@ class Service extends BaseModel
         'period_id',
         'category_id',
     ];
+
+    /**
+     * Get array of model's validation rules.
+     *
+     * @var bool $forInsert
+     * @return array
+     */
+    public static function getValidationRules($forInsert = false) {
+        return [
+            'name' => NameConstrainter::getRules(false),
+            'description' => DescriptionConstrainter::getRules(false),
+            'once_paid_price' => PriceConstrainter::getRules(false),
+            'hourly_paid_price' => PriceConstrainter::getRules(false),
+            'period_id' => IdentifierConstrainter::getRules(false),
+            'category_id' => IdentifierConstrainter::getRules(false),
+        ];
+    }
 
     /**
      * The relationships that should always be loaded.

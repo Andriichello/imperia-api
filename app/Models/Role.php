@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Constrainters\Constrainter;
+use App\Constrainters\Implementations\DescriptionConstrainter;
+use App\Constrainters\Implementations\NameConstrainter;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Role extends BaseModel
@@ -28,6 +31,23 @@ class Role extends BaseModel
         'can_modify',
         'is_owner',
     ];
+
+    /**
+     * Get array of model's validation rules.
+     *
+     * @var bool $forInsert
+     * @return array
+     */
+    public static function getValidationRules($forInsert = false) {
+        return [
+            'name' => NameConstrainter::getRules(false),
+            'description' => DescriptionConstrainter::getRules(false),
+            'can_read' => Constrainter::getRules(false),
+            'can_insert' => Constrainter::getRules(false),
+            'can_modify' => Constrainter::getRules(false),
+            'is_owner' => Constrainter::getRules(false),
+        ];
+    }
 
     /**
      * The attributes that should be cast.

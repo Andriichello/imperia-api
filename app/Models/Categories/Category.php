@@ -2,6 +2,9 @@
 
 namespace App\Models\Categories;
 
+use App\Constrainters\Implementations\DescriptionConstrainter;
+use App\Constrainters\Implementations\ItemTypeConstrainter;
+use App\Constrainters\Implementations\NameConstrainter;
 use App\Models\BaseModel;
 use App\Models\Discount;
 use App\Models\Menu;
@@ -22,6 +25,13 @@ class Category extends BaseModel
     protected $table = 'categories';
 
     /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
@@ -30,6 +40,31 @@ class Category extends BaseModel
         'name',
         'description',
     ];
+
+
+    /**
+     * Get array of model's validation rules.
+     *
+     * @var bool $forInsert
+     * @return array
+     */
+    public static function getValidationRules($forInsert = false, $type = null) {
+        $additionalNameRules = [];
+        if ($forInsert) {
+            if (isset($type)) {
+                $tableName = self::getTypedTableName($type);
+            }
+
+            if (isset($tableName)) {
+                $additionalNameRules[] = "unique:{$tableName}";
+            }
+        }
+
+        return [
+            'name' => NameConstrainter::getRules($forInsert, $additionalNameRules),
+            'description' => DescriptionConstrainter::getRules(false),
+        ];
+    }
 
     /**
      * Get available types of categories.
@@ -66,6 +101,29 @@ class Category extends BaseModel
                 return Service::class;
             case 'discount':
                 return Discount::class;
+        }
+        return null;
+    }
+
+    /**
+     * Get model class for specified type.
+     *
+     * @var string $type
+     * @return string|null
+     */
+    public static function getTypeCategoryClass($type)
+    {
+        switch ($type) {
+            case 'menu':
+                return MenuCategory::class;
+            case 'product':
+                return ProductCategory::class;
+            case 'ticket':
+                return TicketCategory::class;
+            case 'service':
+                return ServiceCategory::class;
+            case 'discount':
+                return DiscountCategory::class;
         }
         return null;
     }

@@ -10,11 +10,11 @@ class CommentTextConstrainter extends Constrainter
     public static function getConstraints(bool $isMandatory = false, array $additionalConstrains = []): array
     {
         $additionalConstrains[] = new Assert\Length([
-            'min' => 2,
+            'min' => 1,
             'max' => 100,
         ]);
         $additionalConstrains[] = new Assert\Regex([
-            'pattern' => '(^\S(.*)\S$)',
+            'pattern' => '(^\S$|^\S(.*)\S$)',
             'message' => 'This value must start and end with non-space character.'
         ]);
         return parent::getConstraints(
