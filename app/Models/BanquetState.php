@@ -35,7 +35,7 @@ class BanquetState extends BaseModel
      */
     public static function getValidationRules($forInsert = false) {
         return [
-            'name' => NameConstrainter::getRules(false),
+            'name' => NameConstrainter::getRules($forInsert, ['unique:banquet_states']),
             'description' => DescriptionConstrainter::getRules(false),
         ];
     }

@@ -2,11 +2,14 @@
 
 namespace App\Models\Orders;
 
+use App\Constrainters\Constrainter;
+use App\Constrainters\Implementations\IdentifierConstrainter;
 use App\Models\Banquet;
 use App\Models\BaseModel;
 use App\Models\Comment;
 use App\Models\Discount;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class SpaceOrder extends BaseModel
 {
@@ -27,8 +30,23 @@ class SpaceOrder extends BaseModel
     protected $fillable = [
         'banquet_id',
         'discount_id',
-        'items',
     ];
+
+    /**
+     * Get array of model's validation rules.
+     *
+     * @var bool $forInsert
+     * @return array
+     */
+    public static function getValidationRules($forInsert = false) {
+        $rules = Order::getValidationRules($forInsert, 'space');
+        $rules['items'] = Constrainter::getRules(false);
+        $rules['items.*.id'] = IdentifierConstrainter::getRules($forInsert);
+        $rules['items.*.beg_datetime'] = Constrainter::getRules($forInsert, [new Assert\DateTime()]);
+        $rules['items.*.end_datetime'] = Constrainter::getRules($forInsert, [new Assert\DateTime()]);
+
+        return $rules;
+    }
 
     /**
      * The attributes that should be hidden for arrays.

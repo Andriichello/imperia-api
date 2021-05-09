@@ -8,6 +8,7 @@ use App\Constrainters\Implementations\NameConstrainter;
 use App\Constrainters\Implementations\PriceConstrainter;
 use App\Models\Categories\ServiceCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Validation\Rule;
 
 class Service extends BaseModel
 {
@@ -37,17 +38,22 @@ class Service extends BaseModel
     /**
      * Get array of model's validation rules.
      *
-     * @var bool $forInsert
      * @return array
+     * @var bool $forInsert
      */
-    public static function getValidationRules($forInsert = false) {
+    public static function getValidationRules($forInsert = false)
+    {
         return [
-            'name' => NameConstrainter::getRules(false),
+            'name' => NameConstrainter::getRules($forInsert),
             'description' => DescriptionConstrainter::getRules(false),
-            'once_paid_price' => PriceConstrainter::getRules(false),
-            'hourly_paid_price' => PriceConstrainter::getRules(false),
+            'once_paid_price' => PriceConstrainter::getRules(false,
+                $forInsert ? ['required_without:hourly_paid_price'] : []
+            ),
+            'hourly_paid_price' => PriceConstrainter::getRules(false,
+                $forInsert ? ['required_without:once_paid_price'] : []
+            ),
             'period_id' => IdentifierConstrainter::getRules(false),
-            'category_id' => IdentifierConstrainter::getRules(false),
+            'category_id' => IdentifierConstrainter::getRules($forInsert),
         ];
     }
 

@@ -38,9 +38,9 @@ class CustomerFamilyMember extends BaseModel
      */
     public static function getValidationRules($forInsert = false) {
         return [
-            'name' => NameConstrainter::getRules(false),
-            'customer_id' => IdentifierConstrainter::getRules(false),
-            'birthdate' => Constrainter::getRules(false, [new Assert\Date()]),
+            'name' => NameConstrainter::getRules($forInsert),
+            'customer_id' => IdentifierConstrainter::getRules($forInsert),
+            'birthdate' => Constrainter::getRules($forInsert, [new Assert\Date()]),
         ];
     }
 

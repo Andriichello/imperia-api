@@ -2,6 +2,9 @@
 
 namespace App\Models\Orders;
 
+use App\Constrainters\Constrainter;
+use App\Constrainters\Implementations\AmountConstrainter;
+use App\Constrainters\Implementations\IdentifierConstrainter;
 use App\Models\Banquet;
 use App\Models\BaseModel;
 use App\Models\Comment;
@@ -27,15 +30,24 @@ class ServiceOrder extends BaseModel
     protected $fillable = [
         'banquet_id',
         'discount_id',
-        'items',
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
     protected $hidden = ['fields'];
+
+    /**
+     * Get array of model's validation rules.
+     *
+     * @var bool $forInsert
+     * @return array
+     */
+    public static function getValidationRules($forInsert = false) {
+        $rules = Order::getValidationRules($forInsert, 'service');
+        $rules['items'] = Constrainter::getRules(false);
+        $rules['items.*.id'] = IdentifierConstrainter::getRules($forInsert);
+        $rules['items.*.amount'] = AmountConstrainter::getRules($forInsert);
+        $rules['items.*.duration'] = AmountConstrainter::getRules($forInsert);
+        return $rules;
+    }
 
     /**
      * The accessors to append to the model's array form.

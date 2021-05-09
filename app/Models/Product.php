@@ -39,10 +39,11 @@ class Product extends BaseModel
     /**
      * Get array of model's validation rules.
      *
-     * @var bool $forInsert
      * @return array
+     * @var bool $forInsert
      */
-    public static function getValidationRules($forInsert = false) {
+    public static function getValidationRules($forInsert = false)
+    {
         return [
             'name' => NameConstrainter::getRules($forInsert),
             'description' => DescriptionConstrainter::getRules(false),

@@ -2,10 +2,12 @@
 
 namespace App\Models\Orders;
 
+use App\Constrainters\Constrainter;
+use App\Constrainters\Implementations\IdentifierConstrainter;
 use App\Models\BaseModel;
-use App\Models\Service;
 use App\Models\Space;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class SpaceOrderField extends BaseModel
 {
@@ -29,6 +31,21 @@ class SpaceOrderField extends BaseModel
         'beg_datetime',
         'end_datetime',
     ];
+
+    /**
+     * Get array of model's validation rules.
+     *
+     * @var bool $forInsert
+     * @return array
+     */
+    public static function getValidationRules($forInsert = false) {
+        return [
+            'order_id' => IdentifierConstrainter::getRules(true),
+            'space_id' => IdentifierConstrainter::getRules(true),
+            'beg_datetime' => Constrainter::getRules($forInsert, [new Assert\DateTime()]),
+            'end_datetime' => Constrainter::getRules($forInsert, [new Assert\DateTime()]),
+        ];
+    }
 
     /**
      * The relationships that should always be loaded.

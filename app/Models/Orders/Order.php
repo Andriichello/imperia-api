@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Models\Categories;
+namespace App\Models\Orders;
 
 use App\Constrainters\Implementations\DescriptionConstrainter;
+use App\Constrainters\Implementations\IdentifierConstrainter;
 use App\Constrainters\Implementations\ItemTypeConstrainter;
 use App\Constrainters\Implementations\NameConstrainter;
 use App\Models\BaseModel;
@@ -14,7 +15,7 @@ use App\Models\Space;
 use App\Models\Ticket;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Category extends BaseModel
+class Order extends BaseModel
 {
     use HasFactory;
 
@@ -23,14 +24,7 @@ class Category extends BaseModel
      *
      * @var string
      */
-    protected $table = 'categories';
-
-    /**
-     * Indicates if the model should be timestamped.
-     *
-     * @var bool
-     */
-    public $timestamps = false;
+    protected $table = 'orders';
 
     /**
      * The attributes that are mass assignable.
@@ -38,8 +32,8 @@ class Category extends BaseModel
      * @var array
      */
     protected $fillable = [
-        'name',
-        'description',
+        'banquet_id',
+        'discount_id',
     ];
 
 
@@ -51,17 +45,19 @@ class Category extends BaseModel
      */
     public static function getValidationRules($forInsert = false, $type = null)
     {
-        $additionalNameRules = [];
-        if (isset($type)) {
-            $tableName = self::getTypedTableName($type);
-        }
-        if (isset($tableName)) {
-            $additionalNameRules[] = "unique:{$tableName}";
+        $additionalBanquetIdRules = [];
+        if ($forInsert) {
+            if (isset($type)) {
+                $tableName = self::getTypedOrderTableName($type);
+            }
+            if (isset($tableName)) {
+                $additionalBanquetIdRules[] = "unique:{$tableName}";
+            }
         }
 
         return [
-            'name' => NameConstrainter::getRules($forInsert, $additionalNameRules),
-            'description' => DescriptionConstrainter::getRules(false),
+            'banquet_id' => IdentifierConstrainter::getRules($forInsert, $additionalBanquetIdRules),
+            'discount_id' => IdentifierConstrainter::getRules(false),
         ];
     }
 
@@ -73,12 +69,10 @@ class Category extends BaseModel
     public static function getTypes()
     {
         return [
-            'menu',
-            'product',
             'space',
             'ticket',
             'service',
-            'discount',
+            'product',
         ];
     }
 
@@ -93,16 +87,12 @@ class Category extends BaseModel
         switch ($type) {
             case 'space':
                 return Space::class;
-            case 'menu':
-                return Menu::class;
-            case 'product':
-                return Product::class;
             case 'ticket':
                 return Ticket::class;
             case 'service':
                 return Service::class;
-            case 'discount':
-                return Discount::class;
+            case 'product':
+                return Product::class;
         }
         return null;
     }
@@ -113,21 +103,38 @@ class Category extends BaseModel
      * @return string|null
      * @var string $type
      */
-    public static function getTypeCategoryClass($type)
+    public static function getTypeOrderClass($type)
     {
         switch ($type) {
             case 'space':
-                return SpaceCategory::class;
-            case 'menu':
-                return MenuCategory::class;
-            case 'product':
-                return ProductCategory::class;
+                return SpaceOrder::class;
             case 'ticket':
-                return TicketCategory::class;
+                return TicketOrder::class;
             case 'service':
-                return ServiceCategory::class;
-            case 'discount':
-                return DiscountCategory::class;
+                return ServiceOrder::class;
+            case 'product':
+                return ProductOrder::class;
+        }
+        return null;
+    }
+
+    /**
+     * Get model class for specified type.
+     *
+     * @return string|null
+     * @var string $type
+     */
+    public static function getTypeOrderFieldClass($type)
+    {
+        switch ($type) {
+            case 'space':
+                return SpaceOrderField::class;
+            case 'ticket':
+                return TicketOrderField::class;
+            case 'service':
+                return ServiceOrderField::class;
+            case 'product':
+                return ProductOrderField::class;
         }
         return null;
     }
@@ -138,10 +145,24 @@ class Category extends BaseModel
      * @return string|null
      * @var string $type
      */
-    public static function getTypedTableName($type)
+    public static function getTypedOrderTableName($type)
     {
         if (in_array($type, self::getTypes())) {
-            return "{$type}_categories";
+            return "{$type}_orders";
+        }
+        return null;
+    }
+
+    /**
+     * Get table name for specified type.
+     *
+     * @return string|null
+     * @var string $type
+     */
+    public static function getTypedOrderFieldTableName($type)
+    {
+        if (in_array($type, self::getTypes())) {
+            return "{$type}_order_fields";
         }
         return null;
     }

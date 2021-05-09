@@ -26,10 +26,13 @@ $controllers = [
     'services' => \App\Http\Controllers\Implementations\ServiceController::class,
     'menus' => \App\Http\Controllers\Implementations\MenuController::class,
     'products' => \App\Http\Controllers\Implementations\ProductController::class,
+    'discounts' => \App\Http\Controllers\Implementations\DiscountController::class,
     'roles' => \App\Http\Controllers\Implementations\RoleController::class,
     'users' => \App\Http\Controllers\Implementations\UserController::class,
     'customers' => \App\Http\Controllers\Implementations\CustomerController::class,
     'customer-family-members' => \App\Http\Controllers\Implementations\CustomerFamilyMemberController::class,
+    'datetimes' => \App\Http\Controllers\Implementations\DatetimeController::class,
+    'periods' => \App\Http\Controllers\Implementations\PeriodController::class,
 ];
 
 foreach ($controllers as $modelName => $controller) {
@@ -41,23 +44,32 @@ foreach ($controllers as $modelName => $controller) {
     Route::get($root . '/{id}', [$controller, 'show'])
         ->name($modelName . '.show');
 
-    Route::post($root, [$controller, 'create'])
-        ->name($modelName . '.create');
+    Route::post($root, [$controller, 'store'])
+        ->name($modelName . '.store');
 
     Route::patch($root . '/{id?}', [$controller, 'update'])
         ->name($modelName . '.update');
 
-    Route::delete($root . '/{id?}', [$controller, 'delete'])
-        ->name($modelName . '.delete');
+    Route::delete($root . '/{id?}', [$controller, 'destroy'])
+        ->name($modelName . '.destroy');
 }
 
 Route::group([], function () {
     $controller = \App\Http\Controllers\Implementations\CategoryController::class;
     Route::get('/{type}-categories', [$controller, 'index']);
     Route::get('/{type}-categories/{id}', [$controller, 'show']);
-    Route::post('/{type}-categories', [$controller, 'create']);
+    Route::post('/{type}-categories', [$controller, 'store']);
     Route::patch('/{type}-categories/{id?}', [$controller, 'update']);
-    Route::delete('/{type}-categories/{id?}', [$controller, 'delete']);
+    Route::delete('/{type}-categories/{id?}', [$controller, 'destroy']);
+});
+
+Route::group([], function () {
+    $controller = \App\Http\Controllers\Implementations\OrderController::class;
+    Route::get('/{type}-orders', [$controller, 'index']);
+    Route::get('/{type}-orders/{id}', [$controller, 'show']);
+    Route::post('/{type}-orders', [$controller, 'store']);
+    Route::patch('/{type}-orders/{id?}', [$controller, 'update']);
+    Route::delete('/{type}-orders/{id?}', [$controller, 'destroy']);
 });
 
 Route::group([], function () {
@@ -68,12 +80,12 @@ Route::group([], function () {
     Route::get($root, [$controller, 'index'])
         ->name($modelName . '.index');
 
-    Route::post($root, [$controller, 'create'])
-        ->name($modelName . '.create');
+    Route::post($root, [$controller, 'store'])
+        ->name($modelName . '.store');
 
     Route::patch($root, [$controller, 'update'])
         ->name($modelName . '.update');
 
-    Route::delete($root, [$controller, 'delete'])
-        ->name($modelName . '.delete');
+    Route::delete($root, [$controller, 'destroy'])
+        ->name($modelName . '.destroy');
 });

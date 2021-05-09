@@ -42,19 +42,20 @@ class Space extends BaseModel
     /**
      * Get array of model's validation rules.
      *
-     * @var bool $forInsert
      * @return array
+     * @var bool $forInsert
      */
-    public static function getValidationRules($forInsert = false) {
-        return array(
-            'name' => NameConstrainter::getRules(false),
+    public static function getValidationRules($forInsert = false)
+    {
+        return [
+            'name' => NameConstrainter::getRules($forInsert),
             'description' => DescriptionConstrainter::getRules(false),
-            'number' => AmountConstrainter::getRules(false),
-            'floor' => Constrainter::getRules(false),
-            'price' => PriceConstrainter::getRules(false),
+            'number' => AmountConstrainter::getRules($forInsert),
+            'floor' => Constrainter::getRules($forInsert),
+            'price' => PriceConstrainter::getRules($forInsert),
             'period_id' => IdentifierConstrainter::getRules(false),
-            'category_id' => IdentifierConstrainter::getRules(false),
-        );
+            'category_id' => IdentifierConstrainter::getRules($forInsert),
+        ];
     }
 
     /**
@@ -83,7 +84,8 @@ class Space extends BaseModel
         return $this->belongsTo(SpaceCategory::class, 'category_id', 'id');
     }
 
-    public function intervals() {
+    public function intervals()
+    {
         return $this->hasMany(SpaceOrderField::class, 'space_id', 'id')
             ->without('space')
             ->select(['space_id', 'beg_datetime', 'end_datetime']);

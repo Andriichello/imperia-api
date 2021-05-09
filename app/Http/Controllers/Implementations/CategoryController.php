@@ -44,13 +44,13 @@ class CategoryController extends DynamicController
         return parent::show($id);
     }
 
-    public function create($type = null)
+    public function store($type = null)
     {
         $fail = $this->switchModel(['type' => $type], 'type');
         if (isset($fail)) {
             return $fail;
         }
-        return parent::create();
+        return parent::store();
     }
 
     public function update($type = null, $id = null)
@@ -62,13 +62,13 @@ class CategoryController extends DynamicController
         return parent::update($id);
     }
 
-    public function delete($type = null, $id = null)
+    public function destroy($type = null, $id = null)
     {
         $fail = $this->switchModel(['type' => $type], 'type');
         if (isset($fail)) {
             return $fail;
         }
-        return parent::delete($id);
+        return parent::destroy($id);
     }
 
     /**

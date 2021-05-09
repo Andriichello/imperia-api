@@ -10,6 +10,10 @@ use App\Custom\Collection;
 use App\Http\Resources\Resource;
 use App\Http\Resources\ResourceCollection;
 use App\Models\BaseModel;
+use App\Models\Customer;
+use Facade\FlareClient\Http\Exceptions\NotFound;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Contracts\Support\MessageBag;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -18,9 +22,11 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Exception;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller as BaseController;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class DynamicController extends BaseController
 {
@@ -46,70 +52,36 @@ class DynamicController extends BaseController
     public function index()
     {
         try {
-            $collection = $this->all();
+            $collection = $this->allModels();
 
             if ($collection->count() > 0) {
-                $collection = new ResourceCollection($collection);
-                return array_merge(
-                    ['success' => true],
-                    $collection->toArray(\request()),
-                );
+                return $this->toResponseArray(true, 200, new ResourceCollection($collection));
+            } else {
+                throw new Exception('Not found', 404);
             }
-        } catch (ValidationException $exception) {
-            return [
-                'success' => false,
-                'errors' => $exception->errors(),
-            ];
         } catch (\Exception $exception) {
-            dd($exception);
-
-            return [
-                'success' => false,
-                'errors' => [
-                    $exception->getMessage()
-                ],
-            ];
+            return $this->toExceptionArray($exception);
         }
-
-        return [
-            'success' => false,
-            'errors' => [
-                'Not found.'
-            ],
-        ];
     }
 
     /**
      * Get one specific model by it's primary keys.
      *
+     * @param mixed|array|null $id
      * @return array
-     * @var mixed|array|null $id
      */
     public function show($id = null)
     {
         try {
-            $instance = $this->find($id);
+            $instance = $this->findModel($id);
 
             if (isset($instance)) {
-                return [
-                    'success' => true,
-                    'data' => new Resource($instance),
-                ];
+                return $this->toResponseArray(true, 200, new Resource($instance));
             } else {
-                return [
-                    'success' => false,
-                    'errors' => [
-                        'Not found.'
-                    ],
-                ];
+                throw new Exception('Not found', 404);
             }
         } catch (\Exception $exception) {
-            return [
-                'success' => false,
-                'errors' => [
-                    $exception->getMessage(),
-                ],
-            ];
+            return $this->toExceptionArray($exception);
         }
     }
 
@@ -118,44 +90,17 @@ class DynamicController extends BaseController
      *
      * @return array
      */
-    public function create()
+    public function store()
     {
-        $validator = Validator::make(\request()->all(), [
-            'data' => Constrainter::getRules(true)
-        ]);
-
-        if ($validator->fails()) {
-            return [
-                'success' => false,
-                'errors' => $validator->errors(),
-            ];
-        }
-
-        $validator = Validator::make(
-            \request()->get('data'),
-            $this->model::getValidationRules(true),
-        );
-
-        if ($validator->fails()) {
-            return [
-                'success' => false,
-                'errors' => $validator->errors(),
-            ];
-        }
-
         try {
-            $instance = $this->model::create($validator->validated());
-            return [
-                'success' => true,
-                'data' => new Resource($instance),
-            ];
+            $data = $this->validateRules(\request()->all(), $this->getDataValidationRules('data'));
+            $data = $this->validateRules($data['data'], $this->getModelValidationRules(true));
+
+            $instance = $this->createModel($data);
+
+            return $this->toResponseArray(true, 200, new Resource($instance));
         } catch (\Exception $exception) {
-            return [
-                'success' => false,
-                'errors' => [
-                    $exception->getMessage()
-                ],
-            ];
+            return $this->toExceptionArray($exception);
         }
     }
 
@@ -166,63 +111,23 @@ class DynamicController extends BaseController
      */
     public function update($id = null)
     {
-        $validator = Validator::make(\request()->all(), [
-            'data' => Constrainter::getRules(true)
-        ]);
-
-        if ($validator->fails()) {
-            return [
-                'success' => false,
-                'errors' => $validator->errors(),
-            ];
-        }
-
-        $validator = Validator::make(
-            \request()->get('data'),
-            $this->model::getValidationRules(false),
-        );
-
-        if ($validator->fails()) {
-            return [
-                'success' => false,
-                'errors' => $validator->errors(),
-            ];
-        }
-
         try {
-            $instance = $this->find($id, 'data');
+            $data = $this->validateRules(\request()->all(), $this->getDataValidationRules('data'));
+            $data = $this->validateRules($data['data'], $this->getModelValidationRules(false));
+
+            $instance = $this->findModel($id, 'data');
 
             if (isset($instance)) {
-                $instance->fill($validator->validated());
-                $success = $instance->update();
-                if ($success) {
-                    return [
-                        'success' => true,
-                        'data' => new Resource($instance)
-                    ];
+                if ($this->updateModel($instance, $data)) {
+                    return $this->toResponseArray(true, 200, new Resource($instance));
                 } else {
-                    return [
-                        'success' => false,
-                        'errors' => [
-                            'Error while updating record in the database',
-                        ]
-                    ];
+                    throw new Exception('Error while updating record in the database.');
                 }
             } else {
-                return [
-                    'success' => false,
-                    'errors' => [
-                        'Not found.'
-                    ],
-                ];
+                throw new Exception('Not found');
             }
         } catch (\Exception $exception) {
-            return [
-                'success' => false,
-                'errors' => [
-                    $exception->getMessage(),
-                ],
-            ];
+            return $this->toExceptionArray($exception);
         }
     }
 
@@ -231,31 +136,22 @@ class DynamicController extends BaseController
      *
      * @return array
      */
-    public function delete($id = null)
+    public function destroy($id = null)
     {
         try {
-            $instance = $this->find($id);
+            $instance = $this->findModel($id);
 
             if (isset($instance)) {
-                $success = $instance->delete();
-                return [
-                    'success' => $success,
-                ];
+                if ($this->destroyModel($instance)) {
+                    return $this->toResponseArray(true, 200);
+                } else {
+                    throw new Exception('Error while deleting record from the database.');
+                }
             } else {
-                return [
-                    'success' => false,
-                    'errors' => [
-                        'Not found.'
-                    ],
-                ];
+                throw new Exception('Not found');
             }
         } catch (\Exception $exception) {
-            return [
-                'success' => false,
-                'errors' => [
-                    $exception->getMessage(),
-                ],
-            ];
+            return $this->toExceptionArray($exception);
         }
     }
 
@@ -264,9 +160,9 @@ class DynamicController extends BaseController
      *
      * @param mixed|array|null $id
      * @param string|null $dataKey
-     * @return null
+     * @return Model|null
      */
-    public function find($id = null, $dataKey = null)
+    public function findModel($id = null, $dataKey = null)
     {
         if (!isset($id)) {
             if (isset($dataKey)) {
@@ -289,11 +185,9 @@ class DynamicController extends BaseController
         }
 
         $conditions = $this->extract($id, $this->primaryKeys());
-        $instance = $this->model::select()
+        return $this->model::select()
             ->where($conditions)
             ->first();
-
-        return $instance;
     }
 
     /**
@@ -302,9 +196,8 @@ class DynamicController extends BaseController
      * @param array|null $filters where conditions [[key, comparison, value]]
      * @param array|null $sorts orderBy conditions [key, order]
      * @return \Illuminate\Support\Collection
-     * @throws \Illuminate\Validation\ValidationException
      */
-    public function all($filters = null, $sorts = null)
+    public function allModels($filters = null, $sorts = null)
     {
         if (empty($filters)) {
             $filters = $this->whereConditions(\request()->all(), true, true);
@@ -321,6 +214,91 @@ class DynamicController extends BaseController
         }
 
         return $builder->get();
+    }
+
+    /**
+     * Create new Model instance and store it in the database.
+     *
+     * @param array $columns
+     * @return Model
+     */
+    public function createModel(array $columns): Model
+    {
+        return $this->model::create($columns);
+    }
+
+    /**
+     * Update Model instance in the database.
+     *
+     * @param Model $instance
+     * @param array $columns
+     * @return bool
+     */
+    public function updateModel(Model $instance, array $columns = []): bool
+    {
+        if (!empty($columns)) {
+            $instance->fill($columns);
+        }
+        return $instance->update();
+    }
+    /**
+     * Delete Model instance from the database.
+     *
+     * @param Model $instance
+     * @return bool
+     */
+    public function destroyModel(Model $instance): bool
+    {
+        return $instance->delete();
+    }
+
+
+    /**
+     * Get array of values for response.
+     *
+     * @param bool $success
+     * @param ?int $code
+     * @param ResourceCollection|Resource|array
+     * @return array
+     */
+    public function toResponseArray(bool $success, ?int $code, $data = []): array
+    {
+        $array = ['success' => $success];
+        if ($data instanceof Resource) {
+            $array['data'] = $data->toArray(\request());
+        } else if ($data instanceof ResourceCollection) {
+            $array['data'] = $data->toArray(\request());
+        } else if (is_array($data)) {
+            $array = array_merge(
+                $array,
+                $data,
+            );
+        }
+
+        return $array;
+    }
+
+    /**
+     * Get array of values for exception response.
+     *
+     * @param Exception $exception
+     * @return array
+     */
+    public function toExceptionArray(Exception $exception): array
+    {
+        if ($exception instanceof ValidationException) {
+            return [
+                'success' => false,
+                'errors' => $exception->errors(),
+            ];
+        }
+
+        return [
+            'success' => false,
+            'errors' => [
+                $exception->getMessage(),
+            ],
+        ];
     }
 
     /**
@@ -346,8 +324,8 @@ class DynamicController extends BaseController
     /**
      * Get table column names.
      *
+     * @param string
      * @return array
-     * @var string
      */
     public function tableColumns($tableName = null)
     {
@@ -383,11 +361,59 @@ class DynamicController extends BaseController
     }
 
     /**
+     * Get array of model's validation rules.
+     *
+     * @param bool $forInsert
+     * @return array
+     */
+    public function getModelValidationRules(bool $forInsert = false): array
+    {
+        if (isset($this->model)) {
+            return $this->model::getValidationRules($forInsert);
+        }
+
+        return [];
+    }
+
+    /**
+     * Get array of input data array validation rules.
+     *
+     * @param string $dataKey
+     * @param bool $forInsert
+     * @return array
+     */
+    public function getDataValidationRules(string $dataKey = '', bool $forInsert = false): array
+    {
+        if (empty($dataKey)) {
+            return [];
+        }
+        return [$dataKey => Constrainter::getRules(true)];
+    }
+
+    /**
+     * Validate data with the array of rules.
+     *
+     * @param array $data
+     * @param array $rules
+     * @return array
+     *
+     * @throws ValidationException
+     */
+    public function validateRules(array $data, array $rules): array
+    {
+        $validator = Validator::make($data, $rules);
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+        return $validator->validated();
+    }
+
+    /**
      * Get array of specified key => value pairs.
      *
+     * @param array $keys
+     * @param array $data
      * @return array
-     * @var array $keys
-     * @var array $data
      */
     public function extract(array $data, array $keys)
     {
@@ -406,10 +432,10 @@ class DynamicController extends BaseController
     /**
      * Obtain values from array or object.
      *
+     * @param string $key
+     * @param mixed $default
+     * @param array|object $data
      * @return mixed
-     * @var string $key
-     * @var mixed $default
-     * @var array|object $data
      */
     public function obtain($data, $key, $default = null)
     {
@@ -420,13 +446,14 @@ class DynamicController extends BaseController
         $keys = preg_split('(\.)', $key);
         $count = count($keys);
         if ($count > 0) {
+            $currentKey = $keys[0];
             if (is_array($data)) {
-                if (empty($data[$keys[0]])) {
+                if (empty($data[$currentKey])) {
                     return $default;
                 }
 
                 if ($count === 1) {
-                    return ($data[$keys[0]] ?? $default);
+                    return ($data[$currentKey] ?? $default);
                 } else {
                     $key = implode(
                         '.',
@@ -434,19 +461,19 @@ class DynamicController extends BaseController
                     );
 
                     return $this->obtain(
-                        $data[$keys[0]],
+                        $data[$currentKey],
                         $key,
                         $default,
                     );
                 }
             }
             if (is_object($data)) {
-                if (empty($data->$keys[0])) {
+                if (empty($data->$currentKey)) {
                     return $default;
                 }
 
                 if ($count === 1) {
-                    return ($data->$keys[0] ?? $default);
+                    return ($data->$currentKey ?? $default);
                 } else {
                     $key = implode(
                         '.',
@@ -454,7 +481,7 @@ class DynamicController extends BaseController
                     );
 
                     return $this->obtain(
-                        $data->$keys[0],
+                        $data->$currentKey,
                         $key,
                         $default,
                     );
@@ -467,9 +494,9 @@ class DynamicController extends BaseController
     /**
      * Get array of where conditions for columns.
      *
+     * @param array $data
+     * @param bool $basedOnType
      * @return array
-     * @var array $data
-     * @var bool $basedOnType
      */
     public function whereConditions(array $data, bool $basedOnType = false, bool $onlyTableColumns = true)
     {
@@ -514,9 +541,9 @@ class DynamicController extends BaseController
     /**
      * Get array of order by conditions for columns.
      *
+     * @param bool $onlyTableColumns
+     * @param array $data
      * @return array
-     * @var bool $onlyTableColumns
-     * @var array $data
      */
     public function orderByConditions(array $data, bool $onlyTableColumns = false)
     {

@@ -35,17 +35,18 @@ class Role extends BaseModel
     /**
      * Get array of model's validation rules.
      *
-     * @var bool $forInsert
      * @return array
+     * @var bool $forInsert
      */
-    public static function getValidationRules($forInsert = false) {
+    public static function getValidationRules($forInsert = false)
+    {
         return [
-            'name' => NameConstrainter::getRules(false),
+            'name' => NameConstrainter::getRules($forInsert),
             'description' => DescriptionConstrainter::getRules(false),
-            'can_read' => Constrainter::getRules(false),
-            'can_insert' => Constrainter::getRules(false),
-            'can_modify' => Constrainter::getRules(false),
-            'is_owner' => Constrainter::getRules(false),
+            'can_read' => Constrainter::getRules($forInsert),
+            'can_insert' => Constrainter::getRules($forInsert),
+            'can_modify' => Constrainter::getRules($forInsert),
+            'is_owner' => Constrainter::getRules($forInsert),
         ];
     }
 

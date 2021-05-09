@@ -40,11 +40,11 @@ class Comment extends BaseModel
      */
     public static function getValidationRules($forInsert = false) {
         return [
-            'text' => CommentTextConstrainter::getRules(false),
-            'target_id' => IdentifierConstrainter::getRules(false),
-            'target_type' => NameConstrainter::getRules(false),
-            'container_id' => IdentifierConstrainter::getRules(false),
-            'container_type' => NameConstrainter::getRules(false),
+            'text' => CommentTextConstrainter::getRules(true),
+            'target_id' => IdentifierConstrainter::getRules(true),
+            'target_type' => NameConstrainter::getRules(true),
+            'container_id' => IdentifierConstrainter::getRules(!$forInsert),
+            'container_type' => NameConstrainter::getRules(!$forInsert),
         ];
     }
 

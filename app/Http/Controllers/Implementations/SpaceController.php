@@ -20,6 +20,25 @@ class SpaceController extends DynamicController
     protected $model = Space::class;
 
     /**
+     * Find instance of model by it's primary keys.
+     *
+     * @param mixed|array|null $id
+     * @param string|null $dataKey
+     * @return null
+     */
+    public function findModel($id = null, $dataKey = null)
+    {
+        $instance = parent::findModel($id, $dataKey);
+
+        if (isset($instance)) {
+            $begDatetime = $this->extractDatetime(request()->all(), 'beg_datetime');
+            $endDatetime = $this->extractDatetime(request()->all(), 'end_datetime');
+            $instance->intervals = $this->loadIntervals($instance, $begDatetime, $endDatetime);
+        }
+        return $instance;
+    }
+
+    /**
      * Get filtered and sorted collection of the model instances with intervals if beg and/or end datetime are specified.
      *
      * @param array|null $filters where conditions [[key, comparison, value]]
@@ -27,9 +46,9 @@ class SpaceController extends DynamicController
      * @return \Illuminate\Support\Collection
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function all($filters = null, $sorts = null)
+    public function allModels($filters = null, $sorts = null)
     {
-        $collection = parent::all($filters, $sorts);
+        $collection = parent::allModels($filters, $sorts);
         if ($collection->count() === 0) {
             return $collection;
         }
@@ -68,8 +87,12 @@ class SpaceController extends DynamicController
      */
     protected function loadIntervals($item, $begDatetime, $endDatetime)
     {
+        if (empty($begDatetime) && empty($endDatetime)) {
+            return new Collection();
+        }
+
         // setting beginning to current datetime as default
-        if (empty($begDatetime)) {
+        if (empty($begDatetime) && isset($endDatetime)) {
             $begDatetime = Carbon::now()->toDateTimeString();
         }
 

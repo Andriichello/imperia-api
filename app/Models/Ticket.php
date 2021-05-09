@@ -9,6 +9,7 @@ use App\Constrainters\Implementations\PriceConstrainter;
 use App\Models\Categories\ServiceCategory;
 use App\Models\Categories\TicketCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Validation\Rule;
 
 class Ticket extends BaseModel
 {
@@ -37,17 +38,18 @@ class Ticket extends BaseModel
     /**
      * Get array of model's validation rules.
      *
-     * @var bool $forInsert
      * @return array
+     * @var bool $forInsert
      */
-    public static function getValidationRules($forInsert = false) {
-        return array(
-            'name' => NameConstrainter::getRules(false),
+    public static function getValidationRules($forInsert = false)
+    {
+        return [
+            'name' => NameConstrainter::getRules($forInsert),
             'description' => DescriptionConstrainter::getRules(false),
-            'price' => PriceConstrainter::getRules(false),
+            'price' => PriceConstrainter::getRules($forInsert),
             'period_id' => IdentifierConstrainter::getRules(false),
-            'category_id' => IdentifierConstrainter::getRules(false),
-        );
+            'category_id' => IdentifierConstrainter::getRules($forInsert),
+        ];
     }
 
     /**

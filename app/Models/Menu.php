@@ -34,15 +34,16 @@ class Menu extends BaseModel
     /**
      * Get array of model's validation rules.
      *
-     * @var bool $forInsert
      * @return array
+     * @var bool $forInsert
      */
-    public static function getValidationRules($forInsert = false) {
+    public static function getValidationRules($forInsert = false)
+    {
         return [
-            'name' => NameConstrainter::getRules(false),
+            'name' => NameConstrainter::getRules($forInsert),
             'description' => DescriptionConstrainter::getRules(false),
             'period_id' => IdentifierConstrainter::getRules(false),
-            'category_id' => IdentifierConstrainter::getRules(false),
+            'category_id' => IdentifierConstrainter::getRules($forInsert),
         ];
     }
 

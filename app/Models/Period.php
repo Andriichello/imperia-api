@@ -33,15 +33,20 @@ class Period extends BaseModel
     /**
      * Get array of model's validation rules.
      *
-     * @var bool $forInsert
      * @return array
+     * @var bool $forInsert
      */
-    public static function getValidationRules($forInsert = false) {
+    public static function getValidationRules($forInsert = false)
+    {
         return [
-            'beg_datetime_id' => IdentifierConstrainter::getRules(false),
-            'end_datetime_id' => IdentifierConstrainter::getRules(false),
+            'beg_datetime_id' => IdentifierConstrainter::getRules(false,
+                $forInsert ? ['required_without:end_datetime_id'] : []
+            ),
+            'end_datetime_id' => IdentifierConstrainter::getRules(false,
+                $forInsert ? ['required_without:beg_datetime_id'] : []
+            ),
             'weekdays' => WeekdaysConstrainter::getRules(false),
-            'is_templatable' => Constrainter::getRules(false),
+            'is_templatable' => Constrainter::getRules($forInsert),
         ];
     }
 

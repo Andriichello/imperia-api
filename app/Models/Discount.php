@@ -37,17 +37,22 @@ class Discount extends BaseModel
     /**
      * Get array of model's validation rules.
      *
-     * @var bool $forInsert
      * @return array
+     * @var bool $forInsert
      */
-    public static function getValidationRules($forInsert = false) {
+    public static function getValidationRules($forInsert = false)
+    {
         return [
-            'name' => NameConstrainter::getRules(false),
+            'name' => NameConstrainter::getRules($forInsert),
             'description' => DescriptionConstrainter::getRules(false),
-            'amount' => AmountConstrainter::getRules(false),
-            'percent' => AmountConstrainter::getRules(false),
+            'amount' => AmountConstrainter::getRules(false,
+                $forInsert ? ['required_without:percent'] : []
+            ),
+            'percent' => AmountConstrainter::getRules(false,
+                $forInsert ? ['required_without:percent'] : []
+            ),
             'period_id' => IdentifierConstrainter::getRules(false),
-            'category_id' => IdentifierConstrainter::getRules(false),
+            'category_id' => IdentifierConstrainter::getRules($forInsert),
         ];
     }
 

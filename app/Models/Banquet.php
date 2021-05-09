@@ -40,10 +40,10 @@ class Banquet extends BaseModel
         'state_id',
         'creator_id',
         'customer_id',
-        'spaceOrder',
-        'ticketOrder',
-        'serviceOrder',
-        'productOrder',
+        'space_order',
+        'ticket_order',
+        'service_order',
+        'product_order',
         'comments',
     ];
 
@@ -55,14 +55,15 @@ class Banquet extends BaseModel
      */
     public static function getValidationRules($forInsert = false) {
         return array(
-            'name' => NameConstrainter::getRules(false),
+            'name' => NameConstrainter::getRules($forInsert),
             'description' => DescriptionConstrainter::getRules(false),
-            'advance_amount' => PriceConstrainter::getRules(false),
-            'beg_datetime' => Constrainter::getRules(false, [new Assert\DateTime()]),
-            'end_datetime' => Constrainter::getRules(false, [new Assert\DateTime()]),
-            'state_id' => IdentifierConstrainter::getRules(false),
-            'creator_id' => IdentifierConstrainter::getRules(false),
-            'customer_id' => IdentifierConstrainter::getRules(false),
+            'advance_amount' => PriceConstrainter::getRules($forInsert),
+            'beg_datetime' => Constrainter::getRules($forInsert, [new Assert\DateTime()]),
+            'end_datetime' => Constrainter::getRules($forInsert, [new Assert\DateTime()]),
+            'state_id' => IdentifierConstrainter::getRules($forInsert),
+            // todo: make creator_id specification optional for authorized user
+            'creator_id' => IdentifierConstrainter::getRules($forInsert),
+            'customer_id' => IdentifierConstrainter::getRules($forInsert),
         );
     }
 
@@ -106,7 +107,9 @@ class Banquet extends BaseModel
      */
     public function creator()
     {
-        return $this->belongsTo(User::class, 'creator_id', 'id');
+        return $this->belongsTo(User::class, 'creator_id', 'id')
+            ->without('role')
+            ->select(['id', 'name']);
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Models\Categories;
 
+use App\Constrainters\Constrainter;
 use App\Constrainters\Implementations\DescriptionConstrainter;
 use App\Constrainters\Implementations\NameConstrainter;
 use App\Models\BaseModel;

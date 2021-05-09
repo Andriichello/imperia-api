@@ -37,16 +37,22 @@ class User extends BaseModel
     /**
      * Get array of model's validation rules.
      *
-     * @var bool $forInsert
      * @return array
+     * @var bool $forInsert
      */
-    public static function getValidationRules($forInsert = false) {
-        return [
-            'name' => NameConstrainter::getRules(false),
-            'password' => PasswordConstrainter::getRules(false),
-            'role_id' => IdentifierConstrainter::getRules(false),
-            'api_token' => ApiTokenConstrainter::getRules(false),
+    public static function getValidationRules($forInsert = false)
+    {
+        $rules = [
+            'name' => NameConstrainter::getRules($forInsert, ['unique:users']),
+            'password' => PasswordConstrainter::getRules($forInsert),
+            'role_id' => IdentifierConstrainter::getRules($forInsert),
         ];
+
+        if (!$forInsert) {
+            $rules['api_token'] = ApiTokenConstrainter::getRules(true);
+        }
+
+        return $rules;
     }
 
     /**
