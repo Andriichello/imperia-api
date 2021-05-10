@@ -7,6 +7,7 @@ use App\Constrainters\Implementations\DescriptionConstrainter;
 use App\Constrainters\Implementations\IdentifierConstrainter;
 use App\Constrainters\Implementations\NameConstrainter;
 use App\Constrainters\Implementations\PriceConstrainter;
+use App\Models\Orders\Order;
 use Symfony\Component\Validator\Constraints as Assert;
 use App\Models\Orders\ProductOrder;
 use App\Models\Orders\ServiceOrder;
@@ -40,12 +41,33 @@ class Banquet extends BaseModel
         'state_id',
         'creator_id',
         'customer_id',
-        'space_order',
-        'ticket_order',
-        'service_order',
-        'product_order',
-        'comments',
     ];
+
+    /**
+     * Get array of model's order column names.
+     *
+     * @return array
+     */
+    public static function getOrderColumnNames() {
+        $orderColumnNames = [];
+        foreach (Order::getTypes() as $orderType) {
+            $orderColumnNames[$orderType] = $orderType . '_order';
+        }
+        return $orderColumnNames;
+    }
+
+    /**
+     * Get array of model's order column names.
+     *
+     * @return array
+     */
+    public static function getOrderRelationshipNames() {
+        $orderRelationshipNames = [];
+        foreach (Order::getTypes() as $orderType) {
+            $orderRelationshipNames[$orderType] = $orderType . 'Order';
+        }
+        return $orderRelationshipNames;
+    }
 
     /**
      * Get array of model's validation rules.
@@ -54,7 +76,7 @@ class Banquet extends BaseModel
      * @return array
      */
     public static function getValidationRules($forInsert = false) {
-        return array(
+        $rules = [
             'name' => NameConstrainter::getRules($forInsert),
             'description' => DescriptionConstrainter::getRules(false),
             'advance_amount' => PriceConstrainter::getRules($forInsert),
@@ -64,7 +86,17 @@ class Banquet extends BaseModel
             // todo: make creator_id specification optional for authorized user
             'creator_id' => IdentifierConstrainter::getRules($forInsert),
             'customer_id' => IdentifierConstrainter::getRules($forInsert),
-        );
+            'comments' => Constrainter::getRules(false),
+            'comments.*.text' => Constrainter::getRules(true),
+            'comments.*.target_id' => Constrainter::getRules(true),
+            'comments.*.target_type' => Constrainter::getRules(true),
+        ];
+
+        foreach (self::getOrderColumnNames() as $orderType => $orderName) {
+            $rules[$orderName] = Constrainter::getRules(false);
+        }
+
+        return $rules;
     }
 
     /**

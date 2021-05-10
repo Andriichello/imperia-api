@@ -10,6 +10,13 @@ class BaseModel extends Model
     use HasFactory;
 
     /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = ['targetComments', 'containerComments'];
+
+    /**
      * The accessors to append to the model's array form.
      *
      * @var array

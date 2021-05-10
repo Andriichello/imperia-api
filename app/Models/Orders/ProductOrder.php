@@ -45,7 +45,6 @@ class ProductOrder extends BaseModel
     public static function getValidationRules($forInsert = false) {
         $rules = Order::getValidationRules($forInsert, 'product');
         $rules['items'] = Constrainter::getRules(false);
-        $rules['items'] = Constrainter::getRules(false);
         $rules['items.*.id'] = IdentifierConstrainter::getRules($forInsert);
         $rules['items.*.amount'] = AmountConstrainter::getRules($forInsert);
 

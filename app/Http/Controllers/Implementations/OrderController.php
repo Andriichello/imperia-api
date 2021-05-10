@@ -38,46 +38,50 @@ class OrderController extends DynamicController
 
     public function index($type = null)
     {
-        $fail = $this->switchModel(['type' => $type], 'type');
-        if (isset($fail)) {
-            return $fail;
+        try {
+            $this->switchModel(['type' => $type], 'type');
+        } catch (\Exception $exception) {
+            return $this->toExceptionArray($exception);
         }
         return parent::index();
     }
 
     public function show($type = null, $id = null)
     {
-        $fail = $this->switchModel(['type' => $type], 'type');
-        if (isset($fail)) {
-            return $fail;
+        try {
+            $this->switchModel(['type' => $type], 'type');
+        } catch (\Exception $exception) {
+            return $this->toExceptionArray($exception);
         }
         return parent::show($id);
     }
 
     public function store($type = null)
     {
-        $fail = $this->switchModel(['type' => $type], 'type');
-        if (isset($fail)) {
-            return $fail;
+        try {
+            $this->switchModel(['type' => $type], 'type');
+        } catch (\Exception $exception) {
+            return $this->toExceptionArray($exception);
         }
         return parent::store();
     }
 
     public function update($type = null, $id = null)
     {
-        $fail = $this->switchModel(['type' => $type], 'type');
-        if (isset($fail)) {
-            return $fail;
+        try {
+            $this->switchModel(['type' => $type], 'type');
+        } catch (\Exception $exception) {
+            return $this->toExceptionArray($exception);
         }
-
         return parent::update($id);
     }
 
     public function destroy($type = null, $id = null)
     {
-        $fail = $this->switchModel(['type' => $type], 'type');
-        if (isset($fail)) {
-            return $fail;
+        try {
+            $this->switchModel(['type' => $type], 'type');
+        } catch (\Exception $exception) {
+            return $this->toExceptionArray($exception);
         }
         return parent::destroy($id);
     }
@@ -87,20 +91,21 @@ class OrderController extends DynamicController
      *
      * @param array $columns
      * @param bool $beginTransaction
+     * @param string|null $type
      * @return Model
      * @throws \Exception
      */
-    public function createModel(array $columns, bool $beginTransaction = true): Model
+    public function createModel(array $columns, bool $beginTransaction = true, string $type = null): Model
     {
-        $instance = new $this->model();
-        $instance->fill($columns);
-        $instance->setAppends([]);
-
-        if (empty($columns['items'])) {
-            return $instance->save();
-        }
-
         try {
+            if (isset($type)) {
+                $this->switchModel(['type' => $type], 'type');
+            }
+
+            $instance = new $this->model();
+            $instance->fill($columns);
+            $instance->setAppends([]);
+
             if ($beginTransaction) {
                 DB::beginTransaction();
             }
@@ -136,18 +141,22 @@ class OrderController extends DynamicController
      * @param Model $instance
      * @param array $columns
      * @param bool $beginTransaction
+     * @param string|null $type
      * @return bool
      * @throws \Exception
      */
-    public function updateModel(Model $instance, array $columns = [], bool $beginTransaction = true): bool
+    public function updateModel(Model $instance, array $columns = [], bool $beginTransaction = true, string $type = null): bool
     {
         try {
+            if (isset($type)) {
+                $this->switchModel(['type' => $type], 'type');
+            }
+
             if ($beginTransaction) {
                 DB::beginTransaction();
             }
 
-            $instance->fill($columns);
-            if (!$instance->update()) {
+            if (!$instance->update($columns)) {
                 return false;
             }
 
@@ -176,7 +185,6 @@ class OrderController extends DynamicController
                             return false;
                         }
                     }
-
                 } // there was at least one item and now there is at least one
                 else {
                     $newFields = $this->toFields($instance, $newItems);
@@ -259,12 +267,17 @@ class OrderController extends DynamicController
      *
      * @param Model $instance
      * @param bool $beginTransaction
+     * @param string|null $type
      * @return bool
      * @throws \Exception
      */
-    public function destroyModel(Model $instance, bool $beginTransaction = true): bool
+    public function destroyModel(Model $instance, bool $beginTransaction = true, string $type = null): bool
     {
         try {
+            if (isset($type)) {
+                $this->switchModel(['type' => $type], 'type');
+            }
+
             if ($beginTransaction) {
                 DB::beginTransaction();
             }
@@ -312,11 +325,13 @@ class OrderController extends DynamicController
     /**
      * Switches controller's model class name depending on specified type.
      *
-     * @return array|null
-     * @var string|null $dataKey
-     * @var array|null $data
+     * @param string|null $dataKey
+     * @param array|null $data
+     * @return void
+     *
+     * @throws \Exception
      */
-    protected function switchModel($data = null, $dataKey = null)
+    public function switchModel($data = null, $dataKey = null)
     {
         if (empty($data)) {
             $data = \request()->all();
@@ -332,19 +347,12 @@ class OrderController extends DynamicController
             ]);
         }
 
-        if ($validator->fails()) {
-            return [
-                'success' => false,
-                'errors' => $validator->errors(),
-            ];
-        }
-
+        $data = $validator->validated();
         if (empty($dataKey)) {
             $type = $data[array_key_first($data)];
         } else {
             $type = $this->obtain($data, $dataKey);
         }
         $this->model = Order::getTypeOrderClass($this->currentType = $type);
-        return null;
     }
 }

@@ -36,15 +36,16 @@ class Comment extends BaseModel
      * Get array of model's validation rules.
      *
      * @var bool $forInsert
+     * @var bool $inOtherObject
      * @return array
      */
-    public static function getValidationRules($forInsert = false) {
+    public static function getValidationRules($forInsert = false, $inOtherObject = false) {
         return [
             'text' => CommentTextConstrainter::getRules(true),
             'target_id' => IdentifierConstrainter::getRules(true),
             'target_type' => NameConstrainter::getRules(true),
-            'container_id' => IdentifierConstrainter::getRules(!$forInsert),
-            'container_type' => NameConstrainter::getRules(!$forInsert),
+            'container_id' => IdentifierConstrainter::getRules($forInsert && !$inOtherObject),
+            'container_type' => NameConstrainter::getRules($forInsert && !$inOtherObject),
         ];
     }
 

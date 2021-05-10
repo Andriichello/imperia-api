@@ -45,6 +45,20 @@ class DynamicController extends BaseController
     protected $primaryKeys = ['id'];
 
     /**
+     * Currently applied sorts.
+     *
+     * @var array
+     */
+    protected $currentSorts = [];
+
+    /**
+     * Currently applied filters.
+     *
+     * @var array
+     */
+    protected $currentFilters = [];
+
+    /**
      * Get filtered and paginated collection of models.
      *
      * @return array
@@ -201,14 +215,32 @@ class DynamicController extends BaseController
     {
         if (empty($filters)) {
             $filters = $this->whereConditions(\request()->all(), true, true);
+            $this->currentFilters = $filters;
         }
 
         if (empty($sorts)) {
             $sorts = $this->orderByConditions(\request()->all(), true);
+            $this->currentSorts = $sorts;
         }
 
-        $builder = $this->model::select()
-            ->where($filters);
+        $builder = $this->model::select();
+        foreach ($filters as $filter) {
+            if (
+                is_array($filter) &&
+                count($filter) === 3
+            ) {
+                if ($filter[1] === 'in') {
+                    $builder->whereIn($filter[0], $filter[2]);
+                } else if ($filter[1] === 'not in') {
+                    $builder->whereNotIn($filter[0], $filter[2]);
+                } else {
+                    $builder->where($filters);
+                }
+                continue;
+            }
+            $builder->where($filters);
+        }
+
         foreach ($sorts as $key => $order) {
             $builder->orderBy($key, $order);
         }
@@ -236,11 +268,9 @@ class DynamicController extends BaseController
      */
     public function updateModel(Model $instance, array $columns = []): bool
     {
-        if (!empty($columns)) {
-            $instance->fill($columns);
-        }
-        return $instance->update();
+        return $instance->update($columns);
     }
+
     /**
      * Delete Model instance from the database.
      *
@@ -264,6 +294,16 @@ class DynamicController extends BaseController
     public function toResponseArray(bool $success, ?int $code, $data = []): array
     {
         $array = ['success' => $success];
+
+        // displaying applied sorting parameters, should be removed on release
+        $array['sorts'] = [];
+        foreach ($this->currentSorts as $columnName => $sortOrder) {
+            $array['sorts'][] = [$columnName, $sortOrder];
+        }
+
+        // displaying applied filtering parameters, should be removed on release
+        $array['filters'] = $this->currentFilters;
+
         if ($data instanceof Resource) {
             $array['data'] = $data->toArray(\request());
         } else if ($data instanceof ResourceCollection) {
@@ -521,18 +561,35 @@ class DynamicController extends BaseController
                 continue;
             }
 
-            if (
-                isset($types) &&
-                isset($types[$key]) &&
-                $types[$key] === 'string'
-            ) {
-                if (in_array($key, $this->primaryKeys())) {
-                    $conditions[] = [$key, 'like', $value];
-                } else {
-                    $conditions[] = [$key, 'like', '%' . $value . '%'];
+            if (is_array($value)) {
+                if (isset($value['min'])) {
+                    $conditions[] = [$key, '>=', $value['min']];
+                }
+                if (isset($value['max'])) {
+                    $conditions[] = [$key, '<=', $value['max']];
+                }
+                if (isset($value['only'])) {
+                    $ins = preg_split('(,)', $value['only']);
+                    $conditions[] = [$key, 'in', $ins];
+                }
+                if (isset($value['except'])) {
+                    $outs = preg_split('(,)', $value['except']);
+                    $conditions[] = [$key, 'not in', $outs];
                 }
             } else {
-                $conditions[] = [$key, '=', $value];
+                if (
+                    isset($types) &&
+                    isset($types[$key]) &&
+                    $types[$key] === 'string'
+                ) {
+                    if (in_array($key, $this->primaryKeys())) {
+                        $conditions[] = [$key, 'like', $value];
+                    } else {
+                        $conditions[] = [$key, 'like', '%' . $value . '%'];
+                    }
+                } else {
+                    $conditions[] = [$key, '=', $value];
+                }
             }
         }
         return $conditions;
