@@ -138,7 +138,7 @@ class DynamicController extends BaseController
                     throw new Exception('Error while updating record in the database.');
                 }
             } else {
-                throw new Exception('Not found');
+                throw new Exception('Not found', 404);
             }
         } catch (\Exception $exception) {
             return $this->toExceptionArray($exception);
@@ -162,7 +162,7 @@ class DynamicController extends BaseController
                     throw new Exception('Error while deleting record from the database.');
                 }
             } else {
-                throw new Exception('Not found');
+                throw new Exception('Not found', 404);
             }
         } catch (\Exception $exception) {
             return $this->toExceptionArray($exception);
@@ -307,7 +307,10 @@ class DynamicController extends BaseController
         if ($data instanceof Resource) {
             $array['data'] = $data->toArray(\request());
         } else if ($data instanceof ResourceCollection) {
-            $array['data'] = $data->toArray(\request());
+            $array = array_merge(
+                $array,
+                $data->toArray(\request()),
+            );
         } else if (is_array($data)) {
             $array = array_merge(
                 $array,
@@ -327,14 +330,23 @@ class DynamicController extends BaseController
     public function toExceptionArray(Exception $exception): array
     {
         if ($exception instanceof ValidationException) {
+            $message = '';
+            foreach ($exception->errors() as $bag => $errors) {
+                foreach ($errors as $error) {
+                    $message .= $error . ' ';
+                }
+            }
+
             return [
                 'success' => false,
+                'message' => $message,
                 'errors' => $exception->errors(),
             ];
         }
 
         return [
             'success' => false,
+            'message' => $exception->getMessage(),
             'errors' => [
                 $exception->getMessage(),
             ],

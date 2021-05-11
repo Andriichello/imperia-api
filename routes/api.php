@@ -28,7 +28,6 @@ $controllers = [
     'products' => \App\Http\Controllers\Implementations\ProductController::class,
     'discounts' => \App\Http\Controllers\Implementations\DiscountController::class,
     'roles' => \App\Http\Controllers\Implementations\RoleController::class,
-    'users' => \App\Http\Controllers\Implementations\UserController::class,
     'customers' => \App\Http\Controllers\Implementations\CustomerController::class,
     'customer-family-members' => \App\Http\Controllers\Implementations\CustomerFamilyMemberController::class,
     'datetimes' => \App\Http\Controllers\Implementations\DatetimeController::class,
@@ -53,6 +52,30 @@ foreach ($controllers as $modelName => $controller) {
     Route::delete($root . '/{id?}', [$controller, 'destroy'])
         ->name($modelName . '.destroy');
 }
+
+Route::group([], function () {
+    $controller = \App\Http\Controllers\Implementations\UserController::class;
+
+    $modelName = 'users';
+    $root = '/' . $modelName;
+    Route::get($root, [$controller, 'index'])
+        ->name($modelName . '.index');
+
+    Route::get($root . '/{id}', [$controller, 'show'])
+        ->name($modelName . '.show');
+
+    Route::post($root . '/login', [$controller, 'login'])
+        ->name($modelName . '.login');
+
+    Route::post($root, [$controller, 'store'])
+        ->name($modelName . '.store');
+
+    Route::patch($root . '/{id?}', [$controller, 'update'])
+        ->name($modelName . '.update');
+
+    Route::delete($root . '/{id?}', [$controller, 'destroy'])
+        ->name($modelName . '.destroy');
+});
 
 Route::group([], function () {
     $controller = \App\Http\Controllers\Implementations\CategoryController::class;
@@ -88,4 +111,20 @@ Route::group([], function () {
 
     Route::delete($root, [$controller, 'destroy'])
         ->name($modelName . '.destroy');
+});
+
+Route::group([], function () {
+    Route::get('/routes', function () {
+        $routes = [];
+        foreach (Route::getRoutes() as $route) {
+            if (str_starts_with($route->uri, '_ignition')) {
+                continue;
+            }
+            $routes[] = [
+                'route' => $route->uri,
+                'methods' => $route->methods,
+            ];
+        }
+        return ['success' => true, 'routes' => $routes];
+    })->name('routes.index');
 });

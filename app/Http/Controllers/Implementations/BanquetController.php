@@ -232,10 +232,6 @@ class BanquetController extends DynamicController
         try {
             DB::beginTransaction();
 
-            if (!$instance->update()) {
-                throw new \Exception('Error while updating record in the database.');
-            }
-
             $orderController = new OrderController();
             foreach (Banquet::getOrderRelationshipNames() as $orderType => $orderRelationshipName) {
                 if (isset($instance->$orderRelationshipName)) {

@@ -42,8 +42,9 @@ class User extends BaseModel
      */
     public static function getValidationRules($forInsert = false)
     {
+        $additionalNameRules = $forInsert ? ['unique:users'] : [];
         $rules = [
-            'name' => NameConstrainter::getRules($forInsert, ['unique:users']),
+            'name' => NameConstrainter::getRules($forInsert, $additionalNameRules),
             'password' => PasswordConstrainter::getRules($forInsert),
             'role_id' => IdentifierConstrainter::getRules($forInsert),
         ];
@@ -51,7 +52,6 @@ class User extends BaseModel
         if (!$forInsert) {
             $rules['api_token'] = ApiTokenConstrainter::getRules(true);
         }
-
         return $rules;
     }
 
