@@ -36,7 +36,7 @@ class BanquetController extends DynamicController
             DB::beginTransaction();
 
             if (!$instance->save()) {
-                throw new \Exception('Error while inserting record into the database.');
+                throw new \Exception('Error while inserting record into the database.', 520);
             }
 
             $orders = [];
@@ -100,8 +100,8 @@ class BanquetController extends DynamicController
         try {
             DB::beginTransaction();
 
-            if (!$instance->update()) {
-                throw new \Exception('Error while updating record in the database.');
+            if (!$instance->update($columns)) {
+                throw new \Exception('Error while updating record in the database.', 520);
             }
 
             $orderColumnNames = Banquet::getOrderColumnNames();
@@ -214,6 +214,8 @@ class BanquetController extends DynamicController
             }
 
             DB::commit();
+
+            $instance->refresh();
             return true;
         } catch (\Exception $exception) {
             DB::rollBack();

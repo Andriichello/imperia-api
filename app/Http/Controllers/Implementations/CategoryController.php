@@ -8,6 +8,7 @@ use App\Http\Controllers\DynamicController;
 use App\Models\Categories\Category;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class CategoryController extends DynamicController
@@ -28,45 +29,50 @@ class CategoryController extends DynamicController
 
     public function index($type = null)
     {
-        $fail = $this->switchModel(['type' => $type], 'type');
-        if (isset($fail)) {
-            return $fail;
+        try {
+            $this->switchModel(['type' => $type], 'type');
+        } catch (\Exception $exception) {
+            return $this->toResponse($exception);
         }
         return parent::index();
     }
 
     public function show($type = null, $id = null)
     {
-        $fail = $this->switchModel(['type' => $type], 'type');
-        if (isset($fail)) {
-            return $fail;
+        try {
+            $this->switchModel(['type' => $type], 'type');
+        } catch (\Exception $exception) {
+            return $this->toResponse($exception);
         }
         return parent::show($id);
     }
 
     public function store($type = null)
     {
-        $fail = $this->switchModel(['type' => $type], 'type');
-        if (isset($fail)) {
-            return $fail;
+        try {
+            $this->switchModel(['type' => $type], 'type');
+        } catch (\Exception $exception) {
+            return $this->toResponse($exception);
         }
         return parent::store();
     }
 
     public function update($type = null, $id = null)
     {
-        $fail = $this->switchModel(['type' => $type], 'type');
-        if (isset($fail)) {
-            return $fail;
+        try {
+            $this->switchModel(['type' => $type], 'type');
+        } catch (\Exception $exception) {
+            return $this->toResponse($exception);
         }
         return parent::update($id);
     }
 
     public function destroy($type = null, $id = null)
     {
-        $fail = $this->switchModel(['type' => $type], 'type');
-        if (isset($fail)) {
-            return $fail;
+        try {
+            $this->switchModel(['type' => $type], 'type');
+        } catch (\Exception $exception) {
+            return $this->toResponse($exception);
         }
         return parent::destroy($id);
     }
@@ -76,7 +82,7 @@ class CategoryController extends DynamicController
      *
      * @var array|null $data
      * @var string|null $dataKey
-     * @return array|null
+     * @throws \Exception
      */
     protected function switchModel($data = null, $dataKey = null)
     {
@@ -85,21 +91,14 @@ class CategoryController extends DynamicController
         }
 
         if (empty($dataKey)) {
-            $validator = Validator::make($data, [
+            $data = $this->validateRules($data, [
                 ItemTypeConstrainter::getRules(true, [Rule::in(Category::getTypes())])
             ]);
+
         } else {
-            $validator = Validator::make($data, [
+            $data = $this->validateRules($data, [
                 $dataKey => ItemTypeConstrainter::getRules(true, [Rule::in(Category::getTypes())])
             ]);
-        }
-
-
-        if ($validator->fails()) {
-            return [
-                'success' => false,
-                'errors' => $validator->errors(),
-            ];
         }
 
         if (empty($dataKey)) {
@@ -108,6 +107,5 @@ class CategoryController extends DynamicController
             $type = $this->obtain($data, $dataKey);
         }
         $this->model = Category::getTypeCategoryClass($type);
-        return null;
     }
 }

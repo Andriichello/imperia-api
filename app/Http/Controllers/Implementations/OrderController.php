@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\Validator\Constraints as Assert;
 use function PHPUnit\Framework\throwException;
 
@@ -41,7 +42,7 @@ class OrderController extends DynamicController
         try {
             $this->switchModel(['type' => $type], 'type');
         } catch (\Exception $exception) {
-            return $this->toExceptionArray($exception);
+            return $this->toResponse($exception);
         }
         return parent::index();
     }
@@ -51,7 +52,7 @@ class OrderController extends DynamicController
         try {
             $this->switchModel(['type' => $type], 'type');
         } catch (\Exception $exception) {
-            return $this->toExceptionArray($exception);
+            return $this->toResponse($exception);
         }
         return parent::show($id);
     }
@@ -61,7 +62,7 @@ class OrderController extends DynamicController
         try {
             $this->switchModel(['type' => $type], 'type');
         } catch (\Exception $exception) {
-            return $this->toExceptionArray($exception);
+            return $this->toResponse($exception);
         }
         return parent::store();
     }
@@ -71,7 +72,7 @@ class OrderController extends DynamicController
         try {
             $this->switchModel(['type' => $type], 'type');
         } catch (\Exception $exception) {
-            return $this->toExceptionArray($exception);
+            return $this->toResponse($exception);
         }
         return parent::update($id);
     }
@@ -81,7 +82,7 @@ class OrderController extends DynamicController
         try {
             $this->switchModel(['type' => $type], 'type');
         } catch (\Exception $exception) {
-            return $this->toExceptionArray($exception);
+            return $this->toResponse($exception);
         }
         return parent::destroy($id);
     }
@@ -111,13 +112,13 @@ class OrderController extends DynamicController
             }
 
             if (!$instance->save()) {
-                throw new \Exception('Error while inserting record into the database.');
+                throw new \Exception('Error while inserting record into the database.', 520);
             }
 
             $newFields = $this->toFields($instance, $columns['items'] ?? []);
             foreach ($newFields as $newField) {
                 if (!$newField->save()) {
-                    throw new \Exception('Error while inserting field record into the database.');
+                    throw new \Exception('Error while inserting field record into the database.', 520);
                 }
             }
 
@@ -245,13 +246,12 @@ class OrderController extends DynamicController
                         }
                     }
                 }
-
-                $instance->refresh();
             }
 
             if ($beginTransaction) {
                 DB::commit();
             }
+            $instance->refresh();
             return true;
         } catch (\Exception $exception) {
             if ($beginTransaction) {
@@ -338,16 +338,15 @@ class OrderController extends DynamicController
         }
 
         if (empty($dataKey)) {
-            $validator = Validator::make($data, [
+            $data = $this->validateRules($data, [
                 ItemTypeConstrainter::getRules(true, [Rule::in(Order::getTypes())])
             ]);
         } else {
-            $validator = Validator::make($data, [
+            $data = $this->validateRules($data, [
                 $dataKey => ItemTypeConstrainter::getRules(true, [Rule::in(Order::getTypes())])
             ]);
         }
 
-        $data = $validator->validated();
         if (empty($dataKey)) {
             $type = $data[array_key_first($data)];
         } else {

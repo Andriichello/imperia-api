@@ -26,6 +26,7 @@ use Exception;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller as BaseController;
+use phpDocumentor\Reflection\Types\Array_;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 class DynamicController extends BaseController
@@ -61,7 +62,7 @@ class DynamicController extends BaseController
     /**
      * Get filtered and paginated collection of models.
      *
-     * @return array
+     * @return Response
      */
     public function index()
     {
@@ -69,12 +70,12 @@ class DynamicController extends BaseController
             $collection = $this->allModels();
 
             if ($collection->count() > 0) {
-                return $this->toResponseArray(true, 200, new ResourceCollection($collection));
+                return $this->toResponse(new ResourceCollection($collection));
             } else {
                 throw new Exception('Not found', 404);
             }
         } catch (\Exception $exception) {
-            return $this->toExceptionArray($exception);
+            return $this->toResponse($exception);
         }
     }
 
@@ -82,7 +83,7 @@ class DynamicController extends BaseController
      * Get one specific model by it's primary keys.
      *
      * @param mixed|array|null $id
-     * @return array
+     * @return Response
      */
     public function show($id = null)
     {
@@ -90,19 +91,19 @@ class DynamicController extends BaseController
             $instance = $this->findModel($id);
 
             if (isset($instance)) {
-                return $this->toResponseArray(true, 200, new Resource($instance));
+                return $this->toResponse(new Resource($instance));
             } else {
                 throw new Exception('Not found', 404);
             }
         } catch (\Exception $exception) {
-            return $this->toExceptionArray($exception);
+            return $this->toResponse($exception);
         }
     }
 
     /**
      * Insert new model's record into the database.
      *
-     * @return array
+     * @return Response
      */
     public function store()
     {
@@ -112,16 +113,16 @@ class DynamicController extends BaseController
 
             $instance = $this->createModel($data);
 
-            return $this->toResponseArray(true, 200, new Resource($instance));
+            return $this->toResponse(new Resource($instance), true, 201);
         } catch (\Exception $exception) {
-            return $this->toExceptionArray($exception);
+            return $this->toResponse($exception);
         }
     }
 
     /**
      * Update model's record in the database.
      *
-     * @return array
+     * @return Response
      */
     public function update($id = null)
     {
@@ -129,11 +130,12 @@ class DynamicController extends BaseController
             $data = $this->validateRules(\request()->all(), $this->getDataValidationRules('data'));
             $data = $this->validateRules($data['data'], $this->getModelValidationRules(false));
 
+
             $instance = $this->findModel($id, 'data');
 
             if (isset($instance)) {
                 if ($this->updateModel($instance, $data)) {
-                    return $this->toResponseArray(true, 200, new Resource($instance));
+                    return $this->toResponse(new Resource($instance));
                 } else {
                     throw new Exception('Error while updating record in the database.');
                 }
@@ -141,14 +143,14 @@ class DynamicController extends BaseController
                 throw new Exception('Not found', 404);
             }
         } catch (\Exception $exception) {
-            return $this->toExceptionArray($exception);
+            return $this->toResponse($exception);
         }
     }
 
     /**
      * Delete model's record from the database.
      *
-     * @return array
+     * @return Response
      */
     public function destroy($id = null)
     {
@@ -157,7 +159,7 @@ class DynamicController extends BaseController
 
             if (isset($instance)) {
                 if ($this->destroyModel($instance)) {
-                    return $this->toResponseArray(true, 200);
+                    return $this->toResponse([]);
                 } else {
                     throw new Exception('Error while deleting record from the database.');
                 }
@@ -165,7 +167,7 @@ class DynamicController extends BaseController
                 throw new Exception('Not found', 404);
             }
         } catch (\Exception $exception) {
-            return $this->toExceptionArray($exception);
+            return $this->toResponse($exception);
         }
     }
 
@@ -268,7 +270,12 @@ class DynamicController extends BaseController
      */
     public function updateModel(Model $instance, array $columns = []): bool
     {
-        return $instance->update($columns);
+        if (!$instance->update($columns)) {
+            return false;
+        }
+
+        $instance->refresh();
+        return true;
     }
 
     /**
@@ -351,6 +358,35 @@ class DynamicController extends BaseController
                 $exception->getMessage(),
             ],
         ];
+    }
+
+    /**
+     * Convert to response.
+     *
+     * @param array|Resource|ResourceCollection|Exception $data
+     * @param bool $success
+     * @param int $code
+     * @return Response
+     */
+    public function toResponse($data, bool $success = true, int $code = 200): Response
+    {
+        if ($data instanceof Exception) {
+            if ($data instanceof ValidationException) {
+                $code = $data->status;
+            } else {
+                $code = $data->getCode();
+            }
+
+            return \Illuminate\Support\Facades\Response::make(
+                $this->toExceptionArray($data),
+                $code,
+            );
+        }
+
+        return \Illuminate\Support\Facades\Response::make(
+            $this->toResponseArray($success, $code, $data),
+            $code,
+        );
     }
 
     /**
@@ -455,7 +491,7 @@ class DynamicController extends BaseController
     {
         $validator = Validator::make($data, $rules);
         if ($validator->fails()) {
-            throw new ValidationException($validator);
+            throw (new ValidationException($validator))->status(400);
         }
         return $validator->validated();
     }

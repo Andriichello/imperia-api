@@ -120,9 +120,24 @@ Route::group([], function () {
             if (str_starts_with($route->uri, '_ignition')) {
                 continue;
             }
+
+            if (isset($route->action['controller'])) {
+                $controllerClass = $route->action['controller'];
+                $position = strpos($controllerClass, '@');
+                if ($position !== false) {
+                    $controllerClass = substr($controllerClass, 0, $position);
+                }
+
+                $controller = new $controllerClass();
+                if ($controller instanceof \App\Http\Controllers\DynamicController) {
+                    $attributes = $controller->fillable();
+                }
+            }
+
             $routes[] = [
                 'route' => $route->uri,
                 'methods' => $route->methods,
+                'attributes' => $attributes ?? [],
             ];
         }
         return ['success' => true, 'routes' => $routes];

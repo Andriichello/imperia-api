@@ -8,6 +8,7 @@ use App\Models\Space;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class SpaceController extends DynamicController
@@ -72,10 +73,9 @@ class SpaceController extends DynamicController
      */
     protected function extractDatetime($data, $datetimeKey)
     {
-        $validator = Validator::make($data, [
+        $queries = $this->validateRules($data, [
             $datetimeKey => Constrainter::getRules(false, [new Assert\DateTime()]),
         ]);
-        $queries = $validator->validated();
         return $queries[$datetimeKey] ?? null;
     }
 

@@ -9,6 +9,7 @@ use App\Http\Controllers\DynamicController;
 use App\Http\Resources\Resource;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Response;
 
 class UserController extends DynamicController
 {
@@ -21,6 +22,8 @@ class UserController extends DynamicController
 
     /**
      * Get the user with api_token from name and password.
+     *
+     * @return Response
      */
     public function login()
     {
@@ -43,12 +46,12 @@ class UserController extends DynamicController
                 ->first();
 
             if (isset($user)) {
-                return $this->toResponseArray(true, 200, new Resource($user));
+                return $this->toResponse(new Resource($user));
             } else {
                 throw new \Exception('Not found', 404);
             }
         } catch (\Exception $exception) {
-            return $this->toExceptionArray($exception);
+            return $this->toResponse($exception);
         }
     }
 
