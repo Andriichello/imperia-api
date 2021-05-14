@@ -377,7 +377,9 @@ class DynamicController extends BaseController
                 $code = (int)$data->getCode();
             }
 
-            dd($data);
+            if (!in_array($code, array_keys(Response::$statusTexts))) {
+                $code = 520; // unknown error status code
+            }
 
             return \Illuminate\Support\Facades\Response::make(
                 $this->toExceptionArray($data),
