@@ -20,7 +20,7 @@ class User extends BaseModel
      *
      * @var string
      */
-    protected $table = 'users';
+    protected $table = 'imperia_users';
 
     /**
      * The attributes that are mass assignable.

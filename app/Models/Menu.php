@@ -17,7 +17,7 @@ class Menu extends BaseModel
      *
      * @var string
      */
-    protected $table = 'menus';
+    protected $table = 'imperia_menus';
 
     /**
      * The attributes that are mass assignable.

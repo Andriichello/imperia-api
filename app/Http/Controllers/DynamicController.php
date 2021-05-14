@@ -372,10 +372,12 @@ class DynamicController extends BaseController
     {
         if ($data instanceof Exception) {
             if ($data instanceof ValidationException) {
-                $code = $data->status;
+                $code = (int)$data->status;
             } else {
-                $code = $data->getCode();
+                $code = (int)$data->getCode();
             }
+
+            dd($data);
 
             return \Illuminate\Support\Facades\Response::make(
                 $this->toExceptionArray($data),
