@@ -7,7 +7,7 @@ use App\Constrainters\Implementations\DescriptionConstrainter;
 use App\Constrainters\Implementations\NameConstrainter;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Role extends BaseModel
+class ImperiaRole extends BaseModel
 {
     use HasFactory;
 
@@ -67,6 +67,6 @@ class Role extends BaseModel
      */
     public function users()
     {
-        return $this->hasMany(User::class, 'role_id', 'id');
+        return $this->hasMany(ImperiaUser::class, 'role_id', 'id');
     }
 }

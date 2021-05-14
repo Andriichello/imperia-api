@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Implementations;
 
 use App\Http\Controllers\DynamicController;
-use App\Models\Role;
+use App\Models\ImperiaRole;
 
 class RoleController extends DynamicController
 {
@@ -12,5 +12,5 @@ class RoleController extends DynamicController
      *
      * @var string
      */
-    protected $model = Role::class;
+    protected $model = ImperiaRole::class;
 }

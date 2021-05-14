@@ -68,7 +68,7 @@ class Product extends BaseModel
      */
     public function menu()
     {
-        return $this->belongsTo(Menu::class, 'menu_id', 'id');
+        return $this->belongsTo(ImperiaMenu::class, 'menu_id', 'id');
     }
 
     /**

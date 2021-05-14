@@ -139,7 +139,7 @@ class Banquet extends BaseModel
      */
     public function creator()
     {
-        return $this->belongsTo(User::class, 'creator_id', 'id')
+        return $this->belongsTo(ImperiaUser::class, 'creator_id', 'id')
             ->without('role')
             ->select(['id', 'name']);
     }

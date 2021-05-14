@@ -8,7 +8,7 @@ use App\Constrainters\Implementations\ItemTypeConstrainter;
 use App\Constrainters\Implementations\NameConstrainter;
 use App\Models\BaseModel;
 use App\Models\Discount;
-use App\Models\Menu;
+use App\Models\ImperiaMenu;
 use App\Models\Product;
 use App\Models\Service;
 use App\Models\Space;

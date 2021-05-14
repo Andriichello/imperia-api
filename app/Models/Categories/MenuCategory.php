@@ -6,7 +6,7 @@ use App\Constrainters\Constrainter;
 use App\Constrainters\Implementations\DescriptionConstrainter;
 use App\Constrainters\Implementations\NameConstrainter;
 use App\Models\BaseModel;
-use App\Models\Menu;
+use App\Models\ImperiaMenu;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class MenuCategory extends BaseModel
@@ -52,6 +52,6 @@ class MenuCategory extends BaseModel
      */
     public function menus()
     {
-        return $this->hasMany(Menu::class, 'menu_id', 'id');
+        return $this->hasMany(ImperiaMenu::class, 'menu_id', 'id');
     }
 }

@@ -7,7 +7,7 @@ use App\Constrainters\Implementations\ItemTypeConstrainter;
 use App\Constrainters\Implementations\NameConstrainter;
 use App\Models\BaseModel;
 use App\Models\Discount;
-use App\Models\Menu;
+use App\Models\ImperiaMenu;
 use App\Models\Product;
 use App\Models\Service;
 use App\Models\Space;
@@ -94,7 +94,7 @@ class Category extends BaseModel
             case 'space':
                 return Space::class;
             case 'menu':
-                return Menu::class;
+                return ImperiaMenu::class;
             case 'product':
                 return Product::class;
             case 'ticket':

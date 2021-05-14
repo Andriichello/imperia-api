@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Implementations;
 
 use App\Http\Controllers\DynamicController;
-use App\Models\Menu;
+use App\Models\ImperiaMenu;
 
 class MenuController extends DynamicController
 {
@@ -12,5 +12,5 @@ class MenuController extends DynamicController
      *
      * @var string
      */
-    protected $model = Menu::class;
+    protected $model = ImperiaMenu::class;
 }

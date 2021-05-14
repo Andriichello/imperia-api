@@ -7,7 +7,7 @@ use App\Constrainters\Implementations\NameConstrainter;
 use App\Constrainters\Implementations\PasswordConstrainter;
 use App\Http\Controllers\DynamicController;
 use App\Http\Resources\Resource;
-use App\Models\User;
+use App\Models\ImperiaUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
 
@@ -18,7 +18,7 @@ class UserController extends DynamicController
      *
      * @var string
      */
-    protected $model = User::class;
+    protected $model = ImperiaUser::class;
 
     /**
      * Get the user with api_token from name and password.
@@ -41,7 +41,7 @@ class UserController extends DynamicController
                 unset($data['password']);
             }
 
-            $user = User::select()
+            $user = ImperiaUser::select()
                 ->where($data)
                 ->first();
 
