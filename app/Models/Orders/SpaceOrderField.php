@@ -4,9 +4,11 @@ namespace App\Models\Orders;
 
 use App\Constrainters\Constrainter;
 use App\Constrainters\Implementations\IdentifierConstrainter;
+use App\Models\Banquet;
 use App\Models\BaseModel;
 use App\Models\Space;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\Validator\Constraints as Assert;
 
 class SpaceOrderField extends BaseModel
@@ -33,12 +35,20 @@ class SpaceOrderField extends BaseModel
     ];
 
     /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = ['banquet'];
+
+    /**
      * Get array of model's validation rules.
      *
-     * @var bool $forInsert
      * @return array
+     * @var bool $forInsert
      */
-    public static function getValidationRules($forInsert = false) {
+    public static function getValidationRules($forInsert = false)
+    {
         return [
             'order_id' => IdentifierConstrainter::getRules(true),
             'space_id' => IdentifierConstrainter::getRules(true),
@@ -70,5 +80,14 @@ class SpaceOrderField extends BaseModel
     public function order()
     {
         return $this->belongsTo(SpaceOrder::class, 'order_id', 'id');
+    }
+
+    public function banquet()
+    {
+        return $this->hasOneThrough(
+            Banquet::class, SpaceOrder::class,
+            'id', 'id',
+            'space_id', 'id'
+        )->select('banquet_id')->withOnly([]);
     }
 }

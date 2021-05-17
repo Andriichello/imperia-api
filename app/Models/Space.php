@@ -88,6 +88,7 @@ class Space extends BaseModel
     {
         return $this->hasMany(SpaceOrderField::class, 'space_id', 'id')
             ->without('space')
-            ->select(['space_id', 'beg_datetime', 'end_datetime']);
+            ->with('banquet')
+            ->select(['order_id', 'space_id', 'beg_datetime', 'end_datetime']);
     }
 }

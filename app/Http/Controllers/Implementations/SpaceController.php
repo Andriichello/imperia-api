@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Implementations;
 
 use App\Constrainters\Constrainter;
+use App\Constrainters\Implementations\IdentifierConstrainter;
 use App\Http\Controllers\DynamicController;
+use App\Models\Orders\SpaceOrder;
 use App\Models\Space;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -34,7 +37,16 @@ class SpaceController extends DynamicController
         if (isset($instance)) {
             $begDatetime = $this->extractDatetime(request()->all(), 'beg_datetime');
             $endDatetime = $this->extractDatetime(request()->all(), 'end_datetime');
-            $instance->intervals = $this->loadIntervals($instance, $begDatetime, $endDatetime);
+            $banquetIdConditions = $this->whereConditions(
+                ['banquet_id' => request()->get('banquet_id') ?? []],
+                true,
+                false
+            );
+
+            $instance->intervals = $this->loadIntervals($instance, $begDatetime, $endDatetime)
+                ->filter(function ($interval) use ($banquetIdConditions) {
+                    return $this->isMatchingWhereConditions($interval, $banquetIdConditions);
+                });
         }
         return $instance;
     }
@@ -56,9 +68,17 @@ class SpaceController extends DynamicController
 
         $begDatetime = $this->extractDatetime(request()->all(), 'beg_datetime');
         $endDatetime = $this->extractDatetime(request()->all(), 'end_datetime');
+        $banquetIdConditions = $this->whereConditions(
+            ['banquet_id' => request()->get('banquet_id') ?? []],
+            true,
+            false
+        );
 
         foreach ($collection as $item) {
-            $item->intervals = $this->loadIntervals($item, $begDatetime, $endDatetime);
+            $item->intervals = $this->loadIntervals($item, $begDatetime, $endDatetime)
+                ->filter(function ($interval) use ($banquetIdConditions) {
+                    return $this->isMatchingWhereConditions($interval, $banquetIdConditions);
+                });
         }
         return $collection;
     }
@@ -83,6 +103,9 @@ class SpaceController extends DynamicController
      * Loads Space's business intervals for the specified period of time.
      *
      * @param Space $item
+     * @param mixed $begDatetime
+     * @param mixed $endDatetime
+     * @param array $additionalWhereConditions
      * @return \Illuminate\Database\Eloquent\Collection|Collection
      */
     protected function loadIntervals($item, $begDatetime, $endDatetime)
@@ -124,7 +147,14 @@ class SpaceController extends DynamicController
                     })->orWhere('beg_datetime', '>=', $begDatetime); // begins after/on beginning
                 });
             }
-            return $builder->get();
+
+            $intervals = $builder->get();
+            foreach ($intervals as $interval) {
+                $interval->makeHidden('banquet');
+                $interval->banquet_id = $interval->banquet->banquet_id ?? null;
+            }
+
+            return $intervals;
         }
 
         return new Collection();

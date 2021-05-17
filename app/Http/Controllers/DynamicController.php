@@ -648,6 +648,77 @@ class DynamicController extends BaseController
     }
 
     /**
+     * Determine if specified data matches where conditions.
+     *
+     * @param array|object $data
+     * @param array $whereConditions
+     * @param bool $basedOnType
+     * @return bool
+     */
+    public function isMatchingWhereConditions($data, array $whereConditions, bool $basedOnType = false): bool
+    {
+        if (empty($whereConditions)) {
+            return true;
+        }
+
+        if (!is_array($whereConditions[0])) {
+            $whereConditions = [$whereConditions];
+        }
+
+        $isMatching = true;
+        foreach ($whereConditions as $whereCondition) {
+            if (!$isMatching) {
+                return false;
+            }
+
+            $dataValue = $this->obtain($data, $whereCondition[0]);
+            $whereValue = $whereCondition[2];
+
+            if ($whereCondition[1] === 'in') {
+                if (!is_array($whereValue)) {
+                    $whereValue = [$whereValue];
+                }
+                $isMatching = in_array($dataValue, $whereValue);
+            } else if ($whereCondition[1] === 'not in') {
+                if (!is_array($whereValue)) {
+                    $whereValue = [$whereValue];
+                }
+                $isMatching = !in_array($dataValue, $whereValue);
+            } else if ($whereCondition[1] === 'like') {
+                $whereValue = strtolower($whereValue);
+                $length = strlen($whereValue);
+                if ($length > 2) {
+                    $whereValue = substr($whereValue, 1, $length - 2);
+                }
+
+                $isMatching = str_contains(strtolower($dataValue), strtolower($whereValue));
+            } else if ($whereCondition[1] === '=') {
+                if ($basedOnType) {
+                    $isMatching = $dataValue === $whereValue;
+                } else {
+                    $isMatching = $dataValue == $whereValue;
+                }
+            } else if ($whereCondition[1] === '!=') {
+                if ($basedOnType) {
+                    $isMatching = $dataValue !== $whereValue;
+                } else {
+                    $isMatching = $dataValue != $whereValue;
+                }
+            } else if ($whereCondition[1] === '>=') {
+                $isMatching = $dataValue >= $whereValue;
+            } else if ($whereCondition[1] === '<=') {
+                $isMatching = $dataValue <= $whereValue;
+            } else if ($whereCondition[1] === '>') {
+                $isMatching = $dataValue > $whereValue;
+            } else if ($whereCondition[1] === '<') {
+                $isMatching = $dataValue > $whereValue;
+            }
+        }
+
+        return $isMatching;
+    }
+
+    /**
      * Get array of order by conditions for columns.
      *
      * @param bool $onlyTableColumns
