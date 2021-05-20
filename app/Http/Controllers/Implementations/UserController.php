@@ -48,7 +48,7 @@ class UserController extends DynamicController
             if (isset($user)) {
                 return $this->toResponse(new Resource($user));
             } else {
-                throw new \Exception('Not found', 404);
+                throw new \Exception('Invalid credentials', 401);
             }
         } catch (\Exception $exception) {
             return $this->toResponse($exception);

@@ -121,7 +121,7 @@ Route::group([], function () {
                 continue;
             }
 
-            if (isset($route->action['controller'])) {
+            if (isset($route->action['controller']) && str_contains($route->action['controller'], 'App\\Http\\Controllers\\Implementations\\')) {
                 $controllerClass = $route->action['controller'];
                 $position = strpos($controllerClass, '@');
                 if ($position !== false) {

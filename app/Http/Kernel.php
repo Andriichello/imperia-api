@@ -25,6 +25,7 @@ class Kernel extends HttpKernel
         /*
          * Custom
          */
+        \App\Http\Middleware\HttpsProtocol::class,
         \Fruitcake\Cors\HandleCors::class,
     ];
 
