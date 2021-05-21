@@ -75,9 +75,9 @@ class Space extends BaseModel
      */
     protected $casts = [
         'price' => 'float',
-        'created_at' => 'datetime:d-m-Y H:i:s',
-        'updated_at' => 'datetime:d-m-Y H:i:s',
-        'deleted_at' => 'datetime:d-m-Y H:i:s',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     /**
