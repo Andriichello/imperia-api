@@ -14,10 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//Route::middleware('auth:api')->get('/user', function (Request $request) {
-//    return $request->user();
-//});
-
 $controllers = [
     'banquets' => \App\Http\Controllers\Implementations\BanquetController::class,
     'banquet-states' => \App\Http\Controllers\Implementations\BanquetStateController::class,
@@ -35,25 +31,27 @@ $controllers = [
 ];
 
 foreach ($controllers as $modelName => $controller) {
-    $root = '/' . $modelName;
+    Route::group(['middleware' => ['auth.token']], function () use ($modelName, $controller) {
+        $root = '/' . $modelName;
 
-    Route::get($root, [$controller, 'index'])
-        ->name($modelName . '.index');
+        Route::get($root, [$controller, 'index'])
+            ->name($modelName . '.index');
 
-    Route::get($root . '/{id}', [$controller, 'show'])
-        ->name($modelName . '.show');
+        Route::get($root . '/{id}', [$controller, 'show'])
+            ->name($modelName . '.show');
 
-    Route::post($root, [$controller, 'store'])
-        ->name($modelName . '.store');
+        Route::post($root, [$controller, 'store'])
+            ->name($modelName . '.store');
 
-    Route::patch($root . '/{id?}', [$controller, 'update'])
-        ->name($modelName . '.update');
+        Route::patch($root . '/{id?}', [$controller, 'update'])
+            ->name($modelName . '.update');
 
-    Route::delete($root . '/{id?}', [$controller, 'destroy'])
-        ->name($modelName . '.destroy');
+        Route::delete($root . '/{id?}', [$controller, 'destroy'])
+            ->name($modelName . '.destroy');
+    });
 }
 
-Route::group([], function () {
+Route::group(['middleware' => ['auth.token']], function () {
     $controller = \App\Http\Controllers\Implementations\UserController::class;
 
     $modelName = 'users';
@@ -65,7 +63,8 @@ Route::group([], function () {
         ->name($modelName . '.show');
 
     Route::post($root . '/login', [$controller, 'login'])
-        ->name($modelName . '.login');
+        ->name($modelName . '.login')
+        ->withoutMiddleware('auth.token');
 
     Route::post($root, [$controller, 'store'])
         ->name($modelName . '.store');
@@ -77,7 +76,7 @@ Route::group([], function () {
         ->name($modelName . '.destroy');
 });
 
-Route::group([], function () {
+Route::group(['middleware' => ['auth.token']], function () {
     $controller = \App\Http\Controllers\Implementations\CategoryController::class;
     Route::get('/{type}-categories', [$controller, 'index']);
     Route::get('/{type}-categories/{id}', [$controller, 'show']);
@@ -86,7 +85,7 @@ Route::group([], function () {
     Route::delete('/{type}-categories/{id?}', [$controller, 'destroy']);
 });
 
-Route::group([], function () {
+Route::group(['middleware' => ['auth.token']], function () {
     $controller = \App\Http\Controllers\Implementations\OrderController::class;
     Route::get('/{type}-orders', [$controller, 'index']);
     Route::get('/{type}-orders/{id}', [$controller, 'show']);
@@ -95,7 +94,7 @@ Route::group([], function () {
     Route::delete('/{type}-orders/{id?}', [$controller, 'destroy']);
 });
 
-Route::group([], function () {
+Route::group(['middleware' => ['auth.token']], function () {
     $controller = \App\Http\Controllers\Implementations\CommentController::class;
 
     $modelName = 'comments';
@@ -113,7 +112,7 @@ Route::group([], function () {
         ->name($modelName . '.destroy');
 });
 
-Route::group([], function () {
+Route::group(['middleware' => ['auth.token']], function () {
     Route::get('/routes', function () {
         $routes = [];
         foreach (Route::getRoutes() as $route) {
