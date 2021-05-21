@@ -83,14 +83,16 @@ class Banquet extends BaseModel
             'beg_datetime' => Constrainter::getRules($forInsert, [new Assert\DateTime()]),
             'end_datetime' => Constrainter::getRules($forInsert, [new Assert\DateTime()]),
             'state_id' => IdentifierConstrainter::getRules($forInsert),
-            // todo: make creator_id specification optional for authorized user
-            'creator_id' => IdentifierConstrainter::getRules($forInsert),
             'customer_id' => IdentifierConstrainter::getRules($forInsert),
             'comments' => Constrainter::getRules(false),
             'comments.*.text' => Constrainter::getRules(true),
             'comments.*.target_id' => Constrainter::getRules(true),
             'comments.*.target_type' => Constrainter::getRules(true),
         ];
+
+        if ($forInsert) {
+            $rules['creator_id'] = IdentifierConstrainter::getRules(true);
+        }
 
         foreach (self::getOrderColumnNames() as $orderType => $orderName) {
             $rules[$orderName] = Constrainter::getRules(false);
