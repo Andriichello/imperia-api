@@ -49,11 +49,12 @@ class BaseModel extends Model
      * @var array
      */
     protected $casts = [
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'deleted_at' => 'datetime',
+        'beg_datetime' => 'datetime:d-m-Y H:i:s',
+        'end_datetime' => 'datetime:d-m-Y H:i:s',
+        'created_at' => 'datetime:d-m-Y H:i:s',
+        'updated_at' => 'datetime:d-m-Y H:i:s',
+        'deleted_at' => 'datetime:d-m-Y H:i:s',
     ];
-
 
     /**
      * Get all comments for model as a container.

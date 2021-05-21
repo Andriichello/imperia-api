@@ -60,7 +60,7 @@ class SpaceOrder extends BaseModel
      *
      * @var array
      */
-    public $appends = ['items', 'comments'];
+    public $appends = ['items', 'comments', 'total'];
 
     /**
      * Get space items associated with the model.
@@ -106,6 +106,20 @@ class SpaceOrder extends BaseModel
             ->where('target_id', '=', $this->id)
             ->where('target_type', '=', $this->table)
             ->get();
+    }
+
+    /**
+     * Get total price of all items with the model.
+     *
+     * @return float
+     */
+    public function getTotalAttribute() {
+        $total = 0.0;
+        foreach ($this->items as $item) {
+            $total += $item['price'];
+        }
+
+        return $total;
     }
 
     /**

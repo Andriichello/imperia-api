@@ -59,7 +59,7 @@ class TicketOrder extends BaseModel
      *
      * @var array
      */
-    public $appends = ['items', 'comments'];
+    public $appends = ['items', 'comments', 'total'];
 
     /**
      * Get ticket items associated with the model.
@@ -104,6 +104,20 @@ class TicketOrder extends BaseModel
             ->where('target_id', '=', $this->id)
             ->where('target_type', '=', $this->table)
             ->get();
+    }
+
+    /**
+     * Get total price of all items with the model.
+     *
+     * @return float
+     */
+    public function getTotalAttribute() {
+        $total = 0.0;
+        foreach ($this->items as $item) {
+            $total += $item['price'] * $item['amount'];
+        }
+
+        return $total;
     }
 
     /**

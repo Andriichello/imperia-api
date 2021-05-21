@@ -104,11 +104,30 @@ class Banquet extends BaseModel
      *
      * @var array
      */
-    public $appends = ['comments'];
+    public $appends = ['comments', 'total'];
 
     public function getCommentsAttribute()
     {
         return $this->containerComments;
+    }
+
+    public function getTotalAttribute()
+    {
+        $total = 0.0;
+        if (!empty($this->spaceOrder)) {
+            $total += $this->spaceOrder->total;
+        }
+        if (!empty($this->serviceOrder)) {
+            $total += $this->serviceOrder->total;
+        }
+        if (!empty($this->ticketOrder)) {
+            $total += $this->ticketOrder->total;
+        }
+        if (!empty($this->productOrder)) {
+            $total += $this->productOrder->total;
+        }
+
+        return $total;
     }
 
     /**
@@ -124,6 +143,21 @@ class Banquet extends BaseModel
         'ticketOrder',
         'serviceOrder',
         'productOrder',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'total' => 'float',
+        'advance_amount' => 'float',
+        'beg_datetime' => 'datetime:d-m-Y H:i:s',
+        'end_datetime' => 'datetime:d-m-Y H:i:s',
+        'created_at' => 'datetime:d-m-Y H:i:s',
+        'updated_at' => 'datetime:d-m-Y H:i:s',
+        'deleted_at' => 'datetime:d-m-Y H:i:s',
     ];
 
     /**

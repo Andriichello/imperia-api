@@ -54,7 +54,7 @@ class ServiceOrder extends BaseModel
      *
      * @var array
      */
-    public $appends = ['items', 'comments'];
+    public $appends = ['items', 'comments', 'total'];
 
     /**
      * Get service items associated with the model.
@@ -100,6 +100,21 @@ class ServiceOrder extends BaseModel
             ->where('target_id', '=', $this->id)
             ->where('target_type', '=', $this->table)
             ->get();
+    }
+
+    /**
+     * Get total price of all items with the model.
+     *
+     * @return float
+     */
+    public function getTotalAttribute() {
+        $total = 0.0;
+        foreach ($this->items as $item) {
+            $total += $item['once_paid_price'] * $item['amount'];
+            $total += $item['hourly_paid_price'] * $item['duration'] / 60 * $item['amount'];
+        }
+
+        return $total;
     }
 
     /**

@@ -69,6 +69,18 @@ class Space extends BaseModel
     ];
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'price' => 'float',
+        'created_at' => 'datetime:d-m-Y H:i:s',
+        'updated_at' => 'datetime:d-m-Y H:i:s',
+        'deleted_at' => 'datetime:d-m-Y H:i:s',
+    ];
+
+    /**
      * Get period associated with the model.
      */
     public function period()
