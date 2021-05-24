@@ -85,9 +85,12 @@ class SpaceOrderField extends BaseModel
     public function banquet()
     {
         return $this->hasOneThrough(
-            Banquet::class, SpaceOrder::class,
-            'id', 'id',
-            'space_id', 'id'
+            Banquet::class,
+            SpaceOrder::class,
+            'id',
+            'id',
+            'order_id',
+            'banquet_id'
         )->select('banquet_id')->withOnly([]);
     }
 }
