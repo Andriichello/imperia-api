@@ -37,6 +37,12 @@ class SpaceController extends DynamicController
         if (isset($instance)) {
             $begDatetime = $this->extractDatetime(request()->all(), 'beg_datetime');
             $endDatetime = $this->extractDatetime(request()->all(), 'end_datetime');
+
+            // setting beginning to current datetime if only ending was specified
+            if (empty($begDatetime) && !empty($endDatetime)) {
+                $begDatetime = Carbon::now()->toDateTimeString();
+            }
+
             $banquetIdConditions = $this->whereConditions(
                 ['banquet_id' => request()->get('banquet_id') ?? []],
                 true,
@@ -47,7 +53,24 @@ class SpaceController extends DynamicController
                 ->filter(function ($interval) use ($banquetIdConditions) {
                     return $this->isMatchingWhereConditions($interval, $banquetIdConditions);
                 });
+
+            // filling array of performed filters
+            if (isset($begDatetime) && isset($endDatetime)) {
+                $this->currentFilters[] = [
+                    ['beg_datetime', 'between', [$begDatetime, $endDatetime]],
+                    'or',
+                    ['end_datetime', 'between', [$begDatetime, $endDatetime]]
+                ];
+            } else {
+                $this->currentFilters[] = ['beg_datetime', '>=', $begDatetime];
+            }
+
+            $this->currentFilters = array_merge(
+                $this->currentFilters,
+                $banquetIdConditions
+            );
         }
+
         return $instance;
     }
 
@@ -68,11 +91,18 @@ class SpaceController extends DynamicController
 
         $begDatetime = $this->extractDatetime(request()->all(), 'beg_datetime');
         $endDatetime = $this->extractDatetime(request()->all(), 'end_datetime');
+
+        // setting beginning to current datetime if only ending was specified
+        if (empty($begDatetime) && !empty($endDatetime)) {
+            $begDatetime = Carbon::now()->toDateTimeString();
+        }
+
         $banquetIdConditions = $this->whereConditions(
             ['banquet_id' => request()->get('banquet_id') ?? []],
             true,
             false
         );
+
 
         foreach ($collection as $item) {
             $item->intervals = $this->loadIntervals($item, $begDatetime, $endDatetime)
@@ -80,6 +110,23 @@ class SpaceController extends DynamicController
                     return $this->isMatchingWhereConditions($interval, $banquetIdConditions);
                 });
         }
+
+        // filling array of performed filters
+        if (isset($begDatetime) && isset($endDatetime)) {
+            $this->currentFilters[] = [
+                ['beg_datetime', 'between', [$begDatetime, $endDatetime]],
+                'or',
+                ['end_datetime', 'between', [$begDatetime, $endDatetime]]
+            ];
+        } else {
+            $this->currentFilters[] = ['beg_datetime', '>=', $begDatetime];
+        }
+
+        $this->currentFilters = array_merge(
+            $this->currentFilters,
+            $banquetIdConditions
+        );
+
         return $collection;
     }
 
@@ -112,11 +159,6 @@ class SpaceController extends DynamicController
     {
         if (empty($begDatetime) && empty($endDatetime)) {
             return new Collection();
-        }
-
-        // setting beginning to current datetime as default
-        if (empty($begDatetime) && isset($endDatetime)) {
-            $begDatetime = Carbon::now()->toDateTimeString();
         }
 
         if ($item instanceof Space) {
