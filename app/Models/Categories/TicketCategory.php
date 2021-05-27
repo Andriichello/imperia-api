@@ -4,11 +4,12 @@ namespace App\Models\Categories;
 
 use App\Constrainters\Implementations\DescriptionConstrainter;
 use App\Constrainters\Implementations\NameConstrainter;
+use App\Models\BaseDeletableModel;
 use App\Models\BaseModel;
 use App\Models\Ticket;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class TicketCategory extends BaseModel
+class TicketCategory extends BaseDeletableModel
 {
     use HasFactory;
 
@@ -18,13 +19,6 @@ class TicketCategory extends BaseModel
      * @var string
      */
     protected $table = 'ticket_categories';
-
-    /**
-     * Indicates if the model should be timestamped.
-     *
-     * @var bool
-     */
-    public $timestamps = false;
 
     /**
      * The attributes that are mass assignable.

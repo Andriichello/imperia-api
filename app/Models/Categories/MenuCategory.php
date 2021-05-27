@@ -5,11 +5,12 @@ namespace App\Models\Categories;
 use App\Constrainters\Constrainter;
 use App\Constrainters\Implementations\DescriptionConstrainter;
 use App\Constrainters\Implementations\NameConstrainter;
+use App\Models\BaseDeletableModel;
 use App\Models\BaseModel;
 use App\Models\ImperiaMenu;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class MenuCategory extends BaseModel
+class MenuCategory extends BaseDeletableModel
 {
     use HasFactory;
 
@@ -19,13 +20,6 @@ class MenuCategory extends BaseModel
      * @var string
      */
     protected $table = 'menu_categories';
-
-    /**
-     * Indicates if the model should be timestamped.
-     *
-     * @var bool
-     */
-    public $timestamps = false;
 
     /**
      * The attributes that are mass assignable.

@@ -8,7 +8,7 @@ use App\Constrainters\Implementations\NameConstrainter;
 use App\Models\Categories\MenuCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class ImperiaMenu extends BaseModel
+class ImperiaMenu extends BaseDeletableModel
 {
     use HasFactory;
 

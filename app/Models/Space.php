@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\Models\Categories\SpaceCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Space extends BaseModel
+class Space extends BaseDeletableModel
 {
     use HasFactory;
 
@@ -75,9 +75,9 @@ class Space extends BaseModel
      */
     protected $casts = [
         'price' => 'float',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'deleted_at' => 'datetime',
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+        'deleted_at' => 'datetime:Y-m-d H:i:s',
     ];
 
     /**

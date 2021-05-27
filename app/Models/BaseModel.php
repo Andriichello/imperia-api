@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BaseModel extends Model
 {
@@ -49,11 +50,41 @@ class BaseModel extends Model
      * @var array
      */
     protected $casts = [
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'deleted_at' => 'datetime',
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+        'deleted_at' => 'datetime:Y-m-d H:i:s',
     ];
 
+    protected $hasCreatedAt = true;
+
+    /**
+     * @return bool
+     */
+    public function hasCreatedAt(): bool
+    {
+        return $this->hasCreatedAt;
+    }
+
+
+    protected $hasUpdatedAt = true;
+    /**
+     * @return bool
+     */
+    public function hasUpdatedAt(): bool
+    {
+        return $this->hasUpdatedAt;
+    }
+
+    protected $hasDeletedAt = true;
+    /**
+     * @return bool
+     */
+    public function hasDeletedAt(): bool
+    {
+        return $this->hasDeletedAt;
+    }
+
+    protected $dateFormat = 'Y-m-d H:i:s';
 
     /**
      * Get all comments for model as a container.

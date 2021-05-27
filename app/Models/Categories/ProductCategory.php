@@ -4,11 +4,12 @@ namespace App\Models\Categories;
 
 use App\Constrainters\Implementations\DescriptionConstrainter;
 use App\Constrainters\Implementations\NameConstrainter;
+use App\Models\BaseDeletableModel;
 use App\Models\BaseModel;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class ProductCategory extends BaseModel
+class ProductCategory extends BaseDeletableModel
 {
     use HasFactory;
 
@@ -18,13 +19,6 @@ class ProductCategory extends BaseModel
      * @var string
      */
     protected $table = 'product_categories';
-
-    /**
-     * Indicates if the model should be timestamped.
-     *
-     * @var bool
-     */
-    public $timestamps = false;
 
     /**
      * The attributes that are mass assignable.

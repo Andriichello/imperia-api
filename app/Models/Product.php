@@ -10,7 +10,7 @@ use App\Constrainters\Implementations\PriceConstrainter;
 use App\Models\Categories\ProductCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Product extends BaseModel
+class Product extends BaseDeletableModel
 {
     use HasFactory;
 
@@ -71,9 +71,9 @@ class Product extends BaseModel
     protected $casts = [
         'price' => 'float',
         'weight' => 'float',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'deleted_at' => 'datetime',
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+        'deleted_at' => 'datetime:Y-m-d H:i:s',
     ];
 
     /**

@@ -7,7 +7,7 @@ use App\Constrainters\Implementations\DescriptionConstrainter;
 use App\Constrainters\Implementations\NameConstrainter;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class ImperiaRole extends BaseModel
+class ImperiaRole extends BaseDeletableModel
 {
     use HasFactory;
 

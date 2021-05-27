@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class ImperiaUser extends BaseModel
+class ImperiaUser extends BaseDeletableModel
 {
     use HasFactory;
 

@@ -8,7 +8,7 @@ use App\Constrainters\Implementations\NameConstrainter;
 use Symfony\Component\Validator\Constraints as Assert;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class CustomerFamilyMember extends BaseModel
+class CustomerFamilyMember extends BaseDeletableModel
 {
     use HasFactory;
 

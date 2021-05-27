@@ -11,7 +11,7 @@ use App\Models\Categories\TicketCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Validation\Rule;
 
-class Ticket extends BaseModel
+class Ticket extends BaseDeletableModel
 {
     use HasFactory;
 
@@ -69,9 +69,9 @@ class Ticket extends BaseModel
      */
     protected $casts = [
         'price' => 'float',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'deleted_at' => 'datetime',
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+        'deleted_at' => 'datetime:Y-m-d H:i:s',
     ];
 
     /**
@@ -87,6 +87,6 @@ class Ticket extends BaseModel
      */
     public function category()
     {
-        return $this->belongsTo(TicketCategory::class, 'category_id', 'id');
+        return $this->belongsTo(TicketCategory::class, 'category_id', 'id')->withTrashed();
     }
 }

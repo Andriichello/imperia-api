@@ -16,7 +16,7 @@ use App\Models\Orders\SpaceOrderField;
 use App\Models\Orders\TicketOrder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Banquet extends BaseModel
+class Banquet extends BaseDeletableModel
 {
     use HasFactory;
 
@@ -155,9 +155,9 @@ class Banquet extends BaseModel
     protected $casts = [
         'total' => 'float',
         'advance_amount' => 'float',
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime',
-        'deleted_at' => 'datetime',
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+        'deleted_at' => 'datetime:Y-m-d H:i:s',
     ];
 
     /**
