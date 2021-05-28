@@ -30,6 +30,8 @@ class DiscountCategory extends BaseDeletableModel
         'description',
     ];
 
+    protected $cascadeDeletes = ['discounts'];
+
     /**
      * Get array of model's validation rules.
      *

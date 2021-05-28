@@ -4,11 +4,12 @@ namespace App\Models\Orders;
 
 use App\Constrainters\Implementations\AmountConstrainter;
 use App\Constrainters\Implementations\IdentifierConstrainter;
+use App\Models\BaseDeletableModel;
 use App\Models\BaseModel;
 use App\Models\Service;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class ServiceOrderField extends BaseModel
+class ServiceOrderField extends BaseDeletableModel
 {
     use HasFactory;
 

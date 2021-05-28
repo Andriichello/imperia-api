@@ -227,9 +227,10 @@ class BanquetController extends DynamicController
      * Delete Model instance from the database.
      *
      * @param Model $instance
+     * @param bool $softDelete
      * @return bool
      */
-    public function destroyModel(Model $instance): bool
+    public function destroyModel(Model $instance, bool $softDelete = false): bool
     {
         try {
             DB::beginTransaction();

@@ -28,11 +28,12 @@ class SpaceController extends DynamicController
      *
      * @param mixed|array|null $id
      * @param string|null $dataKey
+     * @param string|null $trashed
      * @return null
      */
-    public function findModel($id = null, $dataKey = null)
+    public function findModel($id = null, $dataKey = null, $trashed = null)
     {
-        $instance = parent::findModel($id, $dataKey);
+        $instance = parent::findModel($id, $dataKey, $trashed);
 
         if (isset($instance)) {
             $begDatetime = $this->extractDatetime(request()->all(), 'beg_datetime');
@@ -79,12 +80,13 @@ class SpaceController extends DynamicController
      *
      * @param array|null $filters where conditions [[key, comparison, value]]
      * @param array|null $sorts orderBy conditions [key, order]
+     * @param string|null $trashed
      * @return \Illuminate\Support\Collection
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function allModels($filters = null, $sorts = null)
+    public function allModels($filters = null, $sorts = null, $trashed = null)
     {
-        $collection = parent::allModels($filters, $sorts);
+        $collection = parent::allModels($filters, $sorts, $trashed);
         if ($collection->count() === 0) {
             return $collection;
         }

@@ -9,6 +9,7 @@ use App\Constrainters\Implementations\PhoneConstrainter;
 use App\Custom\Collection;
 use App\Http\Resources\Resource;
 use App\Http\Resources\ResourceCollection;
+use App\Models\BaseDeletableModel;
 use App\Models\BaseModel;
 use App\Models\Customer;
 use Facade\FlareClient\Http\Exceptions\NotFound;
@@ -58,6 +59,13 @@ class DynamicController extends BaseController
      * @var array
      */
     protected $currentFilters = [];
+
+    /**
+     * Is soft deleting performed by default.
+     *
+     * @var bool
+     */
+    protected $softDelete = true;
 
     /**
      * Get filtered and paginated collection of models.
@@ -130,10 +138,14 @@ class DynamicController extends BaseController
             $data = $this->validateRules(\request()->all(), $this->getDataValidationRules('data'));
             $data = $this->validateRules($data['data'], $this->getModelValidationRules(false));
 
-
-            $instance = $this->findModel($id, 'data');
+            $restore = \request()->get('trashed', false);
+            $instance = $this->findModel($id, 'data', $restore ? 'with' : null);
 
             if (isset($instance)) {
+                if ($restore && !$this->restoreModel($instance)) {
+                    throw new Exception('Error while restoring record in the database.');
+                }
+
                 if ($this->updateModel($instance, $data)) {
                     return $this->toResponse(new Resource($instance));
                 } else {
@@ -158,7 +170,7 @@ class DynamicController extends BaseController
             $instance = $this->findModel($id);
 
             if (isset($instance)) {
-                if ($this->destroyModel($instance)) {
+                if ($this->destroyModel($instance, \request()->get('soft', $this->softDelete))) {
                     return $this->toResponse([]);
                 } else {
                     throw new Exception('Error while deleting record from the database.');
@@ -176,9 +188,10 @@ class DynamicController extends BaseController
      *
      * @param mixed|array|null $id
      * @param string|null $dataKey
+     * @param string|null $trashed
      * @return Model|null
      */
-    public function findModel($id = null, $dataKey = null)
+    public function findModel($id = null, $dataKey = null, $trashed = null)
     {
         if (!isset($id)) {
             if (isset($dataKey)) {
@@ -201,9 +214,18 @@ class DynamicController extends BaseController
         }
 
         $conditions = $this->extract($id, $this->primaryKeys());
-        return $this->model::select()
-            ->where($conditions)
-            ->first();
+        $builder = $this->model::select();
+        $builder->where($conditions);
+
+        if (empty($trashed)) {
+            $trashed = $this->obtain(\request()->all(), 'trashed');
+        }
+        if ($trashed === 'only') {
+            $builder->onlyTrashed();
+        } else if ($trashed === 'with') {
+            $builder->withTrashed();
+        }
+        return $builder->first();
     }
 
     /**
@@ -211,9 +233,10 @@ class DynamicController extends BaseController
      *
      * @param array|null $filters where conditions [[key, comparison, value]]
      * @param array|null $sorts orderBy conditions [key, order]
+     * @param string|null $trashed
      * @return \Illuminate\Support\Collection
      */
-    public function allModels($filters = null, $sorts = null)
+    public function allModels($filters = null, $sorts = null, $trashed = null)
     {
         if (empty($filters)) {
             $filters = $this->whereConditions(\request()->all(), true, true);
@@ -245,6 +268,16 @@ class DynamicController extends BaseController
 
         foreach ($sorts as $key => $order) {
             $builder->orderBy($key, $order);
+        }
+
+        if (empty($trashed)) {
+            $trashed = $this->obtain(\request()->all(), 'trashed');
+        }
+
+        if ($trashed === 'only') {
+            $builder->onlyTrashed();
+        } else if ($trashed === 'with') {
+            $builder->withTrashed();
         }
 
         return $builder->get();
@@ -282,13 +315,32 @@ class DynamicController extends BaseController
      * Delete Model instance from the database.
      *
      * @param Model $instance
+     * @param bool $softDelete
      * @return bool
      */
-    public function destroyModel(Model $instance): bool
+    public function destroyModel(Model $instance, bool $softDelete = true): bool
     {
+        if ($instance instanceof BaseDeletableModel && !$softDelete) {
+            return $instance->forceDelete();
+        }
+
         return $instance->delete();
     }
 
+    /**
+     * Restore Model instance in the database.
+     *
+     * @param Model $instance
+     * @param bool $softDelete
+     * @return bool
+     */
+    public function restoreModel(Model $instance): bool
+    {
+        if ($instance instanceof BaseDeletableModel) {
+            return $instance->restore();
+        }
+        return true;
+    }
 
     /**
      * Get array of values for response.
@@ -479,7 +531,7 @@ class DynamicController extends BaseController
         if (empty($dataKey)) {
             return [];
         }
-        return [$dataKey => Constrainter::getRules(true)];
+        return [$dataKey => Constrainter::getRules($forInsert, ['present', 'array'])];
     }
 
     /**
@@ -532,7 +584,7 @@ class DynamicController extends BaseController
     public function obtain($data, $key, $default = null)
     {
         if (!isset($data) || !isset($key)) {
-            return null;
+            return $default;
         }
 
         $keys = preg_split('(\.)', $key);
@@ -540,12 +592,12 @@ class DynamicController extends BaseController
         if ($count > 0) {
             $currentKey = $keys[0];
             if (is_array($data)) {
-                if (empty($data[$currentKey])) {
+                if (!key_exists($currentKey, $data)) {
                     return $default;
                 }
 
                 if ($count === 1) {
-                    return ($data[$currentKey] ?? $default);
+                    return ($data[$currentKey]);
                 } else {
                     $key = implode(
                         '.',
@@ -560,12 +612,12 @@ class DynamicController extends BaseController
                 }
             }
             if (is_object($data)) {
-                if (empty($data->$currentKey)) {
+                if (!property_exists($data, $currentKey)) {
                     return $default;
                 }
 
                 if ($count === 1) {
-                    return ($data->$currentKey ?? $default);
+                    return $data->$currentKey;
                 } else {
                     $key = implode(
                         '.',

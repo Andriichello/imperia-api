@@ -43,6 +43,8 @@ class Banquet extends BaseDeletableModel
         'customer_id',
     ];
 
+    protected $cascadeDeletes = ['ticketOrder', 'spaceOrder', 'productOrder', 'serviceOrder'];
+
     /**
      * Get array of model's order column names.
      *

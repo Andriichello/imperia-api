@@ -55,35 +55,6 @@ class BaseModel extends Model
         'deleted_at' => 'datetime:Y-m-d H:i:s',
     ];
 
-    protected $hasCreatedAt = true;
-
-    /**
-     * @return bool
-     */
-    public function hasCreatedAt(): bool
-    {
-        return $this->hasCreatedAt;
-    }
-
-
-    protected $hasUpdatedAt = true;
-    /**
-     * @return bool
-     */
-    public function hasUpdatedAt(): bool
-    {
-        return $this->hasUpdatedAt;
-    }
-
-    protected $hasDeletedAt = true;
-    /**
-     * @return bool
-     */
-    public function hasDeletedAt(): bool
-    {
-        return $this->hasDeletedAt;
-    }
-
     protected $dateFormat = 'Y-m-d H:i:s';
 
     /**
@@ -100,5 +71,20 @@ class BaseModel extends Model
     public function targetComments()
     {
         return $this->morphMany(Comment::class, 'target', 'target_type', 'target_id', 'id');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::deleted(function ($model) {
+            if ($model instanceof BaseDeletableModel) {
+                if ($model->isForceDeleting()) {
+                    $model->containerComments()->delete();
+                }
+            } else {
+                $model->containerComments()->delete();
+            }
+        });
     }
 }

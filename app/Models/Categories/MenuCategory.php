@@ -31,6 +31,8 @@ class MenuCategory extends BaseDeletableModel
         'description',
     ];
 
+    protected $cascadeDeletes = ['menus'];
+
     /**
      * Get array of model's validation rules.
      *

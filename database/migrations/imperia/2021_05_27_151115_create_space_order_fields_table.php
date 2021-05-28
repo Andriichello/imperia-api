@@ -18,11 +18,8 @@ class CreateSpaceOrderFieldsTable extends Migration
             $table->unsignedSmallInteger('space_id')->index('space_id');
             $table->dateTime('beg_datetime');
             $table->dateTime('end_datetime');
-
-            $table->dateTime('paid_at')->nullable();
-
-            $table->dateTime('created_at')->useCurrent();
-            $table->dateTime('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->dateTime('created_at')->nullable();
+            $table->dateTime('updated_at')->nullable();
             $table->dateTime('deleted_at')->nullable();
 
             $table->primary(['order_id', 'space_id']);

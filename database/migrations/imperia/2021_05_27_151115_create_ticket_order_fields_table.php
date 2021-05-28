@@ -17,12 +17,10 @@ class CreateTicketOrderFieldsTable extends Migration
             $table->unsignedInteger('order_id');
             $table->unsignedSmallInteger('ticket_id')->index('ticket_id');
             $table->unsignedSmallInteger('amount');
-
-            $table->dateTime('paid_at')->nullable();
-
-            $table->dateTime('created_at')->useCurrent();
-            $table->dateTime('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->dateTime('created_at')->nullable();
+            $table->dateTime('updated_at')->nullable();
             $table->dateTime('deleted_at')->nullable();
+
             $table->primary(['order_id', 'ticket_id']);
         });
     }

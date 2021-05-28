@@ -30,6 +30,8 @@ class TicketCategory extends BaseDeletableModel
         'description',
     ];
 
+    protected $cascadeDeletes = ['tickets'];
+
     /**
      * Get array of model's validation rules.
      *

@@ -5,13 +5,14 @@ namespace App\Models\Orders;
 use App\Constrainters\Constrainter;
 use App\Constrainters\Implementations\IdentifierConstrainter;
 use App\Models\Banquet;
+use App\Models\BaseDeletableModel;
 use App\Models\BaseModel;
 use App\Models\Space;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class SpaceOrderField extends BaseModel
+class SpaceOrderField extends BaseDeletableModel
 {
     use HasFactory;
 

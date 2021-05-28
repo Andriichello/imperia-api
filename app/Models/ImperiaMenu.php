@@ -31,6 +31,8 @@ class ImperiaMenu extends BaseDeletableModel
         'category_id',
     ];
 
+    protected $cascadeDeletes = ['products'];
+
     /**
      * Get array of model's validation rules.
      *

@@ -6,12 +6,13 @@ use App\Constrainters\Constrainter;
 use App\Constrainters\Implementations\AmountConstrainter;
 use App\Constrainters\Implementations\IdentifierConstrainter;
 use App\Models\Banquet;
+use App\Models\BaseDeletableModel;
 use App\Models\BaseModel;
 use App\Models\Comment;
 use App\Models\Discount;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class TicketOrder extends BaseModel
+class TicketOrder extends BaseDeletableModel
 {
     use HasFactory;
 
@@ -33,6 +34,15 @@ class TicketOrder extends BaseModel
     ];
 
     /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = ['fields'];
+
+    protected $cascadeDeletes = ['fields'];
+
+    /**
      * Get array of model's validation rules.
      *
      * @var bool $forInsert
@@ -46,13 +56,6 @@ class TicketOrder extends BaseModel
 
         return $rules;
     }
-
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = ['fields'];
 
     /**
      * The accessors to append to the model's array form.

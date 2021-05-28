@@ -14,7 +14,7 @@ class CreateCommentsTable extends Migration
     public function up()
     {
         Schema::create('comments', function (Blueprint $table) {
-            $table->unsignedInteger('id')->default(0);
+            $table->unsignedBigInteger('id')->autoIncrement();
             $table->string('text', 100);
             $table->unsignedInteger('target_id');
             $table->string('target_type', 35);
@@ -22,7 +22,7 @@ class CreateCommentsTable extends Migration
             $table->string('container_type', 35);
             $table->dateTime('created_at')->useCurrent();
             $table->dateTime('updated_at')->useCurrent()->useCurrentOnUpdate();
-            $table->primary(['id', 'container_type', 'container_id']);
+            $table->unique(['id', 'container_type', 'container_id']);
         });
     }
 

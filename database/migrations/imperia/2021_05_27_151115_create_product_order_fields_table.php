@@ -17,9 +17,10 @@ class CreateProductOrderFieldsTable extends Migration
             $table->unsignedInteger('order_id');
             $table->unsignedInteger('product_id')->index('product_id');
             $table->unsignedSmallInteger('amount');
-            $table->dateTime('created_at')->useCurrent();
-            $table->dateTime('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->dateTime('created_at')->nullable();
+            $table->dateTime('updated_at')->nullable();
             $table->dateTime('deleted_at')->nullable();
+
             $table->primary(['order_id', 'product_id']);
         });
     }

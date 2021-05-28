@@ -30,6 +30,8 @@ class SpaceCategory extends BaseDeletableModel
         'description',
     ];
 
+    protected $cascadeDeletes = ['spaces'];
+
     /**
      * Get array of model's validation rules.
      *

@@ -30,6 +30,8 @@ class ServiceCategory extends BaseDeletableModel
         'description',
     ];
 
+    protected $cascadeDeletes = ['services'];
+
     /**
      * Get array of model's validation rules.
      *

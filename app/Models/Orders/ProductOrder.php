@@ -9,13 +9,14 @@ use App\Constrainters\Implementations\IdentifierConstrainter;
 use App\Constrainters\Implementations\NameConstrainter;
 use App\Constrainters\Implementations\PriceConstrainter;
 use App\Models\Banquet;
+use App\Models\BaseDeletableModel;
 use App\Models\BaseModel;
 use App\Models\Orders\Order;
 use App\Models\Comment;
 use App\Models\Discount;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class ProductOrder extends BaseModel
+class ProductOrder extends BaseDeletableModel
 {
     use HasFactory;
 
@@ -37,6 +38,15 @@ class ProductOrder extends BaseModel
     ];
 
     /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = ['fields'];
+
+    protected $cascadeDeletes = ['fields'];
+
+    /**
      * Get array of model's validation rules.
      *
      * @var bool $forInsert
@@ -50,13 +60,6 @@ class ProductOrder extends BaseModel
 
         return $rules;
     }
-
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = ['fields'];
 
     /**
      * The accessors to append to the model's array form.
