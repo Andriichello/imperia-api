@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller as BaseController;
 use phpDocumentor\Reflection\Types\Array_;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use function PHPUnit\Framework\isNan;
 
 class DynamicController extends BaseController
 {
@@ -120,7 +121,6 @@ class DynamicController extends BaseController
             $data = $this->validateRules($data['data'], $this->getModelValidationRules(true));
 
             $instance = $this->createModel($data);
-
             return $this->toResponse(new Resource($instance), true, 201);
         } catch (\Exception $exception) {
             return $this->toResponse($exception);
@@ -138,10 +138,10 @@ class DynamicController extends BaseController
             $data = $this->validateRules(\request()->all(), $this->getDataValidationRules('data'));
             $data = $this->validateRules($data['data'], $this->getModelValidationRules(false));
 
-            $restore = \request()->get('trashed', false);
-            $instance = $this->findModel($id, 'data', $restore ? 'with' : null);
+            $instance = $this->findModel($id, 'data');
 
             if (isset($instance)) {
+                $restore = \request()->get('restore', false);
                 if ($restore && !$this->restoreModel($instance)) {
                     throw new Exception('Error while restoring record in the database.');
                 }
@@ -188,10 +188,9 @@ class DynamicController extends BaseController
      *
      * @param mixed|array|null $id
      * @param string|null $dataKey
-     * @param string|null $trashed
      * @return Model|null
      */
-    public function findModel($id = null, $dataKey = null, $trashed = null)
+    public function findModel($id = null, $dataKey = null)
     {
         if (!isset($id)) {
             if (isset($dataKey)) {
@@ -217,14 +216,6 @@ class DynamicController extends BaseController
         $builder = $this->model::select();
         $builder->where($conditions);
 
-        if (empty($trashed)) {
-            $trashed = $this->obtain(\request()->all(), 'trashed');
-        }
-        if ($trashed === 'only') {
-            $builder->onlyTrashed();
-        } else if ($trashed === 'with') {
-            $builder->withTrashed();
-        }
         return $builder->first();
     }
 
@@ -236,7 +227,7 @@ class DynamicController extends BaseController
      * @param string|null $trashed
      * @return \Illuminate\Support\Collection
      */
-    public function allModels($filters = null, $sorts = null, $trashed = null)
+    public function allModels($filters = null, $sorts = null)
     {
         if (empty($filters)) {
             $filters = $this->whereConditions(\request()->all(), true, true);
@@ -269,17 +260,6 @@ class DynamicController extends BaseController
         foreach ($sorts as $key => $order) {
             $builder->orderBy($key, $order);
         }
-
-        if (empty($trashed)) {
-            $trashed = $this->obtain(\request()->all(), 'trashed');
-        }
-
-        if ($trashed === 'only') {
-            $builder->onlyTrashed();
-        } else if ($trashed === 'with') {
-            $builder->withTrashed();
-        }
-
         return $builder->get();
     }
 
@@ -448,10 +428,25 @@ class DynamicController extends BaseController
     /**
      * Get array of names for model's primary keys.
      *
+     * @param array|string|null $except
      * @return array
      */
-    public function primaryKeys()
+    public function primaryKeys($except = null): array
     {
+        if (isset($except)) {
+            if (is_string($except)) {
+                $except = [$except];
+            }
+
+            $keys = [];
+            foreach ($this->primaryKeys as $key) {
+                if (!in_array($key, $except)) {
+                    $keys[] = $key;
+                }
+            }
+            return $keys;
+        }
+
         return $this->primaryKeys;
     }
 
@@ -654,6 +649,10 @@ class DynamicController extends BaseController
 
         if ($onlyTableColumns) {
             $columns = $this->tableColumns();
+
+            if (in_array('deleted_at', $columns)) {
+                $columns[] = 'trashed';
+            }
         }
 
         $conditions = [];
@@ -681,7 +680,15 @@ class DynamicController extends BaseController
                     $conditions[] = [$key, 'not in', $outs];
                 }
             } else {
-                if (
+                if ($key === 'trashed') {
+                    if ($value === 'only') {
+                        $conditions[] = ['deleted_at', '!=', null];
+                    } else if ($value === 'with') {
+//                        $conditions[] = ['deleted_at', '=', null];
+                    } else if ($value === 'without') {
+                        $conditions[] = ['deleted_at', '=', null];
+                    }
+                } else if (
                     isset($types) &&
                     isset($types[$key]) &&
                     $types[$key] === 'string'

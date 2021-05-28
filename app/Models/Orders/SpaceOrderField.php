@@ -94,4 +94,20 @@ class SpaceOrderField extends BaseDeletableModel
             'banquet_id'
         )->select('banquet_id')->withOnly([]);
     }
+
+    protected function setKeysForSaveQuery($query)
+    {
+        $query->where('order_id', '=', $this->original['order_id'] ?? $this->order_id);
+        $query->where('space_id', '=', $this->original['space_id'] ?? $this->space_id);
+
+        return $query;
+    }
+
+    protected function setKeysForSelectQuery($query)
+    {
+        $query->where('order_id', '=', $this->original['order_id'] ?? $this->order_id);
+        $query->where('space_id', '=', $this->original['space_id'] ?? $this->space_id);
+
+        return $query;
+    }
 }

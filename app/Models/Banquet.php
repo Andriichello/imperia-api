@@ -20,6 +20,8 @@ class Banquet extends BaseDeletableModel
 {
     use HasFactory;
 
+    // todo: create scope with soft deleted items
+
     /**
      * The table associated with the model.
      *

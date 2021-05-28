@@ -223,45 +223,45 @@ class BanquetController extends DynamicController
         }
     }
 
-    /**
-     * Delete Model instance from the database.
-     *
-     * @param Model $instance
-     * @param bool $softDelete
-     * @return bool
-     */
-    public function destroyModel(Model $instance, bool $softDelete = false): bool
-    {
-        try {
-            DB::beginTransaction();
-
-            $orderController = new OrderController();
-            foreach (Banquet::getOrderRelationshipNames() as $orderType => $orderRelationshipName) {
-                if (isset($instance->$orderRelationshipName)) {
-                    $success = $orderController->destroyModel($instance->$orderRelationshipName, false, $orderType);
-                    if (!$success) {
-                        return false;
-                    }
-                }
-            }
-
-            $commentController = new CommentController();
-            foreach ($instance->comments as $comment) {
-                $success = $commentController->destroyModel($comment);
-                if (!$success) {
-                    return false;
-                }
-            }
-
-            if (!$instance->delete()) {
-                return false;
-            }
-
-            DB::commit();
-            return true;
-        } catch (\Exception $exception) {
-            DB::rollBack();
-            throw $exception;
-        }
-    }
+//    /**
+//     * Delete Model instance from the database.
+//     *
+//     * @param Model $instance
+//     * @param bool $softDelete
+//     * @return bool
+//     */
+//    public function destroyModel(Model $instance, bool $softDelete = false): bool
+//    {
+//        try {
+//            DB::beginTransaction();
+//
+//            $orderController = new OrderController();
+//            foreach (Banquet::getOrderRelationshipNames() as $orderType => $orderRelationshipName) {
+//                if (isset($instance->$orderRelationshipName)) {
+//                    $success = $orderController->destroyModel($instance->$orderRelationshipName, false, $orderType);
+//                    if (!$success) {
+//                        return false;
+//                    }
+//                }
+//            }
+//
+//            $commentController = new CommentController();
+//            foreach ($instance->comments as $comment) {
+//                $success = $commentController->destroyModel($comment);
+//                if (!$success) {
+//                    return false;
+//                }
+//            }
+//
+//            if (!$instance->delete()) {
+//                return false;
+//            }
+//
+//            DB::commit();
+//            return true;
+//        } catch (\Exception $exception) {
+//            DB::rollBack();
+//            throw $exception;
+//        }
+//    }
 }

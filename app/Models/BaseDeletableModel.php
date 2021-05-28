@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Custom\SoftDeletable;
+use App\Models\Scopes\WithTrashedScope;
 use Dyrynda\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BaseDeletableModel extends BaseModel
 {
-    use SoftDeletes, CascadeSoftDeletes;
+    use SoftDeletable, CascadeSoftDeletes;
 
     /**
      * Array of relation names that should be deleted with the current model.
@@ -19,9 +21,17 @@ class BaseDeletableModel extends BaseModel
     {
         parent::boot();
 
-        self::restored(function ($model) {
+        static::restored(function ($model) {
             $model->runCascadingRestores();
         });
+    }
+
+    protected function scopeActive($query) {
+        return $query->where('deleted_at', '=', 'null');
+    }
+
+    protected function scopeNonactive($query) {
+        return $query->where('deleted_at', '!=', 'null');
     }
 
     /**

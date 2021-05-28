@@ -69,4 +69,20 @@ class TicketOrderField extends BaseDeletableModel
     {
         return $this->belongsTo(TicketOrder::class, 'order_id', 'id');
     }
+
+    protected function setKeysForSaveQuery($query)
+    {
+        $query->where('order_id', '=', $this->original['order_id'] ?? $this->order_id);
+        $query->where('ticket_id', '=', $this->original['ticket_id'] ?? $this->ticket_id);
+
+        return $query;
+    }
+
+    protected function setKeysForSelectQuery($query)
+    {
+        $query->where('order_id', '=', $this->original['order_id'] ?? $this->order_id);
+        $query->where('ticket_id', '=', $this->original['ticket_id'] ?? $this->ticket_id);
+
+        return $query;
+    }
 }

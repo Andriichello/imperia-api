@@ -70,4 +70,20 @@ class ProductOrderField extends BaseDeletableModel
     {
         return $this->belongsTo(TicketOrder::class, 'order_id', 'id');
     }
+
+    protected function setKeysForSaveQuery($query)
+    {
+        $query->where('order_id', '=', $this->original['order_id'] ?? $this->order_id);
+        $query->where('product_id', '=', $this->original['product_id'] ?? $this->product_id);
+
+        return $query;
+    }
+
+    protected function setKeysForSelectQuery($query)
+    {
+        $query->where('order_id', '=', $this->original['order_id'] ?? $this->order_id);
+        $query->where('product_id', '=', $this->original['product_id'] ?? $this->product_id);
+
+        return $query;
+    }
 }
