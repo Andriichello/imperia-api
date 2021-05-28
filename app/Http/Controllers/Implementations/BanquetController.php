@@ -57,6 +57,7 @@ class BanquetController extends DynamicController
                     $order,
                     $orderController->getModelValidationRules(true)
                 );
+
                 $orderController->createModel($validatedOrder, false);
             }
 

@@ -607,12 +607,8 @@ class DynamicController extends BaseController
                 }
             }
             if (is_object($data)) {
-                if (!property_exists($data, $currentKey)) {
-                    return $default;
-                }
-
                 if ($count === 1) {
-                    return $data->$currentKey;
+                    return $data->$currentKey ?? $default;
                 } else {
                     $key = implode(
                         '.',
