@@ -78,6 +78,9 @@ class ServiceOrder extends BaseDeletableModel
             $vars = $field->service->toArray();
             $vars['amount'] = $field->amount;
             $vars['duration'] = $field->duration;
+            $vars['created_at'] = $this->toFormattedDate($field->created_at);
+            $vars['updated_at'] = $this->toFormattedDate($field->updated_at);
+            $vars['deleted_at'] = $this->toFormattedDate($field->deleted_at);
             $vars['comments'] = [];
 
             foreach ($comments as $comment) {

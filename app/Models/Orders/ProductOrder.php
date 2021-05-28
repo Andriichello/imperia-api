@@ -86,6 +86,9 @@ class ProductOrder extends BaseDeletableModel
         foreach ($fields as $field) {
             $vars = $field->product->toArray();
             $vars['amount'] = $field->amount;
+            $vars['created_at'] = $this->toFormattedDate($field->created_at);
+            $vars['updated_at'] = $this->toFormattedDate($field->updated_at);
+            $vars['deleted_at'] = $this->toFormattedDate($field->deleted_at);
             $vars['comments'] = [];
 
             foreach ($comments as $comment) {

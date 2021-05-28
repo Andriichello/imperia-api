@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Models\Custom\SoftDeletable;
-use App\Models\Scopes\WithTrashedScope;
 use Dyrynda\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -26,11 +25,13 @@ class BaseDeletableModel extends BaseModel
         });
     }
 
-    protected function scopeActive($query) {
+    protected function scopeActive($query)
+    {
         return $query->where('deleted_at', '=', 'null');
     }
 
-    protected function scopeNonactive($query) {
+    protected function scopeNonactive($query)
+    {
         return $query->where('deleted_at', '!=', 'null');
     }
 

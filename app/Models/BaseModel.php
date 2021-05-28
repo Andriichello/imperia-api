@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Scopes\WithTrashedScope;
+use Cassandra\Date;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -38,10 +39,11 @@ class BaseModel extends Model
     /**
      * Get array of model's validation rules.
      *
-     * @var bool $forInsert
      * @return array
+     * @var bool $forInsert
      */
-    public static function getValidationRules($forInsert = false) {
+    public static function getValidationRules($forInsert = false)
+    {
         return [];
     }
 
@@ -59,9 +61,23 @@ class BaseModel extends Model
     protected $dateFormat = 'Y-m-d H:i:s';
 
     /**
+     *
+     * @param mixed $date
+     * @return string|null
+     */
+    public function toFormattedDate($date)
+    {
+        if (empty($date)) {
+            return null;
+        }
+        return date_format($date, $this->getDateFormat());
+    }
+
+    /**
      * Get all comments for model as a container.
      */
-    public function containerComments()
+    public
+    function containerComments()
     {
         return $this->morphMany(Comment::class, 'container', 'container_type', 'container_id', 'id');
     }
@@ -69,12 +85,14 @@ class BaseModel extends Model
     /**
      * Get all comments for model as a target.
      */
-    public function targetComments()
+    public
+    function targetComments()
     {
         return $this->morphMany(Comment::class, 'target', 'target_type', 'target_id', 'id');
     }
 
-    protected static function boot()
+    protected
+    static function boot()
     {
         parent::boot();
 

@@ -84,6 +84,9 @@ class SpaceOrder extends BaseDeletableModel
             $vars = $field->space->toArray();
             $vars['beg_datetime'] = $field->beg_datetime;
             $vars['end_datetime'] = $field->end_datetime;
+            $vars['created_at'] = $this->toFormattedDate($field->created_at);
+            $vars['updated_at'] = $this->toFormattedDate($field->updated_at);
+            $vars['deleted_at'] = $this->toFormattedDate($field->deleted_at);
             $vars['comments'] = [];
 
             foreach ($comments as $comment) {
