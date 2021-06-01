@@ -6,12 +6,13 @@ use App\Constrainters\Constrainter;
 use App\Constrainters\Implementations\AmountConstrainter;
 use App\Constrainters\Implementations\IdentifierConstrainter;
 use App\Models\Banquet;
+use App\Models\BaseDeletableModel;
 use App\Models\BaseModel;
 use App\Models\Comment;
 use App\Models\Discount;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class ServiceOrder extends BaseModel
+class ServiceOrder extends BaseDeletableModel
 {
     use HasFactory;
 
@@ -34,6 +35,8 @@ class ServiceOrder extends BaseModel
 
     protected $hidden = ['fields'];
 
+    protected $cascadeDeletes = ['fields'];
+
     /**
      * Get array of model's validation rules.
      *
@@ -54,7 +57,7 @@ class ServiceOrder extends BaseModel
      *
      * @var array
      */
-    public $appends = ['items', 'comments'];
+    public $appends = ['items', 'comments', 'total'];
 
     /**
      * Get service items associated with the model.
@@ -75,6 +78,9 @@ class ServiceOrder extends BaseModel
             $vars = $field->service->toArray();
             $vars['amount'] = $field->amount;
             $vars['duration'] = $field->duration;
+            $vars['created_at'] = $this->toFormattedDate($field->created_at);
+            $vars['updated_at'] = $this->toFormattedDate($field->updated_at);
+            $vars['deleted_at'] = $this->toFormattedDate($field->deleted_at);
             $vars['comments'] = [];
 
             foreach ($comments as $comment) {
@@ -100,6 +106,21 @@ class ServiceOrder extends BaseModel
             ->where('target_id', '=', $this->id)
             ->where('target_type', '=', $this->table)
             ->get();
+    }
+
+    /**
+     * Get total price of all items with the model.
+     *
+     * @return float
+     */
+    public function getTotalAttribute() {
+        $total = 0.0;
+        foreach ($this->items as $item) {
+            $total += $item['once_paid_price'] * $item['amount'];
+            $total += $item['hourly_paid_price'] * $item['duration'] / 60 * $item['amount'];
+        }
+
+        return $total;
     }
 
     /**

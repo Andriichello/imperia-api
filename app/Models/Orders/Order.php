@@ -6,6 +6,7 @@ use App\Constrainters\Implementations\DescriptionConstrainter;
 use App\Constrainters\Implementations\IdentifierConstrainter;
 use App\Constrainters\Implementations\ItemTypeConstrainter;
 use App\Constrainters\Implementations\NameConstrainter;
+use App\Models\BaseDeletableModel;
 use App\Models\BaseModel;
 use App\Models\Discount;
 use App\Models\ImperiaMenu;
@@ -15,7 +16,7 @@ use App\Models\Space;
 use App\Models\Ticket;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Order extends BaseModel
+class Order extends BaseDeletableModel
 {
     use HasFactory;
 

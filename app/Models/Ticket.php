@@ -11,7 +11,7 @@ use App\Models\Categories\TicketCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Validation\Rule;
 
-class Ticket extends BaseModel
+class Ticket extends BaseDeletableModel
 {
     use HasFactory;
 
@@ -63,6 +63,18 @@ class Ticket extends BaseModel
     ];
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'price' => 'float',
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+        'deleted_at' => 'datetime:Y-m-d H:i:s',
+    ];
+
+    /**
      * Get period associated with the model.
      */
     public function period()
@@ -75,6 +87,6 @@ class Ticket extends BaseModel
      */
     public function category()
     {
-        return $this->belongsTo(TicketCategory::class, 'category_id', 'id');
+        return $this->belongsTo(TicketCategory::class, 'category_id', 'id')->withTrashed();
     }
 }

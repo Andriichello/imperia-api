@@ -9,6 +9,7 @@ use App\Constrainters\Implementations\PhoneConstrainter;
 use App\Custom\Collection;
 use App\Http\Resources\Resource;
 use App\Http\Resources\ResourceCollection;
+use App\Models\BaseDeletableModel;
 use App\Models\BaseModel;
 use App\Models\Customer;
 use Facade\FlareClient\Http\Exceptions\NotFound;
@@ -28,6 +29,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller as BaseController;
 use phpDocumentor\Reflection\Types\Array_;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use function PHPUnit\Framework\isNan;
 
 class DynamicController extends BaseController
 {
@@ -58,6 +60,13 @@ class DynamicController extends BaseController
      * @var array
      */
     protected $currentFilters = [];
+
+    /**
+     * Is soft deleting performed by default.
+     *
+     * @var bool
+     */
+    protected $softDelete = true;
 
     /**
      * Get filtered and paginated collection of models.
@@ -112,7 +121,6 @@ class DynamicController extends BaseController
             $data = $this->validateRules($data['data'], $this->getModelValidationRules(true));
 
             $instance = $this->createModel($data);
-
             return $this->toResponse(new Resource($instance), true, 201);
         } catch (\Exception $exception) {
             return $this->toResponse($exception);
@@ -130,10 +138,14 @@ class DynamicController extends BaseController
             $data = $this->validateRules(\request()->all(), $this->getDataValidationRules('data'));
             $data = $this->validateRules($data['data'], $this->getModelValidationRules(false));
 
-
             $instance = $this->findModel($id, 'data');
 
             if (isset($instance)) {
+                $restore = \request()->get('restore', false);
+                if ($restore && !$this->restoreModel($instance)) {
+                    throw new Exception('Error while restoring record in the database.');
+                }
+
                 if ($this->updateModel($instance, $data)) {
                     return $this->toResponse(new Resource($instance));
                 } else {
@@ -158,7 +170,7 @@ class DynamicController extends BaseController
             $instance = $this->findModel($id);
 
             if (isset($instance)) {
-                if ($this->destroyModel($instance)) {
+                if ($this->destroyModel($instance, \request()->get('soft', $this->softDelete))) {
                     return $this->toResponse([]);
                 } else {
                     throw new Exception('Error while deleting record from the database.');
@@ -201,9 +213,10 @@ class DynamicController extends BaseController
         }
 
         $conditions = $this->extract($id, $this->primaryKeys());
-        return $this->model::select()
-            ->where($conditions)
-            ->first();
+        $builder = $this->model::select();
+        $builder->where($conditions);
+
+        return $builder->first();
     }
 
     /**
@@ -211,6 +224,7 @@ class DynamicController extends BaseController
      *
      * @param array|null $filters where conditions [[key, comparison, value]]
      * @param array|null $sorts orderBy conditions [key, order]
+     * @param string|null $trashed
      * @return \Illuminate\Support\Collection
      */
     public function allModels($filters = null, $sorts = null)
@@ -246,7 +260,6 @@ class DynamicController extends BaseController
         foreach ($sorts as $key => $order) {
             $builder->orderBy($key, $order);
         }
-
         return $builder->get();
     }
 
@@ -282,13 +295,32 @@ class DynamicController extends BaseController
      * Delete Model instance from the database.
      *
      * @param Model $instance
+     * @param bool $softDelete
      * @return bool
      */
-    public function destroyModel(Model $instance): bool
+    public function destroyModel(Model $instance, bool $softDelete = true): bool
     {
+        if ($instance instanceof BaseDeletableModel && !$softDelete) {
+            return $instance->forceDelete();
+        }
+
         return $instance->delete();
     }
 
+    /**
+     * Restore Model instance in the database.
+     *
+     * @param Model $instance
+     * @param bool $softDelete
+     * @return bool
+     */
+    public function restoreModel(Model $instance): bool
+    {
+        if ($instance instanceof BaseDeletableModel) {
+            return $instance->restore();
+        }
+        return true;
+    }
 
     /**
      * Get array of values for response.
@@ -396,10 +428,25 @@ class DynamicController extends BaseController
     /**
      * Get array of names for model's primary keys.
      *
+     * @param array|string|null $except
      * @return array
      */
-    public function primaryKeys()
+    public function primaryKeys($except = null): array
     {
+        if (isset($except)) {
+            if (is_string($except)) {
+                $except = [$except];
+            }
+
+            $keys = [];
+            foreach ($this->primaryKeys as $key) {
+                if (!in_array($key, $except)) {
+                    $keys[] = $key;
+                }
+            }
+            return $keys;
+        }
+
         return $this->primaryKeys;
     }
 
@@ -479,7 +526,7 @@ class DynamicController extends BaseController
         if (empty($dataKey)) {
             return [];
         }
-        return [$dataKey => Constrainter::getRules(true)];
+        return [$dataKey => Constrainter::getRules($forInsert, ['present', 'array'])];
     }
 
     /**
@@ -532,7 +579,7 @@ class DynamicController extends BaseController
     public function obtain($data, $key, $default = null)
     {
         if (!isset($data) || !isset($key)) {
-            return null;
+            return $default;
         }
 
         $keys = preg_split('(\.)', $key);
@@ -540,12 +587,12 @@ class DynamicController extends BaseController
         if ($count > 0) {
             $currentKey = $keys[0];
             if (is_array($data)) {
-                if (empty($data[$currentKey])) {
+                if (!key_exists($currentKey, $data)) {
                     return $default;
                 }
 
                 if ($count === 1) {
-                    return ($data[$currentKey] ?? $default);
+                    return ($data[$currentKey]);
                 } else {
                     $key = implode(
                         '.',
@@ -560,12 +607,8 @@ class DynamicController extends BaseController
                 }
             }
             if (is_object($data)) {
-                if (empty($data->$currentKey)) {
-                    return $default;
-                }
-
                 if ($count === 1) {
-                    return ($data->$currentKey ?? $default);
+                    return $data->$currentKey ?? $default;
                 } else {
                     $key = implode(
                         '.',
@@ -602,6 +645,10 @@ class DynamicController extends BaseController
 
         if ($onlyTableColumns) {
             $columns = $this->tableColumns();
+
+            if (in_array('deleted_at', $columns)) {
+                $columns[] = 'trashed';
+            }
         }
 
         $conditions = [];
@@ -629,7 +676,15 @@ class DynamicController extends BaseController
                     $conditions[] = [$key, 'not in', $outs];
                 }
             } else {
-                if (
+                if ($key === 'trashed') {
+                    if ($value === 'only') {
+                        $conditions[] = ['deleted_at', '!=', null];
+                    } else if ($value === 'with') {
+//                        $conditions[] = ['deleted_at', '=', null];
+                    } else if ($value === 'without') {
+                        $conditions[] = ['deleted_at', '=', null];
+                    }
+                } else if (
                     isset($types) &&
                     isset($types[$key]) &&
                     $types[$key] === 'string'
@@ -645,6 +700,77 @@ class DynamicController extends BaseController
             }
         }
         return $conditions;
+    }
+
+    /**
+     * Determine if specified data matches where conditions.
+     *
+     * @param array|object $data
+     * @param array $whereConditions
+     * @param bool $basedOnType
+     * @return bool
+     */
+    public function isMatchingWhereConditions($data, array $whereConditions, bool $basedOnType = false): bool
+    {
+        if (empty($whereConditions)) {
+            return true;
+        }
+
+        if (!is_array($whereConditions[0])) {
+            $whereConditions = [$whereConditions];
+        }
+
+        $isMatching = true;
+        foreach ($whereConditions as $whereCondition) {
+            if (!$isMatching) {
+                return false;
+            }
+
+            $dataValue = $this->obtain($data, $whereCondition[0]);
+            $whereValue = $whereCondition[2];
+
+            if ($whereCondition[1] === 'in') {
+                if (!is_array($whereValue)) {
+                    $whereValue = [$whereValue];
+                }
+                $isMatching = in_array($dataValue, $whereValue);
+            } else if ($whereCondition[1] === 'not in') {
+                if (!is_array($whereValue)) {
+                    $whereValue = [$whereValue];
+                }
+                $isMatching = !in_array($dataValue, $whereValue);
+            } else if ($whereCondition[1] === 'like') {
+                $whereValue = strtolower($whereValue);
+                $length = strlen($whereValue);
+                if ($length > 2) {
+                    $whereValue = substr($whereValue, 1, $length - 2);
+                }
+
+                $isMatching = str_contains(strtolower($dataValue), strtolower($whereValue));
+            } else if ($whereCondition[1] === '=') {
+                if ($basedOnType) {
+                    $isMatching = $dataValue === $whereValue;
+                } else {
+                    $isMatching = $dataValue == $whereValue;
+                }
+            } else if ($whereCondition[1] === '!=') {
+                if ($basedOnType) {
+                    $isMatching = $dataValue !== $whereValue;
+                } else {
+                    $isMatching = $dataValue != $whereValue;
+                }
+            } else if ($whereCondition[1] === '>=') {
+                $isMatching = $dataValue >= $whereValue;
+            } else if ($whereCondition[1] === '<=') {
+                $isMatching = $dataValue <= $whereValue;
+            } else if ($whereCondition[1] === '>') {
+                $isMatching = $dataValue > $whereValue;
+            } else if ($whereCondition[1] === '<') {
+                $isMatching = $dataValue > $whereValue;
+            }
+        }
+
+        return $isMatching;
     }
 
     /**

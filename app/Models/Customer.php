@@ -9,7 +9,7 @@ use App\Constrainters\Implementations\PhoneConstrainter;
 use Symfony\Component\Validator\Constraints as Assert;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Customer extends BaseModel
+class Customer extends BaseDeletableModel
 {
     use HasFactory;
 

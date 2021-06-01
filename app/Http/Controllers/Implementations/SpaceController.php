@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Implementations;
 
 use App\Constrainters\Constrainter;
+use App\Constrainters\Implementations\IdentifierConstrainter;
 use App\Http\Controllers\DynamicController;
+use App\Models\Orders\SpaceOrder;
 use App\Models\Space;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -25,17 +28,50 @@ class SpaceController extends DynamicController
      *
      * @param mixed|array|null $id
      * @param string|null $dataKey
+     * @param string|null $trashed
      * @return null
      */
-    public function findModel($id = null, $dataKey = null)
+    public function findModel($id = null, $dataKey = null, $trashed = null)
     {
-        $instance = parent::findModel($id, $dataKey);
+        $instance = parent::findModel($id, $dataKey, $trashed);
 
         if (isset($instance)) {
             $begDatetime = $this->extractDatetime(request()->all(), 'beg_datetime');
             $endDatetime = $this->extractDatetime(request()->all(), 'end_datetime');
-            $instance->intervals = $this->loadIntervals($instance, $begDatetime, $endDatetime);
+
+            // setting beginning to current datetime if only ending was specified
+            if (empty($begDatetime) && !empty($endDatetime)) {
+                $begDatetime = Carbon::now()->toDateTimeString();
+            }
+
+            $banquetIdConditions = $this->whereConditions(
+                ['banquet_id' => request()->get('banquet_id') ?? []],
+                true,
+                false
+            );
+
+            $instance->intervals = $this->loadIntervals($instance, $begDatetime, $endDatetime)
+                ->filter(function ($interval) use ($banquetIdConditions) {
+                    return $this->isMatchingWhereConditions($interval, $banquetIdConditions);
+                });
+
+            // filling array of performed filters
+            if (isset($begDatetime) && isset($endDatetime)) {
+                $this->currentFilters[] = [
+                    ['beg_datetime', 'between', [$begDatetime, $endDatetime]],
+                    'or',
+                    ['end_datetime', 'between', [$begDatetime, $endDatetime]]
+                ];
+            } else {
+                $this->currentFilters[] = ['beg_datetime', '>=', $begDatetime];
+            }
+
+            $this->currentFilters = array_merge(
+                $this->currentFilters,
+                $banquetIdConditions
+            );
         }
+
         return $instance;
     }
 
@@ -44,12 +80,13 @@ class SpaceController extends DynamicController
      *
      * @param array|null $filters where conditions [[key, comparison, value]]
      * @param array|null $sorts orderBy conditions [key, order]
+     * @param string|null $trashed
      * @return \Illuminate\Support\Collection
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function allModels($filters = null, $sorts = null)
+    public function allModels($filters = null, $sorts = null, $trashed = null)
     {
-        $collection = parent::allModels($filters, $sorts);
+        $collection = parent::allModels($filters, $sorts, $trashed);
         if ($collection->count() === 0) {
             return $collection;
         }
@@ -57,9 +94,41 @@ class SpaceController extends DynamicController
         $begDatetime = $this->extractDatetime(request()->all(), 'beg_datetime');
         $endDatetime = $this->extractDatetime(request()->all(), 'end_datetime');
 
-        foreach ($collection as $item) {
-            $item->intervals = $this->loadIntervals($item, $begDatetime, $endDatetime);
+        // setting beginning to current datetime if only ending was specified
+        if (empty($begDatetime) && !empty($endDatetime)) {
+            $begDatetime = Carbon::now()->toDateTimeString();
         }
+
+        $banquetIdConditions = $this->whereConditions(
+            ['banquet_id' => request()->get('banquet_id') ?? []],
+            true,
+            false
+        );
+
+
+        foreach ($collection as $item) {
+            $item->intervals = $this->loadIntervals($item, $begDatetime, $endDatetime)
+                ->filter(function ($interval) use ($banquetIdConditions) {
+                    return $this->isMatchingWhereConditions($interval, $banquetIdConditions);
+                });
+        }
+
+        // filling array of performed filters
+        if (isset($begDatetime) && isset($endDatetime)) {
+            $this->currentFilters[] = [
+                ['beg_datetime', 'between', [$begDatetime, $endDatetime]],
+                'or',
+                ['end_datetime', 'between', [$begDatetime, $endDatetime]]
+            ];
+        } else {
+            $this->currentFilters[] = ['beg_datetime', '>=', $begDatetime];
+        }
+
+        $this->currentFilters = array_merge(
+            $this->currentFilters,
+            $banquetIdConditions
+        );
+
         return $collection;
     }
 
@@ -83,17 +152,15 @@ class SpaceController extends DynamicController
      * Loads Space's business intervals for the specified period of time.
      *
      * @param Space $item
+     * @param mixed $begDatetime
+     * @param mixed $endDatetime
+     * @param array $additionalWhereConditions
      * @return \Illuminate\Database\Eloquent\Collection|Collection
      */
     protected function loadIntervals($item, $begDatetime, $endDatetime)
     {
         if (empty($begDatetime) && empty($endDatetime)) {
             return new Collection();
-        }
-
-        // setting beginning to current datetime as default
-        if (empty($begDatetime) && isset($endDatetime)) {
-            $begDatetime = Carbon::now()->toDateTimeString();
         }
 
         if ($item instanceof Space) {
@@ -124,7 +191,14 @@ class SpaceController extends DynamicController
                     })->orWhere('beg_datetime', '>=', $begDatetime); // begins after/on beginning
                 });
             }
-            return $builder->get();
+
+            $intervals = $builder->get();
+            foreach ($intervals as $interval) {
+                $interval->makeHidden('banquet');
+                $interval->banquet_id = $interval->banquet->banquet_id ?? null;
+            }
+
+            return $intervals;
         }
 
         return new Collection();

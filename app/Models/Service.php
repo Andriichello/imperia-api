@@ -10,7 +10,7 @@ use App\Models\Categories\ServiceCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Validation\Rule;
 
-class Service extends BaseModel
+class Service extends BaseDeletableModel
 {
     use HasFactory;
 
@@ -66,6 +66,20 @@ class Service extends BaseModel
         'period',
         'category',
     ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'once_paid_price' => 'float',
+        'hourly_paid_price' => 'float',
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+        'deleted_at' => 'datetime:Y-m-d H:i:s',
+    ];
+
 
     /**
      * Get period associated with the model.

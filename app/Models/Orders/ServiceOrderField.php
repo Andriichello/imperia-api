@@ -4,11 +4,12 @@ namespace App\Models\Orders;
 
 use App\Constrainters\Implementations\AmountConstrainter;
 use App\Constrainters\Implementations\IdentifierConstrainter;
+use App\Models\BaseDeletableModel;
 use App\Models\BaseModel;
 use App\Models\Service;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class ServiceOrderField extends BaseModel
+class ServiceOrderField extends BaseDeletableModel
 {
     use HasFactory;
 
@@ -70,5 +71,21 @@ class ServiceOrderField extends BaseModel
     public function order()
     {
         return $this->belongsTo(TicketOrder::class, 'order_id', 'id');
+    }
+
+    protected function setKeysForSaveQuery($query)
+    {
+        $query->where('order_id', '=', $this->original['order_id'] ?? $this->order_id);
+        $query->where('service_id', '=', $this->original['service_id'] ?? $this->service_id);
+
+        return $query;
+    }
+
+    protected function setKeysForSelectQuery($query)
+    {
+        $query->where('order_id', '=', $this->original['order_id'] ?? $this->order_id);
+        $query->where('service_id', '=', $this->original['service_id'] ?? $this->service_id);
+
+        return $query;
     }
 }

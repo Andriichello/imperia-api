@@ -266,33 +266,17 @@ class OrderController extends DynamicController
      * Delete new model instance from the database.
      *
      * @param Model $instance
-     * @param bool $beginTransaction
+     * @param bool $softDelete
      * @param string|null $type
-     * @return bool
      * @throws \Exception
      */
-    public function destroyModel(Model $instance, bool $beginTransaction = true, string $type = null): bool
+    public function destroyModel(Model $instance, bool $softDelete = true, ?string $type = null): bool
     {
-        try {
-            if (isset($type)) {
-                $this->switchModel(['type' => $type], 'type');
-            }
-
-            if ($beginTransaction) {
-                DB::beginTransaction();
-            }
-            $instance->fields()->delete();
-            $instance->delete();
-            if ($beginTransaction) {
-                DB::commit();
-            }
-        } catch (\Exception $exception) {
-            if ($beginTransaction) {
-                DB::rollBack();
-            }
-            throw $exception;
+        if (isset($type)) {
+            $this->switchModel(['type' => $type], 'type');
         }
-        return true;
+
+        return parent::destroyModel($instance, false);
     }
 
     /**

@@ -16,9 +16,11 @@ use App\Models\Orders\SpaceOrderField;
 use App\Models\Orders\TicketOrder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Banquet extends BaseModel
+class Banquet extends BaseDeletableModel
 {
     use HasFactory;
+
+    // todo: create scope with soft deleted items
 
     /**
      * The table associated with the model.
@@ -42,6 +44,8 @@ class Banquet extends BaseModel
         'creator_id',
         'customer_id',
     ];
+
+    protected $cascadeDeletes = ['ticketOrder', 'spaceOrder', 'productOrder', 'serviceOrder'];
 
     /**
      * Get array of model's order column names.
@@ -83,14 +87,16 @@ class Banquet extends BaseModel
             'beg_datetime' => Constrainter::getRules($forInsert, [new Assert\DateTime()]),
             'end_datetime' => Constrainter::getRules($forInsert, [new Assert\DateTime()]),
             'state_id' => IdentifierConstrainter::getRules($forInsert),
-            // todo: make creator_id specification optional for authorized user
-            'creator_id' => IdentifierConstrainter::getRules($forInsert),
             'customer_id' => IdentifierConstrainter::getRules($forInsert),
             'comments' => Constrainter::getRules(false),
             'comments.*.text' => Constrainter::getRules(true),
             'comments.*.target_id' => Constrainter::getRules(true),
             'comments.*.target_type' => Constrainter::getRules(true),
         ];
+
+        if ($forInsert) {
+            $rules['creator_id'] = IdentifierConstrainter::getRules(true);
+        }
 
         foreach (self::getOrderColumnNames() as $orderType => $orderName) {
             $rules[$orderName] = Constrainter::getRules(false);
@@ -104,11 +110,30 @@ class Banquet extends BaseModel
      *
      * @var array
      */
-    public $appends = ['comments'];
+    public $appends = ['comments', 'total'];
 
     public function getCommentsAttribute()
     {
         return $this->containerComments;
+    }
+
+    public function getTotalAttribute()
+    {
+        $total = 0.0;
+        if (!empty($this->spaceOrder)) {
+            $total += $this->spaceOrder->total;
+        }
+        if (!empty($this->serviceOrder)) {
+            $total += $this->serviceOrder->total;
+        }
+        if (!empty($this->ticketOrder)) {
+            $total += $this->ticketOrder->total;
+        }
+        if (!empty($this->productOrder)) {
+            $total += $this->productOrder->total;
+        }
+
+        return $total;
     }
 
     /**
@@ -124,6 +149,19 @@ class Banquet extends BaseModel
         'ticketOrder',
         'serviceOrder',
         'productOrder',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'total' => 'float',
+        'advance_amount' => 'float',
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+        'deleted_at' => 'datetime:Y-m-d H:i:s',
     ];
 
     /**

@@ -25,6 +25,7 @@ class Kernel extends HttpKernel
         /*
          * Custom
          */
+        \App\Http\Middleware\HttpsProtocol::class,
         \Fruitcake\Cors\HandleCors::class,
     ];
 
@@ -67,5 +68,7 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        'https' => \App\Http\Middleware\HttpsProtocol::class,
+        'auth.token' => \App\Http\Middleware\VerifyApiToken::class,
     ];
 }

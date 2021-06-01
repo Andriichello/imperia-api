@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use App\Models\Categories\SpaceCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Space extends BaseModel
+class Space extends BaseDeletableModel
 {
     use HasFactory;
 
@@ -69,6 +69,18 @@ class Space extends BaseModel
     ];
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'price' => 'float',
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+        'deleted_at' => 'datetime:Y-m-d H:i:s',
+    ];
+
+    /**
      * Get period associated with the model.
      */
     public function period()
@@ -88,6 +100,7 @@ class Space extends BaseModel
     {
         return $this->hasMany(SpaceOrderField::class, 'space_id', 'id')
             ->without('space')
-            ->select(['space_id', 'beg_datetime', 'end_datetime']);
+            ->with('banquet')
+            ->select(['order_id', 'space_id', 'beg_datetime', 'end_datetime']);
     }
 }

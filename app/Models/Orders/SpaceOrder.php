@@ -5,13 +5,14 @@ namespace App\Models\Orders;
 use App\Constrainters\Constrainter;
 use App\Constrainters\Implementations\IdentifierConstrainter;
 use App\Models\Banquet;
+use App\Models\BaseDeletableModel;
 use App\Models\BaseModel;
 use App\Models\Comment;
 use App\Models\Discount;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class SpaceOrder extends BaseModel
+class SpaceOrder extends BaseDeletableModel
 {
     use HasFactory;
 
@@ -33,6 +34,15 @@ class SpaceOrder extends BaseModel
     ];
 
     /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = ['fields'];
+
+    protected $cascadeDeletes = ['fields'];
+
+    /**
      * Get array of model's validation rules.
      *
      * @var bool $forInsert
@@ -49,18 +59,11 @@ class SpaceOrder extends BaseModel
     }
 
     /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = ['fields'];
-
-    /**
      * The accessors to append to the model's array form.
      *
      * @var array
      */
-    public $appends = ['items', 'comments'];
+    public $appends = ['items', 'comments', 'total'];
 
     /**
      * Get space items associated with the model.
@@ -81,6 +84,9 @@ class SpaceOrder extends BaseModel
             $vars = $field->space->toArray();
             $vars['beg_datetime'] = $field->beg_datetime;
             $vars['end_datetime'] = $field->end_datetime;
+            $vars['created_at'] = $this->toFormattedDate($field->created_at);
+            $vars['updated_at'] = $this->toFormattedDate($field->updated_at);
+            $vars['deleted_at'] = $this->toFormattedDate($field->deleted_at);
             $vars['comments'] = [];
 
             foreach ($comments as $comment) {
@@ -106,6 +112,20 @@ class SpaceOrder extends BaseModel
             ->where('target_id', '=', $this->id)
             ->where('target_type', '=', $this->table)
             ->get();
+    }
+
+    /**
+     * Get total price of all items with the model.
+     *
+     * @return float
+     */
+    public function getTotalAttribute() {
+        $total = 0.0;
+        foreach ($this->items as $item) {
+            $total += $item['price'];
+        }
+
+        return $total;
     }
 
     /**

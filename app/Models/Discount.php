@@ -9,7 +9,7 @@ use App\Constrainters\Implementations\NameConstrainter;
 use App\Models\Categories\DiscountCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Discount extends BaseModel
+class Discount extends BaseDeletableModel
 {
     use HasFactory;
 
@@ -64,6 +64,19 @@ class Discount extends BaseModel
     protected $with = [
         'period',
         'category',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'amount' => 'float',
+        'percent' => 'float',
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+        'deleted_at' => 'datetime:Y-m-d H:i:s',
     ];
 
     /**

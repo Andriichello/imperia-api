@@ -4,12 +4,15 @@ namespace App\Models\Orders;
 
 use App\Constrainters\Constrainter;
 use App\Constrainters\Implementations\IdentifierConstrainter;
+use App\Models\Banquet;
+use App\Models\BaseDeletableModel;
 use App\Models\BaseModel;
 use App\Models\Space;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class SpaceOrderField extends BaseModel
+class SpaceOrderField extends BaseDeletableModel
 {
     use HasFactory;
 
@@ -33,12 +36,20 @@ class SpaceOrderField extends BaseModel
     ];
 
     /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = ['banquet'];
+
+    /**
      * Get array of model's validation rules.
      *
-     * @var bool $forInsert
      * @return array
+     * @var bool $forInsert
      */
-    public static function getValidationRules($forInsert = false) {
+    public static function getValidationRules($forInsert = false)
+    {
         return [
             'order_id' => IdentifierConstrainter::getRules(true),
             'space_id' => IdentifierConstrainter::getRules(true),
@@ -70,5 +81,33 @@ class SpaceOrderField extends BaseModel
     public function order()
     {
         return $this->belongsTo(SpaceOrder::class, 'order_id', 'id');
+    }
+
+    public function banquet()
+    {
+        return $this->hasOneThrough(
+            Banquet::class,
+            SpaceOrder::class,
+            'id',
+            'id',
+            'order_id',
+            'banquet_id'
+        )->select('banquet_id')->withOnly([]);
+    }
+
+    protected function setKeysForSaveQuery($query)
+    {
+        $query->where('order_id', '=', $this->original['order_id'] ?? $this->order_id);
+        $query->where('space_id', '=', $this->original['space_id'] ?? $this->space_id);
+
+        return $query;
+    }
+
+    protected function setKeysForSelectQuery($query)
+    {
+        $query->where('order_id', '=', $this->original['order_id'] ?? $this->order_id);
+        $query->where('space_id', '=', $this->original['space_id'] ?? $this->space_id);
+
+        return $query;
     }
 }

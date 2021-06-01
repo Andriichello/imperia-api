@@ -8,7 +8,7 @@ use App\Constrainters\Implementations\NameConstrainter;
 use App\Models\Categories\MenuCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class ImperiaMenu extends BaseModel
+class ImperiaMenu extends BaseDeletableModel
 {
     use HasFactory;
 
@@ -30,6 +30,8 @@ class ImperiaMenu extends BaseModel
         'period_id',
         'category_id',
     ];
+
+    protected $cascadeDeletes = ['products'];
 
     /**
      * Get array of model's validation rules.
