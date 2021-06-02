@@ -21,9 +21,8 @@ class CreateDiscountsTable extends Migration
             $table->decimal('percent', 6, 3)->unsigned()->nullable();
             $table->unsignedSmallInteger('category_id')->index('category_id');
             $table->unsignedInteger('period_id')->nullable()->index('period_id');
-            $table->dateTime('created_at')->useCurrent();
-            $table->dateTime('updated_at')->useCurrent()->useCurrentOnUpdate();
-            $table->dateTime('deleted_at')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
             $table->unique(['name', 'category_id'], 'discounts_unique_NAME_in_CATEGORY');
         });
     }

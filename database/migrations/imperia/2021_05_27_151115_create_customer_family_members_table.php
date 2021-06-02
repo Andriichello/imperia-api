@@ -18,9 +18,8 @@ class CreateCustomerFamilyMembersTable extends Migration
             $table->unsignedInteger('customer_id')->index('customer_id');
             $table->string('name', 50);
             $table->date('birthdate');
-            $table->dateTime('created_at')->useCurrent();
-            $table->dateTime('updated_at')->useCurrent()->useCurrentOnUpdate();
-            $table->dateTime('deleted_at')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -20,9 +20,8 @@ class CreateCustomersTable extends Migration
             $table->string('phone', 25)->unique('customers_unique_PHONE');
             $table->string('email', 50)->nullable();
             $table->date('birthdate')->nullable();
-            $table->dateTime('created_at')->useCurrent();
-            $table->dateTime('updated_at')->useCurrent()->useCurrentOnUpdate();
-            $table->dateTime('deleted_at')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

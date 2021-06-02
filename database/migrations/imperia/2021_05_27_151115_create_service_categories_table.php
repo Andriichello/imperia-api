@@ -17,9 +17,8 @@ class CreateServiceCategoriesTable extends Migration
             $table->smallIncrements('id');
             $table->string('name', 50)->unique('service_categories_unique_NAME');
             $table->string('description', 100)->nullable();
-            $table->dateTime('created_at')->useCurrent();
-            $table->dateTime('updated_at')->useCurrent()->useCurrentOnUpdate();
-            $table->dateTime('deleted_at')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

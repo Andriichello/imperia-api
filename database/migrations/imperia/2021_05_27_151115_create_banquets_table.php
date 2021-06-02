@@ -26,9 +26,8 @@ class CreateBanquetsTable extends Migration
 
             $table->dateTime('paid_at')->nullable();
 
-            $table->dateTime('created_at')->useCurrent();
-            $table->dateTime('updated_at')->useCurrent()->useCurrentOnUpdate();
-            $table->dateTime('deleted_at')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

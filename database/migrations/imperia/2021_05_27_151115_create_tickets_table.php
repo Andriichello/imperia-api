@@ -20,9 +20,8 @@ class CreateTicketsTable extends Migration
             $table->decimal('price')->unsigned();
             $table->unsignedSmallInteger('category_id')->index('category_id');
             $table->unsignedInteger('period_id')->nullable()->index('period_id');
-            $table->dateTime('created_at')->useCurrent();
-            $table->dateTime('updated_at')->useCurrent()->useCurrentOnUpdate();
-            $table->dateTime('deleted_at')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
             $table->unique(['name', 'category_id'], 'tickets_unique_NAME_in_CATEGORY');
         });
     }

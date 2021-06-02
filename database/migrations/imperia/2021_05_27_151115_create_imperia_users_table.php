@@ -19,9 +19,8 @@ class CreateImperiaUsersTable extends Migration
             $table->string('name', 50)->unique('users_unique_NAME');
             $table->string('password', 50);
             $table->string('api_token', 64);
-            $table->dateTime('created_at')->useCurrent();
-            $table->dateTime('updated_at')->useCurrent()->useCurrentOnUpdate();
-            $table->dateTime('deleted_at')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

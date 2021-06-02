@@ -22,9 +22,8 @@ class CreateSpacesTable extends Migration
             $table->decimal('price')->unsigned();
             $table->unsignedSmallInteger('category_id')->index('category_id');
             $table->unsignedInteger('period_id')->nullable()->index('period_id');
-            $table->dateTime('created_at')->useCurrent();
-            $table->dateTime('updated_at')->useCurrent()->useCurrentOnUpdate();
-            $table->dateTime('deleted_at')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
             $table->unique(['name', 'number', 'floor', 'category_id'], 'spaces_unique_NAME_and_NUMBER_and_FLOOR_in_CATEGORY');
         });
     }

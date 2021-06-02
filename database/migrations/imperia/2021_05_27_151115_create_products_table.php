@@ -21,9 +21,8 @@ class CreateProductsTable extends Migration
             $table->decimal('weight')->unsigned()->nullable();
             $table->unsignedSmallInteger('menu_id')->index('menu_id');
             $table->unsignedSmallInteger('category_id')->index('category_id');
-            $table->dateTime('created_at')->useCurrent();
-            $table->dateTime('updated_at')->useCurrent()->useCurrentOnUpdate();
-            $table->dateTime('deleted_at')->nullable();
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 
