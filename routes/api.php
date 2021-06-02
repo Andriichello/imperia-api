@@ -1,7 +1,25 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Implementations\ {
+    BanquetController,
+    BanquetStateController,
+    SpaceController,
+    TicketController,
+    ServiceController,
+    MenuController,
+    ProductController,
+    DiscountController,
+    RoleController,
+    UserController,
+    CustomerController,
+    CustomerFamilyMemberController,
+    DatetimeController,
+    PeriodController,
+    CategoryController,
+    OrderController,
+    CommentController,
+};
 
 /*
 |--------------------------------------------------------------------------
@@ -14,103 +32,29 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-$controllers = [
-    'banquets' => \App\Http\Controllers\Implementations\BanquetController::class,
-    'banquet-states' => \App\Http\Controllers\Implementations\BanquetStateController::class,
-    'spaces' => \App\Http\Controllers\Implementations\SpaceController::class,
-    'tickets' => \App\Http\Controllers\Implementations\TicketController::class,
-    'services' => \App\Http\Controllers\Implementations\ServiceController::class,
-    'menus' => \App\Http\Controllers\Implementations\MenuController::class,
-    'products' => \App\Http\Controllers\Implementations\ProductController::class,
-    'discounts' => \App\Http\Controllers\Implementations\DiscountController::class,
-    'roles' => \App\Http\Controllers\Implementations\RoleController::class,
-    'customers' => \App\Http\Controllers\Implementations\CustomerController::class,
-    'customer-family-members' => \App\Http\Controllers\Implementations\CustomerFamilyMemberController::class,
-    'datetimes' => \App\Http\Controllers\Implementations\DatetimeController::class,
-    'periods' => \App\Http\Controllers\Implementations\PeriodController::class,
-];
-
-foreach ($controllers as $modelName => $controller) {
-    Route::group(['middleware' => ['auth.token']], function () use ($modelName, $controller) {
-        $root = '/' . $modelName;
-
-        Route::get($root, [$controller, 'index'])
-            ->name($modelName . '.index');
-
-        Route::get($root . '/{id}', [$controller, 'show'])
-            ->name($modelName . '.show');
-
-        Route::post($root, [$controller, 'store'])
-            ->name($modelName . '.store');
-
-        Route::patch($root . '/{id?}', [$controller, 'update'])
-            ->name($modelName . '.update');
-
-        Route::delete($root . '/{id?}', [$controller, 'destroy'])
-            ->name($modelName . '.destroy');
-    });
-}
-
-Route::group(['middleware' => ['auth.token']], function () {
-    $controller = \App\Http\Controllers\Implementations\UserController::class;
-
-    $modelName = 'users';
-    $root = '/' . $modelName;
-    Route::get($root, [$controller, 'index'])
-        ->name($modelName . '.index');
-
-    Route::get($root . '/{id}', [$controller, 'show'])
-        ->name($modelName . '.show');
-
-    Route::post($root . '/login', [$controller, 'login'])
-        ->name($modelName . '.login')
-        ->withoutMiddleware('auth.token');
-
-    Route::post($root, [$controller, 'store'])
-        ->name($modelName . '.store');
-
-    Route::patch($root . '/{id?}', [$controller, 'update'])
-        ->name($modelName . '.update');
-
-    Route::delete($root . '/{id?}', [$controller, 'destroy'])
-        ->name($modelName . '.destroy');
-});
-
-Route::group(['middleware' => ['auth.token']], function () {
-    $controller = \App\Http\Controllers\Implementations\CategoryController::class;
-    Route::get('/{type}-categories', [$controller, 'index']);
-    Route::get('/{type}-categories/{id}', [$controller, 'show']);
-    Route::post('/{type}-categories', [$controller, 'store']);
-    Route::patch('/{type}-categories/{id?}', [$controller, 'update']);
-    Route::delete('/{type}-categories/{id?}', [$controller, 'destroy']);
-});
-
-Route::group(['middleware' => ['auth.token']], function () {
-    $controller = \App\Http\Controllers\Implementations\OrderController::class;
-    Route::get('/{type}-orders', [$controller, 'index']);
-    Route::get('/{type}-orders/{id}', [$controller, 'show']);
-    Route::post('/{type}-orders', [$controller, 'store']);
-    Route::patch('/{type}-orders/{id?}', [$controller, 'update']);
-    Route::delete('/{type}-orders/{id?}', [$controller, 'destroy']);
-});
-
-Route::group(['middleware' => ['auth.token']], function () {
-    $controller = \App\Http\Controllers\Implementations\CommentController::class;
-
-    $modelName = 'comments';
-    $root = '/' . $modelName;
-    Route::get($root, [$controller, 'index'])
-        ->name($modelName . '.index');
-
-    Route::post($root, [$controller, 'store'])
-        ->name($modelName . '.store');
-
-    Route::patch($root, [$controller, 'update'])
-        ->name($modelName . '.update');
-
-    Route::delete($root, [$controller, 'destroy'])
-        ->name($modelName . '.destroy');
-});
+Route::flexibleResources([
+    'banquets' => BanquetController::class,
+    'banquet-states' => BanquetStateController::class,
+    'menus' => MenuController::class,
+    'products' => ProductController::class,
+    'spaces' => SpaceController::class,
+    'tickets' => TicketController::class,
+    'services' => ServiceController::class,
+    'discounts' => DiscountController::class,
+    'customers' => CustomerController::class,
+    'customer-family-members' => CustomerFamilyMemberController::class,
+    'periods' => PeriodController::class,
+    'datetimes' => DatetimeController::class,
+    'comments' => CommentController::class,
+    'roles' => RoleController::class,
+    'users' => [UserController::class, [], function () {
+        Route::post('/login', [UserController::class, 'login'])
+            ->name('login')
+            ->withoutMiddleware('auth.token');
+    }],
+    'orders' => [OrderController::class, ['prefix' => '{type}/orders']],
+    'categories' => [CategoryController::class, ['prefix' => '{type}/categories']],
+], ['middleware' => 'auth.token']);
 
 Route::group(['middleware' => ['auth.token']], function () {
     Route::get('/routes', function () {
