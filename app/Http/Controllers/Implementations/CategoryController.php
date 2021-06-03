@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Implementations;
 use App\Constrainters\Constrainter;
 use App\Constrainters\Implementations\ItemTypeConstrainter;
 use App\Http\Controllers\DynamicController;
+use App\Http\Requests\CategoryStoreRequest;
+use App\Http\Requests\CategoryUpdateRequest;
 use App\Models\Categories\Category;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -18,21 +20,28 @@ class CategoryController extends DynamicController
      *
      * @var string
      */
-    protected $model = Category::class;
+    protected ?string $model = Category::class;
 
     /**
-     * Model's primary keys.
+     * Controller's store method form request class name. Must extend DataFieldRequest.
      *
-     * @var string[]
+     * @var ?string
      */
-    protected $primaryKeys = ['id'];
+    protected ?string $storeFormRequest = CategoryStoreRequest::class;
+
+    /**
+     * Controller's update method form request class name. Must extend DataFieldRequest.
+     *
+     * @var ?string
+     */
+    protected ?string $updateFormRequest = CategoryUpdateRequest::class;
 
     public function index($type = null)
     {
         try {
             $this->switchModel(['type' => $type], 'type');
         } catch (\Exception $exception) {
-            return $this->toResponse($exception);
+            abort(404, 'No such type of category exists.');
         }
         return parent::index();
     }
@@ -42,7 +51,7 @@ class CategoryController extends DynamicController
         try {
             $this->switchModel(['type' => $type], 'type');
         } catch (\Exception $exception) {
-            return $this->toResponse($exception);
+            abort(404, 'No such type of category exists.');
         }
         return parent::show($id);
     }
@@ -52,7 +61,7 @@ class CategoryController extends DynamicController
         try {
             $this->switchModel(['type' => $type], 'type');
         } catch (\Exception $exception) {
-            return $this->toResponse($exception);
+            abort(404, 'No such type of category exists.');
         }
         return parent::store();
     }
@@ -62,7 +71,7 @@ class CategoryController extends DynamicController
         try {
             $this->switchModel(['type' => $type], 'type');
         } catch (\Exception $exception) {
-            return $this->toResponse($exception);
+            abort(404, 'No such type of category exists.');
         }
         return parent::update($id);
     }
@@ -72,7 +81,7 @@ class CategoryController extends DynamicController
         try {
             $this->switchModel(['type' => $type], 'type');
         } catch (\Exception $exception) {
-            return $this->toResponse($exception);
+            abort(404, 'No such type of category exists.');
         }
         return parent::destroy($id);
     }

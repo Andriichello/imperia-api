@@ -33,16 +33,6 @@ class ProductCategory extends BaseDeletableModel
     protected $cascadeDeletes = ['products'];
 
     /**
-     * Get array of model's validation rules.
-     *
-     * @var bool $forInsert
-     * @return array
-     */
-    public static function getValidationRules($forInsert = false) {
-        return Category::getValidationRules($forInsert, 'product');
-    }
-
-    /**
      * Get products associated with the model.
      */
     public function products()

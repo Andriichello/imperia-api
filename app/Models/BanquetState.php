@@ -28,19 +28,6 @@ class BanquetState extends BaseDeletableModel
     ];
 
     /**
-     * Get array of model's validation rules.
-     *
-     * @var bool $forInsert
-     * @return array
-     */
-    public static function getValidationRules($forInsert = false) {
-        return [
-            'name' => NameConstrainter::getRules($forInsert, ['unique:banquet_states']),
-            'description' => DescriptionConstrainter::getRules(false),
-        ];
-    }
-
-    /**
      * Get banquets associated with the model.
      */
     public function banquets()

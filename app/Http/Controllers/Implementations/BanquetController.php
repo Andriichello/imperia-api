@@ -4,10 +4,15 @@ namespace App\Http\Controllers\Implementations;
 
 use App\Constrainters\Constrainter;
 use App\Http\Controllers\DynamicController;
+use App\Http\Requests\BanquetStoreRequest;
+use App\Http\Requests\BanquetUpdateRequest;
+use App\Http\Requests\DataFieldRequest;
+use App\Http\Requests\StoreRequest;
 use App\Models\Banquet;
 use App\Models\Orders\Order;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -16,9 +21,23 @@ class BanquetController extends DynamicController
     /**
      * Controller's model class name.
      *
-     * @var string
+     * @var ?string
      */
-    protected $model = Banquet::class;
+    protected ?string $model = Banquet::class;
+
+    /**
+     * Controller's store method form request class name. Must extend DataFieldRequest.
+     *
+     * @var ?string
+     */
+    protected ?string $storeFormRequest = BanquetStoreRequest::class;
+
+    /**
+     * Controller's update method form request class name. Must extend DataFieldRequest.
+     *
+     * @var ?string
+     */
+    protected ?string $updateFormRequest = BanquetUpdateRequest::class;
 
     /**
      * Create new Model instance and store it in the database.
@@ -223,46 +242,4 @@ class BanquetController extends DynamicController
             throw $exception;
         }
     }
-
-//    /**
-//     * Delete Model instance from the database.
-//     *
-//     * @param Model $instance
-//     * @param bool $softDelete
-//     * @return bool
-//     */
-//    public function destroyModel(Model $instance, bool $softDelete = false): bool
-//    {
-//        try {
-//            DB::beginTransaction();
-//
-//            $orderController = new OrderController();
-//            foreach (Banquet::getOrderRelationshipNames() as $orderType => $orderRelationshipName) {
-//                if (isset($instance->$orderRelationshipName)) {
-//                    $success = $orderController->destroyModel($instance->$orderRelationshipName, false, $orderType);
-//                    if (!$success) {
-//                        return false;
-//                    }
-//                }
-//            }
-//
-//            $commentController = new CommentController();
-//            foreach ($instance->comments as $comment) {
-//                $success = $commentController->destroyModel($comment);
-//                if (!$success) {
-//                    return false;
-//                }
-//            }
-//
-//            if (!$instance->delete()) {
-//                return false;
-//            }
-//
-//            DB::commit();
-//            return true;
-//        } catch (\Exception $exception) {
-//            DB::rollBack();
-//            throw $exception;
-//        }
-//    }
 }

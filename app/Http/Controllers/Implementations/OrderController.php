@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Implementations;
 use App\Constrainters\Constrainter;
 use App\Constrainters\Implementations\ItemTypeConstrainter;
 use App\Http\Controllers\DynamicController;
+use App\Http\Requests\OrderStoreRequest;
+use App\Http\Requests\OrderUpdateRequest;
 use App\Models\Orders\Order;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -21,14 +23,21 @@ class OrderController extends DynamicController
      *
      * @var string
      */
-    protected $model = Order::class;
+    protected ?string $model = Order::class;
 
     /**
-     * Model's primary keys.
+     * Controller's store method form request class name. Must extend DataFieldRequest.
      *
-     * @var string[]
+     * @var ?string
      */
-    protected $primaryKeys = ['id'];
+    protected ?string $storeFormRequest = OrderStoreRequest::class;
+
+    /**
+     * Controller's update method form request class name. Must extend DataFieldRequest.
+     *
+     * @var ?string
+     */
+    protected ?string $updateFormRequest = OrderUpdateRequest::class;
 
     /**
      * Current type.

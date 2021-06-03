@@ -36,29 +36,6 @@ class Category extends BaseDeletableModel
         'description',
     ];
 
-
-    /**
-     * Get array of model's validation rules.
-     *
-     * @return array
-     * @var bool $forInsert
-     */
-    public static function getValidationRules($forInsert = false, $type = null)
-    {
-        $additionalNameRules = [];
-        if (isset($type)) {
-            $tableName = self::getTypedTableName($type);
-        }
-        if (isset($tableName)) {
-            $additionalNameRules[] = "unique:{$tableName}";
-        }
-
-        return [
-            'name' => NameConstrainter::getRules($forInsert, $additionalNameRules),
-            'description' => DescriptionConstrainter::getRules(false),
-        ];
-    }
-
     /**
      * Get available types of categories.
      *

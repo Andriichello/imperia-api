@@ -33,16 +33,6 @@ class DiscountCategory extends BaseDeletableModel
     protected $cascadeDeletes = ['discounts'];
 
     /**
-     * Get array of model's validation rules.
-     *
-     * @var bool $forInsert
-     * @return array
-     */
-    public static function getValidationRules($forInsert = false) {
-        return Category::getValidationRules($forInsert, 'discount');
-    }
-
-    /**
      * The discounts associated with the model.
      */
     public function discounts()

@@ -43,22 +43,6 @@ class SpaceOrderField extends BaseDeletableModel
     protected $hidden = ['banquet'];
 
     /**
-     * Get array of model's validation rules.
-     *
-     * @return array
-     * @var bool $forInsert
-     */
-    public static function getValidationRules($forInsert = false)
-    {
-        return [
-            'order_id' => IdentifierConstrainter::getRules(true),
-            'space_id' => IdentifierConstrainter::getRules(true),
-            'beg_datetime' => Constrainter::getRules($forInsert, [new Assert\DateTime()]),
-            'end_datetime' => Constrainter::getRules($forInsert, [new Assert\DateTime()]),
-        ];
-    }
-
-    /**
      * The relationships that should always be loaded.
      *
      * @var array

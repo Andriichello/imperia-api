@@ -34,22 +34,6 @@ class Customer extends BaseDeletableModel
     ];
 
     /**
-     * Get array of model's validation rules.
-     *
-     * @var bool $forInsert
-     * @return array
-     */
-    public static function getValidationRules($forInsert = false) {
-        return [
-            'name' => NameConstrainter::getRules($forInsert),
-            'surname' => NameConstrainter::getRules($forInsert),
-            'phone' => PhoneConstrainter::getRules($forInsert),
-            'email' => EmailConstrainter::getRules(false),
-            'birthdate' => Constrainter::getRules(false, [new Assert\Date()]),
-        ];
-    }
-
-    /**
      * The relationships that should always be loaded.
      *
      * @var array

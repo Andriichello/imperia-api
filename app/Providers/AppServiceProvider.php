@@ -2,6 +2,11 @@
 
 namespace App\Providers;
 
+use App\Http\Controllers\Implementations\BanquetController;
+use App\Http\Requests\BanquetStoreRequest;
+use App\Http\Requests\BanquetUpdateRequest;
+use App\Http\Requests\StoreRequest;
+use App\Http\Requests\UpdateRequest;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
@@ -89,5 +94,17 @@ class AppServiceProvider extends ServiceProvider
                 Route::flexibleResource($slug, $resource[0], array_merge($attributes, $resource[1] ?? []), $resource[2] ?? null);
             }
         });
+
+        $this->app->when(BanquetController::class)
+            ->needs(StoreRequest::class)
+            ->give(function () {
+                return new BanquetStoreRequest();
+            });
+
+        $this->app->when(BanquetController::class)
+            ->needs(UpdateRequest::class)
+            ->give(function () {
+                return new BanquetUpdateRequest();
+            });
     }
 }

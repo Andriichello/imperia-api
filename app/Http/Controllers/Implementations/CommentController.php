@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Implementations;
 
 use App\Http\Controllers\DynamicController;
+use App\Http\Requests\CommentStoreRequest;
+use App\Http\Requests\CommentUpdateRequest;
 use App\Models\Comment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -14,14 +16,28 @@ class CommentController extends DynamicController
      *
      * @var string
      */
-    protected $model = Comment::class;
+    protected ?string $model = Comment::class;
+
+    /**
+     * Controller's store method form request class name. Must extend DataFieldRequest.
+     *
+     * @var ?string
+     */
+    protected ?string $storeFormRequest = CommentStoreRequest::class;
+
+    /**
+     * Controller's update method form request class name. Must extend DataFieldRequest.
+     *
+     * @var ?string
+     */
+    protected ?string $updateFormRequest = CommentUpdateRequest::class;
 
     /**
      * Model's primary keys.
      *
      * @var string[]
      */
-    protected $primaryKeys = ['id', 'container_id', 'container_type', 'target_id', 'target_type'];
+    protected array $primaryKeys = ['id', 'container_id', 'container_type', 'target_id', 'target_type'];
 
     /**
      * Create new Model instance and store it in the database.

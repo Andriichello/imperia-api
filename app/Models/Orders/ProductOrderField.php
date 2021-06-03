@@ -33,20 +33,6 @@ class ProductOrderField extends BaseDeletableModel
     ];
 
     /**
-     * Get array of model's validation rules.
-     *
-     * @var bool $forInsert
-     * @return array
-     */
-    public static function getValidationRules($forInsert = false) {
-        return [
-            'order_id' => IdentifierConstrainter::getRules(true),
-            'product_id' => IdentifierConstrainter::getRules(true),
-            'amount' => AmountConstrainter::getRules(true),
-        ];
-    }
-
-    /**
      * The relationships that should always be loaded.
      *
      * @var array

@@ -35,25 +35,6 @@ class Product extends BaseDeletableModel
         'category_id',
     ];
 
-
-    /**
-     * Get array of model's validation rules.
-     *
-     * @return array
-     * @var bool $forInsert
-     */
-    public static function getValidationRules($forInsert = false)
-    {
-        return [
-            'name' => NameConstrainter::getRules($forInsert),
-            'description' => DescriptionConstrainter::getRules(false),
-            'price' => PriceConstrainter::getRules($forInsert),
-            'weight' => AmountConstrainter::getRules($forInsert),
-            'menu_id' => IdentifierConstrainter::getRules($forInsert),
-            'category_id' => IdentifierConstrainter::getRules($forInsert),
-        ];
-    }
-
     /**
      * The relationships that should always be loaded.
      *

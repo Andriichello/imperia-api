@@ -35,27 +35,6 @@ class ImperiaUser extends BaseDeletableModel
     ];
 
     /**
-     * Get array of model's validation rules.
-     *
-     * @return array
-     * @var bool $forInsert
-     */
-    public static function getValidationRules($forInsert = false)
-    {
-        $additionalNameRules = $forInsert ? ['unique:users'] : [];
-        $rules = [
-            'name' => NameConstrainter::getRules($forInsert, $additionalNameRules),
-            'password' => PasswordConstrainter::getRules($forInsert),
-            'role_id' => IdentifierConstrainter::getRules($forInsert),
-        ];
-
-        if (!$forInsert) {
-            $rules['api_token'] = ApiTokenConstrainter::getRules(true);
-        }
-        return $rules;
-    }
-
-    /**
      * The relationships that should always be loaded.
      *
      * @var array

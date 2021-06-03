@@ -36,28 +36,6 @@ class Service extends BaseDeletableModel
     ];
 
     /**
-     * Get array of model's validation rules.
-     *
-     * @return array
-     * @var bool $forInsert
-     */
-    public static function getValidationRules($forInsert = false)
-    {
-        return [
-            'name' => NameConstrainter::getRules($forInsert),
-            'description' => DescriptionConstrainter::getRules(false),
-            'once_paid_price' => PriceConstrainter::getRules(false,
-                $forInsert ? ['required_without:hourly_paid_price'] : []
-            ),
-            'hourly_paid_price' => PriceConstrainter::getRules(false,
-                $forInsert ? ['required_without:once_paid_price'] : []
-            ),
-            'period_id' => IdentifierConstrainter::getRules(false),
-            'category_id' => IdentifierConstrainter::getRules($forInsert),
-        ];
-    }
-
-    /**
      * The relationships that should always be loaded.
      *
      * @var array

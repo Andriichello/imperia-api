@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Implementations;
 use App\Constrainters\Constrainter;
 use App\Constrainters\Implementations\IdentifierConstrainter;
 use App\Http\Controllers\DynamicController;
+use App\Http\Requests\SpaceStoreRequest;
+use App\Http\Requests\SpaceUpdateRequest;
 use App\Models\Orders\SpaceOrder;
 use App\Models\Space;
 use Carbon\Carbon;
@@ -21,7 +23,21 @@ class SpaceController extends DynamicController
      *
      * @var string
      */
-    protected $model = Space::class;
+    protected ?string $model = Space::class;
+
+    /**
+     * Controller's store method form request class name. Must extend DataFieldRequest.
+     *
+     * @var ?string
+     */
+    protected ?string $storeFormRequest = SpaceStoreRequest::class;
+
+    /**
+     * Controller's update method form request class name. Must extend DataFieldRequest.
+     *
+     * @var ?string
+     */
+    protected ?string $updateFormRequest = SpaceUpdateRequest::class;
 
     /**
      * Find instance of model by it's primary keys.

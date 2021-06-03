@@ -7,11 +7,11 @@ use App\Http\Controllers\Implementations\ {
     SpaceController,
     TicketController,
     ServiceController,
-    MenuController,
+    ImperiaMenuController,
     ProductController,
     DiscountController,
-    RoleController,
-    UserController,
+    ImperiaRoleController,
+    ImperiaUserController,
     CustomerController,
     CustomerFamilyMemberController,
     DatetimeController,
@@ -35,7 +35,7 @@ use App\Http\Controllers\Implementations\ {
 Route::flexibleResources([
     'banquets' => BanquetController::class,
     'banquet-states' => BanquetStateController::class,
-    'menus' => MenuController::class,
+    'menus' => ImperiaMenuController::class,
     'products' => ProductController::class,
     'spaces' => SpaceController::class,
     'tickets' => TicketController::class,
@@ -46,9 +46,9 @@ Route::flexibleResources([
     'periods' => PeriodController::class,
     'datetimes' => DatetimeController::class,
     'comments' => CommentController::class,
-    'roles' => RoleController::class,
-    'users' => [UserController::class, [], function () {
-        Route::post('/login', [UserController::class, 'login'])
+    'roles' => ImperiaRoleController::class,
+    'users' => [ImperiaUserController::class, [], function () {
+        Route::post('/login', [ImperiaUserController::class, 'login'])
             ->name('login')
             ->withoutMiddleware('auth.token');
     }],

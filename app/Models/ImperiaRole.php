@@ -33,24 +33,6 @@ class ImperiaRole extends BaseDeletableModel
     ];
 
     /**
-     * Get array of model's validation rules.
-     *
-     * @return array
-     * @var bool $forInsert
-     */
-    public static function getValidationRules($forInsert = false)
-    {
-        return [
-            'name' => NameConstrainter::getRules($forInsert),
-            'description' => DescriptionConstrainter::getRules(false),
-            'can_read' => Constrainter::getRules($forInsert),
-            'can_insert' => Constrainter::getRules($forInsert),
-            'can_modify' => Constrainter::getRules($forInsert),
-            'is_owner' => Constrainter::getRules($forInsert),
-        ];
-    }
-
-    /**
      * The attributes that should be cast.
      *
      * @var array

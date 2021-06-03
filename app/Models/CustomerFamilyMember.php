@@ -30,20 +30,6 @@ class CustomerFamilyMember extends BaseDeletableModel
         'customer_id',
     ];
 
-    /**
-     * Get array of model's validation rules.
-     *
-     * @var bool $forInsert
-     * @return array
-     */
-    public static function getValidationRules($forInsert = false) {
-        return [
-            'name' => NameConstrainter::getRules($forInsert),
-            'customer_id' => IdentifierConstrainter::getRules($forInsert),
-            'birthdate' => Constrainter::getRules($forInsert, [new Assert\Date()]),
-        ];
-    }
-
     public function customer()
     {
         return $this->belongsTo(Customer::class, 'customer_id', 'id');

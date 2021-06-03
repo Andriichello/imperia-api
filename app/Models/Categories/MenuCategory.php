@@ -34,16 +34,6 @@ class MenuCategory extends BaseDeletableModel
     protected $cascadeDeletes = ['menus'];
 
     /**
-     * Get array of model's validation rules.
-     *
-     * @var bool $forInsert
-     * @return array
-     */
-    public static function getValidationRules($forInsert = false) {
-        return Category::getValidationRules($forInsert, 'menu');
-    }
-
-    /**
      * Get menus associated with the model.
      */
     public function menus()

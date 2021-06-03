@@ -32,22 +32,6 @@ class ServiceOrderField extends BaseDeletableModel
         'duration',
     ];
 
-
-    /**
-     * Get array of model's validation rules.
-     *
-     * @var bool $forInsert
-     * @return array
-     */
-    public static function getValidationRules($forInsert = false) {
-        return [
-            'order_id' => IdentifierConstrainter::getRules(true),
-            'service_id' => IdentifierConstrainter::getRules(true),
-            'amount' => AmountConstrainter::getRules($forInsert),
-            'duration' => AmountConstrainter::getRules($forInsert),
-        ];
-    }
-
     /**
      * The relationships that should always be loaded.
      *

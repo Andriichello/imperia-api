@@ -33,16 +33,6 @@ class SpaceCategory extends BaseDeletableModel
     protected $cascadeDeletes = ['spaces'];
 
     /**
-     * Get array of model's validation rules.
-     *
-     * @var bool $forInsert
-     * @return array
-     */
-    public static function getValidationRules($forInsert = false) {
-        return Category::getValidationRules($forInsert, 'space');
-    }
-
-    /**
      * Get spaces associated with the model.
      */
     public function spaces()

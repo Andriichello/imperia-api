@@ -3,33 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Constrainters\Constrainter;
-use App\Constrainters\Implementations\EmailConstrainter;
-use App\Constrainters\Implementations\NameConstrainter;
-use App\Constrainters\Implementations\PhoneConstrainter;
-use App\Custom\Collection;
+use App\Http\Requests\DataFieldRequest;
+use App\Http\Requests\StoreRequest;
+use App\Http\Requests\UpdateRequest;
 use App\Http\Resources\Resource;
 use App\Http\Resources\ResourceCollection;
 use App\Models\BaseDeletableModel;
-use App\Models\BaseModel;
-use App\Models\Customer;
-use Facade\FlareClient\Http\Exceptions\NotFound;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Contracts\Support\MessageBag;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller as BaseController;
-use phpDocumentor\Reflection\Types\Array_;
-use Symfony\Component\Console\Output\ConsoleOutput;
-use function PHPUnit\Framework\isNan;
 
 class DynamicController extends BaseController
 {
@@ -38,35 +26,50 @@ class DynamicController extends BaseController
      *
      * @var string
      */
-    protected $model;
+    protected ?string $model;
 
     /**
      * Model's primary key names.
      *
      * @var array
      */
-    protected $primaryKeys = ['id'];
+    protected array $primaryKeys = ['id'];
 
     /**
      * Currently applied sorts.
      *
      * @var array
      */
-    protected $currentSorts = [];
+    protected array $currentSorts = [];
 
     /**
      * Currently applied filters.
      *
      * @var array
      */
-    protected $currentFilters = [];
+    protected array $currentFilters = [];
 
     /**
      * Is soft deleting performed by default.
      *
      * @var bool
      */
-    protected $softDelete = true;
+    protected bool $softDelete = true;
+
+    /**
+     * Controller's store method form request class name. Must extend DataFieldRequest.
+     *
+     * @var ?string
+     */
+    protected ?string $storeFormRequest = DataFieldRequest::class;
+
+    /**
+     * Controller's update method form request class name. Must extend DataFieldRequest.
+     *
+     * @var ?string
+     */
+    protected ?string $updateFormRequest = DataFieldRequest::class;
+
 
     /**
      * Get filtered and paginated collection of models.
@@ -75,17 +78,12 @@ class DynamicController extends BaseController
      */
     public function index()
     {
-        try {
-            $collection = $this->allModels();
-
-            if ($collection->count() > 0) {
-                return $this->toResponse(new ResourceCollection($collection));
-            } else {
-                throw new Exception('Not found', 404);
-            }
-        } catch (\Exception $exception) {
-            return $this->toResponse($exception);
+        $collection = $this->allModels(\request());
+        if ($collection->count() === 0) {
+            abort(404, 'Not found');
         }
+
+        return $this->toResponse(\request(), new ResourceCollection($collection));
     }
 
     /**
@@ -96,17 +94,12 @@ class DynamicController extends BaseController
      */
     public function show($id = null)
     {
-        try {
-            $instance = $this->findModel($id);
-
-            if (isset($instance)) {
-                return $this->toResponse(new Resource($instance));
-            } else {
-                throw new Exception('Not found', 404);
-            }
-        } catch (\Exception $exception) {
-            return $this->toResponse($exception);
+        $instance = $this->findModel(\request(), $id);
+        if (empty($instance)) {
+            abort(404, 'Not found');
         }
+
+        return $this->toResponse(\request(), new Resource($instance));
     }
 
     /**
@@ -116,15 +109,10 @@ class DynamicController extends BaseController
      */
     public function store()
     {
-        try {
-            $data = $this->validateRules(\request()->all(), $this->getDataValidationRules('data'));
-            $data = $this->validateRules($data['data'], $this->getModelValidationRules(true));
+        $request = App::make($this->storeFormRequest);
+        $instance = $this->createModel($request->validated()[$request->dataFieldName()]);
 
-            $instance = $this->createModel($data);
-            return $this->toResponse(new Resource($instance), true, 201);
-        } catch (\Exception $exception) {
-            return $this->toResponse($exception);
-        }
+        return $this->toResponse($request, new Resource($instance), true, 201);
     }
 
     /**
@@ -134,29 +122,23 @@ class DynamicController extends BaseController
      */
     public function update($id = null)
     {
-        try {
-            $data = $this->validateRules(\request()->all(), $this->getDataValidationRules('data'));
-            $data = $this->validateRules($data['data'], $this->getModelValidationRules(false));
+        $request = App::make($this->updateFormRequest);
+        $instance = $this->findModel($request, $id, $request->dataFieldName());
 
-            $instance = $this->findModel($id, 'data');
-
-            if (isset($instance)) {
-                $restore = \request()->get('restore', false);
-                if ($restore && !$this->restoreModel($instance)) {
-                    throw new Exception('Error while restoring record in the database.');
-                }
-
-                if ($this->updateModel($instance, $data)) {
-                    return $this->toResponse(new Resource($instance));
-                } else {
-                    throw new Exception('Error while updating record in the database.');
-                }
-            } else {
-                throw new Exception('Not found', 404);
-            }
-        } catch (\Exception $exception) {
-            return $this->toResponse($exception);
+        if (!isset($instance)) {
+            abort(404, 'Not found');
         }
+
+        $restore = $request->get('restore', false);
+        if ($restore && !$this->restoreModel($instance)) {
+            abort(520, 'Error while restoring record in the database.');
+        }
+
+        if (!$this->updateModel($instance, $request->validated()[$request->dataFieldName()])) {
+            abort(520, 'Error while updating record in the database.');
+        }
+
+        return $this->toResponse($request, new Resource($instance));
     }
 
     /**
@@ -166,37 +148,35 @@ class DynamicController extends BaseController
      */
     public function destroy($id = null)
     {
-        try {
-            $instance = $this->findModel($id);
+        $request = \request();
+        $instance = $this->findModel($id);
 
-            if (isset($instance)) {
-                if ($this->destroyModel($instance, \request()->get('soft', $this->softDelete))) {
-                    return $this->toResponse([]);
-                } else {
-                    throw new Exception('Error while deleting record from the database.');
-                }
-            } else {
-                throw new Exception('Not found', 404);
-            }
-        } catch (\Exception $exception) {
-            return $this->toResponse($exception);
+        if (!isset($instance)) {
+            abort(404, 'Not found');
         }
+
+        if (!$this->destroyModel($instance, $request->get('soft', $this->softDelete))) {
+            abort(520, 'Error while deleting record from the database.');
+        }
+
+        return $this->toResponse($request, []);
     }
 
     /**
      * Find instance of model by it's primary keys.
      *
+     * @param Request $request
      * @param mixed|array|null $id
      * @param string|null $dataKey
      * @return Model|null
      */
-    public function findModel($id = null, $dataKey = null)
+    public function findModel($request, $id = null, $dataKey = null)
     {
         if (!isset($id)) {
             if (isset($dataKey)) {
-                $id = $this->extract(\request()->get($dataKey), $this->primaryKeys());
+                $id = $this->extract($request->get($dataKey), $this->primaryKeys());
             } else {
-                $id = $this->extract(\request()->all(), $this->primaryKeys());
+                $id = $this->extract($request->all(), $this->primaryKeys());
             }
         }
 
@@ -222,20 +202,21 @@ class DynamicController extends BaseController
     /**
      * Get filtered and sorted collection of the model instances.
      *
+     * @param Request $request
      * @param array|null $filters where conditions [[key, comparison, value]]
      * @param array|null $sorts orderBy conditions [key, order]
      * @param string|null $trashed
      * @return \Illuminate\Support\Collection
      */
-    public function allModels($filters = null, $sorts = null)
+    public function allModels($request, $filters = null, $sorts = null)
     {
         if (empty($filters)) {
-            $filters = $this->whereConditions(\request()->all(), true, true);
+            $filters = $this->whereConditions($request->all(), true, true);
             $this->currentFilters = $filters;
         }
 
         if (empty($sorts)) {
-            $sorts = $this->orderByConditions(\request()->all(), true);
+            $sorts = $this->orderByConditions($request->all(), true);
             $this->currentSorts = $sorts;
         }
 
@@ -325,12 +306,13 @@ class DynamicController extends BaseController
     /**
      * Get array of values for response.
      *
+     * @param Request $request
      * @param bool $success
      * @param ?int $code
      * @param ResourceCollection|Resource|array
      * @return array
      */
-    public function toResponseArray(bool $success, ?int $code, $data = []): array
+    public function toResponseArray(Request $request, bool $success, ?int $code, $data = []): array
     {
         $array = ['success' => $success];
 
@@ -344,11 +326,11 @@ class DynamicController extends BaseController
         $array['filters'] = $this->currentFilters;
 
         if ($data instanceof Resource) {
-            $array['data'] = $data->toArray(\request());
+            $array['data'] = $data->toArray($request);
         } else if ($data instanceof ResourceCollection) {
             $array = array_merge(
                 $array,
-                $data->toArray(\request()),
+                $data->toArray($request),
             );
         } else if (is_array($data)) {
             $array = array_merge(
@@ -395,12 +377,13 @@ class DynamicController extends BaseController
     /**
      * Convert to response.
      *
+     * @param Request $request
      * @param array|Resource|ResourceCollection|Exception $data
      * @param bool $success
      * @param int $code
      * @return Response
      */
-    public function toResponse($data, bool $success = true, int $code = 200): Response
+    public function toResponse(Request $request, $data, bool $success = true, int $code = 200): Response
     {
         if ($data instanceof Exception) {
             if ($data instanceof ValidationException) {
@@ -420,7 +403,7 @@ class DynamicController extends BaseController
         }
 
         return \Illuminate\Support\Facades\Response::make(
-            $this->toResponseArray($success, $code, $data),
+            $this->toResponseArray($request, $success, $code, $data),
             $code,
         );
     }

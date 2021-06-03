@@ -37,31 +37,6 @@ class Order extends BaseDeletableModel
         'discount_id',
     ];
 
-
-    /**
-     * Get array of model's validation rules.
-     *
-     * @return array
-     * @var bool $forInsert
-     */
-    public static function getValidationRules($forInsert = false, $type = null)
-    {
-        $additionalBanquetIdRules = [];
-        if ($forInsert) {
-            if (isset($type)) {
-                $tableName = self::getTypedOrderTableName($type);
-            }
-            if (isset($tableName)) {
-                $additionalBanquetIdRules[] = "unique:{$tableName}";
-            }
-        }
-
-        return [
-            'banquet_id' => IdentifierConstrainter::getRules($forInsert, $additionalBanquetIdRules),
-            'discount_id' => IdentifierConstrainter::getRules(false),
-        ];
-    }
-
     /**
      * Get available types of categories.
      *

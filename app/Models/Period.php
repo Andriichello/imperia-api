@@ -18,6 +18,8 @@ class Period extends BaseModel
      */
     protected $table = 'periods';
 
+    public $timestamps = false;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -29,26 +31,6 @@ class Period extends BaseModel
         'weekdays',
         'is_templatable',
     ];
-
-    /**
-     * Get array of model's validation rules.
-     *
-     * @return array
-     * @var bool $forInsert
-     */
-    public static function getValidationRules($forInsert = false)
-    {
-        return [
-            'beg_datetime_id' => IdentifierConstrainter::getRules(false,
-                $forInsert ? ['required_without:end_datetime_id'] : []
-            ),
-            'end_datetime_id' => IdentifierConstrainter::getRules(false,
-                $forInsert ? ['required_without:beg_datetime_id'] : []
-            ),
-            'weekdays' => WeekdaysConstrainter::getRules(false),
-            'is_templatable' => Constrainter::getRules($forInsert),
-        ];
-    }
 
     /**
      * The relationships that should always be loaded.

@@ -33,16 +33,6 @@ class ServiceCategory extends BaseDeletableModel
     protected $cascadeDeletes = ['services'];
 
     /**
-     * Get array of model's validation rules.
-     *
-     * @var bool $forInsert
-     * @return array
-     */
-    public static function getValidationRules($forInsert = false) {
-        return Category::getValidationRules($forInsert, 'service');
-    }
-
-    /**
      * Get services associated with the model.
      */
     public function services()

@@ -74,38 +74,6 @@ class Banquet extends BaseDeletableModel
     }
 
     /**
-     * Get array of model's validation rules.
-     *
-     * @var bool $forInsert
-     * @return array
-     */
-    public static function getValidationRules($forInsert = false) {
-        $rules = [
-            'name' => NameConstrainter::getRules($forInsert),
-            'description' => DescriptionConstrainter::getRules(false),
-            'advance_amount' => PriceConstrainter::getRules($forInsert),
-            'beg_datetime' => Constrainter::getRules($forInsert, [new Assert\DateTime()]),
-            'end_datetime' => Constrainter::getRules($forInsert, [new Assert\DateTime()]),
-            'state_id' => IdentifierConstrainter::getRules($forInsert),
-            'customer_id' => IdentifierConstrainter::getRules($forInsert),
-            'comments' => Constrainter::getRules(false),
-            'comments.*.text' => Constrainter::getRules(true),
-            'comments.*.target_id' => Constrainter::getRules(true),
-            'comments.*.target_type' => Constrainter::getRules(true),
-        ];
-
-        if ($forInsert) {
-            $rules['creator_id'] = IdentifierConstrainter::getRules(true);
-        }
-
-        foreach (self::getOrderColumnNames() as $orderType => $orderName) {
-            $rules[$orderName] = Constrainter::getRules(false);
-        }
-
-        return $rules;
-    }
-
-    /**
      * The accessors to append to the model's array form.
      *
      * @var array

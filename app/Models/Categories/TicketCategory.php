@@ -33,16 +33,6 @@ class TicketCategory extends BaseDeletableModel
     protected $cascadeDeletes = ['tickets'];
 
     /**
-     * Get array of model's validation rules.
-     *
-     * @var bool $forInsert
-     * @return array
-     */
-    public static function getValidationRules($forInsert = false) {
-        return Category::getValidationRules($forInsert, 'ticket');
-    }
-
-    /**
      * Get tickets associated with the model.
      */
     public function tickets()

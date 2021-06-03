@@ -43,22 +43,6 @@ class SpaceOrder extends BaseDeletableModel
     protected $cascadeDeletes = ['fields'];
 
     /**
-     * Get array of model's validation rules.
-     *
-     * @var bool $forInsert
-     * @return array
-     */
-    public static function getValidationRules($forInsert = false) {
-        $rules = Order::getValidationRules($forInsert, 'space');
-        $rules['items'] = Constrainter::getRules(false);
-        $rules['items.*.id'] = IdentifierConstrainter::getRules($forInsert);
-        $rules['items.*.beg_datetime'] = Constrainter::getRules($forInsert, [new Assert\DateTime()]);
-        $rules['items.*.end_datetime'] = Constrainter::getRules($forInsert, [new Assert\DateTime()]);
-
-        return $rules;
-    }
-
-    /**
      * The accessors to append to the model's array form.
      *
      * @var array
