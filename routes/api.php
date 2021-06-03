@@ -86,3 +86,7 @@ Route::group(['middleware' => ['auth.token']], function () {
         return ['success' => true, 'routes' => $routes];
     })->name('routes.index');
 });
+
+Route::fallback(function () {
+    abort(404, 'Not found');
+});

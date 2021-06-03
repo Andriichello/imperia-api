@@ -2,7 +2,10 @@
 
 namespace App\Exceptions;
 
+use \Illuminate\Http\Response;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -22,6 +25,7 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontFlash = [
+        'api_token',
         'current_password',
         'password',
         'password_confirmation',
@@ -34,8 +38,27 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        $this->reportable(function (Throwable $e) {
-            //
+        $this->renderable(function (HttpException $httpException) {
+            return response([
+                'success' => false,
+                'message' => $httpException->getMessage(),
+            ], $httpException->getStatusCode(), $httpException->getHeaders());
+        });
+
+        $this->renderable(function (ValidationException $validationException) {
+            $statusCode = $validationException->status;
+            if (!in_array($statusCode, array_keys(Response::$statusTexts))) {
+                $statusCode = 400; // bad request
+            }
+
+            $message = $validationException->getMessage() ?? Response::$statusTexts[$statusCode];
+            $errors = $validationException->errors();
+
+            return response([
+                'success' => false,
+                'message' => $message,
+                'errors' => $errors,
+            ], $statusCode);
         });
     }
 }
