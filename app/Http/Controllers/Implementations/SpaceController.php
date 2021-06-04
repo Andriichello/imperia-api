@@ -37,14 +37,14 @@ class SpaceController extends DynamicController
     /**
      * Find instance of model by it's primary keys.
      *
-     * @param mixed|array|null $id
+     * @param mixed $request
+     * @param mixed|null $id
      * @param string|null $dataKey
-     * @param string|null $trashed
      * @return null
      */
-    public function findModel($id = null, $dataKey = null, $trashed = null)
+    public function findModel($request, mixed $id = null, $dataKey = null)
     {
-        $instance = parent::findModel($id, $dataKey, $trashed);
+        $instance = parent::findModel($request, $id, $dataKey);
 
         if (isset($instance)) {
             [$begDatetime, $endDatetime] = $this->extractDatetimes(request()->all());

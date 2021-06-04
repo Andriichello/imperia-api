@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Custom\AttributeExtractionException;
 use App\Http\Controllers\Controller as BaseController;
 use App\Http\Requests\DataFieldRequest;
 use App\Http\Resources\PaginatedResourceCollection;
@@ -13,6 +14,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
@@ -74,7 +76,7 @@ class DynamicController extends BaseController
      *
      * @return Response
      */
-    public function index()
+    public function index(): Response
     {
         $collection = $this->allModels(\request());
         if ($collection->count() === 0) {
@@ -87,10 +89,10 @@ class DynamicController extends BaseController
     /**
      * Get one specific model by it's primary keys.
      *
-     * @param mixed|array|null $id
+     * @param mixed $id
      * @return Response
      */
-    public function show($id = null)
+    public function show(mixed $id = null): Response
     {
         $instance = $this->findModel(\request(), $id);
         if (!isset($instance)) {
@@ -105,7 +107,7 @@ class DynamicController extends BaseController
      *
      * @return Response
      */
-    public function store()
+    public function store(): Response
     {
         $request = App::make($this->storeFormRequest);
         $instance = $this->createModel($request->validated()[$request->dataFieldName()]);
@@ -116,9 +118,10 @@ class DynamicController extends BaseController
     /**
      * Update model's record in the database.
      *
+     * @param mixed $id
      * @return Response
      */
-    public function update($id = null)
+    public function update(mixed $id = null): Response
     {
         $request = App::make($this->updateFormRequest);
         $instance = $this->findModel($request, $id, $request->dataFieldName());
@@ -142,9 +145,10 @@ class DynamicController extends BaseController
     /**
      * Delete model's record from the database.
      *
+     * @param mixed $id
      * @return Response
      */
-    public function destroy($id = null)
+    public function destroy(mixed $id = null): Response
     {
         $request = \request();
         $instance = $this->findModel($id);
@@ -164,11 +168,11 @@ class DynamicController extends BaseController
      * Find instance of model by it's primary keys.
      *
      * @param Request $request
-     * @param mixed|array|null $id
+     * @param mixed|null $id
      * @param string|null $dataKey
      * @return Model|null
      */
-    public function findModel($request, $id = null, $dataKey = null)
+    public function findModel(Request $request, mixed $id = null, ?string $dataKey = null): ?Model
     {
         if (!isset($id)) {
             if (isset($dataKey)) {
@@ -206,10 +210,9 @@ class DynamicController extends BaseController
      * @param Request $request
      * @param array|null $filters where conditions [[key, comparison, value]]
      * @param array|null $sorts orderBy conditions [key, order]
-     * @param string|null $trashed
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
-    public function allModels($request, $filters = null, $sorts = null)
+    public function allModels(Request $request, ?array $filters = null, ?array $sorts = null): Collection
     {
         if (empty($filters)) {
             $filters = $this->whereConditions($request->all(), true, true);
@@ -306,11 +309,10 @@ class DynamicController extends BaseController
      *
      * @param Request $request
      * @param bool $success
-     * @param ?int $code
      * @param PaginatedResourceCollection|JsonResource|array
      * @return array
      */
-    public function toResponseArray(Request $request, bool $success, ?int $code, $data = []): array
+    public function toResponseArray(Request $request, bool $success, $data = []): array
     {
         $array = ['success' => $success];
 
@@ -350,7 +352,7 @@ class DynamicController extends BaseController
     {
         if ($exception instanceof ValidationException) {
             $message = '';
-            foreach ($exception->errors() as $bag => $errors) {
+            foreach ($exception->errors() as $errors) {
                 foreach ($errors as $error) {
                     $message .= $error . ' ';
                 }
@@ -376,12 +378,12 @@ class DynamicController extends BaseController
      * Convert to response.
      *
      * @param Request $request
-     * @param array|JsonResource|ResourceCollection|Exception $data
+     * @param Exception|array|JsonResource|ResourceCollection $data
      * @param bool $success
      * @param int $code
      * @return Response
      */
-    public function toResponse(Request $request, $data, bool $success = true, int $code = 200): Response
+    public function toResponse(Request $request, array|JsonResource|ResourceCollection|Exception $data, bool $success = true, int $code = 200): Response
     {
         if ($data instanceof Exception) {
             if ($data instanceof ValidationException) {
@@ -401,7 +403,7 @@ class DynamicController extends BaseController
         }
 
         return \Illuminate\Support\Facades\Response::make(
-            $this->toResponseArray($request, $success, $code, $data),
+            $this->toResponseArray($request, $success, $data),
             $code,
         );
     }
@@ -417,10 +419,10 @@ class DynamicController extends BaseController
     /**
      * Get array of names for model's primary keys.
      *
-     * @param array|string|null $except
+     * @param mixed $except
      * @return array
      */
-    public function primaryKeys($except = null): array
+    public function primaryKeys(mixed $except = null): array
     {
         if (!isset($except)) {
             return $this->primaryKeys;
@@ -485,7 +487,7 @@ class DynamicController extends BaseController
      *
      * @return string
      */
-    public function tableName()
+    public function tableName(): string
     {
         return (new $this->model)->getTable();
     }
@@ -496,7 +498,7 @@ class DynamicController extends BaseController
      * @param string
      * @return array
      */
-    public function tableColumns($tableName = null)
+    public function tableColumns($tableName = null): array
     {
         return Schema::getColumnListing($tableName ?? $this->tableName());
     }
@@ -506,7 +508,7 @@ class DynamicController extends BaseController
      *
      * @return array
      */
-    public function fillable()
+    public function fillable(): array
     {
         return (new $this->model)->getFillable();
     }
@@ -516,7 +518,7 @@ class DynamicController extends BaseController
      *
      * @return array
      */
-    public function types()
+    public function types(): array
     {
         $tableName = $this->tableName();
         $tableColumns = $this->tableColumns($tableName);
@@ -532,20 +534,24 @@ class DynamicController extends BaseController
     /**
      * Get array of specified key => value pairs.
      *
+     * @param array|object $data
      * @param array $keys
-     * @param array $data
      * @return array
      */
-    public function extract(array $data, array $keys)
+    public function extract(array|object $data, array $keys): array
     {
         if (empty($data) || empty($keys)) {
             return [];
         }
 
         $filtered = [];
-        $filteredKeys = array_intersect(array_keys($data), $keys);
-        foreach ($filteredKeys as $filteredKey) {
-            $filtered[$filteredKey] = $data[$filteredKey];
+        foreach ($keys as $key) {
+            $value = data_get($data, $key, new AttributeExtractionException($key));
+            if ($value instanceof AttributeExtractionException) {
+                continue;
+            }
+
+            $filtered[$key] = $value;
         }
         return $filtered;
     }
@@ -557,7 +563,7 @@ class DynamicController extends BaseController
      * @param bool $basedOnType
      * @return array
      */
-    public function whereConditions(array $data, bool $basedOnType = false, bool $onlyTableColumns = true)
+    public function whereConditions(array $data, bool $basedOnType = false, bool $onlyTableColumns = true): array
     {
         if (empty($data)) {
             return [];
@@ -687,7 +693,7 @@ class DynamicController extends BaseController
      * @param array $data
      * @return array
      */
-    public function orderByConditions(array $data, bool $onlyTableColumns = false)
+    public function orderByConditions(array $data, bool $onlyTableColumns = false): array
     {
         if (empty($data) || empty($data['sort'])) {
             return [];

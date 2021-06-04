@@ -7,6 +7,7 @@ use App\Http\Requests\OrderStoreRequest;
 use App\Http\Requests\OrderUpdateRequest;
 use App\Models\Orders\Order;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -40,31 +41,31 @@ class OrderController extends DynamicController
      */
     protected $currentType;
 
-    public function index($type = null)
+    public function index($type = null): Response
     {
         $this->switchModel($type);
         return parent::index();
     }
 
-    public function show($type = null, $id = null)
+    public function show($type = null, $id = null): Response
     {
         $this->switchModel($type);
         return parent::show($id);
     }
 
-    public function store($type = null)
+    public function store($type = null): Response
     {
         $this->switchModel($type);
         return parent::store();
     }
 
-    public function update($type = null, $id = null)
+    public function update($type = null, $id = null): Response
     {
         $this->switchModel($type);
         return parent::update($id);
     }
 
-    public function destroy($type = null, $id = null)
+    public function destroy($type = null, $id = null): Response
     {
         $this->switchModel($type);
         return parent::destroy($id);

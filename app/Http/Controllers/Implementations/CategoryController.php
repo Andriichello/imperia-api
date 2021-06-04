@@ -6,6 +6,7 @@ use App\Http\Controllers\DynamicController;
 use App\Http\Requests\CategoryStoreRequest;
 use App\Http\Requests\CategoryUpdateRequest;
 use App\Models\Categories\Category;
+use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 
 class CategoryController extends DynamicController
@@ -31,31 +32,31 @@ class CategoryController extends DynamicController
      */
     protected ?string $updateFormRequest = CategoryUpdateRequest::class;
 
-    public function index($type = null)
+    public function index($type = null): Response
     {
         $this->switchModel($type);
         return parent::index();
     }
 
-    public function show($type = null, $id = null)
+    public function show($type = null, $id = null): Response
     {
         $this->switchModel($type);
         return parent::show($id);
     }
 
-    public function store($type = null)
+    public function store($type = null): Response
     {
         $this->switchModel($type);
         return parent::store();
     }
 
-    public function update($type = null, $id = null)
+    public function update($type = null, $id = null): Response
     {
         $this->switchModel($type);
         return parent::update($id);
     }
 
-    public function destroy($type = null, $id = null)
+    public function destroy($type = null, $id = null): Response
     {
         $this->switchModel($type);
         return parent::destroy($id);
