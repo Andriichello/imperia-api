@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DynamicController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Implementations\ {
     BanquetController,
@@ -60,10 +61,6 @@ Route::group(['middleware' => ['auth.token']], function () {
     Route::get('/routes', function () {
         $routes = [];
         foreach (Route::getRoutes() as $route) {
-            if (str_starts_with($route->uri, '_ignition')) {
-                continue;
-            }
-
             if (isset($route->action['controller']) && str_contains($route->action['controller'], 'App\\Http\\Controllers\\Implementations\\')) {
                 $controllerClass = $route->action['controller'];
                 $position = strpos($controllerClass, '@');
@@ -72,16 +69,16 @@ Route::group(['middleware' => ['auth.token']], function () {
                 }
 
                 $controller = new $controllerClass();
-                if ($controller instanceof \App\Http\Controllers\DynamicController) {
+                if ($controller instanceof DynamicController) {
                     $attributes = $controller->fillable();
                 }
-            }
 
-            $routes[] = [
-                'route' => $route->uri,
-                'methods' => $route->methods,
-                'attributes' => $attributes ?? [],
-            ];
+                $routes[] = [
+                    'route' => $route->uri,
+                    'methods' => $route->methods,
+                    'attributes' => $attributes ?? [],
+                ];
+            }
         }
         return ['success' => true, 'routes' => $routes];
     })->name('routes.index');
