@@ -43,12 +43,10 @@ class BanquetController extends DynamicController
     public function createModel(array $columns): Model
     {
         try {
-            $instance = new $this->model();
-            $instance->fill($columns);
-
             DB::beginTransaction();
+            $instance = parent::createModel($columns);
 
-            if (!$instance->save()) {
+            if (!isset($instance)) {
                 throw new \Exception('Error while inserting record into the database.', 520);
             }
 
@@ -85,6 +83,7 @@ class BanquetController extends DynamicController
                     $comment['container_id'] = $instance->id;
                     $comment['container_type'] = $instance->type;
                 }
+
                 $commentStoreFormRequest = new ($commentController->storeFormRequest());
                 $commentStoreFormRequest->setDataFieldName('');
 
