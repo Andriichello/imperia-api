@@ -4,16 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller as BaseController;
 use App\Http\Requests\DataFieldRequest;
-use App\Http\Resources\ResourceCollection;
+use App\Http\Resources\PaginatedResourceCollection;
 use App\Models\BaseDeletableModel;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 class DynamicController extends BaseController
@@ -80,7 +80,7 @@ class DynamicController extends BaseController
             abort(404, 'Not found');
         }
 
-        return $this->toResponse(\request(), new ResourceCollection($collection));
+        return $this->toResponse(\request(), new PaginatedResourceCollection($collection));
     }
 
     /**
@@ -306,7 +306,7 @@ class DynamicController extends BaseController
      * @param Request $request
      * @param bool $success
      * @param ?int $code
-     * @param ResourceCollection|JsonResource|array
+     * @param PaginatedResourceCollection|JsonResource|array
      * @return array
      */
     public function toResponseArray(Request $request, bool $success, ?int $code, $data = []): array
@@ -324,7 +324,7 @@ class DynamicController extends BaseController
 
         if ($data instanceof JsonResource) {
             $array['data'] = $data->toArray($request);
-        } else if ($data instanceof ResourceCollection) {
+        } else if ($data instanceof PaginatedResourceCollection) {
             $array = array_merge(
                 $array,
                 $data->toArray($request),
@@ -546,64 +546,6 @@ class DynamicController extends BaseController
             $filtered[$filteredKey] = $data[$filteredKey];
         }
         return $filtered;
-    }
-
-    /**
-     * Obtain values from array or object.
-     *
-     * @param string $key
-     * @param mixed $default
-     * @param array|object $data
-     * @return mixed
-     */
-    public function obtain($data, $key, $default = null)
-    {
-        if (!isset($data) || !isset($key)) {
-            return $default;
-        }
-
-        $keys = preg_split('(\.)', $key);
-        $count = count($keys);
-        if ($count > 0) {
-            $currentKey = $keys[0];
-            if (is_array($data)) {
-                if (!key_exists($currentKey, $data)) {
-                    return $default;
-                }
-
-                if ($count === 1) {
-                    return ($data[$currentKey]);
-                } else {
-                    $key = implode(
-                        '.',
-                        array_slice($keys, 1, $count - 1),
-                    );
-
-                    return $this->obtain(
-                        $data[$currentKey],
-                        $key,
-                        $default,
-                    );
-                }
-            }
-            if (is_object($data)) {
-                if ($count === 1) {
-                    return $data->$currentKey ?? $default;
-                } else {
-                    $key = implode(
-                        '.',
-                        array_slice($keys, 1, $count - 1),
-                    );
-
-                    return $this->obtain(
-                        $data->$currentKey,
-                        $key,
-                        $default,
-                    );
-                }
-            }
-        }
-        return $data;
     }
 
     /**

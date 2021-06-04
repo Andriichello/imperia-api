@@ -8,6 +8,7 @@ use App\Http\Requests\BanquetUpdateRequest;
 use App\Http\Requests\StoreRequest;
 use App\Http\Requests\UpdateRequest;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -95,16 +96,33 @@ class AppServiceProvider extends ServiceProvider
             }
         });
 
-        $this->app->when(BanquetController::class)
-            ->needs(StoreRequest::class)
-            ->give(function () {
-                return new BanquetStoreRequest();
-            });
+        Collection::macro('paginate', function (Request $request, ?int $perPage = null, ?int $page = null, string $pageName = 'page[number]'): LengthAwarePaginator {
+            $options = $request->query('page');
+            if (isset($options)) {
+                if (isset($options['number'])) {
+                    $page = $options['number'];
+                }
+                if (isset($options['size'])) {
+                    $perPage = $options['size'];
+                }
+            }
 
-        $this->app->when(BanquetController::class)
-            ->needs(UpdateRequest::class)
-            ->give(function () {
-                return new BanquetUpdateRequest();
-            });
+            $perPage = $perPage ?: $this->count();
+            $perPage = $perPage > 0 ? $perPage : 1;
+            $page = $page ?: LengthAwarePaginator::resolveCurrentPage($pageName);
+
+            $paginator = new LengthAwarePaginator(
+                $this->forPage($page, $perPage),
+                $this->count(),
+                $perPage,
+                $page,
+                [
+                    'path' => LengthAwarePaginator::resolveCurrentPath(),
+                    'pageName' => $pageName,
+                ]
+            );
+            $paginator->appends('page[size]', $perPage);
+            return $paginator;
+        });
     }
 }

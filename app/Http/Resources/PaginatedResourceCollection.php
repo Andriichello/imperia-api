@@ -2,11 +2,19 @@
 
 namespace App\Http\Resources;
 
-use App\Custom\Collection;
 use Illuminate\Http\Resources\Json\ResourceCollection as BaseResourceCollection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
-class ResourceCollection extends BaseResourceCollection
+class PaginatedResourceCollection extends BaseResourceCollection
 {
+    protected ?LengthAwarePaginator $paginator;
+
+    public function __construct($resource, LengthAwarePaginator $paginator = null)
+    {
+        parent::__construct($resource);
+        $this->paginator = $paginator;
+    }
+
     /**
      * Transform the resource collection into an array.
      *
@@ -15,8 +23,7 @@ class ResourceCollection extends BaseResourceCollection
      */
     public function toArray($request)
     {
-        $items = new Collection($this->collection);
-        $paginator = $items->paginate();
+        $paginator = $this->paginator ?? $this->collection->paginate($request);
 
         return [
             'pagination' => [
