@@ -38,83 +38,59 @@ class CategoryController extends DynamicController
 
     public function index($type = null)
     {
-        try {
-            $this->switchModel(['type' => $type], 'type');
-        } catch (\Exception $exception) {
-            abort(404, 'No such type of category exists.');
-        }
+        $this->switchModel($type);
         return parent::index();
     }
 
     public function show($type = null, $id = null)
     {
-        try {
-            $this->switchModel(['type' => $type], 'type');
-        } catch (\Exception $exception) {
-            abort(404, 'No such type of category exists.');
-        }
+        $this->switchModel($type);
         return parent::show($id);
     }
 
     public function store($type = null)
     {
-        try {
-            $this->switchModel(['type' => $type], 'type');
-        } catch (\Exception $exception) {
-            abort(404, 'No such type of category exists.');
-        }
+        $this->switchModel($type);
         return parent::store();
     }
 
     public function update($type = null, $id = null)
     {
-        try {
-            $this->switchModel(['type' => $type], 'type');
-        } catch (\Exception $exception) {
-            abort(404, 'No such type of category exists.');
-        }
+        $this->switchModel($type);
         return parent::update($id);
     }
 
     public function destroy($type = null, $id = null)
     {
-        try {
-            $this->switchModel(['type' => $type], 'type');
-        } catch (\Exception $exception) {
-            abort(404, 'No such type of category exists.');
-        }
+        $this->switchModel($type);
         return parent::destroy($id);
     }
 
     /**
      * Switches controller's model class name depending on specified type.
      *
-     * @var array|null $data
+     * @throws ValidationException
      * @var string|null $dataKey
-     * @throws \Exception
+     * @var array|null $data
      */
     protected function switchModel($data = null, $dataKey = null)
     {
-        if (empty($data)) {
-            $data = \request()->all();
-        }
-
         if (empty($dataKey)) {
-            $data = $this->validateRules($data, [
-                ItemTypeConstrainter::getRules(true, [Rule::in(Category::getTypes())])
-            ]);
-
+            if (is_array($data)) {
+                $type = $data[array_key_first($data)];
+            } else {
+                $type = $data;
+            }
         } else {
-            $data = $this->validateRules($data, [
-                $dataKey => ItemTypeConstrainter::getRules(true, [Rule::in(Category::getTypes())])
+            $type = data_get($data, $dataKey);
+        }
+
+        if (!in_array($type, Category::getTypes())) {
+            throw ValidationException::withMessages([
+                'type' => ['A type attribute must be one of (' . implode(', ', Category::getTypes()) . ').'],
             ]);
         }
 
-        if (empty($dataKey)) {
-            $type = $data[array_key_first($data)];
-        } else {
-            $type = $this->obtain($data, $dataKey);
-        }
         $this->model = Category::getTypeCategoryClass($type);
     }
 }

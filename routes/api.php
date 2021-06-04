@@ -52,8 +52,8 @@ Route::flexibleResources([
             ->name('login')
             ->withoutMiddleware('auth.token');
     }],
-    'orders' => [OrderController::class, ['prefix' => '{type}/orders']],
-    'categories' => [CategoryController::class, ['prefix' => '{type}/categories']],
+    'orders' => [OrderController::class, ['prefix' => '{type}-orders']],
+    'categories' => [CategoryController::class, ['prefix' => '{type}-categories']],
 ], ['middleware' => 'auth.token']);
 
 Route::group(['middleware' => ['auth.token']], function () {
