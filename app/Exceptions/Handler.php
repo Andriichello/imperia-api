@@ -2,11 +2,10 @@
 
 namespace App\Exceptions;
 
-use \Illuminate\Http\Response;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Throwable;
 
 class Handler extends ExceptionHandler
 {

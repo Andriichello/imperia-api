@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
@@ -92,7 +93,7 @@ class DynamicController extends BaseController
     public function show($id = null)
     {
         $instance = $this->findModel(\request(), $id);
-        if (empty($instance)) {
+        if (!isset($instance)) {
             abort(404, 'Not found');
         }
 
@@ -178,13 +179,16 @@ class DynamicController extends BaseController
         }
 
         if (!is_array($id)) {
-            if (count($this->primaryKeys()) === 1) {
-                $id = [$this->primaryKeys()[0] => $id];
-            } else {
+            // there are more primary keys than specified values
+            if (count($this->primaryKeys()) > 1) {
                 return null;
             }
+
+            // set id to an associative array
+            $id = [$this->primaryKeys()[array_key_first($this->primaryKeys())] => $id];
         }
 
+        // specified values count differs from count of needed for identification columns
         if (count($id) !== count($this->primaryKeys())) {
             return null;
         }
@@ -227,10 +231,7 @@ class DynamicController extends BaseController
                     $builder->whereIn($filter[0], $filter[2]);
                 } else if ($filter[1] === 'not in') {
                     $builder->whereNotIn($filter[0], $filter[2]);
-                } else {
-                    $builder->where($filters);
                 }
-                continue;
             }
             $builder->where($filters);
         }
@@ -421,21 +422,22 @@ class DynamicController extends BaseController
      */
     public function primaryKeys($except = null): array
     {
-        if (isset($except)) {
-            if (is_string($except)) {
-                $except = [$except];
-            }
-
-            $keys = [];
-            foreach ($this->primaryKeys as $key) {
-                if (!in_array($key, $except)) {
-                    $keys[] = $key;
-                }
-            }
-            return $keys;
+        if (!isset($except)) {
+            return $this->primaryKeys;
         }
 
-        return $this->primaryKeys;
+        if (is_string($except)) {
+            $except = [$except];
+        }
+
+        $keys = [];
+        foreach ($this->primaryKeys as $key) {
+            if (in_array($key, $except)) {
+                continue;
+            }
+            $keys[] = $key;
+        }
+        return $keys;
     }
 
     /**
@@ -637,10 +639,7 @@ class DynamicController extends BaseController
         if (empty($whereConditions)) {
             return true;
         }
-
-        if (!is_array($whereConditions[0])) {
-            $whereConditions = [$whereConditions];
-        }
+        $whereConditions = Arr::wrap($whereConditions);
 
         $isMatching = true;
         foreach ($whereConditions as $whereCondition) {
@@ -652,15 +651,9 @@ class DynamicController extends BaseController
             $whereValue = $whereCondition[2];
 
             if ($whereCondition[1] === 'in') {
-                if (!is_array($whereValue)) {
-                    $whereValue = [$whereValue];
-                }
-                $isMatching = in_array($dataValue, $whereValue);
+                $isMatching = in_array($dataValue, Arr::wrap($whereValue));
             } else if ($whereCondition[1] === 'not in') {
-                if (!is_array($whereValue)) {
-                    $whereValue = [$whereValue];
-                }
-                $isMatching = !in_array($dataValue, $whereValue);
+                $isMatching = !in_array($dataValue, Arr::wrap($whereValue));
             } else if ($whereCondition[1] === 'like') {
                 $whereValue = strtolower($whereValue);
                 $length = strlen($whereValue);
@@ -670,17 +663,9 @@ class DynamicController extends BaseController
 
                 $isMatching = str_contains(strtolower($dataValue), strtolower($whereValue));
             } else if ($whereCondition[1] === '=') {
-                if ($basedOnType) {
-                    $isMatching = $dataValue === $whereValue;
-                } else {
-                    $isMatching = $dataValue == $whereValue;
-                }
+                $isMatching = $basedOnType ? $dataValue === $whereValue : $dataValue == $whereValue;
             } else if ($whereCondition[1] === '!=') {
-                if ($basedOnType) {
-                    $isMatching = $dataValue !== $whereValue;
-                } else {
-                    $isMatching = $dataValue != $whereValue;
-                }
+                $isMatching = $basedOnType ? $dataValue !== $whereValue : $dataValue != $whereValue;
             } else if ($whereCondition[1] === '>=') {
                 $isMatching = $dataValue >= $whereValue;
             } else if ($whereCondition[1] === '<=') {
@@ -713,21 +698,24 @@ class DynamicController extends BaseController
             $columns = preg_split('(\s*,\s*)', $data['sort']);
             foreach ($columns as $column) {
                 $length = strlen($column);
-                if ($length > 0) {
-                    if (preg_match('(-\S{1,})', $column)) {
-                        $sort[substr($column, 1, $length - 1)] = 'desc';
-                    } else {
-                        $sort[$column] = 'asc';
-                    }
+                if ($length === 0) {
+                    continue;
+                }
+
+                if (preg_match('(-\S{1,})', $column)) {
+                    $sort[substr($column, 1, $length - 1)] = 'desc';
+                } else {
+                    $sort[$column] = 'asc';
                 }
             }
 
             if ($onlyTableColumns) {
                 $columns = $this->tableColumns();
                 foreach ($sort as $key => $order) {
-                    if (!in_array($key, $columns)) {
-                        unset($sort[$key]);
+                    if (in_array($key, $columns)) {
+                        continue;
                     }
+                    unset($sort[$key]);
                 }
             }
         }
