@@ -48,51 +48,31 @@ class OrderController extends DynamicController
 
     public function index($type = null)
     {
-        try {
-            $this->switchModel(['type' => $type], 'type');
-        } catch (\Exception $exception) {
-            return $this->toResponse($exception);
-        }
+        $this->switchModel($type);
         return parent::index();
     }
 
     public function show($type = null, $id = null)
     {
-        try {
-            $this->switchModel(['type' => $type], 'type');
-        } catch (\Exception $exception) {
-            return $this->toResponse($exception);
-        }
+        $this->switchModel($type);
         return parent::show($id);
     }
 
     public function store($type = null)
     {
-        try {
-            $this->switchModel(['type' => $type], 'type');
-        } catch (\Exception $exception) {
-            return $this->toResponse($exception);
-        }
+        $this->switchModel($type);
         return parent::store();
     }
 
     public function update($type = null, $id = null)
     {
-        try {
-            $this->switchModel(['type' => $type], 'type');
-        } catch (\Exception $exception) {
-            return $this->toResponse($exception);
-        }
+        $this->switchModel($type);
         return parent::update($id);
     }
 
     public function destroy($type = null, $id = null)
     {
-        try {
-            $this->switchModel(['type' => $type], 'type');
-        } catch (\Exception $exception) {
-            return $this->toResponse($exception);
-        }
+        $this->switchModel($type);
         return parent::destroy($id);
     }
 
@@ -107,11 +87,11 @@ class OrderController extends DynamicController
      */
     public function createModel(array $columns, bool $beginTransaction = true, string $type = null): Model
     {
-        try {
-            if (isset($type)) {
-                $this->switchModel(['type' => $type], 'type');
-            }
+        if (isset($type)) {
+            $this->switchModel($type);
+        }
 
+        try {
             $instance = new $this->model();
             $instance->fill($columns);
             $instance->setAppends([]);
@@ -157,11 +137,11 @@ class OrderController extends DynamicController
      */
     public function updateModel(Model $instance, array $columns = [], bool $beginTransaction = true, string $type = null): bool
     {
-        try {
-            if (isset($type)) {
-                $this->switchModel(['type' => $type], 'type');
-            }
+        if (isset($type)) {
+            $this->switchModel($type);
+        }
 
+        try {
             if ($beginTransaction) {
                 DB::beginTransaction();
             }
@@ -282,7 +262,7 @@ class OrderController extends DynamicController
     public function destroyModel(Model $instance, bool $softDelete = true, ?string $type = null): bool
     {
         if (isset($type)) {
-            $this->switchModel(['type' => $type], 'type');
+            $this->switchModel($type);
         }
 
         return parent::destroyModel($instance, false);
@@ -300,9 +280,9 @@ class OrderController extends DynamicController
         $fields = [];
 
         $itemIdKey = $this->currentType . '_id';
-        $orderId = $this->obtain($order, 'id');
+        $orderId = data_get($order, 'id');
         foreach ($items as $item) {
-            $itemId = $this->obtain($item, 'id');
+            $itemId = data_get($item, 'id');
             if (isset($itemId) && isset($orderId)) {
                 $field = new (Order::getTypeOrderFieldClass($this->currentType));
                 $field->fill($item);
@@ -326,25 +306,22 @@ class OrderController extends DynamicController
      */
     public function switchModel($data = null, $dataKey = null)
     {
-        if (empty($data)) {
-            $data = \request()->all();
+        if (empty($dataKey)) {
+            if (is_array($data)) {
+                $type = $data[array_key_first($data)];
+            } else {
+                $type = $data;
+            }
+        } else {
+            $type = data_get($data, $dataKey);
         }
 
-        if (empty($dataKey)) {
-            $data = $this->validateRules($data, [
-                ItemTypeConstrainter::getRules(true, [Rule::in(Order::getTypes())])
-            ]);
-        } else {
-            $data = $this->validateRules($data, [
-                $dataKey => ItemTypeConstrainter::getRules(true, [Rule::in(Order::getTypes())])
+        if (!in_array($type, Order::getTypes())) {
+            throw ValidationException::withMessages([
+                'type' => ['A type attribute must be one of (' . implode(', ', Order::getTypes()) . ').'],
             ]);
         }
 
-        if (empty($dataKey)) {
-            $type = $data[array_key_first($data)];
-        } else {
-            $type = $this->obtain($data, $dataKey);
-        }
         $this->model = Order::getTypeOrderClass($this->currentType = $type);
     }
 }
