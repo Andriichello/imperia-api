@@ -2,10 +2,6 @@
 
 namespace App\Models;
 
-use App\Constrainters\Constrainter;
-use App\Constrainters\Implementations\IdentifierConstrainter;
-use App\Constrainters\Implementations\NameConstrainter;
-use Symfony\Component\Validator\Constraints as Assert;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class CustomerFamilyMember extends BaseDeletableModel

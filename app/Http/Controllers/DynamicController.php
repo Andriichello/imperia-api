@@ -2,22 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Constrainters\Constrainter;
+use App\Http\Controllers\Controller as BaseController;
 use App\Http\Requests\DataFieldRequest;
-use App\Http\Requests\StoreRequest;
-use App\Http\Requests\UpdateRequest;
-use App\Http\Resources\Resource;
 use App\Http\Resources\ResourceCollection;
 use App\Models\BaseDeletableModel;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
-use Exception;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Controllers\Controller as BaseController;
+use Illuminate\Validation\ValidationException;
 
 class DynamicController extends BaseController
 {
@@ -99,7 +96,7 @@ class DynamicController extends BaseController
             abort(404, 'Not found');
         }
 
-        return $this->toResponse(\request(), new Resource($instance));
+        return $this->toResponse(\request(), new JsonResource($instance));
     }
 
     /**
@@ -112,7 +109,7 @@ class DynamicController extends BaseController
         $request = App::make($this->storeFormRequest);
         $instance = $this->createModel($request->validated()[$request->dataFieldName()]);
 
-        return $this->toResponse($request, new Resource($instance), true, 201);
+        return $this->toResponse($request, new JsonResource($instance), true, 201);
     }
 
     /**
@@ -138,7 +135,7 @@ class DynamicController extends BaseController
             abort(520, 'Error while updating record in the database.');
         }
 
-        return $this->toResponse($request, new Resource($instance));
+        return $this->toResponse($request, new JsonResource($instance));
     }
 
     /**
@@ -309,7 +306,7 @@ class DynamicController extends BaseController
      * @param Request $request
      * @param bool $success
      * @param ?int $code
-     * @param ResourceCollection|Resource|array
+     * @param ResourceCollection|JsonResource|array
      * @return array
      */
     public function toResponseArray(Request $request, bool $success, ?int $code, $data = []): array
@@ -325,7 +322,7 @@ class DynamicController extends BaseController
         // displaying applied filtering parameters, should be removed on release
         $array['filters'] = $this->currentFilters;
 
-        if ($data instanceof Resource) {
+        if ($data instanceof JsonResource) {
             $array['data'] = $data->toArray($request);
         } else if ($data instanceof ResourceCollection) {
             $array = array_merge(
@@ -378,7 +375,7 @@ class DynamicController extends BaseController
      * Convert to response.
      *
      * @param Request $request
-     * @param array|Resource|ResourceCollection|Exception $data
+     * @param array|JsonResource|ResourceCollection|Exception $data
      * @param bool $success
      * @param int $code
      * @return Response
@@ -409,6 +406,14 @@ class DynamicController extends BaseController
     }
 
     /**
+     * @return string|null
+     */
+    public function model(): ?string
+    {
+        return $this->model;
+    }
+
+    /**
      * Get array of names for model's primary keys.
      *
      * @param array|string|null $except
@@ -431,6 +436,46 @@ class DynamicController extends BaseController
         }
 
         return $this->primaryKeys;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSoftDelete(): bool
+    {
+        return $this->softDelete;
+    }
+
+    /**
+     * @return array
+     */
+    public function currentSorts(): array
+    {
+        return $this->currentSorts;
+    }
+
+    /**
+     * @return array
+     */
+    public function currentFilters(): array
+    {
+        return $this->currentFilters;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function storeFormRequest(): ?string
+    {
+        return $this->storeFormRequest;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function updateFormRequest(): ?string
+    {
+        return $this->updateFormRequest;
     }
 
     /**
@@ -480,54 +525,6 @@ class DynamicController extends BaseController
         }
 
         return $types;
-    }
-
-    /**
-     * Get array of model's validation rules.
-     *
-     * @param bool $forInsert
-     * @return array
-     */
-    public function getModelValidationRules(bool $forInsert = false): array
-    {
-        if (isset($this->model)) {
-            return $this->model::getValidationRules($forInsert);
-        }
-
-        return [];
-    }
-
-    /**
-     * Get array of input data array validation rules.
-     *
-     * @param string $dataKey
-     * @param bool $forInsert
-     * @return array
-     */
-    public function getDataValidationRules(string $dataKey = '', bool $forInsert = false): array
-    {
-        if (empty($dataKey)) {
-            return [];
-        }
-        return [$dataKey => Constrainter::getRules($forInsert, ['present', 'array'])];
-    }
-
-    /**
-     * Validate data with the array of rules.
-     *
-     * @param array $data
-     * @param array $rules
-     * @return array
-     *
-     * @throws ValidationException
-     */
-    public function validateRules(array $data, array $rules): array
-    {
-        $validator = Validator::make($data, $rules);
-        if ($validator->fails()) {
-            throw (new ValidationException($validator))->status(400);
-        }
-        return $validator->validated();
     }
 
     /**
@@ -709,7 +706,7 @@ class DynamicController extends BaseController
                 return false;
             }
 
-            $dataValue = $this->obtain($data, $whereCondition[0]);
+            $dataValue = data_get($data, $whereCondition[0]);
             $whereValue = $whereCondition[2];
 
             if ($whereCondition[1] === 'in') {

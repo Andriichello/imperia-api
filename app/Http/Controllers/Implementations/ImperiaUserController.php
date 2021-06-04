@@ -2,16 +2,13 @@
 
 namespace App\Http\Controllers\Implementations;
 
-use App\Constrainters\Implementations\ApiTokenConstrainter;
-use App\Constrainters\Implementations\NameConstrainter;
-use App\Constrainters\Implementations\PasswordConstrainter;
 use App\Http\Controllers\DynamicController;
 use App\Http\Requests\ImperiaUserLoginRequest;
 use App\Http\Requests\ImperiaUserStoreRequest;
 use App\Http\Requests\ImperiaUserUpdateRequest;
-use App\Http\Resources\Resource;
 use App\Models\ImperiaUser;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
 
@@ -61,7 +58,7 @@ class ImperiaUserController extends DynamicController
             abort(401, 'Invalid credentials');
         }
 
-        return $this->toResponse(request(), new Resource($user));
+        return $this->toResponse(request(), new JsonResource($user));
     }
 
     /**

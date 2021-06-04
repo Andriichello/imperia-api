@@ -2,10 +2,7 @@
 
 namespace App\Models\Categories;
 
-use App\Constrainters\Implementations\DescriptionConstrainter;
-use App\Constrainters\Implementations\NameConstrainter;
 use App\Models\BaseDeletableModel;
-use App\Models\BaseModel;
 use App\Models\Discount;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 

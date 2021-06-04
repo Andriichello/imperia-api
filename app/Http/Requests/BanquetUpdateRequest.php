@@ -38,8 +38,12 @@ class BanquetUpdateRequest extends DataFieldRequest
             'creator_id' => (new IdentifierRule(0))->make(),
             'customer_id' => (new IdentifierRule(0))->make(),
             'comments' => ['nullable', 'array'],
-            'comments.*.id' => (new IdentifierRule(0))->make(),
-            'comments.*.text' => (new TextRule(1, 100))->make(['required']),
+            'comments.*.id' => (new IdentifierRule(0))->make([
+                'required_without:' . $this->dataFieldPrefix() . 'comments.*.text'
+            ]),
+            'comments.*.text' => (new TextRule(1, 100))->make([
+                'required_without:' . $this->dataFieldPrefix() . 'comments.*.id'
+            ]),
             'comments.*.target_id' => (new IdentifierRule(0))->make(['required']),
             'comments.*.target_type' => (new TextRule(2, 100))->make(['required']),
         ];

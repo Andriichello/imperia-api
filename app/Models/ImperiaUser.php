@@ -2,14 +2,7 @@
 
 namespace App\Models;
 
-use App\Constrainters\Implementations\ApiTokenConstrainter;
-use App\Constrainters\Implementations\IdentifierConstrainter;
-use App\Constrainters\Implementations\NameConstrainter;
-use App\Constrainters\Implementations\PasswordConstrainter;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
 
 class ImperiaUser extends BaseDeletableModel
 {

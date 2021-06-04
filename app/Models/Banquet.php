@@ -2,17 +2,10 @@
 
 namespace App\Models;
 
-use App\Constrainters\Constrainter;
-use App\Constrainters\Implementations\DescriptionConstrainter;
-use App\Constrainters\Implementations\IdentifierConstrainter;
-use App\Constrainters\Implementations\NameConstrainter;
-use App\Constrainters\Implementations\PriceConstrainter;
 use App\Models\Orders\Order;
-use Symfony\Component\Validator\Constraints as Assert;
 use App\Models\Orders\ProductOrder;
 use App\Models\Orders\ServiceOrder;
 use App\Models\Orders\SpaceOrder;
-use App\Models\Orders\SpaceOrderField;
 use App\Models\Orders\TicketOrder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -101,7 +94,7 @@ class Banquet extends BaseDeletableModel
             $total += $this->productOrder->total;
         }
 
-        return $total;
+        return round($total, 2);
     }
 
     /**

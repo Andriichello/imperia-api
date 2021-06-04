@@ -2,19 +2,14 @@
 
 namespace App\Http\Controllers\Implementations;
 
-use App\Constrainters\Constrainter;
-use App\Constrainters\Implementations\IdentifierConstrainter;
 use App\Http\Controllers\DynamicController;
 use App\Http\Requests\SpaceStoreRequest;
 use App\Http\Requests\SpaceUpdateRequest;
-use App\Models\Orders\SpaceOrder;
 use App\Models\Space;
+use App\Rules\RuleBuilders\DateTimeRule;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
-use Symfony\Component\Validator\Constraints as Assert;
 
 class SpaceController extends DynamicController
 {
@@ -52,9 +47,7 @@ class SpaceController extends DynamicController
         $instance = parent::findModel($id, $dataKey, $trashed);
 
         if (isset($instance)) {
-            $begDatetime = $this->extractDatetime(request()->all(), 'beg_datetime');
-            $endDatetime = $this->extractDatetime(request()->all(), 'end_datetime');
-
+            [$begDatetime, $endDatetime] = $this->extractDatetimes(request()->all());
             // setting beginning to current datetime if only ending was specified
             if (empty($begDatetime) && !empty($endDatetime)) {
                 $begDatetime = Carbon::now()->toDateTimeString();
@@ -78,7 +71,7 @@ class SpaceController extends DynamicController
                     'or',
                     ['end_datetime', 'between', [$begDatetime, $endDatetime]]
                 ];
-            } else {
+            } else if (isset($begDatetime)) {
                 $this->currentFilters[] = ['beg_datetime', '>=', $begDatetime];
             }
 
@@ -107,9 +100,7 @@ class SpaceController extends DynamicController
             return $collection;
         }
 
-        $begDatetime = $this->extractDatetime(request()->all(), 'beg_datetime');
-        $endDatetime = $this->extractDatetime(request()->all(), 'end_datetime');
-
+        [$begDatetime, $endDatetime] = $this->extractDatetimes(request()->all());
         // setting beginning to current datetime if only ending was specified
         if (empty($begDatetime) && !empty($endDatetime)) {
             $begDatetime = Carbon::now()->toDateTimeString();
@@ -136,7 +127,7 @@ class SpaceController extends DynamicController
                 'or',
                 ['end_datetime', 'between', [$begDatetime, $endDatetime]]
             ];
-        } else {
+        } else if (isset($begDatetime)) {
             $this->currentFilters[] = ['beg_datetime', '>=', $begDatetime];
         }
 
@@ -152,16 +143,17 @@ class SpaceController extends DynamicController
      * Get validated datetime from data.
      *
      * @param array $data
-     * @param string $datetimeKey
-     * @return mixed
-     * @throws \Illuminate\Validation\ValidationException
+     * @param string $begDatetimeKey
+     * @param string $endDatetimeKey
+     * @return array
      */
-    protected function extractDatetime($data, $datetimeKey)
+    protected function extractDatetimes(array $data, string $begDatetimeKey = 'beg_datetime', string $endDatetimeKey = 'end_datetime'): array
     {
-        $queries = $this->validateRules($data, [
-            $datetimeKey => Constrainter::getRules(false, [new Assert\DateTime()]),
+        Validator::validate($data, [
+            $begDatetimeKey => (new DateTimeRule())->make(),
+            $endDatetimeKey => (new DateTimeRule())->make(),
         ]);
-        return $queries[$datetimeKey] ?? null;
+        return [data_get($data, $begDatetimeKey), data_get($data, $endDatetimeKey)];
     }
 
     /**

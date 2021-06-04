@@ -2,17 +2,11 @@
 
 namespace App\Http\Controllers\Implementations;
 
-use App\Constrainters\Constrainter;
 use App\Http\Controllers\DynamicController;
 use App\Http\Requests\BanquetStoreRequest;
 use App\Http\Requests\BanquetUpdateRequest;
-use App\Http\Requests\DataFieldRequest;
-use App\Http\Requests\StoreRequest;
 use App\Models\Banquet;
-use App\Models\Orders\Order;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -70,13 +64,14 @@ class BanquetController extends DynamicController
                 $orderController = new OrderController();
                 $orderType = array_search($orderColumnName, $orderColumnNames);
 
-                $orderController->switchModel(['type' => $orderType], 'type');
+                $orderController->switchModel($orderType);
                 $order['banquet_id'] = $instance->id;
-                $validatedOrder = $this->validateRules(
-                    $order,
-                    $orderController->getModelValidationRules(true)
-                );
 
+                $orderStoreFormRequest = new ($orderController->storeFormRequest());
+                $orderStoreFormRequest->setType($orderType);
+                $orderStoreFormRequest->setDataFieldName('');
+
+                $validatedOrder = Validator::validate($order, $orderStoreFormRequest->rules());
                 $orderController->createModel($validatedOrder, false);
             }
 
@@ -90,11 +85,10 @@ class BanquetController extends DynamicController
                     $comment['container_id'] = $instance->id;
                     $comment['container_type'] = $instance->type;
                 }
-                $validatedComment = $this->validateRules(
-                    $comment,
-                    $commentController->getModelValidationRules(true)
-                );
+                $commentStoreFormRequest = new ($commentController->storeFormRequest());
+                $commentStoreFormRequest->setDataFieldName('');
 
+                $validatedComment = Validator::validate($comment, $commentStoreFormRequest->rules());
                 $commentController->createModel($validatedComment);
             }
 
@@ -146,14 +140,19 @@ class BanquetController extends DynamicController
                 foreach ($newOrders as $orderColumnName => $newOrder) {
                     $orderType = array_search($orderColumnName, $orderColumnNames);
 
-                    $orderController->switchModel(['type' => $orderType], 'type');
+                    $orderController->switchModel($orderType);
                     if (isset($oldOrders[$orderColumnName])) {
                         // updating old order
-                        $validatedOrder = $this->validateRules(
-                            $newOrder,
-                            $orderController->getModelValidationRules(false)
-                        );
+                        if (!empty($oldOrders[$orderColumnName])) {
+                            $newOrder['id'] = $oldOrders[$orderColumnName]->id;
+                        }
 
+                        $newOrder['banquet_id'] = $instance->id;
+                        $orderUpdateFormRequest = new ($orderController->updateFormRequest());
+                        $orderUpdateFormRequest->setType($orderType);
+                        $orderUpdateFormRequest->setDataFieldName('');
+
+                        $validatedOrder = Validator::validate($newOrder, $orderUpdateFormRequest->rules());
                         $success = $orderController->updateModel($oldOrders[$orderColumnName], $validatedOrder, false);
                         if (!$success) {
                             return false;
@@ -161,10 +160,11 @@ class BanquetController extends DynamicController
                     } else {
                         // creating new order
                         $newOrder['banquet_id'] = $instance->id;
-                        $validatedOrder = $this->validateRules(
-                            $newOrder,
-                            $orderController->getModelValidationRules(true)
-                        );
+                        $orderStoreFormRequest = new ($orderController->storeFormRequest());
+                        $orderStoreFormRequest->setType($orderType);
+                        $orderStoreFormRequest->setDataFieldName('');
+
+                        $validatedOrder = Validator::validate($newOrder, $orderStoreFormRequest->rules());
                         $orderController->createModel($validatedOrder, false);
                     }
                 }
@@ -187,16 +187,16 @@ class BanquetController extends DynamicController
                 foreach ($instance->comments as $oldComment) {
                     $updateComment = null;
                     foreach ($newComments as $newComment) {
-                        if (!isset($newComment->id)) {
+                        if (empty($newComment['id'])) {
                             continue;
                         }
 
                         if (
-                            $oldComment->id == $newComment->id &&
-                            $oldComment->target_id == $newComment->target_id &&
-                            $oldComment->target_type == $newComment->target_type &&
-                            $oldComment->container_id == $newComment->container_id &&
-                            $oldComment->container_type == $newComment->container_type
+                            $oldComment->id == $newComment['id'] &&
+                            $oldComment->target_id == $newComment['target_id'] &&
+                            $oldComment->target_type == $newComment['target_type'] &&
+                            $oldComment->container_id == $newComment['container_id'] &&
+                            $oldComment->container_type == $newComment['container_type']
                         ) {
                             $updateComment = $newComment;
                             break;
@@ -205,10 +205,10 @@ class BanquetController extends DynamicController
 
                     if (isset($updateComment)) {
                         // updating old comment
-                        $validatedComment = $this->validateRules(
-                            $updateComment,
-                            $commentController->getModelValidationRules(false)
-                        );
+                        $commentUpdateFormRequest = new ($commentController->updateFormRequest());
+                        $commentUpdateFormRequest->setDataFieldName('');
+
+                        $validatedComment = Validator::validate($updateComment, $commentUpdateFormRequest->rules());
                         if (!$commentController->updateModel($oldComment, $validatedComment)) {
                             return false;
                         }
@@ -224,10 +224,10 @@ class BanquetController extends DynamicController
                 foreach ($newComments as $newComment) {
                     if (!isset($newComment['id'])) {
                         // creating new comment
-                        $validatedComment = $this->validateRules(
-                            $newComment,
-                            $commentController->getModelValidationRules(true)
-                        );
+                        $commentStoreFormRequest = new ($commentController->storeFormRequest());
+                        $commentStoreFormRequest->setDataFieldName('');
+
+                        $validatedComment = Validator::validate($newComment, $commentStoreFormRequest->rules());
                         $commentController->createModel($validatedComment);
                     }
                 }

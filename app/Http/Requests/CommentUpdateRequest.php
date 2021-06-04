@@ -28,8 +28,12 @@ class CommentUpdateRequest extends DataFieldRequest
     public function rules()
     {
         $rules = [
-            'id' => (new IdentifierRule(0))->make(['required']),
-            'text' => (new TextRule(2, 50))->make(['required']),
+            'id' => (new IdentifierRule(0))->make([
+                'required_without:' . $this->dataFieldPrefix() . 'text'
+            ]),
+            'text' => (new TextRule(2, 50))->make([
+                'required_without:' . $this->dataFieldPrefix() . 'id'
+            ]),
             'target_id' => (new IdentifierRule(0))->make(['required']),
             'target_type' => (new TextRule(2, 35))->make(['required']),
             'container_id' => (new IdentifierRule(0))->make(['required']),

@@ -2,12 +2,8 @@
 
 namespace App\Models\Orders;
 
-use App\Constrainters\Constrainter;
-use App\Constrainters\Implementations\AmountConstrainter;
-use App\Constrainters\Implementations\IdentifierConstrainter;
 use App\Models\Banquet;
 use App\Models\BaseDeletableModel;
-use App\Models\BaseModel;
 use App\Models\Comment;
 use App\Models\Discount;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -105,7 +101,7 @@ class ServiceOrder extends BaseDeletableModel
             $total += $item['hourly_paid_price'] * $item['duration'] / 60 * $item['amount'];
         }
 
-        return $total;
+        return round($total, 2);
     }
 
     /**

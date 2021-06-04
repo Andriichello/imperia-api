@@ -37,7 +37,7 @@ class BanquetStoreRequest extends DataFieldRequest
             'creator_id' => (new IdentifierRule(0))->make(['required']),
             'customer_id' => (new IdentifierRule(0))->make(['required']),
             'comments' => ['nullable', 'array'],
-            'comments.*.text' => (new TextRule(1, 100))->make(),
+            'comments.*.text' => (new TextRule(1, 100))->make(['required']),
             'comments.*.target_id' => (new IdentifierRule(0))->make(['required']),
             'comments.*.target_type' => (new TextRule(2, 100))->make(['required']),
         ];

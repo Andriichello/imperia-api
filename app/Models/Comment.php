@@ -2,10 +2,6 @@
 
 namespace App\Models;
 
-use App\Constrainters\Constrainter;
-use App\Constrainters\Implementations\CommentTextConstrainter;
-use App\Constrainters\Implementations\IdentifierConstrainter;
-use App\Constrainters\Implementations\NameConstrainter;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Comment extends BaseModel

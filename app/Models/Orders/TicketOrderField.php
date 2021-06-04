@@ -2,10 +2,7 @@
 
 namespace App\Models\Orders;
 
-use App\Constrainters\Implementations\AmountConstrainter;
-use App\Constrainters\Implementations\IdentifierConstrainter;
 use App\Models\BaseDeletableModel;
-use App\Models\BaseModel;
 use App\Models\Ticket;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 

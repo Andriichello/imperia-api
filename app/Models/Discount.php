@@ -2,10 +2,6 @@
 
 namespace App\Models;
 
-use App\Constrainters\Implementations\AmountConstrainter;
-use App\Constrainters\Implementations\DescriptionConstrainter;
-use App\Constrainters\Implementations\IdentifierConstrainter;
-use App\Constrainters\Implementations\NameConstrainter;
 use App\Models\Categories\DiscountCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 

@@ -26,6 +26,30 @@ class DataFieldRequest extends FormRequest
     }
 
     /**
+     * Set data field name.
+     *
+     * @return static
+     */
+    public function setDataFieldName(string $dataFieldName): static
+    {
+        $this->dataFieldName = $dataFieldName;
+        return $this;
+    }
+
+    /**
+     * Get data field prefix. Example: 'data.' or '' (if dataFieldName is empty)
+     *
+     * @return string
+     */
+    public function dataFieldPrefix(): string
+    {
+        if (empty($this->dataFieldName())) {
+            return '';
+        }
+        return "$this->dataFieldName.";
+    }
+
+    /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
@@ -42,6 +66,10 @@ class DataFieldRequest extends FormRequest
      */
     public function rules()
     {
+        if (empty($this->dataFieldName())) {
+            return [];
+        }
+
         return [$this->dataFieldName => ['present', 'array']];
     }
 
@@ -61,7 +89,7 @@ class DataFieldRequest extends FormRequest
     /**
      * Handle a failed validation attempt.
      *
-     * @param  \Illuminate\Contracts\Validation\Validator  $validator
+     * @param \Illuminate\Contracts\Validation\Validator $validator
      * @return void
      *
      * @throws \Illuminate\Validation\ValidationException
@@ -73,24 +101,21 @@ class DataFieldRequest extends FormRequest
             ->status(400); // bad request
     }
 
-    public function dataFieldPrefix(): string {
-        if (empty($this->dataFieldName())) {
-            return '';
-        }
-        return "$this->dataFieldName.";
-    }
-
     /**
      * Appends $dataFieldName as a prefix to all array string keys.
      *
      * @param array $rules
      * @return array
      */
-    public function nestWithData(array $rules): array {
-        foreach ($rules as $key => $value) {
-            if (is_string($key)) {
-                $rules[$this->dataFieldPrefix() . $key] = $value;
-                unset($rules[$key]);
+    public function nestWithData(array $rules): array
+    {
+        if (!empty($this->dataFieldPrefix())) {
+            $prefix = $this->dataFieldPrefix();
+            foreach ($rules as $key => $value) {
+                if (is_string($key)) {
+                    $rules[$prefix . $key] = $value;
+                    unset($rules[$key]);
+                }
             }
         }
 

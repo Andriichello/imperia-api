@@ -2,11 +2,6 @@
 
 namespace App\Models;
 
-use App\Constrainters\Constrainter;
-use App\Constrainters\Implementations\EmailConstrainter;
-use App\Constrainters\Implementations\NameConstrainter;
-use App\Constrainters\Implementations\PhoneConstrainter;
-use Symfony\Component\Validator\Constraints as Assert;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Customer extends BaseDeletableModel

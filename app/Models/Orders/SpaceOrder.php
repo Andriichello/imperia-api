@@ -2,15 +2,11 @@
 
 namespace App\Models\Orders;
 
-use App\Constrainters\Constrainter;
-use App\Constrainters\Implementations\IdentifierConstrainter;
 use App\Models\Banquet;
 use App\Models\BaseDeletableModel;
-use App\Models\BaseModel;
 use App\Models\Comment;
 use App\Models\Discount;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Symfony\Component\Validator\Constraints as Assert;
 
 class SpaceOrder extends BaseDeletableModel
 {
@@ -109,7 +105,7 @@ class SpaceOrder extends BaseDeletableModel
             $total += $item['price'];
         }
 
-        return $total;
+        return round($total, 2);
     }
 
     /**
