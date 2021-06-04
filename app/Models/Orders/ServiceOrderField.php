@@ -11,13 +11,6 @@ class ServiceOrderField extends BaseDeletableModel
     use HasFactory;
 
     /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'service_order_fields';
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var array

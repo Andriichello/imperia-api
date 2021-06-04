@@ -13,13 +13,6 @@ class TicketOrder extends BaseDeletableModel
     use HasFactory;
 
     /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'ticket_orders';
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var array

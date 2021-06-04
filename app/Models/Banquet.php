@@ -13,15 +13,6 @@ class Banquet extends BaseDeletableModel
 {
     use HasFactory;
 
-    // todo: create scope with soft deleted items
-
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'banquets';
-
     /**
      * The attributes that are mass assignable.
      *

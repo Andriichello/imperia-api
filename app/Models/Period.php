@@ -8,13 +8,6 @@ class Period extends BaseModel
 {
     use HasFactory;
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'periods';
-
     public $timestamps = false;
 
     /**

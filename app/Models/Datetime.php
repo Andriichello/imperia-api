@@ -8,13 +8,6 @@ class Datetime extends BaseModel
 {
     use HasFactory;
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'datetimes';
-
     public $timestamps = false;
 
     /**

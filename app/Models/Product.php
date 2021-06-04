@@ -10,13 +10,6 @@ class Product extends BaseDeletableModel
     use HasFactory;
 
     /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'products';
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var array

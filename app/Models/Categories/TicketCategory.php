@@ -11,13 +11,6 @@ class TicketCategory extends BaseDeletableModel
     use HasFactory;
 
     /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'ticket_categories';
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var array
