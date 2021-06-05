@@ -30,75 +30,37 @@ class Order extends BaseDeletableModel
      */
     public static function getTypes()
     {
+        return array_keys(self::getTypeModels());
+    }
+
+    /**
+     * Get available types of categories.
+     *
+     * @return string[]
+     */
+    public static function getTypeModels()
+    {
         return [
-            'space',
-            'ticket',
-            'service',
-            'product',
+            'space' => SpaceOrder::class,
+            'ticket' => TicketOrder::class,
+            'service' => ServiceOrder::class,
+            'product' => ProductOrder::class,
         ];
     }
 
     /**
-     * Get model class for specified type.
+     * Get available types of categories.
      *
-     * @return string|null
-     * @var string $type
+     * @return string[]
      */
-    public static function getTypeModelClass($type)
+    public static function getTypeFields()
     {
-        switch ($type) {
-            case 'space':
-                return Space::class;
-            case 'ticket':
-                return Ticket::class;
-            case 'service':
-                return Service::class;
-            case 'product':
-                return Product::class;
-        }
-        return null;
-    }
-
-    /**
-     * Get model class for specified type.
-     *
-     * @return string|null
-     * @var string $type
-     */
-    public static function getTypeOrderClass($type)
-    {
-        switch ($type) {
-            case 'space':
-                return SpaceOrder::class;
-            case 'ticket':
-                return TicketOrder::class;
-            case 'service':
-                return ServiceOrder::class;
-            case 'product':
-                return ProductOrder::class;
-        }
-        return null;
-    }
-
-    /**
-     * Get model class for specified type.
-     *
-     * @return string|null
-     * @var string $type
-     */
-    public static function getTypeOrderFieldClass($type)
-    {
-        switch ($type) {
-            case 'space':
-                return SpaceOrderField::class;
-            case 'ticket':
-                return TicketOrderField::class;
-            case 'service':
-                return ServiceOrderField::class;
-            case 'product':
-                return ProductOrderField::class;
-        }
-        return null;
+        return [
+            'space' => SpaceOrderField::class,
+            'ticket' => TicketOrderField::class,
+            'service' => ServiceOrderField::class,
+            'product' => ProductOrderField::class,
+        ];
     }
 
     /**
@@ -107,7 +69,7 @@ class Order extends BaseDeletableModel
      * @return string|null
      * @var string $type
      */
-    public static function getTypedOrderTableName($type)
+    public static function getTypeModelTableName($type)
     {
         if (in_array($type, self::getTypes())) {
             return "{$type}_orders";
@@ -121,7 +83,7 @@ class Order extends BaseDeletableModel
      * @return string|null
      * @var string $type
      */
-    public static function getTypedOrderFieldTableName($type)
+    public static function getTypeFieldTableName($type)
     {
         if (in_array($type, self::getTypes())) {
             return "{$type}_order_fields";

@@ -62,21 +62,9 @@ Route::group(['middleware' => ['auth.token']], function () {
         $routes = [];
         foreach (Route::getRoutes() as $route) {
             if (isset($route->action['controller']) && str_contains($route->action['controller'], 'App\\Http\\Controllers\\Implementations\\')) {
-                $controllerClass = $route->action['controller'];
-                $position = strpos($controllerClass, '@');
-                if ($position !== false) {
-                    $controllerClass = substr($controllerClass, 0, $position);
-                }
-
-                $controller = new $controllerClass();
-                if ($controller instanceof DynamicController) {
-                    $attributes = $controller->fillable();
-                }
-
                 $routes[] = [
                     'route' => $route->uri,
                     'methods' => $route->methods,
-                    'attributes' => $attributes ?? [],
                 ];
             }
         }

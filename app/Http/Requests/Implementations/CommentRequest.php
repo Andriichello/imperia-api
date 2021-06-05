@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Implementations;
 
-use App\Rules\RuleBuilders\AmountRule;
-use App\Rules\RuleBuilders\DateTimeRule;
+use App\Http\Requests\DynamicFormRequest;
 use App\Rules\RuleBuilders\IdentifierRule;
 use App\Rules\RuleBuilders\TextRule;
-use App\Models\Banquet;
 
-class CommentUpdateRequest extends DataFieldRequest
+class CommentRequest extends DynamicFormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -20,12 +18,20 @@ class CommentUpdateRequest extends DataFieldRequest
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules()
+    public function storeRules(bool $wrapped = true): array
+    {
+        $rules = [
+            'text' => (new TextRule(2, 50))->make(['required']),
+            'target_id' => (new IdentifierRule(0))->make(['required']),
+            'target_type' => (new TextRule(2, 35))->make(['required']),
+            'container_id' => (new IdentifierRule(0))->make(['required']),
+            'container_type' => (new TextRule(2, 35))->make(['required']),
+        ];
+
+        return $wrapped ? $this->wrapIntoData($rules) : $rules;
+    }
+
+    public function updateRules(bool $wrapped = true): array
     {
         $rules = [
             'id' => (new IdentifierRule(0))->make([
@@ -40,6 +46,6 @@ class CommentUpdateRequest extends DataFieldRequest
             'container_type' => (new TextRule(2, 35))->make(['required']),
         ];
 
-        return $this->nestWithData($rules);
+        return $wrapped ? $this->wrapIntoData($rules) : $rules;
     }
 }

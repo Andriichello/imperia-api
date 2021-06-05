@@ -1,14 +1,13 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Implementations;
 
+use App\Http\Requests\DynamicFormRequest;
 use App\Rules\RuleBuilders\AmountRule;
-use App\Rules\RuleBuilders\DateTimeRule;
 use App\Rules\RuleBuilders\IdentifierRule;
 use App\Rules\RuleBuilders\TextRule;
-use App\Models\Banquet;
 
-class ServiceStoreRequest extends DataFieldRequest
+class ServiceRequest extends DynamicFormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -20,12 +19,7 @@ class ServiceStoreRequest extends DataFieldRequest
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules()
+    public function storeRules(bool $wrapped = true): array
     {
         $rules = [
             'name' => (new TextRule(2, 50))->make(['required']),
@@ -36,6 +30,20 @@ class ServiceStoreRequest extends DataFieldRequest
             'category_id' => (new IdentifierRule(0))->make(['required']),
         ];
 
-        return $this->nestWithData($rules);
+        return $wrapped ? $this->wrapIntoData($rules) : $rules;
+    }
+
+    public function updateRules(bool $wrapped = true): array
+    {
+        $rules = [
+            'name' => (new TextRule(2, 50))->make(),
+            'description' => (new TextRule(2, 100))->make(['nullable']),
+            'once_paid_price' => (new AmountRule(0))->make(['nullable']),
+            'hourly_paid_price' => (new AmountRule(0))->make(['nullable']),
+            'period_id' => (new IdentifierRule(0))->make(),
+            'category_id' => (new IdentifierRule(0))->make(),
+        ];
+
+        return $wrapped ? $this->wrapIntoData($rules) : $rules;
     }
 }

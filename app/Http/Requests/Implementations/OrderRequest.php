@@ -1,60 +1,38 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Implementations;
 
+use App\Http\Requests\DynamicTypedFormRequest;
+use App\Models\Orders\Order;
 use App\Rules\RuleBuilders\AmountRule;
 use App\Rules\RuleBuilders\DateTimeRule;
 use App\Rules\RuleBuilders\IdentifierRule;
-use App\Rules\RuleBuilders\TextRule;
-use App\Models\Banquet;
 
-class OrderUpdateRequest extends DataFieldRequest
+class OrderRequest extends DynamicTypedFormRequest
 {
-    /**
-     * Order type.
-     *
-     * @var string
-     */
-    protected string $type;
-
-    /**
-     * Get order type.
-     *
-     * @return string
-     */
-    public function type(): string
+    public function getTypes(): array
     {
-        return $this->type;
+        return Order::getTypes();
     }
 
-    /**
-     * Set order type.
-     *
-     * @param string $type
-     * @return static
-     */
-    public function setType(string $type): static
+    public function rules(?string $action = null): array
     {
-        $this->type = $type;
-        return $this;
+        $this->type = $this->getType($this->type);
+        return parent::rules($action);
     }
 
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
+    public function storeRules(bool $wrapped = true): array
     {
-        return true;
+        $rules = [
+            'banquet_id' => (new IdentifierRule(0))->make(['required']),
+            'discount_id' => (new IdentifierRule(0))->make(),
+        ];
+
+        $rules = array_merge($rules, $this->itemRules());
+        return $wrapped ? $this->wrapIntoData($rules) : $rules;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules()
+    public function updateRules(bool $wrapped = true): array
     {
         $rules = [
             'id' => (new IdentifierRule(0))->make([
@@ -64,11 +42,20 @@ class OrderUpdateRequest extends DataFieldRequest
                 'required_without:' . $this->dataFieldPrefix() . 'id'
             ]),
             'discount_id' => (new IdentifierRule(0))->make(),
+        ];
+
+        $rules = array_merge($rules, $this->itemRules());
+        return $wrapped ? $this->wrapIntoData($rules) : $rules;
+    }
+
+    public function itemRules(?string $type = null): array
+    {
+        $rules = [
             'items' => ['nullable', 'array'],
             'items.*.id' => (new IdentifierRule(0))->make(['required']),
         ];
 
-        switch ($this->type()) {
+        switch ($this->getType()) {
             case 'space':
                 $rules['items.*.beg_datetime'] = (new DateTimeRule())->make(['required']);
                 $rules['items.*.end_datetime'] = (new DateTimeRule())->make(['required']);
@@ -84,7 +71,6 @@ class OrderUpdateRequest extends DataFieldRequest
                 $rules['items.*.amount'] = (new AmountRule(0))->make(['required']);
                 break;
         }
-
-        return $this->nestWithData($rules);
+        return $rules;
     }
 }

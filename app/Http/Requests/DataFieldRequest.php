@@ -49,6 +49,12 @@ class DataFieldRequest extends FormRequest
         return "$this->dataFieldName.";
     }
 
+    public function __construct(string $dataFieldName = 'data')
+    {
+        parent::__construct();
+        $this->setDataFieldName($dataFieldName);
+    }
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -105,12 +111,13 @@ class DataFieldRequest extends FormRequest
      * Appends $dataFieldName as a prefix to all array string keys.
      *
      * @param array $rules
+     * @param string|null $prefix
      * @return array
      */
-    public function nestWithData(array $rules): array
+    public function wrapIntoData(array $rules, ?string $prefix = null): array
     {
-        if (!empty($this->dataFieldPrefix())) {
-            $prefix = $this->dataFieldPrefix();
+        $prefix = $prefix ?? $this->dataFieldPrefix();
+        if (!empty($prefix)) {
             foreach ($rules as $key => $value) {
                 if (is_string($key)) {
                     $rules[$prefix . $key] = $value;

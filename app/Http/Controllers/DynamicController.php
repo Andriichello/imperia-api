@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Custom\AttributeExtractionException;
 use App\Http\Controllers\Controller as BaseController;
-use App\Http\Requests\DataFieldRequest;
+use App\Http\Requests\DynamicFormRequest;
 use App\Http\Resources\PaginatedResourceCollection;
 use App\Models\BaseDeletableModel;
 use Exception;
@@ -15,7 +15,6 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
 
@@ -24,9 +23,26 @@ class DynamicController extends BaseController
     /**
      * Controller's model class name. Must extend BaseModel.
      *
-     * @var string
+     * @var ?string
      */
     protected ?string $model;
+
+    /**
+     * Dynamic form request request.
+     *
+     * @var DynamicFormRequest
+     */
+    protected DynamicFormRequest $request;
+
+    /**
+     * Get dynamic form request
+     *
+     * @return DynamicFormRequest
+     */
+    public function request(): DynamicFormRequest
+    {
+        return $this->request;
+    }
 
     /**
      * Model's primary key names.
@@ -56,20 +72,10 @@ class DynamicController extends BaseController
      */
     protected bool $softDelete = true;
 
-    /**
-     * Controller's store method form request class name. Must extend DataFieldRequest.
-     *
-     * @var ?string
-     */
-    protected ?string $storeFormRequest = DataFieldRequest::class;
-
-    /**
-     * Controller's update method form request class name. Must extend DataFieldRequest.
-     *
-     * @var ?string
-     */
-    protected ?string $updateFormRequest = DataFieldRequest::class;
-
+    public function __construct(DynamicFormRequest $request)
+    {
+        $this->request = $request;
+    }
 
     /**
      * Get filtered and paginated collection of models.
@@ -78,12 +84,12 @@ class DynamicController extends BaseController
      */
     public function index(): Response
     {
-        $collection = $this->allModels(\request());
+        $collection = $this->allModels($this->request());
         if ($collection->count() === 0) {
             abort(404, 'Not found');
         }
 
-        return $this->toResponse(\request(), new PaginatedResourceCollection($collection));
+        return $this->toResponse($this->request(), new PaginatedResourceCollection($collection));
     }
 
     /**
@@ -94,12 +100,12 @@ class DynamicController extends BaseController
      */
     public function show(mixed $id = null): Response
     {
-        $instance = $this->findModel(\request(), $id);
+        $instance = $this->findModel($this->request(), $id);
         if (!isset($instance)) {
             abort(404, 'Not found');
         }
 
-        return $this->toResponse(\request(), new JsonResource($instance));
+        return $this->toResponse($this->request(), new JsonResource($instance));
     }
 
     /**
@@ -109,10 +115,9 @@ class DynamicController extends BaseController
      */
     public function store(): Response
     {
-        $request = App::make($this->storeFormRequest);
-        $instance = $this->createModel($request->validated()[$request->dataFieldName()]);
+        $instance = $this->createModel($this->request()->validated()[$this->request()->dataFieldName()]);
 
-        return $this->toResponse($request, new JsonResource($instance), true, 201);
+        return $this->toResponse($this->request(), new JsonResource($instance), true, 201);
     }
 
     /**
@@ -123,23 +128,22 @@ class DynamicController extends BaseController
      */
     public function update(mixed $id = null): Response
     {
-        $request = App::make($this->updateFormRequest);
-        $instance = $this->findModel($request, $id, $request->dataFieldName());
+        $instance = $this->findModel($this->request(), $id, $this->request()->dataFieldName());
 
         if (!isset($instance)) {
             abort(404, 'Not found');
         }
 
-        $restore = $request->get('restore', false);
+        $restore = $this->request()->get('restore', false);
         if ($restore && !$this->restoreModel($instance)) {
             abort(520, 'Error while restoring record in the database.');
         }
 
-        if (!$this->updateModel($instance, $request->validated()[$request->dataFieldName()])) {
+        if (!$this->updateModel($instance, $this->request()->validated()[$this->request()->dataFieldName()])) {
             abort(520, 'Error while updating record in the database.');
         }
 
-        return $this->toResponse($request, new JsonResource($instance));
+        return $this->toResponse($this->request(), new JsonResource($instance));
     }
 
     /**
@@ -150,29 +154,28 @@ class DynamicController extends BaseController
      */
     public function destroy(mixed $id = null): Response
     {
-        $request = \request();
         $instance = $this->findModel($id);
 
         if (!isset($instance)) {
             abort(404, 'Not found');
         }
 
-        if (!$this->destroyModel($instance, $request->get('soft', $this->softDelete))) {
+        if (!$this->destroyModel($instance, $this->request()->get('soft', $this->softDelete))) {
             abort(520, 'Error while deleting record from the database.');
         }
 
-        return $this->toResponse($request, []);
+        return $this->toResponse($this->request(), []);
     }
 
     /**
      * Find instance of model by it's primary keys.
      *
-     * @param Request $request
+     * @param DynamicFormRequest $request
      * @param mixed|null $id
      * @param string|null $dataKey
      * @return Model|null
      */
-    public function findModel(Request $request, mixed $id = null, ?string $dataKey = null): ?Model
+    public function findModel(DynamicFormRequest $request, mixed $id = null, ?string $dataKey = null): ?Model
     {
         if (!isset($id)) {
             if (isset($dataKey)) {
@@ -207,12 +210,12 @@ class DynamicController extends BaseController
     /**
      * Get filtered and sorted collection of the model instances.
      *
-     * @param Request $request
+     * @param DynamicFormRequest $request
      * @param array|null $filters where conditions [[key, comparison, value]]
      * @param array|null $sorts orderBy conditions [key, order]
      * @return Collection
      */
-    public function allModels(Request $request, ?array $filters = null, ?array $sorts = null): Collection
+    public function allModels(DynamicFormRequest $request, ?array $filters = null, ?array $sorts = null): Collection
     {
         if (empty($filters)) {
             $filters = $this->whereConditions($request->all(), true, true);
@@ -464,22 +467,6 @@ class DynamicController extends BaseController
     public function currentFilters(): array
     {
         return $this->currentFilters;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function storeFormRequest(): ?string
-    {
-        return $this->storeFormRequest;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function updateFormRequest(): ?string
-    {
-        return $this->updateFormRequest;
     }
 
     /**

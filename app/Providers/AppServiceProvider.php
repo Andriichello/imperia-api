@@ -3,16 +3,20 @@
 namespace App\Providers;
 
 use App\Http\Controllers\Implementations\BanquetController;
-use App\Http\Requests\BanquetStoreRequest;
-use App\Http\Requests\BanquetUpdateRequest;
-use App\Http\Requests\StoreRequest;
-use App\Http\Requests\UpdateRequest;
+use App\Http\Controllers\Implementations\CategoryController;
+use App\Http\Controllers\Implementations\CommentController;
+use App\Http\Controllers\Implementations\OrderController;
+use App\Http\Requests\Implementations\BanquetRequest;
+use App\Http\Requests\Implementations\BanquetStateRequest;
+use App\Http\Requests\Implementations\CategoryRequest;
+use App\Http\Requests\Implementations\CommentRequest;
+use App\Http\Requests\Implementations\OrderRequest;
+use App\Http\Requests\DynamicFormRequest;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 

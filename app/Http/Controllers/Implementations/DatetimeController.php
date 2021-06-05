@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Implementations;
 
 use App\Http\Controllers\DynamicController;
-use App\Http\Requests\DatetimeStoreRequest;
-use App\Http\Requests\DatetimeUpdateRequest;
+use App\Http\Requests\Implementations\DatetimeRequest;
 use App\Models\Datetime;
 
 class DatetimeController extends DynamicController
@@ -12,21 +11,12 @@ class DatetimeController extends DynamicController
     /**
      * Controller's model class name.
      *
-     * @var string
+     * @var ?string
      */
     protected ?string $model = Datetime::class;
 
-    /**
-     * Controller's store method form request class name. Must extend DataFieldRequest.
-     *
-     * @var ?string
-     */
-    protected ?string $storeFormRequest = DatetimeStoreRequest::class;
-
-    /**
-     * Controller's update method form request class name. Must extend DataFieldRequest.
-     *
-     * @var ?string
-     */
-    protected ?string $updateFormRequest = DatetimeUpdateRequest::class;
+    public function __construct(DatetimeRequest $request)
+    {
+        parent::__construct($request);
+    }
 }

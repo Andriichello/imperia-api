@@ -32,64 +32,24 @@ class Category extends BaseDeletableModel
      */
     public static function getTypes()
     {
+        return array_keys(self::getTypeModels());
+    }
+
+    /**
+     * Get available type models.
+     *
+     * @return string[]
+     */
+    public static function getTypeModels()
+    {
         return [
-            'menu',
-            'product',
-            'space',
-            'ticket',
-            'service',
-            'discount',
+            'menu' => MenuCategory::class,
+            'product' => ProductCategory::class,
+            'space' => SpaceCategory::class,
+            'ticket' => TicketCategory::class,
+            'service' => ServiceCategory::class,
+            'discount' => DiscountCategory::class,
         ];
-    }
-
-    /**
-     * Get model class for specified type.
-     *
-     * @return string|null
-     * @var string $type
-     */
-    public static function getTypeModelClass($type)
-    {
-        switch ($type) {
-            case 'space':
-                return Space::class;
-            case 'menu':
-                return ImperiaMenu::class;
-            case 'product':
-                return Product::class;
-            case 'ticket':
-                return Ticket::class;
-            case 'service':
-                return Service::class;
-            case 'discount':
-                return Discount::class;
-        }
-        return null;
-    }
-
-    /**
-     * Get model class for specified type.
-     *
-     * @return string|null
-     * @var string $type
-     */
-    public static function getTypeCategoryClass($type)
-    {
-        switch ($type) {
-            case 'space':
-                return SpaceCategory::class;
-            case 'menu':
-                return MenuCategory::class;
-            case 'product':
-                return ProductCategory::class;
-            case 'ticket':
-                return TicketCategory::class;
-            case 'service':
-                return ServiceCategory::class;
-            case 'discount':
-                return DiscountCategory::class;
-        }
-        return null;
     }
 
     /**
@@ -98,7 +58,7 @@ class Category extends BaseDeletableModel
      * @return string|null
      * @var string $type
      */
-    public static function getTypedTableName($type)
+    public static function getTypeTableName($type)
     {
         if (in_array($type, self::getTypes())) {
             return "{$type}_categories";

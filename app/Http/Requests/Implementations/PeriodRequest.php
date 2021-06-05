@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Implementations;
 
-use App\Rules\RuleBuilders\AmountRule;
-use App\Rules\RuleBuilders\DateTimeRule;
+use App\Http\Requests\DynamicFormRequest;
 use App\Rules\RuleBuilders\IdentifierRule;
 use App\Rules\RuleBuilders\TextRule;
-use App\Models\Banquet;
 
-class PeriodStoreRequest extends DataFieldRequest
+class PeriodRequest extends DynamicFormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -20,12 +18,7 @@ class PeriodStoreRequest extends DataFieldRequest
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules()
+    public function storeRules(bool $wrapped = true): array
     {
         $rules = [
             'beg_datetime_id' => (new IdentifierRule(0))->make([
@@ -39,6 +32,18 @@ class PeriodStoreRequest extends DataFieldRequest
             'is_templatable' => ['required', 'boolean'],
         ];
 
-        return $this->nestWithData($rules);
+        return $wrapped ? $this->wrapIntoData($rules) : $rules;
+    }
+
+    public function updateRules(bool $wrapped = true): array
+    {
+        $rules = [
+            'beg_datetime_id' => (new IdentifierRule(0))->make(),
+            'end_datetime_id' => (new IdentifierRule(0))->make(),
+            'weekdays' => (new TextRule(0, 13, TextRule::PERIOD_WEEKDAYS_REGEX))->make(),
+            'is_templatable' => ['required', 'boolean'],
+        ];
+
+        return $wrapped ? $this->wrapIntoData($rules) : $rules;
     }
 }

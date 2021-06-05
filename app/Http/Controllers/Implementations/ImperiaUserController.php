@@ -3,37 +3,25 @@
 namespace App\Http\Controllers\Implementations;
 
 use App\Http\Controllers\DynamicController;
-use App\Http\Requests\ImperiaUserLoginRequest;
-use App\Http\Requests\ImperiaUserStoreRequest;
-use App\Http\Requests\ImperiaUserUpdateRequest;
+use App\Http\Requests\Implementations\ImperiaUserRequest;
 use App\Models\ImperiaUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\App;
 
 class ImperiaUserController extends DynamicController
 {
     /**
      * Controller's model class name.
      *
-     * @var string
+     * @var ?string
      */
     protected ?string $model = ImperiaUser::class;
 
-    /**
-     * Controller's store method form request class name. Must extend DataFieldRequest.
-     *
-     * @var ?string
-     */
-    protected ?string $storeFormRequest = ImperiaUserStoreRequest::class;
-
-    /**
-     * Controller's update method form request class name. Must extend DataFieldRequest.
-     *
-     * @var ?string
-     */
-    protected ?string $updateFormRequest = ImperiaUserUpdateRequest::class;
+    public function __construct(ImperiaUserRequest $request)
+    {
+        parent::__construct($request);
+    }
 
     /**
      * Get the user with api_token from name and password.
@@ -42,8 +30,7 @@ class ImperiaUserController extends DynamicController
      */
     public function login()
     {
-        $request = App::make(ImperiaUserLoginRequest::class);
-        $data = $request->validated();
+        $data = $this->request()->validated();
 
         if (isset($data['api_token'])) {
             unset($data['name']);
@@ -58,7 +45,7 @@ class ImperiaUserController extends DynamicController
             abort(401, 'Invalid credentials');
         }
 
-        return $this->toResponse(request(), new JsonResource($user));
+        return $this->toResponse($this->request(), new JsonResource($user));
     }
 
     /**

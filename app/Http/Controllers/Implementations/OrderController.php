@@ -2,73 +2,29 @@
 
 namespace App\Http\Controllers\Implementations;
 
-use App\Http\Controllers\DynamicController;
-use App\Http\Requests\OrderStoreRequest;
-use App\Http\Requests\OrderUpdateRequest;
+use App\Http\Controllers\DynamicTypedController;
+use App\Http\Requests\Implementations\OrderRequest;
 use App\Models\Orders\Order;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
 
-class OrderController extends DynamicController
+class OrderController extends DynamicTypedController
 {
     /**
      * Controller's model class name.
      *
-     * @var string
+     * @var ?string
      */
     protected ?string $model = Order::class;
 
-    /**
-     * Controller's store method form request class name. Must extend DataFieldRequest.
-     *
-     * @var ?string
-     */
-    protected ?string $storeFormRequest = OrderStoreRequest::class;
-
-    /**
-     * Controller's update method form request class name. Must extend DataFieldRequest.
-     *
-     * @var ?string
-     */
-    protected ?string $updateFormRequest = OrderUpdateRequest::class;
-
-    /**
-     * Current type.
-     *
-     * @var string
-     */
-    protected $currentType;
-
-    public function index($type = null): Response
+    public function getTypeModels(): array
     {
-        $this->switchModel($type);
-        return parent::index();
+        return Order::getTypeModels();
     }
 
-    public function show($type = null, $id = null): Response
+    public function __construct(OrderRequest $request, ?string $type = null)
     {
-        $this->switchModel($type);
-        return parent::show($id);
-    }
-
-    public function store($type = null): Response
-    {
-        $this->switchModel($type);
-        return parent::store();
-    }
-
-    public function update($type = null, $id = null): Response
-    {
-        $this->switchModel($type);
-        return parent::update($id);
-    }
-
-    public function destroy($type = null, $id = null): Response
-    {
-        $this->switchModel($type);
-        return parent::destroy($id);
+        parent::__construct($request, $type);
     }
 
     /**
@@ -158,9 +114,9 @@ class OrderController extends DynamicController
                     }
                 } // there was at least one item but now there isn't
                 else if (empty($newItems) && !empty($instance->items)) {
-                    $itemIdKey = $this->currentType . '_id';
+                    $itemIdKey = $this->getType() . '_id';
                     foreach ($instance->fields as $oldField) {
-                        $fieldsTableName = Order::getTypedOrderFieldTableName($this->currentType);
+                        $fieldsTableName = Order::getTypeFieldTableName($this->getType());
                         $success = DB::table($fieldsTableName)
                             ->where('order_id', $oldField->order_id)
                             ->where($itemIdKey, $oldField->$itemIdKey)
@@ -174,7 +130,7 @@ class OrderController extends DynamicController
                 else {
                     $newFields = $this->toFields($instance, $newItems);
 
-                    $itemIdKey = $this->currentType . '_id';
+                    $itemIdKey = $this->getType() . '_id';
                     foreach ($instance->fields as $oldField) {
                         $isThere = false;
                         foreach ($newFields as $newField) {
@@ -184,7 +140,7 @@ class OrderController extends DynamicController
                         }
 
                         if (!$isThere) {
-                            $fieldsTableName = Order::getTypedOrderFieldTableName($this->currentType);
+                            $fieldsTableName = Order::getTypeFieldTableName($this->getType());
                             $success = DB::table($fieldsTableName)
                                 ->where('order_id', $oldField->order_id)
                                 ->where($itemIdKey, $oldField->$itemIdKey)
@@ -208,7 +164,7 @@ class OrderController extends DynamicController
                                     }
                                 }
                                 if (!empty($updates)) {
-                                    $fieldsTableName = Order::getTypedOrderFieldTableName($this->currentType);
+                                    $fieldsTableName = Order::getTypeFieldTableName($this->getType());
                                     $success = DB::table($fieldsTableName)
                                         ->where('order_id', $oldField->order_id)
                                         ->where($itemIdKey, $oldField->$itemIdKey)
@@ -274,12 +230,12 @@ class OrderController extends DynamicController
     {
         $fields = [];
 
-        $itemIdKey = $this->currentType . '_id';
+        $itemIdKey = $this->getType() . '_id';
         $orderId = data_get($order, 'id');
         foreach ($items as $item) {
             $itemId = data_get($item, 'id');
             if (isset($itemId) && isset($orderId)) {
-                $field = new (Order::getTypeOrderFieldClass($this->currentType));
+                $field = new (Order::getTypeFields()[$this->getType()]);
                 $field->fill($item);
                 $field->order_id = $orderId;
                 $field->$itemIdKey = $itemId;
@@ -288,35 +244,5 @@ class OrderController extends DynamicController
             }
         }
         return $fields;
-    }
-
-    /**
-     * Switches controller's model class name depending on specified type.
-     *
-     * @param string|null $dataKey
-     * @param array|null $data
-     * @return void
-     *
-     * @throws \Exception
-     */
-    public function switchModel($data = null, $dataKey = null)
-    {
-        if (empty($dataKey)) {
-            if (is_array($data)) {
-                $type = $data[array_key_first($data)];
-            } else {
-                $type = $data;
-            }
-        } else {
-            $type = data_get($data, $dataKey);
-        }
-
-        if (!in_array($type, Order::getTypes())) {
-            throw ValidationException::withMessages([
-                'type' => ['A type attribute must be one of (' . implode(', ', Order::getTypes()) . ').'],
-            ]);
-        }
-
-        $this->model = Order::getTypeOrderClass($this->currentType = $type);
     }
 }

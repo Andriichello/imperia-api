@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Implementations;
 
 use App\Http\Controllers\DynamicController;
-use App\Http\Requests\SpaceStoreRequest;
-use App\Http\Requests\SpaceUpdateRequest;
+use App\Http\Requests\DynamicFormRequest;
+use App\Http\Requests\Implementations\SpaceRequest;
 use App\Models\Space;
 use App\Rules\RuleBuilders\DateTimeRule;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 
@@ -16,33 +17,24 @@ class SpaceController extends DynamicController
     /**
      * Controller's model class name.
      *
-     * @var string
+     * @var ?string
      */
     protected ?string $model = Space::class;
 
-    /**
-     * Controller's store method form request class name. Must extend DataFieldRequest.
-     *
-     * @var ?string
-     */
-    protected ?string $storeFormRequest = SpaceStoreRequest::class;
-
-    /**
-     * Controller's update method form request class name. Must extend DataFieldRequest.
-     *
-     * @var ?string
-     */
-    protected ?string $updateFormRequest = SpaceUpdateRequest::class;
+    public function __construct(SpaceRequest $request)
+    {
+        parent::__construct($request);
+    }
 
     /**
      * Find instance of model by it's primary keys.
      *
-     * @param mixed $request
+     * @param DynamicFormRequest $request
      * @param mixed|null $id
      * @param string|null $dataKey
-     * @return null
+     * @return Model|null
      */
-    public function findModel($request, mixed $id = null, $dataKey = null)
+    public function findModel(DynamicFormRequest $request, mixed $id = null, ?string $dataKey = null): ?Model
     {
         $instance = parent::findModel($request, $id, $dataKey);
 
@@ -93,7 +85,7 @@ class SpaceController extends DynamicController
      * @return \Illuminate\Support\Collection
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function allModels($filters = null, $sorts = null, $trashed = null)
+    public function allModels($filters = null, $sorts = null, $trashed = null): Collection
     {
         $collection = parent::allModels($filters, $sorts, $trashed);
         if ($collection->count() === 0) {
