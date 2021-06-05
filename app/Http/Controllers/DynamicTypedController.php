@@ -81,7 +81,7 @@ class DynamicTypedController extends DynamicController
         $model = data_get($this->getTypeModels(), $type);
         if (empty($model)) {
             throw ValidationException::withMessages([
-                'type' => ['A :attribute field must be one of (' . implode(',', array_keys($this->getTypeModels())) . ').'],
+                'type' => [trans('validation.custom.type.in')],
             ]);
         }
 

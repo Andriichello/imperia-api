@@ -25,7 +25,7 @@ class TicketRequest extends DynamicFormRequest
             'name' => (new TextRule(2, 50))->make(['required']),
             'description' => (new TextRule(2, 100))->make(['nullable']),
             'price' => (new AmountRule(0))->make(['required']),
-            'period_id' => (new IdentifierRule(0))->make(),
+            'period_id' => (new IdentifierRule(0))->make(['nullable']),
             'category_id' => (new IdentifierRule(0))->make(['required']),
         ];
 
@@ -38,7 +38,7 @@ class TicketRequest extends DynamicFormRequest
             'name' => (new TextRule(2, 50))->make(['required']),
             'description' => (new TextRule(2, 100))->make(['nullable']),
             'price' => (new AmountRule(0))->make(['required']),
-            'period_id' => (new IdentifierRule(0))->make(),
+            'period_id' => (new IdentifierRule(0))->make(['nullable']),
             'category_id' => (new IdentifierRule(0))->make(['required']),
         ];
 

@@ -26,7 +26,7 @@ class ServiceRequest extends DynamicFormRequest
             'description' => (new TextRule(2, 100))->make(['nullable']),
             'once_paid_price' => (new AmountRule(0))->make(['nullable', 'required_without:hourly_paid_price']),
             'hourly_paid_price' => (new AmountRule(0))->make(['nullable', 'required_without:once_paid_price']),
-            'period_id' => (new IdentifierRule(0))->make(['required']),
+            'period_id' => (new IdentifierRule(0))->make(['nullable']),
             'category_id' => (new IdentifierRule(0))->make(['required']),
         ];
 
@@ -40,7 +40,7 @@ class ServiceRequest extends DynamicFormRequest
             'description' => (new TextRule(2, 100))->make(['nullable']),
             'once_paid_price' => (new AmountRule(0))->make(['nullable']),
             'hourly_paid_price' => (new AmountRule(0))->make(['nullable']),
-            'period_id' => (new IdentifierRule(0))->make(),
+            'period_id' => (new IdentifierRule(0))->make(['nullable']),
             'category_id' => (new IdentifierRule(0))->make(),
         ];
 

@@ -23,7 +23,7 @@ class ImperiaMenuRequest extends DynamicFormRequest
         $rules = [
             'name' => (new TextRule(2, 50))->make(['required']),
             'description' => (new TextRule(2, 100))->make(['nullable']),
-            'period_id' => (new IdentifierRule(0))->make(),
+            'period_id' => (new IdentifierRule(0))->make(['nullable']),
             'category_id' => (new IdentifierRule(0))->make(['required']),
         ];
 
@@ -36,7 +36,7 @@ class ImperiaMenuRequest extends DynamicFormRequest
             'id' => (new IdentifierRule(0))->make(),
             'name' => (new TextRule(2, 50))->make(['required']),
             'description' => (new TextRule(2, 100))->make(['nullable']),
-            'period_id' => (new IdentifierRule(0))->make(),
+            'period_id' => (new IdentifierRule(0))->make(['nullable']),
             'category_id' => (new IdentifierRule(0))->make(['required']),
         ];
 

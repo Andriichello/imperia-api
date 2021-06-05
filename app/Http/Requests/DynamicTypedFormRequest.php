@@ -41,16 +41,6 @@ class DynamicTypedFormRequest extends DynamicFormRequest
         );
     }
 
-    public function messages()
-    {
-        return array_merge(
-            parent::messages(),
-            [
-                'type.in' => 'The :attribute field must be one of (:values)',
-            ]
-        );
-    }
-
     protected function prepareForValidation()
     {
         $this->merge([

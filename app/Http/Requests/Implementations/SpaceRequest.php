@@ -27,7 +27,7 @@ class SpaceRequest extends DynamicFormRequest
             'number' => (new AmountRule(0))->make(['required']),
             'floor' => (new AmountRule())->make(['required']),
             'price' => (new AmountRule(0))->make(['required']),
-            'period_id' => (new IdentifierRule(0))->make(),
+            'period_id' => (new IdentifierRule(0))->make(['nullable']),
             'category_id' => (new IdentifierRule(0))->make(['required']),
         ];
 
@@ -42,7 +42,7 @@ class SpaceRequest extends DynamicFormRequest
             'number' => (new AmountRule(0))->make(),
             'floor' => (new AmountRule())->make(),
             'price' => (new AmountRule(0))->make(),
-            'period_id' => (new IdentifierRule(0))->make(),
+            'period_id' => (new IdentifierRule(0))->make(['nullable']),
             'category_id' => (new IdentifierRule(0))->make(),
         ];
 

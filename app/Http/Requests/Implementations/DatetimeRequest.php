@@ -30,6 +30,7 @@ class DatetimeRequest extends DynamicFormRequest
 
         $rules = [
             'day' => (new AmountRule(1, 31))->make([
+                'nullable',
                 "required_if:{$this->dataFieldPrefix()}is_templatable,false",
                 'required_without_all:' . implode(',', [
                     $prefixed['month'],
@@ -39,6 +40,7 @@ class DatetimeRequest extends DynamicFormRequest
                 ])
             ]),
             'month' => (new AmountRule(1, 12))->make([
+                'nullable',
                 "required_if:{$this->dataFieldPrefix()}is_templatable,false",
                 'required_without_all:' . implode(',', [
                     $prefixed['day'],
@@ -48,6 +50,7 @@ class DatetimeRequest extends DynamicFormRequest
                 ])
             ]),
             'year' => (new AmountRule(1900, 2100))->make([
+                'nullable',
                 "required_if:{$this->dataFieldPrefix()}is_templatable,false",
                 'required_without_all:' . implode(',', [
                     $prefixed['day'],
@@ -57,6 +60,7 @@ class DatetimeRequest extends DynamicFormRequest
                 ])
             ]),
             'hours' => (new AmountRule(0, 23))->make([
+                'nullable',
                 "required_if:{$this->dataFieldPrefix()}is_templatable,false",
                 'required_without_all:' . implode(',', [
                     $prefixed['day'],
@@ -66,6 +70,7 @@ class DatetimeRequest extends DynamicFormRequest
                 ])
             ]),
             'minutes' => (new AmountRule(0, 59))->make([
+                'nullable',
                 "required_if:{$this->dataFieldPrefix()}is_templatable,false",
                 'required_without_all:' . implode(',', [
                     $prefixed['day'],
@@ -84,11 +89,11 @@ class DatetimeRequest extends DynamicFormRequest
     {
         $rules = [
             'id' => (new IdentifierRule(0))->make(['required']),
-            'day' => (new AmountRule(1, 31))->make(),
-            'month' => (new AmountRule(1, 12))->make(),
-            'year' => (new AmountRule(1900, 2100))->make(),
-            'hours' => (new AmountRule(0, 23))->make(),
-            'minutes' => (new AmountRule(0, 59))->make(),
+            'day' => (new AmountRule(1, 31))->make(['nullable']),
+            'month' => (new AmountRule(1, 12))->make(['nullable']),
+            'year' => (new AmountRule(1900, 2100))->make(['nullable']),
+            'hours' => (new AmountRule(0, 23))->make(['nullable']),
+            'minutes' => (new AmountRule(0, 59))->make(['nullable']),
             'is_templatable' => ['boolean'],
         ];
 

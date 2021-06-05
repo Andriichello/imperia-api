@@ -22,10 +22,12 @@ class PeriodRequest extends DynamicFormRequest
     {
         $rules = [
             'beg_datetime_id' => (new IdentifierRule(0))->make([
+                'nullable',
                 "required_if:{$this->dataFieldPrefix()}is_templatable,false",
                 "required_without:{$this->dataFieldPrefix()}end_datetime_id"
             ]),
             'end_datetime_id' => (new IdentifierRule(0))->make([
+                'nullable',
                 "required_if:{$this->dataFieldPrefix()}is_templatable,false",
                 "required_without:{$this->dataFieldPrefix()}beg_datetime_id"]),
             'weekdays' => (new TextRule(0, 13, TextRule::PERIOD_WEEKDAYS_REGEX))->make(),
@@ -38,8 +40,8 @@ class PeriodRequest extends DynamicFormRequest
     public function updateRules(bool $wrapped = true): array
     {
         $rules = [
-            'beg_datetime_id' => (new IdentifierRule(0))->make(),
-            'end_datetime_id' => (new IdentifierRule(0))->make(),
+            'beg_datetime_id' => (new IdentifierRule(0))->make(['nullable']),
+            'end_datetime_id' => (new IdentifierRule(0))->make(['nullable']),
             'weekdays' => (new TextRule(0, 13, TextRule::PERIOD_WEEKDAYS_REGEX))->make(),
             'is_templatable' => ['required', 'boolean'],
         ];

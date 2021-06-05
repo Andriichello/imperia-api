@@ -25,7 +25,7 @@ class OrderRequest extends DynamicTypedFormRequest
     {
         $rules = [
             'banquet_id' => (new IdentifierRule(0))->make(['required']),
-            'discount_id' => (new IdentifierRule(0))->make(),
+            'discount_id' => (new IdentifierRule(0))->make(['nullable']),
         ];
 
         $rules = array_merge($rules, $this->itemRules());
@@ -41,7 +41,7 @@ class OrderRequest extends DynamicTypedFormRequest
             'banquet_id' => (new IdentifierRule(0))->make([
                 'required_without:' . $this->dataFieldPrefix() . 'id'
             ]),
-            'discount_id' => (new IdentifierRule(0))->make(),
+            'discount_id' => (new IdentifierRule(0))->make(['nullable']),
         ];
 
         $rules = array_merge($rules, $this->itemRules());

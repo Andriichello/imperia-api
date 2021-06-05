@@ -25,7 +25,7 @@ class DiscountRequest extends DynamicFormRequest
             'description' => (new TextRule(2, 100))->make(['nullable']),
             'amount' => (new TextRule(0))->make(['required_without:percent']),
             'percent' => (new TextRule(0, 100))->make(['required_without:amount']),
-            'period_id' => (new IdentifierRule(0))->make(),
+            'period_id' => (new IdentifierRule(0))->make(['nullable']),
             'category_id' => (new IdentifierRule(0))->make(['required']),
         ];
 
@@ -40,7 +40,7 @@ class DiscountRequest extends DynamicFormRequest
             'description' => (new TextRule(2, 100))->make(['nullable']),
             'amount' => (new TextRule(0))->make(),
             'percent' => (new TextRule(0, 100))->make(),
-            'period_id' => (new IdentifierRule(0))->make(),
+            'period_id' => (new IdentifierRule(0))->make(['nullable']),
             'category_id' => (new IdentifierRule(0))->make(),
         ];
 
