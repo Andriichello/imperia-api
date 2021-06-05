@@ -328,13 +328,13 @@ class DynamicController extends BaseController
         // displaying applied filtering parameters, should be removed on release
         $array['filters'] = $this->currentFilters;
 
-        if ($data instanceof JsonResource) {
-            $array['data'] = $data->toArray($request);
-        } else if ($data instanceof PaginatedResourceCollection) {
+        if ($data instanceof PaginatedResourceCollection) {
             $array = array_merge(
                 $array,
                 $data->toArray($request),
             );
+        } else if ($data instanceof JsonResource) {
+            $array['data']  = $data->toArray($request);
         } else if (is_array($data)) {
             $array = array_merge(
                 $array,
