@@ -39,7 +39,7 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        if (str_ends_with(Route::getCurrentRoute()->getPrefix(), 'admin')) {
+        if (Route::getCurrentRoute() === null || str_ends_with(Route::getCurrentRoute()->getPrefix(), 'admin')) {
             return;
         }
 
