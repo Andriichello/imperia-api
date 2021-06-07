@@ -32,6 +32,9 @@ class ImperiaRole extends BaseDeletableModel
         'can_insert' => 'boolean',
         'can_modify' => 'boolean',
         'is_owner' => 'boolean',
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+        'deleted_at' => 'datetime:Y-m-d H:i:s',
     ];
 
     /**

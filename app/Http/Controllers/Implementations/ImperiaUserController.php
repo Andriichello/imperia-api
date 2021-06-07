@@ -37,10 +37,7 @@ class ImperiaUserController extends DynamicController
             unset($data['password']);
         }
 
-        $user = ImperiaUser::select()
-            ->where($data)
-            ->first();
-
+        $user = ImperiaUser::where($data)->first();
         if (!isset($user)) {
             abort(401, 'Invalid credentials');
         }
