@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller as BaseController;
-use App\Http\Controllers\Traits\DynamicallyFilterable;
-use App\Http\Controllers\Traits\DynamicallyIdentifiable;
-use App\Http\Controllers\Traits\DynamicallySortable;
+use App\Http\Controllers\Traits\Filterable;
+use App\Http\Controllers\Traits\Identifiable;
+use App\Http\Controllers\Traits\Sortable;
 use App\Http\Requests\DynamicFormRequest;
 use App\Http\Resources\PaginatedResourceCollection;
 use App\Models\BaseDeletableModel;
@@ -20,7 +20,7 @@ use Illuminate\Validation\ValidationException;
 
 class DynamicController extends BaseController
 {
-    use DynamicallyIdentifiable, DynamicallyFilterable, DynamicallySortable;
+    use Identifiable, Filterable, Sortable;
 
     /**
      * Dynamic form request request.
@@ -184,7 +184,7 @@ class DynamicController extends BaseController
         // init query builder
         $queryBuilder = $this->model::select();
 
-        [$modelFilters, $additionalFilters] = $this->extractFilters($data);
+        [$modelFilters, $additionalFilters] = $this->splitFilters($data);
         // append model filters to select query
         $queryBuilder = $this->applyModelFilters($queryBuilder, $modelFilters);
 

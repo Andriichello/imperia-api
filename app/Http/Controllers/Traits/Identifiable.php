@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Schema;
 
-trait DynamicallyIdentifiable
+trait Identifiable
 {
     /**
      * Filterable model class name.

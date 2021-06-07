@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
-trait DynamicallySortable
+trait Sortable
 {
-    use DynamicallyIdentifiable;
+    use Identifiable;
 
     /**
      * Sorts that can be applied directly to model's table.

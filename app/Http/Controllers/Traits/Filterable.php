@@ -7,9 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
-trait DynamicallyFilterable
+trait Filterable
 {
-    use DynamicallyIdentifiable;
+    use Identifiable;
 
     /**
      * Filters that can be applied directly to model's table.
@@ -75,12 +75,41 @@ trait DynamicallyFilterable
         return $this->appliedFilters;
     }
 
+    public static function extractFilterKey(?array $filter, mixed $default = null): mixed {
+        if (empty($filter)) {
+            return $default;
+        }
+
+        return Arr::first($filter, null, $default);
+    }
+
+    public static function extractFilterValue(?array $filter, mixed $default = null): mixed {
+        if (empty($filter)) {
+            return $default;
+        }
+
+        return Arr::last($filter, null, $default);
+    }
+
+    public static function extractFilter(?array $filters, string $column, ?array $default = null): ?array {
+        if (empty($filters)) {
+            return $default;
+        }
+
+        foreach ($filters as $filter) {
+            if ($filter[0] === $column) {
+                return $filter;
+            }
+        }
+        return $default;
+    }
+
     /**
      * Get only those filters that are specified in a second argument.
      *
      * @return array
      */
-    protected function limitFilters(array $requestedFilters, array $availableFilters)
+    public static function limitFilters(array $requestedFilters, array $availableFilters)
     {
         if (empty($availableFilters)) {
             return [];
@@ -101,7 +130,7 @@ trait DynamicallyFilterable
      *
      * @return array
      */
-    protected function extractFilters(array $data)
+    protected function splitFilters(array $data)
     {
         if (empty($data)) {
             return [[], []];
@@ -232,7 +261,7 @@ trait DynamicallyFilterable
      * @param bool $strict
      * @return bool
      */
-    public function isMatchingWhereCondition(array|object $data, array $whereCondition, bool $strict = false): bool
+    public static function isMatchingWhereCondition(array|object $data, array $whereCondition, bool $strict = false): bool
     {
         if (empty($whereCondition)) {
             return true;
@@ -287,11 +316,11 @@ trait DynamicallyFilterable
      * @param bool $strict
      * @return bool
      */
-    public function isMatchingWhereConditions(array|object $data, array $whereConditions, bool $strict = false): bool
+    public static function isMatchingWhereConditions(array|object $data, array $whereConditions, bool $strict = false): bool
     {
         $whereConditions = Arr::wrap($whereConditions);
         foreach ($whereConditions as $whereCondition) {
-            if (!$this->isMatchingWhereCondition($data, $whereCondition, $strict)) {
+            if (!static::isMatchingWhereCondition($data, $whereCondition, $strict)) {
                 return false;
             }
         }
