@@ -8,7 +8,7 @@ use TCG\Voyager\Events\SettingUpdated;
 class ClearCachedSettingValue
 {
     /**
-     * Create the event listener.
+     * Creator the event listener.
      *
      * @return void
      */

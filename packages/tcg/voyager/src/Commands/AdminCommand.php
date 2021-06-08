@@ -31,7 +31,7 @@ class AdminCommand extends Command
     protected function getOptions()
     {
         return [
-            ['create', null, InputOption::VALUE_NONE, 'Create an admin user', null],
+            ['create', null, InputOption::VALUE_NONE, 'Creator an admin user', null],
         ];
     }
 

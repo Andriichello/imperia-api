@@ -9,7 +9,7 @@ return [
     'help_option'          => '(optional, the same options as for the corresponding formfield apply)',
     'add_new'              => 'Add New Setting',
     'delete_question'      => 'Are you sure you want to delete the :setting Setting?',
-    'delete_confirm'       => 'Yes, Delete This Setting',
+    'delete_confirm'       => 'Yes, DeleteAction This Setting',
     'successfully_created' => 'Successfully Created Settings',
     'successfully_saved'   => 'Successfully Saved Settings',
     'successfully_deleted' => 'Successfully Deleted Setting',

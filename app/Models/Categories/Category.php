@@ -3,12 +3,6 @@
 namespace App\Models\Categories;
 
 use App\Models\BaseDeletableModel;
-use App\Models\Discount;
-use App\Models\ImperiaMenu;
-use App\Models\Product;
-use App\Models\Service;
-use App\Models\Space;
-use App\Models\Ticket;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Category extends BaseDeletableModel
@@ -30,17 +24,17 @@ class Category extends BaseDeletableModel
      *
      * @return string[]
      */
-    public static function getTypes()
+    public static function getModelTypes()
     {
-        return array_keys(self::getTypeModels());
+        return array_keys(self::getModels());
     }
 
     /**
      * Get available type models.
      *
-     * @return string[]
+     * @return array
      */
-    public static function getTypeModels()
+    public static function getModels()
     {
         return [
             'menu' => MenuCategory::class,
@@ -58,9 +52,9 @@ class Category extends BaseDeletableModel
      * @return string|null
      * @var string $type
      */
-    public static function getTypeTableName($type)
+    public static function getModelTableName($type)
     {
-        if (in_array($type, self::getTypes())) {
+        if (in_array($type, self::getModelTypes())) {
             return "{$type}_categories";
         }
         return null;

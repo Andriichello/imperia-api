@@ -102,12 +102,12 @@ return [
         'enabled' => false,
 
         /*
-         * Select default language
+         * SelectAction default language
          */
         'default' => 'en',
 
         /*
-         * Select languages that are supported.
+         * SelectAction languages that are supported.
          */
         'locales' => [
             'en',

@@ -49,6 +49,15 @@ class DataFieldRequest extends FormRequest
         return "$this->dataFieldName.";
     }
 
+    public function getData(bool $prefixed = true, bool $validated = true): mixed
+    {
+        $data = $validated ? $this->validated() : $this->all();
+        if ($prefixed && !empty($this->dataFieldName())) {
+            return data_get($data, $this->dataFieldName(), []);
+        }
+        return $data;
+    }
+
     public function __construct(string $dataFieldName = 'data')
     {
         parent::__construct();

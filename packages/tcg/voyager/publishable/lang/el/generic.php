@@ -43,7 +43,7 @@ return [
     'exception'              => 'Εξαίρεση',
     'featured'               => 'Επιλεγμένο (featured)',
     'field_does_not_exist'   => 'Το πεδίο δεν υπάρχει',
-    'find_by_place'          => 'Find by Place',
+    'find_by_place'          => 'FindAction by Place',
     'home'                   => 'Αρχική',
     'how_to_use'             => 'Πως χρησιμοποιείται',
     'index'                  => 'Λίστα',

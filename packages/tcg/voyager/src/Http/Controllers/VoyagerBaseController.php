@@ -439,7 +439,7 @@ class VoyagerBaseController extends Controller
     //               | |__| |
     //               |_____/
     //
-    //         Delete an item BREA(D)
+    //         DeleteAction an item BREA(D)
     //
     //****************************************
 
@@ -528,7 +528,7 @@ class VoyagerBaseController extends Controller
 
     //***************************************
     //
-    //  Delete uploaded file
+    //  DeleteAction uploaded file
     //
     //****************************************
 
@@ -665,15 +665,15 @@ class VoyagerBaseController extends Controller
      */
     protected function cleanup($dataType, $data)
     {
-        // Delete Translations, if present
+        // DeleteAction Translations, if present
         if (is_bread_translatable($data)) {
             $data->deleteAttributeTranslations($data->getTranslatableAttributes());
         }
 
-        // Delete Images
+        // DeleteAction Images
         $this->deleteBreadImages($data, $dataType->deleteRows->whereIn('type', ['image', 'multiple_images']));
 
-        // Delete Files
+        // DeleteAction Files
         foreach ($dataType->deleteRows->where('type', 'file') as $row) {
             if (isset($data->{$row->field})) {
                 foreach (json_decode($data->{$row->field}) as $file) {
@@ -682,7 +682,7 @@ class VoyagerBaseController extends Controller
             }
         }
 
-        // Delete media-picker files
+        // DeleteAction media-picker files
         $dataType->rows->where('type', 'media_picker')->where('details.delete_files', true)->each(function ($row) use ($data) {
             $content = $data->{$row->field};
             if (isset($content)) {
@@ -701,7 +701,7 @@ class VoyagerBaseController extends Controller
     }
 
     /**
-     * Delete all images related to a BREAD item.
+     * DeleteAction all images related to a BREAD item.
      *
      * @param \Illuminate\Database\Eloquent\Model $data
      * @param \Illuminate\Database\Eloquent\Model $rows

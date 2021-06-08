@@ -12,7 +12,7 @@ class CreateCategoriesTable extends Migration
      */
     public function up()
     {
-        // Create table for storing categories
+        // Creator table for storing categories
         Schema::create('categories', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('parent_id')->unsigned()->nullable()->default(null);

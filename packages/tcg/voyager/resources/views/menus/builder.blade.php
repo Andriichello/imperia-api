@@ -275,7 +275,7 @@
 
 
             /**
-             * Delete menu item
+             * DeleteAction menu item
              */
             $('.item_actions').on('click', '.delete', function (e) {
                 id = $(e.currentTarget).data('id');

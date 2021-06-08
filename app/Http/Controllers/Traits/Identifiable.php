@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Traits;
 
 use App\Custom\AttributeExtractionException;
-use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Schema;
 
 trait Identifiable
@@ -128,7 +127,7 @@ trait Identifiable
      * @param array $keys
      * @return array
      */
-    public function extract(array|object $data, array $keys): array
+    public function extract(array|object $data, array $keys, bool $throwExtractionException = false): array
     {
         if (empty($data) || empty($keys)) {
             return [];
@@ -138,11 +137,52 @@ trait Identifiable
         foreach ($keys as $key) {
             $value = data_get($data, $key, new AttributeExtractionException($key));
             if ($value instanceof AttributeExtractionException) {
+                if ($throwExtractionException) {
+                    throw $value;
+                }
                 continue;
             }
 
             $filtered[$key] = $value;
         }
         return $filtered;
+    }
+
+    /**
+     * @param mixed $data
+     * @param mixed|null $except
+     * @return array
+     * @throws AttributeExtractionException
+     */
+    public function extractIdentifiers(mixed $data, mixed $except = null): array
+    {
+        if (!isset($data)) {
+            throw new AttributeExtractionException(null, 'Not enough values to identify model.');
+        }
+
+        if (!is_array($data) && !is_object($data)) {
+            if (count($this->primaryKeys($except)) !== 1) {
+                throw new AttributeExtractionException(null, 'Not enough values to identify model.');
+            }
+            return [Arr::first($this->primaryKeys($except)) => $data];
+        }
+
+        return $this->extract($data, $this->primaryKeys($except), true);
+    }
+
+    /**
+     * @param mixed $data
+     * @param mixed $alternative
+     * @param mixed|null $except
+     * @return array
+     * @throws AttributeExtractionException
+     */
+    public function alternativeIdentifiers(mixed $data, mixed $alternative, mixed $except = null): array
+    {
+        try {
+            return $this->extractIdentifiers($data, $except);
+        } catch (AttributeExtractionException $exception) {
+            return $this->extractIdentifiers($alternative, $except);
+        }
     }
 }

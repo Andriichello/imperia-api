@@ -38,7 +38,7 @@ class Banquet extends BaseDeletableModel
      */
     public static function getOrderColumnNames() {
         $orderColumnNames = [];
-        foreach (Order::getTypes() as $orderType) {
+        foreach (Order::getModelTypes() as $orderType) {
             $orderColumnNames[$orderType] = $orderType . '_order';
         }
         return $orderColumnNames;
@@ -51,7 +51,7 @@ class Banquet extends BaseDeletableModel
      */
     public static function getOrderRelationshipNames() {
         $orderRelationshipNames = [];
-        foreach (Order::getTypes() as $orderType) {
+        foreach (Order::getModelTypes() as $orderType) {
             $orderRelationshipNames[$orderType] = $orderType . 'Order';
         }
         return $orderRelationshipNames;

@@ -2,16 +2,6 @@
 
 namespace App\Providers;
 
-use App\Http\Controllers\Implementations\BanquetController;
-use App\Http\Controllers\Implementations\CategoryController;
-use App\Http\Controllers\Implementations\CommentController;
-use App\Http\Controllers\Implementations\OrderController;
-use App\Http\Requests\Implementations\BanquetRequest;
-use App\Http\Requests\Implementations\BanquetStateRequest;
-use App\Http\Requests\Implementations\CategoryRequest;
-use App\Http\Requests\Implementations\CommentRequest;
-use App\Http\Requests\Implementations\OrderRequest;
-use App\Http\Requests\DynamicFormRequest;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;

@@ -2,13 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Custom\AttributeExtractionException;
+use App\Http\Actions\CreateAction;
+use App\Http\Actions\DeleteAction;
+use App\Http\Actions\FindAction;
+use App\Http\Actions\RestoreAction;
+use App\Http\Actions\SelectAction;
+use App\Http\Actions\UpdateAction;
 use App\Http\Controllers\Controller as BaseController;
 use App\Http\Controllers\Traits\Filterable;
 use App\Http\Controllers\Traits\Identifiable;
 use App\Http\Controllers\Traits\Sortable;
 use App\Http\Requests\DynamicFormRequest;
 use App\Http\Resources\PaginatedResourceCollection;
-use App\Models\BaseDeletableModel;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -17,6 +23,7 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class DynamicController extends BaseController
 {
@@ -39,9 +46,65 @@ class DynamicController extends BaseController
         return $this->request;
     }
 
+    /**
+     * SelectAction instance.
+     *
+     * @var SelectAction
+     */
+    protected SelectAction $selectAction;
+
+    /**
+     * FindAction instance.
+     *
+     * @var FindAction
+     */
+    protected FindAction $findAction;
+
+    /**
+     * Creator instance.
+     *
+     * @var CreateAction
+     */
+    protected CreateAction $createAction;
+
+    /**
+     * UpdateAction instance.
+     *
+     * @var UpdateAction
+     */
+    protected UpdateAction $updateAction;
+
+    /**
+     * DeleteAction instance.
+     *
+     * @var DeleteAction
+     */
+    protected DeleteAction $deleteAction;
+
+    /**
+     * RestoreAction instance.
+     *
+     * @var RestoreAction
+     */
+    protected RestoreAction $restoreAction;
+
     public function __construct(DynamicFormRequest $request)
     {
         $this->request = $request;
+        $this->setUpActions($this->createSelectAction());
+    }
+
+    protected function createSelectAction(): SelectAction {
+        return new SelectAction($this->model(), $this->isSoftDelete(), $this->primaryKeys());
+    }
+
+    protected function setUpActions(SelectAction $selectAction) {
+        $this->selectAction = $selectAction;
+        $this->findAction = new FindAction($this->selectAction);
+        $this->createAction = new CreateAction($this->findAction);
+        $this->restoreAction = new RestoreAction($this->findAction);
+        $this->updateAction = new UpdateAction($this->findAction, $this->restoreAction);
+        $this->deleteAction = new DeleteAction($this->findAction);
     }
 
     /**
@@ -51,12 +114,11 @@ class DynamicController extends BaseController
      */
     public function index(): Response
     {
-        $collection = $this->allModels($this->request()->all());
+        $collection = $this->allModels($this->request->getData(false, false));
         if ($collection->count() === 0) {
             abort(404, 'Not found');
         }
-
-        return $this->toResponse($this->request(), new PaginatedResourceCollection($collection));
+        return $this->toResponse($this->request, new PaginatedResourceCollection($collection));
     }
 
     /**
@@ -67,12 +129,16 @@ class DynamicController extends BaseController
      */
     public function show(mixed $id = null): Response
     {
-        $instance = $this->findModel($this->request(), $id);
+        $instance = $this->findModel(
+            $this->identify($id),
+            $this->request->getData(false, false),
+            $this->request->getData(false, false)
+        );
         if (!isset($instance)) {
             abort(404, 'Not found');
         }
 
-        return $this->toResponse($this->request(), new JsonResource($instance));
+        return $this->toResponse($this->request, new JsonResource($instance));
     }
 
     /**
@@ -82,7 +148,13 @@ class DynamicController extends BaseController
      */
     public function store(): Response
     {
-        $instance = $this->createModel($this->request()->validated()[$this->request()->dataFieldName()]);
+        $instance = $this->createModel(
+            $this->request->getData(true),
+            $this->request->getData(true, true)
+        );
+        if (!isset($instance)) {
+            abort(520, 'Error while creating record.');
+        }
 
         return $this->toResponse($this->request(), new JsonResource($instance), true, 201);
     }
@@ -95,170 +167,83 @@ class DynamicController extends BaseController
      */
     public function update(mixed $id = null): Response
     {
-        $instance = $this->findModel($this->request(), $id, $this->request()->dataFieldName());
-
+        $instance = $this->updateModel(
+            $this->identify($id, true, true),
+            $this->request->getData(true),
+            $this->request->getData(false, false)
+        );
         if (!isset($instance)) {
-            abort(404, 'Not found');
-        }
-
-        $restore = $this->request()->get('restore', false);
-        if ($restore && !$this->restoreModel($instance)) {
-            abort(520, 'Error while restoring record in the database.');
-        }
-
-        if (!$this->updateModel($instance, $this->request()->validated()[$this->request()->dataFieldName()])) {
-            abort(520, 'Error while updating record in the database.');
+            abort(520, 'Error while updating record.');
         }
 
         return $this->toResponse($this->request(), new JsonResource($instance));
     }
 
     /**
-     * Delete model's record from the database.
+     * DeleteAction model's record from the database.
      *
      * @param mixed $id
      * @return Response
      */
     public function destroy(mixed $id = null): Response
     {
-        $instance = $this->findModel($id);
-
-        if (!isset($instance)) {
-            abort(404, 'Not found');
-        }
-
-        if (!$this->destroyModel($instance, $this->request()->get('soft', $this->softDelete))) {
+        $success = $this->destroyModel(
+            $this->identify($id, true, true),
+            $this->request->getData(true),
+            $this->request->getData(false, false)
+        );
+        if (!$success) {
             abort(520, 'Error while deleting record from the database.');
         }
 
         return $this->toResponse($this->request(), []);
     }
 
-    /**
-     * Find instance of model by it's primary keys.
-     *
-     * @param DynamicFormRequest $request
-     * @param mixed|null $id
-     * @param string|null $dataKey
-     * @return Model|null
-     */
-    public function findModel(DynamicFormRequest $request, mixed $id = null, ?string $dataKey = null): ?Model
+    public function identify(mixed $id, bool $prefixed = false, bool $validated = false, mixed $except = null): array
     {
-        if (!isset($id)) {
-            if (!empty($dataKey)) {
-                $id = $this->extract($request->get($dataKey), $this->primaryKeys());
-            } else {
-                $id = $this->extract($request->all(), $this->primaryKeys());
-            }
+        try {
+            return $this->alternativeIdentifiers($id, $this->request->getData($prefixed, $validated), $except);
+        } catch (AttributeExtractionException $exception) {
+            throw new HttpException(400, $exception->getMessage());
         }
-
-        if (!is_array($id)) {
-            // there are more primary keys than specified values
-            if (count($this->primaryKeys()) > 1) {
-                return null;
-            }
-
-            // set id to an associative array
-            $id = [$this->primaryKeys()[array_key_first($this->primaryKeys())] => $id];
-        }
-
-        // specified values count differs from count of needed for identification columns
-        if (count($id) !== count($this->primaryKeys())) {
-            return null;
-        }
-
-        return $this->allModels($request->all(), $id)->first();
     }
 
-    /**
-     * Get filtered and sorted collection of the model instances.
-     *
-     * @param array $data
-     * @param array $additionalParameters
-     * @return Collection
-     */
-    public function allModels(array $data, array $additionalParameters = []): Collection
+    public function allModels(array $parameters, array $options = [], bool $basedOnType = true): Collection
     {
-        $data = array_merge($data, $additionalParameters);
+        $collection = $this->selectAction->execute($parameters, $options, $basedOnType);
 
-        // init query builder
-        $queryBuilder = $this->model::select();
-
-        [$modelFilters, $additionalFilters] = $this->splitFilters($data);
-        // append model filters to select query
-        $queryBuilder = $this->applyModelFilters($queryBuilder, $modelFilters);
-
-        [$modelSorts, $additionalSorts] = $this->extractSorts($data);
-        // append model sorts to select query
-        $queryBuilder = $this->applyModelSorts($queryBuilder, $modelSorts);
-
-        // retrieve filtered and sorted collection
-        $collection = $queryBuilder->get();
-
-        // apply additional filters and sorts on a collection
-        $collection = $this->applyAdditionalFilters($collection, $additionalFilters);
-        $collection = $this->applyAdditionalSorts($collection, $additionalSorts);
-
+        $this->appliedFilters = $this->selectAction->getAppliedFilters();
+        $this->appliedSorts = $this->selectAction->getAppliedSorts();
         return $collection;
     }
 
-    /**
-     * Create new Model instance and store it in the database.
-     *
-     * @param array $columns
-     * @return Model
-     */
-    public function createModel(array $columns): Model
+    public function findModel(array $identifiers, array $parameters, array $options = []): ?Model
     {
-        return $this->model::create($columns);
+        $instance = $this->findAction->execute($identifiers, $parameters, $options);
+
+        $this->appliedFilters = $this->findAction->getAppliedFilters();
+        $this->appliedSorts = $this->findAction->getAppliedSorts();
+        return $instance;
     }
 
-    /**
-     * Update Model instance in the database.
-     *
-     * @param Model $instance
-     * @param array $columns
-     * @return bool
-     */
-    public function updateModel(Model $instance, array $columns = []): bool
+    public function createModel(array $columns, array $options = []): ?Model
     {
-        if (!$instance->update($columns)) {
-            return false;
-        }
-
-        $instance->refresh();
-        return true;
+        return $this->createAction->execute($columns, $options);
     }
 
-    /**
-     * Delete Model instance from the database.
-     *
-     * @param Model $instance
-     * @param bool $softDelete
-     * @return bool
-     */
-    public function destroyModel(Model $instance, bool $softDelete = true): bool
+    public function updateModel(array $identifiers, array $parameters, array $options = []): ?Model
     {
-        if ($instance instanceof BaseDeletableModel && !$softDelete) {
-            return $instance->forceDelete();
-        }
-
-        return $instance->delete();
+        return $this->updateAction->execute($identifiers, $parameters, $options);
     }
 
-    /**
-     * Restore Model instance in the database.
-     *
-     * @param Model $instance
-     * @param bool $softDelete
-     * @return bool
-     */
-    public function restoreModel(Model $instance): bool
+    public function destroyModel(array $identifiers, array $parameters, array $options = []): bool
     {
-        if ($instance instanceof BaseDeletableModel) {
-            return $instance->restore();
-        }
-        return true;
+        return $this->deleteAction->execute($identifiers, $parameters, $options);
+    }
+
+    public function restoreModel(array $identifiers, array $parameters, array $options = []): ?Model
+    {
+        return $this->restoreAction->execute($identifiers, $parameters, $options);
     }
 
     /**
@@ -288,7 +273,7 @@ class DynamicController extends BaseController
                 $data->toArray($request),
             );
         } else if ($data instanceof JsonResource) {
-            $array['data']  = $data->toArray($request);
+            $array['data'] = $data->toArray($request);
         } else if (is_array($data)) {
             $array = array_merge(
                 $array,

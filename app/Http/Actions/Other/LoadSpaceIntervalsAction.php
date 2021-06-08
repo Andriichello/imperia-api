@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Actions;
+namespace App\Http\Actions\Other;
 
 use App\Models\Space;
 use DateTime;
 use Illuminate\Support\Collection;
 
-class LoadSpaceIntervals
+class LoadSpaceIntervalsAction
 {
     protected array $appliedFilters = [];
 

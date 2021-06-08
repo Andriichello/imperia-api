@@ -267,7 +267,7 @@
     </div>
     <!-- End New Folder Modal -->
 
-    <!-- Delete File Modal -->
+    <!-- DeleteAction File Modal -->
     <div class="modal fade modal-danger" :id="'confirm_delete_modal_'+this._uid" v-if="allowDelete">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -294,7 +294,7 @@
             </div>
         </div>
     </div>
-    <!-- End Delete File Modal -->
+    <!-- End DeleteAction File Modal -->
 
     <!-- Move Files Modal -->
     <div class="modal fade modal-warning" :id="'move_files_modal_'+this._uid" v-if="allowMove">

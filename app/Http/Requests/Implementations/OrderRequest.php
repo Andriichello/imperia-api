@@ -10,14 +10,17 @@ use App\Rules\RuleBuilders\IdentifierRule;
 
 class OrderRequest extends DynamicTypedFormRequest
 {
-    public function getTypes(): array
+    public function __construct(?string $type = null)
     {
-        return Order::getTypes();
+        $this->models = Order::getModels();
+        $this->modelTypes = Order::getModelTypes();
+
+        parent::__construct($type);
     }
 
     public function rules(?string $action = null): array
     {
-        $this->type = $this->getType($this->type);
+        $this->type = $this->getModelType($this->type);
         return parent::rules($action);
     }
 
@@ -55,7 +58,7 @@ class OrderRequest extends DynamicTypedFormRequest
             'items.*.id' => (new IdentifierRule(0))->make(['required']),
         ];
 
-        switch ($this->getType()) {
+        switch ($this->getModelType()) {
             case 'space':
                 $rules['items.*.beg_datetime'] = (new DateTimeRule())->make(['required']);
                 $rules['items.*.end_datetime'] = (new DateTimeRule())->make(['required']);

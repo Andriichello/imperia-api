@@ -84,11 +84,11 @@ snippet sw\n\
 		${2}\n\
 	}\n\
 ##\n\
-## Create a Method\n\
+## Creator a Method\n\
 snippet m\n\
 	${1:void} ${2:method}(${3}) ${4:throws }${5}\n\
 ##\n\
-## Create a Variable\n\
+## Creator a Variable\n\
 snippet v\n\
 	${1:String} ${2:var}${3: = null}${4};${5}\n\
 ##\n\
@@ -131,7 +131,7 @@ snippet tryf\n\
 	} finally {\n\
 	}\n\
 ##\n\
-## Find Methods\n\
+## FindAction Methods\n\
 snippet findall\n\
 	List<${1:listName}> ${2:items} = ${1}.findAll();${3}\n\
 snippet findbyid\n\
@@ -251,4 +251,3 @@ exports.scope = "java";
                         }
                     });
                 })();
-            

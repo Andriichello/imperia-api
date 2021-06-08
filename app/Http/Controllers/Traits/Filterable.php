@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
@@ -75,23 +74,7 @@ trait Filterable
         return $this->appliedFilters;
     }
 
-    public static function extractFilterKey(?array $filter, mixed $default = null): mixed {
-        if (empty($filter)) {
-            return $default;
-        }
-
-        return Arr::first($filter, null, $default);
-    }
-
-    public static function extractFilterValue(?array $filter, mixed $default = null): mixed {
-        if (empty($filter)) {
-            return $default;
-        }
-
-        return Arr::last($filter, null, $default);
-    }
-
-    public static function extractFilter(?array $filters, string $column, ?array $default = null): ?array {
+    public static function findFilter(?array $filters, string $column, ?array $default = null): ?array {
         if (empty($filters)) {
             return $default;
         }
@@ -104,12 +87,36 @@ trait Filterable
         return $default;
     }
 
+    public static function findFilterKey(?array $filter, mixed $default = null): mixed {
+        if (empty($filter)) {
+            return $default;
+        }
+
+        return Arr::first($filter, null, $default);
+    }
+
+    public static function findFilterOperator(?array $filter, mixed $default = null): mixed {
+        if (empty($filter)) {
+            return $default;
+        }
+
+        return data_get($filter, count($filter) - 2, $default);
+    }
+
+    public static function findFilterValue(?array $filter, mixed $default = null): mixed {
+        if (empty($filter)) {
+            return $default;
+        }
+
+        return Arr::last($filter, null, $default);
+    }
+
     /**
      * Get only those filters that are specified in a second argument.
      *
      * @return array
      */
-    public static function limitFilters(array $requestedFilters, array $availableFilters)
+    public static function limitFilters(array $requestedFilters, array $availableFilters): array
     {
         if (empty($availableFilters)) {
             return [];
@@ -128,78 +135,29 @@ trait Filterable
     /**
      * Get model and additional filters.
      *
+     * @param array $filters
      * @return array
      */
-    protected function splitFilters(array $data)
+    public function splitFilters(array $filters): array
     {
-        if (empty($data)) {
+        if (empty($filters)) {
             return [[], []];
         }
 
-        $filters = $this->whereConditions($data, true);
         return [
             $this->limitFilters($filters, $this->getModelFilters()),
             $this->limitFilters($filters, $this->getAdditionalFilters()),
         ];
     }
 
-    protected function applyFilters(Collection|Builder $data, array $filters): Collection|Builder
-    {
-        $modelFilters = $this->limitFilters($filters, $this->getModelFilters());
-        $additionalFilters = $this->limitFilters($filters, $this->getAdditionalFilters());
-
-        $data = $this->applyModelFilters($data, $modelFilters);
-        $data = $this->applyAdditionalFilters($data, $additionalFilters);
-
-        return $data;
-    }
-
-    protected function applyModelFilters(Collection|Builder $data, array $filters): Collection|Builder
-    {
-        if (empty($filters)) {
-            return $data;
-        }
-
-        if ($data instanceof Collection) {
-            return $data->filter(function ($item) use ($filters) {
-                return $this->isMatchingWhereConditions($item, $filters, false);
-            });
-        }
-
-        foreach ($filters as $filter) {
-            if (is_array($filter)) {
-                if (count($filter) === 2) {
-                    $data->where($filter[0], $filter[1]);
-                } else if (count($filter) === 3) {
-                    if ($filter[1] === 'in') {
-                        $data->whereIn($filter[0], $filter[2]);
-                    } else if ($filter[1] === 'not in') {
-                        $data->whereNotIn($filter[0], $filter[2]);
-                    } else {
-                        $data->where($filter[0], $filter[1], $filter[2]);
-                    }
-                }
-            }
-        }
-
-        $this->appliedFilters = array_merge($this->appliedFilters, $filters);
-        return $data;
-    }
-
-    protected function applyAdditionalFilters(Collection|Builder $data, array $filters): Collection|Builder
-    {
-        // implement additional filtering logic
-        return $data;
-    }
-
     /**
-     * Get array of where conditions for columns.
+     * Get array of filters for columns.
      *
      * @param array $data
      * @param bool $basedOnType
      * @return array
      */
-    public function whereConditions(array $data, bool $basedOnType = false): array
+    public function extractFilters(array $data, bool $basedOnType = false): array
     {
         if (empty($data)) {
             return [];
@@ -253,74 +211,111 @@ trait Filterable
         return $conditions;
     }
 
+    public function applyModelFilters(Collection|Builder $data, array $filters): Collection|Builder
+    {
+        if (empty($filters)) {
+            return $data;
+        }
+
+        if ($data instanceof Collection) {
+            return $data->filter(function ($item) use ($filters) {
+                return $this->isMatchingFilters($item, $filters, false);
+            });
+        }
+
+        foreach ($filters as $filter) {
+            if (is_array($filter)) {
+                if (count($filter) === 2) {
+                    $data->where($filter[0], $filter[1]);
+                } else if (count($filter) === 3) {
+                    if ($filter[1] === 'in') {
+                        $data->whereIn($filter[0], $filter[2]);
+                    } else if ($filter[1] === 'not in') {
+                        $data->whereNotIn($filter[0], $filter[2]);
+                    } else {
+                        $data->where($filter[0], $filter[1], $filter[2]);
+                    }
+                }
+            }
+        }
+
+        $this->appliedFilters = array_merge($this->appliedFilters, $filters);
+        return $data;
+    }
+
+    public function applyAdditionalFilters(Collection|Builder $data, array $filters): Collection|Builder
+    {
+        // implement additional filtering logic
+        return $data;
+    }
+
     /**
      * Determine if specified data matches where condition.
      *
      * @param array|object $data
-     * @param array $whereCondition [key, condition, value/[values]]
+     * @param array $filter [key, condition, value/[values]]
      * @param bool $strict
      * @return bool
      */
-    public static function isMatchingWhereCondition(array|object $data, array $whereCondition, bool $strict = false): bool
+    public static function isMatchingFilter(array|object $data, array $filter, bool $strict = false): bool
     {
-        if (empty($whereCondition)) {
+        if (empty($filter)) {
             return true;
         }
 
-        $dataValue = data_get($data, $whereCondition[0]);
-        $whereValue = $whereCondition[2];
+        $dataValue = data_get($data, self::findFilterKey($filter));
+        $filterOperator = self::findFilterOperator($filter, '=');
+        $filterValue = self::findFilterValue($filter);
 
-        switch ($whereCondition[1]) {
+        switch ($filterOperator) {
             case 'in':
-                return in_array($dataValue, Arr::wrap($whereValue));
+                return in_array($dataValue, Arr::wrap($filterValue));
 
             case 'not in':
-                return !in_array($dataValue, Arr::wrap($whereValue));
+                return !in_array($dataValue, Arr::wrap($filterValue));
 
             case 'like':
-                $whereValue = strtolower($whereValue);
-                $length = strlen($whereValue);
+                $filterValue = strtolower($filterValue);
+                $length = strlen($filterValue);
                 if ($length > 2) {
-                    $whereValue = substr($whereValue, 1, $length - 2);
+                    $filterValue = substr($filterValue, 1, $length - 2);
                 }
-                return str_contains(strtolower($dataValue), strtolower($whereValue));
+                return str_contains(strtolower($dataValue), strtolower($filterValue));
 
             case '=':
-                return $strict ? $dataValue === $whereValue : $dataValue == $whereValue;
+                return $strict ? $dataValue === $filterValue : $dataValue == $filterValue;
 
             case '!=':
-                return $strict ? $dataValue !== $whereValue : $dataValue != $whereValue;
+                return $strict ? $dataValue !== $filterValue : $dataValue != $filterValue;
 
             case '>=':
-                return $dataValue >= $whereValue;
+                return $dataValue >= $filterValue;
 
             case '<=':
-                return $dataValue <= $whereValue;
+                return $dataValue <= $filterValue;
 
             case '>':
-                return $dataValue > $whereValue;
+                return $dataValue > $filterValue;
 
             case '<':
-                return $dataValue < $whereValue;
+                return $dataValue < $filterValue;
         }
-
         return true;
     }
-
 
     /**
      * Determine if specified data matches where conditions.
      *
      * @param array|object $data
-     * @param array $whereConditions [[key, condition, value/[values]], ...]
+     * @param array $filters [[key, condition, value/[values]], ...]
      * @param bool $strict
      * @return bool
      */
-    public static function isMatchingWhereConditions(array|object $data, array $whereConditions, bool $strict = false): bool
+    public static function isMatchingFilters(array|object $data, array $filters, bool $strict = false): bool
     {
-        $whereConditions = Arr::wrap($whereConditions);
-        foreach ($whereConditions as $whereCondition) {
-            if (!static::isMatchingWhereCondition($data, $whereCondition, $strict)) {
+        $filters = Arr::wrap($filters);
+        foreach ($filters as $whereCondition) {
+            if (!static::isMatchingFilter($data, $whereCondition, $strict)) {
                 return false;
             }
         }

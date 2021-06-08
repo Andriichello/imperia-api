@@ -84,7 +84,7 @@ abstract class Index
     }
 
     /**
-     * Create a default index name.
+     * Creator a default index name.
      *
      * @param array  $columns
      * @param string $type

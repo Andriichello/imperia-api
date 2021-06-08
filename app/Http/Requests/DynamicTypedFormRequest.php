@@ -2,41 +2,31 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Controllers\Traits\Typable;
 use Illuminate\Support\Facades\Route;
 
 class DynamicTypedFormRequest extends DynamicFormRequest
 {
-    protected ?string $type = null;
+    use Typable;
 
-    public function getType(?string $type = null): string
+    public function getModelType(?string $modelType = null): ?string
     {
-        if (empty($type)) {
-            return $this->type ?? data_get(Route::current()->parameters(), 'type');
+        if (empty($modelType)) {
+            return $this->modelType ?? data_get(Route::current()->parameters(), 'type');
         }
-        return $type;
-    }
-
-    public function setType(?string $type = null): static
-    {
-        $this->type = $type;
-        return $this;
-    }
-
-    public function getTypes(): array
-    {
-        return [];
+        return $modelType;
     }
 
     public function __construct(?string $type = null)
     {
         parent::__construct();
-        $this->setType($type);
+        $this->setModelType($type);
     }
 
     public function rules(?string $action = null): array
     {
         return array_merge(
-            ['type' => 'in:' . implode(',', $this->getTypes())],
+            ['type' => 'in:' . implode(',', $this->getModelTypes())],
             parent::rules($action)
         );
     }
@@ -44,7 +34,7 @@ class DynamicTypedFormRequest extends DynamicFormRequest
     protected function prepareForValidation()
     {
         $this->merge([
-            'type' => $this->getType($this->type),
+            'type' => $this->getModelType(),
         ]);
     }
 }

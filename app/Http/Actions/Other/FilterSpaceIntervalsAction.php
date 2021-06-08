@@ -1,16 +1,15 @@
 <?php
 
-namespace App\Http\Actions;
+namespace App\Http\Actions\Other;
 
 use App\Http\Controllers\Traits\Filterable;
 use App\Models\Space;
 use Carbon\Carbon;
-use DateTime;
 use Illuminate\Support\Collection;
 
-class FilterSpaceIntervals
+class FilterSpaceIntervalsAction
 {
-    protected LoadSpaceIntervals $loadIntervals;
+    protected LoadSpaceIntervalsAction $loadIntervals;
 
     protected array $appliedFilters = [];
 
@@ -23,11 +22,11 @@ class FilterSpaceIntervals
     }
 
     /**
-     * FilterSpaceIntervals constructor.
+     * FilterSpaceIntervalsAction constructor.
      *
-     * @param LoadSpaceIntervals $loadIntervals
+     * @param LoadSpaceIntervalsAction $loadIntervals
      */
-    public function __construct(LoadSpaceIntervals $loadIntervals)
+    public function __construct(LoadSpaceIntervalsAction $loadIntervals)
     {
         $this->loadIntervals = $loadIntervals;
     }
@@ -45,19 +44,19 @@ class FilterSpaceIntervals
             return new Collection();
         }
 
-        $begDatetimeFilter = Filterable::extractFilter($filters, 'beg_datetime');
-        $endDatetimeFilter = Filterable::extractFilter($filters, 'end_datetime');
+        $begDatetimeFilter = Filterable::findFilter($filters, 'beg_datetime');
+        $endDatetimeFilter = Filterable::findFilter($filters, 'end_datetime');
         $intervals = $this->loadIntervals->execute(
             $instance,
-            Filterable::extractFilterValue($begDatetimeFilter, Carbon::now()->format('Y-m-d H:i:s')),
-            Filterable::extractFilterValue($endDatetimeFilter)
+            Filterable::findFilterValue($begDatetimeFilter, Carbon::now()->format('Y-m-d H:i:s')),
+            Filterable::findFilterValue($endDatetimeFilter)
         );
         $this->appliedFilters = $this->loadIntervals->getAppliedFilters();
 
-        $banquetIdFilter = Filterable::extractFilter($filters, 'banquet_id');
+        $banquetIdFilter = Filterable::findFilter($filters, 'banquet_id');
         if (!empty($banquetIdFilter)) {
             $intervals = $intervals->filter(function ($interval) use ($banquetIdFilter) {
-                return Filterable::isMatchingWhereConditions($interval, [$banquetIdFilter], false);
+                return Filterable::isMatchingFilters($interval, [$banquetIdFilter], false);
             });
 
             $this->appliedFilters[] = $banquetIdFilter;

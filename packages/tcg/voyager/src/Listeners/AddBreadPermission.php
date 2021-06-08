@@ -8,7 +8,7 @@ use TCG\Voyager\Facades\Voyager;
 class AddBreadPermission
 {
     /**
-     * Create the event listener.
+     * Creator the event listener.
      *
      * @return void
      */
@@ -18,7 +18,7 @@ class AddBreadPermission
     }
 
     /**
-     * Create Permission for a given BREAD.
+     * Creator Permission for a given BREAD.
      *
      * @param BreadAdded $event
      *
@@ -27,7 +27,7 @@ class AddBreadPermission
     public function handle(BreadAdded $bread)
     {
         if (config('voyager.bread.add_permission') && file_exists(base_path('routes/web.php'))) {
-            // Create permission
+            // Creator permission
             //
             // Permission::generateFor(Str::snake($bread->dataType->slug));
             $role = Voyager::model('Role')->where('name', config('voyager.bread.default_role'))->firstOrFail();

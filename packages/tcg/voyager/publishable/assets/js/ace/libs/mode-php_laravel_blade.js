@@ -9,7 +9,7 @@ var DocCommentHighlightRules = function() {
         "start" : [ {
             token : "comment.doc.tag",
             regex : "@[\\w\\d_]+" // TODO: fix email addresses
-        }, 
+        },
         DocCommentHighlightRules.getTagRule(),
         {
             defaultToken : "comment.doc",
@@ -2466,11 +2466,11 @@ var functionMap = {
     ],
     "array_fill": [
         "array array_fill(int start_key, int num, mixed val)",
-        "Create an array containing num elements starting with index start_key each initialized to val"
+        "Creator an array containing num elements starting with index start_key each initialized to val"
     ],
     "array_fill_keys": [
         "array array_fill_keys(array keys, mixed val)",
-        "Create an array using the elements of the first parameter as keys each initialized to val"
+        "Creator an array using the elements of the first parameter as keys each initialized to val"
     ],
     "array_filter": [
         "array array_filter(array input [, mixed callback])",
@@ -2918,7 +2918,7 @@ var functionMap = {
     ],
     "collator_create": [
         "Collator collator_create( string $locale )",
-        "* Create collator."
+        "* Creator collator."
     ],
     "collator_get_attribute": [
         "int collator_get_attribute( Collator $coll, int $attr )",
@@ -3278,7 +3278,7 @@ var functionMap = {
     ],
     "datefmt_create": [
         "IntlDateFormatter datefmt_create(string $locale, long date_type, long time_type[, string $timezone_str, long $calendar, string $pattern] )",
-        "* Create formatter."
+        "* Creator formatter."
     ],
     "datefmt_format": [
         "string datefmt_format( [mixed]int $args or array $args )",
@@ -3971,7 +3971,7 @@ var functionMap = {
     ],
     "file_put_contents": [
         "int file_put_contents(string file, mixed data [, int flags [, resource context]])",
-        "Write/Create a file with contents data and return the number of bytes written"
+        "Write/Creator a file with contents data and return the number of bytes written"
     ],
     "fileatime": [
         "int fileatime(string filename)",
@@ -4043,7 +4043,7 @@ var functionMap = {
     ],
     "finfo_open": [
         "resource finfo_open([int options [, string arg]])",
-        "Create a new fileinfo resource."
+        "Creator a new fileinfo resource."
     ],
     "finfo_set_flags": [
         "bool finfo_set_flags(resource finfo, int options)",
@@ -4517,7 +4517,7 @@ var functionMap = {
     ],
     "glob": [
         "array glob(string pattern [, int flags])",
-        "Find pathnames matching a pattern"
+        "FindAction pathnames matching a pattern"
     ],
     "gmdate": [
         "string gmdate(string format [, long timestamp])",
@@ -4697,7 +4697,7 @@ var functionMap = {
     ],
     "grapheme_stripos": [
         "int grapheme_stripos(string haystack, string needle [, int offset ])",
-        "Find position of first occurrence of a string within another, ignoring case differences"
+        "FindAction position of first occurrence of a string within another, ignoring case differences"
     ],
     "grapheme_stristr": [
         "string grapheme_stristr(string haystack, string needle[, bool part])",
@@ -4709,15 +4709,15 @@ var functionMap = {
     ],
     "grapheme_strpos": [
         "int grapheme_strpos(string haystack, string needle [, int offset ])",
-        "Find position of first occurrence of a string within another"
+        "FindAction position of first occurrence of a string within another"
     ],
     "grapheme_strripos": [
         "int grapheme_strripos(string haystack, string needle [, int offset])",
-        "Find position of last occurrence of a string within another, ignoring case"
+        "FindAction position of last occurrence of a string within another, ignoring case"
     ],
     "grapheme_strrpos": [
         "int grapheme_strrpos(string haystack, string needle [, int offset])",
-        "Find position of last occurrence of a string within another"
+        "FindAction position of last occurrence of a string within another"
     ],
     "grapheme_strstr": [
         "string grapheme_strstr(string haystack, string needle[, bool part])",
@@ -4889,7 +4889,7 @@ var functionMap = {
     ],
     "ibase_blob_create": [
         "resource ibase_blob_create([resource link_identifier])",
-        "Create blob for adding data"
+        "Creator blob for adding data"
     ],
     "ibase_blob_echo": [
         "bool ibase_blob_echo([ resource link_identifier, ] string blob_id)",
@@ -4901,7 +4901,7 @@ var functionMap = {
     ],
     "ibase_blob_import": [
         "string ibase_blob_import([ resource link_identifier, ] resource file)",
-        "Create blob, copy file in it, and close it"
+        "Creator blob, copy file in it, and close it"
     ],
     "ibase_blob_info": [
         "array ibase_blob_info([ resource link_identifier, ] string blob_id)",
@@ -4933,7 +4933,7 @@ var functionMap = {
     ],
     "ibase_delete_user": [
         "bool ibase_delete_user(resource service_handle, string user_name, string password [, string first_name [, string middle_name [, string last_name]]])",
-        "Delete a user from security database"
+        "DeleteAction a user from security database"
     ],
     "ibase_drop_db": [
         "bool ibase_drop_db([resource link_identifier])",
@@ -5165,7 +5165,7 @@ var functionMap = {
     ],
     "imagecolorclosestalpha": [
         "int imagecolorclosestalpha(resource im, int red, int green, int blue, int alpha)",
-        "Find the closest matching colour with alpha transparency"
+        "FindAction the closest matching colour with alpha transparency"
     ],
     "imagecolorclosesthwb": [
         "int imagecolorclosesthwb(resource im, int red, int green, int blue)",
@@ -5181,7 +5181,7 @@ var functionMap = {
     ],
     "imagecolorexactalpha": [
         "int imagecolorexactalpha(resource im, int red, int green, int blue, int alpha)",
-        "Find exact match for colour with transparency"
+        "FindAction exact match for colour with transparency"
     ],
     "imagecolormatch": [
         "bool imagecolormatch(resource im1, resource im2)",
@@ -5205,7 +5205,7 @@ var functionMap = {
     ],
     "imagecolorstotal": [
         "int imagecolorstotal(resource im)",
-        "Find out the number of colors in an image's palette"
+        "FindAction out the number of colors in an image's palette"
     ],
     "imagecolortransparent": [
         "int imagecolortransparent(resource im [, int col])",
@@ -5237,51 +5237,51 @@ var functionMap = {
     ],
     "imagecreate": [
         "resource imagecreate(int x_size, int y_size)",
-        "Create a new image"
+        "Creator a new image"
     ],
     "imagecreatefromgd": [
         "resource imagecreatefromgd(string filename)",
-        "Create a new image from GD file or URL"
+        "Creator a new image from GD file or URL"
     ],
     "imagecreatefromgd2": [
         "resource imagecreatefromgd2(string filename)",
-        "Create a new image from GD2 file or URL"
+        "Creator a new image from GD2 file or URL"
     ],
     "imagecreatefromgd2part": [
         "resource imagecreatefromgd2part(string filename, int srcX, int srcY, int width, int height)",
-        "Create a new image from a given part of GD2 file or URL"
+        "Creator a new image from a given part of GD2 file or URL"
     ],
     "imagecreatefromgif": [
         "resource imagecreatefromgif(string filename)",
-        "Create a new image from GIF file or URL"
+        "Creator a new image from GIF file or URL"
     ],
     "imagecreatefromjpeg": [
         "resource imagecreatefromjpeg(string filename)",
-        "Create a new image from JPEG file or URL"
+        "Creator a new image from JPEG file or URL"
     ],
     "imagecreatefrompng": [
         "resource imagecreatefrompng(string filename)",
-        "Create a new image from PNG file or URL"
+        "Creator a new image from PNG file or URL"
     ],
     "imagecreatefromstring": [
         "resource imagecreatefromstring(string image)",
-        "Create a new image from the image stream in the string"
+        "Creator a new image from the image stream in the string"
     ],
     "imagecreatefromwbmp": [
         "resource imagecreatefromwbmp(string filename)",
-        "Create a new image from WBMP file or URL"
+        "Creator a new image from WBMP file or URL"
     ],
     "imagecreatefromxbm": [
         "resource imagecreatefromxbm(string filename)",
-        "Create a new image from XBM file or URL"
+        "Creator a new image from XBM file or URL"
     ],
     "imagecreatefromxpm": [
         "resource imagecreatefromxpm(string filename)",
-        "Create a new image from XPM file or URL"
+        "Creator a new image from XPM file or URL"
     ],
     "imagecreatetruecolor": [
         "resource imagecreatetruecolor(int x_size, int y_size)",
-        "Create a new true color image"
+        "Creator a new true color image"
     ],
     "imagedashedline": [
         "bool imagedashedline(resource im, int x1, int y1, int x2, int y2, int col)",
@@ -5545,7 +5545,7 @@ var functionMap = {
     ],
     "imap_createmailbox": [
         "bool imap_createmailbox(resource stream_id, string mailbox)",
-        "Create a new mailbox"
+        "Creator a new mailbox"
     ],
     "imap_delete": [
         "bool imap_delete(resource stream_id, int msg_no [, int options])",
@@ -5553,7 +5553,7 @@ var functionMap = {
     ],
     "imap_deletemailbox": [
         "bool imap_deletemailbox(resource stream_id, string mailbox)",
-        "Delete a mailbox"
+        "DeleteAction a mailbox"
     ],
     "imap_errors": [
         "array imap_errors(void)",
@@ -5633,7 +5633,7 @@ var functionMap = {
     ],
     "imap_mail_compose": [
         "string imap_mail_compose(array envelope, array body)",
-        "Create a MIME message based on given envelope and body sections"
+        "Creator a MIME message based on given envelope and body sections"
     ],
     "imap_mail_copy": [
         "bool imap_mail_copy(resource stream_id, string msglist, string mailbox [, int options])",
@@ -6061,7 +6061,7 @@ var functionMap = {
     ],
     "ldap_delete": [
         "bool ldap_delete(resource link, string dn)",
-        "Delete an entry from a directory"
+        "DeleteAction an entry from a directory"
     ],
     "ldap_dn2ufn": [
         "string ldap_dn2ufn(string dn)",
@@ -6129,7 +6129,7 @@ var functionMap = {
     ],
     "ldap_mod_del": [
         "bool ldap_mod_del(resource link, string dn, array entry)",
-        "Delete attribute values"
+        "DeleteAction attribute values"
     ],
     "ldap_mod_replace": [
         "bool ldap_mod_replace(resource link, string dn, array entry)",
@@ -6229,7 +6229,7 @@ var functionMap = {
     ],
     "link": [
         "int link(string target, string link)",
-        "Create a hard link"
+        "Creator a hard link"
     ],
     "linkinfo": [
         "int linkinfo(string filename)",
@@ -6497,7 +6497,7 @@ var functionMap = {
     ],
     "mb_strpos": [
         "int mb_strpos(string haystack, string needle [, int offset [, string encoding]])",
-        "Find position of first occurrence of a string within another"
+        "FindAction position of first occurrence of a string within another"
     ],
     "mb_strrchr": [
         "string mb_strrchr(string haystack, string needle[, bool part[, string encoding]])",
@@ -6513,7 +6513,7 @@ var functionMap = {
     ],
     "mb_strrpos": [
         "int mb_strrpos(string haystack, string needle [, int offset [, string encoding]])",
-        "Find position of last occurrence of a string within another"
+        "FindAction position of last occurrence of a string within another"
     ],
     "mb_strstr": [
         "string mb_strstr(string haystack, string needle[, bool part[, string encoding]])",
@@ -6553,7 +6553,7 @@ var functionMap = {
     ],
     "mcrypt_create_iv": [
         "string mcrypt_create_iv(int size, int source)",
-        "Create an initialization vector (IV)"
+        "Creator an initialization vector (IV)"
     ],
     "mcrypt_decrypt": [
         "string mcrypt_decrypt(string cipher, string key, string data, string mode, string iv)",
@@ -6745,7 +6745,7 @@ var functionMap = {
     ],
     "mkdir": [
         "bool mkdir(string pathname [, int mode [, bool recursive [, resource context]]])",
-        "Create a directory"
+        "Creator a directory"
     ],
     "mktime": [
         "int mktime([int hour [, int min [, int sec [, int mon [, int day [, int year]]]]]])",
@@ -6789,7 +6789,7 @@ var functionMap = {
     ],
     "msgfmt_create": [
         "MessageFormatter msgfmt_create( string $locale, string $pattern )",
-        "* Create formatter."
+        "* Creator formatter."
     ],
     "msgfmt_format": [
         "mixed msgfmt_format( MessageFormatter $nf, array $args )",
@@ -6941,7 +6941,7 @@ var functionMap = {
     ],
     "mssql_select_db": [
         "bool mssql_select_db(string database_name [, resource conn_id])",
-        "Select a MS-SQL database"
+        "SelectAction a MS-SQL database"
     ],
     "mt_getrandmax": [
         "int mt_getrandmax(void)",
@@ -6973,7 +6973,7 @@ var functionMap = {
     ],
     "mysql_create_db": [
         "bool mysql_create_db(string database_name [, int link_identifier])",
-        "Create a MySQL database"
+        "Creator a MySQL database"
     ],
     "mysql_data_seek": [
         "bool mysql_data_seek(resource result, int row_number)",
@@ -7389,7 +7389,7 @@ var functionMap = {
     ],
     "mysqli_select_db": [
         "bool mysqli_select_db(object link, string dbname)",
-        "Select a MySQL database"
+        "SelectAction a MySQL database"
     ],
     "mysqli_set_charset": [
         "bool mysqli_set_charset(object link, string csname)",
@@ -7589,7 +7589,7 @@ var functionMap = {
     ],
     "numfmt_create": [
         "NumberFormatter numfmt_create( string $locale, int style[, string $pattern ] )",
-        "* Create number formatter."
+        "* Creator number formatter."
     ],
     "numfmt_format": [
         "mixed numfmt_format( NumberFormatter $nf, mixed $num[, int type] )",
@@ -8545,7 +8545,7 @@ var functionMap = {
     ],
     "pg_delete": [
         "mixed pg_delete(resource db, string table, array ids[, int options])",
-        "Delete records has ids (id=>value)"
+        "DeleteAction records has ids (id=>value)"
     ],
     "pg_end_copy": [
         "bool pg_end_copy([resource connection])",
@@ -8665,7 +8665,7 @@ var functionMap = {
     ],
     "pg_lo_create": [
         "mixed pg_lo_create([resource connection],[mixed large_object_oid])",
-        "Create a large object"
+        "Creator a large object"
     ],
     "pg_lo_export": [
         "bool pg_lo_export([resource connection, ] int objoid, string filename)",
@@ -8697,7 +8697,7 @@ var functionMap = {
     ],
     "pg_lo_unlink": [
         "bool pg_lo_unlink([resource connection,] string large_object_oid)",
-        "Delete a large object"
+        "DeleteAction a large object"
     ],
     "pg_lo_write": [
         "int pg_lo_write(resource large_object, string buf [, int len])",
@@ -8769,7 +8769,7 @@ var functionMap = {
     ],
     "pg_select": [
         "mixed pg_select(resource db, string table, array ids[, int options])",
-        "Select records that has ids (id=>value)"
+        "SelectAction records that has ids (id=>value)"
     ],
     "pg_send_execute": [
         "bool pg_send_execute(resource connection, string stmtname, array params)",
@@ -9001,7 +9001,7 @@ var functionMap = {
     ],
     "posix_setsid": [
         "int posix_setsid(void)",
-        "Create session and set process group id (POSIX.1, 4.3.2)"
+        "Creator session and set process group id (POSIX.1, 4.3.2)"
     ],
     "posix_setuid": [
         "bool posix_setuid(long uid)",
@@ -9121,7 +9121,7 @@ var functionMap = {
     ],
     "pspell_config_create": [
         "int pspell_config_create(string language [, string spelling [, string jargon [, string encoding]]])",
-        "Create a new config to be used later to create a manager"
+        "Creator a new config to be used later to create a manager"
     ],
     "pspell_config_data_dir": [
         "bool pspell_config_data_dir(int conf, string directory)",
@@ -9137,7 +9137,7 @@ var functionMap = {
     ],
     "pspell_config_mode": [
         "bool pspell_config_mode(int conf, long mode)",
-        "Select mode for config (PSPELL_FAST, PSPELL_NORMAL or PSPELL_BAD_SPELLERS)"
+        "SelectAction mode for config (PSPELL_FAST, PSPELL_NORMAL or PSPELL_BAD_SPELLERS)"
     ],
     "pspell_config_personal": [
         "bool pspell_config_personal(int conf, string personal)",
@@ -9205,7 +9205,7 @@ var functionMap = {
     ],
     "range": [
         "array range(mixed low, mixed high[, int step])",
-        "Create an array containing the range of integers or characters from low to high (inclusive)"
+        "Creator an array containing the range of integers or characters from low to high (inclusive)"
     ],
     "rawurldecode": [
         "string rawurldecode(string str)",
@@ -10113,7 +10113,7 @@ var functionMap = {
     ],
     "stream_bucket_new": [
         "resource stream_bucket_new(resource stream, string buffer)",
-        "Create a new bucket for use on the current stream"
+        "Creator a new bucket for use on the current stream"
     ],
     "stream_bucket_prepend": [
         "void stream_bucket_prepend(resource brigade, resource bucket)",
@@ -10121,7 +10121,7 @@ var functionMap = {
     ],
     "stream_context_create": [
         "resource stream_context_create([array options[, array params]])",
-        "Create a file context and optionally set parameters"
+        "Creator a file context and optionally set parameters"
     ],
     "stream_context_get_default": [
         "resource stream_context_get_default([array options])",
@@ -10245,7 +10245,7 @@ var functionMap = {
     ],
     "stream_socket_server": [
         "resource stream_socket_server(string localaddress [, long &errcode [, string &errstring [, long flags [, resource context]]]])",
-        "Create a server socket bound to localaddress"
+        "Creator a server socket bound to localaddress"
     ],
     "stream_socket_shutdown": [
         "int stream_socket_shutdown(resource stream, int how)",
@@ -10469,7 +10469,7 @@ var functionMap = {
     ],
     "sybase_select_db": [
         "bool sybase_select_db(string database [, resource link_id])",
-        "Select Sybase database"
+        "SelectAction Sybase database"
     ],
     "sybase_set_message_handler": [
         "bool sybase_set_message_handler(mixed error_func [, resource connection])",
@@ -10481,7 +10481,7 @@ var functionMap = {
     ],
     "symlink": [
         "int symlink(string target, string link)",
-        "Create a symbolic link"
+        "Creator a symbolic link"
     ],
     "sys_get_temp_dir": [
         "string sys_get_temp_dir()",
@@ -10509,7 +10509,7 @@ var functionMap = {
     ],
     "tempnam": [
         "string tempnam(string dir, string prefix)",
-        "Create a unique filename in a directory"
+        "Creator a unique filename in a directory"
     ],
     "textdomain": [
         "string textdomain(string domain)",
@@ -10661,7 +10661,7 @@ var functionMap = {
     ],
     "tmpfile": [
         "resource tmpfile(void)",
-        "Create a temporary file that will be deleted automatically after use"
+        "Creator a temporary file that will be deleted automatically after use"
     ],
     "token_get_all": [
         "array token_get_all(string source)",
@@ -10713,7 +10713,7 @@ var functionMap = {
     ],
     "unlink": [
         "bool unlink(string filename[, context context])",
-        "Delete a file"
+        "DeleteAction a file"
     ],
     "unpack": [
         "array unpack(string format, string input)",
@@ -10945,11 +10945,11 @@ var functionMap = {
     ],
     "xml_parser_create": [
         "resource xml_parser_create([string encoding])",
-        "Create an XML parser"
+        "Creator an XML parser"
     ],
     "xml_parser_create_ns": [
         "resource xml_parser_create_ns([string encoding [, string sep]])",
-        "Create an XML parser"
+        "Creator an XML parser"
     ],
     "xml_parser_free": [
         "int xml_parser_free(resource parser)",
@@ -11069,7 +11069,7 @@ var functionMap = {
     ],
     "xmlwriter_end_comment": [
         "bool xmlwriter_end_comment(resource xmlwriter)",
-        "Create end comment - returns FALSE on error"
+        "Creator end comment - returns FALSE on error"
     ],
     "xmlwriter_end_document": [
         "bool xmlwriter_end_document(resource xmlwriter)",
@@ -11109,11 +11109,11 @@ var functionMap = {
     ],
     "xmlwriter_open_memory": [
         "resource xmlwriter_open_memory()",
-        "Create new xmlwriter using memory for string output"
+        "Creator new xmlwriter using memory for string output"
     ],
     "xmlwriter_open_uri": [
         "resource xmlwriter_open_uri(resource xmlwriter, string source)",
-        "Create new xmlwriter using source uri for output"
+        "Creator new xmlwriter using source uri for output"
     ],
     "xmlwriter_output_memory": [
         "string xmlwriter_output_memory(resource xmlwriter [,bool flush])",
@@ -11129,51 +11129,51 @@ var functionMap = {
     ],
     "xmlwriter_start_attribute": [
         "bool xmlwriter_start_attribute(resource xmlwriter, string name)",
-        "Create start attribute - returns FALSE on error"
+        "Creator start attribute - returns FALSE on error"
     ],
     "xmlwriter_start_attribute_ns": [
         "bool xmlwriter_start_attribute_ns(resource xmlwriter, string prefix, string name, string uri)",
-        "Create start namespaced attribute - returns FALSE on error"
+        "Creator start namespaced attribute - returns FALSE on error"
     ],
     "xmlwriter_start_cdata": [
         "bool xmlwriter_start_cdata(resource xmlwriter)",
-        "Create start CDATA tag - returns FALSE on error"
+        "Creator start CDATA tag - returns FALSE on error"
     ],
     "xmlwriter_start_comment": [
         "bool xmlwriter_start_comment(resource xmlwriter)",
-        "Create start comment - returns FALSE on error"
+        "Creator start comment - returns FALSE on error"
     ],
     "xmlwriter_start_document": [
         "bool xmlwriter_start_document(resource xmlwriter, string version, string encoding, string standalone)",
-        "Create document tag - returns FALSE on error"
+        "Creator document tag - returns FALSE on error"
     ],
     "xmlwriter_start_dtd": [
         "bool xmlwriter_start_dtd(resource xmlwriter, string name, string pubid, string sysid)",
-        "Create start DTD tag - returns FALSE on error"
+        "Creator start DTD tag - returns FALSE on error"
     ],
     "xmlwriter_start_dtd_attlist": [
         "bool xmlwriter_start_dtd_attlist(resource xmlwriter, string name)",
-        "Create start DTD AttList - returns FALSE on error"
+        "Creator start DTD AttList - returns FALSE on error"
     ],
     "xmlwriter_start_dtd_element": [
         "bool xmlwriter_start_dtd_element(resource xmlwriter, string name)",
-        "Create start DTD element - returns FALSE on error"
+        "Creator start DTD element - returns FALSE on error"
     ],
     "xmlwriter_start_dtd_entity": [
         "bool xmlwriter_start_dtd_entity(resource xmlwriter, string name, bool isparam)",
-        "Create start DTD Entity - returns FALSE on error"
+        "Creator start DTD Entity - returns FALSE on error"
     ],
     "xmlwriter_start_element": [
         "bool xmlwriter_start_element(resource xmlwriter, string name)",
-        "Create start element tag - returns FALSE on error"
+        "Creator start element tag - returns FALSE on error"
     ],
     "xmlwriter_start_element_ns": [
         "bool xmlwriter_start_element_ns(resource xmlwriter, string prefix, string name, string uri)",
-        "Create start namespaced element tag - returns FALSE on error"
+        "Creator start namespaced element tag - returns FALSE on error"
     ],
     "xmlwriter_start_pi": [
         "bool xmlwriter_start_pi(resource xmlwriter, string target)",
-        "Create start PI tag - returns FALSE on error"
+        "Creator start PI tag - returns FALSE on error"
     ],
     "xmlwriter_text": [
         "bool xmlwriter_text(resource xmlwriter, string content)",
@@ -11309,7 +11309,7 @@ var functionMap = {
     ],
     "zip_open": [
         "resource zip_open(string filename)",
-        "Create new zip using source uri for output"
+        "Creator new zip using source uri for output"
     ],
     "zip_read": [
         "resource zip_read(resource zip)",
@@ -11393,7 +11393,7 @@ var PhpCompletions = function() {
 
         if (!token)
             return [];
-        
+
         if (token.type==='support.php_tag' && token.value==='<?')
             return this.getTagCompletions(state, session, pos, prefix);
         if (token.type==='identifier') {
@@ -11413,7 +11413,7 @@ var PhpCompletions = function() {
 
         return [];
     };
-    
+
     this.getTagCompletions = function(state, session, pos, prefix) {
         return [{
             caption: 'php',
@@ -11500,7 +11500,7 @@ var FoldMode = exports.FoldMode = function(commentRegex) {
 oop.inherits(FoldMode, BaseFoldMode);
 
 (function() {
-    
+
     this.foldingStartMarker = /([\{\[\(])[^\}\]\)]*$|^\s*(\/\*)/;
     this.foldingStopMarker = /^[^\[\{\(]*([\}\]\)])|^[\s\*]*(\*\/)/;
     this.singleLineBlockCommentRe= /^\s*(\/\*).*\*\/\s*$/;
@@ -11509,42 +11509,42 @@ oop.inherits(FoldMode, BaseFoldMode);
     this._getFoldWidgetBase = this.getFoldWidget;
     this.getFoldWidget = function(session, foldStyle, row) {
         var line = session.getLine(row);
-    
+
         if (this.singleLineBlockCommentRe.test(line)) {
             if (!this.startRegionRe.test(line) && !this.tripleStarBlockCommentRe.test(line))
                 return "";
         }
-    
+
         var fw = this._getFoldWidgetBase(session, foldStyle, row);
-    
+
         if (!fw && this.startRegionRe.test(line))
             return "start"; // lineCommentRegionStart
-    
+
         return fw;
     };
 
     this.getFoldWidgetRange = function(session, foldStyle, row, forceMultiline) {
         var line = session.getLine(row);
-        
+
         if (this.startRegionRe.test(line))
             return this.getCommentRegionBlock(session, line, row);
-        
+
         var match = line.match(this.foldingStartMarker);
         if (match) {
             var i = match.index;
 
             if (match[1])
                 return this.openingBracketBlock(session, match[1], row, i);
-                
+
             var range = session.getCommentFoldRange(row, i + match[0].length, 1);
-            
+
             if (range && !range.isMultiLine()) {
                 if (forceMultiline) {
                     range = this.getSectionRange(session, row);
                 } else if (foldStyle != "all")
                     range = null;
             }
-            
+
             return range;
         }
 
@@ -11561,7 +11561,7 @@ oop.inherits(FoldMode, BaseFoldMode);
             return session.getCommentFoldRange(row, i, -1);
         }
     };
-    
+
     this.getSectionRange = function(session, row) {
         var line = session.getLine(row);
         var startIndent = line.search(/\S/);
@@ -11578,7 +11578,7 @@ oop.inherits(FoldMode, BaseFoldMode);
             if  (startIndent > indent)
                 break;
             var subRange = this.getFoldWidgetRange(session, "all", row);
-            
+
             if (subRange) {
                 if (subRange.start.row <= startRow) {
                     break;
@@ -11590,14 +11590,14 @@ oop.inherits(FoldMode, BaseFoldMode);
             }
             endRow = row;
         }
-        
+
         return new Range(startRow, startColumn, endRow, session.getLine(endRow).length);
     };
     this.getCommentRegionBlock = function(session, line, row) {
         var startColumn = line.search(/\s*$/);
         var maxRow = session.getLength();
         var startRow = row;
-        
+
         var re = /^\s*(?:\/\*|\/\/|--)#?(end)?region\b/;
         var depth = 1;
         while (++row < maxRow) {
@@ -11633,7 +11633,7 @@ var CStyleFoldMode = require("./folding/cstyle").FoldMode;
 
 var Mode = function() {
     this.HighlightRules = JavaScriptHighlightRules;
-    
+
     this.$outdent = new MatchingBraceOutdent();
     this.$behaviour = new CstyleBehaviour();
     this.foldingRules = new CStyleFoldMode();
@@ -12134,7 +12134,7 @@ var XmlBehaviour = function () {
                     iterator.stepBackward();
                 }
             }
-            
+
             if (/^\s*>/.test(session.getLine(position.row).slice(position.column)))
                 return;
             while (!is(token, "tag-name")) {
@@ -12233,7 +12233,7 @@ oop.inherits(FoldMode, BaseFoldMode);
 
 
     this.$getMode = function(state) {
-        if (typeof state != "string") 
+        if (typeof state != "string")
             state = state[0];
         for (var key in this.subModes) {
             if (state.indexOf(key) === 0)
@@ -12241,7 +12241,7 @@ oop.inherits(FoldMode, BaseFoldMode);
         }
         return null;
     };
-    
+
     this.$tryMode = function(state, session, foldStyle, row) {
         var mode = this.$getMode(state);
         return (mode ? mode.getFoldWidget(session, foldStyle, row) : "");
@@ -12257,13 +12257,13 @@ oop.inherits(FoldMode, BaseFoldMode);
 
     this.getFoldWidgetRange = function(session, foldStyle, row) {
         var mode = this.$getMode(session.getState(row-1));
-        
+
         if (!mode || !mode.getFoldWidget(session, foldStyle, row))
             mode = this.$getMode(session.getState(row));
-        
+
         if (!mode || !mode.getFoldWidget(session, foldStyle, row))
             mode = this.defaultMode;
-        
+
         return mode.getFoldWidgetRange(session, foldStyle, row);
     };
 
@@ -12286,7 +12286,7 @@ var FoldMode = exports.FoldMode = function(voidElements, optionalEndTags) {
     this.optionalEndTags = oop.mixin({}, this.voidElements);
     if (optionalEndTags)
         oop.mixin(this.optionalEndTags, optionalEndTags);
-    
+
 };
 oop.inherits(FoldMode, BaseFoldMode);
 
@@ -12321,7 +12321,7 @@ function is(token, type) {
 
         return "start";
     };
-    
+
     this.getCommentFoldWidget = function(session, row) {
         if (/comment/.test(session.getState(row)) && /<!-/.test(session.getLine(row)))
             return "start";
@@ -12400,7 +12400,7 @@ function is(token, type) {
 
         return null;
     };
-    
+
     this._readTagBackward = function(iterator) {
         var token = iterator.getCurrentToken();
         if (!token)
@@ -12425,10 +12425,10 @@ function is(token, type) {
 
         return null;
     };
-    
+
     this._pop = function(stack, tag) {
         while (stack.length) {
-            
+
             var top = stack[stack.length-1];
             if (!tag || top.tagName == tag.tagName) {
                 return stack.pop();
@@ -12441,19 +12441,19 @@ function is(token, type) {
             }
         }
     };
-    
+
     this.getFoldWidgetRange = function(session, foldStyle, row) {
         var firstTag = this._getFirstTagInLine(session, row);
-        
+
         if (!firstTag) {
             return this.getCommentFoldWidget(session, row)
                 && session.getCommentFoldRange(row, session.getLine(row).length);
         }
-        
+
         var isBackward = firstTag.closing || firstTag.selfClosing;
         var stack = [];
         var tag;
-        
+
         if (!isBackward) {
             var iterator = new TokenIterator(session, row, firstTag.start.column);
             var start = {
@@ -12471,7 +12471,7 @@ function is(token, type) {
                     } else
                         continue;
                 }
-                
+
                 if (tag.closing) {
                     this._pop(stack, tag);
                     if (stack.length == 0)
@@ -12488,7 +12488,7 @@ function is(token, type) {
                 row: row,
                 column: firstTag.start.column
             };
-            
+
             while (tag = this._readTagBackward(iterator)) {
                 if (tag.selfClosing) {
                     if (!stack.length) {
@@ -12498,7 +12498,7 @@ function is(token, type) {
                     } else
                         continue;
                 }
-                
+
                 if (!tag.closing) {
                     this._pop(stack, tag);
                     if (stack.length == 0) {
@@ -12513,7 +12513,7 @@ function is(token, type) {
                 }
             }
         }
-        
+
     };
 
 }).call(FoldMode.prototype);
@@ -12826,7 +12826,7 @@ var HtmlCompletions = function() {
     this.getAttributeValueCompletions = function(state, session, pos, prefix) {
         var tagName = findTagName(session, pos);
         var attributeName = findAttributeName(session, pos);
-        
+
         if (!tagName)
             return [];
         var values = [];
@@ -12882,12 +12882,12 @@ var Mode = function(options) {
     this.HighlightRules = HtmlHighlightRules;
     this.$behaviour = new XmlBehaviour();
     this.$completer = new HtmlCompletions();
-    
+
     this.createModeDelegates({
         "js-": JavaScriptMode,
         "css-": CssMode
     });
-    
+
     this.foldingRules = new HtmlFoldMode(this.voidElements, lang.arrayToMap(optionalEndTags));
 };
 oop.inherits(Mode, TextMode);
@@ -13097,4 +13097,3 @@ ace.define("ace/mode/php_laravel_blade",["require","exports","module","ace/lib/o
                         }
                     });
                 })();
-            

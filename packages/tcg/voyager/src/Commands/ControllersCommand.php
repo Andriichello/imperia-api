@@ -38,7 +38,7 @@ class ControllersCommand extends Command
     protected $stub = 'controller.stub';
 
     /**
-     * Create a new command instance.
+     * Creator a new command instance.
      *
      * @param Filesystem $filesystem
      */

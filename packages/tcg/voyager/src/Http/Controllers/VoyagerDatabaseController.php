@@ -43,7 +43,7 @@ class VoyagerDatabaseController extends Controller
     }
 
     /**
-     * Create database table.
+     * Creator database table.
      *
      * @return \Illuminate\Http\RedirectResponse
      */

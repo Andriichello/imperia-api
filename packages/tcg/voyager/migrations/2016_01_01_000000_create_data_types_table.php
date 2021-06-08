@@ -12,7 +12,7 @@ class CreateDataTypesTable extends Migration
      */
     public function up()
     {
-        // Create table for storing roles
+        // Creator table for storing roles
         Schema::create('data_types', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->unique();
@@ -26,7 +26,7 @@ class CreateDataTypesTable extends Migration
             $table->timestamps();
         });
 
-        // Create table for storing roles
+        // Creator table for storing roles
         Schema::create('data_rows', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('data_type_id')->unsigned();

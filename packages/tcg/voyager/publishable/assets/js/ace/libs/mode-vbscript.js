@@ -7,7 +7,7 @@ var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 var VBScriptHighlightRules = function() {
 
     var keywordMapper = this.createKeywordMapper({
-        "keyword.control.asp":  "If|Then|Else|ElseIf|End|While|Wend|For|To|Each|Case|Select|Return"
+        "keyword.control.asp":  "If|Then|Else|ElseIf|End|While|Wend|For|To|Each|Case|SelectAction|Return"
             + "|Continue|Do|Until|Loop|Next|With|Exit|Function|Property|Type|Enum|Sub|IIf",
         "storage.type.asp": "Dim|Call|Class|Const|Dim|Redim|Set|Let|Get|New|Randomize|Option|Explicit",
         "storage.modifier.asp": "Private|Public|Default",
@@ -189,9 +189,9 @@ var Mode = function() {
 oop.inherits(Mode, TextMode);
 
 (function() {
-       
+
     this.lineCommentStart = ["'", "REM"];
-    
+
     this.$id = "ace/mode/vbscript";
 }).call(Mode.prototype);
 
@@ -203,4 +203,3 @@ exports.Mode = Mode;
                         }
                     });
                 })();
-            

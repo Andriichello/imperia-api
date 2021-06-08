@@ -35,11 +35,11 @@ snippet stuffxml\n\
 		WHERE ${3:WhereClause}\n\
 		FOR XML PATH('')), 1, 1, '') AS ${4:Alias}\n\
 	${5:/*https://msdn.microsoft.com/en-us/library/ms188043.aspx*/}\n\
-# Create Procedure\n\
+# Creator Procedure\n\
 snippet createproc\n\
 	-- =============================================\n\
 	-- Author:		${1:Author}\n\
-	-- Create date: ${2:Date}\n\
+	-- Creator date: ${2:Date}\n\
 	-- Description:	${3:Description}\n\
 	-- =============================================\n\
 	CREATE PROCEDURE ${4:Procedure_Name}\n\
@@ -53,11 +53,11 @@ snippet createproc\n\
 		\n\
 	END\n\
 	GO\n\
-# Create Scalar Function\n\
+# Creator Scalar Function\n\
 snippet createfn\n\
 	-- =============================================\n\
 	-- Author:		${1:Author}\n\
-	-- Create date: ${2:Date}\n\
+	-- Creator date: ${2:Date}\n\
 	-- Description:	${3:Description}\n\
 	-- =============================================\n\
 	CREATE FUNCTION ${4:Scalar_Function_Name}\n\
@@ -80,4 +80,3 @@ exports.scope = "sqlserver";
                         }
                     });
                 })();
-            

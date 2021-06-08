@@ -3,7 +3,7 @@
 return [
     'add_bread'                 => 'Voeg BREAD toe aan deze tabel',
     'add_new_column'            => 'Voeg nieuwe kolom toe',
-    'add_softdeletes'           => 'Voeg Soft Delete toe',
+    'add_softdeletes'           => 'Voeg Soft DeleteAction toe',
     'add_timestamps'            => 'Voeg tijdstempels toe',
     'already_exists'            => 'bestaat al',
     'already_exists_table'      => 'Tabel :table bestaat al',

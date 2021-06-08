@@ -64,7 +64,7 @@
             </div>
         </div>
     </div>
-    {{-- Delete BREAD Modal --}}
+    {{-- DeleteAction BREAD Modal --}}
     <div class="modal modal-danger fade" tabindex="-1" id="delete_builder_modal" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -144,7 +144,7 @@
 
         $(function () {
 
-            // Setup Delete BREAD
+            // Setup DeleteAction BREAD
             //
             $('table .actions').on('click', '.delete', function (e) {
                 id = $(this).data('id');

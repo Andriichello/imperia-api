@@ -151,7 +151,7 @@
         },
 
         /**
-         * Return Locale for a given Button Group Selector
+         * Return Locale for a given Button Group SelectAction
          *
          * @return string The locale.
          */
@@ -194,7 +194,7 @@
             var _this  = this,
                 inpUsr = inp.data('inpUsr'),
                 $_val  = $(inpUsr).val(),
-                $_data = {};  // Create new data
+                $_data = {};  // Creator new data
 
             if (inpUsr.hasClass('richTextBox')) {
                 var $_mce = tinymce.get('richtext'+inpUsr.prop('name'));

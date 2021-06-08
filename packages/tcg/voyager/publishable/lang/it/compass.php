@@ -31,8 +31,8 @@ return [
         'date'                  => 'Date',
         'content'               => 'Content',
         'download_file'         => 'Download file',
-        'delete_file'           => 'Delete file',
-        'delete_all_files'      => 'Delete all files',
+        'delete_file'           => 'DeleteAction file',
+        'delete_all_files'      => 'DeleteAction all files',
         'delete_success'        => 'Successfully deleted log file:',
         'delete_all_success'    => 'Successfully deleted all log files',
 

@@ -3,10 +3,8 @@
 namespace App\Models;
 
 use App\Models\Scopes\WithTrashedScope;
-use Cassandra\Date;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BaseModel extends Model
 {

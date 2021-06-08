@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\Models\Orders\SpaceOrderField;
 use App\Models\Categories\SpaceCategory;
+use App\Models\Orders\SpaceOrderField;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Space extends BaseDeletableModel

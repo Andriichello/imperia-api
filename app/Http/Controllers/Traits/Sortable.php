@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 trait Sortable
@@ -67,9 +66,11 @@ trait Sortable
     /**
      * Get only those sorts that are specified in a second argument.
      *
+     * @param array $requestedSorts
+     * @param array $availableSorts
      * @return array
      */
-    protected function limitSorts(array $requestedSorts, array $availableSorts)
+    public function limitSorts(array $requestedSorts, array $availableSorts): array
     {
         if (empty($availableSorts)) {
             return [];
@@ -88,50 +89,19 @@ trait Sortable
     /**
      * Get model and additional filters.
      *
+     * @param array $sorts
      * @return array
      */
-    protected function extractSorts(array $data)
+    public function splitSorts(array $sorts): array
     {
-        if (empty($data)) {
+        if (empty($sorts)) {
             return [[], []];
         }
 
-        $sorts = $this->orderByConditions($data);
         return [
             $this->limitSorts($sorts, $this->getModelSorts()),
             $this->limitSorts($sorts, $this->getAdditionalSorts()),
         ];
-    }
-
-    protected function applySorts(Collection|Builder $data, array $sorts): Collection|Builder
-    {
-        $modelSorts = $this->limitFilters($sorts, $this->getModelSorts());
-        $additionalSorts = $this->limitFilters($sorts, $this->getAdditionalSorts());
-
-        $data = $this->applyModelSorts($data, $modelSorts);
-        $data = $this->applyAdditionalSorts($data, $additionalSorts);
-
-        return $data;
-    }
-
-    protected function applyModelSorts(Collection|Builder $data, array $sorts): Collection|Builder
-    {
-        if (empty($sorts)) {
-            return $data;
-        }
-
-        foreach ($sorts as $key => $order)
-        {
-            $data->orderBy($key, $order);
-        }
-        $this->appliedSorts = $sorts;
-        return $data;
-    }
-
-    protected function applyAdditionalSorts(Collection|Builder $data, array $sorts): Collection|Builder
-    {
-        // implement additional sorting logic
-        return $data;
     }
 
     /**
@@ -140,7 +110,7 @@ trait Sortable
      * @param array $data
      * @return array
      */
-    public function orderByConditions(array $data): array
+    public function extractSorts(array $data): array
     {
         if (empty($data) || empty($data['sort'])) {
             return [];
@@ -164,5 +134,24 @@ trait Sortable
         }
 
         return $sort;
+    }
+
+    public function applyModelSorts(Collection|Builder $data, array $sorts): Collection|Builder
+    {
+        if (empty($sorts)) {
+            return $data;
+        }
+
+        foreach ($sorts as $key => $order) {
+            $data->orderBy($key, $order);
+        }
+        $this->appliedSorts = $sorts;
+        return $data;
+    }
+
+    public function applyAdditionalSorts(Collection|Builder $data, array $sorts): Collection|Builder
+    {
+        // implement additional sorting logic
+        return $data;
     }
 }

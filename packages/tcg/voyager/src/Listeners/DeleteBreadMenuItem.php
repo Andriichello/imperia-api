@@ -8,7 +8,7 @@ use TCG\Voyager\Facades\Voyager;
 class DeleteBreadMenuItem
 {
     /**
-     * Create the event listener.
+     * Creator the event listener.
      *
      * @return void
      */
@@ -18,7 +18,7 @@ class DeleteBreadMenuItem
     }
 
     /**
-     * Delete a MenuItem for a given BREAD.
+     * DeleteAction a MenuItem for a given BREAD.
      *
      * @param BreadDeleted $bread
      *

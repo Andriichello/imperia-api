@@ -7,7 +7,7 @@ for(var i = 0; i < ace_editor_element.length; i++)
     //Define path for libs
     ace.config.set("basePath", $('meta[name="assets-path"]').attr('content')+"?path=js/ace/libs");
 
-	// Create an ace editor instance
+	// Creator an ace editor instance
 	var ace_editor = ace.edit(ace_editor_element[i].id);
 
 	// Get the corresponding text area associated with the ace editor
@@ -20,7 +20,7 @@ for(var i = 0; i < ace_editor_element.length; i++)
     if(ace_editor_element[i].getAttribute('data-language')){
     	ace_editor.getSession().setMode("ace/mode/" + ace_editor_element[i].getAttribute('data-language'));
     }
-    
+
     ace_editor.on('change', function(event, el) {
     	ace_editor_id = el.container.id;
     	ace_editor_textarea = document.getElementById(ace_editor_id + '_textarea');

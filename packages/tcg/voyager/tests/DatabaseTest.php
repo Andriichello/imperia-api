@@ -40,7 +40,7 @@ class DatabaseTest extends TestCase
 
         $this->table = $newTable->toArray();
 
-        // Create table
+        // Creator table
         $this->post(route('voyager.database.store'), [
             'table' => json_encode($this->table),
         ]);

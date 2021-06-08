@@ -40,7 +40,7 @@ return [
     'success_renamed'        => 'Successfully renamed file/folder',
     'uploading_wrong_type'   => 'Caricamento Fallito: File non supportato o troppo grande per essere caricato!',
     'crop'                   => 'Crop',
-    'crop_and_create'        => 'Crop & Create',
+    'crop_and_create'        => 'Crop & Creator',
     'crop_override_confirm'  => 'It will override the original image, are you sure?',
     'crop_image'             => 'Crop Image',
     'success_crop_image'     => 'Successfully cropped the image',

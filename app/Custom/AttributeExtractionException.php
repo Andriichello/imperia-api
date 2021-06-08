@@ -16,6 +16,12 @@ class AttributeExtractionException extends \Exception
     {
         $this->key = $key;
         $this->reason = $reason;
+
+        if (!empty($key)) {
+            $this->message = "$key attribute is missing.";
+        } else {
+            $this->message = $reason;
+        }
     }
 
     /**
@@ -27,26 +33,10 @@ class AttributeExtractionException extends \Exception
     }
 
     /**
-     * @param string|null $key
-     */
-    public function setKey(?string $key): void
-    {
-        $this->key = $key;
-    }
-
-    /**
      * @return string|null
      */
     public function getReason(): ?string
     {
         return $this->reason;
-    }
-
-    /**
-     * @param string|null $reason
-     */
-    public function setReason(?string $reason): void
-    {
-        $this->reason = $reason;
     }
 }

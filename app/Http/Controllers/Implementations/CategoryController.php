@@ -17,11 +17,9 @@ class CategoryController extends DynamicTypedController
 
     public function __construct(CategoryRequest $request, ?string $type = null)
     {
-        parent::__construct($request, $type);
-    }
+        $this->models = Category::getModels();
+        $this->modelTypes = Category::getModelTypes();
 
-    public function getTypeModels(): array
-    {
-        return Category::getTypeModels();
+        parent::__construct($request, $type);
     }
 }

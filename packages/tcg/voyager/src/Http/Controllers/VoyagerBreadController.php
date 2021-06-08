@@ -39,7 +39,7 @@ class VoyagerBreadController extends Controller
     }
 
     /**
-     * Create BREAD.
+     * Creator BREAD.
      *
      * @param Request $request
      * @param string  $table   Table name.
@@ -178,7 +178,7 @@ class VoyagerBreadController extends Controller
     }
 
     /**
-     * Delete BREAD.
+     * DeleteAction BREAD.
      *
      * @param Number $id BREAD data_type id.
      *
@@ -191,7 +191,7 @@ class VoyagerBreadController extends Controller
         /* @var \TCG\Voyager\Models\DataType $dataType */
         $dataType = Voyager::model('DataType')->find($id);
 
-        // Delete Translations, if present
+        // DeleteAction Translations, if present
         if (is_bread_translatable($dataType)) {
             $dataType->deleteAttributeTranslations($dataType->getTranslatableAttributes());
         }
@@ -339,7 +339,7 @@ class VoyagerBreadController extends Controller
     }
 
     /**
-     * Delete Relationship.
+     * DeleteAction Relationship.
      *
      * @param Number $id Record id
      *

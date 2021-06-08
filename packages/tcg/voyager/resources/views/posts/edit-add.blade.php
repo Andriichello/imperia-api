@@ -323,7 +323,7 @@
             </div>
         </div>
     </div>
-    <!-- End Delete File Modal -->
+    <!-- End DeleteAction File Modal -->
 @stop
 
 @section('javascript')

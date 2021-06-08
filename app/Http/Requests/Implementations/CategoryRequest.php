@@ -9,14 +9,16 @@ use App\Rules\RuleBuilders\TextRule;
 
 class CategoryRequest extends DynamicTypedFormRequest
 {
-    public function getTypes(): array
+    public function __construct(?string $type = null)
     {
-        return Category::getTypes();
+        parent::__construct($type);
+        $this->models = Category::getModels();
+        $this->modelTypes = Category::getModelTypes();
     }
 
     public function rules(?string $action = null, ?string $type = null): array
     {
-        $this->type = $this->getType($type);
+        $this->setModelType($this->getModelType($type));
         return parent::rules($action);
     }
 

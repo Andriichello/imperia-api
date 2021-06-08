@@ -8,7 +8,7 @@ use TCG\Voyager\Facades\Voyager;
 class AddBreadMenuItem
 {
     /**
-     * Create the event listener.
+     * Creator the event listener.
      *
      * @return void
      */
@@ -18,7 +18,7 @@ class AddBreadMenuItem
     }
 
     /**
-     * Create a MenuItem for a given BREAD.
+     * Creator a MenuItem for a given BREAD.
      *
      * @param BreadAdded $event
      *

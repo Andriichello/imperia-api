@@ -3,7 +3,7 @@
 return [
     'add_new_folder'         => 'Add New Folder',
     'audio_support'          => 'Your browser does not support the audio element.',
-    'create_new_folder'      => 'Create New Folder',
+    'create_new_folder'      => 'Creator New Folder',
     'delete_folder_question' => 'Deleting a folder will remove all files and folders contained inside',
     'delete_question'        => 'Are you sure you want to delete the following file(s)?',
     'destination_folder'     => 'Destination Folder',
@@ -40,7 +40,7 @@ return [
     'success_renamed'        => 'Successfully renamed file/folder',
     'uploading_wrong_type'   => 'Upload Fail: Unsupported file format or It is too large to upload!',
     'crop'                   => 'Crop',
-    'crop_and_create'        => 'Crop & Create',
+    'crop_and_create'        => 'Crop & Creator',
     'crop_override_confirm'  => 'It will override the original image, are you sure?',
     'crop_image'             => 'Crop Image',
     'success_crop_image'     => 'Successfully cropped the image',

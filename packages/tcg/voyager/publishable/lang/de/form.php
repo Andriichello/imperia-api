@@ -9,7 +9,7 @@ return [
     'type_image'                   => 'Bild',
     'type_radiobutton'             => 'Radio Button',
     'type_richtextbox'             => 'Rich Textbox',
-    'type_selectdropdown'          => 'Select Dropdown',
+    'type_selectdropdown'          => 'SelectAction Dropdown',
     'type_textarea'                => 'Text Area',
     'type_textbox'                 => 'Text Box',
 ];

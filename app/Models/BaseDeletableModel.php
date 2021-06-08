@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Models\Custom\SoftDeletable;
 use Dyrynda\Database\Support\CascadeSoftDeletes;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class BaseDeletableModel extends BaseModel
 {

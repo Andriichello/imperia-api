@@ -7745,7 +7745,7 @@ var modern = (function (domGlobals) {
           'mceHelp'
         ],
         selectall: [
-          'Select all',
+          'SelectAction all',
           'SelectAll'
         ],
         visualaid: [
@@ -7852,7 +7852,7 @@ var modern = (function (domGlobals) {
           'Meta+V'
         ],
         selectall: [
-          'Select all',
+          'SelectAction all',
           'SelectAll',
           'Meta+A'
         ]

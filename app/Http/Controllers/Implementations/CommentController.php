@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\Implementations;
 
+use App\Http\Actions\Implementations\CreateCommentAction;
 use App\Http\Controllers\DynamicController;
 use App\Http\Requests\Implementations\CommentRequest;
 use App\Models\Comment;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 class CommentController extends DynamicController
 {
@@ -27,25 +26,15 @@ class CommentController extends DynamicController
     public function __construct(CommentRequest $request)
     {
         parent::__construct($request);
+        $this->createAction = new CreateCommentAction($this->findAction);
     }
 
-    /**
-     * Create new Model instance and store it in the database.
-     *
-     * @param array $columns
-     * @return Model
-     */
-    public function createModel(array $columns): Model
+    public function identify(mixed $id, bool $prefixed = false, bool $validated = false, mixed $except = null): array
     {
-        $instance = parent::createModel($columns);
-
-        $id = DB::table($instance->getTable())
-            ->where($this->extract($instance->toArray(), $this->primaryKeys('id')))
-            ->max('id');
-
-        if (isset($instance) && isset($id)) {
-            $instance->id = $id;
+        if ($this->request->action() === 'show') {
+            return $this->extractIdentifiers($id, array_diff($this->primaryKeys(), ['id']));
         }
-        return $instance;
+
+        return parent::identify($id, $prefixed, $validated, $except);
     }
 }

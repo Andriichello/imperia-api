@@ -13,7 +13,7 @@ class CreatePagesTable extends Migration
      */
     public function up()
     {
-        // Create table for storing roles
+        // Creator table for storing roles
         Schema::create('pages', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('author_id');

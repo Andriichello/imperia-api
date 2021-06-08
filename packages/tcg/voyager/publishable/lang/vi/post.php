@@ -9,7 +9,7 @@ return [
     'image'            => 'Post Image',
     'meta_description' => 'Meta Description',
     'meta_keywords'    => 'Meta Keywords',
-    'new'              => 'Create New Post',
+    'new'              => 'Creator New Post',
     'seo_content'      => 'SEO Content',
     'seo_title'        => 'SEO Title',
     'slug'             => 'URL slug',

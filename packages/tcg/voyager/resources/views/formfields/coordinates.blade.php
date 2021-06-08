@@ -120,13 +120,13 @@
                     // Set initial LatLng
                     this.setLatLng(center.lat, center.lng);
 
-                    // Create map
+                    // Creator map
                     vm.map = new google.maps.Map(document.getElementById('map'), {
                         zoom: vm.zoom,
                         center: new google.maps.LatLng(center.lat, center.lng)
                     });
 
-                    // Create marker
+                    // Creator marker
                     vm.marker = new google.maps.Marker({
                         position: new google.maps.LatLng(center.lat, center.lng),
                         map: vm.map,

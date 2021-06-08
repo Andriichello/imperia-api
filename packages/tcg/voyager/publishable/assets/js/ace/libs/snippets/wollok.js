@@ -38,7 +38,7 @@ snippet if\n\
 	if (${1}) ${2}\n\
 \n\
 ##\n\
-## Create a Method\n\
+## Creator a Method\n\
 snippet m\n\
 	method ${1:method}(${2}) ${5}\n\
 \n\
@@ -95,4 +95,3 @@ exports.scope = "wollok";
                         }
                     });
                 })();
-            

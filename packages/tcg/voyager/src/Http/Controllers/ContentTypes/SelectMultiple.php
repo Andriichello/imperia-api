@@ -23,7 +23,7 @@ class SelectMultiple extends BaseType
                 }
                 $pivotContent[$pivotField] = $this->request->input('pivot_'.$pivotField);
             }
-            // Create a new content array for updating pivot table
+            // Creator a new content array for updating pivot table
             $newContent = [];
             foreach ($content as $contentIndex => $contentValue) {
                 $newContent[$contentValue] = [];

@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@master
 
       # Configure PHP
-      - name: Select PHP version
+      - name: SelectAction PHP version
         uses: shivammathur/setup-php@master
         with:
           php-version: '7.3'

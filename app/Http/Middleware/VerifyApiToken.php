@@ -3,11 +3,9 @@
 namespace App\Http\Middleware;
 
 use App\Models\ImperiaUser;
-use App\Providers\RouteServiceProvider;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Auth;
 
 class VerifyApiToken
 {

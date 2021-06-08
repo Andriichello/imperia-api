@@ -174,7 +174,7 @@
                 if (columnPos !== -1) {
                     this.table.columns.splice(columnPos, 1);
 
-                    // Delete associated index
+                    // DeleteAction associated index
                     this.deleteIndex(this.getColumnsIndex(column.name));
                 }
             },
