@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Events\ProductCreated;
+use App\Events\ProductUpdated;
 use App\Models\Categories\ProductCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -43,6 +45,11 @@ class Product extends BaseDeletableModel
         'created_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
         'deleted_at' => 'datetime:Y-m-d H:i:s',
+    ];
+
+    protected $dispatchesEvents = [
+        'saved' => ProductCreated::class,
+        'updated' => ProductUpdated::class,
     ];
 
     /**
