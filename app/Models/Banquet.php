@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use App\Events\BanquetCreated;
+use App\Events\BanquetUpdated;
 use App\Models\Orders\Order;
 use App\Models\Orders\ProductOrder;
 use App\Models\Orders\ServiceOrder;
 use App\Models\Orders\SpaceOrder;
 use App\Models\Orders\TicketOrder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class Banquet extends BaseDeletableModel
 {
@@ -32,61 +36,11 @@ class Banquet extends BaseDeletableModel
     protected $cascadeDeletes = ['ticketOrder', 'spaceOrder', 'productOrder', 'serviceOrder'];
 
     /**
-     * Get array of model's order column names.
-     *
-     * @return array
-     */
-    public static function getOrderColumnNames() {
-        $orderColumnNames = [];
-        foreach (Order::getModelTypes() as $orderType) {
-            $orderColumnNames[$orderType] = $orderType . '_order';
-        }
-        return $orderColumnNames;
-    }
-
-    /**
-     * Get array of model's order column names.
-     *
-     * @return array
-     */
-    public static function getOrderRelationshipNames() {
-        $orderRelationshipNames = [];
-        foreach (Order::getModelTypes() as $orderType) {
-            $orderRelationshipNames[$orderType] = $orderType . 'Order';
-        }
-        return $orderRelationshipNames;
-    }
-
-    /**
      * The accessors to append to the model's array form.
      *
      * @var array
      */
     public $appends = ['comments', 'total'];
-
-    public function getCommentsAttribute()
-    {
-        return $this->containerComments;
-    }
-
-    public function getTotalAttribute()
-    {
-        $total = 0.0;
-        if (!empty($this->spaceOrder)) {
-            $total += $this->spaceOrder->total;
-        }
-        if (!empty($this->serviceOrder)) {
-            $total += $this->serviceOrder->total;
-        }
-        if (!empty($this->ticketOrder)) {
-            $total += $this->ticketOrder->total;
-        }
-        if (!empty($this->productOrder)) {
-            $total += $this->productOrder->total;
-        }
-
-        return round($total, 2);
-    }
 
     /**
      * The relationships that should always be loaded.
@@ -115,6 +69,71 @@ class Banquet extends BaseDeletableModel
         'updated_at' => 'datetime:Y-m-d H:i:s',
         'deleted_at' => 'datetime:Y-m-d H:i:s',
     ];
+
+    protected $dispatchesEvents = [
+        'saved' => BanquetCreated::class,
+        'updated' => BanquetUpdated::class,
+    ];
+
+    protected static function boot()
+    {
+        parent::boot();
+    }
+
+
+    /**
+     * Get total price of all orders.
+     *
+     * @return float
+     */
+    public function getTotalAttribute()
+    {
+        $total = 0.0;
+        foreach (self::getOrderRelationshipNames() as $orderRelationship) {
+            if (empty($this->$orderRelationship)) {
+                continue;
+            }
+            $total += $this->$orderRelationship->total ?? 0.0;
+        }
+        return round($total, 2);
+    }
+
+    /**
+     * Get comments that are pinned to the banquet.
+     *
+     * @return Collection
+     */
+    public function getCommentsAttribute()
+    {
+        return $this->containerComments;
+    }
+
+    /**
+     * Get array of model's order column names.
+     *
+     * @return array
+     */
+    public static function getOrderColumnNames() {
+        $orderColumnNames = [];
+        foreach (Order::getModelTypes() as $orderType) {
+            $orderColumnNames[$orderType] = $orderType . '_order';
+        }
+        return $orderColumnNames;
+    }
+
+    /**
+     * Get array of model's order column names.
+     *
+     * @return array
+     */
+    public static function getOrderRelationshipNames() {
+        $orderRelationshipNames = [];
+        foreach (Order::getModelTypes() as $orderType) {
+            $orderRelationshipNames[$orderType] = $orderType . 'Order';
+        }
+        return $orderRelationshipNames;
+    }
+
 
     /**
      * Get the state associated with the model.
