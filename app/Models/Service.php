@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Events\ServiceCreated;
+use App\Events\ServiceUpdated;
 use App\Models\Categories\ServiceCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -44,6 +46,11 @@ class Service extends BaseDeletableModel
         'created_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
         'deleted_at' => 'datetime:Y-m-d H:i:s',
+    ];
+
+    protected $dispatchesEvents = [
+        'saved' => ServiceCreated::class,
+        'updated' => ServiceUpdated::class,
     ];
 
 
