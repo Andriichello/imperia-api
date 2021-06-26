@@ -37,6 +37,6 @@ class SaveServicePriceChange
         }
 
         return $event->service->getOriginal(['once_paid_price']) != $event->service->once_paid_price ||
-            $event->service->getOriginal(['hourly_paid_price']) != $event->service->once_paid_price;
+            $event->service->getOriginal(['hourly_paid_price']) != $event->service->hourly_paid_price;
     }
 }
