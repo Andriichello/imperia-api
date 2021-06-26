@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Events\DiscountCreated;
+use App\Events\DiscountUpdated;
 use App\Models\Categories\DiscountCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -44,6 +46,11 @@ class Discount extends BaseDeletableModel
         'created_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
         'deleted_at' => 'datetime:Y-m-d H:i:s',
+    ];
+
+    protected $dispatchesEvents = [
+        'saved' => DiscountCreated::class,
+        'updated' => DiscountUpdated::class,
     ];
 
     /**
