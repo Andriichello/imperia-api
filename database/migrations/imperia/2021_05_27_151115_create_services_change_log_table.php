@@ -15,8 +15,8 @@ class CreateServicesChangeLogTable extends Migration
     {
         Schema::create('services_change_log', function (Blueprint $table) {
             $table->unsignedSmallInteger('service_id');
-            $table->decimal('once_paid_price')->unsigned()->nullable();
-            $table->decimal('hourly_paid_price')->unsigned()->nullable();
+            $table->decimal('once_paid_price')->unsigned();
+            $table->decimal('hourly_paid_price')->unsigned();
             $table->dateTime('created_at')->useCurrent();
         });
     }

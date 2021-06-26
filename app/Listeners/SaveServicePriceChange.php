@@ -36,7 +36,14 @@ class SaveServicePriceChange
             return true;
         }
 
-        return $event->service->getOriginal(['once_paid_price']) != $event->service->once_paid_price ||
-            $event->service->getOriginal(['hourly_paid_price']) != $event->service->hourly_paid_price;
+        $updated = $event->service;
+        $original = $event->service->getOriginal();
+
+        $updatedOnce = data_get($updated, 'once_paid_price');
+        $originalOnce = data_get($original, 'once_paid_price');
+        $updatedHourly = data_get($updated, 'hourly_paid_price');
+        $originalHourly = data_get($original, 'hourly_paid_price');
+
+        return $updatedOnce !== $originalOnce || $updatedHourly !== $originalHourly;
     }
 }

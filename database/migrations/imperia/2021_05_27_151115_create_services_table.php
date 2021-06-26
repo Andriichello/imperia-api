@@ -17,8 +17,8 @@ class CreateServicesTable extends Migration
             $table->smallIncrements('id');
             $table->string('name', 50);
             $table->string('description', 100)->nullable();
-            $table->decimal('once_paid_price')->unsigned()->nullable();
-            $table->decimal('hourly_paid_price')->unsigned()->nullable();
+            $table->decimal('once_paid_price')->unsigned()->default(0.0);
+            $table->decimal('hourly_paid_price')->unsigned()->default(0.0);
             $table->unsignedSmallInteger('category_id')->index('category_id');
             $table->unsignedInteger('period_id')->nullable()->index('period_id');
             $table->timestamps();

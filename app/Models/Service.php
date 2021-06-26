@@ -6,6 +6,8 @@ use App\Events\ServiceCreated;
 use App\Events\ServiceUpdated;
 use App\Models\Categories\ServiceCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class Service extends BaseDeletableModel
 {
@@ -52,7 +54,6 @@ class Service extends BaseDeletableModel
         'saved' => ServiceCreated::class,
         'updated' => ServiceUpdated::class,
     ];
-
 
     /**
      * Get period associated with the model.
