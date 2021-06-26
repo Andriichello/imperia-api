@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Events\TicketCreated;
+use App\Events\TicketUpdated;
 use App\Models\Categories\TicketCategory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -42,6 +44,11 @@ class Ticket extends BaseDeletableModel
         'created_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
         'deleted_at' => 'datetime:Y-m-d H:i:s',
+    ];
+
+    protected $dispatchesEvents = [
+        'saved' => TicketCreated::class,
+        'updated' => TicketUpdated::class,
     ];
 
     /**
