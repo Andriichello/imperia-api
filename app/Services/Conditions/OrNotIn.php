@@ -10,7 +10,7 @@ class OrNotIn extends Condition
 {
     public function __construct(string $name, mixed $value)
     {
-        parent::__construct($name, 'not in', Arr::wrap($value));
+        parent::__construct($name, 'or not in', Arr::wrap($value));
     }
 
     public function query(EloquentBuilder|QueryBuilder $query): EloquentBuilder|QueryBuilder

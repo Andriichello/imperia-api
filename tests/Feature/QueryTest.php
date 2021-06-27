@@ -3,8 +3,11 @@
 namespace Tests\Feature;
 
 use App\Models\Customer;
+use App\Services\Conditions\Condition;
+use App\Services\Conditions\ConditionFactory;
 use App\Services\Query;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Arr;
 use Tests\TestCase;
 
 class QueryTest extends TestCase
@@ -56,5 +59,36 @@ class QueryTest extends TestCase
             'select * from `customers` inner join `customer_family_members` on `customer_family_members`.`customer_id` = `customers`.`id`',
             $query->toSql()
         );
+    }
+
+
+    /**
+     * @param string $conditionType
+     * @param string|null $operator
+     *
+     * @testWith ["equal", "="]
+     * ["not equal", "!="]
+     * ["or equal", "="]
+     * ["or not equal", "!="]
+     * ["in", "in"]
+     * ["or in", "in"]
+     * ["not in", "not in"]
+     * ["or not in", "or not in"]
+     * ["on", "="]
+     * ["or on", "="]
+     */
+    public function testConditionFactory(string $conditionType, ?string $operator)
+    {
+        if (!isset($operator)) {
+            $this->expectException(\Exception::class);
+        }
+
+        $name = 'name';
+        $value = 'value';
+        $condition = ConditionFactory::make($conditionType, $name, $value);
+        $this->assertTrue($condition instanceof Condition);
+        $this->assertSame($name, $condition->getName());
+        $this->assertSame($operator, $condition->getOperator());
+        $this->assertSame(Arr::wrap($value), Arr::wrap($condition->getValue()));
     }
 }
