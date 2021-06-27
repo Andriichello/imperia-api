@@ -3,8 +3,12 @@
 namespace App\Services;
 
 use App\Services\Conditions\Equal;
+use App\Services\Conditions\In;
+use App\Services\Conditions\NotIn;
 use App\Services\Conditions\On;
 use App\Services\Conditions\OrEqual;
+use App\Services\Conditions\OrIn;
+use App\Services\Conditions\OrNotIn;
 use App\Services\Conditions\OrOn;
 use App\Services\Filters\Join;
 use App\Services\Filters\OrWhere;
@@ -66,6 +70,26 @@ class Query
     public function orEqual(string $name, mixed $value): static
     {
         return $this->append(new OrEqual($name, $value));
+    }
+
+    public function in(string $name, mixed $value): static
+    {
+        return $this->append(new In($name, $value));
+    }
+
+    public function notIn(string $name, mixed $value): static
+    {
+        return $this->append(new NotIn($name, $value));
+    }
+    
+    public function orIn(string $name, mixed $value): static
+    {
+        return $this->append(new OrIn($name, $value));
+    }
+
+    public function orNotIn(string $name, mixed $value): static
+    {
+        return $this->append(new OrNotIn($name, $value));
     }
 
     public function where(\Closure $closure): static
