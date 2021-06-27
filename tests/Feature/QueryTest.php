@@ -16,14 +16,30 @@ class QueryTest extends TestCase
                 $q->equal('name', 'Tony')
                     ->orEqual('surname', 'Parker')
                     ->where(function ($q) {
-                        $q->equal('price', 4.55)
-                            ->orEqual('amount', 3);
+                        $q->equal('phone', '111 111 222 222')
+                            ->orEqual('email', 'tony.parker@mail.com');
                     });
             })
             ->finish();
 
         $this->assertSame(
-            'select * from `customers` where (`name` = ? or `surname` = ? and (`price` = ? or `amount` = ?))',
+            'select * from `customers` where (`name` = ? or `surname` = ? and (`phone` = ? or `email` = ?))',
+            $query->toSql()
+        );
+    }
+
+    public function testInQuery()
+    {
+        $query = Query::from(Customer::query())
+            ->where(function ($q) {
+                $q->in('id', [1, 2, 3])
+                    ->notIn('name', 'John')
+                    ->orIn('name', ['Austin', 'James']);
+            })
+            ->finish();
+
+        $this->assertSame(
+            'select * from `customers` where (`id` in (?, ?, ?) and `name` not in (?) or `name` in (?, ?))',
             $query->toSql()
         );
     }
