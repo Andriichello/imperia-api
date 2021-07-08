@@ -36,4 +36,13 @@ class ImperiaUser extends BaseDeletableModel
     {
         return $this->belongsTo(ImperiaRole::class, 'role_id', 'id');
     }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::creating(function ($user) {
+            $user->api_token = hash('sha256', uniqid());
+        });
+    }
 }
