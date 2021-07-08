@@ -49,6 +49,10 @@ class ServiceOrder extends BaseDeletableModel
         $fields = $this->fields;
         $items = [];
         foreach ($fields as $field) {
+            if (empty($field->service)) {
+                continue;
+            }
+
             $vars = $field->service->toArray();
             $vars['amount'] = $field->amount;
             $vars['duration'] = $field->duration;

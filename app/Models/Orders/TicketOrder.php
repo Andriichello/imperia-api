@@ -54,6 +54,10 @@ class TicketOrder extends BaseDeletableModel
         $fields = $this->fields;
         $items = [];
         foreach ($fields as $field) {
+            if (empty($field->ticket)) {
+                continue;
+            }
+
             $vars = $field->ticket->toArray();
             $vars['amount'] = $field->amount;
             $vars['created_at'] = $this->toFormattedDate($field->created_at);

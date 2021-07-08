@@ -54,6 +54,10 @@ class ProductOrder extends BaseDeletableModel
         $fields = $this->fields;
         $items = [];
         foreach ($fields as $field) {
+            if (empty($field->product)) {
+                continue;
+            }
+
             $vars = $field->product->toArray();
             $vars['amount'] = $field->amount;
             $vars['created_at'] = $this->toFormattedDate($field->created_at);

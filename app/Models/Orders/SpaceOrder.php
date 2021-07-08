@@ -54,6 +54,10 @@ class SpaceOrder extends BaseDeletableModel
         $fields = $this->fields;
         $items = [];
         foreach ($fields as $field) {
+            if (empty($field->space)) {
+                continue;
+            }
+
             $vars = $field->space->toArray();
             $vars['beg_datetime'] = $field->beg_datetime;
             $vars['end_datetime'] = $field->end_datetime;

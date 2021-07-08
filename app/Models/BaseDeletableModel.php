@@ -24,16 +24,6 @@ class BaseDeletableModel extends BaseModel
         });
     }
 
-    protected function scopeActive($query)
-    {
-        return $query->where('deleted_at', '=', 'null');
-    }
-
-    protected function scopeNonactive($query)
-    {
-        return $query->where('deleted_at', '!=', 'null');
-    }
-
     /**
      * Run the cascading soft restore for this model.
      *

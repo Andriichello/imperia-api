@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Traits;
 
+use App\Models\Scopes\SoftDeletableScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -185,15 +186,7 @@ trait Filterable
                     $conditions[] = [$key, 'not in', $outs];
                 }
             } else {
-                if ($key === 'trashed') {
-                    if ($value === 'only') {
-                        $conditions[] = ['deleted_at', '!=', null];
-                    } else if ($value === 'with') {
-//                        $conditions[] = ['deleted_at', '=', null];
-                    } else if ($value === 'without') {
-                        $conditions[] = ['deleted_at', '=', null];
-                    }
-                } else if (
+                if (
                     isset($types) &&
                     isset($types[$key]) &&
                     $types[$key] === 'string'

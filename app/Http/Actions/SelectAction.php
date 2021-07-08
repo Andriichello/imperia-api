@@ -25,6 +25,13 @@ class SelectAction extends DynamicAction
         // init query builder
         $queryBuilder = $this->model()::select();
 
+        foreach ($filters as $key => $filter) {
+            // appending trashed filter as it will be applied in SoftDeletableScope
+            if (self::findFilterKey($filter) === 'trashed') {
+                $this->appliedFilters[] = $filter;
+            }
+        }
+
         [$modelFilters, $additionalFilters] = $this->splitFilters($filters);
         // append model filters to select query
         $queryBuilder = $this->applyModelFilters($queryBuilder, $modelFilters);
