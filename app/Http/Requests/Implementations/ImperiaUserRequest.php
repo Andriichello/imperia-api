@@ -30,7 +30,7 @@ class ImperiaUserRequest extends DynamicFormRequest
     public function storeRules(bool $wrapped = true): array
     {
         $rules = [
-            'name' => (new TextRule(2, 50))->make(['required', 'unique:imperia_users']),
+            'name' => (new TextRule(2, 50))->make(['required', 'unique:imperia_users,name']),
             'password' => (new TextRule(8, 50))->make(['required']),
             'role_id' => (new IdentifierRule(0))->make(['required']),
         ];

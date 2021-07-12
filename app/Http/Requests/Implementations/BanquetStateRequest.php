@@ -21,7 +21,7 @@ class BanquetStateRequest extends DynamicFormRequest
     public function storeRules(bool $wrapped = true): array
     {
         $rules = [
-            'name' => (new TextRule(2, 50))->make(['required', 'unique:banquet_states']),
+            'name' => (new TextRule(2, 50))->make(['required', 'unique:banquet_states,name']),
             'description' => (new TextRule(2, 100))->make(['nullable']),
         ];
 

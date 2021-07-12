@@ -24,7 +24,7 @@ class CustomerRequest extends DynamicFormRequest
         $rules = [
             'name' => (new TextRule(2, 50))->make(['required']),
             'surname' => (new TextRule(2, 50))->make(['required']),
-            'phone' => (new TextRule(2, 100, TextRule::PHONE_REGEX))->make(['required', 'unique:customers']),
+            'phone' => (new TextRule(2, 100, TextRule::PHONE_REGEX))->make(['required', 'unique:customers,phone']),
             'email' => (new TextRule(2, 100))->make(['email']),
             'birthdate' => (new DateRule())->make(),
         ];
