@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Database\Seeders\Imperia\BanquetStateChangeLogTableSeeder;
 use Database\Seeders\Imperia\ImperiaDatabaseSeeder;
+use Database\Seeders\Voyager\VoyagerTablesSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -16,5 +16,6 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call(ImperiaDatabaseSeeder::class);
+        $this->call(VoyagerTablesSeeder::class);
     }
 }
