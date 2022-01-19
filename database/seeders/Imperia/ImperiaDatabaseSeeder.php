@@ -30,7 +30,6 @@ class ImperiaDatabaseSeeder extends Seeder
         $this->call(ImperiaRolesTableSeeder::class);
         $this->call(ImperiaUsersTableSeeder::class);
         $this->call(MenuCategoriesTableSeeder::class);
-        $this->call(MigrationsTableSeeder::class);
         $this->call(PeriodsTableSeeder::class);
         $this->call(ProductCategoriesTableSeeder::class);
         $this->call(ProductOrderFieldsTableSeeder::class);
