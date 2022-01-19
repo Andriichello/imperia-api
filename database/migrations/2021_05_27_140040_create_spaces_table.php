@@ -13,15 +13,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('spaces', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('password');
-            $table->rememberToken();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->string('title', 50)->unique('spaces_unique_TITLE');
+            $table->smallInteger('number');
+            $table->smallInteger('floor');
+            $table->string('description', 100)->nullable();
+            $table->decimal('price')->unsigned();
             $table->timestamps();
             $table->softDeletes();
+            $table->unique(['title', 'number', 'floor'], 'spaces_unique_TITLE_and_NUMBER_and_FLOOR');
         });
     }
 
@@ -32,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('spaces');
     }
 };

@@ -13,15 +13,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('password');
-            $table->rememberToken();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->string('title', 50)->unique('products_unique_TITLE');
+            $table->string('description', 100)->nullable();
+            $table->decimal('price')->unsigned();
+            $table->decimal('weight')->unsigned()->nullable();
+            $table->unsignedBigInteger('menu_id');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('menu_id')
+                ->references('id')->on('imperia_menus');
         });
     }
 
@@ -32,6 +35,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('products');
     }
 };

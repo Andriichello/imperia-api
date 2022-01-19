@@ -16,9 +16,9 @@ class CustomerFamilyMembersTableSeeder extends Seeder
     {
 
 
-        \DB::table('customer_family_members')->delete();
+        \DB::table('family_members')->delete();
 
-        \DB::table('customer_family_members')->insert(array (
+        \DB::table('family_members')->insert(array (
             0 =>
             array (
                 'id' => 1,

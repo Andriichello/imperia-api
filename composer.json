@@ -21,7 +21,7 @@
         }
     },
     "require": {
-        "php": "^7.3|^8.0",
+        "php": "^8.0",
         "bensampo/laravel-enum": "^3.4",
         "doctrine/dbal": "^2.5",
         "dyrynda/laravel-cascade-soft-deletes": "^4.1",
@@ -29,8 +29,11 @@
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.12",
+        "laravel/sanctum": "^2.14",
         "laravel/tinker": "^2.5",
         "orangehill/iseed": "^3.0",
+        "rinvex/laravel-categories": "^6.0",
+        "spatie/laravel-permission": "^5.5",
         "symfony/console": "^5.2",
         "symfony/validator": "^5.2",
         "tcg/voyager": "master"
