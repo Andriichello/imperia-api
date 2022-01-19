@@ -22,6 +22,7 @@
     },
     "require": {
         "php": "^7.3|^8.0",
+        "bensampo/laravel-enum": "^3.4",
         "doctrine/dbal": "^2.5",
         "dyrynda/laravel-cascade-soft-deletes": "^4.1",
         "fideloper/proxy": "^4.4",
