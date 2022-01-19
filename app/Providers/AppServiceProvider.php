@@ -17,7 +17,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->loadMigrationsFrom('database/migrations/imperia');
     }
 
     /**
