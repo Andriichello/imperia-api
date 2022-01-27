@@ -1,26 +1,12 @@
 <?php
 
-use App\Http\Controllers\DynamicController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Model\CustomerController;
+use App\Http\Controllers\Model\FamilyMemberController;
+use App\Http\Controllers\Model\UserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Implementations\ {
-    BanquetController,
-    BanquetStateController,
-    SpaceController,
-    TicketController,
-    ServiceController,
-    ImperiaMenuController,
-    ProductController,
-    DiscountController,
-    ImperiaRoleController,
-    ImperiaUserController,
-    CustomerController,
-    CustomerFamilyMemberController,
-    DatetimeController,
-    PeriodController,
-    CategoryController,
-    OrderController,
-    CommentController,
-};
 
 /*
 |--------------------------------------------------------------------------
@@ -33,43 +19,26 @@ use App\Http\Controllers\Implementations\ {
 |
 */
 
-Route::flexibleResources([
-    'banquets' => BanquetController::class,
-    'banquet-states' => BanquetStateController::class,
-    'menus' => ImperiaMenuController::class,
-    'products' => ProductController::class,
-    'spaces' => SpaceController::class,
-    'tickets' => TicketController::class,
-    'services' => ServiceController::class,
-    'discounts' => DiscountController::class,
-    'customers' => CustomerController::class,
-    'customer-family-members' => CustomerFamilyMemberController::class,
-    'periods' => PeriodController::class,
-    'datetimes' => DatetimeController::class,
-    'comments' => CommentController::class,
-    'roles' => ImperiaRoleController::class,
-    'users' => [ImperiaUserController::class, [], function () {
-        Route::post('/login', [ImperiaUserController::class, 'login'])
-            ->name('login')
-            ->withoutMiddleware('auth.token');
-    }],
-    'orders' => [OrderController::class, ['prefix' => '{type}-orders']],
-    'categories' => [CategoryController::class, ['prefix' => '{type}-categories']],
-], ['middleware' => 'auth.token']);
+Route::post('/register', RegisterController::class)->name('api.register');
+Route::post('/login', LoginController::class)->name('api.login');
 
-Route::group(['middleware' => ['auth.token']], function () {
-    Route::get('/routes', function () {
-        $routes = [];
-        foreach (Route::getRoutes() as $route) {
-            if (isset($route->action['controller']) && str_contains($route->action['controller'], 'App\\Http\\Controllers\\Implementations\\')) {
-                $routes[] = [
-                    'route' => $route->uri,
-                    'methods' => $route->methods,
-                ];
-            }
-        }
-        return ['success' => true, 'routes' => $routes];
-    })->name('routes.index');
+Route::group(['as' => 'api.', 'middleware' => []], function () {
+    Route::delete('/logout', LogoutController::class)->name('logout');
+
+    Route::get('/users/me', [UserController::class, 'me'])->name('users.me');
+    Route::post('/users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
+    Route::apiResource('users', UserController::class)
+        ->only('index', 'show', 'store', 'update', 'destroy')
+        ->parameters(['users' => 'id']);
+
+    Route::post('/customers/{id}/restore', [CustomerController::class, 'restore'])->name('customers.restore');
+    Route::apiResource('customers', CustomerController::class)
+        ->only('index', 'show', 'store', 'update', 'destroy')
+        ->parameters(['customers' => 'id']);
+
+    Route::apiResource('family-members', FamilyMemberController::class)
+        ->only('index', 'show', 'store', 'update', 'destroy')
+        ->parameters(['family-members' => 'id']);
 });
 
 Route::fallback(function () {
