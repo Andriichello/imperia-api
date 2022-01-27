@@ -2,14 +2,35 @@
 
 namespace App\Models\Orders;
 
-use App\Models\Banquet;
-use App\Models\BaseDeletableModel;
+use App\Models\BaseModel;
 use App\Models\Space;
+use App\Models\Traits\SoftDeletable;
+use Carbon\Carbon;
+use Database\Factories\SpaceOrderFieldFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class SpaceOrderField extends BaseDeletableModel
+/**
+ * Class SpaceOrderField.
+ *
+ * @property int $order_id
+ * @property int $space_id
+ * @property Carbon $start_at
+ * @property Carbon $end_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ *
+ * @property float $total
+ * @property Order $order
+ * @property Space $space
+ *
+ * @method static SpaceOrderFieldFactory factory(...$parameters)
+ */
+class SpaceOrderField extends BaseModel
 {
     use HasFactory;
+    use SoftDeletable;
 
     /**
      * The attributes that are mass assignable.
@@ -19,67 +40,57 @@ class SpaceOrderField extends BaseDeletableModel
     protected $fillable = [
         'order_id',
         'space_id',
-        'beg_datetime',
-        'end_datetime',
+        'start_at',
+        'end_at',
     ];
 
     /**
-     * The attributes that should be hidden for arrays.
+     * The accessors to append to the model's array form.
      *
      * @var array
      */
-    protected $hidden = ['banquet'];
-
-    /**
-     * The relationships that should always be loaded.
-     *
-     * @var array
-     */
-    protected $with = [
-        'space',
+    protected $appends = [
+        'total',
+        'duration',
     ];
 
     /**
-     * Get space associated with the model.
+     * Space associated with the model.
+     *
+     * @return BelongsTo
      */
-    public function space()
+    public function space(): BelongsTo
     {
-        return $this->belongsTo(Space::class, 'space_id', 'id');
+        return $this->belongsTo(Space::class, 'product_id', 'id');
     }
 
     /**
-     * Get order associated with the model.
+     * Order associated with the model.
+     *
+     * @return BelongsTo
      */
-    public function order()
+    public function order(): BelongsTo
     {
-        return $this->belongsTo(SpaceOrder::class, 'order_id', 'id');
+        return $this->belongsTo(Order::class, 'order_id', 'id');
     }
 
-    public function banquet()
+    /**
+     * Accessor for total price of all fields within the model.
+     *
+     * @return float
+     */
+    public function getTotalAttribute(): float
     {
-        return $this->hasOneThrough(
-            Banquet::class,
-            SpaceOrder::class,
-            'id',
-            'id',
-            'order_id',
-            'banquet_id'
-        )->select('banquet_id')->withOnly([]);
+        return round($this->space->price, 2);
     }
 
-    protected function setKeysForSaveQuery($query)
+    /**
+     * Accessor for duration of the rental.
+     *
+     * @return int
+     */
+    public function getDurationAttribute(): int
     {
-        $query->where('order_id', '=', $this->original['order_id'] ?? $this->order_id);
-        $query->where('space_id', '=', $this->original['space_id'] ?? $this->space_id);
-
-        return $query;
-    }
-
-    protected function setKeysForSelectQuery($query)
-    {
-        $query->where('order_id', '=', $this->original['order_id'] ?? $this->order_id);
-        $query->where('space_id', '=', $this->original['space_id'] ?? $this->space_id);
-
-        return $query;
+        return $this->end_at->diffInMinutes($this->start_at);
     }
 }

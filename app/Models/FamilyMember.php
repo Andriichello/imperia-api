@@ -2,9 +2,26 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Database\Factories\FamilyMemberFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class CustomerFamilyMember extends BaseDeletableModel
+/**
+ * Class FamilyMember.
+ *
+ * @property int $relative_id
+ * @property string $name
+ * @property string $relation
+ * @property Carbon $birthdate
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ *
+ * @property Customer $relative
+ *
+ * @method static FamilyMemberFactory factory(...$parameters)
+ */
+class FamilyMember extends BaseModel
 {
     use HasFactory;
 
@@ -15,12 +32,27 @@ class CustomerFamilyMember extends BaseDeletableModel
      */
     protected $fillable = [
         'name',
+        'relation',
         'birthdate',
-        'customer_id',
+        'relative_id',
     ];
 
-    public function customer()
+    /**
+     * The loadable relationships for the model.
+     *
+     * @var array
+     */
+    protected $relations = [
+        'relative',
+    ];
+
+    /**
+     * Customer to whom the model is related.
+     *
+     * @return BelongsTo
+     */
+    public function relative(): BelongsTo
     {
-        return $this->belongsTo(Customer::class, 'customer_id', 'id');
+        return $this->belongsTo(Customer::class, 'relative_id', 'id');
     }
 }

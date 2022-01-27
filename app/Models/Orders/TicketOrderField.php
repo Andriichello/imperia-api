@@ -2,13 +2,35 @@
 
 namespace App\Models\Orders;
 
-use App\Models\BaseDeletableModel;
+use App\Models\BaseModel;
+use App\Models\Space;
 use App\Models\Ticket;
+use App\Models\Traits\SoftDeletable;
+use Carbon\Carbon;
+use Database\Factories\TicketOrderFieldFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class TicketOrderField extends BaseDeletableModel
+/**
+ * Class ServiceOrderField.
+ *
+ * @property int $order_id
+ * @property int $ticket_id
+ * @property int $amount
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ *
+ * @property float $total
+ * @property Order $order
+ * @property Ticket $ticket
+ *
+ * @method static TicketOrderFieldFactory factory(...$parameters)
+ */
+class TicketOrderField extends BaseModel
 {
     use HasFactory;
+    use SoftDeletable;
 
     /**
      * The attributes that are mass assignable.
@@ -22,43 +44,41 @@ class TicketOrderField extends BaseDeletableModel
     ];
 
     /**
-     * The relationships that should always be loaded.
+     * The accessors to append to the model's array form.
      *
      * @var array
      */
-    protected $with = [
-        'ticket',
+    protected $appends = [
+        'total',
     ];
 
     /**
-     * Get ticket associated with the model.
+     * Space associated with the model.
+     *
+     * @return BelongsTo
      */
-    public function ticket()
+    public function space(): BelongsTo
     {
-        return $this->belongsTo(Ticket::class, 'ticket_id', 'id');
+        return $this->belongsTo(Space::class, 'product_id', 'id');
     }
 
     /**
-     * Get order associated with the model.
+     * Order associated with the model.
+     *
+     * @return BelongsTo
      */
-    public function order()
+    public function order(): BelongsTo
     {
-        return $this->belongsTo(TicketOrder::class, 'order_id', 'id');
+        return $this->belongsTo(Order::class, 'order_id', 'id');
     }
 
-    protected function setKeysForSaveQuery($query)
+    /**
+     * Accessor for total price of all fields within the model.
+     *
+     * @return float
+     */
+    public function getTotalAttribute(): float
     {
-        $query->where('order_id', '=', $this->original['order_id'] ?? $this->order_id);
-        $query->where('ticket_id', '=', $this->original['ticket_id'] ?? $this->ticket_id);
-
-        return $query;
-    }
-
-    protected function setKeysForSelectQuery($query)
-    {
-        $query->where('order_id', '=', $this->original['order_id'] ?? $this->order_id);
-        $query->where('ticket_id', '=', $this->original['ticket_id'] ?? $this->ticket_id);
-
-        return $query;
+        return round($this->ticket->price * $this->amount, 2);
     }
 }

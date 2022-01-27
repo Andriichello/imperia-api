@@ -2,13 +2,34 @@
 
 namespace App\Models\Orders;
 
-use App\Models\BaseDeletableModel;
+use App\Models\BaseModel;
 use App\Models\Product;
+use App\Models\Traits\SoftDeletable;
+use Carbon\Carbon;
+use Database\Factories\ProductOrderFieldFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ProductOrderField extends BaseDeletableModel
+/**
+ * Class ProductOrderField.
+ *
+ * @property int $order_id
+ * @property int $product_id
+ * @property int $amount
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ *
+ * @property float $total
+ * @property Order $order
+ * @property Product $product
+ *
+ * @method static ProductOrderFieldFactory factory(...$parameters)
+ */
+class ProductOrderField extends BaseModel
 {
     use HasFactory;
+    use SoftDeletable;
 
     /**
      * The attributes that are mass assignable.
@@ -22,43 +43,41 @@ class ProductOrderField extends BaseDeletableModel
     ];
 
     /**
-     * The relationships that should always be loaded.
+     * The accessors to append to the model's array form.
      *
      * @var array
      */
-    protected $with = [
-        'product',
+    protected $appends = [
+        'total',
     ];
 
     /**
-     * Get product associated with the model.
+     * Product associated with the model.
+     *
+     * @return BelongsTo
      */
-    public function product()
+    public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class, 'product_id', 'id');
     }
 
     /**
-     * Get order associated with the model.
+     * Order associated with the model.
+     *
+     * @return BelongsTo
      */
-    public function order()
+    public function order(): BelongsTo
     {
-        return $this->belongsTo(TicketOrder::class, 'order_id', 'id');
+        return $this->belongsTo(Order::class, 'order_id', 'id');
     }
 
-    protected function setKeysForSaveQuery($query)
+    /**
+     * Accessor for total price of all fields within the model.
+     *
+     * @return float
+     */
+    public function getTotalAttribute(): float
     {
-        $query->where('order_id', '=', $this->original['order_id'] ?? $this->order_id);
-        $query->where('product_id', '=', $this->original['product_id'] ?? $this->product_id);
-
-        return $query;
-    }
-
-    protected function setKeysForSelectQuery($query)
-    {
-        $query->where('order_id', '=', $this->original['order_id'] ?? $this->order_id);
-        $query->where('product_id', '=', $this->original['product_id'] ?? $this->product_id);
-
-        return $query;
+        return round($this->product->price * $this->amount, 2);
     }
 }

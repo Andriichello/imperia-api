@@ -2,13 +2,38 @@
 
 namespace App\Models\Orders;
 
-use App\Models\BaseDeletableModel;
+use App\Models\Banquet;
+use App\Models\BaseModel;
+use App\Models\Traits\SoftDeletable;
+use Carbon\Carbon;
+use Database\Factories\OrderFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
-class Order extends BaseDeletableModel
+/**
+ * Class Order.
+ *
+ * @property int $banquet_id
+ * @property string|null $metadata
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ *
+ * @property float $total
+ * @property Banquet $banquet
+ * @property SpaceOrderField[]|Collection $spaces
+ * @property TicketOrderField[]|Collection $tickets
+ * @property ServiceOrderField[]|Collection $services
+ * @property ProductOrderField[]|Collection $products
+ *
+ * @method static OrderFactory factory(...$parameters)
+ */
+class Order extends BaseModel
 {
     use HasFactory;
+    use SoftDeletable;
 
     /**
      * The attributes that are mass assignable.
@@ -17,103 +42,108 @@ class Order extends BaseDeletableModel
      */
     protected $fillable = [
         'banquet_id',
-        'discount_id',
+        'spaces',
+        'tickets',
+        'services',
+        'products',
     ];
 
     /**
-     * Get available types of categories.
+     * The loadable relationships for the model.
      *
-     * @return string[]
+     * @var array
      */
-    public static function getModelTypes()
+    protected $relations = [
+        'banquet',
+        'spaces',
+        'tickets',
+        'services',
+        'products',
+    ];
+
+    /**
+     * Array of relation names that should be deleted with the current model.
+     *
+     * @var array
+     */
+    protected array $cascadeDeletes = [
+        'spaces',
+        'tickets',
+        'services',
+        'products',
+    ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    public $appends = [
+        'total',
+    ];
+
+    /**
+     * Banquet associated with the model.
+     *
+     * @return BelongsTo
+     */
+    public function banquet(): BelongsTo
     {
-        return array_keys(self::getModels());
+        return $this->belongsTo(Banquet::class, 'banquet_id', 'id');
     }
 
     /**
-     * Get available types of categories.
+     * Spaces associated with the model.
      *
-     * @return string[]
+     * @return HasMany
      */
-    public static function getModels()
+    public function spaces(): HasMany
     {
-        return [
-            'space' => SpaceOrder::class,
-            'ticket' => TicketOrder::class,
-            'service' => ServiceOrder::class,
-            'product' => ProductOrder::class,
-        ];
+        return $this->hasMany(SpaceOrderField::class, 'order_id', 'id');
     }
 
     /**
-     * Get available types of categories.
+     * Tickets associated with the model.
      *
-     * @return string[]
+     * @return HasMany
      */
-    public static function getModelFields()
+    public function tickets(): HasMany
     {
-        return [
-            'space' => SpaceOrderField::class,
-            'ticket' => TicketOrderField::class,
-            'service' => ServiceOrderField::class,
-            'product' => ProductOrderField::class,
-        ];
+        return $this->hasMany(TicketOrderField::class, 'order_id', 'id');
     }
 
     /**
-     * Get table name for specified type.
+     * Services associated with the model.
      *
-     * @return string|null
-     * @var string $type
+     * @return HasMany
      */
-    public static function getModelTableName($type)
+    public function services(): HasMany
     {
-        if (in_array($type, self::getModelTypes())) {
-            return "{$type}_orders";
-        }
-        return null;
+        return $this->hasMany(ServiceOrderField::class, 'order_id', 'id');
     }
 
     /**
-     * Get table name for specified type.
+     * Products associated with the model.
      *
-     * @return string|null
-     * @var string $type
+     * @return HasMany
      */
-    public static function getModelFieldTableName($type)
+    public function products(): HasMany
     {
-        if (in_array($type, self::getModelTypes())) {
-            return "{$type}_order_fields";
-        }
-        return null;
+        return $this->hasMany(ProductOrderField::class, 'order_id', 'id');
     }
 
     /**
-     * Convert items to Fields
+     * Accessor for total price of all items within the model.
      *
-     * @param Model $order
-     * @param array $items
-     * @return array
+     * @return float
      */
-    public static function toFields(Model $order, array $items): array
+    public function getTotalAttribute(): float
     {
-        $fields = [];
+        $total = $this->spaces->sum('total');
+        $total += $this->tickets->sum('total');
+        $total += $this->services->sum('total');
+        $total += $this->products->sum('total');
 
-        $type = array_search(get_class($order), self::getModels());
-
-        $itemIdKey = $type . '_id';
-        $orderId = data_get($order, 'id');
-        foreach ($items as $item) {
-            $itemId = data_get($item, 'id');
-            if (isset($itemId) && isset($orderId)) {
-                $field = new (Order::getModelFields()[$type]);
-                $field->fill($item);
-                $field->order_id = $orderId;
-                $field->$itemIdKey = $itemId;
-
-                $fields[] = $field;
-            }
-        }
-        return $fields;
+        return round($total, 2);
     }
 }

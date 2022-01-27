@@ -2,13 +2,32 @@
 
 namespace App\Models;
 
-use App\Models\Categories\SpaceCategory;
 use App\Models\Orders\SpaceOrderField;
+use App\Models\Traits\SoftDeletable;
+use Carbon\Carbon;
+use Database\Factories\SpaceFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
-class Space extends BaseDeletableModel
+/**
+ * Class Space.
+ *
+ * @property string $title
+ * @property string|null $description
+ * @property float $price
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ *
+ * @property SpaceOrderField[]|Collection $intervals
+ *
+ * @method static SpaceFactory factory(...$parameters)
+ */
+class Space extends BaseModel
 {
     use HasFactory;
+    use SoftDeletable;
 
     /**
      * The attributes that are mass assignable.
@@ -16,13 +35,11 @@ class Space extends BaseDeletableModel
      * @var array
      */
     protected $fillable = [
-        'name',
+        'title',
         'description',
         'number',
         'floor',
         'price',
-        'period_id',
-        'category_id',
     ];
 
     /**
@@ -30,9 +47,8 @@ class Space extends BaseDeletableModel
      *
      * @var array
      */
-    protected $with = [
-        'period',
-        'category',
+    protected $relations = [
+        'intervals',
     ];
 
     /**
@@ -42,28 +58,14 @@ class Space extends BaseDeletableModel
      */
     protected $casts = [
         'price' => 'float',
-        'created_at' => 'datetime:Y-m-d H:i:s',
-        'updated_at' => 'datetime:Y-m-d H:i:s',
-        'deleted_at' => 'datetime:Y-m-d H:i:s',
     ];
 
     /**
-     * Get period associated with the model.
+     * Get all intervals for which space is reserved.
+     *
+     * @return HasMany
      */
-    public function period()
-    {
-        return $this->belongsTo(Period::class, 'period_id', 'id');
-    }
-
-    /**
-     * Get category associated with the model.
-     */
-    public function category()
-    {
-        return $this->belongsTo(SpaceCategory::class, 'category_id', 'id');
-    }
-
-    public function intervals()
+    public function intervals(): HasMany
     {
         return $this->hasMany(SpaceOrderField::class, 'space_id', 'id')
             ->without('space')

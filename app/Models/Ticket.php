@@ -2,14 +2,27 @@
 
 namespace App\Models;
 
-use App\Events\TicketCreated;
-use App\Events\TicketUpdated;
-use App\Models\Categories\TicketCategory;
+use App\Models\Traits\SoftDeletable;
+use Carbon\Carbon;
+use Database\Factories\TicketFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Ticket extends BaseDeletableModel
+/**
+ * Class Space.
+ *
+ * @property string $title
+ * @property string|null $description
+ * @property float price
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ *
+ * @method static TicketFactory factory(...$parameters)
+ */
+class Ticket extends BaseModel
 {
     use HasFactory;
+    use SoftDeletable;
 
     /**
      * The attributes that are mass assignable.
@@ -17,21 +30,9 @@ class Ticket extends BaseDeletableModel
      * @var array
      */
     protected $fillable = [
-        'name',
+        'title',
         'description',
         'price',
-        'period_id',
-        'category_id',
-    ];
-
-    /**
-     * The relationships that should always be loaded.
-     *
-     * @var array
-     */
-    protected $with = [
-        'period',
-        'category',
     ];
 
     /**
@@ -41,29 +42,5 @@ class Ticket extends BaseDeletableModel
      */
     protected $casts = [
         'price' => 'float',
-        'created_at' => 'datetime:Y-m-d H:i:s',
-        'updated_at' => 'datetime:Y-m-d H:i:s',
-        'deleted_at' => 'datetime:Y-m-d H:i:s',
     ];
-
-    protected $dispatchesEvents = [
-        'saved' => TicketCreated::class,
-        'updated' => TicketUpdated::class,
-    ];
-
-    /**
-     * Get period associated with the model.
-     */
-    public function period()
-    {
-        return $this->belongsTo(Period::class, 'period_id', 'id');
-    }
-
-    /**
-     * Get category associated with the model.
-     */
-    public function category()
-    {
-        return $this->belongsTo(TicketCategory::class, 'category_id', 'id')->withTrashed();
-    }
 }

@@ -1,26 +1,20 @@
 <?php
 
-namespace App\Models\Custom;
+namespace App\Models\Traits;
 
-use App\Models\BaseDeletableModel;
 use App\Models\BaseModel;
 use Dyrynda\Database\Support\CascadeSoftDeletes;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Trait SoftDeletable.
  *
- * @property array $cascadeDeletes
- *
  * @mixin BaseModel
  */
-trait SoftDeletable {
+trait SoftDeletable
+{
+    use SoftDeletes;
     use CascadeSoftDeletes;
-
-    /**
-     * Array of relation names that should be deleted with the current model.
-     * @var array
-     */
-    protected array $cascadeDeletes = [];
 
     protected static function boot()
     {
@@ -55,7 +49,7 @@ trait SoftDeletable {
         $lastDeletedAt = $trashed->max('deleted_at');
 
         foreach ($trashed as $item) {
-            if ($item instanceof BaseDeletableModel) {
+            if (usesTrait($item, SoftDeletable::class)) {
                 // should restore only last deleted items, so if some of them
                 // was deleted (earlier) on purpose then they will stay deleted
                 if ($item->deleted_at == $lastDeletedAt) {
