@@ -2,10 +2,12 @@
 
 namespace Database\Seeders;
 
-use Database\Seeders\Imperia\ImperiaDatabaseSeeder;
-use Database\Seeders\Voyager\VoyagerTablesSeeder;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\App;
 
+/**
+ * Class DatabaseSeeder.
+ */
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -15,7 +17,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(ImperiaDatabaseSeeder::class);
-        $this->call(VoyagerTablesSeeder::class);
+        $this->call(RolesSeeder::class);
+        if (!App::environment('testing')) {
+            $this->call(TestingSeeder::class);
+        }
     }
 }
