@@ -68,6 +68,16 @@ trait CommentableTrait
     }
 
     /**
+     * Determines if model has comments attached.
+     *
+     * @return bool
+     */
+    public function hasComments(): bool
+    {
+        return $this->comments()->exists();
+    }
+
+    /**
      * Determines if model has all comments attached.
      *
      * @param string ...$texts

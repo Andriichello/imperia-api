@@ -76,6 +76,16 @@ trait CategorizableTrait
     }
 
     /**
+     * Determines if model has categories attached.
+     *
+     * @return bool
+     */
+    public function hasCategories(): bool
+    {
+        return $this->categories()->exists();
+    }
+
+    /**
      * Determines if model has all categories attached.
      *
      * @param Category ...$categories
