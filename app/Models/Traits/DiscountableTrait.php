@@ -3,16 +3,15 @@
 namespace App\Models\Traits;
 
 use App\Models\BaseModel;
-use App\Models\BaseModel;
 use App\Models\Morphs\Discount;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
- * Trait Discountable.
+ * Trait DiscountableTrait.
  *
  * @mixin BaseModel
  */
-trait Discountable
+trait DiscountableTrait
 {
     /**
      * Discounts related to the model.

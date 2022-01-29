@@ -3,16 +3,15 @@
 namespace App\Models\Traits;
 
 use App\Models\BaseModel;
-use App\Models\BaseModel;
 use App\Models\Morphs\Comment;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
- * Trait Commentable.
+ * Trait CommentableTrait.
  *
  * @mixin BaseModel
  */
-trait Commentable
+trait CommentableTrait
 {
     /**
      * Get all comments for model as a target.

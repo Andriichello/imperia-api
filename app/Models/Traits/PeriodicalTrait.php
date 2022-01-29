@@ -3,16 +3,15 @@
 namespace App\Models\Traits;
 
 use App\Models\BaseModel;
-use App\Models\BaseModel;
 use App\Models\Morphs\Period;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
- * Trait Periodical.
+ * Trait PeriodicalTrait.
  *
  * @mixin BaseModel
  */
-trait Periodical
+trait PeriodicalTrait
 {
     /**
      * Logs related to the model.

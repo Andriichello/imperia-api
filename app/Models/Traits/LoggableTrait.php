@@ -3,16 +3,15 @@
 namespace App\Models\Traits;
 
 use App\Models\BaseModel;
-use App\Models\BaseModel;
 use App\Models\Morphs\Log;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
- * Trait Loggable.
+ * Trait LoggableTrait.
  *
  * @mixin BaseModel
  */
-trait Loggable
+trait LoggableTrait
 {
     /**
      * Logs related to the model.

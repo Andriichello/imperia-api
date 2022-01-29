@@ -3,7 +3,7 @@
 namespace App\Models\Morphs;
 
 use App\Models\BaseModel;
-use App\Models\Traits\SoftDeletable;
+use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 class Comment extends BaseModel
 {
-    use SoftDeletable;
+    use SoftDeletableTrait;
 
     /**
      * The attributes that are mass assignable.
