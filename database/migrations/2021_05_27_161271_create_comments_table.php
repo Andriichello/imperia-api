@@ -15,39 +15,12 @@ return new class extends Migration
     public function up()
     {
         Schema::create('comments', function (Blueprint $table) {
-            $table->unsignedSmallInteger('id')->default(0);
-            $table->string('text', 100);
-            $table->unsignedBigInteger('target_id');
-            $table->string('target_type', 50);
-            $table->unsignedBigInteger('container_id');
-            $table->string('container_type', 50);
+            $table->id();
+            $table->string('text', 255);
+            $table->unsignedBigInteger('commentable_id');
+            $table->string('commentable_type');
             $table->timestamps();
-
-            $table->primary(['id', 'container_type', 'container_id']);
         });
-
-        DB::unprepared('
-            create trigger trigger_comments_before_insert
-                before insert
-                on comments
-                for each row
-            begin
-                if (new.id = 0) then
-                    select max(id)
-                    into @id
-                    from comments
-                    where container_type = new.container_type
-                      and container_id = new.container_id;
-
-                    if (@id is null) then
-                        set new.id = 1;
-                    else
-                        set new.id = @id + 1;
-                    end if;
-
-                end if;
-            end;
-        ');
     }
 
     /**
@@ -58,6 +31,5 @@ return new class extends Migration
     public function down()
     {
         Schema::dropIfExists('comments');
-        DB::unprepared('drop trigger trigger_comments_before_insert');
     }
 };

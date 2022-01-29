@@ -26,10 +26,10 @@ class CategoryFactory extends Factory
      *
      * @return array
      */
-    public function definition()
+    public function definition(): array
     {
         return [
-            'slug' => $this->faker->unique->slug,
+            'slug' => $this->faker->unique()->slug,
             'title' => $this->faker->title,
             'description' => $this->faker->sentence,
         ];
