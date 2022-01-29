@@ -6,6 +6,9 @@ use App\Enums\FamilyRelation;
 use App\Enums\UserRole;
 use App\Models\Customer;
 use App\Models\FamilyMember;
+use App\Models\Morphs\Categorizable;
+use App\Models\Morphs\Category;
+use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -23,6 +26,7 @@ class TestingSeeder extends Seeder
     {
         $this->seedUsers();
         $this->seedCustomers();
+        $this->seedTickets();
     }
 
     /**
@@ -80,5 +84,30 @@ class TestingSeeder extends Seeder
                 'name' => 'Tommy Doe',
                 'birthdate' => '2013-07-03',
             ]);
+    }
+
+    /**
+     * Seed tickets.
+     *
+     * @return void
+     */
+    public function seedTickets(): void
+    {
+        $ticket = Ticket::factory()
+            ->create([
+                'title' => 'Just a Ticket',
+                'price' => 19.99,
+            ]);
+
+        $category = Category::factory()
+            ->create([
+                'slug' => 'one',
+                'title' => 'One',
+            ]);
+
+        $categorizable = Categorizable::factory()
+            ->withCategory($category)
+            ->withModel($ticket)
+            ->create();
     }
 }
