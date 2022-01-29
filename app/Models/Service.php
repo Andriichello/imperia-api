@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\CategorizableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 use Database\Factories\ServiceFactory;
@@ -24,6 +25,7 @@ class Service extends BaseModel
 {
     use HasFactory;
     use SoftDeletableTrait;
+    use CategorizableTrait;
 
     /**
      * The attributes that are mass assignable.

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Orders\SpaceOrderField;
+use App\Models\Traits\CategorizableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 use Database\Factories\SpaceFactory;
@@ -28,6 +29,7 @@ class Space extends BaseModel
 {
     use HasFactory;
     use SoftDeletableTrait;
+    use CategorizableTrait;
 
     /**
      * The attributes that are mass assignable.

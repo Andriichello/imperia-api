@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\CategorizableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 use Database\Factories\TicketFactory;
@@ -23,6 +24,7 @@ class Ticket extends BaseModel
 {
     use HasFactory;
     use SoftDeletableTrait;
+    use CategorizableTrait;
 
     /**
      * The attributes that are mass assignable.

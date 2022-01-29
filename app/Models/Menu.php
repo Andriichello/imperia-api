@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\CategorizableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 use Database\Factories\MenuFactory;
@@ -26,6 +27,7 @@ class Menu extends BaseModel
 {
     use HasFactory;
     use SoftDeletableTrait;
+    use CategorizableTrait;
 
     /**
      * The table associated with the model.
