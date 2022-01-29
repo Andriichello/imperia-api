@@ -15,7 +15,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('morph_categorizable', function (Blueprint $table) {
+        Schema::create('morph_categorizables', function (Blueprint $table) {
             $table->unsignedBigInteger('category_id');
             $table->unsignedBigInteger('categorizable_id');
             $table->string('categorizable_type');
@@ -34,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists(config('rinvex.categories.tables.categorizables'));
+        Schema::dropIfExists('morph_categorizables');
     }
 };

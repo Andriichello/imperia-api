@@ -3,123 +3,105 @@
 namespace App\Models\Traits;
 
 use App\Models\BaseModel;
-use App\Models\Morphs\Categorizable as CategorizableModel;
+use App\Models\Morphs\Categorizable;
 use App\Models\Morphs\Category;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Trait Categorizable.
+ * Trait CategorizableTrait.
  *
  * @mixin BaseModel
+ *
+ * @property Category[]|Collection $categories
  */
-trait Categorizable
+trait CategorizableTrait
 {
     /**
      * Categories related to the model.
      *
-     * @return MorphMany
+     * @return MorphToMany
      */
-    public function categories(): MorphMany
+    public function categories(): MorphToMany
     {
-        return $this->morphMany(Category::class, 'categorizable', 'categorizable_type', 'categorizable_id', 'id');
+        return $this->morphToMany(
+            Category::class, // related model
+            'categorizable', // morph relation name
+            Categorizable::class, // morph relation table
+            'categorizable_id', // morph table pivot key to current model
+            'category_id', // morph table pivot key to related model
+        );
     }
 
     /**
      * Attach given categories to the model.
      *
-     * @param mixed $categories
+     * @param Category ...$categories
      *
-     * @return bool
+     * @return void
      */
-    public function attachCategory(mixed $categories): bool
+    public function attachCategories(Category ...$categories): void
     {
-        $slugs = $this->extractCategorySlugs($categories);
-        if (empty($slugs)) {
-            return true;
-        }
+        DB::transaction(function () use ($categories) {
+            foreach ($categories as $category) {
+                Categorizable::query()
+                    ->firstOrCreate([
+                        'category_id' => $category->id,
+                        'categorizable_id' => $this->id,
+                        'categorizable_type' => $this->type,
+                    ]);
+            }
+        });
+    }
 
-        return DB::transaction(function () use ($slugs) {
-            $categories = Category::query()->whereIn('slug', $slugs)
-                ->each(function (Category $category) {
-                    CategorizableModel::query()
-                        ->firstOrCreate([
-                            'categorizable_id' => $
-                        ])
-                });
-
+    /**
+     * Attach given categories to the model.
+     *
+     * @param Category ...$categories
+     *
+     * @return void
+     */
+    public function detachCategories(Category ...$categories): void
+    {
+        DB::transaction(function () use ($categories) {
+            foreach ($categories as $category) {
+                Categorizable::query()
+                    ->where('category_id', $category->id)
+                    ->where('categorizable_id', $this->id)
+                    ->where('categorizable_type', $this->type)
+                    ->delete();
+            }
         });
     }
 
     /**
      * Determines if model has all categories attached.
      *
-     * @param mixed $categories
+     * @param Category ...$categories
      *
      * @return bool
      */
-    public function hasAllCategories(mixed $categories): bool
+    public function hasAllOfCategories(Category ...$categories): bool
     {
-        $slugs = $this->extractCategorySlugs($categories);
-        if (empty($slugs)) {
-            return true;
-        }
-        return count($slugs) === $this->categories()->whereIn('slug', $slugs)->count();
+        $ids = array_map(fn(Category $category) => $category->id, $categories);
+        $count = $this->categories()->whereIn('id', $ids)->count();
+        return count($categories) === $count;
     }
 
     /**
      * Determines if model has any of categories attached.
      *
-     * @param mixed $categories
+     * @param Category ...$categories
      *
      * @return bool
      */
-    public function hasAnyCategories(mixed $categories): bool
+    public function hasAnyOfCategories(Category ...$categories): bool
     {
-        $slugs = $this->extractCategorySlugs($categories);
-        if (empty($slugs)) {
-            return true;
-        }
-        return $this->categories()->whereIn('slug', $slugs)->exists();
-    }
-
-    /**
-     * Extract given in argument category ids.
-     *
-     * @param mixed $categories
-     *
-     * @return array
-     */
-    protected function extractCategoryIds(mixed $categories): array
-    {
-        $models = array_filter($categories, fn($category) => $category instanceof Category);
-        return array_merge(
-            array_filter($categories, fn($category) => is_integer($category)),
-            array_map(fn(Category $category) => $category->id, $models),
-        );
-    }
-
-    /**
-     * Extract given in argument category slugs.
-     *
-     * @param mixed $categories
-     *
-     * @return array
-     */
-    protected function extractCategorySlugs(mixed $categories): array
-    {
-        $slugs = array_filter($categories, fn($category) => is_string($category));
-
-        $ids = $this->extractCategoryIds($categories);
-        if (!empty($ids)) {
-            $plucked = $slugs = Category::query()
-                ->whereIn('id', $ids)
-                ->pluck('slug')
-                ->all();
-
-            $slugs = array_merge($slugs, $plucked);
-        }
-
-        return array_unique(array_filter($slugs));
+        $ids = array_map(fn(Category $category) => $category->id, $categories);
+        return empty($ids) || $this->categories()->whereIn('id', $ids)->exists();
     }
 }

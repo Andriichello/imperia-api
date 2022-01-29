@@ -4,7 +4,11 @@ namespace App\Models\Morphs;
 
 use App\Models\BaseModel;
 use Carbon\Carbon;
+use Database\Factories\Morphs\CategorizableFactory;
+use Faker\Provider\Base;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
@@ -16,10 +20,22 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
- * @property Model|null $categorizable
+ * @property Category $category
+ * @property BaseModel $categorized
+ *
+ * @method static CategorizableFactory factory(...$parameters)
  */
 class Categorizable extends BaseModel
 {
+    use HasFactory;
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'morph_categorizables';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -37,16 +53,27 @@ class Categorizable extends BaseModel
      * @var array
      */
     protected $relations = [
-        'categorizable',
+        'category',
+        'categorized',
     ];
 
     /**
-     * Get the target model.
+     * Related category.
+     *
+     * @return BelongsTo
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * Related categorized model.
      *
      * @return MorphTo
      */
-    public function categorizable(): MorphTo
+    public function categorized(): MorphTo
     {
-        return $this->morphTo(__FUNCTION__, 'categorizable_type', 'categorizable_id', 'id');
+        return $this->morphTo('categorized', 'categorizable_type', 'categorizable_id', 'id');
     }
 }
