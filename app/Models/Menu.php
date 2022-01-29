@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Traits\SoftDeletable;
+use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 use Database\Factories\MenuFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,7 +25,7 @@ use Illuminate\Support\Collection;
 class Menu extends BaseModel
 {
     use HasFactory;
-    use SoftDeletable;
+    use SoftDeletableTrait;
 
     /**
      * The table associated with the model.

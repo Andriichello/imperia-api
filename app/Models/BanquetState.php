@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Traits\SoftDeletable;
+use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
@@ -20,7 +20,7 @@ use Illuminate\Support\Collection;
  */
 class BanquetState extends BaseModel
 {
-    use SoftDeletable;
+    use SoftDeletableTrait;
 
     /**
      * The attributes that are mass assignable.

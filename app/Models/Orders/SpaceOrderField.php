@@ -4,7 +4,7 @@ namespace App\Models\Orders;
 
 use App\Models\BaseModel;
 use App\Models\Space;
-use App\Models\Traits\SoftDeletable;
+use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 use Database\Factories\SpaceOrderFieldFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -30,7 +30,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class SpaceOrderField extends BaseModel
 {
     use HasFactory;
-    use SoftDeletable;
+    use SoftDeletableTrait;
 
     /**
      * The attributes that are mass assignable.

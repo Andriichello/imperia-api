@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Traits\SoftDeletable;
+use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -33,7 +33,7 @@ use Spatie\Permission\Traits\HasRoles;
  */
 class User extends Authenticatable
 {
-    use SoftDeletable;
+    use SoftDeletableTrait;
     use HasApiTokens;
     use Notifiable;
     use HasFactory;

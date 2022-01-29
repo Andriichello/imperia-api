@@ -3,15 +3,18 @@
 namespace App\Models\Traits;
 
 use App\Models\BaseModel;
+use Carbon\Carbon;
 use Dyrynda\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * Trait SoftDeletable.
+ * Trait SoftDeletableTrait.
  *
  * @mixin BaseModel
+ *
+ * @property Carbon|null $deleted_at
  */
-trait SoftDeletable
+trait SoftDeletableTrait
 {
     use SoftDeletes;
     use CascadeSoftDeletes;
@@ -49,7 +52,7 @@ trait SoftDeletable
         $lastDeletedAt = $trashed->max('deleted_at');
 
         foreach ($trashed as $item) {
-            if (usesTrait($item, SoftDeletable::class)) {
+            if (usesTrait($item, SoftDeletableTrait::class)) {
                 // should restore only last deleted items, so if some of them
                 // was deleted (earlier) on purpose then they will stay deleted
                 if ($item->deleted_at == $lastDeletedAt) {

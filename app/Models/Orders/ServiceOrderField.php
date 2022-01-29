@@ -4,7 +4,7 @@ namespace App\Models\Orders;
 
 use App\Models\BaseModel;
 use App\Models\Service;
-use App\Models\Traits\SoftDeletable;
+use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -29,7 +29,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ServiceOrderField extends BaseModel
 {
     use HasFactory;
-    use SoftDeletable;
+    use SoftDeletableTrait;
 
     /**
      * The attributes that are mass assignable.
