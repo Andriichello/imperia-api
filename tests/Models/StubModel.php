@@ -8,6 +8,7 @@ use App\Models\BaseModel;
  * Class StubModel.
  *
  * @property string $name
+ * @property string $metadata
  */
 class StubModel extends BaseModel
 {
@@ -25,5 +26,6 @@ class StubModel extends BaseModel
      */
     protected $fillable = [
         'name',
+        'metadata',
     ];
 }

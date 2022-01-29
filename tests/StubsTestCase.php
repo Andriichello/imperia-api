@@ -37,6 +37,7 @@ abstract class StubsTestCase extends TestCase
             $table->temporary();
             $table->increments('id');
             $table->string('name')->default('Stub');
+            $table->json('metadata')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
