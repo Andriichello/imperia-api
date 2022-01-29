@@ -5,11 +5,11 @@ namespace App\Models\Traits;
 use App\Models\BaseModel;
 
 /**
- * Trait SoftDeletable.
+ * Trait JsonFieldTrait.
  *
  * @mixin BaseModel
  */
-trait BaseModelTrait
+trait JsonFieldTrait
 {
     /**
      * Get JSON field decoded as associate array.

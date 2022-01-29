@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Traits\BaseModelTrait;
+use App\Models\Traits\JsonFieldTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class BaseModel extends Model
 {
-    use BaseModelTrait;
+    use JsonFieldTrait;
 
     /**
      * The accessors to append to the model's array form.
