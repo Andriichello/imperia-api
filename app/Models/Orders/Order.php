@@ -4,6 +4,7 @@ namespace App\Models\Orders;
 
 use App\Models\Banquet;
 use App\Models\BaseModel;
+use App\Models\Traits\CommentableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 use Database\Factories\OrderFactory;
@@ -34,6 +35,7 @@ class Order extends BaseModel
 {
     use HasFactory;
     use SoftDeletableTrait;
+    use CommentableTrait;
 
     /**
      * The attributes that are mass assignable.

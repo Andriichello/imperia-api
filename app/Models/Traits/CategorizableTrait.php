@@ -5,9 +5,6 @@ namespace App\Models\Traits;
 use App\Models\BaseModel;
 use App\Models\Morphs\Categorizable;
 use App\Models\Morphs\Category;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -59,7 +56,7 @@ trait CategorizableTrait
     }
 
     /**
-     * Attach given categories to the model.
+     * Detach given categories from the model.
      *
      * @param Category ...$categories
      *

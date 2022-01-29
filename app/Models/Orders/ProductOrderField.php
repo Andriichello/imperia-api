@@ -4,6 +4,7 @@ namespace App\Models\Orders;
 
 use App\Models\BaseModel;
 use App\Models\Product;
+use App\Models\Traits\CommentableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 use Database\Factories\ProductOrderFieldFactory;
@@ -30,6 +31,7 @@ class ProductOrderField extends BaseModel
 {
     use HasFactory;
     use SoftDeletableTrait;
+    use CommentableTrait;
 
     /**
      * The attributes that are mass assignable.
