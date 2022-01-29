@@ -4,12 +4,13 @@ namespace Tests\Models\Traits;
 
 use App\Models\BaseModel;
 use App\Models\Traits\JsonFieldTrait;
-use Tests\TestCase;
+use Tests\Models\StubModel;
+use Tests\StubsTestCase;
 
 /**
  * Class JsonFieldTraitTest.
  */
-class JsonFieldTraitTest extends TestCase
+class JsonFieldTraitTest extends StubsTestCase
 {
     /**
      * Instance of the tested class.
@@ -27,9 +28,10 @@ class JsonFieldTraitTest extends TestCase
     {
         parent::setUp();
 
-        $this->instance = new class extends BaseModel {
+        $this->instance = new class extends StubModel {
             use JsonFieldTrait;
         };
+        $this->instance->save();
     }
 
 
@@ -41,14 +43,18 @@ class JsonFieldTraitTest extends TestCase
     public function testGettersAndSetters()
     {
         $this->instance->setJson('metadata', ['key' => 'value']);
+        $this->instance->save();
 
+        $this->instance = $this->instance->fresh();
         $metadata = $this->instance->getJson('metadata');
         $this->assertIsArray($metadata);
         $this->assertNotEmpty($metadata);
         $this->assertArrayHasKey('key', $metadata);
 
         $this->instance->setToJson('metadata', 'title', 'something');
+        $this->instance->save();
 
+        $this->instance = $this->instance->fresh();
         $metadata = $this->instance->getJson('metadata');
         $this->assertIsArray($metadata);
         $this->assertNotEmpty($metadata);
