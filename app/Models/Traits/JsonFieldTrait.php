@@ -49,7 +49,7 @@ trait JsonFieldTrait
      */
     public function setJson(string $field, array $array): void
     {
-        $this->$field = $array;
+        $this->$field = json_encode($array);
     }
 
     /**
@@ -65,6 +65,6 @@ trait JsonFieldTrait
     {
         $array = $this->getJson($field);
         data_set($array, $key, $value);
-        $this->$field = $array;
+        $this->$field = json_encode($array);
     }
 }
