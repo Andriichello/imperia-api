@@ -3,18 +3,29 @@
 namespace App\Models\Morphs;
 
 use App\Models\BaseModel;
+use App\Models\Traits\JsonFieldTrait;
 use Carbon\Carbon;
+use Database\Factories\Morphs\LogFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * Class Log.
  *
- * @property string $title
- * @property string|null $metadata
+ * @property string|null $title
+ * @property string $metadata
+ * @property int $loggable_id
+ * @property string $loggable_type
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
+ * @method static LogFactory factory(...$parameters)
  */
 class Log extends BaseModel
 {
+    use HasFactory;
+    use JsonFieldTrait;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -23,5 +34,26 @@ class Log extends BaseModel
     protected $fillable = [
         'title',
         'metadata',
+        'loggable_id',
+        'loggable_type',
     ];
+
+    /**
+     * The loadable relationships for the model.
+     *
+     * @var array
+     */
+    protected $relations = [
+        'loggable',
+    ];
+
+    /**
+     * Model, for which the log was created.
+     *
+     * @return MorphTo
+     */
+    public function loggable(): MorphTo
+    {
+        return $this->morphTo('loggable');
+    }
 }
