@@ -15,8 +15,10 @@ return new class extends Migration
     {
         Schema::create('logs', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 25);
-            $table->json('metadata')->nullable();
+            $table->unsignedBigInteger('loggable_id');
+            $table->string('loggable_type');
+            $table->string('title', 25)->nullable();
+            $table->json('metadata');
             $table->timestamps();
         });
     }
