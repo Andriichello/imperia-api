@@ -61,7 +61,6 @@ class BaseModelTest extends TestCase
      */
     public function testTypeAttribute()
     {
-        $type = $this->instance->type;
-        $this->assertEmpty($type);
+        $this->assertEquals($this->instance->type, get_class($this->instance));
     }
 }
