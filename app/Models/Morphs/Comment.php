@@ -3,29 +3,27 @@
 namespace App\Models\Morphs;
 
 use App\Models\BaseModel;
-use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
+use Database\Factories\Morphs\CommentFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * Class Comment.
  *
  * @property string $text
- * @property int $target_id
- * @property int $container_id
- * @property string $target_type
- * @property string $container_type
+ * @property int $commentable_id
+ * @property string $commentable_type
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- * @property Carbon|null $deleted_at
  *
- * @property Model|null $target
- * @property Model|null $container
+ * @property BaseModel $commentable
+ *
+ * @method static CommentFactory factory(...$parameters)
  */
 class Comment extends BaseModel
 {
-    use SoftDeletableTrait;
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -34,10 +32,8 @@ class Comment extends BaseModel
      */
     protected $fillable = [
         'text',
-        'target_id',
-        'target_type',
-        'container_id',
-        'container_type',
+        'commentable_id',
+        'commentable_type',
     ];
 
     /**
@@ -46,27 +42,16 @@ class Comment extends BaseModel
      * @var array
      */
     protected $relations = [
-        'target',
-        'container',
+        'commentable',
     ];
 
     /**
-     * Get the target model.
+     * Model, which was commented.
      *
      * @return MorphTo
      */
-    public function target(): MorphTo
+    public function commentable(): MorphTo
     {
-        return $this->morphTo('target', 'target_type', 'target_id', 'id');
-    }
-
-    /**
-     * Get the container model.
-     *
-     * @return MorphTo
-     */
-    public function container(): MorphTo
-    {
-        return $this->morphTo('container', 'container_type', 'container_id', 'id');
+        return $this->morphTo('commentable', 'commentable_type', 'commentable_id', 'id');
     }
 }
