@@ -1,0 +1,37 @@
+<?php
+
+namespace Database\Factories\Morphs;
+
+use App\Models\Morphs\Category;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
+
+/**
+ * Class CategoryFactory.
+ *
+ * @method Category|Collection create($attributes = [], ?Model $parent = null)
+ */
+class CategoryFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string|null
+     */
+    protected $model = Category::class;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array
+     */
+    public function definition()
+    {
+        return [
+            'slug' => $this->faker->unique->slug,
+            'title' => $this->faker->title,
+            'description' => $this->faker->sentence,
+        ];
+    }
+}
