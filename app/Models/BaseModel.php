@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Traits\BaseModelTrait;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property string $type
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  */
 class BaseModel extends Model
 {
@@ -27,10 +30,10 @@ class BaseModel extends Model
     /**
      * Accessor for the model type string.
      *
-     * @return string|null
+     * @return string
      */
-    public function getTypeAttribute(): ?string
+    public function getTypeAttribute(): string
     {
-        return $this->table ?? null;
+        return static::class;
     }
 }
