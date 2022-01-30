@@ -71,14 +71,14 @@ class TestingSeeder extends Seeder
                 'birthdate' => '1986-01-26',
             ]);
 
-        $jennyDoe = FamilyMember::factory()
+        FamilyMember::factory()
             ->withRelative($johnDoe, FamilyRelation::Child())
             ->create([
                 'name' => 'Jenny Doe',
                 'birthdate' => '2010-07-03',
             ]);
 
-        $tommyDoe = FamilyMember::factory()
+        FamilyMember::factory()
             ->withRelative($johnDoe, FamilyRelation::Child())
             ->create([
                 'name' => 'Tommy Doe',
@@ -105,7 +105,7 @@ class TestingSeeder extends Seeder
                 'title' => 'One',
             ]);
 
-        $categorizable = Categorizable::factory()
+        Categorizable::factory()
             ->withCategory($category)
             ->withModel($ticket)
             ->create();

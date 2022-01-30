@@ -26,12 +26,7 @@ class UpdateUserRequest extends UpdateRequest
         $target = (new UserRepository())->find($this->id());
 
         if ($this->has('current_password')) {
-            $credentials = [
-                'email' => $target->email,
-                'password' => $this->get('current_password'),
-            ];
-
-            if (!Auth::attempt($credentials)) {
+            if (!$target->isCurrentPassword($this->get('current_password'))) {
                 $this->validator->errors()
                     ->add('current_password', 'Invalid current password');
 

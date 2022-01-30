@@ -9,6 +9,8 @@ namespace App\Enums;
  * @method static FamilyRelation Parent()
  * @method static FamilyRelation Grandparent()
  * @method static FamilyRelation Partner()
+ *
+ * @SuppressWarnings(PHPMD)
  */
 class FamilyRelation extends Enum
 {

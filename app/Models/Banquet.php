@@ -47,7 +47,7 @@ class Banquet extends BaseModel
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var string[]
      */
     protected $fillable = [
         'title',
@@ -108,9 +108,7 @@ class Banquet extends BaseModel
      */
     public function creator(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'creator_id', 'id')
-            ->without('role')
-            ->select(['id', 'name']);
+        return $this->belongsTo(User::class, 'creator_id', 'id');
     }
 
     /**

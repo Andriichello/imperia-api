@@ -28,12 +28,12 @@ class CustomerController extends CrudController
      *
      * @var string
      */
-    protected string $resourceCollectionClass = CustomerCollection::class;
+    protected string $collectionClass = CustomerCollection::class;
 
     /**
      * CustomerController constructor.
      *
-     * @var CustomerRepository
+     * @param  CustomerRepository $repository
      */
     public function __construct(CustomerRepository $repository)
     {

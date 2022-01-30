@@ -2,10 +2,8 @@
 
 namespace Tests\Models\Traits;
 
-use App\Models\BaseModel;
 use App\Models\Morphs\Log;
-use App\Models\Traits\LoggableTrait;
-use Tests\Models\StubModel;
+use Tests\Models\Stubs\LoggableStub;
 use Tests\StubsTestCase;
 
 /**
@@ -16,9 +14,9 @@ class LoggableTraitTest extends StubsTestCase
     /**
      * Instance of the tested class.
      *
-     * @var BaseModel
+     * @var LoggableStub
      */
-    protected BaseModel $instance;
+    protected LoggableStub $instance;
 
     /**
      * Setup the test environment.
@@ -29,9 +27,7 @@ class LoggableTraitTest extends StubsTestCase
     {
         parent::setUp();
 
-        $this->instance = new class extends StubModel {
-            use LoggableTrait;
-        };
+        $this->instance = new LoggableStub();
         $this->instance->save();
     }
 

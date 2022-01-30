@@ -7,7 +7,6 @@ use App\Models\Customer;
 use App\Models\FamilyMember;
 use Illuminate\Foundation\Testing\Concerns\MakesHttpRequests;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Tests\RegisteringTestCase;
 
 /**

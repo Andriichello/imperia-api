@@ -2,8 +2,6 @@
 
 namespace App\Models\Morphs;
 
-use App\Events\DiscountCreated;
-use App\Events\DiscountUpdated;
 use App\Models\BaseModel;
 use Carbon\Carbon;
 
@@ -22,7 +20,7 @@ class Discount extends BaseModel
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var string[]
      */
     protected $fillable = [
         'title',
@@ -39,15 +37,5 @@ class Discount extends BaseModel
     protected $casts = [
         'amount' => 'float',
         'percent' => 'float',
-    ];
-
-    /**
-     * The event map for the model.
-     *
-     * @var array
-     */
-    protected $dispatchesEvents = [
-        'saved' => DiscountCreated::class,
-        'updated' => DiscountUpdated::class,
     ];
 }

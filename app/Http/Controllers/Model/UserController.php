@@ -46,12 +46,12 @@ class UserController extends CrudController
      *
      * @var string
      */
-    protected string $resourceCollectionClass = UserCollection::class;
+    protected string $collectionClass = UserCollection::class;
 
     /**
      * UserController constructor.
      *
-     * @var UserRepository
+     * @param UserRepository $repository
      */
     public function __construct(UserRepository $repository)
     {

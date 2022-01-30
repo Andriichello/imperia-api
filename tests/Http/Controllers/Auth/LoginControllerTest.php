@@ -5,7 +5,6 @@ namespace Tests\Http\Controllers\Auth;
 use Illuminate\Foundation\Testing\Concerns\MakesHttpRequests;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Symfony\Component\Console\Output\ConsoleOutput;
 use Tests\RegisteringTestCase;
 
 /**

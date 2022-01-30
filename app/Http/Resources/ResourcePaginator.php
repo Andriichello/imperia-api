@@ -7,10 +7,8 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Contracts\Pagination\Paginator as PaginatorInterface;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class ResourcePaginator.
@@ -158,7 +156,7 @@ class ResourcePaginator extends Paginator
     /**
      * Get the URL for a given page number.
      *
-     * @param $page
+     * @param int $page
      *
      * @return string
      */

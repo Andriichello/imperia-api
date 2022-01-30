@@ -7,6 +7,8 @@ namespace App\Enums;
  *
  * @method static UserRole Admin()
  * @method static UserRole Manager()
+ *
+ * @SuppressWarnings(PHPMD)
  */
 class UserRole extends Enum
 {

@@ -8,7 +8,6 @@ use App\Http\Resources\User\UserResource;
 use App\Http\Responses\ApiResponse;
 use App\Repositories\UserRepository;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Response;
 
 /**
  * Class RegisterController.

@@ -60,8 +60,10 @@ trait PaginationTrait
      * @return ResourcePaginator
      * @throws Exception
      */
-    public function paginateResource(Builder|EloquentBuilder|SpatieBuilder $builder, ?string $collectionClass,): ResourcePaginator
-    {
+    public function paginateResource(
+        Builder|EloquentBuilder|SpatieBuilder $builder,
+        ?string $collectionClass,
+    ): ResourcePaginator {
         return new ResourcePaginator($this->paginate($builder), $collectionClass);
     }
 }

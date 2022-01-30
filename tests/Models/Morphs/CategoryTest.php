@@ -4,7 +4,7 @@ namespace Tests\Models\Morphs;
 
 use App\Models\Morphs\Categorizable;
 use App\Models\Morphs\Category;
-use Tests\Models\StubModel;
+use Tests\Models\Stubs\CategorizableStub;
 use Tests\StubsTestCase;
 
 /**
@@ -38,10 +38,10 @@ class CategoryTest extends StubsTestCase
      */
     public function testCategorizables()
     {
-        /** @var StubModel $stubOne */
-        $stubOne = StubModel::query()->create(['name' => 'One']);
-        /** @var StubModel $stubTwo */
-        $stubTwo = StubModel::query()->create(['name' => 'Two']);
+        /** @var CategorizableStub $stubOne */
+        $stubOne = CategorizableStub::query()->create();
+        /** @var CategorizableStub $stubTwo */
+        $stubTwo = CategorizableStub::query()->create();
 
         Categorizable::factory()->withCategory($this->instance)->withModel($stubOne)->create();
         $this->assertEquals(1, $this->instance->categorizables()->count());

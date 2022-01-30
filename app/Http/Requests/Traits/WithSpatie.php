@@ -3,6 +3,9 @@
 namespace App\Http\Requests\Traits;
 
 use App\Http\Requests\BaseRequest;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Query\Builder;
+use Spatie\QueryBuilder\QueryBuilder as SpatieBuilder;
 
 /**
  * Trait WithSpatie.
@@ -94,5 +97,23 @@ trait WithSpatie
     public function getAllowedIncludes(): array
     {
         return $this->allowedIncludes;
+    }
+
+    /**
+     * Apply allowed options to spatie builder.
+     *
+     * @param Builder|EloquentBuilder|SpatieBuilder $builder
+     *
+     * @return SpatieBuilder
+     */
+    public function spatieBuilder(Builder|EloquentBuilder|SpatieBuilder $builder): SpatieBuilder
+    {
+        $builder = $builder instanceof SpatieBuilder ? $builder : SpatieBuilder::for($builder);
+
+        return $builder->allowedFields($this->getAllowedFields())
+            ->allowedSorts($this->getAllowedSorts())
+            ->allowedFilters($this->getAllowedFilters())
+            ->allowedAppends($this->getAllowedAppends())
+            ->allowedIncludes($this->getAllowedIncludes());
     }
 }

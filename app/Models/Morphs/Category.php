@@ -7,9 +7,7 @@ use Carbon\Carbon;
 use Database\Factories\Morphs\CategoryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Collection;
-use MigrationsGenerator\Models\Model;
 
 /**
  * Class Category.
@@ -38,7 +36,7 @@ class Category extends BaseModel
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var string[]
      */
     protected $fillable = [
         'slug',

@@ -3,7 +3,6 @@
 namespace App\Http\Resources\FamilyMember;
 
 use App\Http\Resources\Customer\CustomerResource;
-use App\Models\Customer;
 use App\Models\FamilyMember;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -20,6 +19,8 @@ class FamilyMemberResource extends JsonResource
      *
      * @param  Request  $request
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function toArray($request): array
     {

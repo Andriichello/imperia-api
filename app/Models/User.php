@@ -42,7 +42,7 @@ class User extends Authenticatable
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var string[]
      */
     protected $fillable = [
         'name',
@@ -92,10 +92,23 @@ class User extends Authenticatable
      * Password mutator, which handles encrypting.
      *
      * @param string $password
+     *
      * @return void
      */
     public function setPasswordAttribute(string $password)
     {
         $this->attributes['password'] = Hash::make($password);
+    }
+
+    /**
+     * Determines if given password is the same as current one.
+     *
+     * @param string $password
+     *
+     * @return bool
+     */
+    public function isCurrentPassword(string $password): bool
+    {
+        return Hash::check($password, $this->getOriginal('password'));
     }
 }

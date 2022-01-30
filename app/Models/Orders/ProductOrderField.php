@@ -36,7 +36,7 @@ class ProductOrderField extends BaseModel
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var string[]
      */
     protected $fillable = [
         'order_id',
@@ -47,7 +47,7 @@ class ProductOrderField extends BaseModel
     /**
      * The accessors to append to the model's array form.
      *
-     * @var array
+     * @var string[]
      */
     protected $appends = [
         'total',

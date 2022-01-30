@@ -3,8 +3,10 @@
 namespace App\Models\Traits;
 
 use App\Models\BaseModel;
+use App\Models\Scopes\SoftDeletableScope;
 use Carbon\Carbon;
 use Dyrynda\Database\Support\CascadeSoftDeletes;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -13,19 +15,40 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @mixin BaseModel
  *
  * @property Carbon|null $deleted_at
+ *
+ * @method Builder withTrashed()
+ * @method Builder withoutTrashed()
+ * @method Builder onlyTrashed()
  */
 trait SoftDeletableTrait
 {
     use SoftDeletes;
     use CascadeSoftDeletes;
 
+    /**
+     * Bootstrap the model and its traits.
+     *
+     * @return void
+     */
     protected static function boot()
     {
-        parent::boot();
+        static::bootTraits();
+        static::bootSoftDeletes();
+        static::bootCascadeSoftDeletes();
 
         static::restored(function ($model) {
             $model->runCascadingRestores();
         });
+    }
+
+    /**
+     * Boot the soft deleting trait for a model.
+     *
+     * @return void
+     */
+    public static function bootSoftDeletes()
+    {
+        static::addGlobalScope(new SoftDeletableScope());
     }
 
     /**

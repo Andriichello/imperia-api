@@ -2,13 +2,8 @@
 
 namespace Tests\Models\Traits;
 
-use App\Models\BaseModel;
-use App\Models\Morphs\Categorizable;
-use App\Models\Morphs\Category;
 use App\Models\Morphs\Comment;
-use App\Models\Traits\CategorizableTrait;
-use App\Models\Traits\CommentableTrait;
-use Tests\Models\StubModel;
+use Tests\Models\Stubs\CommentableStub;
 use Tests\StubsTestCase;
 
 /**
@@ -19,9 +14,9 @@ class CommentableTraitTest extends StubsTestCase
     /**
      * Instance of the tested class.
      *
-     * @var BaseModel
+     * @var CommentableStub
      */
-    protected BaseModel $instance;
+    protected CommentableStub $instance;
 
     /**
      * Setup the test environment.
@@ -32,9 +27,7 @@ class CommentableTraitTest extends StubsTestCase
     {
         parent::setUp();
 
-        $this->instance = new class extends StubModel {
-            use CommentableTrait;
-        };
+        $this->instance = new CommentableStub();
         $this->instance->save();
     }
 
@@ -112,7 +105,7 @@ class CommentableTraitTest extends StubsTestCase
         $this->assertTrue($this->instance->hasAnyOfComments());
         $this->assertTrue($this->instance->hasAnyOfComments($texts[0]));
         $this->assertFalse($this->instance->hasAnyOfComments($texts[1]));
-        $this->assertTrue ($this->instance->hasAnyOfComments(...$texts));
+        $this->assertTrue($this->instance->hasAnyOfComments(...$texts));
 
         Comment::factory()->withText($texts[1])->withModel($this->instance)->create();
 

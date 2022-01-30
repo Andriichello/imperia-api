@@ -2,12 +2,8 @@
 
 namespace Tests;
 
-use App\Enums\UserRole;
-use App\Models\User;
-use App\Repositories\UserRepository;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Laravel\Sanctum\Sanctum;
 
 /**
  * Class StubsTestCase.

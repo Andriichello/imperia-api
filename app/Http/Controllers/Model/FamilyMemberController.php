@@ -28,12 +28,12 @@ class FamilyMemberController extends CrudController
      *
      * @var string
      */
-    protected string $resourceCollectionClass = FamilyMemberCollection::class;
+    protected string $collectionClass = FamilyMemberCollection::class;
 
     /**
      * FamilyMemberController constructor.
      *
-     * @var FamilyMemberRepository
+     * @param  FamilyMemberRepository $repository
      */
     public function __construct(FamilyMemberRepository $repository)
     {

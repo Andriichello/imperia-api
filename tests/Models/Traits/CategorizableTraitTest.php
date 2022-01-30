@@ -2,11 +2,9 @@
 
 namespace Tests\Models\Traits;
 
-use App\Models\BaseModel;
 use App\Models\Morphs\Categorizable;
 use App\Models\Morphs\Category;
-use App\Models\Traits\CategorizableTrait;
-use Tests\Models\StubModel;
+use Tests\Models\Stubs\CategorizableStub;
 use Tests\StubsTestCase;
 
 /**
@@ -17,9 +15,9 @@ class CategorizableTraitTest extends StubsTestCase
     /**
      * Instance of the tested class.
      *
-     * @var BaseModel
+     * @var CategorizableStub
      */
-    protected BaseModel $instance;
+    protected CategorizableStub $instance;
 
     /**
      * Setup the test environment.
@@ -30,9 +28,7 @@ class CategorizableTraitTest extends StubsTestCase
     {
         parent::setUp();
 
-        $this->instance = new class extends StubModel {
-            use CategorizableTrait;
-        };
+        $this->instance = new CategorizableStub();
         $this->instance->save();
     }
 
@@ -113,7 +109,7 @@ class CategorizableTraitTest extends StubsTestCase
         $this->assertTrue($this->instance->hasAnyOfCategories());
         $this->assertTrue($this->instance->hasAnyOfCategories($categoryOne));
         $this->assertFalse($this->instance->hasAnyOfCategories($categoryTwo));
-        $this->assertTrue ($this->instance->hasAnyOfCategories($categoryOne, $categoryTwo));
+        $this->assertTrue($this->instance->hasAnyOfCategories($categoryOne, $categoryTwo));
 
         Categorizable::factory()->withCategory($categoryTwo)->withModel($this->instance)->create();
 

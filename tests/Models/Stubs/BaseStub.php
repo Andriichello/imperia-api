@@ -1,16 +1,16 @@
 <?php
 
-namespace Tests\Models;
+namespace Tests\Models\Stubs;
 
 use App\Models\BaseModel;
 
 /**
- * Class StubModel.
+ * Class BaseStub.
  *
  * @property string $name
  * @property string $metadata
  */
-class StubModel extends BaseModel
+class BaseStub extends BaseModel
 {
     /**
      * The table associated with the model.
@@ -22,10 +22,20 @@ class StubModel extends BaseModel
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var string[]
      */
     protected $fillable = [
         'name',
         'metadata',
+    ];
+
+    /**
+     * The model's attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'name' => 'Stub',
+        'metadata' => '{}',
     ];
 }

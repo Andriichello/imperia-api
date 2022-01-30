@@ -2,12 +2,8 @@
 
 namespace App\Repositories;
 
-use App\Enums\UserRole;
-use App\Models\Customer;
 use App\Models\FamilyMember;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 /**
  * Class FamilyMemberRepository.

@@ -40,7 +40,7 @@ class Order extends BaseModel
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var string[]
      */
     protected $fillable = [
         'banquet_id',
@@ -78,9 +78,9 @@ class Order extends BaseModel
     /**
      * The accessors to append to the model's array form.
      *
-     * @var array
+     * @var string[]
      */
-    public $appends = [
+    protected $appends = [
         'total',
     ];
 

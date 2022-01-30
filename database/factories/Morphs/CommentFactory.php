@@ -3,7 +3,6 @@
 namespace Database\Factories\Morphs;
 
 use App\Models\BaseModel;
-use App\Models\Morphs\Category;
 use App\Models\Morphs\Comment;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;

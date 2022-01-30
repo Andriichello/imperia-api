@@ -34,7 +34,7 @@ class CustomerControllerTest extends RegisteringTestCase
     /**
      * Family members of the test customer.
      *
-     * @var Collection<FamilyMember>
+     * @var Collection
      */
     protected Collection $familyMembers;
 

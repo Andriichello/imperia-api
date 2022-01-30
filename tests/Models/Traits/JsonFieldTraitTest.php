@@ -2,9 +2,7 @@
 
 namespace Tests\Models\Traits;
 
-use App\Models\BaseModel;
-use App\Models\Traits\JsonFieldTrait;
-use Tests\Models\StubModel;
+use Tests\Models\Stubs\BaseStub;
 use Tests\StubsTestCase;
 
 /**
@@ -15,9 +13,9 @@ class JsonFieldTraitTest extends StubsTestCase
     /**
      * Instance of the tested class.
      *
-     * @var BaseModel
+     * @var BaseStub
      */
-    protected BaseModel $instance;
+    protected BaseStub $instance;
 
     /**
      * Setup the test environment.
@@ -28,9 +26,10 @@ class JsonFieldTraitTest extends StubsTestCase
     {
         parent::setUp();
 
-        $this->instance = new class extends StubModel {
-            use JsonFieldTrait;
-        };
+        $this->instance = new BaseStub([
+            'name' => 'Stub',
+            'metadata' => '{}',
+        ]);
         $this->instance->save();
     }
 

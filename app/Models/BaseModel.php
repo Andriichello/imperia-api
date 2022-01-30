@@ -21,9 +21,9 @@ class BaseModel extends Model
     /**
      * The accessors to append to the model's array form.
      *
-     * @var array
+     * @var string[]
      */
-    public $appends = [
+    protected $appends = [
         'type',
     ];
 

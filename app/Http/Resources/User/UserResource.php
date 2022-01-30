@@ -18,6 +18,8 @@ class UserResource extends JsonResource
      *
      * @param  Request  $request
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function toArray($request): array
     {

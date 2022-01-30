@@ -29,9 +29,9 @@ if (!function_exists('usesTrait')) {
      * @param string|object $class
      * @param string $trait
      *
-     * @return string
+     * @return bool
      */
-    function usesTrait(string|object $class, string $trait): string
+    function usesTrait(string|object $class, string $trait): bool
     {
         return in_array($trait, class_uses_recursive($class), true);
     }

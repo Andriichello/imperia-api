@@ -32,10 +32,10 @@ class DestroyRequest extends CrudRequest
     /**
      * Get force parameter.
      *
-     * @return mixed
+     * @return bool
      */
     public function force(): bool
     {
-        return $this->get('force', false);
+        return (bool) $this->get('force', false);
     }
 }
