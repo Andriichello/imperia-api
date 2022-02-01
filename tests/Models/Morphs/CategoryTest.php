@@ -8,7 +8,7 @@ use Tests\Models\Stubs\CategorizableStub;
 use Tests\StubsTestCase;
 
 /**
- * Class Category.
+ * Class CategoryTest.
  */
 class CategoryTest extends StubsTestCase
 {
@@ -32,7 +32,7 @@ class CategoryTest extends StubsTestCase
     }
 
     /**
-     * Test attaching and detaching categories.
+     * Test categorizable and categorized relations.
      *
      * @return void
      */
