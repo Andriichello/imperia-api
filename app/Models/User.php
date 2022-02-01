@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 use Database\Factories\UserFactory;
@@ -31,7 +32,7 @@ use Spatie\Permission\Traits\HasRoles;
  *
  * @method static UserFactory factory(...$parameters)
  */
-class User extends Authenticatable
+class User extends Authenticatable implements SoftDeletableInterface
 {
     use SoftDeletableTrait;
     use HasApiTokens;

@@ -4,6 +4,8 @@ namespace App\Models\Orders;
 
 use App\Models\Banquet;
 use App\Models\BaseModel;
+use App\Models\Interfaces\CommentableInterface;
+use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Traits\CommentableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
@@ -31,7 +33,9 @@ use Illuminate\Support\Collection;
  *
  * @method static OrderFactory factory(...$parameters)
  */
-class Order extends BaseModel
+class Order extends BaseModel implements
+    SoftDeletableInterface,
+    CommentableInterface
 {
     use HasFactory;
     use SoftDeletableTrait;

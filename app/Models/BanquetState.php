@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,7 +19,7 @@ use Illuminate\Support\Collection;
  *
  * @property Banquet[]|Collection $banquets
  */
-class BanquetState extends BaseModel
+class BanquetState extends BaseModel implements SoftDeletableInterface
 {
     use SoftDeletableTrait;
 

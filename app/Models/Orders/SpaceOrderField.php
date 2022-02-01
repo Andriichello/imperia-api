@@ -3,6 +3,8 @@
 namespace App\Models\Orders;
 
 use App\Models\BaseModel;
+use App\Models\Interfaces\CommentableInterface;
+use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Space;
 use App\Models\Traits\CommentableTrait;
 use App\Models\Traits\SoftDeletableTrait;
@@ -28,7 +30,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @method static SpaceOrderFieldFactory factory(...$parameters)
  */
-class SpaceOrderField extends BaseModel
+class SpaceOrderField extends BaseModel implements
+    SoftDeletableInterface,
+    CommentableInterface
 {
     use HasFactory;
     use SoftDeletableTrait;

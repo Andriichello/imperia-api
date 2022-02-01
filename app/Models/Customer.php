@@ -2,6 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\CommentableInterface;
+use App\Models\Interfaces\LoggableInterface;
+use App\Models\Interfaces\SoftDeletableInterface;
+use App\Models\Traits\CommentableTrait;
+use App\Models\Traits\LoggableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 use Database\Factories\CustomerFactory;
@@ -25,10 +30,15 @@ use Illuminate\Support\Collection;
  *
  * @method static CustomerFactory factory(...$parameters)
  */
-class Customer extends BaseModel
+class Customer extends BaseModel implements
+    SoftDeletableInterface,
+    CommentableInterface,
+    LoggableInterface
 {
     use HasFactory;
     use SoftDeletableTrait;
+    use CommentableTrait;
+    use LoggableTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -50,6 +60,16 @@ class Customer extends BaseModel
      */
     protected $relations = [
         'familyMembers',
+    ];
+
+    /**
+     * Array of column names changes of which should be logged.
+     *
+     * @var array
+     */
+    protected array $logFields = [
+        'email',
+        'phone',
     ];
 
     /**

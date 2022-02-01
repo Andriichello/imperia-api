@@ -2,9 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\CommentableInterface;
+use App\Models\Interfaces\LoggableInterface;
+use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Morphs\Comment;
 use App\Models\Orders\Order;
 use App\Models\Traits\CommentableTrait;
+use App\Models\Traits\LoggableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 use Database\Factories\BanquetFactory;
@@ -38,11 +42,15 @@ use Illuminate\Support\Collection;
  *
  * @method static BanquetFactory factory(...$parameters)
  */
-class Banquet extends BaseModel
+class Banquet extends BaseModel implements
+    SoftDeletableInterface,
+    CommentableInterface,
+    LoggableInterface
 {
     use HasFactory;
     use SoftDeletableTrait;
     use CommentableTrait;
+    use LoggableTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -79,6 +87,15 @@ class Banquet extends BaseModel
      */
     protected array $cascadeDeletes = [
         'order',
+    ];
+
+    /**
+     * Array of column names changes of which should be logged.
+     *
+     * @var array
+     */
+    protected array $logFields = [
+        'state_id',
     ];
 
     /**

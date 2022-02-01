@@ -2,7 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\CategorizableInterface;
+use App\Models\Interfaces\LoggableInterface;
+use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Traits\CategorizableTrait;
+use App\Models\Traits\LoggableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 use Database\Factories\SpaceFactory;
@@ -20,11 +24,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  *
  * @method static SpaceFactory factory(...$parameters)
  */
-class Space extends BaseModel
+class Space extends BaseModel implements
+    SoftDeletableInterface,
+    CategorizableInterface,
+    LoggableInterface
 {
     use HasFactory;
     use SoftDeletableTrait;
     use CategorizableTrait;
+    use LoggableTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -55,5 +63,14 @@ class Space extends BaseModel
      */
     protected $casts = [
         'price' => 'float',
+    ];
+
+    /**
+     * Array of column names changes of which should be logged.
+     *
+     * @var array
+     */
+    protected array $logFields = [
+        'price',
     ];
 }

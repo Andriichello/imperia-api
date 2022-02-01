@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\CategorizableInterface;
+use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Traits\CategorizableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
@@ -23,7 +25,9 @@ use Illuminate\Support\Collection;
  *
  * @method static MenuFactory factory(...$parameters)
  */
-class Menu extends BaseModel
+class Menu extends BaseModel implements
+    SoftDeletableInterface,
+    CategorizableInterface
 {
     use HasFactory;
     use SoftDeletableTrait;

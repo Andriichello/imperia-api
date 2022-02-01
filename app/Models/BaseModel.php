@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\JsonFieldInterface;
 use App\Models\Traits\JsonFieldTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-class BaseModel extends Model
+class BaseModel extends Model implements JsonFieldInterface
 {
     use JsonFieldTrait;
 
