@@ -2,7 +2,9 @@
 
 namespace Tests\Models\Traits;
 
+use App\Jobs\LogIfModelChanged;
 use App\Models\Morphs\Log;
+use Illuminate\Support\Facades\Bus;
 use Tests\Models\Stubs\LoggableStub;
 use Tests\StubsTestCase;
 
@@ -28,7 +30,7 @@ class LoggableTraitTest extends StubsTestCase
         parent::setUp();
 
         $this->instance = new LoggableStub();
-        $this->instance->save();
+        $this->instance->saveQuietly();
     }
 
     /**
@@ -90,5 +92,71 @@ class LoggableTraitTest extends StubsTestCase
         $this->assertTrue($this->instance->hasLogs());
         $this->assertEquals(1, $this->instance->logs()->count());
         $this->assertEquals($metadata, $this->instance->logs->first()->getJson('metadata'));
+    }
+
+    /**
+     * Test model created event log job dispatching.
+     *
+     * @return void
+     */
+    public function testModelCreatedLogJobDispatching()
+    {
+        $instance = new LoggableStub([
+            'name' => 'Just a name',
+            'metadata' => '{}',
+        ]);
+
+        Bus::fake();
+        $instance->save();
+        Bus::assertDispatched(LogIfModelChanged::class);
+    }
+
+    /**
+     * Test model updated event log job dispatching.
+     *
+     * @return void
+     */
+    public function testModelUpdatedLogJobDispatching()
+    {
+        Bus::fake();
+        $this->instance->update(['name' => 'New name']);
+        Bus::assertDispatched(LogIfModelChanged::class);
+
+        $this->instance->update(['metadata' => '{"key": "value"}']);
+        Bus::assertDispatched(LogIfModelChanged::class);
+    }
+
+    /**
+     * Test model created and updated events logging.
+     *
+     * @return void
+     */
+    public function testModelLogging()
+    {
+        $instance = new LoggableStub([
+            'name' => 'Just a name',
+            'metadata' => '{}',
+        ]);
+        $instance->save();
+        $this->assertEquals(1, $instance->logs()->count());
+
+        /** @var Log $log */
+        $log = $instance->logs()->first();
+        $this->assertEquals('created', $log->title);
+        $this->assertEquals($instance->name, $log->getFromJson('metadata', 'name'));
+        $this->assertNull($log->getFromJson('metadata', 'metadata'));
+
+        $instance->update(['name' => 'New name']);
+        $this->assertEquals(2, $instance->logs()->count());
+
+        $instance = $instance->fresh();
+        /** @var Log $log */
+        $log = $instance->logs()->offset(1)->first();
+        $this->assertEquals($instance->name, $log->getFromJson('metadata', 'name'));
+
+        if (!in_array('metadata', $instance->getLogFields())) {
+            $this->instance->update(['metadata' => '{"key": "value"}']);
+            $this->assertEquals(2, $instance->logs()->count());
+        }
     }
 }
