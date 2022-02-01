@@ -3,11 +3,12 @@
 namespace App\Models\Traits;
 
 use App\Models\BaseModel;
+use App\Models\Interfaces\CategorizableInterface;
 use App\Models\Morphs\Categorizable;
 use App\Models\Morphs\Category;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Trait CategorizableTrait.
@@ -30,7 +31,7 @@ trait CategorizableTrait
             'categorizable', // morph relation name
             Categorizable::class, // morph relation table
             'categorizable_id', // morph table pivot key to current model
-            'category_id', // morph table pivot key to related model
+            'category_id' // morph table pivot key to related model
         );
     }
 
@@ -43,16 +44,7 @@ trait CategorizableTrait
      */
     public function attachCategories(Category ...$categories): void
     {
-        DB::transaction(function () use ($categories) {
-            foreach ($categories as $category) {
-                Categorizable::query()
-                    ->firstOrCreate([
-                        'category_id' => $category->id,
-                        'categorizable_id' => $this->id,
-                        'categorizable_type' => $this->type,
-                    ]);
-            }
-        });
+        $this->categories()->attach(Arr::pluck($categories, 'id'));
     }
 
     /**
@@ -64,15 +56,7 @@ trait CategorizableTrait
      */
     public function detachCategories(Category ...$categories): void
     {
-        DB::transaction(function () use ($categories) {
-            foreach ($categories as $category) {
-                Categorizable::query()
-                    ->where('category_id', $category->id)
-                    ->where('categorizable_id', $this->id)
-                    ->where('categorizable_type', $this->type)
-                    ->delete();
-            }
-        });
+        $this->categories()->detach(Arr::pluck($categories, 'id'));
     }
 
     /**

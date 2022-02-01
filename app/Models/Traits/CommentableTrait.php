@@ -6,15 +6,13 @@ use App\Models\BaseModel;
 use App\Models\Morphs\Comment;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Trait CommentableTrait.
  *
  * @mixin BaseModel
  *
- * @property Comment[]|Collection $targetComments
- * @property Comment[]|Collection $containerComments
+ * @property Comment[]|Collection $comments
  */
 trait CommentableTrait
 {
@@ -37,16 +35,8 @@ trait CommentableTrait
      */
     public function attachComments(string ...$texts): void
     {
-        DB::transaction(function () use ($texts) {
-            foreach ($texts as $text) {
-                Comment::query()
-                    ->create([
-                        'text' => $text,
-                        'commentable_id' => $this->id,
-                        'commentable_type' => $this->type,
-                    ]);
-            }
-        });
+        $texts = array_map(fn($text) => compact('text'), $texts);
+        $this->comments()->createMany($texts);
     }
 
     /**
@@ -58,13 +48,7 @@ trait CommentableTrait
      */
     public function detachComments(string ...$texts): void
     {
-        DB::transaction(function () use ($texts) {
-            Comment::query()
-                ->where('commentable_id', $this->id)
-                ->where('commentable_type', $this->type)
-                ->whereIn('text', $texts)
-                ->delete();
-        });
+        $this->comments()->whereIn('text', $texts)->delete();
     }
 
     /**
