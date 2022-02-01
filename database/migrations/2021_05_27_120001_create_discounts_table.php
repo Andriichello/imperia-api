@@ -20,6 +20,7 @@ return new class extends Migration
             $table->decimal('amount')->unsigned()->nullable();
             $table->decimal('percent', 6, 3)->unsigned()->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

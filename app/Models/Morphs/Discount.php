@@ -3,6 +3,10 @@
 namespace App\Models\Morphs;
 
 use App\Models\BaseModel;
+use App\Models\Interfaces\LoggableInterface;
+use App\Models\Interfaces\SoftDeletableInterface;
+use App\Models\Traits\LoggableTrait;
+use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 
 /**
@@ -15,8 +19,13 @@ use Carbon\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-class Discount extends BaseModel
+class Discount extends BaseModel implements
+    SoftDeletableInterface,
+    LoggableInterface
 {
+    use SoftDeletableTrait;
+    use LoggableTrait;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -37,5 +46,15 @@ class Discount extends BaseModel
     protected $casts = [
         'amount' => 'float',
         'percent' => 'float',
+    ];
+
+    /**
+     * Array of column names changes of which should be logged.
+     *
+     * @var array
+     */
+    protected array $logFields = [
+        'amount',
+        'percent',
     ];
 }

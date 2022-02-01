@@ -3,6 +3,7 @@
 namespace App\Models\Morphs;
 
 use App\Models\BaseModel;
+use App\Models\Interfaces\JsonFieldInterface;
 use App\Models\Traits\JsonFieldTrait;
 use Carbon\Carbon;
 use Database\Factories\Morphs\LogFactory;
@@ -19,12 +20,13 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
+ * @property BaseModel $loggable
+ *
  * @method static LogFactory factory(...$parameters)
  */
 class Log extends BaseModel
 {
     use HasFactory;
-    use JsonFieldTrait;
 
     /**
      * The attributes that are mass assignable.
