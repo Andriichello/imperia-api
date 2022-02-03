@@ -4,6 +4,9 @@ namespace App\Models\Morphs;
 
 use App\Models\BaseModel;
 use Carbon\Carbon;
+use Database\Factories\Morphs\DiscountableFactory;
+use Database\Factories\Morphs\DiscountFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
@@ -18,9 +21,13 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property Carbon|null $deleted_at
  *
  * @property Model|null $discountable
+ *
+ * @method static DiscountableFactory factory(...$parameters)
  */
 class Discountable extends BaseModel
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *

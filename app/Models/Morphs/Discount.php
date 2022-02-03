@@ -8,6 +8,10 @@ use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Traits\LoggableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
+use Database\Factories\Morphs\DiscountFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 /**
  * Class Discount.
@@ -18,11 +22,16 @@ use Carbon\Carbon;
  * @property float|null $percent
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
+ * @property Discountable[]|Collection $discountables
+ *
+ * @method static DiscountFactory factory(...$parameters)
  */
 class Discount extends BaseModel implements
     SoftDeletableInterface,
     LoggableInterface
 {
+    use HasFactory;
     use SoftDeletableTrait;
     use LoggableTrait;
 
@@ -57,4 +66,14 @@ class Discount extends BaseModel implements
         'amount',
         'percent',
     ];
+
+    /**
+     * Related discountables.
+     *
+     * @return HasMany
+     */
+    public function discountables(): HasMany
+    {
+        return $this->hasMany(Discountable::class, 'discount_id', 'id');
+    }
 }
