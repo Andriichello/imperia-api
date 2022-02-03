@@ -8,6 +8,7 @@ use Database\Factories\Morphs\DiscountableFactory;
 use Database\Factories\Morphs\DiscountFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
@@ -20,7 +21,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  *
- * @property Model|null $discountable
+ * @property Discount $discount
+ * @property BaseModel $discounted
  *
  * @method static DiscountableFactory factory(...$parameters)
  */
@@ -40,21 +42,32 @@ class Discountable extends BaseModel
     ];
 
     /**
-     * The discountable relationships for the model.
+     * The loadable relationships for the model.
      *
      * @var array
      */
     protected $relations = [
-        'discountable',
+        'discount',
+        'discounted',
     ];
 
     /**
-     * Get the target model.
+     * Related discount.
+     *
+     * @return BelongsTo
+     */
+    public function discount(): BelongsTo
+    {
+        return $this->belongsTo(Discount::class);
+    }
+
+    /**
+     * Related discounted model.
      *
      * @return MorphTo
      */
-    public function discountable(): MorphTo
+    public function discounted(): MorphTo
     {
-        return $this->morphTo(__FUNCTION__, 'discountable_type', 'discountable_id', 'id');
+        return $this->morphTo('discounted', 'discountable_type', 'discountable_id', 'id');
     }
 }
