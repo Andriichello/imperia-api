@@ -22,8 +22,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(['category_id', 'categorizable_id', 'categorizable_type'], 'categorizables_ids_type_unique');
-            $table->foreign('category_id')->references('id')->on('morph_categories')
-                  ->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('category_id')->references('id')->on('morph_categories')->onDelete('cascade');
         });
     }
 

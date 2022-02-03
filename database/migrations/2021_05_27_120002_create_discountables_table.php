@@ -12,17 +12,14 @@ return new class extends Migration {
      */
     public function up()
     {
-        Schema::create('discountable', function (Blueprint $table) {
+        Schema::create('discountables', function (Blueprint $table) {
             $table->unsignedBigInteger('discount_id');
             $table->unsignedBigInteger('discountable_id');
-            $table->unsignedBigInteger('discountable_type');
+            $table->string('discountable_type');
             $table->timestamps();
 
             $table->unique(['discount_id', 'discountable_id', 'discountable_type'], 'discountable_ids_type_unique');
-
-            $table->foreign('discount_id')
-                ->references('id')->on('discounts')
-                ->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('discount_id')->references('id')->on('discounts')->onDelete('cascade');
         });
     }
 
@@ -33,6 +30,6 @@ return new class extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('periods');
+        Schema::dropIfExists('discountables');
     }
 };
