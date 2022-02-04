@@ -4,9 +4,11 @@ namespace App\Models\Orders;
 
 use App\Models\BaseModel;
 use App\Models\Interfaces\CommentableInterface;
+use App\Models\Interfaces\DiscountableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Service;
 use App\Models\Traits\CommentableTrait;
+use App\Models\Traits\DiscountableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -31,11 +33,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class ServiceOrderField extends BaseModel implements
     SoftDeletableInterface,
-    CommentableInterface
+    CommentableInterface,
+    DiscountableInterface
 {
     use HasFactory;
     use SoftDeletableTrait;
     use CommentableTrait;
+    use DiscountableTrait;
 
     /**
      * The attributes that are mass assignable.

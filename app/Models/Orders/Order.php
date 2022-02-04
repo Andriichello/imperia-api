@@ -5,8 +5,10 @@ namespace App\Models\Orders;
 use App\Models\Banquet;
 use App\Models\BaseModel;
 use App\Models\Interfaces\CommentableInterface;
+use App\Models\Interfaces\DiscountableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Traits\CommentableTrait;
+use App\Models\Traits\DiscountableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 use Database\Factories\OrderFactory;
@@ -35,11 +37,13 @@ use Illuminate\Support\Collection;
  */
 class Order extends BaseModel implements
     SoftDeletableInterface,
-    CommentableInterface
+    CommentableInterface,
+    DiscountableInterface
 {
     use HasFactory;
     use SoftDeletableTrait;
     use CommentableTrait;
+    use DiscountableTrait;
 
     /**
      * The attributes that are mass assignable.

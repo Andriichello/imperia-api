@@ -4,9 +4,11 @@ namespace App\Models\Orders;
 
 use App\Models\BaseModel;
 use App\Models\Interfaces\CommentableInterface;
+use App\Models\Interfaces\DiscountableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Product;
 use App\Models\Traits\CommentableTrait;
+use App\Models\Traits\DiscountableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 use Database\Factories\ProductOrderFieldFactory;
@@ -31,11 +33,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class ProductOrderField extends BaseModel implements
     SoftDeletableInterface,
-    CommentableInterface
+    CommentableInterface,
+    DiscountableInterface
 {
     use HasFactory;
     use SoftDeletableTrait;
     use CommentableTrait;
+    use DiscountableTrait;
 
     /**
      * The attributes that are mass assignable.

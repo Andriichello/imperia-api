@@ -4,9 +4,11 @@ namespace App\Models\Orders;
 
 use App\Models\BaseModel;
 use App\Models\Interfaces\CommentableInterface;
+use App\Models\Interfaces\DiscountableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Space;
 use App\Models\Traits\CommentableTrait;
+use App\Models\Traits\DiscountableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 use Database\Factories\SpaceOrderFieldFactory;
@@ -32,11 +34,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class SpaceOrderField extends BaseModel implements
     SoftDeletableInterface,
-    CommentableInterface
+    CommentableInterface,
+    DiscountableInterface
 {
     use HasFactory;
     use SoftDeletableTrait;
     use CommentableTrait;
+    use DiscountableTrait;
 
     /**
      * The attributes that are mass assignable.
