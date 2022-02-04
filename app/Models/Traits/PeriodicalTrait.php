@@ -4,7 +4,9 @@ namespace App\Models\Traits;
 
 use App\Models\BaseModel;
 use App\Models\Morphs\Period;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+use App\Models\Morphs\Periodical;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Arr;
 
 /**
  * Trait PeriodicalTrait.
@@ -14,12 +16,79 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 trait PeriodicalTrait
 {
     /**
-     * Logs related to the model.
+     * Periods related to the model.
      *
-     * @return MorphMany
+     * @return MorphToMany
      */
-    public function periods(): MorphMany
+    public function periods(): MorphToMany
     {
-        return $this->morphMany(Period::class, 'periodical', 'periodical_type', 'periodical_id', 'id');
+        return $this->morphToMany(
+            Period::class, // related model
+            'periodical', // morph relation name
+            Periodical::class, // morph relation table
+            'periodical_id', // morph table pivot key to current model
+            'period_id' // morph table pivot key to related model
+        );
+    }
+
+    /**
+     * Attach given categories to the model.
+     *
+     * @param Period ...$periods
+     *
+     * @return void
+     */
+    public function attachPeriods(Period ...$periods): void
+    {
+        $this->periods()->attach(Arr::pluck($periods, 'id'));
+    }
+
+    /**
+     * Detach given periods from the model.
+     *
+     * @param Period ...$periods
+     *
+     * @return void
+     */
+    public function detachPeriods(Period ...$periods): void
+    {
+        $this->periods()->detach(Arr::pluck($periods, 'id'));
+    }
+
+    /**
+     * Determines if model has periods attached.
+     *
+     * @return bool
+     */
+    public function hasPeriods(): bool
+    {
+        return $this->periods()->exists();
+    }
+
+    /**
+     * Determines if model has all periods attached.
+     *
+     * @param Period ...$periods
+     *
+     * @return bool
+     */
+    public function hasAllOfPeriods(Period ...$periods): bool
+    {
+        $ids = array_map(fn(Period $period) => $period->id, $periods);
+        $count = $this->periods()->whereIn('id', $ids)->count();
+        return count($periods) === $count;
+    }
+
+    /**
+     * Determines if model has any of periods attached.
+     *
+     * @param Period ...$periods
+     *
+     * @return bool
+     */
+    public function hasAnyOfPeriods(Period ...$periods): bool
+    {
+        $ids = array_map(fn(Period $period) => $period->id, $periods);
+        return empty($ids) || $this->periods()->whereIn('id', $ids)->exists();
     }
 }

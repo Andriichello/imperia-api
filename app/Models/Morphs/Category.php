@@ -45,6 +45,15 @@ class Category extends BaseModel
     ];
 
     /**
+     * The loadable relationships for the model.
+     *
+     * @var array
+     */
+    protected $relations = [
+        'categorizables',
+    ];
+
+    /**
      * Related categorizables.
      *
      * @return HasMany

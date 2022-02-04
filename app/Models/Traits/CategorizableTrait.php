@@ -3,7 +3,6 @@
 namespace App\Models\Traits;
 
 use App\Models\BaseModel;
-use App\Models\Interfaces\CategorizableInterface;
 use App\Models\Morphs\Categorizable;
 use App\Models\Morphs\Category;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
