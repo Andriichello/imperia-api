@@ -3,6 +3,7 @@
 namespace App\Models\Interfaces;
 
 use App\Models\Morphs\Period;
+use DateTime;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Collection;
 
@@ -19,6 +20,16 @@ interface PeriodicalInterface
      * @return MorphToMany
      */
     public function periods(): MorphToMany;
+
+    /**
+     * Query builder for periods in time range.
+     *
+     * @param DateTime|null $start
+     * @param DateTime|null $end
+     *
+     * @return MorphToMany
+     */
+    public function periodsInRange(?DateTime $start = null, ?DateTime $end = null): MorphToMany;
 
     /**
      * Attach given periods to the model.
@@ -62,4 +73,14 @@ interface PeriodicalInterface
      * @return bool
      */
     public function hasAnyOfPeriods(Period ...$periods): bool;
+
+    /**
+     * Determines if model has periods that currently affect it.
+     *
+     * @param DateTime|null $start
+     * @param DateTime|null $end
+     *
+     * @return bool
+     */
+    public function hasAffectingPeriods(?DateTime $start = null, ?DateTime $end = null): bool;
 }

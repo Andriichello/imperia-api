@@ -4,6 +4,8 @@ namespace Tests\Models\Traits;
 
 use App\Models\Morphs\Periodical;
 use App\Models\Morphs\Period;
+use Carbon\Carbon;
+use Faker\Generator;
 use Tests\Models\Stubs\PeriodicalStub;
 use Tests\StubsTestCase;
 
@@ -117,5 +119,44 @@ class PeriodicalTraitTest extends StubsTestCase
         $this->assertTrue($this->instance->hasAnyOfPeriods($categoryOne));
         $this->assertTrue($this->instance->hasAnyOfPeriods($categoryTwo));
         $this->assertTrue($this->instance->hasAnyOfPeriods($categoryOne, $categoryTwo));
+    }
+
+    /**
+     * Test hasAffectingPeriods method.
+     *
+     * @return void
+     */
+    public function testHasAffectingPeriods()
+    {
+        /** @var Generator $faker */
+        $faker = app(Generator::class);
+
+        $passedPeriod = Period::factory()->create([
+            'title' => 'Passed',
+            'start_at' => $faker->dateTimeBetween('-5 days', '-2 days'),
+            'end_at' => Carbon::yesterday(),
+        ]);
+        $currentPeriod = Period::factory()->create([
+            'title' => 'Current',
+            'start_at' => Carbon::yesterday(),
+            'end_at' => Carbon::tomorrow(),
+        ]);
+        $futurePeriod = Period::factory()->create([
+            'title' => 'Future',
+            'start_at' => Carbon::tomorrow(),
+            'end_at' => $faker->dateTimeBetween('+2 days', '+2 days'),
+        ]);
+
+        $this->instance->attachPeriods($passedPeriod);
+        $this->assertFalse($this->instance->hasAffectingPeriods());
+        $this->assertTrue($this->instance->hasAffectingPeriods($passedPeriod->end_at, $passedPeriod->end_at));
+
+        $this->instance->attachPeriods($futurePeriod);
+        $this->assertFalse($this->instance->hasAffectingPeriods());
+        $this->assertTrue($this->instance->hasAffectingPeriods($futurePeriod->end_at, $futurePeriod->end_at));
+
+        $this->instance->attachPeriods($currentPeriod);
+        $this->assertTrue($this->instance->hasAffectingPeriods());
+        $this->assertTrue($this->instance->hasAffectingPeriods($futurePeriod->end_at, $futurePeriod->end_at));
     }
 }

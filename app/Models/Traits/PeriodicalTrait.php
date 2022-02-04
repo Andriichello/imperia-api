@@ -5,6 +5,7 @@ namespace App\Models\Traits;
 use App\Models\BaseModel;
 use App\Models\Morphs\Period;
 use App\Models\Morphs\Periodical;
+use DateTime;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Arr;
 
@@ -29,6 +30,20 @@ trait PeriodicalTrait
             'periodical_id', // morph table pivot key to current model
             'period_id' // morph table pivot key to related model
         );
+    }
+
+    /**
+     * Query builder for periods in time range.
+     *
+     * @param DateTime|null $start
+     * @param DateTime|null $end
+     *
+     * @return MorphToMany
+     */
+    public function periodsInRange(?DateTime $start = null, ?DateTime $end = null): MorphToMany
+    {
+        return $this->periods()->where('start_at', '<=', $start ?? now())
+            ->where('end_at', '>=', $end ?? now());
     }
 
     /**
@@ -90,5 +105,19 @@ trait PeriodicalTrait
     {
         $ids = array_map(fn(Period $period) => $period->id, $periods);
         return empty($ids) || $this->periods()->whereIn('id', $ids)->exists();
+    }
+
+    /**
+     * Determines if model has periods that affect it
+     * in specified time range.
+     *
+     * @param DateTime|null $start
+     * @param DateTime|null $end
+     *
+     * @return bool
+     */
+    public function hasAffectingPeriods(?DateTime $start = null, ?DateTime $end = null): bool
+    {
+        return $this->periodsInRange($start, $end)->exists();
     }
 }
