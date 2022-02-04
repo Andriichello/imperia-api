@@ -16,14 +16,11 @@ return new class extends Migration
         Schema::create('periodicals', function (Blueprint $table) {
             $table->unsignedBigInteger('period_id');
             $table->unsignedBigInteger('periodical_id');
-            $table->unsignedBigInteger('periodical_type');
+            $table->string('periodical_type');
             $table->timestamps();
 
             $table->unique(['period_id', 'periodical_id', 'periodical_type'], 'periodicals_ids_type_unique');
-
-            $table->foreign('period_id')
-                ->references('id')->on('periods')
-                ->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('period_id')->references('id')->on('periods')->onDelete('cascade');
         });
     }
 
