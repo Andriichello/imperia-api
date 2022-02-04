@@ -91,4 +91,40 @@ trait DiscountableTrait
         $ids = array_map(fn(Discount $discount) => $discount->id, $discounts);
         return empty($ids) || $this->discounts()->whereIn('id', $ids)->exists();
     }
+
+    /**
+     * Total amount from all attached discounts.
+     *
+     * @return float
+     */
+    public function discountsAmount(): float
+    {
+        return $this->discounts()->sum('amount');
+    }
+
+    /**
+     * Total percent from all attached discounts.
+     *
+     * @return float
+     */
+    public function discountsPercent(): float
+    {
+        return min(100, $this->discounts()->sum('percent'));
+    }
+
+    /**
+     * Apply attached discounts to the price.
+     *
+     * @param float $price
+     *
+     * @return float
+     */
+    public function applyDiscounts(float $price): float
+    {
+        if (empty($price)) {
+            return 0.0;
+        }
+        $discount = $this->discountsAmount() + $price * ($this->discountsPercent() / 100.0);
+        return $discount < $price ? $price - $discount : 0.0;
+    }
 }

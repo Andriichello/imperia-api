@@ -65,4 +65,27 @@ interface DiscountableInterface
      * @return bool
      */
     public function hasAnyOfDiscounts(Discount ...$discounts): bool;
+
+    /**
+     * Get total amount from all attached discounts.
+     *
+     * @return float
+     */
+    public function discountsAmount(): float;
+
+    /**
+     * Get total percent from all attached discounts.
+     *
+     * @return float
+     */
+    public function discountsPercent(): float;
+
+    /**
+     * Apply attached discounts to the price.
+     *
+     * @param float $price
+     *
+     * @return float
+     */
+    public function applyDiscounts(float $price): float;
 }
