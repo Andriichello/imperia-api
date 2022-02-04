@@ -4,7 +4,9 @@ namespace App\Models\Morphs;
 
 use App\Models\BaseModel;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
+use Database\Factories\Morphs\PeriodicalFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
@@ -16,10 +18,15 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
- * @property Model|null $periodical
+ * @property Period $period
+ * @property BaseModel $periodic
+ *
+ * @method static PeriodicalFactory factory(...$parameters)
  */
 class Periodical extends BaseModel
 {
+    use HasFactory;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -37,16 +44,27 @@ class Periodical extends BaseModel
      * @var array
      */
     protected $relations = [
-        'periodical',
+        'period',
+        'periodic',
     ];
 
     /**
-     * Get the related model.
+     * Related period.
+     *
+     * @return BelongsTo
+     */
+    public function period(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * Related periodic model.
      *
      * @return MorphTo
      */
-    public function periodical(): MorphTo
+    public function periodic(): MorphTo
     {
-        return $this->morphTo(__FUNCTION__, 'periodical_type', 'periodical_id', 'id');
+        return $this->morphTo('periodic', 'periodical_type', 'periodical_id', 'id');
     }
 }
