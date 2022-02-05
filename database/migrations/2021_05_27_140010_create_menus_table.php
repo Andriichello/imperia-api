@@ -13,9 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('imperia_menus', function (Blueprint $table) {
+        Schema::create('menus', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 50)->unique('imperia_menus_unique_TITLE');
+            $table->string('title', 50)->unique('menus_unique_TITLE');
             $table->string('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('imperia_menus');
+        Schema::dropIfExists('menus');
     }
 };

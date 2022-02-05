@@ -24,7 +24,7 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->foreign('menu_id')
-                ->references('id')->on('imperia_menus');
+                ->references('id')->on('menus');
         });
     }
 
