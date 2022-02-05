@@ -14,7 +14,7 @@ class ShowTicketRequest extends ShowRequest
         return array_merge(
             parent::getAllowedIncludes(),
             [
-                //
+                'categories',
             ]
         );
     }

@@ -15,6 +15,7 @@ class ShowCustomerRequest extends ShowRequest
         return array_merge(
             parent::getAllowedIncludes(),
             [
+                'comments',
                 AllowedInclude::relationship('family_members', 'familyMembers'),
             ]
         );

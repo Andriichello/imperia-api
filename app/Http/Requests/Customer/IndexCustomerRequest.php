@@ -15,6 +15,7 @@ class IndexCustomerRequest extends IndexRequest
         return array_merge(
             parent::getAllowedIncludes(),
             [
+                'comments',
                 AllowedInclude::relationship('family_members', 'familyMembers'),
             ]
         );

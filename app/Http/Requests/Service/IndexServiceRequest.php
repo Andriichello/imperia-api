@@ -14,7 +14,7 @@ class IndexServiceRequest extends IndexRequest
         return array_merge(
             parent::getAllowedIncludes(),
             [
-                //
+                'categories',
             ]
         );
     }

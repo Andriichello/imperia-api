@@ -14,7 +14,7 @@ class ShowSpaceRequest extends ShowRequest
         return array_merge(
             parent::getAllowedIncludes(),
             [
-                //
+                'categories',
             ]
         );
     }

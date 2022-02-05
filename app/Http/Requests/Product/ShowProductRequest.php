@@ -15,6 +15,7 @@ class ShowProductRequest extends ShowRequest
             parent::getAllowedIncludes(),
             [
                 'menu',
+                'categories',
             ]
         );
     }

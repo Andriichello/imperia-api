@@ -14,7 +14,7 @@ class IndexSpaceRequest extends IndexRequest
         return array_merge(
             parent::getAllowedIncludes(),
             [
-                //
+                'categories',
             ]
         );
     }

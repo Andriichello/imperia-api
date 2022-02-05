@@ -15,6 +15,7 @@ class IndexProductRequest extends IndexRequest
             parent::getAllowedIncludes(),
             [
                 'menu',
+                'categories',
             ]
         );
     }
