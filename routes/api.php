@@ -5,6 +5,11 @@ use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Model\CustomerController;
 use App\Http\Controllers\Model\FamilyMemberController;
+use App\Http\Controllers\Model\MenuController;
+use App\Http\Controllers\Model\ProductController;
+use App\Http\Controllers\Model\ServiceController;
+use App\Http\Controllers\Model\SpaceController;
+use App\Http\Controllers\Model\TicketController;
 use App\Http\Controllers\Model\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -39,6 +44,26 @@ Route::group(['as' => 'api.', 'middleware' => []], function () {
     Route::apiResource('family-members', FamilyMemberController::class)
         ->only('index', 'show', 'store', 'update', 'destroy')
         ->parameters(['family-members' => 'id']);
+
+    Route::apiResource('menus', MenuController::class)
+        ->only('index', 'show')
+        ->parameters(['menus' => 'id']);
+
+    Route::apiResource('products', ProductController::class)
+        ->only('index', 'show')
+        ->parameters(['products' => 'id']);
+
+    Route::apiResource('tickets', TicketController::class)
+        ->only('index', 'show')
+        ->parameters(['tickets' => 'id']);
+
+    Route::apiResource('services', ServiceController::class)
+        ->only('index', 'show')
+        ->parameters(['services' => 'id']);
+
+    Route::apiResource('spaces', SpaceController::class)
+        ->only('index', 'show')
+        ->parameters(['spaces' => 'id']);
 });
 
 Route::fallback(function () {
