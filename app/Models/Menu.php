@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\Interfaces\CategorizableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
-use App\Models\Traits\CategorizableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 use Database\Factories\MenuFactory;
@@ -26,19 +24,17 @@ use Illuminate\Support\Collection;
  * @method static MenuFactory factory(...$parameters)
  */
 class Menu extends BaseModel implements
-    SoftDeletableInterface,
-    CategorizableInterface
+    SoftDeletableInterface
 {
     use HasFactory;
     use SoftDeletableTrait;
-    use CategorizableTrait;
 
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'imperia_menus';
+    protected $table = 'menus';
 
     /**
      * The attributes that are mass assignable.
