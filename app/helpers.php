@@ -36,3 +36,22 @@ if (!function_exists('usesTrait')) {
         return in_array($trait, class_uses_recursive($class), true);
     }
 }
+
+if (!function_exists('slugClass')) {
+
+    /**
+     * Get class name as slug.
+     *
+     * @param string|object $class
+     *
+     * @return string
+     */
+    function slugClass(string|object $class): string
+    {
+        $name = Str::of(is_object($class) ? get_class($class) : $class)
+            ->explode('\\')->last();
+        $words = preg_split('/(?=[A-Z])/', $name);
+        $slug = collect($words)->filter()->implode('-');
+        return Str::plural(strtolower($slug));
+    }
+}
