@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Ticket;
 
+use App\Http\Resources\Category\CategoryCollection;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -28,6 +29,7 @@ class TicketResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'price' => $this->price,
+            'categories' => new CategoryCollection($this->whenLoaded('categories')),
         ];
     }
 }

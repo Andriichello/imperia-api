@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Product;
 
+use App\Http\Resources\Category\CategoryCollection;
 use App\Http\Resources\Menu\MenuResource;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -32,6 +33,7 @@ class ProductResource extends JsonResource
             'weight' => $this->weight,
             'menu_id' => $this->menu_id,
             'menu' => new MenuResource($this->whenLoaded('menu')),
+            'categories' => new CategoryCollection($this->whenLoaded('categories')),
         ];
     }
 }

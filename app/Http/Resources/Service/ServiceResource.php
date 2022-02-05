@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Service;
 
+use App\Http\Resources\Category\CategoryCollection;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -29,6 +30,7 @@ class ServiceResource extends JsonResource
             'description' => $this->description,
             'price' => $this->once_paid_price,
             'weight' => $this->hourly_paid_price,
+            'categories' => new CategoryCollection($this->whenLoaded('categories')),
         ];
     }
 }

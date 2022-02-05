@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Space;
 
+use App\Http\Resources\Category\CategoryCollection;
 use App\Models\Space;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -31,6 +32,7 @@ class SpaceResource extends JsonResource
             'floor' => $this->floor,
             'number' => $this->number,
             'price' => $this->price,
+            'categories' => new CategoryCollection($this->whenLoaded('categories')),
         ];
     }
 }

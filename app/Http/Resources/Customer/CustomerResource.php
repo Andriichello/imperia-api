@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Customer;
 
+use App\Http\Resources\Comment\CommentCollection;
 use App\Http\Resources\FamilyMember\FamilyMemberCollection;
 use App\Models\Customer;
 use Illuminate\Http\Request;
@@ -32,6 +33,7 @@ class CustomerResource extends JsonResource
             'phone' => $this->phone,
             'birthdate' => $this->birthdate,
             'family_members' => new FamilyMemberCollection($this->whenLoaded('familyMembers')),
+            'comments' => new CommentCollection($this->whenLoaded('comments')),
         ];
     }
 }
