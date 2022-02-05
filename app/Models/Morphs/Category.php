@@ -13,6 +13,7 @@ use Illuminate\Support\Collection;
  * Class Category.
  *
  * @property string $slug
+ * @property string|null $target
  * @property string $title
  * @property string|null $description
  * @property Carbon|null $created_at
@@ -27,19 +28,13 @@ class Category extends BaseModel
     use HasFactory;
 
     /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'morph_categories';
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var string[]
      */
     protected $fillable = [
         'slug',
+        'target',
         'title',
         'description',
     ];

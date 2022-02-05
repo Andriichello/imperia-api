@@ -28,13 +28,6 @@ class Categorizable extends BaseModel
     use HasFactory;
 
     /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'morph_categorizables';
-
-    /**
      * The attributes that are mass assignable.
      *
      * @var string[]

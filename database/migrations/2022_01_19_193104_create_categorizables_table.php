@@ -15,14 +15,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('morph_categorizables', function (Blueprint $table) {
+        Schema::create('categorizables', function (Blueprint $table) {
             $table->unsignedBigInteger('category_id');
             $table->unsignedBigInteger('categorizable_id');
             $table->string('categorizable_type');
             $table->timestamps();
 
             $table->unique(['category_id', 'categorizable_id', 'categorizable_type'], 'categorizables_ids_type_unique');
-            $table->foreign('category_id')->references('id')->on('morph_categories')->onDelete('cascade');
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
         });
     }
 
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('morph_categorizables');
+        Schema::dropIfExists('categorizables');
     }
 };

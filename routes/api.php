@@ -3,6 +3,8 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Model\CategoryController;
+use App\Http\Controllers\Model\CommentController;
 use App\Http\Controllers\Model\CustomerController;
 use App\Http\Controllers\Model\FamilyMemberController;
 use App\Http\Controllers\Model\MenuController;
@@ -64,6 +66,14 @@ Route::group(['as' => 'api.', 'middleware' => []], function () {
     Route::apiResource('spaces', SpaceController::class)
         ->only('index', 'show')
         ->parameters(['spaces' => 'id']);
+
+    Route::apiResource('comments', CommentController::class)
+        ->only('index', 'show', 'store', 'update', 'destroy')
+        ->parameters(['comments' => 'id']);
+
+    Route::apiResource('categories', CategoryController::class)
+        ->only('index', 'show')
+        ->parameters(['categories' => 'id']);
 });
 
 Route::fallback(function () {

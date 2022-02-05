@@ -31,7 +31,25 @@ class CategoryFactory extends Factory
         return [
             'slug' => $this->faker->unique()->slug,
             'title' => $this->faker->unique()->sentence(3),
+            'target' => null,
             'description' => $this->faker->sentence,
         ];
+    }
+
+    /**
+     * Indicate category target.
+     *
+     * @param string|null $target
+     *
+     * @return static
+     */
+    public function withTarget(?string $target): static
+    {
+        return $this->state(
+            function (array $attributes) use ($target) {
+                $attributes['target'] = $target;
+                return $attributes;
+            }
+        );
     }
 }

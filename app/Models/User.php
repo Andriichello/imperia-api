@@ -19,6 +19,7 @@ use Spatie\Permission\Traits\HasRoles;
  * Class User.
  *
  * @property int $id
+ * @property string $type
  * @property string $name
  * @property string $email
  * @property string $password
@@ -71,6 +72,15 @@ class User extends Authenticatable implements SoftDeletableInterface
     ];
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var string[]
+     */
+    protected $appends = [
+        'type',
+    ];
+
+    /**
      * The loadable relationships for the model.
      *
      * @var array
@@ -99,6 +109,16 @@ class User extends Authenticatable implements SoftDeletableInterface
     public function setPasswordAttribute(string $password)
     {
         $this->attributes['password'] = Hash::make($password);
+    }
+
+    /**
+     * Accessor for the model type string.
+     *
+     * @return string
+     */
+    public function getTypeAttribute(): string
+    {
+        return slugClass(static::class);
     }
 
     /**

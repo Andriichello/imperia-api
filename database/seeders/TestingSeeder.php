@@ -112,6 +112,7 @@ class TestingSeeder extends Seeder
     {
         $workday = Category::factory()->create([
             'slug' => 'work-day-tickets',
+            'target' => slugClass(Ticket::class),
             'title' => 'Work Day Tickets',
             'description' => 'Tickets that are available from Monday to Thursday.',
         ]);
@@ -128,6 +129,7 @@ class TestingSeeder extends Seeder
 
         $weekend = Category::factory()->create([
             'slug' => 'weekend-tickets',
+            'target' => slugClass(Ticket::class),
             'title' => 'Weekend Tickets',
             'description' => 'Tickets that are available from Friday to Sunday.',
         ]);
@@ -152,6 +154,7 @@ class TestingSeeder extends Seeder
     {
         $indoors = Category::factory()->create([
             'slug' => 'indoors',
+            'target' => slugClass(Service::class),
             'title' => 'Indoors',
             'description' => null,
         ]);
@@ -167,6 +170,7 @@ class TestingSeeder extends Seeder
 
         $outdoors = Category::factory()->create([
             'slug' => 'outdoors',
+            'target' => slugClass(Service::class),
             'title' => 'Outdoors',
             'description' => null,
         ]);
@@ -191,11 +195,13 @@ class TestingSeeder extends Seeder
     {
         $rooms = Category::factory()->create([
             'slug' => 'rooms',
+            'target' => slugClass(Space::class),
             'title' => 'Rooms',
             'description' => null,
         ]);
         $tables = Category::factory()->create([
             'slug' => 'tables',
+            'target' => slugClass(Space::class),
             'title' => 'Tables',
             'description' => null,
         ]);
@@ -254,6 +260,7 @@ class TestingSeeder extends Seeder
     {
         $pizza = Category::factory()->create([
             'slug' => 'pizza',
+            'target' => slugClass(Product::class),
             'title' => 'Pizza',
             'description' => null,
         ]);
@@ -290,6 +297,7 @@ class TestingSeeder extends Seeder
     {
         $soups = Category::factory()->create([
             'slug' => 'soups',
+            'target' => slugClass(Product::class),
             'title' => 'Soups',
             'description' => null,
         ]);
@@ -316,6 +324,7 @@ class TestingSeeder extends Seeder
     {
         $desserts = Category::factory()->create([
             'slug' => 'desserts',
+            'target' => slugClass(Product::class),
             'title' => 'Desserts',
             'description' => null,
         ]);
@@ -342,6 +351,7 @@ class TestingSeeder extends Seeder
     {
         $alcoholic = Category::factory()->create([
             'slug' => 'alcoholic',
+            'target' => slugClass(Product::class),
             'title' => 'Alcoholic',
             'description' => null,
         ]);
@@ -359,6 +369,7 @@ class TestingSeeder extends Seeder
 
         $nonalcoholic = Category::factory()->create([
             'slug' => 'non-alcoholic',
+            'target' => slugClass(Product::class),
             'title' => 'Non-alcoholic',
             'description' => null,
         ]);
