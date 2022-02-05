@@ -6,6 +6,8 @@ use App\Models\Interfaces\JsonFieldInterface;
 use App\Models\Traits\JsonFieldTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Str;
 
 /**
  * Class BaseModel.
@@ -35,6 +37,6 @@ class BaseModel extends Model implements JsonFieldInterface
      */
     public function getTypeAttribute(): string
     {
-        return static::class;
+        return slugClass(static::class);
     }
 }
