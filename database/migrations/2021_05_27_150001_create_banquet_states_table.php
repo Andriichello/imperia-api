@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('banquet_states', function (Blueprint $table) {
             $table->unsignedTinyInteger('id')->primary();
             $table->string('title', 50)->unique('banquet_states_unique_TITLE');
-            $table->string('description', 100)->nullable();
+            $table->string('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

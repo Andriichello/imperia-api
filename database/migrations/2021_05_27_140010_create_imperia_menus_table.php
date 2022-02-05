@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('imperia_menus', function (Blueprint $table) {
             $table->id();
             $table->string('title', 50)->unique('imperia_menus_unique_TITLE');
-            $table->string('description', 100)->nullable();
+            $table->string('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

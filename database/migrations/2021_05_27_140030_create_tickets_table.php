@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
             $table->string('title', 50)->unique('tickets_unique_TITLE');
-            $table->string('description', 100)->nullable();
+            $table->string('description')->nullable();
             $table->decimal('price')->unsigned();
             $table->timestamps();
             $table->softDeletes();

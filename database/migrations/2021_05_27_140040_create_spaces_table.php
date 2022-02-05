@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('title', 50)->unique('spaces_unique_TITLE');
             $table->smallInteger('number');
             $table->smallInteger('floor');
-            $table->string('description', 100)->nullable();
+            $table->string('description')->nullable();
             $table->decimal('price')->unsigned();
             $table->timestamps();
             $table->softDeletes();

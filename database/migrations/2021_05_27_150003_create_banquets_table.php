@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('creator_id');
             $table->unsignedBigInteger('customer_id');
             $table->string('title', 50);
-            $table->string('description', 100)->nullable();
+            $table->string('description')->nullable();
             $table->decimal('advance_amount')->unsigned();
             $table->dateTime('start_at');
             $table->dateTime('end_at');

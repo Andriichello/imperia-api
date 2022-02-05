@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('discounts', function (Blueprint $table) {
             $table->id();
             $table->string('title', 50);
-            $table->string('description', 100)->nullable();
+            $table->string('description')->nullable();
             $table->decimal('amount')->unsigned()->nullable();
             $table->decimal('percent', 6, 3)->unsigned()->nullable();
             $table->timestamps();
