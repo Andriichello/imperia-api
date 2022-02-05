@@ -18,6 +18,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string $title
  * @property string|null $description
  * @property float $price
+ * @property int $floor
+ * @property int $number
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
@@ -45,15 +47,6 @@ class Space extends BaseModel implements
         'number',
         'floor',
         'price',
-    ];
-
-    /**
-     * The relationships that should always be loaded.
-     *
-     * @var array
-     */
-    protected $relations = [
-        'intervals',
     ];
 
     /**

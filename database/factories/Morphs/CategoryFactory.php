@@ -30,7 +30,7 @@ class CategoryFactory extends Factory
     {
         return [
             'slug' => $this->faker->unique()->slug,
-            'title' => $this->faker->title,
+            'title' => $this->faker->unique()->sentence(3),
             'description' => $this->faker->sentence,
         ];
     }

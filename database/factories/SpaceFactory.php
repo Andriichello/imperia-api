@@ -29,7 +29,11 @@ class SpaceFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'title' => $this->faker->unique()->sentence(3),
+            'description' => $this->faker->sentence(5),
+            'number' => rand(1, 10),
+            'floor' => rand(1, 3),
+            'price' => $this->faker->randomFloat(2, 0, 100),
         ];
     }
 }

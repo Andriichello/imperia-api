@@ -32,7 +32,7 @@ class DiscountFactory extends Factory
         $isAmount = $this->faker->boolean;
         $isPercent = $this->faker->boolean;
         return [
-            'title' => $this->faker->title(),
+            'title' => $this->faker->unique()->sentence(3),
             'description' => $this->faker->sentence(),
             'amount' => $isAmount ? $this->faker->randomFloat(2, 10, 1000) : null,
             'percent' => $isPercent ? $this->faker->randomFloat(2, 10, 90) : null,

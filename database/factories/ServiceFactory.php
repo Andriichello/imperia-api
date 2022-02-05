@@ -28,8 +28,12 @@ class ServiceFactory extends Factory
      */
     public function definition(): array
     {
+        $prices = [0.0, $this->faker->randomFloat(2, 10, 200)];
         return [
-            //
+            'title' => $this->faker->unique()->sentence(3),
+            'description' => $this->faker->sentence(5),
+            'once_paid_price' => $this->faker->randomElement($prices),
+            'hourly_paid_price' => $this->faker->randomFloat(2, 10, 100),
         ];
     }
 }

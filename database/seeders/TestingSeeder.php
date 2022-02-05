@@ -6,8 +6,12 @@ use App\Enums\FamilyRelation;
 use App\Enums\UserRole;
 use App\Models\Customer;
 use App\Models\FamilyMember;
+use App\Models\Menu;
 use App\Models\Morphs\Categorizable;
 use App\Models\Morphs\Category;
+use App\Models\Product;
+use App\Models\Service;
+use App\Models\Space;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -27,6 +31,9 @@ class TestingSeeder extends Seeder
         $this->seedUsers();
         $this->seedCustomers();
         $this->seedTickets();
+        $this->seedProducts();
+        $this->seedServices();
+        $this->seedSpaces();
     }
 
     /**
@@ -93,21 +100,43 @@ class TestingSeeder extends Seeder
      */
     public function seedTickets(): void
     {
-        $ticket = Ticket::factory()
-            ->create([
-                'title' => 'Just a Ticket',
-                'price' => 19.99,
+        Ticket::factory()->count(4)->create();
+    }
+
+    /**
+     * Seed services.
+     *
+     * @return void
+     */
+    public function seedServices(): void
+    {
+        Service::factory()->count(10)->create();
+    }
+
+    /**
+     * Seed spaces.
+     *
+     * @return void
+     */
+    public function seedSpaces(): void
+    {
+        Space::factory()->count(10)->create();
+    }
+
+    /**
+     * Seed products.
+     *
+     * @return void
+     */
+    public function seedProducts(): void
+    {
+        foreach ([4, 8, 12] as $index => $count) {
+            $menu = Menu::factory()->create([
+                'title' => 'Menu #' . ($index + 1),
             ]);
 
-        $category = Category::factory()
-            ->create([
-                'slug' => 'one',
-                'title' => 'One',
-            ]);
-
-        Categorizable::factory()
-            ->withCategory($category)
-            ->withModel($ticket)
-            ->create();
+            Product::factory()->withMenu($menu)
+                ->count($count)->create();
+        }
     }
 }
