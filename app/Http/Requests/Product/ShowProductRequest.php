@@ -14,7 +14,6 @@ class ShowProductRequest extends ShowRequest
         return array_merge(
             parent::getAllowedIncludes(),
             [
-                'menu',
                 'categories',
             ]
         );

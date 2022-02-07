@@ -16,8 +16,19 @@ class LogoutController extends Controller
     /**
      * Logout user.
      *
-     * @@authenticated
-     * @group User management
+     * @OA\Post  (
+     *   path="/api/logout",
+     *   summary="Logout user.",
+     *   operationId="logout",
+     *   tags={"auth"},
+     *
+     *   @OA\Response(
+     *     response=200,
+     *     description="User has been successfully logged out.",
+     *     @OA\JsonContent(ref ="#/components/schemas/RegisterResponse")
+     *  ),
+     * )
+     *
      * @param BaseRequest $request
      *
      * @return JsonResponse
@@ -30,4 +41,13 @@ class LogoutController extends Controller
 
         return ApiResponse::make([], 200, 'Logged out');
     }
+
+    /**
+     * @OA\Schema(
+     *   schema="LogoutResponse",
+     *   description="Logout user response object.",
+     *   required = {"message"},
+     *   @OA\Property(property="message", type="string", example="Logged out")
+     * )
+     */
 }

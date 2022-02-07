@@ -13,6 +13,7 @@ use App\Http\Controllers\Model\ServiceController;
 use App\Http\Controllers\Model\SpaceController;
 use App\Http\Controllers\Model\TicketController;
 use App\Http\Controllers\Model\UserController;
+use App\Http\Responses\ApiResponse;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -77,5 +78,5 @@ Route::group(['as' => 'api.', 'middleware' => []], function () {
 });
 
 Route::fallback(function () {
-    abort(404, 'Not found');
+    return ApiResponse::make([], 404, 'Not Found');
 });

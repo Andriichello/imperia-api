@@ -73,7 +73,7 @@ class TestingSeeder extends Seeder
                 'name' => 'John',
                 'surname' => 'Doe',
                 'email' => 'john.doe@email.com',
-                'phone' => '+38 050 777 7777',
+                'phone' => '+380507777777',
                 'birthdate' => '1986-01-26',
             ]);
         $johnDoe->attachComments(
@@ -98,7 +98,7 @@ class TestingSeeder extends Seeder
                 'name' => 'Richard',
                 'surname' => 'Jefferson',
                 'email' => 'richard.jefferson@email.com',
-                'phone' => '+38 050 555 5555',
+                'phone' => '+380505555555',
                 'birthdate' => '1973-08-03',
             ])->attachComments('He played in NBA for Cleveland Cavaliers.');
     }

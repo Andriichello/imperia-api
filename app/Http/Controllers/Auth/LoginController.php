@@ -19,7 +19,29 @@ class LoginController extends Controller
     /**
      * Login user.
      *
-     * @group User management
+     * @OA\Post  (
+     *   path="/api/login",
+     *   summary="Login user.",
+     *   operationId="login",
+     *   tags={"auth"},
+     *
+     *   @OA\RequestBody(
+     *     required=true,
+     *     description="Login user request object.",
+     *     @OA\JsonContent(ref ="#/components/schemas/LoginRequest")
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="User has been successfully logged in.",
+     *     @OA\JsonContent(ref ="#/components/schemas/LoginResponse")
+     *  ),
+     *   @OA\Response(
+     *     response=422,
+     *     description="Validation failed.",
+     *     @OA\JsonContent(ref ="#/components/schemas/ValidationErrorsResponse")
+     *   )
+     * )
+     *
      * @param LoginRequest $request
      *
      * @return JsonResponse
@@ -95,4 +117,14 @@ class LoginController extends Controller
 
         return $user;
     }
+
+    /**
+     * @OA\Schema(
+     *   schema="LoginResponse",
+     *   description="Login response object.",
+     *   required = {"data", "message"},
+     *   @OA\Property(property="data", ref ="#/components/schemas/UserAndTokenResponse"),
+     *   @OA\Property(property="message", type="string", example="Success")
+     * )
+     */
 }

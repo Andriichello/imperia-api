@@ -34,4 +34,19 @@ class FamilyMemberResource extends JsonResource
             'relative' => new CustomerResource($this->whenLoaded('relative')),
         ];
     }
+
+    /**
+     * @OA\Schema(
+     *   schema="FamilyMember",
+     *   description="Family member resource object",
+     *   required = {"id", "type", "name", "relation", "birthdate", "relative_id"},
+     *   @OA\Property(property="id", type="integer", example=1),
+     *   @OA\Property(property="type", type="string", example="family-members"),
+     *   @OA\Property(property="name", type="string", example="Tommy Doe"),
+     *   @OA\Property(property="relation", type="string", enum={"child", "parent", "grandparent", "partner"}),
+     *   @OA\Property(property="birthdate", type="string", example="1986-01-26"),
+     *   @OA\Property(property="relative_id", type="integer", example=1),
+     *   @OA\Property(property="relative", ref ="#/components/schemas/Customer"),
+     * )
+     */
 }

@@ -75,4 +75,18 @@ class LoginRequest extends BaseRequest
     {
         return $this->has('remember_token');
     }
+
+    /**
+     * @OA\Schema(
+     *   schema="LoginRequest",
+     *   description="Supports login by credantials (`email` and `password`) and
+    by remember token (`remember_token`).",
+     *   @OA\Property(property="email", type="string", example="john.doe@email.com",
+     *     description="By credentials. Required with `password`"),
+     *   @OA\Property(property="password", type="string", example="password",
+     *     description="By credentials. Required with `email`"),
+     *   @OA\Property(property="remember_token", type="string",
+     *     description="By remember token"))
+     * )
+     */
 }

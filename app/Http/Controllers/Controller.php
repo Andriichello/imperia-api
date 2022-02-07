@@ -19,6 +19,19 @@ use Spatie\QueryBuilder\QueryBuilder as SpatieBuilder;
 
 /**
  * Class Controller.
+ *
+ * @OA\Info(title="Imperia API", version="0.1"),
+ * @OA\Servers(
+ *   @OA\Server(
+ *     url=L5_SWAGGER_CONST_HOST,
+ *     description="Current server"
+ *   )
+ * ),
+ * @OA\SecurityScheme(
+ *   securityScheme="bearerAuth",
+ *   type="http",
+ *   scheme="bearer"
+ * )
  */
 abstract class Controller extends BaseController
 {
@@ -100,4 +113,37 @@ abstract class Controller extends BaseController
         $paginator = $this->paginateResource($builder, $this->collectionClass);
         return ApiResponse::make($paginator->toArray(), $status, $message);
     }
+
+    /**
+     * @OA\Schema(
+     *   schema="SuccessResponse",
+     *   description="Succsess response object.",
+     *   required = {"message"},
+     *   @OA\Property(property="message", type="string", example="Success")
+     * ),
+     *
+     * @OA\Schema(
+     *   schema="UnauthenticatedResponse",
+     *   description="Unauthenticated response object.",
+     *   required = {"message"},
+     *   @OA\Property(property="message", type="string", example="Unauthenticated")
+     * ),
+     *
+     * @OA\Schema(
+     *   schema="ValidationErrorsResponse",
+     *   description="Validation errors response object.",
+     *   required = {"message", "errors"},
+     *   @OA\Property(property="message", type="string", example="The given data was invalid."),
+     *   @OA\Property(property="errors", type="object", example={"example": "The example field is required."})
+     * ),
+     *
+     * @OA\Schema(
+     *   schema="UserAndTokenResponse",
+     *   description="User and token response object.",
+     *   required = {"access_token", "user"},
+     *   @OA\Property(property="access_token", type="string",
+     *      example="1|ARDGny3pfUiPpxaXCKtW1w5B7qqcqAYehtRTVA849X3p"),
+     *   @OA\Property(property="user", ref ="#/components/schemas/User")
+     * )
+     */
 }

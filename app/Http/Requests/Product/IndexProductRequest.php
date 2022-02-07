@@ -14,7 +14,6 @@ class IndexProductRequest extends IndexRequest
         return array_merge(
             parent::getAllowedIncludes(),
             [
-                'menu',
                 'categories',
             ]
         );

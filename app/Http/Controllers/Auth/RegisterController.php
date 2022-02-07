@@ -17,7 +17,29 @@ class RegisterController extends Controller
     /**
      * Register user.
      *
-     * @group User management
+     * @OA\Post  (
+     *   path="/api/register",
+     *   summary="Register user.",
+     *   operationId="register",
+     *   tags={"auth"},
+     *
+     *   @OA\RequestBody(
+     *     required=true,
+     *     description="Register user request object.",
+     *     @OA\JsonContent(ref ="#/components/schemas/RegisterRequest")
+     *   ),
+     *   @OA\Response(
+     *     response=201,
+     *     description="User has been successfully registered.",
+     *     @OA\JsonContent(ref ="#/components/schemas/RegisterResponse")
+     *  ),
+     *   @OA\Response(
+     *     response=422,
+     *     description="Validation failed.",
+     *     @OA\JsonContent(ref ="#/components/schemas/ValidationErrorsResponse")
+     *   )
+     * )
+     *
      * @param RegisterRequest $request
      * @param UserRepository $repository
      *
@@ -34,4 +56,14 @@ class RegisterController extends Controller
         ];
         return ApiResponse::make(['data' => $data], 201, 'Registered');
     }
+
+    /**
+     * @OA\Schema(
+     *   schema="RegisterResponse",
+     *   description="Register user response object.",
+     *   required = {"data", "message"},
+     *   @OA\Property(property="data", ref ="#/components/schemas/UserAndTokenResponse"),
+     *   @OA\Property(property="message", type="string", example="Success")
+     * )
+     */
 }

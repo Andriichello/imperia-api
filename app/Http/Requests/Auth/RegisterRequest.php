@@ -36,4 +36,15 @@ class RegisterRequest extends BaseRequest
             ],
         ];
     }
+
+    /**
+     * @OA\Schema(
+     *   schema="RegisterRequest",
+     *   description="Register user request",
+     *   required={"name", "email", "password"},
+     *   @OA\Property(property="name", type="string", example="John Doe"),
+     *   @OA\Property(property="email", type="string", example="john.doe@email.com"),
+     *   @OA\Property(property="password", type="string", example="pa$$w0rd")
+     * )
+     */
 }

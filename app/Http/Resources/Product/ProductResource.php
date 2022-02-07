@@ -25,6 +25,7 @@ class ProductResource extends JsonResource
      */
     public function toArray($request): array
     {
+        $categoryIds = $this->categories()->pluck('id');
         return [
             'id' => $this->id,
             'type' => $this->type,
@@ -33,8 +34,25 @@ class ProductResource extends JsonResource
             'price' => $this->price,
             'weight' => $this->weight,
             'menu_id' => $this->menu_id,
-            'menu' => new MenuResource($this->whenLoaded('menu')),
             'categories' => new CategoryCollection($this->whenLoaded('categories')),
+            'category_ids' => $this->$categoryIds,
         ];
     }
+
+    /**
+     * @OA\Schema(
+     *   schema="Product",
+     *   description="Product resource object",
+     *   required = {"id", "type", "title", "description", "price", "weight", "menu_id", "category_ids"},
+     *   @OA\Property(property="id", type="integer", example=1),
+     *   @OA\Property(property="type", type="string", example="products"),
+     *   @OA\Property(property="title", type="string", example="Margarita"),
+     *   @OA\Property(property="description", type="string", example="Some text..."),
+     *   @OA\Property(property="price", type="float", example=15.99),
+     *   @OA\Property(property="weight", type="float", example=120),
+     *   @OA\Property(property="menu_id", type="integer", example=1),
+     *   @OA\Property(property="categories", type="array", @OA\Items(ref ="#/components/schemas/Category")),
+     *   @OA\Property(property="category_ids", type="array", @OA\Items(type="integer", example=1)),
+     * )
+     */
 }

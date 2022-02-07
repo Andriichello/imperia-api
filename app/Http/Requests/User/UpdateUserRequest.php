@@ -73,4 +73,18 @@ class UpdateUserRequest extends UpdateRequest
             ]
         );
     }
+
+    /**
+     * @OA\Schema(
+     *   schema="UpdateUserRequest",
+     *   description="Update user request",
+     *   @OA\Property(property="name", type="string", example="John"),
+     *   @OA\Property(property="email", type="string", example="ben.forrester@email.com"),
+     *   @OA\Property(property="password", type="string", example="new-pa$$w0rd",
+     *     description="This is a new password. It must be different than the current one."),
+     *   @OA\Property(property="current_password", type="string", example="pa$$w0rd",
+     *     description="This is a current password. It is needed in order to perform
+     authorization. Required with `password`."),
+     * )
+     */
 }

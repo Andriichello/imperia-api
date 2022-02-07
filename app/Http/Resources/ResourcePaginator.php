@@ -183,4 +183,30 @@ class ResourcePaginator extends Paginator
         $limit = $this->currentPage * $this->perPage;
         return ($total - $limit) > 0;
     }
+
+    /**
+     * @OA\Schema(
+     *   schema="Links",
+     *   description="Pagination meta links object.",
+     *   required = {"first", "prev", "self", "next", "last"},
+     *   @OA\Property(property="first", type="string"),
+     *   @OA\Property(property="prev", type="string", nullable="true", example=null),
+     *   @OA\Property(property="self", type="string"),
+     *   @OA\Property(property="next", type="string", nullable="true", example=null),
+     *   @OA\Property(property="last", type="string", nullable="true", example=null),
+     * ),
+     * @OA\Schema(
+     *   schema="PaginationMeta",
+     *   description="Pagination meta object.",
+     *   required = {"from", "to", "total", "path", "per_page", "current_page", "last_page", "links"},
+     *   @OA\Property(property="from", type="integer", nullable="true", example=1),
+     *   @OA\Property(property="to", type="integer", nullable="true", example=1),
+     *   @OA\Property(property="total", type="integer", example=30),
+     *   @OA\Property(property="path", type="integer", nullable="true", example=null),
+     *   @OA\Property(property="per_page", type="integer", example=1),
+     *   @OA\Property(property="current_page", type="integer", example=1),
+     *   @OA\Property(property="last_page", type="integer", example=2),
+     *   @OA\Property(property="links", ref ="#/components/schemas/Links"),
+     * )
+     */
 }

@@ -24,6 +24,7 @@ class TicketResource extends JsonResource
      */
     public function toArray($request): array
     {
+        $categoryIds = $this->categories()->pluck('id');
         return [
             'id' => $this->id,
             'type' => $this->type,
@@ -31,6 +32,22 @@ class TicketResource extends JsonResource
             'description' => $this->description,
             'price' => $this->price,
             'categories' => new CategoryCollection($this->whenLoaded('categories')),
+            'category_ids' => $this->$categoryIds,
         ];
     }
+
+    /**
+     * @OA\Schema(
+     *   schema="Ticket",
+     *   description="Ticket resource object",
+     *   required = {"id", "type", "title", "description", "price", "category_ids"},
+     *   @OA\Property(property="id", type="integer", example=1),
+     *   @OA\Property(property="type", type="string", example="tickets"),
+     *   @OA\Property(property="title", type="string", example="Child ticket"),
+     *   @OA\Property(property="description", type="string", example="Some text..."),
+     *   @OA\Property(property="price", type="float", example=19.60),
+     *   @OA\Property(property="categories", type="array", @OA\Items(ref ="#/components/schemas/Category")),
+     *   @OA\Property(property="category_ids", type="array", @OA\Items(type="integer", example=1)),
+     * )
+     */
 }
