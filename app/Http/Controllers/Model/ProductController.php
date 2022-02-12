@@ -1,0 +1,111 @@
+<?php
+
+namespace App\Http\Controllers\Model;
+
+use App\Http\Controllers\CrudController;
+use App\Http\Requests\Product\IndexProductRequest;
+use App\Http\Requests\Product\ShowProductRequest;
+use App\Http\Resources\Product\ProductCollection;
+use App\Http\Resources\Product\ProductResource;
+use App\Repositories\ProductRepository;
+
+/**
+ * Class ProductController.
+ */
+class ProductController extends CrudController
+{
+    /**
+     * Controller's model resource class.
+     *
+     * @var string
+     */
+    protected string $resourceClass = ProductResource::class;
+
+    /**
+     * Controller's model resource collection class.
+     *
+     * @var string
+     */
+    protected string $collectionClass = ProductCollection::class;
+
+    /**
+     * ProductController constructor.
+     *
+     * @param ProductRepository $repository
+     */
+    public function __construct(ProductRepository $repository)
+    {
+        parent::__construct($repository);
+        $this->actions['index'] = IndexProductRequest::class;
+        $this->actions['show'] = ShowProductRequest::class;
+    }
+
+    /**
+     * @OA\Get(
+     *   path="/api/products",
+     *   summary="Index products.",
+     *   operationId="indexProducts",
+     *   security={{"bearerAuth": {}}},
+     *   tags={"products"},
+     *
+     *   @OA\Parameter(name="include", in="query",
+     *     @OA\Schema(ref ="#/components/schemas/ProductIncludes")),
+     *
+     *   @OA\Response(
+     *     response=200,
+     *     description="Index products response object.",
+     *     @OA\JsonContent(ref ="#/components/schemas/IndexProductResponse")
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     description="Unauthenticated.",
+     *     @OA\JsonContent(ref ="#/components/schemas/UnauthenticatedResponse")
+     *   )
+     * ),
+     * @OA\Get(
+     *   path="/api/products/{id}",
+     *   summary="Show product by id.",
+     *   operationId="showProduct",
+     *   security={{"bearerAuth": {}}},
+     *   tags={"products"},
+     *
+     *  @OA\Parameter(name="id", required=true, in="path", example=1, @OA\Schema(type="integer"),
+     *     description="Id of the products."),
+     *  @OA\Parameter(name="include", in="query",
+     *     @OA\Schema(ref ="#/components/schemas/ProductIncludes")),
+     *
+     *   @OA\Response(
+     *     response=200,
+     *     description="Show products response object.",
+     *     @OA\JsonContent(ref ="#/components/schemas/ShowProductResponse")
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     description="Unauthenticated.",
+     *     @OA\JsonContent(ref ="#/components/schemas/UnauthenticatedResponse")
+     *   )
+     * ),
+     *
+     * @OA\Schema(
+     *   schema="IndexProductResponse",
+     *   description="Index products response object.",
+     *   required = {"data", "meta", "message"},
+     *   @OA\Property(property="data", type="array", @OA\Items(ref ="#/components/schemas/Product")),
+     *   @OA\Property(property="meta", ref ="#/components/schemas/PaginationMeta"),
+     *   @OA\Property(property="message", type="string", example="Success"),
+     * ),
+     * @OA\Schema(
+     *   schema="ShowProductResponse",
+     *   description="Show products response object.",
+     *   required = {"data", "message"},
+     *   @OA\Property(property="data", ref ="#/components/schemas/Product"),
+     *   @OA\Property(property="message", type="string", example="Success"),
+     * ),
+     * @OA\Schema(
+     *   schema="ProductIncludes",
+     *   description="Coma-separated list of inluded relations.
+    Available relations: `categories`",
+     *   type="string", example="categories"
+     * )
+     */
+}

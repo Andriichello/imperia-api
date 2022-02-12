@@ -2,17 +2,49 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\SoftDeletableInterface;
+use App\Models\Traits\SoftDeletableTrait;
+use Carbon\Carbon;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
-class User extends \TCG\Voyager\Models\User
+/**
+ * Class User.
+ *
+ * @property int $id
+ * @property string $type
+ * @property string $name
+ * @property string $email
+ * @property string $password
+ * @property string|null $remember_token
+ * @property Carbon|null $email_verified_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ *
+ * @property Banquet[]|Collection $banquets
+ *
+ * @method static UserFactory factory(...$parameters)
+ */
+class User extends Authenticatable implements SoftDeletableInterface
 {
-    use HasFactory, Notifiable;
+    use SoftDeletableTrait;
+    use HasApiTokens;
+    use Notifiable;
+    use HasFactory;
+    use HasRoles;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var string[]
      */
     protected $fillable = [
         'name',
@@ -21,7 +53,7 @@ class User extends \TCG\Voyager\Models\User
     ];
 
     /**
-     * The attributes that should be hidden for arrays.
+     * The attributes that should be hidden for serialization.
      *
      * @var array
      */
@@ -31,14 +63,73 @@ class User extends \TCG\Voyager\Models\User
     ];
 
     /**
-     * The attributes that should be cast to native types.
+     * The attributes that should be cast.
      *
      * @var array
      */
     protected $casts = [
-        'email_verified_at' => 'datetime:Y-m-d H:i:s',
-        'created_at' => 'datetime:Y-m-d H:i:s',
-        'updated_at' => 'datetime:Y-m-d H:i:s',
-        'deleted_at' => 'datetime:Y-m-d H:i:s',
+        'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var string[]
+     */
+    protected $appends = [
+        'type',
+    ];
+
+    /**
+     * The loadable relationships for the model.
+     *
+     * @var array
+     */
+    protected $relations = [
+        'banquets',
+    ];
+
+    /**
+     * Banquets associated with the model.
+     *
+     * @return HasMany
+     */
+    public function banquets(): HasMany
+    {
+        return $this->hasMany(Banquet::class, 'creator_id', 'id');
+    }
+
+    /**
+     * Password mutator, which handles encrypting.
+     *
+     * @param string $password
+     *
+     * @return void
+     */
+    public function setPasswordAttribute(string $password)
+    {
+        $this->attributes['password'] = Hash::make($password);
+    }
+
+    /**
+     * Accessor for the model type string.
+     *
+     * @return string
+     */
+    public function getTypeAttribute(): string
+    {
+        return slugClass(static::class);
+    }
+
+    /**
+     * Determines if given password is the same as current one.
+     *
+     * @param string $password
+     *
+     * @return bool
+     */
+    public function isCurrentPassword(string $password): bool
+    {
+        return Hash::check($password, $this->getOriginal('password'));
+    }
 }

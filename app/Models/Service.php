@@ -2,39 +2,49 @@
 
 namespace App\Models;
 
-use App\Events\ServiceCreated;
-use App\Events\ServiceUpdated;
-use App\Models\Categories\ServiceCategory;
+use App\Models\Interfaces\CategorizableInterface;
+use App\Models\Interfaces\LoggableInterface;
+use App\Models\Interfaces\SoftDeletableInterface;
+use App\Models\Traits\CategorizableTrait;
+use App\Models\Traits\LoggableTrait;
+use App\Models\Traits\SoftDeletableTrait;
+use Carbon\Carbon;
+use Database\Factories\ServiceFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
-class Service extends BaseDeletableModel
+/**
+ * Class Service.
+ *
+ * @property string $title
+ * @property string|null $description
+ * @property float $once_paid_price
+ * @property float $hourly_paid_price
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ *
+ * @method static ServiceFactory factory(...$parameters)
+ */
+class Service extends BaseModel implements
+    SoftDeletableInterface,
+    CategorizableInterface,
+    LoggableInterface
 {
     use HasFactory;
+    use SoftDeletableTrait;
+    use CategorizableTrait;
+    use LoggableTrait;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var string[]
      */
     protected $fillable = [
-        'name',
+        'title',
         'description',
         'once_paid_price',
         'hourly_paid_price',
-        'period_id',
-        'category_id',
-    ];
-
-    /**
-     * The relationships that should always be loaded.
-     *
-     * @var array
-     */
-    protected $with = [
-        'period',
-        'category',
     ];
 
     /**
@@ -45,29 +55,15 @@ class Service extends BaseDeletableModel
     protected $casts = [
         'once_paid_price' => 'float',
         'hourly_paid_price' => 'float',
-        'created_at' => 'datetime:Y-m-d H:i:s',
-        'updated_at' => 'datetime:Y-m-d H:i:s',
-        'deleted_at' => 'datetime:Y-m-d H:i:s',
-    ];
-
-    protected $dispatchesEvents = [
-        'saved' => ServiceCreated::class,
-        'updated' => ServiceUpdated::class,
     ];
 
     /**
-     * Get period associated with the model.
+     * Array of column names changes of which should be logged.
+     *
+     * @var array
      */
-    public function period()
-    {
-        return $this->belongsTo(Period::class, 'period_id', 'id');
-    }
-
-    /**
-     * Get category associated with the model.
-     */
-    public function category()
-    {
-        return $this->belongsTo(ServiceCategory::class, 'category_id', 'id');
-    }
+    protected array $logFields = [
+        'once_paid_price',
+        'hourly_paid_price',
+    ];
 }

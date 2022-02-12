@@ -1,0 +1,47 @@
+<?php
+
+namespace App\Http\Resources\User;
+
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+/**
+ * Class UserResource.
+ *
+ * @mixin User
+ */
+class UserResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @param  Request  $request
+     * @return array
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function toArray($request): array
+    {
+        return [
+            'id' => $this->id,
+            'type' => $this->type,
+            'name' => $this->name,
+            'email' => $this->email,
+            'email_verified_at' => $this->email_verified_at,
+        ];
+    }
+
+    /**
+     * @OA\Schema(
+     *   schema="User",
+     *   description="User resource object",
+     *   required = {"id", "type", "name", "email", "email_verified_at"},
+     *   @OA\Property(property="id", type="integer", example=1),
+     *   @OA\Property(property="type", type="string", example="users"),
+     *   @OA\Property(property="name", type="string", example="Admin Admins"),
+     *   @OA\Property(property="email", type="string", example="admin@email.com", nullable="true"),
+     *   @OA\Property(property="email_verified_at", type="string", format="date-time", nullable="true"),
+     * )
+     */
+}

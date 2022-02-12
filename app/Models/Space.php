@@ -2,37 +2,51 @@
 
 namespace App\Models;
 
-use App\Models\Categories\SpaceCategory;
-use App\Models\Orders\SpaceOrderField;
+use App\Models\Interfaces\CategorizableInterface;
+use App\Models\Interfaces\LoggableInterface;
+use App\Models\Interfaces\SoftDeletableInterface;
+use App\Models\Traits\CategorizableTrait;
+use App\Models\Traits\LoggableTrait;
+use App\Models\Traits\SoftDeletableTrait;
+use Carbon\Carbon;
+use Database\Factories\SpaceFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Space extends BaseDeletableModel
+/**
+ * Class Space.
+ *
+ * @property string $title
+ * @property string|null $description
+ * @property float $price
+ * @property int $floor
+ * @property int $number
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ *
+ * @method static SpaceFactory factory(...$parameters)
+ */
+class Space extends BaseModel implements
+    SoftDeletableInterface,
+    CategorizableInterface,
+    LoggableInterface
 {
     use HasFactory;
+    use SoftDeletableTrait;
+    use CategorizableTrait;
+    use LoggableTrait;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var string[]
      */
     protected $fillable = [
-        'name',
+        'title',
         'description',
         'number',
         'floor',
         'price',
-        'period_id',
-        'category_id',
-    ];
-
-    /**
-     * The relationships that should always be loaded.
-     *
-     * @var array
-     */
-    protected $with = [
-        'period',
-        'category',
     ];
 
     /**
@@ -42,32 +56,14 @@ class Space extends BaseDeletableModel
      */
     protected $casts = [
         'price' => 'float',
-        'created_at' => 'datetime:Y-m-d H:i:s',
-        'updated_at' => 'datetime:Y-m-d H:i:s',
-        'deleted_at' => 'datetime:Y-m-d H:i:s',
     ];
 
     /**
-     * Get period associated with the model.
+     * Array of column names changes of which should be logged.
+     *
+     * @var array
      */
-    public function period()
-    {
-        return $this->belongsTo(Period::class, 'period_id', 'id');
-    }
-
-    /**
-     * Get category associated with the model.
-     */
-    public function category()
-    {
-        return $this->belongsTo(SpaceCategory::class, 'category_id', 'id');
-    }
-
-    public function intervals()
-    {
-        return $this->hasMany(SpaceOrderField::class, 'space_id', 'id')
-            ->without('space')
-            ->with('banquet')
-            ->select(['order_id', 'space_id', 'beg_datetime', 'end_datetime']);
-    }
+    protected array $logFields = [
+        'price',
+    ];
 }

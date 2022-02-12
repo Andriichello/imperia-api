@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<ruleset name="Imperia Code Sniffer Standard">
+    <description>Coding standard for Imperia</description>
+
+    <file>app</file>
+    <file>config</file>
+    <file>resources</file>
+    <file>routes</file>
+    <file>tests</file>
+
+    <exclude-pattern>*/database/migrations/*</exclude-pattern>
+    <exclude-pattern>*/cache/*</exclude-pattern>
+    <exclude-pattern>*/lang/*</exclude-pattern>
+    <exclude-pattern>*/*.js</exclude-pattern>
+    <exclude-pattern>*/*.css</exclude-pattern>
+    <exclude-pattern>*/*.xml</exclude-pattern>
+    <exclude-pattern>*/*.blade.php</exclude-pattern>
+    <exclude-pattern>*/autoload.php</exclude-pattern>
+    <exclude-pattern>*/storage/*</exclude-pattern>
+    <exclude-pattern>*/docs/*</exclude-pattern>
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+
+    <arg name="report" value="summary"/>
+    <arg name="colors"/>
+
+    <ini name="memory_limit" value="128M"/>
+
+    <rule ref="Generic.NamingConventions.UpperCaseConstantName">
+        <exclude-pattern>/app/Enums/*\.php</exclude-pattern>
+    </rule>
+    <rule ref="PSR1.Classes.ClassDeclaration.MissingNamespace">
+        <exclude-pattern>/database/migrations/*\.php</exclude-pattern>
+    </rule>
+    <rule ref="PSR1.Files.SideEffects">
+        <exclude-pattern>index.php</exclude-pattern>
+    </rule>
+    <rule ref="PSR12">
+        <exclude name="PSR1.Methods.CamelCapsMethodName"/>
+    </rule>
+</ruleset>

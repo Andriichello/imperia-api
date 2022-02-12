@@ -2,36 +2,63 @@
 
 namespace App\Models;
 
-use App\Events\ProductCreated;
-use App\Events\ProductUpdated;
-use App\Models\Categories\ProductCategory;
+use App\Models\Interfaces\CategorizableInterface;
+use App\Models\Interfaces\LoggableInterface;
+use App\Models\Interfaces\SoftDeletableInterface;
+use App\Models\Traits\CategorizableTrait;
+use App\Models\Traits\LoggableTrait;
+use App\Models\Traits\SoftDeletableTrait;
+use Carbon\Carbon;
+use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Product extends BaseDeletableModel
+/**
+ * Class Product.
+ *
+ * @property string $title
+ * @property string|null $description
+ * @property float|null $price
+ * @property float|null $weight
+ * @property int|null $menu_id
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ *
+ * @property Menu|null $menu
+ *
+ * @method static ProductFactory factory(...$parameters)
+ */
+class Product extends BaseModel implements
+    SoftDeletableInterface,
+    CategorizableInterface,
+    LoggableInterface
 {
     use HasFactory;
+    use SoftDeletableTrait;
+    use CategorizableTrait;
+    use LoggableTrait;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var string[]
      */
     protected $fillable = [
-        'name',
+        'title',
         'description',
         'price',
         'weight',
         'menu_id',
-        'category_id',
     ];
 
     /**
-     * The relationships that should always be loaded.
+     * The loadable relationships for the model.
      *
      * @var array
      */
-    protected $with = [
-        'category',
+    protected $relations = [
+        'menu',
     ];
 
     /**
@@ -42,29 +69,24 @@ class Product extends BaseDeletableModel
     protected $casts = [
         'price' => 'float',
         'weight' => 'float',
-        'created_at' => 'datetime:Y-m-d H:i:s',
-        'updated_at' => 'datetime:Y-m-d H:i:s',
-        'deleted_at' => 'datetime:Y-m-d H:i:s',
     ];
 
-    protected $dispatchesEvents = [
-        'saved' => ProductCreated::class,
-        'updated' => ProductUpdated::class,
+    /**
+     * Array of column names changes of which should be logged.
+     *
+     * @var array
+     */
+    protected array $logFields = [
+        'price',
     ];
 
     /**
      * Get the menu associated with the model.
+     *
+     * @return BelongsTo
      */
-    public function menu()
+    public function menu(): BelongsTo
     {
-        return $this->belongsTo(ImperiaMenu::class, 'menu_id', 'id');
-    }
-
-    /**
-     * Get the category associated with the model.
-     */
-    public function category()
-    {
-        return $this->belongsTo(ProductCategory::class, 'category_id', 'id');
+        return $this->belongsTo(Menu::class, 'menu_id', 'id');
     }
 }

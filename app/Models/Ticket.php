@@ -2,36 +2,47 @@
 
 namespace App\Models;
 
-use App\Events\TicketCreated;
-use App\Events\TicketUpdated;
-use App\Models\Categories\TicketCategory;
+use App\Models\Interfaces\CategorizableInterface;
+use App\Models\Interfaces\LoggableInterface;
+use App\Models\Interfaces\SoftDeletableInterface;
+use App\Models\Traits\CategorizableTrait;
+use App\Models\Traits\LoggableTrait;
+use App\Models\Traits\SoftDeletableTrait;
+use Carbon\Carbon;
+use Database\Factories\TicketFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Ticket extends BaseDeletableModel
+/**
+ * Class Space.
+ *
+ * @property string $title
+ * @property string|null $description
+ * @property float $price
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ *
+ * @method static TicketFactory factory(...$parameters)
+ */
+class Ticket extends BaseModel implements
+    SoftDeletableInterface,
+    CategorizableInterface,
+    LoggableInterface
 {
     use HasFactory;
+    use SoftDeletableTrait;
+    use CategorizableTrait;
+    use LoggableTrait;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var string[]
      */
     protected $fillable = [
-        'name',
+        'title',
         'description',
         'price',
-        'period_id',
-        'category_id',
-    ];
-
-    /**
-     * The relationships that should always be loaded.
-     *
-     * @var array
-     */
-    protected $with = [
-        'period',
-        'category',
     ];
 
     /**
@@ -41,29 +52,14 @@ class Ticket extends BaseDeletableModel
      */
     protected $casts = [
         'price' => 'float',
-        'created_at' => 'datetime:Y-m-d H:i:s',
-        'updated_at' => 'datetime:Y-m-d H:i:s',
-        'deleted_at' => 'datetime:Y-m-d H:i:s',
-    ];
-
-    protected $dispatchesEvents = [
-        'saved' => TicketCreated::class,
-        'updated' => TicketUpdated::class,
     ];
 
     /**
-     * Get period associated with the model.
+     * Array of column names changes of which should be logged.
+     *
+     * @var array
      */
-    public function period()
-    {
-        return $this->belongsTo(Period::class, 'period_id', 'id');
-    }
-
-    /**
-     * Get category associated with the model.
-     */
-    public function category()
-    {
-        return $this->belongsTo(TicketCategory::class, 'category_id', 'id')->withTrashed();
-    }
+    protected array $logFields = [
+        'price',
+    ];
 }

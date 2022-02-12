@@ -2,64 +2,94 @@
 
 namespace App\Models\Orders;
 
-use App\Models\BaseDeletableModel;
+use App\Models\BaseModel;
+use App\Models\Interfaces\CommentableInterface;
+use App\Models\Interfaces\DiscountableInterface;
+use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Service;
+use App\Models\Traits\CommentableTrait;
+use App\Models\Traits\DiscountableTrait;
+use App\Models\Traits\SoftDeletableTrait;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ServiceOrderField extends BaseDeletableModel
+/**
+ * Class ServiceOrderField.
+ *
+ * @property int $order_id
+ * @property int $service_id
+ * @property int $amount
+ * @property int $duration
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ *
+ * @property float $total
+ * @property Order $order
+ * @property Service $service
+ *
+ * @method static ServiceOrderField factory(...$parameters)
+ */
+class ServiceOrderField extends BaseModel implements
+    SoftDeletableInterface,
+    CommentableInterface,
+    DiscountableInterface
 {
     use HasFactory;
+    use SoftDeletableTrait;
+    use CommentableTrait;
+    use DiscountableTrait;
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var string[]
      */
     protected $fillable = [
         'order_id',
         'service_id',
         'amount',
-        'duration',
     ];
 
     /**
-     * The relationships that should always be loaded.
+     * The accessors to append to the model's array form.
      *
-     * @var array
+     * @var string[]
      */
-    protected $with = [
-        'service',
+    protected $appends = [
+        'total',
     ];
 
     /**
-     * Get service associated with the model.
+     * Service associated with the model.
+     *
+     * @return BelongsTo
      */
-    public function service()
+    public function service(): BelongsTo
     {
-        return $this->belongsTo(Service::class, 'service_id', 'id');
+        return $this->belongsTo(Service::class, 'product_id', 'id');
     }
 
     /**
-     * Get order associated with the model.
+     * Order associated with the model.
+     *
+     * @return BelongsTo
      */
-    public function order()
+    public function order(): BelongsTo
     {
-        return $this->belongsTo(TicketOrder::class, 'order_id', 'id');
+        return $this->belongsTo(Order::class, 'order_id', 'id');
     }
 
-    protected function setKeysForSaveQuery($query)
+    /**
+     * Accessor for total price of all fields within the model.
+     *
+     * @return float
+     */
+    public function getTotalAttribute(): float
     {
-        $query->where('order_id', '=', $this->original['order_id'] ?? $this->order_id);
-        $query->where('service_id', '=', $this->original['service_id'] ?? $this->service_id);
-
-        return $query;
-    }
-
-    protected function setKeysForSelectQuery($query)
-    {
-        $query->where('order_id', '=', $this->original['order_id'] ?? $this->order_id);
-        $query->where('service_id', '=', $this->original['service_id'] ?? $this->service_id);
-
-        return $query;
+        $total = $this->service->once_paid_price +
+            $this->service->hourly_paid_price * $this->duration;
+        return round($total * $this->amount, 2);
     }
 }

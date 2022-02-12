@@ -1,0 +1,73 @@
+<?php
+
+namespace App\Models\Morphs;
+
+use App\Models\BaseModel;
+use Carbon\Carbon;
+use Database\Factories\Morphs\DiscountableFactory;
+use Database\Factories\Morphs\DiscountFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+
+/**
+ * Class Discountable.
+ *
+ * @property int $discount_id
+ * @property int $discountable_id
+ * @property string $discountable_type
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ *
+ * @property Discount $discount
+ * @property BaseModel $discounted
+ *
+ * @method static DiscountableFactory factory(...$parameters)
+ */
+class Discountable extends BaseModel
+{
+    use HasFactory;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var string[]
+     */
+    protected $fillable = [
+        'discount_id',
+        'discountable_id',
+        'discountable_type',
+    ];
+
+    /**
+     * The loadable relationships for the model.
+     *
+     * @var array
+     */
+    protected $relations = [
+        'discount',
+        'discounted',
+    ];
+
+    /**
+     * Related discount.
+     *
+     * @return BelongsTo
+     */
+    public function discount(): BelongsTo
+    {
+        return $this->belongsTo(Discount::class);
+    }
+
+    /**
+     * Related discounted model.
+     *
+     * @return MorphTo
+     */
+    public function discounted(): MorphTo
+    {
+        return $this->morphTo('discounted', 'discountable_type', 'discountable_id', 'id');
+    }
+}
