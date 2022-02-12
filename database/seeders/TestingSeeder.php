@@ -7,7 +7,6 @@ use App\Enums\UserRole;
 use App\Models\Customer;
 use App\Models\FamilyMember;
 use App\Models\Menu;
-use App\Models\Morphs\Categorizable;
 use App\Models\Morphs\Category;
 use App\Models\Product;
 use App\Models\Service;
