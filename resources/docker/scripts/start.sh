@@ -19,4 +19,4 @@ php artisan route:cache
 
 php artisan migrate
 php artisan l5-swagger:generate
-php artisan queue:work
+nohup php artisan queue:work --daemon &

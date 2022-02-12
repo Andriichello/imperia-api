@@ -1,0 +1,20 @@
+version: "3.7"
+
+networks:
+  app_network:
+    driver: bridge
+
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: imperia_api
+    working_dir: /var/www/imperia-api
+    tty: true
+    volumes:
+      - ./:/var/www/imperia-api
+    networks:
+      - app_network
+    ports:
+      - "8080:80"

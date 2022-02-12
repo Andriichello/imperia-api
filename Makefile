@@ -1,8 +1,11 @@
-image:
-	sh ./resources/docker/scripts/make-image.sh
-
-run:
-	sh ./resources/docker/scripts/make-run.sh
+init:
+	docker-compose up --no-recreate --detach \
+ 	&& docker exec -it imperia_api /var/www/imperia-api/resources/docker/scripts/init.sh
 
 start:
-	sh ./resources/docker/scripts/make-start.sh
+	docker-compose up --no-recreate --detach \
+ 	&& docker exec -it imperia_api /var/www/imperia-api/resources/docker/scripts/start.sh
+
+bash:
+	docker-compose up --no-recreate --detach \
+ 	&& docker exec -it imperia_api /bin/bash

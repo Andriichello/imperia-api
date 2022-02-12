@@ -19,19 +19,6 @@ use Spatie\QueryBuilder\QueryBuilder as SpatieBuilder;
 
 /**
  * Class Controller.
- *
- * @OA\Info(title="Imperia API", version="0.1"),
- * @OA\Servers(
- *   @OA\Server(
- *     url=L5_SWAGGER_CONST_HOST,
- *     description="Current server"
- *   )
- * ),
- * @OA\SecurityScheme(
- *   securityScheme="bearerAuth",
- *   type="http",
- *   scheme="bearer"
- * )
  */
 abstract class Controller extends BaseController
 {
@@ -39,6 +26,25 @@ abstract class Controller extends BaseController
     use ValidatesRequests;
     use PaginationTrait;
     use DispatchesJobs;
+
+    /**
+     * @OA\Info(title="Imperia API", version="0.1"),
+     * @OA\Servers(
+     *   @OA\Server(
+     *     url="http://localhost:8080",
+     *     description="Mapped server"
+     *   ),
+     *   @OA\Server(
+     *     url=L5_SWAGGER_CONST_HOST,
+     *     description="Current server"
+     *   )
+     * ),
+     * @OA\SecurityScheme(
+     *   securityScheme="bearerAuth",
+     *   type="http",
+     *   scheme="bearer"
+     * )
+     */
 
     /**
      * Controller's model resource class.

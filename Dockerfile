@@ -25,17 +25,8 @@ RUN cd ~  \
 # Download and install MySQL
 RUN apt-get update && apt-get install mysql-server --yes
 
-# Download and install MySQL
+# Download and install Apache
 RUN apt-get update && apt-get install apache2 --yes
-
-COPY . /var/www/imperia-api
-WORKDIR /var/www/imperia-api
-
-# Set permissions for folders
-RUN chown -R www-data:www-data /var/www/imperia-api/public \
-    && chown -R www-data:www-data /var/www/imperia-api/bootstrap/cache/ \
-    && chown -R www-data:www-data /var/www/imperia-api/storage \
-    && chmod -R u+x /var/www/imperia-api/resources/docker/scripts
 
 # Set up MySQL
 RUN service mysql start \
@@ -46,26 +37,17 @@ RUN service mysql start \
       flush privileges; \
     "
 
-# Set up Apache
-RUN cp -f /var/www/imperia-api/resources/docker/configs/apache2.conf /etc/apache2/apache2.conf \
-    && cp -f /var/www/imperia-api/resources/docker/configs/ports.conf /etc/apache2/ports.conf \
-    && cp -f /var/www/imperia-api/resources/docker/configs/imperia-api.conf /etc/apache2/sites-available/imperia-api.conf \
-    && service apache2 start \
+# Set up Apache config
+COPY ./resources/docker/configs/apache2.conf /etc/apache2/apache2.conf
+COPY ./resources/docker/configs/ports.conf /etc/apache2/ports.conf
+COPY ./resources/docker/configs/imperia-api.conf /etc/apache2/sites-available/imperia-api.conf
+
+# Set up Apache service
+RUN service apache2 start \
     && a2dissite 000-default.conf \
     && a2ensite imperia-api.conf \
     && a2enmod proxy_fcgi setenvif rewrite ssl \
     && a2enconf php8.0-fpm \
     && service apache2 reload
 
-# Replace file endings
-RUN sed -i 's/\r$//' /var/www/imperia-api/resources/docker/scripts/setup.sh
-# Set up application
-RUN /var/www/imperia-api/resources/docker/scripts/setup.sh
-
-# Expose ports
-EXPOSE 80
-
-# Replace file endings
-RUN sed -i 's/\r$//' /var/www/imperia-api/resources/docker/scripts/start.sh
-# Start up application when container starts
-ENTRYPOINT /var/www/imperia-api/resources/docker/scripts/start.sh
+EXPOSE 80 443

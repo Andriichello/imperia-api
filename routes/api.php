@@ -30,7 +30,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', RegisterController::class)->name('api.register');
 Route::post('/login', LoginController::class)->name('api.login');
 
-Route::group(['as' => 'api.', 'middleware' => []], function () {
+Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
     Route::delete('/logout', LogoutController::class)->name('logout');
 
     Route::get('/users/me', [UserController::class, 'me'])->name('users.me');
