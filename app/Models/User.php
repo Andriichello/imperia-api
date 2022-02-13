@@ -41,6 +41,7 @@ class User extends Authenticatable implements SoftDeletableInterface
     use HasFactory;
     use HasRoles;
 
+    // find //var/www/imperia-api/resources/docker/scripts/ -type f -print0 | xargs -0 dos2unix --
     /**
      * The attributes that are mass assignable.
      *

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Replace file endings
-sed -i 's/\r$//' resources/docker/scripts/permissions.sh
-sed -i 's/\r$//' resources/docker/scripts/setup.sh
+dos2unix resources/docker/scripts/permissions.sh
+dos2unix resources/docker/scripts/setup.sh
 
 # Run scripts
 sh resources/docker/scripts/permissions.sh

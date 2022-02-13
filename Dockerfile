@@ -9,7 +9,7 @@ RUN apt-get install --no-install-recommends --yes software-properties-common apt
     && add-apt-repository ppa:ondrej/php \
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install --yes --allow-unauthenticated --no-install-recommends \
-        wget git unzip curl nano \
+        wget git unzip curl nano dos2unix \
         php8.0 php8.0-cli php8.0-fpm \
         php8.0-intl php8.0-xml php8.0-zip php8.0-curl \
         php8.0-http php8.0-raphf \
@@ -49,5 +49,10 @@ RUN service apache2 start \
     && a2enmod proxy_fcgi setenvif rewrite ssl \
     && a2enconf php8.0-fpm \
     && service apache2 reload
+
+# Set up scripts
+COPY ./resources/docker/scripts /var/www/imperia-api/resources/docker/scripts
+RUN find //var/www/imperia-api/resources/docker/scripts/ -type f -print0 | xargs -0 dos2unix -- \
+    && chmod -R u+x /var/www/imperia-api/resources/docker/scripts
 
 EXPOSE 80 443
