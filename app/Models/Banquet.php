@@ -25,7 +25,7 @@ use Illuminate\Support\Collection;
  * @property string $advance_amount
  * @property Carbon $start_at
  * @property Carbon $end_at
- * @property int $state_id
+ * @property string $state
  * @property int $creator_id
  * @property int $customer_id
  * @property Carbon|null $created_at
@@ -37,7 +37,6 @@ use Illuminate\Support\Collection;
  * @property Order|null $order
  * @property User|null $creator
  * @property Customer|null $customer
- * @property BanquetState|null $state
  * @property Comment[]|Collection $comments
  *
  * @method static BanquetFactory factory(...$parameters)
@@ -63,7 +62,7 @@ class Banquet extends BaseModel implements
         'advance_amount',
         'start_at',
         'end_at',
-        'state_id',
+        'state',
         'creator_id',
         'customer_id',
     ];
@@ -75,7 +74,6 @@ class Banquet extends BaseModel implements
      */
     protected $relations = [
         'order',
-        'state',
         'creator',
         'customer',
     ];
@@ -95,18 +93,8 @@ class Banquet extends BaseModel implements
      * @var array
      */
     protected array $logFields = [
-        'state_id',
+        'state',
     ];
-
-    /**
-     * Get the state associated with the model.
-     *
-     * @return BelongsTo
-     */
-    public function state(): BelongsTo
-    {
-        return $this->belongsTo(BanquetState::class, 'state_id', 'id');
-    }
 
     /**
      * Order associated with the model.
