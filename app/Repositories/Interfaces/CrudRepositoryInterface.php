@@ -48,6 +48,15 @@ interface CrudRepositoryInterface
     public function update(Model $model, array $attributes): bool;
 
     /**
+     * Update or create model with given attributes.
+     *
+     * @param array $attributes
+     *
+     * @return Builder|Model
+     */
+    public function updateOrCreate(array $attributes): Builder|Model;
+
+    /**
      * Delete model with given attributes.
      *
      * @param Model $model

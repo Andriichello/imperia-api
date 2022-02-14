@@ -41,6 +41,11 @@ abstract class CrudRepository implements CrudRepositoryInterface
         return $model->update($attributes);
     }
 
+    public function updateOrCreate(array $attributes): Builder|Model
+    {
+        return $this->builder()->updateOrCreate($attributes);
+    }
+
     public function delete(Model $model): bool
     {
         return $model->delete();
