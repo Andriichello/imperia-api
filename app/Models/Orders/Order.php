@@ -156,4 +156,14 @@ class Order extends BaseModel implements
 
         return round($total, 2);
     }
+
+    /**
+     * Determine if order can be edited.
+     *
+     * @return bool
+     */
+    public function canBeEdited(): bool
+    {
+        return $this->banquet->canBeEdited();
+    }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\BanquetState;
+use App\Helpers\BanquetHelper;
 use App\Models\Interfaces\CommentableInterface;
 use App\Models\Interfaces\LoggableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
@@ -134,5 +136,16 @@ class Banquet extends BaseModel implements
     public function getTotalAttribute(): float
     {
         return data_get($this->order, 'total', 0.0);
+    }
+
+    /**
+     * Determine if banquet can be edited.
+     *
+     * @return bool
+     */
+    public function canBeEdited(): bool
+    {
+        return $this->state !== BanquetState::Completed
+            && $this->state !== BanquetState::Cancelled;
     }
 }
