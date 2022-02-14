@@ -20,6 +20,7 @@ return new class extends Migration
             $table->smallInteger('floor');
             $table->string('description')->nullable();
             $table->decimal('price')->unsigned();
+            $table->boolean('archived')->default(false);
             $table->timestamps();
             $table->softDeletes();
             $table->unique(['title', 'number', 'floor'], 'spaces_unique_TITLE_and_NUMBER_and_FLOOR');

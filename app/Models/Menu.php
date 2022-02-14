@@ -20,6 +20,7 @@ use Illuminate\Support\Collection;
  *
  * @property string $title
  * @property string|null $description
+ * @property bool $archived
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
@@ -50,6 +51,7 @@ class Menu extends BaseModel implements
     protected $fillable = [
         'title',
         'description',
+        'archived',
     ];
 
     /**

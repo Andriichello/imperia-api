@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string $title
  * @property string|null $description
  * @property float $price
+ * @property bool $archived
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
@@ -43,6 +44,7 @@ class Ticket extends BaseModel implements
         'title',
         'description',
         'price',
+        'archived',
     ];
 
     /**

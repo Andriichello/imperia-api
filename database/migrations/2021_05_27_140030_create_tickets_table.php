@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('title', 50)->unique('tickets_unique_TITLE');
             $table->string('description')->nullable();
             $table->decimal('price')->unsigned();
+            $table->boolean('archived')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

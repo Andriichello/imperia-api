@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string|null $description
  * @property float $once_paid_price
  * @property float $hourly_paid_price
+ * @property bool $archived
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
@@ -45,6 +46,7 @@ class Service extends BaseModel implements
         'description',
         'once_paid_price',
         'hourly_paid_price',
+        'archived',
     ];
 
     /**

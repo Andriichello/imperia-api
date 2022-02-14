@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property float|null $price
  * @property float|null $weight
  * @property int|null $menu_id
+ * @property bool $archived
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
@@ -50,6 +51,7 @@ class Product extends BaseModel implements
         'price',
         'weight',
         'menu_id',
+        'archived',
     ];
 
     /**

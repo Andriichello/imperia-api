@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property float $price
  * @property int $floor
  * @property int $number
+ * @property bool $archived
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
@@ -47,6 +48,7 @@ class Space extends BaseModel implements
         'number',
         'floor',
         'price',
+        'archived',
     ];
 
     /**
