@@ -32,6 +32,7 @@ class ServiceResource extends JsonResource
             'description' => $this->description,
             'once_paid_price' => $this->once_paid_price,
             'hourly_paid_price' => $this->hourly_paid_price,
+            'archived' => $this->archived,
             'categories' => new CategoryCollection($this->whenLoaded('categories')),
             'category_ids' => $this->$categoryIds,
         ];
@@ -48,6 +49,7 @@ class ServiceResource extends JsonResource
      *   @OA\Property(property="description", type="string", example="Some text..."),
      *   @OA\Property(property="once_paid_price", type="float", example=350),
      *   @OA\Property(property="hourly_paid_price", type="float", example=200),
+     *   @OA\Property(property="archived", type="boolean", example="false"),
      *   @OA\Property(property="categories", type="array", @OA\Items(ref ="#/components/schemas/Category")),
      *   @OA\Property(property="category_ids", type="array", @OA\Items(type="integer", example=1)),
      * )

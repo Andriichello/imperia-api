@@ -30,6 +30,7 @@ class MenuResource extends JsonResource
             'type' => $this->type,
             'title' => $this->title,
             'description' => $this->description,
+            'archived' => $this->archived,
             'products' => new ProductCollection($this->whenLoaded('products')),
             'categories' => new CategoryCollection($this->categories),
         ];
@@ -44,6 +45,7 @@ class MenuResource extends JsonResource
      *   @OA\Property(property="type", type="string", example="menus"),
      *   @OA\Property(property="title", type="string", example="Kitchen"),
      *   @OA\Property(property="description", type="string", example="Some text..."),
+     *   @OA\Property(property="archived", type="boolean", example="false"),
      *   @OA\Property(property="products", type="array", @OA\Items(ref ="#/components/schemas/Product")),
      *   @OA\Property(property="categories", type="array", @OA\Items(ref ="#/components/schemas/Category")),
      * )

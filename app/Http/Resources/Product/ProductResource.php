@@ -34,6 +34,7 @@ class ProductResource extends JsonResource
             'price' => $this->price,
             'weight' => $this->weight,
             'menu_id' => $this->menu_id,
+            'archived' => $this->archived,
             'categories' => new CategoryCollection($this->whenLoaded('categories')),
             'category_ids' => $this->$categoryIds,
         ];
@@ -51,6 +52,7 @@ class ProductResource extends JsonResource
      *   @OA\Property(property="price", type="float", example=15.99),
      *   @OA\Property(property="weight", type="float", example=120),
      *   @OA\Property(property="menu_id", type="integer", example=1),
+     *   @OA\Property(property="archived", type="boolean", example="false"),
      *   @OA\Property(property="categories", type="array", @OA\Items(ref ="#/components/schemas/Category")),
      *   @OA\Property(property="category_ids", type="array", @OA\Items(type="integer", example=1)),
      * )

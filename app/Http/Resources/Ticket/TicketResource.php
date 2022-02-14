@@ -31,6 +31,7 @@ class TicketResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'price' => $this->price,
+            'archived' => $this->archived,
             'categories' => new CategoryCollection($this->whenLoaded('categories')),
             'category_ids' => $this->$categoryIds,
         ];
@@ -46,6 +47,7 @@ class TicketResource extends JsonResource
      *   @OA\Property(property="title", type="string", example="Child ticket"),
      *   @OA\Property(property="description", type="string", example="Some text..."),
      *   @OA\Property(property="price", type="float", example=19.60),
+     *   @OA\Property(property="archived", type="boolean", example="false"),
      *   @OA\Property(property="categories", type="array", @OA\Items(ref ="#/components/schemas/Category")),
      *   @OA\Property(property="category_ids", type="array", @OA\Items(type="integer", example=1)),
      * )

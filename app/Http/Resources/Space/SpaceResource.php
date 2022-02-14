@@ -33,6 +33,7 @@ class SpaceResource extends JsonResource
             'floor' => $this->floor,
             'number' => $this->number,
             'price' => $this->price,
+            'archived' => $this->archived,
             'categories' => new CategoryCollection($this->whenLoaded('categories')),
             'category_ids' => $this->$categoryIds,
         ];
@@ -50,6 +51,7 @@ class SpaceResource extends JsonResource
      *   @OA\Property(property="floor", type="integer", example=1),
      *   @OA\Property(property="number", type="integer", example=1),
      *   @OA\Property(property="price", type="float", example=15.99),
+     *   @OA\Property(property="archived", type="boolean", example="false"),
      *   @OA\Property(property="categories", type="array", @OA\Items(ref ="#/components/schemas/Category")),
      *   @OA\Property(property="category_ids", type="array", @OA\Items(type="integer", example=1)),
      * )
