@@ -71,7 +71,7 @@ class SpaceOrderField extends BaseModel implements
      */
     public function space(): BelongsTo
     {
-        return $this->belongsTo(Space::class, 'product_id', 'id');
+        return $this->belongsTo(Space::class, 'space_id', 'id');
     }
 
     /**

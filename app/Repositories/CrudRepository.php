@@ -6,6 +6,7 @@ use App\Models\BaseModel;
 use App\Repositories\Interfaces\CrudRepositoryInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class BaseRepository.

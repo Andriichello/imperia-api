@@ -22,7 +22,7 @@ class CustomerControllerTest extends RegisteringTestCase
      *
      * @var bool
      */
-    protected bool $shouldLogin = false;
+    protected bool $shouldLogin = true;
 
     /**
      * Test customer.
@@ -63,15 +63,7 @@ class CustomerControllerTest extends RegisteringTestCase
      */
     public function testIndex()
     {
-        $credentials = [
-            'name' => 'Temporary User',
-            'email' => 'temporary@email.com',
-            'password' => 'pa$$w0rd',
-        ];
-        $response = $this->postJson('/api/register', $credentials);
-        $token = $response['data']['token'];
-
-        $response = $this->getJson(route('api.customers.index'), ['Authorization' => 'Bearer ' . $token]);
+        $response = $this->getJson(route('api.customers.index'));
 
         $response->assertOk();
         $response->assertJsonStructure([

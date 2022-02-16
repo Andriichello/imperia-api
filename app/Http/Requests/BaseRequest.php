@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Redirector;
 
 /**
  * Class BaseRequest.
@@ -35,6 +36,7 @@ class BaseRequest extends FormRequest
         $obj = parent::createFrom($from, $to);
         $obj->setContainer(app());
         $obj->getValidatorInstance();
+        $obj->setRedirector(app(Redirector::class));
 
         return $obj;
     }

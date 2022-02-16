@@ -50,6 +50,7 @@ class ServiceOrderField extends BaseModel implements
         'order_id',
         'service_id',
         'amount',
+        'duration',
     ];
 
     /**
@@ -68,7 +69,7 @@ class ServiceOrderField extends BaseModel implements
      */
     public function service(): BelongsTo
     {
-        return $this->belongsTo(Service::class, 'product_id', 'id');
+        return $this->belongsTo(Service::class, 'service_id', 'id');
     }
 
     /**

@@ -24,7 +24,7 @@ class SpaceResource extends JsonResource
      */
     public function toArray($request): array
     {
-        $categoryIds = $this->categories()->pluck('id');
+        $categoryIds = $this->resource->categories()->pluck('id');
         return [
             'id' => $this->id,
             'type' => $this->type,
@@ -35,7 +35,7 @@ class SpaceResource extends JsonResource
             'price' => $this->price,
             'archived' => $this->archived,
             'categories' => new CategoryCollection($this->whenLoaded('categories')),
-            'category_ids' => $this->$categoryIds,
+            'category_ids' => $categoryIds,
         ];
     }
 

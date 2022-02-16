@@ -2,6 +2,10 @@
 
 namespace App\Http\Resources\Order;
 
+use App\Http\Resources\Field\ProductOrderFieldCollection;
+use App\Http\Resources\Field\ServiceOrderFieldCollection;
+use App\Http\Resources\Field\SpaceOrderFieldCollection;
+use App\Http\Resources\Field\TicketOrderFieldCollection;
 use App\Http\Resources\Product\ProductCollection;
 use App\Models\Orders\Order;
 use Illuminate\Http\Request;
@@ -29,10 +33,10 @@ class OrderResource extends JsonResource
             'type' => $this->type,
             'total' => $this->total,
             'banquet_id' => $this->banquet_id,
-            'spaces' => new ProductCollection($this->whenLoaded('spaces')),
-            'tickets' => new ProductCollection($this->whenLoaded('tickets')),
-            'products' => new ProductCollection($this->whenLoaded('products')),
-            'services' => new ProductCollection($this->whenLoaded('services')),
+            'spaces' => new SpaceOrderFieldCollection($this->whenLoaded('spaces')),
+            'tickets' => new TicketOrderFieldCollection($this->whenLoaded('tickets')),
+            'products' => new ProductOrderFieldCollection($this->whenLoaded('products')),
+            'services' => new ServiceOrderFieldCollection($this->whenLoaded('services')),
         ];
     }
 

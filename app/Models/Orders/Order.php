@@ -52,10 +52,6 @@ class Order extends BaseModel implements
      */
     protected $fillable = [
         'banquet_id',
-        'spaces',
-        'tickets',
-        'services',
-        'products',
     ];
 
     /**

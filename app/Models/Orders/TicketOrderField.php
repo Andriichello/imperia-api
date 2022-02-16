@@ -63,13 +63,13 @@ class TicketOrderField extends BaseModel implements
     ];
 
     /**
-     * Space associated with the model.
+     * Ticket associated with the model.
      *
      * @return BelongsTo
      */
-    public function space(): BelongsTo
+    public function ticket(): BelongsTo
     {
-        return $this->belongsTo(Space::class, 'product_id', 'id');
+        return $this->belongsTo(Space::class, 'ticket_id', 'id');
     }
 
     /**

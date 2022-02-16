@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Order;
 
-use App\Enums\FamilyRelation;
 use App\Http\Requests\Crud\StoreRequest;
 
 /**
@@ -44,13 +43,13 @@ class StoreOrderRequest extends StoreRequest
                     'exists:spaces,id',
                 ],
                 'spaces.*.start_at' => [
-                    'required',
-                    'datetime',
-                    'before_or_equal:yesterday',
+                    'sometimes',
+                    'date',
+                    'after_or_equal:yesterday',
                 ],
                 'spaces.*.end_at' => [
-                    'required',
-                    'datetime',
+                    'sometimes',
+                    'date',
                     'after:start_at',
                 ],
 
@@ -131,10 +130,12 @@ class StoreOrderRequest extends StoreRequest
      * @OA\Schema(
      *   schema="StoreOrderRequestSpaceField",
      *   description="Store order request space field",
-     *   required={"space_id", "start_at", "end_at"},
+     *   required={"space_id"},
      *   @OA\Property(property="space_id", type="integer", example=1),
-     *   @OA\Property(property="start_at", type="string", format="date-time"),
-     *   @OA\Property(property="end_at", type="string", format="date-time"),
+     *   @OA\Property(property="start_at", type="string", format="date-time",
+     *     description="If not present then banquet start_at date will be used."),
+     *   @OA\Property(property="end_at", type="string", format="date-time",
+     *     description="If not present then banquet end_at date will be used."),
      *  ),
      * @OA\Schema(
      *   schema="StoreOrderRequestTicketField",

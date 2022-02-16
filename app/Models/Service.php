@@ -68,4 +68,13 @@ class Service extends BaseModel implements
         'once_paid_price',
         'hourly_paid_price',
     ];
+
+    /**
+     * The loadable relationships for the model.
+     *
+     * @var array
+     */
+    protected $relations = [
+        'categories',
+    ];
 }

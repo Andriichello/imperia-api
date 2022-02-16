@@ -8,6 +8,7 @@ use App\Http\Controllers\Model\CommentController;
 use App\Http\Controllers\Model\CustomerController;
 use App\Http\Controllers\Model\FamilyMemberController;
 use App\Http\Controllers\Model\MenuController;
+use App\Http\Controllers\Model\OrderController;
 use App\Http\Controllers\Model\ProductController;
 use App\Http\Controllers\Model\ServiceController;
 use App\Http\Controllers\Model\SpaceController;
@@ -75,6 +76,10 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
     Route::apiResource('categories', CategoryController::class)
         ->only('index', 'show')
         ->parameters(['categories' => 'id']);
+
+    Route::apiResource('orders', OrderController::class)
+        ->only('index', 'show', 'store', 'update')
+        ->parameters(['orders' => 'id']);
 });
 
 Route::fallback(function () {

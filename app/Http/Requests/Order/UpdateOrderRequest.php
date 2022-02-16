@@ -3,12 +3,27 @@
 namespace App\Http\Requests\Order;
 
 use App\Http\Requests\Crud\UpdateRequest;
+use App\Models\Banquet;
+use App\Models\Orders\Order;
 
 /**
  * Class UpdateOrderRequest.
  */
 class UpdateOrderRequest extends UpdateRequest
 {
+    /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize(): bool
+    {
+        /** @var Banquet $banquet */
+        $banquet = Order::query()
+            ->findOrFail($this->id());
+        return $banquet->canBeEdited();
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -30,13 +45,13 @@ class UpdateOrderRequest extends UpdateRequest
                     'exists:spaces,id',
                 ],
                 'spaces.*.start_at' => [
-                    'required',
-                    'datetime',
-                    'before_or_equal:yesterday',
+                    'sometimes',
+                    'date',
+                    'after_or_equal:yesterday',
                 ],
                 'spaces.*.end_at' => [
-                    'required',
-                    'datetime',
+                    'sometimes',
+                    'date',
                     'after:start_at',
                 ],
 

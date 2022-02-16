@@ -23,7 +23,8 @@ return new class extends Migration
             $table->primary(['order_id', 'ticket_id']);
 
             $table->foreign('order_id')
-                ->references('id')->on('orders');
+                ->references('id')->on('orders')
+                ->onDelete('cascade');
             $table->foreign('ticket_id')
                 ->references('id')->on('tickets');
         });

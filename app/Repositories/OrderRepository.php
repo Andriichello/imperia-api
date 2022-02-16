@@ -28,6 +28,14 @@ class OrderRepository extends CrudRepository
             $relations = Arr::only($attributes, ['spaces', 'tickets', 'services', 'products']);
             foreach ($relations as $relation => $fields) {
                 foreach ($fields as $field) {
+                    if ($relation === 'spaces') {
+                        $startAt = data_get($field, 'start_at', $order->banquet->start_at);
+                        $endAt = data_get($field, 'end_at', $order->banquet->end_at);
+
+                        data_set($field, 'start_at', $startAt);
+                        data_set($field, 'end_at', $endAt);
+                    }
+
                     $order->$relation()->create($field);
                 }
             }

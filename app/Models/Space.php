@@ -68,4 +68,13 @@ class Space extends BaseModel implements
     protected array $logFields = [
         'price',
     ];
+
+    /**
+     * The loadable relationships for the model.
+     *
+     * @var array
+     */
+    protected $relations = [
+        'categories',
+    ];
 }
