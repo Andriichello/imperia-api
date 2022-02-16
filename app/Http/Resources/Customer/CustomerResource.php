@@ -49,7 +49,7 @@ class CustomerResource extends JsonResource
      *   @OA\Property(property="surname", type="string", example="Doe"),
      *   @OA\Property(property="email", type="integer", example="john.doe@email.com"),
      *   @OA\Property(property="phone", type="string", example="+380507777777"),
-     *   @OA\Property(property="birthdate", type="string", example="1986-01-26"),
+     *   @OA\Property(property="birthdate", type="string", format="date", example="1986-01-26"),
      *   @OA\Property(property="family_members", type="array",
      *     @OA\Items(ref ="#/components/schemas/FamilyMember")),
      *   @OA\Property(property="comments", type="array",

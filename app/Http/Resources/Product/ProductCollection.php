@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources\Product;
 
-use App\Http\Resources\Product\ProductResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 /**
