@@ -5,7 +5,7 @@ return [
     'documentations' => [
         'default' => [
             'api' => [
-                'title' => 'Imperia API',
+                'title' => 'imperia-api',
             ],
 
             'routes' => [

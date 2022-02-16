@@ -28,10 +28,10 @@ abstract class Controller extends BaseController
     use DispatchesJobs;
 
     /**
-     * @OA\Info(title="Imperia API", version="0.1"),
+     * @OA\Info(title="imperia-api", version="0.1"),
      * @OA\Servers(
      *   @OA\Server(
-     *     url="http://localhost:8080",
+     *     url="http://localhost:8000",
      *     description="Mapped server"
      *   ),
      *   @OA\Server(

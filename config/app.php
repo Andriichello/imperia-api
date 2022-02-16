@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Imperia API'),
+    'name' => env('APP_NAME', 'imperia-api'),
 
     /*
     |--------------------------------------------------------------------------
