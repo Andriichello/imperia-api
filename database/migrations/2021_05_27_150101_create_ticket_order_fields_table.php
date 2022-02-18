@@ -14,13 +14,14 @@ return new class extends Migration
     public function up()
     {
         Schema::create('ticket_order_fields', function (Blueprint $table) {
+            $table->id();
             $table->unsignedBigInteger('order_id');
             $table->unsignedBigInteger('ticket_id');
             $table->unsignedSmallInteger('amount');
             $table->timestamps();
             $table->softDeletes();
 
-            $table->primary(['order_id', 'ticket_id']);
+            $table->unique(['order_id', 'ticket_id']);
 
             $table->foreign('order_id')
                 ->references('id')->on('orders')

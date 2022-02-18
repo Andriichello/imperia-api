@@ -14,6 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('service_order_fields', function (Blueprint $table) {
+            $table->id();
             $table->unsignedBigInteger('order_id');
             $table->unsignedBigInteger('service_id')->index('service_id');
             $table->unsignedSmallInteger('amount');
@@ -21,7 +22,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->primary(['order_id', 'service_id']);
+            $table->unique(['order_id', 'service_id']);
 
             $table->foreign('order_id')
                 ->references('id')->on('orders')

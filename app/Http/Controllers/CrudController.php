@@ -197,7 +197,7 @@ abstract class CrudController extends Controller
         $model = $this->spatieBuilder($request)
             ->findOrFail($request->id());
 
-        $model->updateOrFail($request->validated());
+        $this->repository->update($model, $request->validated());
         return $this->asResourceResponse($model->fresh());
     }
 

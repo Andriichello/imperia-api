@@ -14,6 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('space_order_fields', function (Blueprint $table) {
+            $table->id();
             $table->unsignedBigInteger('order_id');
             $table->unsignedBigInteger('space_id')->index('space_id');
             $table->dateTime('start_at');
@@ -21,7 +22,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->primary(['order_id', 'space_id']);
+            $table->unique(['order_id', 'space_id']);
 
             $table->foreign('order_id')
                 ->references('id')->on('orders')

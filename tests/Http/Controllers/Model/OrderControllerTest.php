@@ -7,6 +7,7 @@ use App\Enums\UserRole;
 use App\Models\Banquet;
 use App\Models\Customer;
 use App\Models\Orders\Order;
+use App\Models\Orders\ProductOrderField;
 use App\Models\Product;
 use App\Models\Service;
 use App\Models\Space;
@@ -39,6 +40,31 @@ class OrderControllerTest extends RegisteringTestCase
     protected Banquet $banquet;
 
     /**
+     * @var Space
+     */
+    protected Space $space;
+
+    /**
+     * @var Service
+     */
+    protected Service $service;
+
+    /**
+     * @var Product
+     */
+    protected Product $product;
+
+    /**
+     * @var Ticket
+     */
+    protected Ticket $ticket;
+
+    /**
+     * @var array
+     */
+    protected array $attributes;
+
+    /**
      * Setup the test environment.
      *
      * @return void
@@ -47,11 +73,45 @@ class OrderControllerTest extends RegisteringTestCase
     {
         parent::setUp();
 
+        $this->space = Space::factory()->create();
+        $this->ticket = Ticket::factory()->create();
+        $this->service = Service::factory()->create();
+        $this->product = Product::factory()->create();
+
         $this->banquet = Banquet::factory()
             ->withCustomer(Customer::factory()->create())
             ->withCreator($this->user)
             ->withState(BanquetState::Draft)
             ->create();
+
+        $this->attributes = [
+            'spaces' => [
+                [
+                    'space_id' => $this->space->id,
+                    'start_at' => $this->banquet->start_at,
+                    'end_at' => $this->banquet->end_at,
+                ]
+            ],
+            'tickets' => [
+                [
+                    'ticket_id' => $this->ticket->id,
+                    'amount' => 5,
+                ]
+            ],
+            'services' => [
+                [
+                    'service_id' => $this->service->id,
+                    'amount' => 2,
+                    'duration' => 90,
+                ]
+            ],
+            'products' => [
+                [
+                    'product_id' => $this->product->id,
+                    'amount' => 2,
+                ]
+            ],
+        ];
     }
 
     /**
@@ -61,55 +121,70 @@ class OrderControllerTest extends RegisteringTestCase
      */
     public function testStore()
     {
-        /** @var Space $space */
-        $space = Space::factory()->create();
-        /** @var Ticket $ticket */
-        $ticket = Ticket::factory()->create();
-        /** @var Service $service */
-        $service = Service::factory()->create();
-        /** @var Product $product */
-        $product = Product::factory()->create();
+        $this->attributes['banquet_id'] = $this->banquet->id;
 
-        $response = $this->postJson(
-            route('api.orders.store', $attributes = [
-                'banquet_id' => $this->banquet->id,
-                'spaces' => [
-                    [
-                        'space_id' => $space->id,
-                        'start_at' => $this->banquet->start_at,
-                        'end_at' => $this->banquet->end_at,
-                    ]
-                ],
-                'tickets' => [
-                    [
-                        'ticket_id' => $ticket->id,
-                        'amount' => 5,
-                    ]
-                ],
-                'services' => [
-                    [
-                        'service_id' => $service->id,
-                        'amount' => 2,
-                        'duration' => 90,
-                    ]
-                ],
-                'product' => [
-                    [
-                        'product_id' => $product->id,
-                        'amount' => 2,
-                        'duration' => 90,
-                    ]
-                ]
-            ])
-        );
+        $response = $this->postJson(route('api.orders.store', $this->attributes));
         $response->assertCreated();
         $response->assertJsonStructure([
             'data',
             'message'
         ]);
-        $this->assertDatabaseHas(Order::class, Arr::only($attributes, 'banquet_id'));
+        $this->assertDatabaseHas(Order::class, Arr::only($this->attributes, 'banquet_id'));
 
-        $response = $this->postJson(route('api.orders.store', $attributes));
+        $response = $this->postJson(route('api.orders.store'), $this->attributes);
         $response->assertUnprocessable();
+    }
+
+    /**
+     * Test update order.
+     *
+     * @return void
+     */
+    public function testUpdate()
+    {
+        $this->attributes['banquet_id'] = $this->banquet->id;
+
+        $response = $this->postJson(route('api.orders.store'), $this->attributes);
+        $response->assertCreated();
+        $response->assertJsonStructure([
+            'data',
+            'message'
+        ]);
+
+        /** @var Order $order */
+        $order = Order::query()->findOrFail(data_get($response, 'data.id'));
+        $this->assertEquals($this->banquet->id, $order->banquet_id);
+        $this->assertCount(1, $order->spaces);
+        $this->assertCount(1, $order->tickets);
+        $this->assertCount(1, $order->products);
+        $this->assertCount(1, $order->services);
+
+        $response = $this->patchJson(
+            route('api.orders.update', ['id' => data_get($response, 'data.id')]),
+            [
+                'spaces' => [],
+                'tickets' => [],
+                'services' => [],
+                'products' => [
+                    [
+                        'product_id' => $this->product->id,
+                        'amount' => 10,
+                    ]
+                ]
+            ]
+        );
+        $response->assertOk();
+
+        /** @var Order $order */
+        $order = Order::query()->findOrFail(data_get($response, 'data.id'));
+        $this->assertEquals($this->banquet->id, $order->banquet_id);
+        $this->assertCount(0, $order->spaces);
+        $this->assertCount(0, $order->tickets);
+        $this->assertCount(1, $order->products);
+        $this->assertCount(0, $order->services);
+
+        /** @var ProductOrderField $productOrderField */
+        $productOrderField = $order->products->first();
+        $this->assertEquals(10, $productOrderField->amount);
     }
 }
