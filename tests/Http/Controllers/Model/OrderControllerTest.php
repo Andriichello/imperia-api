@@ -186,5 +186,20 @@ class OrderControllerTest extends RegisteringTestCase
         /** @var ProductOrderField $productOrderField */
         $productOrderField = $order->products->first();
         $this->assertEquals(10, $productOrderField->amount);
+
+        $this->banquet->update(['state' => BanquetState::Completed]);
+
+        $response = $this->patchJson(
+            route('api.orders.update', ['id' => data_get($response, 'data.id')]),
+            [
+                'tickets' => [
+                    [
+                        'ticket_id' => $this->ticket->id,
+                        'amount' => 10,
+                    ]
+                ],
+            ]
+        );
+        $response->assertStatus(403);
     }
 }

@@ -6,7 +6,6 @@ use App\Models\BaseModel;
 use App\Models\Interfaces\CommentableInterface;
 use App\Models\Interfaces\DiscountableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
-use App\Models\Space;
 use App\Models\Ticket;
 use App\Models\Traits\CommentableTrait;
 use App\Models\Traits\DiscountableTrait;
@@ -15,7 +14,6 @@ use Carbon\Carbon;
 use Database\Factories\TicketOrderFieldFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class ServiceOrderField.
@@ -90,7 +88,6 @@ class TicketOrderField extends BaseModel implements
      */
     public function getTotalAttribute(): float
     {
-        (new ConsoleOutput())->writeln('ticket->price: ' . $this->ticket->price);
         return round($this->ticket->price * $this->amount, 2);
     }
 }
