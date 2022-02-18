@@ -166,7 +166,8 @@ abstract class CrudController extends Controller
      */
     protected function handleShow(ShowRequest $request): ApiResponse
     {
-        $model = $this->spatieBuilder($request)
+        /** @var BaseModel $model @phpstan-ignore-next-line */
+        $model = $this->spatieBuilder($request)->withTrashed()
             ->findOrFail($request->id());
         return $this->asResourceResponse($model);
     }

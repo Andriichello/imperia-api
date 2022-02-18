@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Model\BanquetController;
 use App\Http\Controllers\Model\CategoryController;
 use App\Http\Controllers\Model\CommentController;
 use App\Http\Controllers\Model\CustomerController;
@@ -80,6 +81,12 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
     Route::apiResource('orders', OrderController::class)
         ->only('index', 'show', 'store', 'update')
         ->parameters(['orders' => 'id']);
+
+    Route::get('/banquets/{id}/order', [OrderController::class, 'showByBanquetId']);
+    Route::post('/banquets/{id}/restore', [BanquetController::class, 'restore']);
+    Route::apiResource('banquets', BanquetController::class)
+        ->only('index', 'show', 'store', 'update', 'destroy')
+        ->parameters(['banquets' => 'id']);
 });
 
 Route::fallback(function () {

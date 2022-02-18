@@ -146,8 +146,8 @@ class CommentController extends CrudController
      *     description="Id of the comment."),
      *
      *   @OA\Response(
-     *     response=201,
-     *     description="Update comment response object.",
+     *     response=200,
+     *     description="Delete comment response object.",
      *     @OA\JsonContent(ref ="#/components/schemas/DestroyCommentResponse")
      *   ),
      *   @OA\Response(

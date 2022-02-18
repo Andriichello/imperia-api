@@ -38,4 +38,13 @@ class DestroyRequest extends CrudRequest
     {
         return (bool) $this->get('force', false);
     }
+
+    /**
+     * @OA\Schema(
+     *   schema="DestroyRequest",
+     *   description="Destroy request",
+     *   @OA\Property(property="force", type="boolean", example="true",
+     *     description="Determines whether resource should be deleted without change of restoring."),
+     *  )
+     */
 }

@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Model;
 
 use App\Http\Controllers\CrudController;
+use App\Http\Requests\Crud\ShowRequest;
 use App\Http\Requests\Order\IndexOrderRequest;
 use App\Http\Requests\Order\ShowOrderRequest;
 use App\Http\Requests\Order\StoreOrderRequest;
 use App\Http\Requests\Order\UpdateOrderRequest;
 use App\Http\Resources\Order\OrderCollection;
 use App\Http\Resources\Order\OrderResource;
+use App\Http\Responses\ApiResponse;
+use App\Models\Banquet;
 use App\Repositories\OrderRepository;
 
 /**
@@ -45,6 +48,23 @@ class OrderController extends CrudController
     }
 
     /**
+     * Show order by banquet id.
+     *
+     * @param int $banquetId
+     * @param ShowOrderRequest $request
+     *
+     * @return ApiResponse
+     */
+    protected function showByBanquetId(int $banquetId, ShowOrderRequest $request): ApiResponse
+    {
+        /** @var Banquet $model @phpstan-ignore-next-line */
+        $model = $this->spatieBuilder($request)->withTrashed()
+            ->where('banquet_id', $banquetId)
+            ->firstOrFail();
+        return $this->asResourceResponse($model);
+    }
+
+    /**
      * @OA\Get(
      *   path="/api/orders",
      *   summary="Index orders.",
@@ -76,6 +96,27 @@ class OrderController extends CrudController
      *   @OA\Response(
      *     response=200,
      *     description="Show order response object.",
+     *     @OA\JsonContent(ref ="#/components/schemas/ShowOrderResponse")
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     description="Unauthenticated.",
+     *     @OA\JsonContent(ref ="#/components/schemas/UnauthenticatedResponse")
+     *   )
+     * ),
+     * @OA\Get(
+     *   path="/api/banquets/{id}/order",
+     *   summary="Show order by banquet id.",
+     *   operationId="showOrderByBanquetId",
+     *   security={{"bearerAuth": {}}},
+     *   tags={"orders", "banquets"},
+     *
+     *  @OA\Parameter(name="id", required=true, in="path", example=1, @OA\Schema(type="integer"),
+     *     description="Id of the banquet."),
+     *
+     *   @OA\Response(
+     *     response=200,
+     *     description="Show order by banquet id response object.",
      *     @OA\JsonContent(ref ="#/components/schemas/ShowOrderResponse")
      *   ),
      *   @OA\Response(

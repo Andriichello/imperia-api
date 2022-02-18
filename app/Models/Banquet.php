@@ -24,17 +24,19 @@ use Illuminate\Support\Collection;
  *
  * @property string $title
  * @property string|null $description
- * @property string $advance_amount
+ * @property float $advance_amount
  * @property Carbon $start_at
  * @property Carbon $end_at
+ * @property Carbon|null $paid_at
  * @property string $state
+ * @property int|null $order_id
  * @property int $creator_id
  * @property int $customer_id
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  *
- * @property int $total
+ * @property float $total
  *
  * @property Order|null $order
  * @property User|null $creator
@@ -64,9 +66,19 @@ class Banquet extends BaseModel implements
         'advance_amount',
         'start_at',
         'end_at',
+        'paid_at',
         'state',
         'creator_id',
         'customer_id',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'advance_amount' => 'float',
     ];
 
     /**
@@ -129,13 +141,23 @@ class Banquet extends BaseModel implements
     }
 
     /**
-     * Accessor for total price of an order.
+     * Accessor for total price of banquet.
      *
-     * @return float
+     * @return int|null
      */
-    public function getTotalAttribute(): float
+    public function getTotalAttribute(): ?int
     {
         return data_get($this->order, 'total', 0.0);
+    }
+
+    /**
+     * Accessor for id of the order.
+     *
+     * @return int|null
+     */
+    public function getOrderIdAttribute(): ?int
+    {
+        return $this->order()->pluck('id')->first();
     }
 
     /**

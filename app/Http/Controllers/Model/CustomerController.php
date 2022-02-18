@@ -54,6 +54,8 @@ class CustomerController extends CrudController
      *
      *   @OA\Parameter(name="include", in="query",
      *     @OA\Schema(ref ="#/components/schemas/CustomerIncludes")),
+     *   @OA\Parameter(name="trashed", in="query",
+     *     @OA\Schema(ref ="#/components/schemas/TrashedParameter")),
      *
      *   @OA\Response(
      *     response=200,
@@ -128,7 +130,7 @@ class CustomerController extends CrudController
      *     @OA\JsonContent(ref ="#/components/schemas/UpdateCustomerRequest")
      *   ),
      *   @OA\Response(
-     *     response=201,
+     *     response=200,
      *     description="Update customer response object.",
      *     @OA\JsonContent(ref ="#/components/schemas/UpdateCustomerResponse")
      *   ),
@@ -148,9 +150,14 @@ class CustomerController extends CrudController
      *  @OA\Parameter(name="id", required=true, in="path", example=1, @OA\Schema(type="integer"),
      *     description="Id of the customer."),
      *
+     *  @OA\RequestBody(
+     *     required=false,
+     *     description="Delete customer request object.",
+     *     @OA\JsonContent(ref ="#/components/schemas/DestroyRequest")
+     *   ),
      *   @OA\Response(
-     *     response=201,
-     *     description="Update customer response object.",
+     *     response=200,
+     *     description="Delete customer response object.",
      *     @OA\JsonContent(ref ="#/components/schemas/DestroyCustomerResponse")
      *   ),
      *   @OA\Response(
@@ -170,8 +177,8 @@ class CustomerController extends CrudController
      *     description="Id of the customer."),
      *
      *   @OA\Response(
-     *     response=201,
-     *     description="Update customer response object.",
+     *     response=200,
+     *     description="Restore customer response object.",
      *     @OA\JsonContent(ref ="#/components/schemas/RestoreCustomerResponse")
      *   ),
      *   @OA\Response(
