@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Database\Factories\TicketOrderFieldFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class ServiceOrderField.
@@ -69,7 +70,7 @@ class TicketOrderField extends BaseModel implements
      */
     public function ticket(): BelongsTo
     {
-        return $this->belongsTo(Space::class, 'ticket_id', 'id');
+        return $this->belongsTo(Ticket::class, 'ticket_id', 'id');
     }
 
     /**
@@ -89,6 +90,7 @@ class TicketOrderField extends BaseModel implements
      */
     public function getTotalAttribute(): float
     {
+        (new ConsoleOutput())->writeln('ticket->price: ' . $this->ticket->price);
         return round($this->ticket->price * $this->amount, 2);
     }
 }
