@@ -54,4 +54,39 @@ class Comment extends BaseModel
     {
         return $this->morphTo('commentable', 'commentable_type', 'commentable_id', 'id');
     }
+
+    /**
+     * Get request validation rules for creating or updating comments.
+     *
+     * @param string|null $prefix
+     *
+     * @return array
+     */
+    public static function rulesForAttaching(?string $prefix = null): array
+    {
+        return [
+            $prefix . 'comments' => [
+                'sometimes',
+                'array',
+            ],
+            $prefix . 'comments.*.id' => [
+                'sometimes',
+                'integer',
+            ],
+            $prefix . 'comments.*.commentable_id' => [
+                'sometimes',
+                'integer',
+            ],
+            $prefix . 'comments.*.commentable_type' => [
+                'sometimes',
+                'string',
+            ],
+            $prefix . 'comments.*.text' => [
+                'required',
+                'string',
+                'min:0',
+                'max:255',
+            ],
+        ];
+    }
 }
