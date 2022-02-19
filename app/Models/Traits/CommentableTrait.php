@@ -3,6 +3,7 @@
 namespace App\Models\Traits;
 
 use App\Models\BaseModel;
+use App\Models\Interfaces\CommentableInterface;
 use App\Models\Morphs\Comment;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Collection;
@@ -86,5 +87,17 @@ trait CommentableTrait
     {
         $texts = array_unique($texts);
         return empty($texts) || $this->comments()->whereIn('text', $texts)->exists();
+    }
+
+    /**
+     * Boot commentable trait.
+     *
+     * @return void
+     */
+    public static function bootCommentableTrait(): void
+    {
+        static::deleted(function ($model) {
+            $model->comments()->delete();
+        });
     }
 }

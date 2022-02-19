@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Order;
 
 use App\Http\Requests\Crud\StoreRequest;
+use App\Models\Morphs\Comment;
 
 /**
  * Class StoreOrderRequest.
@@ -17,6 +18,98 @@ class StoreOrderRequest extends StoreRequest
     }
 
     /**
+     * Get order's relations validation rules.
+     *
+     * @return array
+     */
+    public static function rulesForRelations(): array
+    {
+        $rules = [
+            'spaces' => [
+                'sometimes',
+                'array',
+            ],
+            'spaces.*.space_id' => [
+                'required',
+                'integer',
+                'distinct',
+                'exists:spaces,id',
+            ],
+            'spaces.*.start_at' => [
+                'sometimes',
+                'date',
+                'after_or_equal:yesterday',
+            ],
+            'spaces.*.end_at' => [
+                'sometimes',
+                'date',
+                'after:start_at',
+            ],
+
+            'tickets' => [
+                'sometimes',
+                'array',
+            ],
+            'tickets.*.ticket_id' => [
+                'required',
+                'integer',
+                'distinct',
+                'exists:tickets,id',
+            ],
+            'tickets.*.amount' => [
+                'required',
+                'integer',
+                'min:1',
+            ],
+
+            'services' => [
+                'sometimes',
+                'array',
+            ],
+            'services.*.service_id' => [
+                'required',
+                'integer',
+                'distinct',
+                'exists:services,id',
+            ],
+            'services.*.amount' => [
+                'required',
+                'integer',
+                'min:1',
+            ],
+            'services.*.duration' => [
+                'required',
+                'integer',
+                'min:0',
+            ],
+
+            'products' => [
+                'sometimes',
+                'array',
+            ],
+            'products.*.product_id' => [
+                'required',
+                'integer',
+                'distinct',
+                'exists:products,id',
+            ],
+            'products.*.amount' => [
+                'required',
+                'integer',
+                'min:1',
+            ],
+        ];
+        return array_merge(
+            $rules,
+            Comment::rulesForAttaching(),
+            Comment::rulesForAttaching('spaces.'),
+            Comment::rulesForAttaching('tickets.'),
+            Comment::rulesForAttaching('products.'),
+            Comment::rulesForAttaching('services.'),
+        );
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -25,85 +118,12 @@ class StoreOrderRequest extends StoreRequest
     {
         return array_merge(
             parent::rules(),
+            static::rulesForRelations(),
             [
                 'banquet_id' => [
                     'required',
                     'integer',
                     'unique:orders,banquet_id',
-                ],
-
-                'spaces' => [
-                    'sometimes',
-                    'array',
-                ],
-                'spaces.*.space_id' => [
-                    'required',
-                    'integer',
-                    'distinct',
-                    'exists:spaces,id',
-                ],
-                'spaces.*.start_at' => [
-                    'sometimes',
-                    'date',
-                    'after_or_equal:yesterday',
-                ],
-                'spaces.*.end_at' => [
-                    'sometimes',
-                    'date',
-                    'after:start_at',
-                ],
-
-                'tickets' => [
-                    'sometimes',
-                    'array',
-                ],
-                'tickets.*.ticket_id' => [
-                    'required',
-                    'integer',
-                    'distinct',
-                    'exists:tickets,id',
-                ],
-                'tickets.*.amount' => [
-                    'required',
-                    'integer',
-                    'min:1',
-                ],
-
-                'services' => [
-                    'sometimes',
-                    'array',
-                ],
-                'services.*.service_id' => [
-                    'required',
-                    'integer',
-                    'distinct',
-                    'exists:services,id',
-                ],
-                'services.*.amount' => [
-                    'required',
-                    'integer',
-                    'min:1',
-                ],
-                'services.*.duration' => [
-                    'required',
-                    'integer',
-                    'min:0',
-                ],
-
-                'products' => [
-                    'sometimes',
-                    'array',
-                ],
-                'products.*.product_id' => [
-                    'required',
-                    'integer',
-                    'distinct',
-                    'exists:products,id',
-                ],
-                'products.*.amount' => [
-                    'required',
-                    'integer',
-                    'min:1',
                 ],
             ]
         );
@@ -123,6 +143,8 @@ class StoreOrderRequest extends StoreRequest
      *     @OA\Items(ref ="#/components/schemas/StoreOrderRequestServiceField")),
      *   @OA\Property(property="products", type="array",
      *     @OA\Items(ref ="#/components/schemas/StoreOrderRequestProductField")),
+     *   @OA\Property(property="comments", type="array",
+     *     @OA\Items(ref ="#/components/schemas/AttachingComment")),
      *  )
      */
 
@@ -136,6 +158,8 @@ class StoreOrderRequest extends StoreRequest
      *     description="If not present then banquet start_at date will be used."),
      *   @OA\Property(property="end_at", type="string", format="date-time",
      *     description="If not present then banquet end_at date will be used."),
+     *   @OA\Property(property="comments", type="array",
+     *     @OA\Items(ref ="#/components/schemas/AttachingComment")),
      *  ),
      * @OA\Schema(
      *   schema="StoreOrderRequestTicketField",
@@ -143,6 +167,8 @@ class StoreOrderRequest extends StoreRequest
      *   required={"ticket_id", "amount"},
      *   @OA\Property(property="ticket_id", type="integer", example=1),
      *   @OA\Property(property="amount", type="integer", example=5),
+     *   @OA\Property(property="comments", type="array",
+     *     @OA\Items(ref ="#/components/schemas/AttachingComment")),
      *  ),
      * @OA\Schema(
      *   schema="StoreOrderRequestServiceField",
@@ -152,6 +178,8 @@ class StoreOrderRequest extends StoreRequest
      *   @OA\Property(property="amount", type="integer", example=1),
      *   @OA\Property(property="duration", type="integer", example=90,
      *     description="Duration of the service rental in minutes."),
+     *   @OA\Property(property="comments", type="array",
+     *     @OA\Items(ref ="#/components/schemas/AttachingComment")),
      *  ),
      * @OA\Schema(
      *   schema="StoreOrderRequestProductField",
@@ -159,6 +187,8 @@ class StoreOrderRequest extends StoreRequest
      *   required={"product_id", "amount"},
      *   @OA\Property(property="product_id", type="integer", example=1),
      *   @OA\Property(property="amount", type="integer", example=3),
+     *   @OA\Property(property="comments", type="array",
+     *     @OA\Items(ref ="#/components/schemas/AttachingComment")),
      *  )
      */
 }

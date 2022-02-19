@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Field;
 
+use App\Http\Resources\Comment\CommentCollection;
 use App\Models\Orders\ServiceOrderField;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -31,6 +32,7 @@ class ServiceOrderFieldResource extends JsonResource
             'amount' => $this->amount,
             'duration' => $this->duration,
             'total' => $this->total,
+            'comments' => new CommentCollection($this->whenLoaded('comments')),
         ];
     }
 
@@ -46,6 +48,8 @@ class ServiceOrderFieldResource extends JsonResource
      *   @OA\Property(property="amount", type="integer", example=5),
      *   @OA\Property(property="duration", type="integer", example=90),
      *   @OA\Property(property="total", type="float", example=125.55),
+     *   @OA\Property(property="comments", type="array",
+     *     @OA\Items(ref ="#/components/schemas/Comment")),
      * )
      */
 }

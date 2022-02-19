@@ -3,6 +3,11 @@
 namespace App\Repositories;
 
 use App\Models\Orders\Order;
+use App\Models\Orders\ProductOrderField;
+use App\Models\Orders\ServiceOrderField;
+use App\Models\Orders\SpaceOrderField;
+use App\Models\Orders\TicketOrderField;
+use App\Repositories\Traits\CommentableRepositoryTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -13,6 +18,8 @@ use Illuminate\Support\Facades\DB;
  */
 class OrderRepository extends CrudRepository
 {
+    use CommentableRepositoryTrait;
+
     /**
      * Repository's target model class.
      *
@@ -26,6 +33,7 @@ class OrderRepository extends CrudRepository
             /** @var Order $order */
             $order = parent::create($attributes);
             $this->createOrUpdateRelations($order, $attributes);
+            $this->createComments($order, $attributes);
 
             return $order->fresh();
         });
@@ -39,6 +47,7 @@ class OrderRepository extends CrudRepository
             }
             /** @var Order $model */
             $this->createOrUpdateRelations($model, $attributes);
+            $this->updateComments($model, $attributes);
 
             return true;
         });
@@ -62,13 +71,16 @@ class OrderRepository extends CrudRepository
                 $startAt = data_get($values, 'start_at', $order->banquet->start_at);
                 $endAt = data_get($values, 'end_at', $order->banquet->end_at);
 
-                $order->spaces()->updateOrCreate($identifiers, array_merge(
+                /** @var SpaceOrderField $field */
+                $field = $order->spaces()->updateOrCreate($identifiers, array_merge(
                     $values,
                     [
                         'start_at' => Carbon::make($startAt),
                         'end_at' => Carbon::make($endAt),
                     ],
                 ));
+
+                $this->updateComments($field, $values);
             }
 
             $order->spaces()
@@ -79,7 +91,10 @@ class OrderRepository extends CrudRepository
         if (Arr::has($attributes, 'tickets')) {
             foreach ($attributes['tickets'] as $values) {
                 $identifiers = Arr::only($values, 'ticket_id');
-                $order->tickets()->updateOrCreate($identifiers, $values);
+                /** @var TicketOrderField $field */
+                $field = $order->tickets()->updateOrCreate($identifiers, $values);
+
+                $this->updateComments($field, $values);
             }
 
             $order->tickets()
@@ -90,7 +105,10 @@ class OrderRepository extends CrudRepository
         if (Arr::has($attributes, 'products')) {
             foreach ($attributes['products'] as $values) {
                 $identifiers = Arr::only($values, 'product_id');
-                $order->products()->updateOrCreate($identifiers, $values);
+                /** @var ProductOrderField $field */
+                $field = $order->products()->updateOrCreate($identifiers, $values);
+
+                $this->updateComments($field, $values);
             }
 
             $order->products()
@@ -101,7 +119,10 @@ class OrderRepository extends CrudRepository
         if (Arr::has($attributes, 'services')) {
             foreach ($attributes['services'] as $values) {
                 $identifiers = Arr::only($values, 'service_id');
-                $order->services()->updateOrCreate($identifiers, $values);
+                /** @var ServiceOrderField $field */
+                $field = $order->services()->updateOrCreate($identifiers, $values);
+
+                $this->updateComments($field, $values);
             }
 
             $order->services()

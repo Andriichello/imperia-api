@@ -20,6 +20,20 @@ class IndexOrderRequest extends IndexRequest
         );
     }
 
+    public function getAllowedIncludes(): array
+    {
+        return array_merge(
+            parent::getAllowedIncludes(),
+            [
+                'comments',
+                'spaces.comments',
+                'tickets.comments',
+                'products.comments',
+                'services.comments',
+            ]
+        );
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *

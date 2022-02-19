@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Banquet;
 
 use App\Helpers\BanquetHelper;
+use App\Http\Resources\Comment\CommentCollection;
 use App\Http\Resources\Customer\CustomerResource;
 use App\Http\Resources\User\UserResource;
 use App\Models\Banquet;
@@ -45,6 +46,7 @@ class BanquetResource extends JsonResource
             'total' => $this->total,
             'creator' => new UserResource($this->whenLoaded('creator')),
             'customer' => new CustomerResource($this->whenLoaded('customer')),
+            'comments' => new CommentCollection($this->whenLoaded('comments')),
         ];
     }
 
@@ -72,6 +74,8 @@ class BanquetResource extends JsonResource
      *   @OA\Property(property="customer_id", type="integer", example=1),
      *   @OA\Property(property="creator", ref ="#/components/schemas/User"),
      *   @OA\Property(property="customer", ref ="#/components/schemas/Customer"),
+     *   @OA\Property(property="comments", type="array",
+     *     @OA\Items(ref ="#/components/schemas/Comment")),
      * )
      */
 }

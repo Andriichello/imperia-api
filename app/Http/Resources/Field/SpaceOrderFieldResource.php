@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Field;
 
+use App\Http\Resources\Comment\CommentCollection;
 use App\Models\Orders\SpaceOrderField;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -31,6 +32,7 @@ class SpaceOrderFieldResource extends JsonResource
             'start_at' => $this->start_at,
             'end_at' => $this->end_at,
             'total' => $this->total,
+            'comments' => new CommentCollection($this->whenLoaded('comments')),
         ];
     }
 
@@ -46,6 +48,8 @@ class SpaceOrderFieldResource extends JsonResource
      *   @OA\Property(property="start_at", type="string", format="date-time"),
      *   @OA\Property(property="end_at", type="string", format="date-time"),
      *   @OA\Property(property="total", type="float", example=159.99),
+     *   @OA\Property(property="comments", type="array",
+     *     @OA\Items(ref ="#/components/schemas/Comment")),
      * )
      */
 }

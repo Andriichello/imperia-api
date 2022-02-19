@@ -48,79 +48,11 @@ class UpdateOrderRequest extends UpdateRequest
     {
         return array_merge(
             parent::rules(),
+            StoreOrderRequest::rulesForRelations(),
             [
                 'spaces' => [
                     'sometimes',
                     'array',
-                ],
-                'spaces.*.space_id' => [
-                    'required',
-                    'integer',
-                    'distinct',
-                    'exists:spaces,id',
-                ],
-                'spaces.*.start_at' => [
-                    'sometimes',
-                    'date',
-                    'after_or_equal:yesterday',
-                ],
-                'spaces.*.end_at' => [
-                    'sometimes',
-                    'date',
-                    'after:start_at',
-                ],
-
-                'tickets' => [
-                    'sometimes',
-                    'array',
-                ],
-                'tickets.*.ticket_id' => [
-                    'required',
-                    'integer',
-                    'distinct',
-                    'exists:tickets,id',
-                ],
-                'tickets.*.amount' => [
-                    'required',
-                    'integer',
-                    'min:1',
-                ],
-
-                'services' => [
-                    'sometimes',
-                    'array',
-                ],
-                'services.*.service_id' => [
-                    'required',
-                    'integer',
-                    'distinct',
-                    'exists:services,id',
-                ],
-                'services.*.amount' => [
-                    'required',
-                    'integer',
-                    'min:1',
-                ],
-                'services.*.duration' => [
-                    'required',
-                    'integer',
-                    'min:1',
-                ],
-
-                'products' => [
-                    'sometimes',
-                    'array',
-                ],
-                'products.*.product_id' => [
-                    'required',
-                    'integer',
-                    'distinct',
-                    'exists:products,id',
-                ],
-                'products.*.amount' => [
-                    'required',
-                    'integer',
-                    'min:1',
                 ],
             ]
         );
@@ -138,6 +70,8 @@ class UpdateOrderRequest extends UpdateRequest
      *     @OA\Items(ref ="#/components/schemas/StoreOrderRequestServiceField")),
      *   @OA\Property(property="products", type="array",
      *     @OA\Items(ref ="#/components/schemas/StoreOrderRequestProductField")),
+     *   @OA\Property(property="comments", type="array",
+     *     @OA\Items(ref ="#/components/schemas/AttachingComment")),
      *  )
      */
 }

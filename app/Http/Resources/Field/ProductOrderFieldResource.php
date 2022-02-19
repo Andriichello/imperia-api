@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Field;
 
+use App\Http\Resources\Comment\CommentCollection;
 use App\Models\Orders\ProductOrderField;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -30,6 +31,7 @@ class ProductOrderFieldResource extends JsonResource
             'product_id' => $this->product_id,
             'amount' => $this->amount,
             'total' => $this->total,
+            'comments' => new CommentCollection($this->whenLoaded('comments')),
         ];
     }
 
@@ -44,6 +46,8 @@ class ProductOrderFieldResource extends JsonResource
      *   @OA\Property(property="product_id", type="integer", example=1),
      *   @OA\Property(property="amount", type="integer", example=5),
      *   @OA\Property(property="total", type="float", example=125.55),
+     *   @OA\Property(property="comments", type="array",
+     *     @OA\Items(ref ="#/components/schemas/Comment")),
      * )
      */
 }

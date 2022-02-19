@@ -45,4 +45,16 @@ class IndexCommentRequest extends IndexRequest
             ]
         );
     }
+
+    /**
+     * @OA\Schema(
+     *   schema="AttachingComment",
+     *   description="Attaching comment",
+     *   required={"text"},
+     *   @OA\Property(property="id", type="integer", example=1),
+     *   @OA\Property(property="commentable_id", type="integer", example=1),
+     *   @OA\Property(property="commentable_type", type="string", example="products"),
+     *   @OA\Property(property="text", type="string", example="Example comment..."),
+     *  ),
+     */
 }

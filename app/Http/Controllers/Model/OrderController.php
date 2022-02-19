@@ -71,6 +71,9 @@ class OrderController extends CrudController
      *   security={{"bearerAuth": {}}},
      *   tags={"orders"},
      *
+     *  @OA\Parameter(name="include", in="query",
+     *     @OA\Schema(ref ="#/components/schemas/OrderIncludes")),
+     *
      *   @OA\Response(
      *     response=200,
      *     description="Index orders response object.",
@@ -89,6 +92,8 @@ class OrderController extends CrudController
      *   security={{"bearerAuth": {}}},
      *   tags={"orders"},
      *
+     *  @OA\Parameter(name="include", in="query",
+     *     @OA\Schema(ref ="#/components/schemas/OrderIncludes")),
      *  @OA\Parameter(name="id", required=true, in="path", example=1, @OA\Schema(type="integer"),
      *     description="Id of the order."),
      *
@@ -221,6 +226,12 @@ class OrderController extends CrudController
      *   )
      * ),
      *
+     * @OA\Schema(
+     *   schema="OrderIncludes",
+     *   description="Coma-separated list of inluded relations. Available relations:
+    `comments`, `spaces.comments`, `tickets.comments`, `products.comments`, `services.comments`",
+     *   type="string", example="comments,spaces.comments,tickets.comments,products.comments,services.comments"
+     * ),
      * @OA\Schema(
      *   schema="IndexOrderResponse",
      *   description="Index orders response object.",

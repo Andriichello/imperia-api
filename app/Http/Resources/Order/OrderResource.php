@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Order;
 
+use App\Http\Resources\Comment\CommentCollection;
 use App\Http\Resources\Field\ProductOrderFieldCollection;
 use App\Http\Resources\Field\ServiceOrderFieldCollection;
 use App\Http\Resources\Field\SpaceOrderFieldCollection;
@@ -36,6 +37,7 @@ class OrderResource extends JsonResource
             'tickets' => new TicketOrderFieldCollection($this->whenLoaded('tickets')),
             'products' => new ProductOrderFieldCollection($this->whenLoaded('products')),
             'services' => new ServiceOrderFieldCollection($this->whenLoaded('services')),
+            'comments' => new CommentCollection($this->whenLoaded('comments')),
         ];
     }
 
@@ -48,10 +50,16 @@ class OrderResource extends JsonResource
      *   @OA\Property(property="type", type="string", example="orders"),
      *   @OA\Property(property="total", type="float", example=125.55),
      *   @OA\Property(property="banquet_id", type="integer", example=1),
-     *   @OA\Property(property="spaces", type="array", @OA\Items(ref ="#/components/schemas/SpaceOrderField")),
-     *   @OA\Property(property="tickets", type="array", @OA\Items(ref ="#/components/schemas/TicketOrderField")),
-     *   @OA\Property(property="products", type="array", @OA\Items(ref ="#/components/schemas/ProductOrderField")),
-     *   @OA\Property(property="services", type="array", @OA\Items(ref ="#/components/schemas/ServiceOrderField")),
+     *   @OA\Property(property="spaces", type="array",
+     *     @OA\Items(ref ="#/components/schemas/SpaceOrderField")),
+     *   @OA\Property(property="tickets", type="array",
+     *     @OA\Items(ref ="#/components/schemas/TicketOrderField")),
+     *   @OA\Property(property="products", type="array",
+     *     @OA\Items(ref ="#/components/schemas/ProductOrderField")),
+     *   @OA\Property(property="services", type="array",
+     *     @OA\Items(ref ="#/components/schemas/ServiceOrderField")),
+     *   @OA\Property(property="comments", type="array",
+     *     @OA\Items(ref ="#/components/schemas/Comment")),
      * )
      */
 }

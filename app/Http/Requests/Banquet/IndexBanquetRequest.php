@@ -14,9 +14,9 @@ class IndexBanquetRequest extends IndexRequest
         return array_merge(
             parent::getAllowedIncludes(),
             [
-                'order',
                 'creator',
                 'customer',
+                'comments',
             ]
         );
     }
