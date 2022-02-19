@@ -29,7 +29,7 @@ class TicketFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => $this->faker->unique()->sentence(3),
+            'title' => $this->faker->unique()->sentence(2),
             'description' => $this->faker->sentence,
             'price' => $this->faker->randomFloat(2, 20, 100),
         ];

@@ -31,7 +31,7 @@ class PeriodFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => $this->faker->unique()->sentence(3),
+            'title' => $this->faker->unique()->sentence(2),
             'start_at' => $this->faker->dateTimeBetween('-10 days', '-5 days'),
             'end_at' => $this->faker->dateTimeBetween('-4 days', '+10 days'),
             'metadata' => '{}',

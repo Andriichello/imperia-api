@@ -33,7 +33,7 @@ class BanquetFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => $this->faker->sentence(3),
+            'title' => $this->faker->sentence(2),
             'description' => $this->faker->sentence(4),
             'advance_amount' => 0,
             'start_at' => Carbon::tomorrow()->setHour(8),

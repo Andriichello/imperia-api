@@ -196,7 +196,6 @@ class OrderControllerTest extends RegisteringTestCase
         /** @var Comment $comment */
         $comment = $order->comments->first();
         $this->assertEquals('Updated comment...', $comment->text);
-        $this->assertTrue($comment->created_at->isBefore($comment->updated_at));
 
         /** @var ProductOrderField $productOrderField */
         $productOrderField = $order->products->first();
