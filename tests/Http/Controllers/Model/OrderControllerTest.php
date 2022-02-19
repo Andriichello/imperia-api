@@ -5,6 +5,7 @@ namespace Tests\Http\Controllers\Model;
 use App\Enums\BanquetState;
 use App\Models\Banquet;
 use App\Models\Customer;
+use App\Models\Morphs\Comment;
 use App\Models\Orders\Order;
 use App\Models\Orders\ProductOrderField;
 use App\Models\Product;
@@ -142,6 +143,11 @@ class OrderControllerTest extends RegisteringTestCase
     public function testUpdate()
     {
         $this->attributes['banquet_id'] = $this->banquet->id;
+        $this->attributes['comments'] = [
+            ['text' => 'Comment one...'],
+            ['text' => 'Comment two...'],
+            ['text' => 'Comment three...'],
+        ];
 
         $response = $this->postJson(route('api.orders.store'), $this->attributes);
         $response->assertCreated();
@@ -157,6 +163,7 @@ class OrderControllerTest extends RegisteringTestCase
         $this->assertCount(1, $order->tickets);
         $this->assertCount(1, $order->products);
         $this->assertCount(1, $order->services);
+        $this->assertCount(3, $order->comments);
 
         $response = $this->patchJson(
             route('api.orders.update', ['id' => data_get($response, 'data.id')]),
@@ -169,6 +176,9 @@ class OrderControllerTest extends RegisteringTestCase
                         'product_id' => $this->product->id,
                         'amount' => 10,
                     ]
+                ],
+                'comments' => [
+                    ['text' => 'Updated comment...']
                 ]
             ]
         );
@@ -181,6 +191,12 @@ class OrderControllerTest extends RegisteringTestCase
         $this->assertCount(0, $order->tickets);
         $this->assertCount(1, $order->products);
         $this->assertCount(0, $order->services);
+        $this->assertCount(1, $order->comments);
+
+        /** @var Comment $comment */
+        $comment = $order->comments->first();
+        $this->assertEquals('Updated comment...', $comment->text);
+        $this->assertTrue($comment->created_at->isBefore($comment->updated_at));
 
         /** @var ProductOrderField $productOrderField */
         $productOrderField = $order->products->first();
