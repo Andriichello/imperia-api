@@ -6,7 +6,6 @@ use App\Enums\UserRole;
 use App\Http\Requests\Crud\UpdateRequest;
 use App\Models\User;
 use App\Repositories\UserRepository;
-use Illuminate\Support\Facades\Auth;
 
 /**
  * Class UpdateUserRequest.

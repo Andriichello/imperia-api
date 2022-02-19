@@ -2,9 +2,7 @@
 
 namespace Tests\Models\Stubs;
 
-use App\Models\Interfaces\CategorizableInterface;
 use App\Models\Interfaces\DiscountableInterface;
-use App\Models\Traits\CategorizableTrait;
 use App\Models\Traits\DiscountableTrait;
 
 /**

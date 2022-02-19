@@ -78,12 +78,13 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
         ->only('index', 'show')
         ->parameters(['categories' => 'id']);
 
+    Route::post('/orders/{id}/restore', [OrderController::class, 'restore'])->name('orders.restore');
     Route::apiResource('orders', OrderController::class)
-        ->only('index', 'show', 'store', 'update')
+        ->only('index', 'show', 'store', 'update', 'destroy')
         ->parameters(['orders' => 'id']);
 
     Route::get('/banquets/{id}/order', [OrderController::class, 'showByBanquetId']);
-    Route::post('/banquets/{id}/restore', [BanquetController::class, 'restore']);
+    Route::post('/banquets/{id}/restore', [BanquetController::class, 'restore'])->name('banquets.restore');
     Route::apiResource('banquets', BanquetController::class)
         ->only('index', 'show', 'store', 'update', 'destroy')
         ->parameters(['banquets' => 'id']);

@@ -11,7 +11,7 @@ use App\Models\Traits\CommentableTrait;
 use App\Models\Traits\DiscountableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
-use Database\Factories\OrderFactory;
+use Database\Factories\Orders\OrderFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;

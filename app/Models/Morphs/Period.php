@@ -4,7 +4,6 @@ namespace App\Models\Morphs;
 
 use App\Models\BaseModel;
 use Carbon\Carbon;
-use Database\Factories\Morphs\CategoryFactory;
 use Database\Factories\Morphs\PeriodFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;

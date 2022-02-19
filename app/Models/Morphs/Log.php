@@ -3,8 +3,6 @@
 namespace App\Models\Morphs;
 
 use App\Models\BaseModel;
-use App\Models\Interfaces\JsonFieldInterface;
-use App\Models\Traits\JsonFieldTrait;
 use Carbon\Carbon;
 use Database\Factories\Morphs\LogFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

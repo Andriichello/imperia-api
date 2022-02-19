@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use App\Models\Banquet;
-use App\Models\BanquetState;
 use App\Models\Customer;
 use App\Models\FamilyMember;
 use App\Models\Menu;
@@ -27,8 +26,6 @@ use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
-use Symfony\Component\Console\Output\ConsoleOutput;
 use Tests\Models\Stubs\BaseStub;
 use Tests\Models\Stubs\CategorizableStub;
 use Tests\Models\Stubs\CommentableStub;
@@ -53,7 +50,6 @@ class MorphServiceProvider extends ServiceProvider
         FamilyMember::class,
         /** Banquet */
         Banquet::class,
-        BanquetState::class,
         /** Items */
         Menu::class,
         Space::class,

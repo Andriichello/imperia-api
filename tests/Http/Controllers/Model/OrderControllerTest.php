@@ -3,7 +3,6 @@
 namespace Tests\Http\Controllers\Model;
 
 use App\Enums\BanquetState;
-use App\Enums\UserRole;
 use App\Models\Banquet;
 use App\Models\Customer;
 use App\Models\Orders\Order;
@@ -12,10 +11,10 @@ use App\Models\Product;
 use App\Models\Service;
 use App\Models\Space;
 use App\Models\Ticket;
-use App\Models\User;
+use App\Repositories\OrderRepository;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\Concerns\MakesHttpRequests;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Hash;
 use Tests\RegisteringTestCase;
 
 /**
@@ -123,7 +122,7 @@ class OrderControllerTest extends RegisteringTestCase
     {
         $this->attributes['banquet_id'] = $this->banquet->id;
 
-        $response = $this->postJson(route('api.orders.store', $this->attributes));
+        $response = $this->postJson(route('api.orders.store'), $this->attributes);
         $response->assertCreated();
         $response->assertJsonStructure([
             'data',
@@ -201,5 +200,71 @@ class OrderControllerTest extends RegisteringTestCase
             ]
         );
         $response->assertStatus(403);
+    }
+
+    /**
+     * Test delete and restore order.
+     *
+     * @return void
+     */
+    public function testDeleteAndRestore()
+    {
+        $attributes = [
+            'banquet_id' => $this->banquet->id,
+            'spaces' => [
+                [
+                    'space_id' => $this->space->id,
+                ]
+            ],
+            'tickets' => [
+                [
+                    'ticket_id' => $this->ticket->id,
+                    'amount' => 3,
+                ]
+            ],
+            'products' => [
+                [
+                    'product_id' => $this->product->id,
+                    'amount' => 2,
+                ]
+            ],
+            'services' => [
+                [
+                    'service_id' => $this->service->id,
+                    'amount' => 2,
+                    'duration' => 45,
+                ]
+            ]
+        ];
+
+        $response = $this->postJson(route('api.orders.store'), $attributes);
+        $response->assertCreated();
+
+        /** @var Order $order */
+        $order = Order::query()->findOrFail(data_get($response, 'data.id'));
+
+        $response = $this->deleteJson(route('api.orders.destroy', ['id' => $order->id]));
+        $response->assertOk();
+
+        $this->assertNotNull($order->fresh()->deleted_at);
+
+        $this->assertEquals(0, $order->spaces()->count());
+        $this->assertEquals(1, $order->spaces()->withTrashed()->count()); // @phpstan-ignore-line
+        $this->assertEquals(0, $order->tickets()->count());
+        $this->assertEquals(1, $order->tickets()->withTrashed()->count()); // @phpstan-ignore-line
+        $this->assertEquals(0, $order->products()->count());
+        $this->assertEquals(1, $order->products()->withTrashed()->count()); // @phpstan-ignore-line
+        $this->assertEquals(0, $order->services()->count());
+        $this->assertEquals(1, $order->services()->withTrashed()->count()); // @phpstan-ignore-line
+
+        $response = $this->postJson(route('api.orders.restore', ['id' => $order->id]));
+        $response->assertOk();
+
+        $this->assertNull($order->fresh()->deleted_at);
+
+        $this->assertEquals(1, $order->spaces()->count());
+        $this->assertEquals(1, $order->tickets()->count());
+        $this->assertEquals(1, $order->products()->count());
+        $this->assertEquals(1, $order->services()->count());
     }
 }

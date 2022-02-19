@@ -2,7 +2,6 @@
 
 namespace Database\Factories\Morphs;
 
-use App\Models\BaseModel;
 use App\Models\Morphs\Period;
 use Carbon\Carbon;
 use Exception;

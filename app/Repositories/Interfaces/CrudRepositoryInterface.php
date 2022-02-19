@@ -87,4 +87,11 @@ interface CrudRepositoryInterface
      * @return Builder
      */
     public function builder(): Builder;
+
+    /**
+     * Determine if repository's model is soft-deletable.
+     *
+     * @return bool
+     */
+    public function isSoftDeletable(): bool;
 }

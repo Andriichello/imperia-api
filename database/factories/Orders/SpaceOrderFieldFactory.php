@@ -1,25 +1,25 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Orders;
 
-use App\Models\Orders\ServiceOrderField;
+use App\Models\Orders\SpaceOrderField;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 /**
- * Class ServiceOrderFieldFactory.
+ * Class SpaceOrderFieldFactory.
  *
- * @method ServiceOrderField|Collection create($attributes = [], ?Model $parent = null)
+ * @method SpaceOrderField|Collection create($attributes = [], ?Model $parent = null)
  */
-class ServiceOrderFieldFactory extends Factory
+class SpaceOrderFieldFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string|null
      */
-    protected $model = ServiceOrderField::class;
+    protected $model = SpaceOrderField::class;
 
     /**
      * Define the model's default state.

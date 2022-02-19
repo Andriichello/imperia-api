@@ -2,8 +2,8 @@
 
 namespace Tests\Models\Morphs;
 
-use App\Models\Morphs\Discountable;
 use App\Models\Morphs\Discount;
+use App\Models\Morphs\Discountable;
 use Tests\Models\Stubs\DiscountableStub;
 use Tests\StubsTestCase;
 

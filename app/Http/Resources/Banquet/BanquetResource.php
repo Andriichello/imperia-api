@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Banquet;
 
+use App\Helpers\BanquetHelper;
 use App\Http\Resources\Customer\CustomerResource;
 use App\Http\Resources\User\UserResource;
 use App\Models\Banquet;
@@ -25,10 +26,13 @@ class BanquetResource extends JsonResource
      */
     public function toArray($request): array
     {
+        $helper = new BanquetHelper();
+
         return [
             'id' => $this->id,
             'type' => $this->type,
             'state' => $this->state,
+            'available_states' => $helper->availableTransferStates($this->resource),
             'title' => $this->title,
             'description' => $this->description,
             'start_at' => $this->start_at,
@@ -54,6 +58,8 @@ class BanquetResource extends JsonResource
      *   @OA\Property(property="type", type="string", example="orders"),
      *   @OA\Property(property="state", type="string", example="draft",
      *     enum={"draft", "new", "processing", "completed", "cancelled"}),
+     *   @OA\Property(property="available_states", type="array", @OA\Items(type="string",
+     *     example="new", enum={"draft", "new", "processing", "completed", "cancelled"})),
      *   @OA\Property(property="title", type="string", example="Banquet title."),
      *   @OA\Property(property="description", type="string", example="Banquet description..."),
      *   @OA\Property(property="start_at", type="string", format="date-time"),

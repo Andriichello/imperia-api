@@ -43,8 +43,8 @@ class DestroyRequest extends CrudRequest
      * @OA\Schema(
      *   schema="DestroyRequest",
      *   description="Destroy request",
-     *   @OA\Property(property="force", type="boolean", example="true",
-     *     description="Determines whether resource should be deleted without change of restoring."),
+     *   @OA\Property(property="force", type="boolean", example="false",
+     *     description="Determines whether resource should be deleted without chance of restoring."),
      *  )
      */
 }

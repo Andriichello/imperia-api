@@ -1,7 +1,8 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Orders;
 
+use App\Models\Banquet;
 use App\Models\Orders\Order;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
@@ -31,5 +32,22 @@ class OrderFactory extends Factory
         return [
             //
         ];
+    }
+
+    /**
+     * Indicate creator.
+     *
+     * @param Banquet $banquet
+     *
+     * @return static
+     */
+    public function withBanquet(Banquet $banquet): static
+    {
+        return $this->state(
+            function (array $attributes) use ($banquet) {
+                $attributes['banquet_id'] = $banquet->id;
+                return $attributes;
+            }
+        );
     }
 }

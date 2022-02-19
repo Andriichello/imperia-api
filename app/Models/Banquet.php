@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Enums\BanquetState;
-use App\Helpers\BanquetHelper;
 use App\Models\Interfaces\CommentableInterface;
 use App\Models\Interfaces\LoggableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;

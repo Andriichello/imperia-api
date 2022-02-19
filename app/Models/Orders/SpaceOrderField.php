@@ -11,7 +11,7 @@ use App\Models\Traits\CommentableTrait;
 use App\Models\Traits\DiscountableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
-use Database\Factories\SpaceOrderFieldFactory;
+use Database\Factories\Orders\SpaceOrderFieldFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 

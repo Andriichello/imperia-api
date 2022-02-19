@@ -2,8 +2,8 @@
 
 namespace Tests\Models\Morphs;
 
-use App\Models\Morphs\Periodical;
 use App\Models\Morphs\Period;
+use App\Models\Morphs\Periodical;
 use Tests\Models\Stubs\PeriodicalStub;
 use Tests\StubsTestCase;
 

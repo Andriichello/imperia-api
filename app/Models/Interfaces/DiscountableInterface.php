@@ -3,10 +3,7 @@
 namespace App\Models\Interfaces;
 
 use App\Models\Morphs\Discount;
-use App\Models\Morphs\Discountable;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 /**

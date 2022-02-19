@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Model;
 
 use App\Http\Controllers\CrudController;
-use App\Http\Requests\Crud\ShowRequest;
 use App\Http\Requests\Order\IndexOrderRequest;
 use App\Http\Requests\Order\ShowOrderRequest;
 use App\Http\Requests\Order\StoreOrderRequest;
@@ -174,6 +173,53 @@ class OrderController extends CrudController
      *     @OA\JsonContent(ref ="#/components/schemas/UnauthenticatedResponse")
      *   )
      * ),
+     * @OA\Delete(
+     *   path="/api/orders/{id}",
+     *   summary="Delete order.",
+     *   operationId="destroyOrder",
+     *   security={{"bearerAuth": {}}},
+     *   tags={"orders"},
+     *
+     *  @OA\Parameter(name="id", required=true, in="path", example=1, @OA\Schema(type="integer"),
+     *     description="Id of the order."),
+     *
+     *  @OA\RequestBody(
+     *     required=false,
+     *     description="Delete request object.",
+     *     @OA\JsonContent(ref ="#/components/schemas/DestroyRequest")
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="Delete order response object.",
+     *     @OA\JsonContent(ref ="#/components/schemas/DestroyOrderResponse")
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     description="Unauthenticated.",
+     *     @OA\JsonContent(ref ="#/components/schemas/UnauthenticatedResponse")
+     *   )
+     * ),
+     * @OA\Post(
+     *   path="/api/orders/{id}/restore",
+     *   summary="Restore order.",
+     *   operationId="restoreOrder",
+     *   security={{"bearerAuth": {}}},
+     *   tags={"orders"},
+     *
+     *  @OA\Parameter(name="id", required=true, in="path", example=1, @OA\Schema(type="integer"),
+     *     description="Id of the order."),
+     *
+     *   @OA\Response(
+     *     response=200,
+     *     description="Restore order response object.",
+     *     @OA\JsonContent(ref ="#/components/schemas/RestoreOrderResponse")
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     description="Unauthenticated.",
+     *     @OA\JsonContent(ref ="#/components/schemas/UnauthenticatedResponse")
+     *   )
+     * ),
      *
      * @OA\Schema(
      *   schema="IndexOrderResponse",
@@ -200,6 +246,19 @@ class OrderController extends CrudController
      * @OA\Schema(
      *   schema="UpdateOrderResponse",
      *   description="Update order response object.",
+     *   required = {"data", "message"},
+     *   @OA\Property(property="data", ref ="#/components/schemas/Order"),
+     *   @OA\Property(property="message", type="string", example="Success"),
+     * ),
+     * @OA\Schema(
+     *   schema="DestroyOrderResponse",
+     *   description="Delete order response object.",
+     *   required = {"message"},
+     *   @OA\Property(property="message", type="string", example="Deleted"),
+     * ),
+     * @OA\Schema(
+     *   schema="RestoreOrderResponse",
+     *   description="Restore order response object.",
      *   required = {"data", "message"},
      *   @OA\Property(property="data", ref ="#/components/schemas/Order"),
      *   @OA\Property(property="message", type="string", example="Success"),

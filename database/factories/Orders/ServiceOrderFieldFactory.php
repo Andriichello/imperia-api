@@ -1,25 +1,25 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Orders;
 
-use App\Models\Orders\ProductOrderField;
+use App\Models\Orders\ServiceOrderField;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 /**
- * Class ProductOrderFieldFactory.
+ * Class ServiceOrderFieldFactory.
  *
- * @method ProductOrderField|Collection create($attributes = [], ?Model $parent = null)
+ * @method ServiceOrderField|Collection create($attributes = [], ?Model $parent = null)
  */
-class ProductOrderFieldFactory extends Factory
+class ServiceOrderFieldFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string|null
      */
-    protected $model = ProductOrderField::class;
+    protected $model = ServiceOrderField::class;
 
     /**
      * Define the model's default state.

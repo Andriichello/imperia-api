@@ -1,25 +1,25 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Orders;
 
-use App\Models\Orders\SpaceOrderField;
+use App\Models\Orders\TicketOrderField;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 /**
- * Class SpaceOrderFieldFactory.
+ * Class TicketOrderFieldFactory.
  *
- * @method SpaceOrderField|Collection create($attributes = [], ?Model $parent = null)
+ * @method TicketOrderField|Collection create($attributes = [], ?Model $parent = null)
  */
-class SpaceOrderFieldFactory extends Factory
+class TicketOrderFieldFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string|null
      */
-    protected $model = SpaceOrderField::class;
+    protected $model = TicketOrderField::class;
 
     /**
      * Define the model's default state.

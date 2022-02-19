@@ -2,8 +2,8 @@
 
 namespace Tests\Models\Traits;
 
-use App\Models\Morphs\Periodical;
 use App\Models\Morphs\Period;
+use App\Models\Morphs\Periodical;
 use Carbon\Carbon;
 use Faker\Generator;
 use Tests\Models\Stubs\PeriodicalStub;

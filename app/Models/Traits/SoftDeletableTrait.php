@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Dyrynda\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use LogicException;
 
 /**
  * Trait SoftDeletableTrait.
@@ -26,22 +27,6 @@ trait SoftDeletableTrait
     use CascadeSoftDeletes;
 
     /**
-     * Bootstrap the model and its traits.
-     *
-     * @return void
-     */
-    protected static function boot()
-    {
-        static::bootTraits();
-        static::bootSoftDeletes();
-        static::bootCascadeSoftDeletes();
-
-        static::restored(function ($model) {
-            $model->runCascadingRestores();
-        });
-    }
-
-    /**
      * Boot the soft deleting trait for a model.
      *
      * @return void
@@ -52,15 +37,55 @@ trait SoftDeletableTrait
     }
 
     /**
+     * Boot the cascade soft deletes trait for a model.
+     *
+     * @throws LogicException
+     */
+    protected static function bootCascadeSoftDeletes()
+    {
+        static::deleting(function ($model) {
+            $model->validateCascadingSoftDelete();
+
+            $model->runCascadingDeletes();
+        });
+    }
+
+    /**
+     * Boot the soft deletable trait for a model.
+     *
+     * @return void
+     */
+    protected static function bootSoftDeletableTrait()
+    {
+        static::restored(function ($model) {
+            $model->validateCascadingSoftDelete();
+
+            $model->runCascadingRestores();
+        });
+    }
+
+    /**
      * Run the cascading soft restore for this model.
      *
      * @return void
      */
     protected function runCascadingRestores()
     {
-        foreach ($this->getActiveCascadingDeletes() as $relationship) {
+        foreach ($this->getActiveCascadingRestores() as $relationship) {
             $this->cascadeSoftRestore($relationship);
         }
+    }
+
+    /**
+     * For the cascading restores defined on the model, return only those that are not null.
+     *
+     * @return array
+     */
+    protected function getActiveCascadingRestores(): array
+    {
+        return array_filter($this->getCascadingDeletes(), function ($relationship) {
+            return $this->{$relationship}()->onlyTrashed()->exists();
+        });
     }
 
     /**
@@ -71,16 +96,16 @@ trait SoftDeletableTrait
      */
     public function cascadeSoftRestore(string $relationship)
     {
-        $trashed = $this->$relationship()->onlyTrashed()->get();
-        $lastDeletedAt = $trashed->max('deleted_at');
+        /** @var Builder $builder */
+        $builder = $this->$relationship()->onlyTrashed();
+        $maxDate = $builder->max($column = $this->getDeletedAtColumn());
 
-        foreach ($trashed as $item) {
+        foreach ($builder->where($column, $maxDate)->get() as $item) {
             if (usesTrait($item, SoftDeletableTrait::class)) {
                 // should restore only last deleted items, so if some of them
-                // was deleted (earlier) on purpose then they will stay deleted
-                if ($item->deleted_at == $lastDeletedAt) {
-                    $item->restore();
-                }
+                // was deleted earlier (on purpose) then they will stay that way
+                // @phpstan-ignore-next-line
+                $item->restore();
             }
         }
     }

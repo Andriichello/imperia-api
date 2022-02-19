@@ -166,9 +166,13 @@ abstract class CrudController extends Controller
      */
     protected function handleShow(ShowRequest $request): ApiResponse
     {
-        /** @var BaseModel $model @phpstan-ignore-next-line */
-        $model = $this->spatieBuilder($request)->withTrashed()
+        $isSoftDeletable = $this->repository->isSoftDeletable();
+
+        /** @var BaseModel $model */
+        $model = $this->spatieBuilder($request)
+            ->when($isSoftDeletable, fn ($builder) => $builder->withTrashed())
             ->findOrFail($request->id());
+
         return $this->asResourceResponse($model);
     }
 
@@ -195,7 +199,11 @@ abstract class CrudController extends Controller
      */
     protected function handleUpdate(UpdateRequest $request): ApiResponse
     {
+        $isSoftDeletable = $this->repository->isSoftDeletable();
+
+        /** @var BaseModel $model */
         $model = $this->spatieBuilder($request)
+            ->when($isSoftDeletable, fn ($builder) => $builder->withTrashed())
             ->findOrFail($request->id());
 
         $this->repository->update($model, $request->validated());
@@ -212,7 +220,11 @@ abstract class CrudController extends Controller
      */
     protected function handleDestroy(DestroyRequest $request): ApiResponse
     {
+        $isSoftDeletable = $this->repository->isSoftDeletable();
+
+        /** @var BaseModel $model */
         $model = $this->spatieBuilder($request)
+            ->when($isSoftDeletable, fn ($builder) => $builder->withTrashed())
             ->findOrFail($request->id());
 
         $deleted = $request->force() ? $model->forceDelete() : $model->deleteOrFail();
@@ -233,8 +245,11 @@ abstract class CrudController extends Controller
      */
     protected function handleRestore(RestoreRequest $request): ApiResponse
     {
-        /** @var BaseModel $model @phpstan-ignore-next-line */
-        $model = $this->builder()->withTrashed()
+        $isSoftDeletable = $this->repository->isSoftDeletable();
+
+        /** @var BaseModel $model */
+        $model = $this->spatieBuilder($request)
+            ->when($isSoftDeletable, fn ($builder) => $builder->withTrashed())
             ->findOrFail($request->id());
 
         if (!method_exists($model, 'restore')) {

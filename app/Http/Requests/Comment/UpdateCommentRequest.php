@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Comment;
 
-use App\Http\Requests\Crud\ShowRequest;
 use App\Http\Requests\Crud\UpdateRequest;
 
 /**

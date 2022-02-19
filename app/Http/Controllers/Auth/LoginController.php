@@ -93,11 +93,12 @@ class LoginController extends Controller
      */
     protected function findUserByCredentials(array $credentials): ?User
     {
-        if (!Auth::attempt($credentials)) {
+        /** @phpstan-ignore-next-line */
+        if (!Auth::guard('web')->attempt($credentials)) {
             return null;
         }
         /** @var User|null $user */
-        $user = Auth::user();
+        $user = Auth::guard('web')->user();
         return $user;
     }
 

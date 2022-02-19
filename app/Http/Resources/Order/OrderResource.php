@@ -6,7 +6,6 @@ use App\Http\Resources\Field\ProductOrderFieldCollection;
 use App\Http\Resources\Field\ServiceOrderFieldCollection;
 use App\Http\Resources\Field\SpaceOrderFieldCollection;
 use App\Http\Resources\Field\TicketOrderFieldCollection;
-use App\Http\Resources\Product\ProductCollection;
 use App\Models\Orders\Order;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
