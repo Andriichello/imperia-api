@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Customer;
 
 use App\Http\Requests\Crud\StoreRequest;
+use App\Models\Morphs\Comment;
 
 /**
  * Class StoreCustomerRequest.
@@ -18,6 +19,7 @@ class StoreCustomerRequest extends StoreRequest
     {
         return array_merge(
             parent::rules(),
+            Comment::rulesForAttaching(),
             [
                 'name' => [
                     'required',

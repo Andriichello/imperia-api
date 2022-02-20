@@ -2,7 +2,9 @@
 
 namespace Tests\Models\Traits;
 
+use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Morphs\Comment;
+use App\Models\Traits\SoftDeletableTrait;
 use Tests\Models\Stubs\CommentableStub;
 use Tests\StubsTestCase;
 
@@ -113,5 +115,67 @@ class CommentableTraitTest extends StubsTestCase
         $this->assertTrue($this->instance->hasAnyOfComments($texts[0]));
         $this->assertTrue($this->instance->hasAnyOfComments($texts[1]));
         $this->assertTrue($this->instance->hasAnyOfComments(...$texts));
+    }
+
+    /**
+     * Test comments deleting.
+     *
+     * @return void
+     */
+    public function testCommentsDeleting()
+    {
+        $this->instance->attachComments(
+            'Comment one...',
+            'Comment two...',
+        );
+
+        $comments = $this->instance->comments;
+        $this->assertCount(2, $comments);
+
+        $this->instance->delete();
+
+        $exists = Comment::query()
+            ->whereIn('id', $comments->pluck('id')->all())
+            ->exists();
+
+        $this->assertFalse($exists);
+    }
+
+    /**
+     * Test comments deleting on soft-deletable model.
+     *
+     * @return void
+     */
+    public function testCommentsDeletingOnSoftDeletable()
+    {
+        $instance = new class extends CommentableStub implements SoftDeletableInterface {
+            use SoftDeletableTrait;
+        };
+        $instance->save();
+
+        $instance->attachComments(
+            'Comment one...',
+            'Comment two...',
+        );
+
+        $comments = $instance->comments;
+        $this->assertCount(2, $comments);
+
+        $instance->delete();
+        $this->assertNotNull($instance->deleted_at);
+
+        $exists = Comment::query()
+            ->whereIn('id', $comments->pluck('id')->all())
+            ->exists();
+
+        $this->assertTrue($exists);
+
+        $instance->forceDelete();
+
+        $exists = Comment::query()
+            ->whereIn('id', $comments->pluck('id')->all())
+            ->exists();
+
+        $this->assertFalse($exists);
     }
 }

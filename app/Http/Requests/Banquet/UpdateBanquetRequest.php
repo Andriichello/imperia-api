@@ -5,6 +5,7 @@ namespace App\Http\Requests\Banquet;
 use App\Helpers\BanquetHelper;
 use App\Http\Requests\Crud\UpdateRequest;
 use App\Models\Banquet;
+use App\Models\Morphs\Comment;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Validation\Validator;
 
@@ -49,6 +50,7 @@ class UpdateBanquetRequest extends UpdateRequest
     {
         return array_merge(
             parent::rules(),
+            Comment::rulesForAttaching(),
             [
                 'title' => [
                     'string',
@@ -132,6 +134,8 @@ class UpdateBanquetRequest extends UpdateRequest
      *     description="Date and time of when banquet should end. Must be after or equal to `start_at`."),
      *   @OA\Property(property="paid_at", type="string", format="date-time", nullable="true", example=null,
      *     description="Date and time of when banquet was fully paid for."),
+     *   @OA\Property(property="comments", type="array",
+     *     @OA\Items(ref ="#/components/schemas/AttachingComment")),
      *  )
      */
 }

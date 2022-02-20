@@ -122,6 +122,11 @@ class OrderControllerTest extends RegisteringTestCase
     public function testStore()
     {
         $this->attributes['banquet_id'] = $this->banquet->id;
+        $this->attributes['comments'] = [
+            ['text' => 'Comment one...'],
+            ['text' => 'Comment two...'],
+            ['text' => 'Comment three...'],
+        ];
 
         $response = $this->postJson(route('api.orders.store'), $this->attributes);
         $response->assertCreated();
@@ -130,6 +135,10 @@ class OrderControllerTest extends RegisteringTestCase
             'message'
         ]);
         $this->assertDatabaseHas(Order::class, Arr::only($this->attributes, 'banquet_id'));
+
+        /** @var Order $order */
+        $order = Order::query()->findOrFail(data_get($response, 'data.id'));
+        $this->assertCount(3, $order->comments);
 
         $response = $this->postJson(route('api.orders.store'), $this->attributes);
         $response->assertUnprocessable();

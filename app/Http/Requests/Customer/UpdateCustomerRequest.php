@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Customer;
 
 use App\Http\Requests\Crud\UpdateRequest;
+use App\Models\Morphs\Comment;
 
 /**
  * Class UpdateCustomerRequest.
@@ -18,6 +19,7 @@ class UpdateCustomerRequest extends UpdateRequest
     {
         return array_merge(
             parent::rules(),
+            Comment::rulesForAttaching(),
             [
                 'name' => [
                     'string',

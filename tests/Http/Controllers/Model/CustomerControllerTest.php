@@ -142,13 +142,19 @@ class CustomerControllerTest extends RegisteringTestCase
     public function testStore()
     {
         $response = $this->postJson(
-            route('api.customers.store', $attributes = [
+            route('api.customers.store'),
+            $attributes = [
                 'name' => 'John',
                 'surname' => 'John Doe',
                 'email' => 'john.doe@email.com',
                 'phone' => '+380507777777',
                 'birthdate' => '1995-10-15',
-            ])
+                'comments' => [
+                    ['text' => 'Comment one...'],
+                    ['text' => 'Comment two...'],
+                    ['text' => 'Comment three...'],
+                ]
+            ],
         );
 
         $response->assertCreated();
@@ -158,6 +164,9 @@ class CustomerControllerTest extends RegisteringTestCase
         ]);
 
         $this->assertDatabaseHas(Customer::class, Arr::only($attributes, ['name', 'surname', 'email']));
+        /** @var Customer $customer */
+        $customer = Customer::query()->findOrFail(data_get($response, 'data.id'));
+        $this->assertCount(3, $customer->comments);
     }
 
     /**

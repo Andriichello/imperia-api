@@ -95,6 +95,11 @@ class BanquetControllerTest extends RegisteringTestCase
             'state' => BanquetState::Draft,
             'creator_id' => $this->user->id,
             'customer_id' => $this->customers->first()->id,
+            'comments' => [
+                ['text' => 'Comment one...'],
+                ['text' => 'Comment two...'],
+                ['text' => 'Comment three...'],
+            ],
         ];
 
         $response = $this->postJson(route('api.banquets.store'), $attributes);
@@ -103,6 +108,10 @@ class BanquetControllerTest extends RegisteringTestCase
             'data',
             'message'
         ]);
+
+        /** @var Banquet $banquet */
+        $banquet = Banquet::query()->findOrFail(data_get($response, 'data.id'));
+        $this->assertCount(3, $banquet->comments);
     }
 
     /**
@@ -118,6 +127,20 @@ class BanquetControllerTest extends RegisteringTestCase
             ->withCreator($this->user)
             ->withState(BanquetState::Draft)
             ->create();
+
+        $banquet->attachComments('Comment one...', 'Comment two...');
+        $this->assertCount(2, $banquet->comments);
+
+        $response = $this->patchJson(
+            route('api.banquets.update', ['id' => $banquet->id]),
+            [
+                'comments' => [
+                    ['text' => 'Updated comment...']
+                ],
+            ]
+        );
+        $response->assertOk();
+        $this->assertCount(1, $banquet->fresh()->comments);
 
         $response = $this->patchJson(
             route('api.banquets.update', ['id' => $banquet->id]),
