@@ -6,6 +6,7 @@ use App\Models\BaseModel;
 use App\Models\Interfaces\CommentableInterface;
 use App\Models\Morphs\Comment;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 
 /**
@@ -97,7 +98,15 @@ trait CommentableTrait
     public static function bootCommentableTrait(): void
     {
         static::deleted(function ($model) {
-            $model->comments()->delete();
+            if (!usesTrait($model, SoftDeletes::class)) {
+                $model->comments()->delete();
+            }
         });
+
+        if (usesTrait(static::class, SoftDeletes::class)) {
+            static::forceDeleted(function ($model) {
+                $model->comments()->delete();
+            });
+        }
     }
 }
