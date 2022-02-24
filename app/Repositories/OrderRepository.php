@@ -8,6 +8,7 @@ use App\Models\Orders\ServiceOrderField;
 use App\Models\Orders\SpaceOrderField;
 use App\Models\Orders\TicketOrderField;
 use App\Repositories\Traits\CommentableRepositoryTrait;
+use App\Repositories\Traits\DiscountableRepositoryTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 class OrderRepository extends CrudRepository
 {
     use CommentableRepositoryTrait;
+    use DiscountableRepositoryTrait;
 
     /**
      * Repository's target model class.
@@ -34,6 +36,7 @@ class OrderRepository extends CrudRepository
             $order = parent::create($attributes);
             $this->createOrUpdateRelations($order, $attributes);
             $this->createComments($order, $attributes);
+            $this->createDiscounts($order, $attributes);
 
             return $order->fresh();
         });
@@ -42,12 +45,13 @@ class OrderRepository extends CrudRepository
     public function update(Order|Model $model, array $attributes): bool
     {
         return DB::transaction(function () use ($model, $attributes) {
+            /** @var Order $model */
             if (!parent::update($model, $attributes)) {
                 return false;
             }
-            /** @var Order $model */
             $this->createOrUpdateRelations($model, $attributes);
             $this->updateComments($model, $attributes);
+            $this->updateDiscounts($model, $attributes);
 
             return true;
         });
@@ -81,6 +85,7 @@ class OrderRepository extends CrudRepository
                 ));
 
                 $this->updateComments($field, $values);
+                $this->updateDiscounts($field, $values);
             }
 
             $order->spaces()
@@ -95,6 +100,7 @@ class OrderRepository extends CrudRepository
                 $field = $order->tickets()->updateOrCreate($identifiers, $values);
 
                 $this->updateComments($field, $values);
+                $this->updateDiscounts($field, $values);
             }
 
             $order->tickets()
@@ -109,6 +115,7 @@ class OrderRepository extends CrudRepository
                 $field = $order->products()->updateOrCreate($identifiers, $values);
 
                 $this->updateComments($field, $values);
+                $this->updateDiscounts($field, $values);
             }
 
             $order->products()
@@ -123,6 +130,7 @@ class OrderRepository extends CrudRepository
                 $field = $order->services()->updateOrCreate($identifiers, $values);
 
                 $this->updateComments($field, $values);
+                $this->updateDiscounts($field, $values);
             }
 
             $order->services()

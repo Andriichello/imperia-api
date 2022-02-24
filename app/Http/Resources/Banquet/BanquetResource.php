@@ -5,6 +5,7 @@ namespace App\Http\Resources\Banquet;
 use App\Helpers\BanquetHelper;
 use App\Http\Resources\Comment\CommentCollection;
 use App\Http\Resources\Customer\CustomerResource;
+use App\Http\Resources\Discount\DiscountCollection;
 use App\Http\Resources\User\UserResource;
 use App\Models\Banquet;
 use Illuminate\Http\Request;
@@ -34,6 +35,7 @@ class BanquetResource extends JsonResource
             'type' => $this->type,
             'state' => $this->state,
             'available_states' => $helper->availableTransferStates($this->resource),
+            'is_editable' => $this->canBeEdited(),
             'title' => $this->title,
             'description' => $this->description,
             'start_at' => $this->start_at,
@@ -47,6 +49,7 @@ class BanquetResource extends JsonResource
             'creator' => new UserResource($this->whenLoaded('creator')),
             'customer' => new CustomerResource($this->whenLoaded('customer')),
             'comments' => new CommentCollection($this->whenLoaded('comments')),
+            'discounts' => new DiscountCollection($this->whenLoaded('discounts')),
         ];
     }
 
@@ -54,14 +57,17 @@ class BanquetResource extends JsonResource
      * @OA\Schema(
      *   schema="Banquet",
      *   description="Banquet resource object",
-     *   required = {"id", "type", "title", "description", "start_at", "end_at", "paid_at",
-     *      "advance_ampunt", "total", "order_id", "creator_id", "customer_id"},
+     *   required = {"id", "type", "state", "available_states", "is_editable", "title", "description",
+     *     "start_at", "end_at", "paid_at", "advance_amount", "total", "order_id", "creator_id", "customer_id"},
      *   @OA\Property(property="id", type="integer", example=1),
-     *   @OA\Property(property="type", type="string", example="orders"),
+     *   @OA\Property(property="type", type="string", example="banquets"),
      *   @OA\Property(property="state", type="string", example="draft",
      *     enum={"draft", "new", "processing", "completed", "cancelled"}),
      *   @OA\Property(property="available_states", type="array", @OA\Items(type="string",
-     *     example="new", enum={"draft", "new", "processing", "completed", "cancelled"})),
+     *     example="new", enum={"draft", "new", "processing", "completed", "cancelled"}),
+     *     description="List of states, to which banquet may be transferred."),
+     *   @OA\Property(property="is_editable", type="boolean", example="true",
+     *     description="Determines if banquet can be edited."),
      *   @OA\Property(property="title", type="string", example="Banquet title."),
      *   @OA\Property(property="description", type="string", example="Banquet description..."),
      *   @OA\Property(property="start_at", type="string", format="date-time"),
@@ -76,6 +82,8 @@ class BanquetResource extends JsonResource
      *   @OA\Property(property="customer", ref ="#/components/schemas/Customer"),
      *   @OA\Property(property="comments", type="array",
      *     @OA\Items(ref ="#/components/schemas/Comment")),
+     *   @OA\Property(property="discounts", type="array",
+     *     @OA\Items(ref ="#/components/schemas/Discount")),
      * )
      */
 }

@@ -72,6 +72,8 @@ class UpdateOrderRequest extends UpdateRequest
      *     @OA\Items(ref ="#/components/schemas/StoreOrderRequestProductField")),
      *   @OA\Property(property="comments", type="array",
      *     @OA\Items(ref ="#/components/schemas/AttachingComment")),
+     *   @OA\Property(property="discounts", type="array",
+     *     @OA\Items(ref ="#/components/schemas/AttachingDiscount")),
      *  )
      */
 }

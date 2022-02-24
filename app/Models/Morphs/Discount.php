@@ -16,6 +16,7 @@ use Illuminate\Support\Collection;
 /**
  * Class Discount.
  *
+ * @property string|null $target
  * @property string $title
  * @property string|null $description
  * @property float|null $amount
@@ -41,6 +42,7 @@ class Discount extends BaseModel implements
      * @var string[]
      */
     protected $fillable = [
+        'target',
         'title',
         'description',
         'amount',
@@ -75,5 +77,51 @@ class Discount extends BaseModel implements
     public function discountables(): HasMany
     {
         return $this->hasMany(Discountable::class, 'discount_id', 'id');
+    }
+
+    /**
+     * Target property mutator.
+     *
+     * @param string|null $target
+     *
+     * @return void
+     */
+    public function setTargetAttribute(?string $target): void
+    {
+        $this->attributes['target'] = $target ? slugClass($target) : null;
+    }
+
+    /**
+     * Get request validation rules for creating or updating discounts.
+     *
+     * @param string|null $prefix
+     *
+     * @return array
+     */
+    public static function rulesForAttaching(?string $prefix = null): array
+    {
+        return [
+            $prefix . 'discounts' => [
+                'sometimes',
+                'array',
+            ],
+            $prefix . 'discounts.*.id' => [
+                'sometimes',
+                'integer',
+            ],
+            $prefix . 'discounts.*.discount_id' => [
+                'required',
+                'integer',
+                'exists:discounts,id'
+            ],
+            $prefix . 'discounts.*.discountable_id' => [
+                'sometimes',
+                'integer',
+            ],
+            $prefix . 'discounts.*.discountable_type' => [
+                'sometimes',
+                'string',
+            ],
+        ];
     }
 }

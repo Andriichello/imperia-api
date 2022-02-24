@@ -6,6 +6,7 @@ use App\Helpers\BanquetHelper;
 use App\Http\Requests\Crud\UpdateRequest;
 use App\Models\Banquet;
 use App\Models\Morphs\Comment;
+use App\Models\Morphs\Discount;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Validation\Validator;
 
@@ -24,7 +25,7 @@ class UpdateBanquetRequest extends UpdateRequest
     protected function failedAuthorization()
     {
         $message = 'Banquet can\'t be updated,'
-            . ' because it\'s in a on-editable state.';
+            . ' because it\'s in a non-editable state.';
         throw new AuthorizationException($message);
     }
 
@@ -38,6 +39,7 @@ class UpdateBanquetRequest extends UpdateRequest
         /** @var Banquet $banquet */
         $banquet = Banquet::query()
             ->findOrFail($this->id());
+
         return $banquet->canBeEdited();
     }
 
@@ -51,6 +53,7 @@ class UpdateBanquetRequest extends UpdateRequest
         return array_merge(
             parent::rules(),
             Comment::rulesForAttaching(),
+            Discount::rulesForAttaching(),
             [
                 'title' => [
                     'string',
@@ -136,6 +139,8 @@ class UpdateBanquetRequest extends UpdateRequest
      *     description="Date and time of when banquet was fully paid for."),
      *   @OA\Property(property="comments", type="array",
      *     @OA\Items(ref ="#/components/schemas/AttachingComment")),
+     *   @OA\Property(property="discounts", type="array",
+     *     @OA\Items(ref ="#/components/schemas/AttachingDiscount")),
      *  )
      */
 }

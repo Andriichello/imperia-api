@@ -4,6 +4,7 @@ namespace App\Http\Requests\Order;
 
 use App\Http\Requests\Crud\StoreRequest;
 use App\Models\Morphs\Comment;
+use App\Models\Morphs\Discount;
 
 /**
  * Class StoreOrderRequest.
@@ -106,6 +107,11 @@ class StoreOrderRequest extends StoreRequest
             Comment::rulesForAttaching('tickets.'),
             Comment::rulesForAttaching('products.'),
             Comment::rulesForAttaching('services.'),
+            Discount::rulesForAttaching(),
+            Discount::rulesForAttaching('spaces.'),
+            Discount::rulesForAttaching('tickets.'),
+            Discount::rulesForAttaching('products.'),
+            Discount::rulesForAttaching('services.'),
         );
     }
 
@@ -145,6 +151,8 @@ class StoreOrderRequest extends StoreRequest
      *     @OA\Items(ref ="#/components/schemas/StoreOrderRequestProductField")),
      *   @OA\Property(property="comments", type="array",
      *     @OA\Items(ref ="#/components/schemas/AttachingComment")),
+     *   @OA\Property(property="discounts", type="array",
+     *     @OA\Items(ref ="#/components/schemas/AttachingDiscount")),
      *  )
      */
 
@@ -160,6 +168,8 @@ class StoreOrderRequest extends StoreRequest
      *     description="If not present then banquet end_at date will be used."),
      *   @OA\Property(property="comments", type="array",
      *     @OA\Items(ref ="#/components/schemas/AttachingComment")),
+     *   @OA\Property(property="discounts", type="array",
+     *     @OA\Items(ref ="#/components/schemas/AttachingDiscount")),
      *  ),
      * @OA\Schema(
      *   schema="StoreOrderRequestTicketField",
@@ -169,6 +179,8 @@ class StoreOrderRequest extends StoreRequest
      *   @OA\Property(property="amount", type="integer", example=5),
      *   @OA\Property(property="comments", type="array",
      *     @OA\Items(ref ="#/components/schemas/AttachingComment")),
+     *   @OA\Property(property="discounts", type="array",
+     *     @OA\Items(ref ="#/components/schemas/AttachingDiscount")),
      *  ),
      * @OA\Schema(
      *   schema="StoreOrderRequestServiceField",
@@ -180,6 +192,8 @@ class StoreOrderRequest extends StoreRequest
      *     description="Duration of the service rental in minutes."),
      *   @OA\Property(property="comments", type="array",
      *     @OA\Items(ref ="#/components/schemas/AttachingComment")),
+     *   @OA\Property(property="discounts", type="array",
+     *     @OA\Items(ref ="#/components/schemas/AttachingDiscount")),
      *  ),
      * @OA\Schema(
      *   schema="StoreOrderRequestProductField",
@@ -189,6 +203,8 @@ class StoreOrderRequest extends StoreRequest
      *   @OA\Property(property="amount", type="integer", example=3),
      *   @OA\Property(property="comments", type="array",
      *     @OA\Items(ref ="#/components/schemas/AttachingComment")),
+     *   @OA\Property(property="discounts", type="array",
+     *     @OA\Items(ref ="#/components/schemas/AttachingDiscount")),
      *  )
      */
 }

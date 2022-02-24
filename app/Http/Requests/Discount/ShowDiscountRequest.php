@@ -1,23 +1,20 @@
 <?php
 
-namespace App\Http\Requests\Banquet;
+namespace App\Http\Requests\Discount;
 
-use App\Http\Requests\Crud\IndexRequest;
+use App\Http\Requests\Crud\ShowRequest;
 
 /**
- * Class IndexBanquetRequest.
+ * Class ShowDiscountRequest.
  */
-class IndexBanquetRequest extends IndexRequest
+class ShowDiscountRequest extends ShowRequest
 {
     public function getAllowedIncludes(): array
     {
         return array_merge(
             parent::getAllowedIncludes(),
             [
-                'creator',
-                'customer',
-                'comments',
-                'discounts',
+                //
             ]
         );
     }

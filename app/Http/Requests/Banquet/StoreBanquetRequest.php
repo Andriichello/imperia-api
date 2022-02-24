@@ -5,6 +5,7 @@ namespace App\Http\Requests\Banquet;
 use App\Enums\BanquetState;
 use App\Http\Requests\Crud\StoreRequest;
 use App\Models\Morphs\Comment;
+use App\Models\Morphs\Discount;
 
 /**
  * Class StoreBanquetRequest.
@@ -21,6 +22,7 @@ class StoreBanquetRequest extends StoreRequest
         return array_merge(
             parent::rules(),
             Comment::rulesForAttaching(),
+            Discount::rulesForAttaching(),
             [
                 'title' => [
                     'required',
@@ -91,6 +93,8 @@ class StoreBanquetRequest extends StoreRequest
      *     description="Date and time of when banquet was fully paid for."),
      *   @OA\Property(property="comments", type="array",
      *     @OA\Items(ref ="#/components/schemas/AttachingComment")),
+     *   @OA\Property(property="discounts", type="array",
+     *     @OA\Items(ref ="#/components/schemas/AttachingDiscount")),
      *  )
      */
 }

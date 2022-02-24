@@ -188,8 +188,8 @@ class BanquetController extends CrudController
      * @OA\Schema(
      *   schema="BanquetIncludes",
      *   description="Coma-separated list of inluded relations.
-    Available relations: `creator`, `customer`, `comments`",
-     *   type="string", example="creator,customer,comments"
+    Available relations: `creator`, `customer`, `comments`, `discounts`",
+     *   type="string", example="creator,customer,comments,discounts"
      * ),
      * @OA\Schema(
      *   schema="IndexBanquetResponse",

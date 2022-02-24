@@ -20,9 +20,9 @@ class ForceJsonOnApi
      */
     public function handle(Request $request, Closure $next): mixed
     {
-//        if (str_contains($request->url(), '/api/')) {
-//            $request->headers->set('Accept', 'application/json');
-//        }
+        if (str_contains($request->url(), '/api/')) {
+            $request->headers->set('Accept', 'application/json');
+        }
 
         return $next($request);
     }

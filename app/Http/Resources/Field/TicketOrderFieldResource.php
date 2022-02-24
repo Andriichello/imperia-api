@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Field;
 
 use App\Http\Resources\Comment\CommentCollection;
+use App\Http\Resources\Discount\DiscountCollection;
 use App\Models\Orders\TicketOrderField;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -32,6 +33,7 @@ class TicketOrderFieldResource extends JsonResource
             'amount' => $this->amount,
             'total' => $this->total,
             'comments' => new CommentCollection($this->whenLoaded('comments')),
+            'discounts' => new DiscountCollection($this->whenLoaded('discounts')),
         ];
     }
 
@@ -48,6 +50,8 @@ class TicketOrderFieldResource extends JsonResource
      *   @OA\Property(property="total", type="float", example=125),
      *   @OA\Property(property="comments", type="array",
      *     @OA\Items(ref ="#/components/schemas/Comment")),
+     *   @OA\Property(property="discounts", type="array",
+     *     @OA\Items(ref ="#/components/schemas/Discount")),
      * )
      */
 }

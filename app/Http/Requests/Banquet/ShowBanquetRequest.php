@@ -17,6 +17,7 @@ class ShowBanquetRequest extends ShowRequest
                 'creator',
                 'customer',
                 'comments',
+                'discounts',
             ]
         );
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Order;
 
 use App\Http\Resources\Comment\CommentCollection;
+use App\Http\Resources\Discount\DiscountCollection;
 use App\Http\Resources\Field\ProductOrderFieldCollection;
 use App\Http\Resources\Field\ServiceOrderFieldCollection;
 use App\Http\Resources\Field\SpaceOrderFieldCollection;
@@ -38,6 +39,7 @@ class OrderResource extends JsonResource
             'products' => new ProductOrderFieldCollection($this->whenLoaded('products')),
             'services' => new ServiceOrderFieldCollection($this->whenLoaded('services')),
             'comments' => new CommentCollection($this->whenLoaded('comments')),
+            'discounts' => new DiscountCollection($this->whenLoaded('discounts')),
         ];
     }
 
@@ -60,6 +62,8 @@ class OrderResource extends JsonResource
      *     @OA\Items(ref ="#/components/schemas/ServiceOrderField")),
      *   @OA\Property(property="comments", type="array",
      *     @OA\Items(ref ="#/components/schemas/Comment")),
+     *   @OA\Property(property="discounts", type="array",
+     *     @OA\Items(ref ="#/components/schemas/Discount")),
      * )
      */
 }

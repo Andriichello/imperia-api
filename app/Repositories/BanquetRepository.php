@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Banquet;
 use App\Repositories\Traits\CommentableRepositoryTrait;
+use App\Repositories\Traits\DiscountableRepositoryTrait;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -12,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 class BanquetRepository extends CrudRepository
 {
     use CommentableRepositoryTrait;
+    use DiscountableRepositoryTrait;
 
     /**
      * Repository's target model class.
@@ -25,14 +27,18 @@ class BanquetRepository extends CrudRepository
         /** @var Banquet $model */
         $model = parent::create($attributes);
         $this->createComments($model, $attributes);
+        $this->createDiscounts($model, $attributes);
+
         return $model;
     }
 
     public function update(Model $model, array $attributes): bool
     {
-        $result = parent::update($model, $attributes);
         /** @var Banquet $model */
+        $result = parent::update($model, $attributes);
         $this->updateComments($model, $attributes);
+        $this->updateDiscounts($model, $attributes);
+
         return $result;
     }
 }

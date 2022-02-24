@@ -3,58 +3,58 @@
 namespace App\Http\Controllers\Model;
 
 use App\Http\Controllers\CrudController;
-use App\Http\Requests\Category\IndexCategoryRequest;
-use App\Http\Requests\Category\ShowCategoryRequest;
-use App\Http\Resources\Category\CategoryCollection;
-use App\Http\Resources\Category\CategoryResource;
-use App\Repositories\CategoryRepository;
+use App\Http\Requests\Discount\IndexDiscountRequest;
+use App\Http\Requests\Discount\ShowDiscountRequest;
+use App\Http\Resources\Discount\DiscountCollection;
+use App\Http\Resources\Discount\DiscountResource;
+use App\Repositories\DiscountRepository;
 
 /**
- * Class CategoryController.
+ * Class DiscountController.
  */
-class CategoryController extends CrudController
+class DiscountController extends CrudController
 {
     /**
      * Controller's model resource class.
      *
      * @var string
      */
-    protected string $resourceClass = CategoryResource::class;
+    protected string $resourceClass = DiscountResource::class;
 
     /**
      * Controller's model resource collection class.
      *
      * @var string
      */
-    protected string $collectionClass = CategoryCollection::class;
+    protected string $collectionClass = DiscountCollection::class;
 
     /**
-     * CategoryController constructor.
+     * DiscountController constructor.
      *
-     * @param CategoryRepository $repository
+     * @param DiscountRepository $repository
      */
-    public function __construct(CategoryRepository $repository)
+    public function __construct(DiscountRepository $repository)
     {
         parent::__construct($repository);
-        $this->actions['index'] = IndexCategoryRequest::class;
-        $this->actions['show'] = ShowCategoryRequest::class;
+        $this->actions['index'] = IndexDiscountRequest::class;
+        $this->actions['show'] = ShowDiscountRequest::class;
     }
 
     /**
      * @OA\Get(
-     *   path="/api/categories",
+     *   path="/api/discounts",
      *   summary="Index categoreis.",
      *   operationId="indexCategoreies",
      *   security={{"bearerAuth": {}}},
-     *   tags={"categories"},
+     *   tags={"discounts"},
      *
      *  @OA\Parameter(name="filter[target]", in="query", example="products", @OA\Schema(type="string"),
      *     description="Target class morph slug. Examples: `products`, `tickets`, `services`, `spaces`"),
      *
      *   @OA\Response(
      *     response=200,
-     *     description="Index categories response object.",
-     *     @OA\JsonContent(ref ="#/components/schemas/IndexCategoryResponse")
+     *     description="Index discounts response object.",
+     *     @OA\JsonContent(ref ="#/components/schemas/IndexDiscountResponse")
      *   ),
      *   @OA\Response(
      *     response=401,
@@ -63,19 +63,19 @@ class CategoryController extends CrudController
      *   )
      * ),
      * @OA\Get(
-     *   path="/api/categories/{id}",
-     *   summary="Show category by id.",
-     *   operationId="showCategory",
+     *   path="/api/discounts/{id}",
+     *   summary="Show discount by id.",
+     *   operationId="showDiscount",
      *   security={{"bearerAuth": {}}},
-     *   tags={"categories"},
+     *   tags={"discounts"},
      *
      *  @OA\Parameter(name="id", required=true, in="path", example=1, @OA\Schema(type="integer"),
-     *     description="Id of the category."),
+     *     description="Id of the discount."),
      *
      *   @OA\Response(
      *     response=200,
-     *     description="Show category response object.",
-     *     @OA\JsonContent(ref ="#/components/schemas/ShowCategoryResponse")
+     *     description="Show discount response object.",
+     *     @OA\JsonContent(ref ="#/components/schemas/ShowDiscountResponse")
      *   ),
      *   @OA\Response(
      *     response=401,
@@ -85,18 +85,18 @@ class CategoryController extends CrudController
      * ),
      *
      * @OA\Schema(
-     *   schema="IndexCategoryResponse",
-     *   description="Index categories response object.",
+     *   schema="IndexDiscountResponse",
+     *   description="Index discounts response object.",
      *   required = {"data", "meta", "message"},
-     *   @OA\Property(property="data", type="array", @OA\Items(ref ="#/components/schemas/Category")),
+     *   @OA\Property(property="data", type="array", @OA\Items(ref ="#/components/schemas/Discount")),
      *   @OA\Property(property="meta", ref ="#/components/schemas/PaginationMeta"),
      *   @OA\Property(property="message", type="string", example="Success"),
      * ),
      * @OA\Schema(
-     *   schema="ShowCategoryResponse",
-     *   description="Show category response object.",
+     *   schema="ShowDiscountResponse",
+     *   description="Show discount response object.",
      *   required = {"data", "message"},
-     *   @OA\Property(property="data", ref ="#/components/schemas/Category"),
+     *   @OA\Property(property="data", ref ="#/components/schemas/Discount"),
      *   @OA\Property(property="message", type="string", example="Success"),
      * ),
      */

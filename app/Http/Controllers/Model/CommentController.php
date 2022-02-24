@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Model;
 use App\Http\Controllers\CrudController;
 use App\Http\Requests\Comment\IndexCommentRequest;
 use App\Http\Requests\Comment\ShowCommentRequest;
+use App\Http\Requests\Comment\StoreCommentRequest;
+use App\Http\Requests\Comment\UpdateCommentRequest;
 use App\Http\Resources\Comment\CommentCollection;
 use App\Http\Resources\Comment\CommentResource;
 use App\Repositories\CommentRepository;
@@ -38,6 +40,8 @@ class CommentController extends CrudController
         parent::__construct($repository);
         $this->actions['index'] = IndexCommentRequest::class;
         $this->actions['show'] = ShowCommentRequest::class;
+        $this->actions['store'] = StoreCommentRequest::class;
+        $this->actions['update'] = UpdateCommentRequest::class;
     }
 
     /**

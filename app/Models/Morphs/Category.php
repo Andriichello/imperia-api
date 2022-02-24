@@ -57,4 +57,16 @@ class Category extends BaseModel
     {
         return $this->hasMany(Categorizable::class, 'category_id', 'id');
     }
+
+    /**
+     * Target property mutator.
+     *
+     * @param string|null $target
+     *
+     * @return void
+     */
+    public function setTargetAttribute(?string $target): void
+    {
+        $this->attributes['target'] = $target ? slugClass($target) : null;
+    }
 }

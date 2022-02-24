@@ -5,7 +5,7 @@ namespace App\Http\Resources\Category;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 /**
- * Class SpaceCollection.
+ * Class CategoryCollection.
  */
 class CategoryCollection extends ResourceCollection
 {
