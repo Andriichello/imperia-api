@@ -6,6 +6,7 @@ use App\Enums\BanquetState;
 use App\Models\Banquet;
 use App\Models\Customer;
 use App\Models\Morphs\Comment;
+use App\Models\Morphs\Discount;
 use App\Models\Orders\Order;
 use App\Models\Orders\ProductOrderField;
 use App\Models\Product;
@@ -60,6 +61,12 @@ class OrderControllerTest extends RegisteringTestCase
     protected Ticket $ticket;
 
     /**
+     * @var Discount
+     */
+    protected Discount $discount;
+
+
+    /**
      * @var array
      */
     protected array $attributes;
@@ -77,6 +84,7 @@ class OrderControllerTest extends RegisteringTestCase
         $this->ticket = Ticket::factory()->create();
         $this->service = Service::factory()->create();
         $this->product = Product::factory()->create();
+        $this->discount = Discount::factory()->create();
 
         $this->banquet = Banquet::factory()
             ->withCustomer(Customer::factory()->create())
@@ -127,6 +135,9 @@ class OrderControllerTest extends RegisteringTestCase
             ['text' => 'Comment two...'],
             ['text' => 'Comment three...'],
         ];
+        $this->attributes['discounts'] = [
+            ['discount_id' => $this->discount->id],
+        ];
 
         $response = $this->postJson(route('api.orders.store'), $this->attributes);
         $response->assertCreated();
@@ -139,6 +150,7 @@ class OrderControllerTest extends RegisteringTestCase
         /** @var Order $order */
         $order = Order::query()->findOrFail(data_get($response, 'data.id'));
         $this->assertCount(3, $order->comments);
+        $this->assertCount(1, $order->discounts);
 
         $response = $this->postJson(route('api.orders.store'), $this->attributes);
         $response->assertUnprocessable();
@@ -157,6 +169,9 @@ class OrderControllerTest extends RegisteringTestCase
             ['text' => 'Comment two...'],
             ['text' => 'Comment three...'],
         ];
+        $this->attributes['discounts'] = [
+            ['discount_id' => $this->discount->id],
+        ];
 
         $response = $this->postJson(route('api.orders.store'), $this->attributes);
         $response->assertCreated();
@@ -173,6 +188,7 @@ class OrderControllerTest extends RegisteringTestCase
         $this->assertCount(1, $order->products);
         $this->assertCount(1, $order->services);
         $this->assertCount(3, $order->comments);
+        $this->assertCount(1, $order->discounts);
 
         $response = $this->patchJson(
             route('api.orders.update', ['id' => data_get($response, 'data.id')]),
@@ -188,7 +204,8 @@ class OrderControllerTest extends RegisteringTestCase
                 ],
                 'comments' => [
                     ['text' => 'Updated comment...']
-                ]
+                ],
+                'discounts' => [],
             ]
         );
         $response->assertOk();
@@ -201,6 +218,7 @@ class OrderControllerTest extends RegisteringTestCase
         $this->assertCount(1, $order->products);
         $this->assertCount(0, $order->services);
         $this->assertCount(1, $order->comments);
+        $this->assertCount(0, $order->discounts);
 
         /** @var Comment $comment */
         $comment = $order->comments->first();
