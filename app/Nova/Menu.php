@@ -4,26 +4,23 @@ namespace App\Nova;
 
 use Davidpiesse\NovaToggle\Toggle;
 use Illuminate\Http\Request;
-use Inspheric\Fields\Indicator;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
-use Laravel\Nova\Fields\Gravatar;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
-use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Text;
 
 /**
- * Class Ticket.
+ * Class Menu.
  */
-class Ticket extends Resource
+class Menu extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static string $model = \App\Models\Ticket::class;
+    public static string $model = \App\Models\Menu::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -59,11 +56,6 @@ class Ticket extends Resource
             Text::make('Description')
                 ->rules('nullable', 'min:1', 'max:255'),
 
-            Number::make('Price')
-                ->step(0.01)
-                ->updateRules('sometimes', 'min:0')
-                ->creationRules('required', 'min:0'),
-
             Boolean::make('Archived')
                 ->default(fn() => false),
 
@@ -91,7 +83,6 @@ class Ticket extends Resource
             'id' => true,
             'title' => true,
             'description' => false,
-            'price' => true,
             'archived' => true,
             'created_at' => false,
             'updated_at' => false,

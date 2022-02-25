@@ -2,9 +2,8 @@
 
 namespace App\Nova;
 
-use Davidpiesse\NovaToggle\Toggle;
 use Illuminate\Http\Request;
-use Inspheric\Fields\Indicator;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\Gravatar;
@@ -14,16 +13,16 @@ use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Text;
 
 /**
- * Class Ticket.
+ * Class Product.
  */
-class Ticket extends Resource
+class Product extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static string $model = \App\Models\Ticket::class;
+    public static string $model = \App\Models\Product::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -52,6 +51,8 @@ class Ticket extends Resource
         return [
             ID::make()->sortable(),
 
+            BelongsTo::make('menu'),
+
             Text::make('Title')
                 ->updateRules('sometimes', 'min:1', 'max:50')
                 ->creationRules('required', 'min:1', 'max:50'),
@@ -60,6 +61,11 @@ class Ticket extends Resource
                 ->rules('nullable', 'min:1', 'max:255'),
 
             Number::make('Price')
+                ->step(0.01)
+                ->updateRules('sometimes', 'min:0')
+                ->creationRules('required', 'min:0'),
+
+            Number::make('Weight')
                 ->step(0.01)
                 ->updateRules('sometimes', 'min:0')
                 ->creationRules('required', 'min:0'),
@@ -92,6 +98,7 @@ class Ticket extends Resource
             'title' => true,
             'description' => false,
             'price' => true,
+            'weight' => true,
             'archived' => true,
             'created_at' => false,
             'updated_at' => false,

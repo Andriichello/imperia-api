@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "25e1be5be64ad51f7ff4acf1c131cbae",
+    "content-hash": "e46288c598c6bcb445e4fee98cd82bf1",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -324,6 +324,42 @@
                 "source": "https://github.com/cakephp/chronos"
             },
             "time": "2021-10-17T02:44:05+00:00"
+        },
+        {
+            "name": "customs/columns-card",
+            "version": "dev-dev",
+            "dist": {
+                "type": "path",
+                "url": "./nova-components/ColumnsCard",
+                "reference": "c54950058431cb547fc823b25ca9b650110ec2d0"
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Customs\\ColumnsCard\\CardServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Customs\\ColumnsCard\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova card for selecting resource columns on index.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "dflydev/dot-access-data",
@@ -1657,6 +1693,54 @@
                 "source": "https://github.com/hanneskod/classtools/tree/1.0"
             },
             "time": "2020-03-05T20:41:28+00:00"
+        },
+        {
+            "name": "inspheric/nova-indicator-field",
+            "version": "v1.43",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/inspheric/nova-indicator-field.git",
+                "reference": "256a2b7eb1febb7b829cd1a86adf6fe6e048354b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/inspheric/nova-indicator-field/zipball/256a2b7eb1febb7b829cd1a86adf6fe6e048354b",
+                "reference": "256a2b7eb1febb7b829cd1a86adf6fe6e048354b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Inspheric\\Fields\\IndicatorFieldServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Inspheric\\Fields\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova indicator field.",
+            "keywords": [
+                "field",
+                "indicator",
+                "laravel",
+                "nova",
+                "status"
+            ],
+            "support": {
+                "issues": "https://github.com/inspheric/nova-indicator-field/issues",
+                "source": "https://github.com/inspheric/nova-indicator-field/tree/master"
+            },
+            "time": "2020-01-24T12:55:36+00:00"
         },
         {
             "name": "laminas/laminas-code",

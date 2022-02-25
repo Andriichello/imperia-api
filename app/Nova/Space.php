@@ -2,9 +2,7 @@
 
 namespace App\Nova;
 
-use Davidpiesse\NovaToggle\Toggle;
 use Illuminate\Http\Request;
-use Inspheric\Fields\Indicator;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\Gravatar;
@@ -14,16 +12,16 @@ use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Text;
 
 /**
- * Class Ticket.
+ * Class Space.
  */
-class Ticket extends Resource
+class Space extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static string $model = \App\Models\Ticket::class;
+    public static string $model = \App\Models\Space::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -59,8 +57,17 @@ class Ticket extends Resource
             Text::make('Description')
                 ->rules('nullable', 'min:1', 'max:255'),
 
+            Number::make('Floor')
+                ->step(1)
+                ->creationRules('required'),
+
+            Number::make('Number')
+                ->step(1)
+                ->creationRules('required'),
+
             Number::make('Price')
                 ->step(0.01)
+                ->default(0.0)
                 ->updateRules('sometimes', 'min:0')
                 ->creationRules('required', 'min:0'),
 
@@ -91,6 +98,8 @@ class Ticket extends Resource
             'id' => true,
             'title' => true,
             'description' => false,
+            'floor' => true,
+            'number' => true,
             'price' => true,
             'archived' => true,
             'created_at' => false,

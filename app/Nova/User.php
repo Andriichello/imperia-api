@@ -65,8 +65,16 @@ class User extends Resource
                 ->creationRules('required', 'string', 'min:8')
                 ->updateRules('nullable', 'string', 'min:8'),
 
-            DateTime::make('Email Verified At', 'email_verified_at')
-                ->readonly(),
+            DateTime::make('Email Verified At')
+                ->exceptOnForms(),
+
+            DateTime::make('Created At')
+                ->sortable()
+                ->exceptOnForms(),
+
+            DateTime::make('Updated At')
+                ->sortable()
+                ->exceptOnForms(),
         ];
     }
 
@@ -79,7 +87,9 @@ class User extends Resource
      */
     public function cards(Request $request): array
     {
-        return [];
+        return [
+            $this->makeColumnsCard($request),
+        ];
     }
 
     /**
@@ -91,7 +101,9 @@ class User extends Resource
      */
     public function filters(Request $request): array
     {
-        return [];
+        return [
+            $this->makeColumnsFilter($request),
+        ];
     }
 
     /**
@@ -116,5 +128,25 @@ class User extends Resource
     public function actions(Request $request): array
     {
         return [];
+    }
+
+    /**
+     * Get columns filter fields.
+     *
+     * @param Request $request
+     *
+     * @return array
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    protected function columnsFilterFields(Request $request): array
+    {
+        return [
+            'id' => true,
+            'name' => true,
+            'email' => true,
+            'email_verified_at' => false,
+            'created_at' => false,
+            'updated_at' => false,
+        ];
     }
 }

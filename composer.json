@@ -12,11 +12,13 @@
         "ext-http": "*",
         "ext-pdo": "*",
         "bensampo/laravel-enum": "^4.1",
+        "customs/columns-card": "*",
         "doctrine/dbal": "^2.5",
         "dyrynda/laravel-cascade-soft-deletes": "^4.1",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
+        "inspheric/nova-indicator-field": "^1.43",
         "laravel/framework": "^8.65",
         "laravel/nova": "*",
         "laravel/sanctum": "^2.11",
@@ -62,6 +64,10 @@
         {
             "type": "path",
             "url": "./nova"
+        },
+        {
+            "type": "path",
+            "url": "./nova-components/ColumnsCard"
         }
     ],
     "scripts": {
