@@ -7,3 +7,4 @@ parameters:
 		- database
 	excludePaths:
 	    - database/migrations/*
+	    - nova/*

@@ -19,6 +19,7 @@
     <exclude-pattern>*/storage/*</exclude-pattern>
     <exclude-pattern>*/docs/*</exclude-pattern>
     <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/nova/*</exclude-pattern>
 
     <arg name="report" value="summary"/>
     <arg name="colors"/>

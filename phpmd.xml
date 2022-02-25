@@ -9,6 +9,8 @@
         Mess detector rules for Imperia
     </description>
 
+    <exclude-pattern>*/nova/*</exclude-pattern>
+
     <rule ref="rulesets/codesize.xml">
         <exclude name="CyclomaticComplexity" />
         <exclude name="NPathComplexity" />
