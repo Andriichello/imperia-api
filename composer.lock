@@ -4551,12 +4551,12 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "Symfony\\Polyfill\\Ctype\\": ""
-                },
                 "files": [
                     "bootstrap.php"
-                ]
+                ],
+                "psr-4": {
+                    "Symfony\\Polyfill\\Ctype\\": ""
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -5600,12 +5600,12 @@
             },
             "type": "library",
             "autoload": {
-                "psr-4": {
-                    "Symfony\\Component\\String\\": ""
-                },
                 "files": [
                     "Resources/functions.php"
                 ],
+                "psr-4": {
+                    "Symfony\\Component\\String\\": ""
+                },
                 "exclude-from-classmap": [
                     "/Tests/"
                 ]
@@ -7601,16 +7601,16 @@
         },
         {
             "name": "gitonomy/gitlib",
-            "version": "v1.3.3",
+            "version": "v1.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/gitonomy/gitlib.git",
-                "reference": "5035f69c06df74ab7ee8ec14da9016b71ff3ed50"
+                "reference": "3c2f67a2fa6e7b26dbc9b9d0ca272ed33ba5895e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/gitonomy/gitlib/zipball/5035f69c06df74ab7ee8ec14da9016b71ff3ed50",
-                "reference": "5035f69c06df74ab7ee8ec14da9016b71ff3ed50",
+                "url": "https://api.github.com/repos/gitonomy/gitlib/zipball/3c2f67a2fa6e7b26dbc9b9d0ca272ed33ba5895e",
+                "reference": "3c2f67a2fa6e7b26dbc9b9d0ca272ed33ba5895e",
                 "shasum": ""
             },
             "require": {
@@ -7663,7 +7663,7 @@
             "description": "Library for accessing git",
             "support": {
                 "issues": "https://github.com/gitonomy/gitlib/issues",
-                "source": "https://github.com/gitonomy/gitlib/tree/v1.3.3"
+                "source": "https://github.com/gitonomy/gitlib/tree/v1.3.4"
             },
             "funding": [
                 {
@@ -7671,7 +7671,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-01-23T20:26:42+00:00"
+            "time": "2022-02-14T09:07:07+00:00"
         },
         {
             "name": "hamcrest/hamcrest-php",
@@ -11036,16 +11036,16 @@
         },
         {
             "name": "zircote/swagger-php",
-            "version": "3.3.3",
+            "version": "3.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zircote/swagger-php.git",
-                "reference": "cec9943f974df43370c51be7c489fc1007f80f2b"
+                "reference": "7313ff7d1991d00e52d0e852087693d4482df631"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zircote/swagger-php/zipball/cec9943f974df43370c51be7c489fc1007f80f2b",
-                "reference": "cec9943f974df43370c51be7c489fc1007f80f2b",
+                "url": "https://api.github.com/repos/zircote/swagger-php/zipball/7313ff7d1991d00e52d0e852087693d4482df631",
+                "reference": "7313ff7d1991d00e52d0e852087693d4482df631",
                 "shasum": ""
             },
             "require": {
@@ -11103,9 +11103,9 @@
             ],
             "support": {
                 "issues": "https://github.com/zircote/swagger-php/issues",
-                "source": "https://github.com/zircote/swagger-php/tree/3.3.3"
+                "source": "https://github.com/zircote/swagger-php/tree/3.3.4"
             },
-            "time": "2021-12-23T19:45:20+00:00"
+            "time": "2022-02-22T21:09:06+00:00"
         }
     ],
     "aliases": [],

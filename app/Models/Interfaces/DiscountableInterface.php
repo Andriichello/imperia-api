@@ -68,14 +68,14 @@ interface DiscountableInterface
      *
      * @return float
      */
-    public function discountsAmount(): float;
+    public function getDiscountsAmountAttribute(): float;
 
     /**
      * Get total percent from all attached discounts.
      *
      * @return float
      */
-    public function discountsPercent(): float;
+    public function getDiscountsPercentAttribute(): float;
 
     /**
      * Apply attached discounts to the price.

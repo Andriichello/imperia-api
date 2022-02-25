@@ -4,13 +4,11 @@ namespace App\Models;
 
 use App\Enums\BanquetState;
 use App\Models\Interfaces\CommentableInterface;
-use App\Models\Interfaces\DiscountableInterface;
 use App\Models\Interfaces\LoggableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Morphs\Comment;
 use App\Models\Orders\Order;
 use App\Models\Traits\CommentableTrait;
-use App\Models\Traits\DiscountableTrait;
 use App\Models\Traits\LoggableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
@@ -38,6 +36,7 @@ use Illuminate\Support\Collection;
  * @property Carbon|null $deleted_at
  *
  * @property float $total
+ * @property float $discounted_total
  *
  * @property Order|null $order
  * @property User|null $creator
@@ -49,13 +48,11 @@ use Illuminate\Support\Collection;
 class Banquet extends BaseModel implements
     SoftDeletableInterface,
     CommentableInterface,
-    DiscountableInterface,
     LoggableInterface
 {
     use HasFactory;
     use SoftDeletableTrait;
     use CommentableTrait;
-    use DiscountableTrait;
     use LoggableTrait;
 
     /**
@@ -93,6 +90,7 @@ class Banquet extends BaseModel implements
         'order',
         'creator',
         'customer',
+        'comments',
     ];
 
     /**
@@ -146,11 +144,21 @@ class Banquet extends BaseModel implements
     /**
      * Accessor for total price of banquet.
      *
-     * @return int|null
+     * @return float
      */
-    public function getTotalAttribute(): ?int
+    public function getTotalAttribute(): float
     {
         return data_get($this->order, 'total', 0.0);
+    }
+
+    /**
+     * Accessor for discounted total price of banquet.
+     *
+     * @return float
+     */
+    public function getDiscountedTotalAttribute(): float
+    {
+        return data_get($this->order, 'discounted_total', 0.0);
     }
 
     /**

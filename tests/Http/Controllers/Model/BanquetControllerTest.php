@@ -5,7 +5,6 @@ namespace Tests\Http\Controllers\Model;
 use App\Enums\BanquetState;
 use App\Models\Banquet;
 use App\Models\Customer;
-use App\Models\Morphs\Discount;
 use App\Models\Product;
 use App\Models\Service;
 use App\Models\Space;
@@ -52,11 +51,6 @@ class BanquetControllerTest extends RegisteringTestCase
     /**
      * @var Collection
      */
-    protected Collection $discounts;
-
-    /**
-     * @var Collection
-     */
     protected Collection $customers;
 
     /**
@@ -78,9 +72,6 @@ class BanquetControllerTest extends RegisteringTestCase
             ->count(3)
             ->create();
         $this->products = Product::factory()
-            ->count(3)
-            ->create();
-        $this->discounts = Discount::factory()
             ->count(3)
             ->create();
         $this->customers = Customer::factory()
@@ -109,9 +100,6 @@ class BanquetControllerTest extends RegisteringTestCase
                 ['text' => 'Comment two...'],
                 ['text' => 'Comment three...'],
             ],
-            'discounts' => [
-                ['discount_id' => $this->discounts->first()->id],
-            ],
         ];
 
         $response = $this->postJson(route('api.banquets.store'), $attributes);
@@ -124,7 +112,6 @@ class BanquetControllerTest extends RegisteringTestCase
         /** @var Banquet $banquet */
         $banquet = Banquet::query()->findOrFail(data_get($response, 'data.id'));
         $this->assertCount(3, $banquet->comments);
-        $this->assertCount(1, $banquet->discounts);
     }
 
     /**
@@ -150,14 +137,10 @@ class BanquetControllerTest extends RegisteringTestCase
                 'comments' => [
                     ['text' => 'Updated comment...'],
                 ],
-                'discounts' => [
-                    ['discount_id' => $this->discounts->first()->id],
-                ],
             ]
         );
         $response->assertOk();
         $this->assertCount(1, $banquet->fresh()->comments);
-        $this->assertCount(1, $banquet->fresh()->discounts);
 
         $response = $this->patchJson(
             route('api.banquets.update', ['id' => $banquet->id]),

@@ -154,8 +154,8 @@ class DiscountableTraitTest extends StubsTestCase
         $amount = $discountOne->amount;
         $percent = $discountOne->percent;
 
-        $this->assertEquals($amount, $this->instance->discountsAmount());
-        $this->assertEquals($percent, $this->instance->discountsPercent());
+        $this->assertEquals($amount, $this->instance->getDiscountsAmountAttribute());
+        $this->assertEquals($percent, $this->instance->getDiscountsPercentAttribute());
 
         $discountTwo = Discount::factory()->create([
             'title' => 'Two',
@@ -167,8 +167,8 @@ class DiscountableTraitTest extends StubsTestCase
         $amount = $discountOne->amount + $discountTwo->amount;
         $percent = $discountOne->percent + $discountTwo->percent;
 
-        $this->assertEquals($amount, $this->instance->discountsAmount());
-        $this->assertEquals($percent, $this->instance->discountsPercent());
+        $this->assertEquals($amount, $this->instance->getDiscountsAmountAttribute());
+        $this->assertEquals($percent, $this->instance->getDiscountsPercentAttribute());
     }
 
     /**

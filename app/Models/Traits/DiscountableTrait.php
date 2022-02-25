@@ -7,11 +7,18 @@ use App\Models\Morphs\Discount;
 use App\Models\Morphs\Discountable;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 /**
  * Trait DiscountableTrait.
  *
  * @mixin BaseModel
+ *
+ * @property float $discounted_total
+ * @property float $discounts_amount
+ * @property float $discounts_percent
+ *
+ * @property Discount[]|Collection $discounts
  */
 trait DiscountableTrait
 {
@@ -97,7 +104,7 @@ trait DiscountableTrait
      *
      * @return float
      */
-    public function discountsAmount(): float
+    public function getDiscountsAmountAttribute(): float
     {
         return $this->discounts()->sum('amount');
     }
@@ -107,10 +114,21 @@ trait DiscountableTrait
      *
      * @return float
      */
-    public function discountsPercent(): float
+    public function getDiscountsPercentAttribute(): float
     {
         return min(100, $this->discounts()->sum('percent'));
     }
+
+    /**
+     * Total after applying all attached discounts.
+     *
+     * @return float
+     */
+    public function getDiscountedTotalAttribute(): float
+    {
+        return $this->applyDiscounts(data_get($this, 'total', 0.0));
+    }
+
 
     /**
      * Apply attached discounts to the price.
@@ -124,7 +142,7 @@ trait DiscountableTrait
         if (empty($price)) {
             return 0.0;
         }
-        $discount = $this->discountsAmount() + $price * ($this->discountsPercent() / 100.0);
+        $discount = $this->getDiscountsAmountAttribute() + $price * ($this->getDiscountsPercentAttribute() / 100.0);
         return $discount < $price ? $price - $discount : 0.0;
     }
 }
