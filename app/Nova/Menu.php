@@ -2,16 +2,17 @@
 
 namespace App\Nova;
 
-use Davidpiesse\NovaToggle\Toggle;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 
 /**
  * Class Menu.
+ *
+ * @mixin \App\Models\Menu
  */
 class Menu extends Resource
 {
@@ -55,6 +56,8 @@ class Menu extends Resource
 
             Text::make('Description')
                 ->rules('nullable', 'min:1', 'max:255'),
+
+            HasMany::make('Products'),
 
             Boolean::make('Archived')
                 ->default(fn() => false),

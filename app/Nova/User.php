@@ -11,6 +11,8 @@ use Laravel\Nova\Fields\Text;
 
 /**
  * Class User.
+ *
+ * @mixin \App\Models\User
  */
 class User extends Resource
 {
@@ -52,7 +54,7 @@ class User extends Resource
 
             Text::make('Name')
                 ->sortable()
-                ->rules('required', 'min:1', 'max:255'),
+                ->rules('required', 'min:2', 'max:255'),
 
             Text::make('Email')
                 ->sortable()

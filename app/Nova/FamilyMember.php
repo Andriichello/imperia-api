@@ -2,34 +2,35 @@
 
 namespace App\Nova;
 
+use App\Enums\FamilyRelation;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
-use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Number;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 
 /**
- * Class Product.
+ * Class FamilyMember.
  *
- * @mixin \App\Models\Product
+ * @mixin \App\Models\FamilyMember
  */
-class Product extends Resource
+class FamilyMember extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static string $model = \App\Models\Product::class;
+    public static string $model = \App\Models\FamilyMember::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
      * @var string
      */
-    public static $title = 'title';
+    public static $title = 'name';
 
     /**
      * The columns that should be searched.
@@ -37,7 +38,7 @@ class Product extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'title', 'description',
+        'id', 'name', 'relation',
     ];
 
     /**
@@ -51,27 +52,18 @@ class Product extends Resource
         return [
             ID::make()->sortable(),
 
-            BelongsTo::make('Menu'),
+            Text::make('Name')
+                ->rules('required', 'min:2', 'max:50'),
 
-            Text::make('Title')
-                ->updateRules('sometimes', 'min:1', 'max:50')
-                ->creationRules('required', 'min:1', 'max:50'),
+            Date::make('Birthdate')
+                ->sortable()
+                ->rules('required', 'date', 'before:today'),
 
-            Text::make('Description')
-                ->rules('nullable', 'min:1', 'max:255'),
+            Select::make('Relation')
+                ->displayUsingLabels()
+                ->options(FamilyRelation::getValues()),
 
-            Number::make('Price')
-                ->step(0.01)
-                ->updateRules('sometimes', 'min:0')
-                ->creationRules('required', 'min:0'),
-
-            Number::make('Weight')
-                ->step(0.01)
-                ->updateRules('sometimes', 'min:0')
-                ->creationRules('required', 'min:0'),
-
-            Boolean::make('Archived')
-                ->default(fn() => false),
+            BelongsTo::make('Relative', 'relative', Customer::class),
 
             DateTime::make('Created At')
                 ->sortable()
@@ -95,12 +87,10 @@ class Product extends Resource
     {
         return [
             'id' => true,
-            'menu' => true,
-            'title' => true,
-            'description' => false,
-            'price' => true,
-            'weight' => true,
-            'archived' => true,
+            'name' => true,
+            'birthdate' => true,
+            'relation' => true,
+            'relative' => true,
             'created_at' => false,
             'updated_at' => false,
         ];

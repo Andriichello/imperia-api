@@ -54,6 +54,15 @@ class Customer extends BaseModel implements
     ];
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'birthdate' => 'datetime',
+    ];
+
+    /**
      * The loadable relationships for the model.
      *
      * @var array

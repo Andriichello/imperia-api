@@ -2,19 +2,17 @@
 
 namespace App\Nova;
 
-use Davidpiesse\NovaToggle\Toggle;
 use Illuminate\Http\Request;
-use Inspheric\Fields\Indicator;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
-use Laravel\Nova\Fields\Gravatar;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
-use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Text;
 
 /**
  * Class Ticket.
+ *
+ * @mixin \App\Models\Ticket
  */
 class Ticket extends Resource
 {
