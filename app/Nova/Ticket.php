@@ -10,23 +10,23 @@ use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Text;
 
 /**
- * Class User.
+ * Class Ticket.
  */
-class User extends Resource
+class Ticket extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static string $model = \App\Models\User::class;
+    public static string $model = \App\Models\Ticket::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
      * @var string
      */
-    public static $title = 'name';
+    public static $title = 'title';
 
     /**
      * The columns that should be searched.
@@ -34,7 +34,7 @@ class User extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'name', 'email',
+        'id', 'title', 'description',
     ];
 
     /**
@@ -48,25 +48,11 @@ class User extends Resource
         return [
             ID::make()->sortable(),
 
-            Gravatar::make()->maxWidth(50),
-
-            Text::make('Name')
+            Text::make('Title')
                 ->sortable()
-                ->rules('required', 'min:1', 'max:255'),
+                ->rules('required', 'min:1', 'max:50'),
 
-            Text::make('Email')
-                ->sortable()
-                ->rules('required', 'email', 'max:254')
-                ->creationRules('unique:users,email')
-                ->updateRules('unique:users,email,{{resourceId}}'),
-
-            Password::make('Password')
-                ->onlyOnForms()
-                ->creationRules('required', 'string', 'min:8')
-                ->updateRules('nullable', 'string', 'min:8'),
-
-            DateTime::make('Email Verified At', 'email_verified_at')
-                ->readonly(),
+            Text::make('Description'),
         ];
     }
 

@@ -27,7 +27,7 @@ class SoftDeletableScope extends SoftDeletingScope
      */
     public function apply(Builder $builder, Model $model)
     {
-        $type = request('filter.trashed', request('trashed', 'without'));
+        $type = request('filter.deleted', request('deleted', 'without'));
         if (in_array($type, ['only', 'with', 'without'])) {
             $method = $type . 'Trashed';
             $builder->$method();

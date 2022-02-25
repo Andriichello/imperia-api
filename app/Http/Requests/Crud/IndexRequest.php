@@ -26,7 +26,7 @@ class IndexRequest extends CrudRequest
 
     /**
      * @OA\Schema(
-     *   schema="TrashedParameter",
+     *   schema="DeletedParameter",
      *   description="Query parameter, which determines if soft-deleted records should be
     fetched from database. Available relations: `only`, `with` and `without`, which is a default one.",
      *   enum={"only", "with", "without"},

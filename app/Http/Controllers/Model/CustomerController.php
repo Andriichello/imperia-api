@@ -54,8 +54,8 @@ class CustomerController extends CrudController
      *
      *   @OA\Parameter(name="include", in="query",
      *     @OA\Schema(ref ="#/components/schemas/CustomerIncludes")),
-     *   @OA\Parameter(name="trashed", in="query",
-     *     @OA\Schema(ref ="#/components/schemas/TrashedParameter")),
+     *   @OA\Parameter(name="deleted", in="query",
+     *     @OA\Schema(ref ="#/components/schemas/DeletedParameter")),
      *
      *   @OA\Response(
      *     response=200,
