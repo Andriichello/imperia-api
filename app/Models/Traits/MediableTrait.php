@@ -17,7 +17,7 @@ use Illuminate\Support\Collection;
  * @mixin BaseModel
  *
  * @property array $media_ids
- * @property array $media
+ * @property Collection $media
  */
 trait MediableTrait
 {
@@ -44,11 +44,11 @@ trait MediableTrait
     /**
      * Accessor for the image.
      *
-     * @return array
+     * @return Collection
      */
-    public function getMediaAttribute(): array
+    public function getMediaAttribute(): Collection
     {
         $media = MediaLibraryAPI::getFiles($this->media_ids, null, true);
-        return Arr::wrap($media);
+        return Collection::wrap($media);
     }
 }

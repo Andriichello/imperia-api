@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Ticket;
 
 use App\Http\Resources\Category\CategoryCollection;
+use App\Http\Resources\Media\MediaCollection;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -34,6 +35,7 @@ class TicketResource extends JsonResource
             'archived' => $this->archived,
             'categories' => new CategoryCollection($this->whenLoaded('categories')),
             'category_ids' => $categoryIds,
+            'media' => new MediaCollection($this->media),
         ];
     }
 
@@ -41,7 +43,8 @@ class TicketResource extends JsonResource
      * @OA\Schema(
      *   schema="Ticket",
      *   description="Ticket resource object",
-     *   required = {"id", "type", "title", "description", "price", "category_ids"},
+     *   required = {"id", "type", "title", "description", "price",
+     *      "category_ids", "media"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="tickets"),
      *   @OA\Property(property="title", type="string", example="Child ticket"),
@@ -50,6 +53,7 @@ class TicketResource extends JsonResource
      *   @OA\Property(property="archived", type="boolean", example="false"),
      *   @OA\Property(property="categories", type="array", @OA\Items(ref ="#/components/schemas/Category")),
      *   @OA\Property(property="category_ids", type="array", @OA\Items(type="integer", example=1)),
+     *   @OA\Property(property="media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
      * )
      */
 }

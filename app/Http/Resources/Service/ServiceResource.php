@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Service;
 
 use App\Http\Resources\Category\CategoryCollection;
+use App\Http\Resources\Media\MediaCollection;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -35,6 +36,7 @@ class ServiceResource extends JsonResource
             'archived' => $this->archived,
             'categories' => new CategoryCollection($this->whenLoaded('categories')),
             'category_ids' => $categoryIds,
+            'media' => new MediaCollection($this->media),
         ];
     }
 
@@ -42,7 +44,8 @@ class ServiceResource extends JsonResource
      * @OA\Schema(
      *   schema="Service",
      *   description="Service resource object",
-     *   required = {"id", "type", "title", "description", "once_paid_price", "hourly_paid_price", "category_ids"},
+     *   required = {"id", "type", "title", "description", "once_paid_price", "hourly_paid_price",
+     *      "category_ids", "media"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="services"),
      *   @OA\Property(property="title", type="string", example="Clown Show"),
@@ -52,6 +55,7 @@ class ServiceResource extends JsonResource
      *   @OA\Property(property="archived", type="boolean", example="false"),
      *   @OA\Property(property="categories", type="array", @OA\Items(ref ="#/components/schemas/Category")),
      *   @OA\Property(property="category_ids", type="array", @OA\Items(type="integer", example=1)),
+     *   @OA\Property(property="media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
      * )
      */
 }
