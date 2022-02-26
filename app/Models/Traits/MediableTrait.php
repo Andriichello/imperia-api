@@ -3,11 +3,7 @@
 namespace App\Models\Traits;
 
 use App\Models\BaseModel;
-use App\Models\Morphs\Categorizable;
-use App\Models\Morphs\Category;
 use ClassicO\NovaMediaLibrary\API as MediaLibraryAPI;
-use ClassicO\NovaMediaLibrary\Core\Model as MediaModel;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 

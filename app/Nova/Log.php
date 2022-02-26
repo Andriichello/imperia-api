@@ -8,7 +8,6 @@ use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\MorphTo;
 use Laravel\Nova\Fields\Text;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class Log.

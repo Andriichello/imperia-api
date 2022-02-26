@@ -3,7 +3,6 @@
 namespace App\Models\Traits;
 
 use App\Models\BaseModel;
-use App\Models\Interfaces\CommentableInterface;
 use App\Models\Morphs\Comment;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;

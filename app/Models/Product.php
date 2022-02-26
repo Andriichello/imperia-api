@@ -10,11 +10,9 @@ use App\Models\Traits\LoggableTrait;
 use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
-use ClassicO\NovaMediaLibrary\API as MediaLibraryAPI;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Arr;
 
 /**
  * Class Product.

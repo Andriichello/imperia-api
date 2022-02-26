@@ -6,7 +6,6 @@ use App\Enums\BanquetState;
 use App\Helpers\BanquetHelper;
 use App\Models\Banquet;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 /**
