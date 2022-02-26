@@ -27,5 +27,7 @@ composer install -o -n
 php artisan key:generate
 php artisan config:cache
 php artisan route:cache
+php artisan storage:link
+php artisan nova:install
 
 php artisan migrate:fresh --seed --force
