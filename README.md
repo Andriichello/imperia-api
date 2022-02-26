@@ -8,4 +8,6 @@ There are multiple steps to make the application running locally via docker. By 
 - Run `make start` in order to start `imperia_api` container for development.
 - Run `make bash` in order to connect to the `imperia_api` container's bash.
 
-Swagger is used for api documentation, and it generates OpenAPI specification file, which can be accessed via `/openapi`. To see the UI version of the api documentation visit `/api/docs`. 
+Swagger is used for api documentation, and it generates OpenAPI specification file, which can be accessed via `/openapi`. To see the UI version of the api documentation visit `/api/docs`.
+
+Laravel Nova is used as admin panel, which can be accessed via `/nova`. By default, you can to log in with `admin@email.com` and `pa$$w0rd`.
