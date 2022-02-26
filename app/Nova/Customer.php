@@ -5,6 +5,7 @@ namespace App\Nova;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\DateTime;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\MorphMany;
 use Laravel\Nova\Fields\Text;
@@ -73,6 +74,8 @@ class Customer extends Resource
             Date::make('Birthdate')
                 ->sortable()
                 ->rules('required', 'date', 'before:today'),
+
+            HasMany::make('Family Members', 'familyMembers'),
 
             MorphMany::make('Comments', 'comments', Comment::class),
 

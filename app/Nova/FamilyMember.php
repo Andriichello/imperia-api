@@ -61,6 +61,7 @@ class FamilyMember extends Resource
 
             Select::make('Relation')
                 ->displayUsingLabels()
+                ->rules('required')
                 ->options(FamilyRelationOptions::all()),
 
             BelongsTo::make('Relative', 'relative', Customer::class),
