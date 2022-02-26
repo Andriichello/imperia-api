@@ -3,25 +3,26 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
-use Laravel\Nova\Fields\Boolean;
+use Laravel\Nova\Fields\Code;
 use Laravel\Nova\Fields\DateTime;
-use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\MorphTo;
 use Laravel\Nova\Fields\Text;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
- * Class Menu.
+ * Class Log.
  *
- * @mixin \App\Models\Menu
+ * @mixin \App\Models\Morphs\Log
  */
-class Menu extends Resource
+class Log extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static string $model = \App\Models\Menu::class;
+    public static string $model = \App\Models\Morphs\Log::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -36,7 +37,7 @@ class Menu extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'title', 'description',
+        'id', 'title', 'loggable_type'
     ];
 
     /**
@@ -51,19 +52,15 @@ class Menu extends Resource
             ID::make()->sortable(),
 
             Text::make('Title')
-                ->updateRules('sometimes', 'min:1', 'max:50')
-                ->creationRules('required', 'min:1', 'max:50'),
+                ->rules('nullable', 'min:1', 'max:50'),
 
-            Text::make('Description')
-                ->rules('nullable', 'min:1', 'max:255'),
+            MorphTo::make('Loggable')
+                ->exceptOnForms(),
 
-            HasMany::make('Products'),
-
-            Boolean::make('Archived')
-                ->default(fn() => false),
-
-            HasMany::make('Categories')
-                ->readonly(),
+            Code::make('Metadata')
+                ->height(50)
+                ->readonly()
+                ->json(),
 
             DateTime::make('Created At')
                 ->sortable()
@@ -73,6 +70,41 @@ class Menu extends Resource
                 ->sortable()
                 ->exceptOnForms(),
         ];
+    }
+
+    /**
+     * Determine if the current user can create new resources.
+     *
+     * @param Request $request
+     *
+     * @return bool
+     */
+    public static function authorizedToCreate(Request $request): bool
+    {
+        return false;
+    }
+
+    /**
+     * Determine if the current user can update the given resource.
+     *
+     * @param Request $request
+     * @return bool
+     */
+    public function authorizedToUpdate(Request $request): bool
+    {
+        return false;
+    }
+
+    /**
+     * Determine if the current user can delete the given resource.
+     *
+     * @param Request $request
+     *
+     * @return bool
+     */
+    public function authorizedToDelete(Request $request): bool
+    {
+        return false;
     }
 
     /**
@@ -88,9 +120,8 @@ class Menu extends Resource
         return [
             'id' => true,
             'title' => true,
-            'description' => false,
-            'archived' => true,
-            'categories' => false,
+            'metadata' => true,
+            'loggable' => true,
             'created_at' => false,
             'updated_at' => false,
         ];

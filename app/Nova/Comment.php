@@ -3,32 +3,31 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
-use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
-use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\MorphTo;
 use Laravel\Nova\Fields\Text;
 
 /**
- * Class Menu.
+ * Class Comment.
  *
- * @mixin \App\Models\Menu
+ * @mixin \App\Models\Morphs\Comment
  */
-class Menu extends Resource
+class Comment extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static string $model = \App\Models\Menu::class;
+    public static string $model = \App\Models\Morphs\Comment::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
      * @var string
      */
-    public static $title = 'title';
+    public static $title = 'text';
 
     /**
      * The columns that should be searched.
@@ -36,7 +35,7 @@ class Menu extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'title', 'description',
+        'id', 'text', 'commentable_type',
     ];
 
     /**
@@ -50,20 +49,11 @@ class Menu extends Resource
         return [
             ID::make()->sortable(),
 
-            Text::make('Title')
-                ->updateRules('sometimes', 'min:1', 'max:50')
-                ->creationRules('required', 'min:1', 'max:50'),
+            Text::make('Text')
+                ->rules('required', 'min:1', 'max:255'),
 
-            Text::make('Description')
-                ->rules('nullable', 'min:1', 'max:255'),
-
-            HasMany::make('Products'),
-
-            Boolean::make('Archived')
-                ->default(fn() => false),
-
-            HasMany::make('Categories')
-                ->readonly(),
+            MorphTo::make('Commentable')
+                ->exceptOnForms(),
 
             DateTime::make('Created At')
                 ->sortable()
@@ -87,10 +77,8 @@ class Menu extends Resource
     {
         return [
             'id' => true,
-            'title' => true,
-            'description' => false,
-            'archived' => true,
-            'categories' => false,
+            'text' => true,
+            'commentable' => true,
             'created_at' => false,
             'updated_at' => false,
         ];

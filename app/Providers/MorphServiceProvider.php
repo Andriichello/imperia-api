@@ -43,7 +43,7 @@ class MorphServiceProvider extends ServiceProvider
      *
      * @var array
      */
-    protected array $models = [
+    protected static array $models = [
         /** People */
         User::class,
         Customer::class,
@@ -97,7 +97,7 @@ class MorphServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Relation::morphMap($this->getMorphMap());
+        Relation::morphMap(static::getMorphMap());
     }
 
     /**
@@ -105,20 +105,21 @@ class MorphServiceProvider extends ServiceProvider
      *
      * @return array
      */
-    public function getModelClasses(): array
+    public static function getModelClasses(): array
     {
-        return $this->models;
+        return static::$models;
     }
 
     /**
      * Get morph map for models.
      *
+     * @param array|null $models
      * @return array
      */
-    public function getMorphMap(): array
+    public static function getMorphMap(?array $models = null): array
     {
         $morphMap = [];
-        foreach ($this->getModelClasses() as $model) {
+        foreach ($models ?? static::getModelClasses() as $model) {
             $morphMap[slugClass($model)] = $model;
         }
         return $morphMap;

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e46288c598c6bcb445e4fee98cd82bf1",
+    "content-hash": "d476fd35c05d3bbc891e3e9c91e7cb1f",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -435,6 +435,59 @@
                 "source": "https://github.com/dflydev/dflydev-dot-access-data/tree/v3.0.1"
             },
             "time": "2021-08-13T13:06:58+00:00"
+        },
+        {
+            "name": "digital-creative/collapsible-resource-manager",
+            "version": "v1.4.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dcasia/collapsible-resource-manager.git",
+                "reference": "94fdb29964d4b1efad77bf5e778043bb76dddb5b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dcasia/collapsible-resource-manager/zipball/94fdb29964d4b1efad77bf5e778043bb76dddb5b",
+                "reference": "94fdb29964d4b1efad77bf5e778043bb76dddb5b",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "DigitalCreative\\CollapsibleResourceManager\\CollapsibleResourceManagerServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "DigitalCreative\\CollapsibleResourceManager\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rafael Milewski"
+                }
+            ],
+            "description": "A custom sidebar menu with collapsible groups",
+            "keywords": [
+                "collapse",
+                "collapsible",
+                "laravel",
+                "nova",
+                "sidebar"
+            ],
+            "support": {
+                "issues": "https://github.com/dcasia/collapsible-resource-manager/issues",
+                "source": "https://github.com/dcasia/collapsible-resource-manager/tree/v1.4.2"
+            },
+            "time": "2022-02-05T17:07:28+00:00"
         },
         {
             "name": "doctrine/cache",

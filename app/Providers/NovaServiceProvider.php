@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use DigitalCreative\CollapsibleResourceManager\CollapsibleResourceManager;
+use DigitalCreative\CollapsibleResourceManager\Resources\TopLevelResource;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\Cards\Help;
 use Laravel\Nova\Nova;
@@ -9,6 +11,8 @@ use Laravel\Nova\NovaApplicationServiceProvider;
 
 /**
  * Class NovaServiceProvider.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class NovaServiceProvider extends NovaApplicationServiceProvider
 {
@@ -30,9 +34,9 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     protected function routes()
     {
         Nova::routes()
-                ->withAuthenticationRoutes()
-                ->withPasswordResetRoutes()
-                ->register();
+            ->withAuthenticationRoutes()
+            ->withPasswordResetRoutes()
+            ->register();
     }
 
     /**
@@ -80,7 +84,52 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      */
     public function tools(): array
     {
-        return [];
+        return [
+            new CollapsibleResourceManager([
+                'navigation' => [
+                    TopLevelResource::make([
+                        'label' => 'Items',
+                        'expanded' => false,
+                        'icon' => null,
+                        'resources' => [
+                            \App\Nova\Menu::class,
+                            \App\Nova\Product::class,
+                            \App\Nova\Ticket::class,
+                            \App\Nova\Space::class,
+                            \App\Nova\Service::class,
+                        ]
+                    ]),
+                    TopLevelResource::make([
+                        'label' => 'People',
+                        'expanded' => false,
+                        'icon' => null,
+                        'resources' => [
+                            \App\Nova\Customer::class,
+                            \App\Nova\FamilyMember::class,
+                        ]
+                    ]),
+                    TopLevelResource::make([
+                        'label' => 'Attachments',
+                        'expanded' => false,
+                        'icon' => null,
+                        'resources' => [
+                            \App\Nova\Category::class,
+                            \App\Nova\Discount::class,
+                            \App\Nova\Comment::class,
+                            \App\Nova\Log::class,
+                        ]
+                    ]),
+                    TopLevelResource::make([
+                        'label' => 'Management',
+                        'expanded' => false,
+                        'icon' => null,
+                        'resources' => [
+                            \App\Nova\User::class,
+                        ]
+                    ]),
+                ]
+            ])
+        ];
     }
 
     /**

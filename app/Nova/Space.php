@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\MorphMany;
+use Laravel\Nova\Fields\MorphToMany;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 
@@ -73,6 +75,10 @@ class Space extends Resource
 
             Boolean::make('Archived')
                 ->default(fn() => false),
+
+            MorphToMany::make('Categories'),
+
+            MorphMany::make('Logs', 'logs', Log::class),
 
             DateTime::make('Created At')
                 ->sortable()

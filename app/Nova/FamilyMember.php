@@ -2,7 +2,7 @@
 
 namespace App\Nova;
 
-use App\Enums\FamilyRelation;
+use App\Nova\Options\FamilyRelationOptions;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Date;
@@ -61,7 +61,7 @@ class FamilyMember extends Resource
 
             Select::make('Relation')
                 ->displayUsingLabels()
-                ->options(FamilyRelation::getValues()),
+                ->options(FamilyRelationOptions::all()),
 
             BelongsTo::make('Relative', 'relative', Customer::class),
 

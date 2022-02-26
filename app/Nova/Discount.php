@@ -2,26 +2,30 @@
 
 namespace App\Nova;
 
+use App\Nova\Options\MorphOptions;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Http\Request;
-use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
-use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\MorphMany;
+use Laravel\Nova\Fields\Number;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
 /**
- * Class Menu.
+ * Class Discount.
  *
- * @mixin \App\Models\Menu
+ * @mixin \App\Models\Morphs\Discount
  */
-class Menu extends Resource
+class Discount extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static string $model = \App\Models\Menu::class;
+    public static string $model = \App\Models\Morphs\Discount::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -36,7 +40,7 @@ class Menu extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'title', 'description',
+        'id', 'slug', 'title',
     ];
 
     /**
@@ -50,20 +54,25 @@ class Menu extends Resource
         return [
             ID::make()->sortable(),
 
+            Select::make('Target')
+                ->displayUsingLabels()
+                ->options(MorphOptions::discountable()),
+
             Text::make('Title')
-                ->updateRules('sometimes', 'min:1', 'max:50')
-                ->creationRules('required', 'min:1', 'max:50'),
+                ->rules('required', 'min:1', 'max:50'),
 
             Text::make('Description')
                 ->rules('nullable', 'min:1', 'max:255'),
 
-            HasMany::make('Products'),
+            Number::make('Amount')
+                ->step(0.01)
+                ->rules('required', 'min:0'),
 
-            Boolean::make('Archived')
-                ->default(fn() => false),
+            Number::make('Percent')
+                ->step(0.01)
+                ->rules('required', 'min:0', 'max:100'),
 
-            HasMany::make('Categories')
-                ->readonly(),
+            MorphMany::make('Logs', 'logs', Log::class),
 
             DateTime::make('Created At')
                 ->sortable()
@@ -73,6 +82,24 @@ class Menu extends Resource
                 ->sortable()
                 ->exceptOnForms(),
         ];
+    }
+
+    /**
+     * Build a "relatable" query for the given resource.
+     *
+     * This query determines which instances of the model may be attached to other resources.
+     *
+     * @param NovaRequest $request
+     * @param EloquentBuilder $query
+     *
+     * @return EloquentBuilder
+     */
+    public static function relatableQuery(NovaRequest $request, $query): EloquentBuilder
+    {
+        $target = slugClass($request->resource());
+        // @phpstan-ignore-next-line
+        return parent::relatableQuery($request, $query)
+            ->whereIn('target', [$target, null]);
     }
 
     /**
@@ -89,8 +116,8 @@ class Menu extends Resource
             'id' => true,
             'title' => true,
             'description' => false,
-            'archived' => true,
-            'categories' => false,
+            'amount' => true,
+            'percent' => true,
             'created_at' => false,
             'updated_at' => false,
         ];
