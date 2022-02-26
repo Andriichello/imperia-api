@@ -81,58 +81,6 @@ class User extends Resource
     }
 
     /**
-     * Get the cards available for the request.
-     *
-     * @param Request $request
-     *
-     * @return array
-     */
-    public function cards(Request $request): array
-    {
-        return [
-            $this->makeColumnsCard($request),
-        ];
-    }
-
-    /**
-     * Get the filters available for the resource.
-     *
-     * @param Request $request
-     *
-     * @return array
-     */
-    public function filters(Request $request): array
-    {
-        return [
-            $this->makeColumnsFilter($request),
-        ];
-    }
-
-    /**
-     * Get the lenses available for the resource.
-     *
-     * @param Request $request
-     *
-     * @return array
-     */
-    public function lenses(Request $request): array
-    {
-        return [];
-    }
-
-    /**
-     * Get the actions available for the resource.
-     *
-     * @param Request $request
-     *
-     * @return array
-     */
-    public function actions(Request $request): array
-    {
-        return [];
-    }
-
-    /**
      * Get columns filter fields.
      *
      * @param Request $request
