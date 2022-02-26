@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use ClassicO\NovaMediaLibrary\NovaMediaLibrary;
 use DigitalCreative\CollapsibleResourceManager\CollapsibleResourceManager;
 use DigitalCreative\CollapsibleResourceManager\Resources\TopLevelResource;
 use Illuminate\Support\Facades\Gate;
@@ -136,8 +137,9 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                             \App\Nova\User::class,
                         ]
                     ]),
-                ]
-            ])
+                ],
+            ]),
+            new NovaMediaLibrary(),
         ];
     }
 

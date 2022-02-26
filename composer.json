@@ -12,6 +12,7 @@
         "ext-http": "*",
         "ext-pdo": "*",
         "bensampo/laravel-enum": "^4.1",
+        "classic-o/nova-media-library": "^1.0",
         "customs/columns-card": "*",
         "digital-creative/collapsible-resource-manager": "^1.4",
         "doctrine/dbal": "^2.5",

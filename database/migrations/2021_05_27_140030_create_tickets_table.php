@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->decimal('price')->unsigned();
             $table->boolean('archived')->default(false);
+            $table->json('metadata')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

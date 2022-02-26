@@ -20,8 +20,11 @@ trait JsonFieldTrait
      */
     public function getJson(string $field): array
     {
-        return !is_string($this->$field) ? $this->$field :
-            (array)json_decode($this->$field, true);
+        $json = $this->$field ?? [];
+
+        return is_string($json)
+            ? (array)json_decode($json, true)
+            : $json;
     }
 
     /**

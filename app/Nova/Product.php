@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use ClassicO\NovaMediaLibrary\MediaLibrary;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
@@ -55,6 +56,9 @@ class Product extends Resource
 
             BelongsTo::make('Menu'),
 
+            MediaLibrary::make('Media', 'media_ids')
+                ->array('gallery'),
+
             Text::make('Title')
                 ->updateRules('sometimes', 'min:1', 'max:50')
                 ->creationRules('required', 'min:1', 'max:50'),
@@ -102,6 +106,7 @@ class Product extends Resource
         return [
             'id' => true,
             'menu' => true,
+            'media_ids' => ['label' => 'Media', 'checked' => true],
             'title' => true,
             'description' => false,
             'price' => true,

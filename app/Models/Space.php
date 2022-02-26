@@ -7,6 +7,7 @@ use App\Models\Interfaces\LoggableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Traits\CategorizableTrait;
 use App\Models\Traits\LoggableTrait;
+use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 use Database\Factories\SpaceFactory;
@@ -21,6 +22,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property int $floor
  * @property int $number
  * @property bool $archived
+ * @property string|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
@@ -36,6 +38,7 @@ class Space extends BaseModel implements
     use SoftDeletableTrait;
     use CategorizableTrait;
     use LoggableTrait;
+    use MediableTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -49,6 +52,7 @@ class Space extends BaseModel implements
         'floor',
         'price',
         'archived',
+        'metadata',
     ];
 
     /**

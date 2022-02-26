@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use ClassicO\NovaMediaLibrary\MediaLibrary;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
@@ -52,6 +53,9 @@ class Service extends Resource
         return [
             ID::make()->sortable(),
 
+            MediaLibrary::make('Media', 'media_ids')
+                ->array('gallery'),
+
             Text::make('Title')
                 ->updateRules('sometimes', 'min:1', 'max:50')
                 ->creationRules('required', 'min:1', 'max:50'),
@@ -98,6 +102,7 @@ class Service extends Resource
     {
         return [
             'id' => true,
+            'media_ids' => ['label' => 'Media', 'checked' => true],
             'title' => true,
             'description' => false,
             'once_paid_price' => true,

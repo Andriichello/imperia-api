@@ -7,6 +7,7 @@ use App\Models\Interfaces\LoggableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Traits\CategorizableTrait;
 use App\Models\Traits\LoggableTrait;
+use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 use Database\Factories\ServiceFactory;
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property float $once_paid_price
  * @property float $hourly_paid_price
  * @property bool $archived
+ * @property string|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
@@ -35,6 +37,7 @@ class Service extends BaseModel implements
     use SoftDeletableTrait;
     use CategorizableTrait;
     use LoggableTrait;
+    use MediableTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -47,6 +50,7 @@ class Service extends BaseModel implements
         'once_paid_price',
         'hourly_paid_price',
         'archived',
+        'metadata',
     ];
 
     /**
