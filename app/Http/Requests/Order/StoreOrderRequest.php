@@ -36,16 +36,6 @@ class StoreOrderRequest extends StoreRequest
                 'distinct',
                 'exists:spaces,id',
             ],
-            'spaces.*.start_at' => [
-                'sometimes',
-                'date',
-                'after_or_equal:yesterday',
-            ],
-            'spaces.*.end_at' => [
-                'sometimes',
-                'date',
-                'after:start_at',
-            ],
 
             'tickets' => [
                 'sometimes',

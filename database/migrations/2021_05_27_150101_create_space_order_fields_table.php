@@ -17,8 +17,6 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('order_id');
             $table->unsignedBigInteger('space_id')->index('space_id');
-            $table->dateTime('start_at');
-            $table->dateTime('end_at');
             $table->timestamps();
             $table->softDeletes();
 

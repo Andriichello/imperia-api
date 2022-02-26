@@ -40,7 +40,7 @@ class Discount extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'slug', 'title',
+        'id', 'title',
     ];
 
     /**

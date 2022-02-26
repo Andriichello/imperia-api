@@ -70,19 +70,9 @@ class OrderRepository extends CrudRepository
     {
         if (Arr::has($attributes, 'spaces')) {
             foreach ($attributes['spaces'] as $values) {
-                $identifiers = Arr::only($values, 'space_id');
-
-                $startAt = data_get($values, 'start_at', $order->banquet->start_at);
-                $endAt = data_get($values, 'end_at', $order->banquet->end_at);
-
                 /** @var SpaceOrderField $field */
-                $field = $order->spaces()->updateOrCreate($identifiers, array_merge(
-                    $values,
-                    [
-                        'start_at' => Carbon::make($startAt),
-                        'end_at' => Carbon::make($endAt),
-                    ],
-                ));
+                $field = $order->spaces()
+                    ->updateOrCreate(Arr::only($values, 'space_id'), $values);
 
                 $this->updateComments($field, $values);
                 $this->updateDiscounts($field, $values);

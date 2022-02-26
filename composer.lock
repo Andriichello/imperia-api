@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d476fd35c05d3bbc891e3e9c91e7cb1f",
+    "content-hash": "9c25ee9f52ca086d69039acedd070da0",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1794,6 +1794,63 @@
                 "source": "https://github.com/inspheric/nova-indicator-field/tree/master"
             },
             "time": "2020-01-24T12:55:36+00:00"
+        },
+        {
+            "name": "jagdeepbanga/nova-date-time",
+            "version": "v1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jagdeepbanga/NovaDateTime.git",
+                "reference": "c6a5a8c266b51d678b1cfb7ea51d53c3af0f5af2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jagdeepbanga/NovaDateTime/zipball/c6a5a8c266b51d678b1cfb7ea51d53c3af0f5af2",
+                "reference": "c6a5a8c266b51d678b1cfb7ea51d53c3af0f5af2",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Jagdeepbanga\\NovaDateTime\\FieldServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Jagdeepbanga\\NovaDateTime\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jagdeep Singh Banga",
+                    "email": "banga.jagdeep@gmail.com"
+                }
+            ],
+            "description": "A Laravel Nova DateTime field picker.",
+            "keywords": [
+                "DateTimePicker",
+                "datetime",
+                "field",
+                "laravel",
+                "laravel-nova",
+                "nova",
+                "picker",
+                "set default time"
+            ],
+            "support": {
+                "issues": "https://github.com/jagdeepbanga/NovaDateTime/issues",
+                "source": "https://github.com/jagdeepbanga/NovaDateTime/tree/v1.0"
+            },
+            "time": "2020-09-28T09:35:06+00:00"
         },
         {
             "name": "laminas/laminas-code",

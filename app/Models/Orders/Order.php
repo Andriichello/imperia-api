@@ -46,6 +46,15 @@ class Order extends BaseModel implements
     use DiscountableTrait;
 
     /**
+     * The model's attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'metadata' => '{}',
+    ];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var string[]

@@ -88,6 +88,15 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             new CollapsibleResourceManager([
                 'navigation' => [
                     TopLevelResource::make([
+                        'label' => 'Offers',
+                        'expanded' => false,
+                        'icon' => null,
+                        'resources' => [
+                            \App\Nova\Banquet::class,
+                            \App\Nova\Order::class,
+                        ]
+                    ]),
+                    TopLevelResource::make([
                         'label' => 'Items',
                         'expanded' => false,
                         'icon' => null,

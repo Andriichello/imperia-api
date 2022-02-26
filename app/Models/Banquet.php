@@ -78,6 +78,9 @@ class Banquet extends BaseModel implements
      * @var array
      */
     protected $casts = [
+        'start_at' => 'datetime',
+        'end_at' => 'datetime',
+        'paid_at' => 'datetime',
         'advance_amount' => 'float',
     ];
 

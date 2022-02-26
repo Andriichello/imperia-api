@@ -28,18 +28,25 @@ class BanquetHelper implements BanquetHelperInterface
     /**
      * Get array of available banquet transfer states.
      *
-     * @param Banquet $banquet
+     * @param Banquet|null $banquet
      *
      * @return array
      */
-    public function availableTransferStates(Banquet $banquet): array
+    public function availableTransferStates(?Banquet $banquet): array
     {
-        return match ($banquet->state) {
+        if (empty($banquet)) {
+            return [BanquetState::Draft];
+        }
+
+        $states = match ($banquet->state) {
             BanquetState::Draft => [BanquetState::New],
             BanquetState::New => [BanquetState::Processing, BanquetState::Cancelled],
             BanquetState::Processing => [BanquetState::New, BanquetState::Cancelled, BanquetState::Completed],
             BanquetState::Cancelled => [BanquetState::New, BanquetState::Processing],
             default => [],
         };
+
+        array_unshift($states, $banquet->state);
+        return $states;
     }
 }

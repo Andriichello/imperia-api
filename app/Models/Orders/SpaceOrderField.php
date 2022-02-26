@@ -2,6 +2,7 @@
 
 namespace App\Models\Orders;
 
+use App\Models\Banquet;
 use App\Models\BaseModel;
 use App\Models\Interfaces\CommentableInterface;
 use App\Models\Interfaces\DiscountableInterface;
@@ -12,6 +13,7 @@ use App\Models\Traits\DiscountableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 use Database\Factories\Orders\SpaceOrderFieldFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -20,8 +22,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @property int $order_id
  * @property int $space_id
- * @property Carbon $start_at
- * @property Carbon $end_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
@@ -50,8 +50,6 @@ class SpaceOrderField extends BaseModel implements
     protected $fillable = [
         'order_id',
         'space_id',
-        'start_at',
-        'end_at',
     ];
 
     /**
@@ -101,6 +99,12 @@ class SpaceOrderField extends BaseModel implements
      */
     public function getDurationAttribute(): int
     {
-        return $this->end_at->diffInMinutes($this->start_at);
+        $dates = Banquet::query()
+            ->whereHas(
+                'order',
+                fn(Builder $query) => $query->where('id', $this->order_id)
+            )->first(['start_at', 'end_at']);
+
+        return Carbon::make($dates['end_at'])->diffInMinutes(Carbon::make($dates['start_at']));
     }
 }
