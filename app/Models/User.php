@@ -25,6 +25,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $password
  * @property string|null $remember_token
  * @property Carbon|null $email_verified_at
+ * @property string|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
@@ -50,6 +51,7 @@ class User extends Authenticatable implements SoftDeletableInterface
         'name',
         'email',
         'password',
+        'metadata',
     ];
 
     /**

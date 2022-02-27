@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Morphs\Category;
+use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 use Database\Factories\MenuFactory;
@@ -19,6 +20,7 @@ use Illuminate\Support\Collection;
  * @property string $title
  * @property string|null $description
  * @property bool $archived
+ * @property string|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
@@ -33,6 +35,7 @@ class Menu extends BaseModel implements
 {
     use HasFactory;
     use SoftDeletableTrait;
+    use MediableTrait;
 
     /**
      * The table associated with the model.
@@ -50,6 +53,7 @@ class Menu extends BaseModel implements
         'title',
         'description',
         'archived',
+        'metadata',
     ];
 
     /**

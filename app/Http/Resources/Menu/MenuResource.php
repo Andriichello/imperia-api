@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Menu;
 
 use App\Http\Resources\Category\CategoryCollection;
+use App\Http\Resources\Media\MediaCollection;
 use App\Http\Resources\Product\ProductCollection;
 use App\Models\Menu;
 use Illuminate\Http\Request;
@@ -33,6 +34,7 @@ class MenuResource extends JsonResource
             'archived' => $this->archived,
             'products' => new ProductCollection($this->whenLoaded('products')),
             'categories' => new CategoryCollection($this->categories),
+            'media' => new MediaCollection($this->media),
         ];
     }
 
@@ -48,6 +50,7 @@ class MenuResource extends JsonResource
      *   @OA\Property(property="archived", type="boolean", example="false"),
      *   @OA\Property(property="products", type="array", @OA\Items(ref ="#/components/schemas/Product")),
      *   @OA\Property(property="categories", type="array", @OA\Items(ref ="#/components/schemas/Category")),
+     *   @OA\Property(property="media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
      * )
      */
 }

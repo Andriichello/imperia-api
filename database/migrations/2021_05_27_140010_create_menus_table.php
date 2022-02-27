@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('title', 50)->unique('menus_unique_TITLE');
             $table->string('description')->nullable();
             $table->boolean('archived')->default(false);
+            $table->json('metadata')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
