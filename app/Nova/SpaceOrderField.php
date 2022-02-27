@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\MorphMany;
+use Laravel\Nova\Fields\MorphToMany;
+use Laravel\Nova\Fields\Number;
 
 /**
  * Class SpaceOrderField.
@@ -54,6 +57,22 @@ class SpaceOrderField extends Resource
 
             BelongsTo::make('Space'),
 
+            Number::make('Total')
+                ->readonly(),
+
+            Number::make('Discounted Total')
+                ->readonly(),
+
+            Number::make('Discounts Amount')
+                ->readonly(),
+
+            Number::make('Discounts Percent')
+                ->readonly(),
+
+            MorphToMany::make('Discounts', 'discounts', Discount::class),
+
+            MorphMany::make('Comments', 'comments', Comment::class),
+
             DateTime::make('Created At')
                 ->sortable()
                 ->exceptOnForms(),
@@ -78,6 +97,11 @@ class SpaceOrderField extends Resource
             'id' => true,
             'order' => true,
             'space' => true,
+            'discounts' => false,
+            'discounted_total' => true,
+            'discounts_amount' => true,
+            'discounts_percent' => true,
+            'comments' => false,
             'created_at' => false,
             'updated_at' => false,
         ];

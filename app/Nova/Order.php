@@ -8,6 +8,9 @@ use Laravel\Nova\Fields\Code;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\MorphMany;
+use Laravel\Nova\Fields\MorphToMany;
+use Laravel\Nova\Fields\Number;
 
 /**
  * Class Order.
@@ -57,6 +60,19 @@ class Order extends Resource
             Code::make('Metadata')
                 ->height(50)
                 ->json(),
+
+            Number::make('Total')
+                ->readonly(),
+
+            Number::make('Discounted Total')
+                ->readonly(),
+
+            Number::make('Discounts Amount')
+                ->readonly(),
+
+            Number::make('Discounts Percent')
+                ->readonly(),
+
             HasMany::make('Spaces', 'spaces', SpaceOrderField::class),
 
             HasMany::make('Tickets', 'tickets', TicketOrderField::class),
@@ -64,6 +80,10 @@ class Order extends Resource
             HasMany::make('Products', 'products', ProductOrderField::class),
 
             HasMany::make('Services', 'services', ServiceOrderField::class),
+
+            MorphToMany::make('Discounts', 'discounts', Discount::class),
+
+            MorphMany::make('Comments', 'comments', Comment::class),
 
             DateTime::make('Created At')
                 ->sortable()
@@ -89,10 +109,16 @@ class Order extends Resource
             'id' => true,
             'banquet' => true,
             'metadata' => true,
+            'total' => true,
+            'discounted_total' => true,
+            'discounts_amount' => true,
+            'discounts_percent' => true,
             'spaces' => false,
             'tickets' => false,
             'products' => false,
             'services' => false,
+            'discounts' => false,
+            'comments' => false,
             'created_at' => false,
             'updated_at' => false,
         ];

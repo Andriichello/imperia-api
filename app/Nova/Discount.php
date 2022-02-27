@@ -4,6 +4,7 @@ namespace App\Nova;
 
 use App\Nova\Options\MorphOptions;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
@@ -99,7 +100,10 @@ class Discount extends Resource
         $target = slugClass($request->resource());
         // @phpstan-ignore-next-line
         return parent::relatableQuery($request, $query)
-            ->whereIn('target', [$target, null]);
+            ->whereNested(function (Builder $builder) use ($target) {
+                $builder->whereNull('target')
+                    ->orWhere('target', $target);
+            });
     }
 
     /**

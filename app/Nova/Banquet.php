@@ -83,6 +83,12 @@ class Banquet extends Resource
                 ->updateRules('sometimes', 'min:0')
                 ->creationRules('required', 'min:0'),
 
+            Number::make('Total')
+                ->readonly(),
+
+            Number::make('Discounted Total')
+                ->readonly(),
+
             NovaDateTime::make('Start At')
                 ->pickerDefaultHour(9)
                 ->pickerDefaultMinute(0)
@@ -98,6 +104,8 @@ class Banquet extends Resource
             DateTime::make('Paid At')
                 ->sortable()
                 ->rules('nullable', 'date', 'after:start_at'),
+
+            MorphMany::make('Comments', 'comments', Comment::class),
 
             MorphMany::make('Logs', 'logs', Log::class),
 
@@ -129,8 +137,12 @@ class Banquet extends Resource
             'title' => true,
             'description' => false,
             'advance_amount' => true,
+            'total' => true,
+            'discounted_total' => true,
             'start_at' => true,
             'end_at' => true,
+            'comments' => false,
+            'logs' => false,
             'paid_at' => false,
             'created_at' => false,
             'updated_at' => false,

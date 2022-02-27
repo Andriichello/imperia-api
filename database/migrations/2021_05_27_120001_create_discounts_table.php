@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('discounts', function (Blueprint $table) {
             $table->id();
+            $table->string('target')->nullable();
             $table->string('title', 50);
             $table->string('description')->nullable();
             $table->decimal('amount')->unsigned()->nullable();

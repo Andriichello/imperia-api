@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\MorphMany;
+use Laravel\Nova\Fields\MorphToMany;
 use Laravel\Nova\Fields\Number;
 
 /**
@@ -59,6 +61,22 @@ class TicketOrderField extends Resource
                 ->step(1)
                 ->rules('required', 'min:1'),
 
+            Number::make('Total')
+                ->readonly(),
+
+            Number::make('Discounted Total')
+                ->readonly(),
+
+            Number::make('Discounts Amount')
+                ->readonly(),
+
+            Number::make('Discounts Percent')
+                ->readonly(),
+
+            MorphToMany::make('Discounts', 'discounts', Discount::class),
+
+            MorphMany::make('Comments', 'comments', Comment::class),
+
             DateTime::make('Created At')
                 ->sortable()
                 ->exceptOnForms(),
@@ -84,6 +102,11 @@ class TicketOrderField extends Resource
             'order' => true,
             'ticket' => true,
             'amount' => true,
+            'discounts' => false,
+            'discounted_total' => true,
+            'discounts_amount' => true,
+            'discounts_percent' => true,
+            'comments' => false,
             'created_at' => false,
             'updated_at' => false,
         ];
