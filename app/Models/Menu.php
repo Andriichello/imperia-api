@@ -116,7 +116,7 @@ class Menu extends BaseModel implements
      *
      * @return Collection
      */
-    public function getProductCategoriesAttribute(): Collection
+    public function getCategoriesAttribute(): Collection
     {
         if (!isset($this->attributes['categories'])) {
             $this->attributes['categories'] = $this->categories()->get();
