@@ -9,7 +9,6 @@ use App\Http\Requests\User\MeUserRequest;
 use App\Http\Requests\User\RestoreUserRequest;
 use App\Http\Requests\User\ShowUserRequest;
 use App\Http\Requests\User\StoreUserRequest;
-use App\Http\Requests\User\UpdateMeUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Resources\User\UserCollection;
 use App\Http\Resources\User\UserResource;

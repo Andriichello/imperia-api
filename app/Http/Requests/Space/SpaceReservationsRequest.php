@@ -3,22 +3,13 @@
 namespace App\Http\Requests\Space;
 
 use App\Http\Requests\Crud\ShowRequest;
+use Carbon\Carbon;
 
 /**
- * Class ShowSpaceRequest.
+ * Class SpaceReservationsRequest.
  */
-class ShowSpaceRequest extends ShowRequest
+class SpaceReservationsRequest extends ShowRequest
 {
-    public function getAllowedIncludes(): array
-    {
-        return array_merge(
-            parent::getAllowedIncludes(),
-            [
-                'categories',
-            ]
-        );
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -30,7 +21,7 @@ class ShowSpaceRequest extends ShowRequest
             parent::rules(),
             [
                 'start_at' => [
-                    'sometimes',
+                    'required',
                     'date',
                 ],
                 'end_at' => [
@@ -40,5 +31,15 @@ class ShowSpaceRequest extends ShowRequest
                 ],
             ]
         );
+    }
+
+    public function getStartAt(): Carbon
+    {
+        return new Carbon($this->get('start_at'));
+    }
+
+    public function getEndAt(): Carbon
+    {
+        return new Carbon($this->get('end_at', $this->getStartAt()));
     }
 }

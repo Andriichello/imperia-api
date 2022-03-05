@@ -66,6 +66,7 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
         ->only('index', 'show')
         ->parameters(['services' => 'id']);
 
+    Route::get('/spaces/reservations', [SpaceController::class, 'reservations'])->name('spaces.reservations');
     Route::apiResource('spaces', SpaceController::class)
         ->only('index', 'show')
         ->parameters(['spaces' => 'id']);

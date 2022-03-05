@@ -4,10 +4,17 @@ namespace App\Http\Controllers\Model;
 
 use App\Http\Controllers\CrudController;
 use App\Http\Requests\Space\IndexSpaceRequest;
+use App\Http\Requests\Space\SpaceReservationsRequest;
 use App\Http\Requests\Space\ShowSpaceRequest;
+use App\Http\Resources\Field\SpaceOrderFieldCollection;
+use App\Http\Resources\Field\SpaceReservationCollection;
+use App\Http\Resources\ResourcePaginator;
 use App\Http\Resources\Space\SpaceCollection;
 use App\Http\Resources\Space\SpaceResource;
+use App\Models\Orders\SpaceOrderField;
+use App\Models\Space;
 use App\Repositories\SpaceRepository;
+use Exception;
 
 /**
  * Class SpaceController.
@@ -38,6 +45,22 @@ class SpaceController extends CrudController
         parent::__construct($repository);
         $this->actions['index'] = IndexSpaceRequest::class;
         $this->actions['show'] = ShowSpaceRequest::class;
+    }
+
+    /**
+     * Get space reservations for given interval of time.
+     *
+     * @param SpaceReservationsRequest $request
+     *
+     * @return ResourcePaginator
+     * @throws Exception
+     */
+    public function reservations(SpaceReservationsRequest $request): ResourcePaginator
+    {
+        $builder = SpaceOrderField::query()
+            ->between($request->getStartAt(), $request->getEndAt());
+
+        return $this->paginateResource($builder, SpaceReservationCollection::class);
     }
 
     /**
@@ -85,6 +108,29 @@ class SpaceController extends CrudController
      *     @OA\JsonContent(ref ="#/components/schemas/UnauthenticatedResponse")
      *   )
      * ),
+     * @OA\Get(
+     *   path="/api/spaces/reservations",
+     *   summary="Index spaces reservations.",
+     *   operationId="indexSpacesReservations",
+     *   security={{"bearerAuth": {}}},
+     *   tags={"spaces"},
+     *
+     *  @OA\Parameter(name="start_at", in="query", required=true,
+     *     @OA\Schema(type="string", format="date-time", example="2022-01-12 11:00:00")),
+     *  @OA\Parameter(name="end_at", in="query", required=true,
+     *     @OA\Schema(type="string", format="date-time", example="2022-01-12 13:00:00")),
+     *
+     *   @OA\Response(
+     *     response=200,
+     *     description="Index spaces reservations response object.",
+     *     @OA\JsonContent(ref ="#/components/schemas/IndexSpaceReservationsResponse")
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     description="Unauthenticated.",
+     *     @OA\JsonContent(ref ="#/components/schemas/UnauthenticatedResponse")
+     *   )
+     * ),
      *
      * @OA\Schema(
      *   schema="IndexSpaceResponse",
@@ -101,6 +147,15 @@ class SpaceController extends CrudController
      *   @OA\Property(property="data", ref ="#/components/schemas/Space"),
      *   @OA\Property(property="message", type="string", example="Success"),
      * ),
+     * @OA\Schema(
+     *   schema="IndexSpaceReservationsResponse",
+     *   description="Index spaces reservations response object.",
+     *   required = {"data", "meta", "message"},
+     *   @OA\Property(property="data", type="array", @OA\Items(ref ="#/components/schemas/SpaceReservation")),
+     *   @OA\Property(property="meta", ref ="#/components/schemas/PaginationMeta"),
+     *   @OA\Property(property="message", type="string", example="Success"),
+     * ),
+     *
      * @OA\Schema(
      *   schema="SpaceIncludes",
      *   description="Coma-separated list of inluded relations.

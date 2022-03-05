@@ -11,17 +11,22 @@ use App\Models\Space;
 use App\Models\Traits\CommentableTrait;
 use App\Models\Traits\DiscountableTrait;
 use App\Models\Traits\SoftDeletableTrait;
+use App\Queries\SpaceOrderFieldQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\Orders\SpaceOrderFieldFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Query\Builder as DatabaseBuilder;
 
 /**
  * Class SpaceOrderField.
  *
  * @property int $order_id
  * @property int $space_id
+ * @property int $duration
+ * @property Carbon|null $start_at
+ * @property Carbon|null $end_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
@@ -30,6 +35,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Order $order
  * @property Space $space
  *
+ * @method static SpaceOrderFieldQueryBuilder query()
  * @method static SpaceOrderFieldFactory factory(...$parameters)
  */
 class SpaceOrderField extends BaseModel implements
@@ -93,18 +99,80 @@ class SpaceOrderField extends BaseModel implements
     }
 
     /**
+     * Accessor for the start date and time of the rental.
+     *
+     * @return Carbon|null
+     */
+    public function getStartAtAttribute(): ?Carbon
+    {
+        $this->loadBanquetDatesIfMissing();
+        return $this->attributes['start_at'];
+    }
+
+    /**
+     * Accessor for the end date and time of the rental.
+     *
+     * @return Carbon|null
+     */
+    public function getEndAtAttribute(): ?Carbon
+    {
+        $this->loadBanquetDatesIfMissing();
+        return $this->attributes['end_at'];
+    }
+
+    /**
      * Accessor for duration of the rental.
      *
      * @return int
      */
     public function getDurationAttribute(): int
     {
-        $dates = Banquet::query()
-            ->whereHas(
-                'order',
-                fn(Builder $query) => $query->where('id', $this->order_id)
-            )->first(['start_at', 'end_at']);
+        $beg = $this->start_at;
+        $end = $this->end_at;
 
-        return Carbon::make($dates['end_at'])->diffInMinutes(Carbon::make($dates['start_at']));
+        return $beg && $end ? $end->diffInMinutes($beg) : 0;
+    }
+
+    /**
+     * Load banquet start and end dates.
+     *
+     * @return void
+     */
+    public function loadBanquetDatesIfMissing()
+    {
+        if (empty($this->attributes)) {
+            return;
+        }
+
+        $this->loadBanquetDates();
+    }
+
+
+    /**
+     * Load banquet start and end dates.
+     *
+     * @return void
+     */
+    public function loadBanquetDates()
+    {
+        $dates = Banquet::query()
+            ->whereHas('order', fn(Builder $query) => $query->where('id', $this->order_id))
+            ->first(['start_at', 'end_at']);
+
+        $startAt = data_get($dates, 'start_at');
+        $endAt = data_get($dates, 'end_at');
+
+        $this->attributes['start_at'] = $startAt ? new Carbon($startAt) : $startAt;
+        $this->attributes['end_at'] = $endAt ? new Carbon($endAt) : $endAt;
+    }
+
+    /**
+     * @param DatabaseBuilder $query
+     *
+     * @return SpaceOrderFieldQueryBuilder
+     */
+    public function newEloquentBuilder($query): SpaceOrderFieldQueryBuilder
+    {
+        return new SpaceOrderFieldQueryBuilder($query);
     }
 }

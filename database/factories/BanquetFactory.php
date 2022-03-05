@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\BanquetState;
+use App\Enums\UserRole;
 use App\Models\Banquet;
 use App\Models\Customer;
 use App\Models\User;
@@ -39,6 +40,8 @@ class BanquetFactory extends Factory
             'start_at' => Carbon::tomorrow()->setHour(8),
             'end_at' => Carbon::tomorrow()->setHour(23),
             'state' => BanquetState::Draft,
+            'creator_id' => User::factory()->withRole(UserRole::Admin()),
+            'customer_id' => Customer::factory(),
         ];
     }
 
