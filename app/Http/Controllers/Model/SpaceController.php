@@ -6,15 +6,14 @@ use App\Http\Controllers\CrudController;
 use App\Http\Requests\Space\IndexSpaceRequest;
 use App\Http\Requests\Space\SpaceReservationsRequest;
 use App\Http\Requests\Space\ShowSpaceRequest;
-use App\Http\Resources\Field\SpaceOrderFieldCollection;
 use App\Http\Resources\Field\SpaceReservationCollection;
 use App\Http\Resources\ResourcePaginator;
 use App\Http\Resources\Space\SpaceCollection;
 use App\Http\Resources\Space\SpaceResource;
 use App\Models\Orders\SpaceOrderField;
-use App\Models\Space;
 use App\Repositories\SpaceRepository;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Class SpaceController.
@@ -57,8 +56,12 @@ class SpaceController extends CrudController
      */
     public function reservations(SpaceReservationsRequest $request): ResourcePaginator
     {
+        $orderId = $request->get('order_id');
         $builder = SpaceOrderField::query()
-            ->between($request->getStartAt(), $request->getEndAt());
+            ->between($request->getStartAt(), $request->getEndAt())
+            ->when($orderId, function (Builder $query) use ($orderId) {
+                $query->where('order_id', '!=', $orderId);
+            });
 
         return $this->paginateResource($builder, SpaceReservationCollection::class);
     }
@@ -115,9 +118,13 @@ class SpaceController extends CrudController
      *   security={{"bearerAuth": {}}},
      *   tags={"spaces"},
      *
+     *  @OA\Parameter(name="order_id", in="query", required=false,
+     *     description="Id of current banquet's order (do not specify if order is just creating).",
+     *     @OA\Schema(type="integer", example="")),
      *  @OA\Parameter(name="start_at", in="query", required=true,
      *     @OA\Schema(type="string", format="date-time", example="2022-01-12 11:00:00")),
-     *  @OA\Parameter(name="end_at", in="query", required=true,
+     *  @OA\Parameter(name="end_at", in="query", required=false,
+     *     description="Must be after or equal to `start_at`. If not present then `start_at` will be taken.",
      *     @OA\Schema(type="string", format="date-time", example="2022-01-12 13:00:00")),
      *
      *   @OA\Response(

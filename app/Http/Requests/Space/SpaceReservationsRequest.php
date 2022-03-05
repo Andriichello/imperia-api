@@ -20,6 +20,11 @@ class SpaceReservationsRequest extends ShowRequest
         return array_merge(
             parent::rules(),
             [
+                'order_id' => [
+                    'sometimes',
+                    'integer',
+                    'exists:orders,id',
+                ],
                 'start_at' => [
                     'required',
                     'date',
