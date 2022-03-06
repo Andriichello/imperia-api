@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\Cards\Help;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
+use Spatie\BackupTool\BackupTool;
 
 /**
  * Class NovaServiceProvider.
@@ -135,11 +136,13 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                         'icon' => null,
                         'resources' => [
                             \App\Nova\User::class,
+                            \App\Nova\Role::class,
                         ]
                     ]),
                 ],
             ]),
             new NovaMediaLibrary(),
+            new BackupTool(),
         ];
     }
 
