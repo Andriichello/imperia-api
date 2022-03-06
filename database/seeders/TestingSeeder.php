@@ -13,6 +13,7 @@ use App\Models\Service;
 use App\Models\Space;
 use App\Models\Ticket;
 use App\Models\User;
+use ClassicO\NovaMediaLibrary\Core\Model as MediaModel;
 use Illuminate\Database\Seeder;
 
 /**

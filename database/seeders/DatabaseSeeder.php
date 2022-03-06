@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(RolesSeeder::class);
         if (!App::environment('testing')) {
+            $this->call(MediaSeeder::class);
             $this->call(TestingSeeder::class);
         }
     }
