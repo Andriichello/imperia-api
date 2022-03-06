@@ -3,6 +3,7 @@
 namespace App\Models\Morphs;
 
 use App\Models\BaseModel;
+use App\Models\Traits\MediableTrait;
 use Carbon\Carbon;
 use Database\Factories\Morphs\CategoryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,6 +16,7 @@ use Illuminate\Support\Collection;
  * @property string $slug
  * @property string|null $target
  * @property string $title
+ * @property string|null $metadata
  * @property string|null $description
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -26,6 +28,7 @@ use Illuminate\Support\Collection;
 class Category extends BaseModel
 {
     use HasFactory;
+    use MediableTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -37,6 +40,7 @@ class Category extends BaseModel
         'target',
         'title',
         'description',
+        'metadata',
     ];
 
     /**

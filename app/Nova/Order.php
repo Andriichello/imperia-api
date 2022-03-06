@@ -62,15 +62,19 @@ class Order extends Resource
                 ->json(),
 
             Number::make('Total')
+                ->exceptOnForms()
                 ->readonly(),
 
             Number::make('Discounted Total')
+                ->exceptOnForms()
                 ->readonly(),
 
             Number::make('Discounts Amount')
+                ->exceptOnForms()
                 ->readonly(),
 
             Number::make('Discounts Percent')
+                ->exceptOnForms()
                 ->readonly(),
 
             HasMany::make('Spaces', 'spaces', SpaceOrderField::class),

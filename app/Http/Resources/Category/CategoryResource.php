@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Category;
 
+use App\Http\Resources\Media\MediaCollection;
 use App\Models\Morphs\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -30,6 +31,7 @@ class CategoryResource extends JsonResource
             'target' => $this->target,
             'title' => $this->title,
             'description' => $this->description,
+            'media' => new MediaCollection($this->media),
         ];
     }
 
@@ -37,13 +39,14 @@ class CategoryResource extends JsonResource
      * @OA\Schema(
      *   schema="Category",
      *   description="Category resource object",
-     *   required = {"id", "type", "slug", "target", "title", "description"},
+     *   required = {"id", "type", "slug", "target", "title", "description", "media"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="slug", type="string", example="pizza"),
      *   @OA\Property(property="type", type="string", example="categories"),
      *   @OA\Property(property="target", type="string", example="products", nullable="true"),
      *   @OA\Property(property="title", type="string", example="Pizza"),
      *   @OA\Property(property="description", example="Some text...", nullable="true"),
+     *   @OA\Property(property="media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
      * )
      */
 }

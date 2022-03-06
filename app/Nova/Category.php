@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use App\Nova\Options\MorphOptions;
+use ClassicO\NovaMediaLibrary\MediaLibrary;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
@@ -64,6 +65,9 @@ class Category extends Resource
                 ->nullable()
                 ->displayUsingLabels(),
 
+            MediaLibrary::make('Media', 'media_ids')
+                ->array('gallery'),
+
             Text::make('Title')
                 ->rules('required', 'min:1', 'max:50'),
 
@@ -112,6 +116,7 @@ class Category extends Resource
             'id' => true,
             'slug' => true,
             'target' => true,
+            'media' => true,
             'title' => true,
             'description' => false,
             'created_at' => false,

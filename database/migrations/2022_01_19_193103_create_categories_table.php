@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('target')->nullable();
             $table->string('title', 50);
             $table->string('description')->nullable();
+            $table->json('metadata')->nullable();
             $table->timestamps();
         });
     }

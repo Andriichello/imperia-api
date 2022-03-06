@@ -58,15 +58,19 @@ class SpaceOrderField extends Resource
             BelongsTo::make('Space'),
 
             Number::make('Total')
+                ->exceptOnForms()
                 ->readonly(),
 
             Number::make('Discounted Total')
+                ->exceptOnForms()
                 ->readonly(),
 
             Number::make('Discounts Amount')
+                ->exceptOnForms()
                 ->readonly(),
 
             Number::make('Discounts Percent')
+                ->exceptOnForms()
                 ->readonly(),
 
             MorphToMany::make('Discounts', 'discounts', Discount::class),

@@ -84,9 +84,11 @@ class Banquet extends Resource
                 ->creationRules('required', 'min:0'),
 
             Number::make('Total')
+                ->exceptOnForms()
                 ->readonly(),
 
             Number::make('Discounted Total')
+                ->exceptOnForms()
                 ->readonly(),
 
             NovaDateTime::make('Start At')

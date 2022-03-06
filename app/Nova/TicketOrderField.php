@@ -62,15 +62,19 @@ class TicketOrderField extends Resource
                 ->rules('required', 'min:1'),
 
             Number::make('Total')
+                ->exceptOnForms()
                 ->readonly(),
 
             Number::make('Discounted Total')
+                ->exceptOnForms()
                 ->readonly(),
 
             Number::make('Discounts Amount')
+                ->exceptOnForms()
                 ->readonly(),
 
             Number::make('Discounts Percent')
+                ->exceptOnForms()
                 ->readonly(),
 
             MorphToMany::make('Discounts', 'discounts', Discount::class),

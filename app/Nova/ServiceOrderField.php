@@ -67,15 +67,19 @@ class ServiceOrderField extends Resource
                 ->rules('required', 'min:0'),
 
             Number::make('Total')
+                ->exceptOnForms()
                 ->readonly(),
 
             Number::make('Discounted Total')
+                ->exceptOnForms()
                 ->readonly(),
 
             Number::make('Discounts Amount')
+                ->exceptOnForms()
                 ->readonly(),
 
             Number::make('Discounts Percent')
+                ->exceptOnForms()
                 ->readonly(),
 
             MorphToMany::make('Discounts', 'discounts', Discount::class),
