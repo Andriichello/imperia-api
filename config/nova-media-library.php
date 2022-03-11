@@ -42,7 +42,7 @@ return [
      * @var string
      */
 
-    'folder' => '',
+    'folder' => '/media',
 
     /**
      * Organize uploads into date based folders

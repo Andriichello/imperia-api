@@ -3,12 +3,26 @@
 namespace App\Queries;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Support\Str;
 
 /**
  * Class MediaQueryBuilder.
  */
 class MediaQueryBuilder extends EloquentBuilder
 {
+    /**
+     * @param string $folder
+     *
+     * @return $this
+     */
+    public function fromFolder(string $folder): static
+    {
+        $folder = Str::of($folder)->start('/')->finish('/');
+        $this->where('folder', $folder);
+
+        return $this;
+    }
+
     /**
      * @param string $extension
      *

@@ -5,11 +5,8 @@ namespace App\Models\Traits;
 use App\Models\BaseModel;
 use App\Models\Morphs\Media;
 use App\Queries\MediaQueryBuilder;
-use ClassicO\NovaMediaLibrary\API as MediaLibraryAPI;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Laravel\Nova\Fields\HasMany;
 
 /**
  * Trait MediableTrait.
@@ -32,8 +29,6 @@ trait MediableTrait
     }
 
     /**
-     * Accessor for the image.
-     *
      * @return Collection
      */
     public function getMediaAttribute(): Collection
@@ -42,8 +37,6 @@ trait MediableTrait
     }
 
     /**
-     * Accessor for the image ids property of metadata.
-     *
      * @return array
      */
     public function getMediaIdsAttribute(): array
@@ -52,8 +45,6 @@ trait MediableTrait
     }
 
     /**
-     * Mutator for the image ids property of metadata.
-     *
      * @param mixed $value
      */
     public function setMediaIdsAttribute(mixed $value): void

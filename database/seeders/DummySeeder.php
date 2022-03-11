@@ -17,9 +17,9 @@ use ClassicO\NovaMediaLibrary\Core\Model as MediaModel;
 use Illuminate\Database\Seeder;
 
 /**
- * Class TestingSeeder.
+ * Class DummySeeder.
  */
-class TestingSeeder extends Seeder
+class DummySeeder extends Seeder
 {
     /**
      * Seed the database for testing.

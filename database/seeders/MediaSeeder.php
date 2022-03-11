@@ -18,14 +18,24 @@ class MediaSeeder extends Seeder
      */
     public function run()
     {
-        $files = File::allFiles('./public/storage/defaults');
-        foreach ($files as $file) {
+        $this->seedFolder('/defaults/');
+        $this->seedFolder('/categories/');
+    }
+
+    /**
+     * @param string $folder
+     *
+     * @return void
+     */
+    public function seedFolder(string $folder)
+    {
+        foreach (File::allFiles('./public/storage/media' . $folder) as $file) {
             MediaModel::query()
                 ->create([
                     'type' => "Image",
                     'name' => $file->getFilename(),
                     'title' => $file->getFilenameWithoutExtension(),
-                    'folder' => '/defaults/',
+                    'folder' => $folder,
                     'private' => false,
                     'lp' => false,
                     'options' => [

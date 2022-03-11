@@ -1,4 +1,6 @@
 *
 !.gitignore
-!defaults/
+!media/
+!media/defaults/
+!media/categories/
 
