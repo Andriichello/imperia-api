@@ -38,6 +38,7 @@ class SpaceResource extends JsonResource
             'categories' => new CategoryCollection($this->whenLoaded('categories')),
             'category_ids' => $categoryIds,
             'media' => new MediaCollection($this->media),
+            'default_media' => new MediaCollection($this->default_media),
         ];
     }
 
@@ -46,7 +47,7 @@ class SpaceResource extends JsonResource
      *   schema="Space",
      *   description="Space resource object",
      *   required = {"id", "type", "title", "description", "floor", "number", "price",
-     *      "category_ids", "media"},
+     *      "category_ids", "media", "default_media"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="spaces"),
      *   @OA\Property(property="title", type="string", example="Room #1(1)"),
@@ -58,6 +59,7 @@ class SpaceResource extends JsonResource
      *   @OA\Property(property="categories", type="array", @OA\Items(ref ="#/components/schemas/Category")),
      *   @OA\Property(property="category_ids", type="array", @OA\Items(type="integer", example=1)),
      *   @OA\Property(property="media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
+     *   @OA\Property(property="default_media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
      * )
      */
 }

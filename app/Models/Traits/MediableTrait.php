@@ -3,6 +3,8 @@
 namespace App\Models\Traits;
 
 use App\Models\BaseModel;
+use App\Models\Menu;
+use App\Models\Morphs\Category;
 use App\Models\Morphs\Media;
 use App\Models\Product;
 use App\Models\Service;
@@ -30,6 +32,8 @@ trait MediableTrait
      * @var array
      */
     protected static array $defaultMediaMap = [
+        Menu::class => 'defaults/menu.svg',
+        Category::class => 'defaults/category.svg',
         Space::class => 'defaults/table.svg',
         Ticket::class => 'defaults/ticket.svg',
         Product::class => 'defaults/dish.svg',
