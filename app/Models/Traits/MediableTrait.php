@@ -11,6 +11,7 @@ use App\Models\Service;
 use App\Models\Space;
 use App\Models\Ticket;
 use App\Queries\MediaQueryBuilder;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -73,9 +74,9 @@ trait MediableTrait
     /**
      * Query for related media.
      *
-     * @return MediaQueryBuilder
+     * @return MediaQueryBuilder|Builder
      */
-    public function media(): MediaQueryBuilder
+    public function media(): MediaQueryBuilder|Builder
     {
         return Media::query()->whereIn('id', $this->media_ids);
     }
@@ -94,5 +95,46 @@ trait MediableTrait
     public function getMediaIdsAttribute(): array
     {
         return Arr::wrap($this->getFromJson('metadata', 'media_ids'));
+    }
+
+    /**
+     * @param mixed $value
+     *
+     * @return void
+     */
+    public function setMediaIdsAttribute(mixed $value): void
+    {
+        $this->setToJson('metadata', 'media_ids', Arr::wrap($value));
+    }
+
+    /**
+     * @param Media ...$media
+     *
+     * @return void
+     */
+    public function attachMedia(Media ...$media): void
+    {
+        $ids = $this->media_ids;
+        foreach ($media as $item) {
+            if (in_array($item->id, $ids)) {
+                continue;
+            }
+            $ids[] = $item->id;
+        }
+
+        $this->media_ids = $ids;
+        $this->save();
+    }
+
+    /**
+     * @param Media ...$media
+     *
+     * @return void
+     */
+    public function detachMedia(Media ...$media): void
+    {
+        $detaches = array_map(fn(Media $item) => $item->id, $media);
+        $this->media_ids = array_diff($this->media_ids, $detaches);
+        $this->save();
     }
 }

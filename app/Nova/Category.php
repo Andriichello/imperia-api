@@ -116,7 +116,7 @@ class Category extends Resource
             'id' => true,
             'slug' => true,
             'target' => true,
-            'media' => true,
+            'media_ids' => ['label' => 'Media', 'checked' => true],
             'title' => true,
             'description' => false,
             'created_at' => false,

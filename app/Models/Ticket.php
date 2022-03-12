@@ -9,9 +9,11 @@ use App\Models\Traits\CategorizableTrait;
 use App\Models\Traits\LoggableTrait;
 use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
+use App\Queries\TicketQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\TicketFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Query\Builder as DatabaseBuilder;
 
 /**
  * Class Space.
@@ -25,6 +27,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  *
+ * @method static TicketQueryBuilder query()
  * @method static TicketFactory factory(...$parameters)
  */
 class Ticket extends BaseModel implements
@@ -77,4 +80,14 @@ class Ticket extends BaseModel implements
     protected $relations = [
         'categories',
     ];
+
+    /**
+     * @param DatabaseBuilder $query
+     *
+     * @return TicketQueryBuilder
+     */
+    public function newEloquentBuilder($query): TicketQueryBuilder
+    {
+        return new TicketQueryBuilder($query);
+    }
 }

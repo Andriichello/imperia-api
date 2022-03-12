@@ -9,10 +9,12 @@ use App\Models\Traits\CategorizableTrait;
 use App\Models\Traits\LoggableTrait;
 use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
+use App\Queries\ProductQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Query\Builder as DatabaseBuilder;
 
 /**
  * Class Product.
@@ -30,6 +32,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @property Menu|null $menu
  *
+ * @method static ProductQueryBuilder query()
  * @method static ProductFactory factory(...$parameters)
  */
 class Product extends BaseModel implements
@@ -95,5 +98,15 @@ class Product extends BaseModel implements
     public function menu(): BelongsTo
     {
         return $this->belongsTo(Menu::class, 'menu_id', 'id');
+    }
+
+    /**
+     * @param DatabaseBuilder $query
+     *
+     * @return ProductQueryBuilder
+     */
+    public function newEloquentBuilder($query): ProductQueryBuilder
+    {
+        return new ProductQueryBuilder($query);
     }
 }

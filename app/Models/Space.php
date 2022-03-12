@@ -9,10 +9,11 @@ use App\Models\Traits\CategorizableTrait;
 use App\Models\Traits\LoggableTrait;
 use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
-use App\Queries\SpaceOrderFieldQueryBuilder;
+use App\Queries\SpaceQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\SpaceFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Query\Builder as DatabaseBuilder;
 
 /**
  * Class Space.
@@ -28,6 +29,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  *
+ * @method static SpaceQueryBuilder query()
  * @method static SpaceFactory factory(...$parameters)
  */
 class Space extends BaseModel implements
@@ -82,4 +84,14 @@ class Space extends BaseModel implements
     protected $relations = [
         'categories',
     ];
+
+    /**
+     * @param DatabaseBuilder $query
+     *
+     * @return SpaceQueryBuilder
+     */
+    public function newEloquentBuilder($query): SpaceQueryBuilder
+    {
+        return new SpaceQueryBuilder($query);
+    }
 }

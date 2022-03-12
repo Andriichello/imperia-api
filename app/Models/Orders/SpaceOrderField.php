@@ -11,7 +11,7 @@ use App\Models\Space;
 use App\Models\Traits\CommentableTrait;
 use App\Models\Traits\DiscountableTrait;
 use App\Models\Traits\SoftDeletableTrait;
-use App\Queries\SpaceOrderFieldQueryBuilder;
+use App\Queries\SpaceQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\Orders\SpaceOrderFieldFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -35,7 +35,7 @@ use Illuminate\Database\Query\Builder as DatabaseBuilder;
  * @property Order $order
  * @property Space $space
  *
- * @method static SpaceOrderFieldQueryBuilder query()
+ * @method static SpaceQueryBuilder query()
  * @method static SpaceOrderFieldFactory factory(...$parameters)
  */
 class SpaceOrderField extends BaseModel implements
@@ -169,10 +169,10 @@ class SpaceOrderField extends BaseModel implements
     /**
      * @param DatabaseBuilder $query
      *
-     * @return SpaceOrderFieldQueryBuilder
+     * @return SpaceQueryBuilder
      */
-    public function newEloquentBuilder($query): SpaceOrderFieldQueryBuilder
+    public function newEloquentBuilder($query): SpaceQueryBuilder
     {
-        return new SpaceOrderFieldQueryBuilder($query);
+        return new SpaceQueryBuilder($query);
     }
 }

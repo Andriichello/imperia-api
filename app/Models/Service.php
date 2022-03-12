@@ -9,9 +9,11 @@ use App\Models\Traits\CategorizableTrait;
 use App\Models\Traits\LoggableTrait;
 use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
+use App\Queries\ServiceQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\ServiceFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Query\Builder as DatabaseBuilder;
 
 /**
  * Class Service.
@@ -26,6 +28,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  *
+ * @method static ServiceQueryBuilder query()
  * @method static ServiceFactory factory(...$parameters)
  */
 class Service extends BaseModel implements
@@ -81,4 +84,14 @@ class Service extends BaseModel implements
     protected $relations = [
         'categories',
     ];
+
+    /**
+     * @param DatabaseBuilder $query
+     *
+     * @return ServiceQueryBuilder
+     */
+    public function newEloquentBuilder($query): ServiceQueryBuilder
+    {
+        return new ServiceQueryBuilder($query);
+    }
 }
