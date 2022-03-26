@@ -11,6 +11,8 @@
         "php": "^8.0",
         "symfony/http-client": "^6.0",
         "ext-pdo": "*",
+        "darkaonline/l5-swagger": "8.0.9",
+        "fakerphp/faker": "^1.9.1",
         "bensampo/laravel-enum": "^4.1",
         "classic-o/nova-media-library": "^1.0",
         "customs/columns-card": "*",
@@ -35,9 +37,7 @@
     },
     "require-dev": {
         "facade/ignition": "^2.5",
-        "fakerphp/faker": "^1.9.1",
         "kitloong/laravel-migrations-generator": "^5.1",
-        "darkaonline/l5-swagger": "8.0.9",
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^5.10",
