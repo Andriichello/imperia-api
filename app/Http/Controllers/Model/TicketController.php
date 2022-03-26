@@ -50,6 +50,11 @@ class TicketController extends CrudController
      *
      *   @OA\Parameter(name="include", in="query",
      *     @OA\Schema(ref ="#/components/schemas/TicketIncludes")),
+     *   @OA\Parameter(name="filter[title]", required=false, in="query", example="Weekend",
+     *     @OA\Schema(type="string"), description="Can be used for searches. Is partial."),
+     *   @OA\Parameter(name="filter[categories]", required=false, in="query", example="2,3",
+     *     @OA\Schema(type="string"), description="Coma-separated array of category ids. Limits tickets to those
+     * that have at least one of given categories attached to them"),
      *
      *   @OA\Response(
      *     response=200,

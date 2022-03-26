@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Service;
 
+use App\Http\Filters\CategoriesFilter;
 use App\Http\Requests\Crud\IndexRequest;
+use Spatie\QueryBuilder\AllowedFilter;
 
 /**
  * Class IndexServiceRequest.
@@ -15,6 +17,17 @@ class IndexServiceRequest extends IndexRequest
             parent::getAllowedIncludes(),
             [
                 'categories',
+            ]
+        );
+    }
+
+    public function getAllowedFilters(): array
+    {
+        return array_merge(
+            parent::getAllowedFilters(),
+            [
+                AllowedFilter::partial('title'),
+                AllowedFilter::custom('categories', new CategoriesFilter()),
             ]
         );
     }
