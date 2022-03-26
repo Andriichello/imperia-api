@@ -43,8 +43,8 @@ class CategoryController extends CrudController
     /**
      * @OA\Get(
      *   path="/api/categories",
-     *   summary="Index categoreis.",
-     *   operationId="indexCategoreies",
+     *   summary="Index categories.",
+     *   operationId="indexCategories",
      *   security={{"bearerAuth": {}}},
      *   tags={"categories"},
      *

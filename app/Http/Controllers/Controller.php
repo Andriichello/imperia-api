@@ -146,8 +146,8 @@ abstract class Controller extends BaseController
      * @OA\Schema(
      *   schema="UserAndTokenResponse",
      *   description="User and token response object.",
-     *   required = {"access_token", "user"},
-     *   @OA\Property(property="access_token", type="string",
+     *   required = {"token", "user"},
+     *   @OA\Property(property="token", type="string",
      *      example="1|ARDGny3pfUiPpxaXCKtW1w5B7qqcqAYehtRTVA849X3p"),
      *   @OA\Property(property="user", ref ="#/components/schemas/User")
      * )

@@ -43,8 +43,8 @@ class DiscountController extends CrudController
     /**
      * @OA\Get(
      *   path="/api/discounts",
-     *   summary="Index categoreis.",
-     *   operationId="indexCategoreies",
+     *   summary="Index discounts.",
+     *   operationId="indexDiscounts",
      *   security={{"bearerAuth": {}}},
      *   tags={"discounts"},
      *
