@@ -9,7 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.0",
-        "ext-http": "*",
+        "symfony/http-client": "^6.0",
         "ext-pdo": "*",
         "bensampo/laravel-enum": "^4.1",
         "classic-o/nova-media-library": "^1.0",
