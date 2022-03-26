@@ -48,6 +48,8 @@ class CategoryController extends CrudController
      *   security={{"bearerAuth": {}}},
      *   tags={"categories"},
      *
+     *   @OA\Parameter(name="page[size]", in="query", @OA\Schema(ref ="#/components/schemas/PageSize")),
+     *   @OA\Parameter(name="page[number]", in="query", @OA\Schema(ref ="#/components/schemas/PageNumber")),
      *  @OA\Parameter(name="filter[target]", in="query", example="products", @OA\Schema(type="string"),
      *     description="Target class morph slug. Examples: `products`, `tickets`, `services`, `spaces`"),
      *

@@ -96,6 +96,9 @@ class UserController extends CrudController
      *   security={{"bearerAuth": {}}},
      *   tags={"users"},
      *
+     *   @OA\Parameter(name="page[size]", in="query", @OA\Schema(ref ="#/components/schemas/PageSize")),
+     *   @OA\Parameter(name="page[number]", in="query", @OA\Schema(ref ="#/components/schemas/PageNumber")),
+     *
      *   @OA\Response(
      *     response=200,
      *     description="Index users response object.",

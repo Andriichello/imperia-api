@@ -54,6 +54,8 @@ class CustomerController extends CrudController
      *
      *   @OA\Parameter(name="include", in="query",
      *     @OA\Schema(ref ="#/components/schemas/CustomerIncludes")),
+     *   @OA\Parameter(name="page[size]", in="query", @OA\Schema(ref ="#/components/schemas/PageSize")),
+     *   @OA\Parameter(name="page[number]", in="query", @OA\Schema(ref ="#/components/schemas/PageNumber")),
      *   @OA\Parameter(name="deleted", in="query",
      *     @OA\Schema(ref ="#/components/schemas/DeletedParameter")),
      *

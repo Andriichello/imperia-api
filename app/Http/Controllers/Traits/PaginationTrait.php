@@ -66,4 +66,17 @@ trait PaginationTrait
     ): ResourcePaginator {
         return new ResourcePaginator($this->paginate($builder), $collectionClass);
     }
+
+    /**
+     * @OA\Schema(
+     *   schema="PageSize",
+     *   description="Max number of results on page.",
+     *   type="integer", example=25
+     * ),
+     * @OA\Schema(
+     *   schema="PageNumber",
+     *   description="Page number to be returned.",
+     *   type="integer", example=1
+     * )
+     */
 }

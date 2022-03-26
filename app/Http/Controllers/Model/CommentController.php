@@ -52,6 +52,8 @@ class CommentController extends CrudController
      *   security={{"bearerAuth": {}}},
      *   tags={"comments"},
      *
+     *   @OA\Parameter(name="page[size]", in="query", @OA\Schema(ref ="#/components/schemas/PageSize")),
+     *   @OA\Parameter(name="page[number]", in="query", @OA\Schema(ref ="#/components/schemas/PageNumber")),
      *  @OA\Parameter(name="filter[commentable_id]", required=true, in="query", example=1, @OA\Schema(type="integer"),
      *     description="Comment target morph lass id."),
      *  @OA\Parameter(name="filter[commentable_type]", required=true, in="query", example="customers",
