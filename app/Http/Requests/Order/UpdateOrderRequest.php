@@ -50,10 +50,7 @@ class UpdateOrderRequest extends UpdateRequest
             parent::rules(),
             StoreOrderRequest::rulesForRelations(),
             [
-                'spaces' => [
-                    'sometimes',
-                    'array',
-                ],
+                //
             ]
         );
     }

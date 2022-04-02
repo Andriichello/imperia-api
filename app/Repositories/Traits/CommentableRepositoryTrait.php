@@ -43,31 +43,37 @@ trait CommentableRepositoryTrait
             $texts = $this->extractTextsFromComments($attributes['comments']);
             if (empty($texts)) {
                 $commentable->comments()->delete();
+                return true;
             }
 
-            $comments = $commentable->comments;
+            $previousCount = $commentable->comments->count();
+            // there were no old comments, so just add the new ones
+            if ($previousCount === 0) {
+                $commentable->attachComments(...$texts);
+                return true;
+            }
             // old and new comments are identical, so none should be changed
-            if ($texts === $comments->pluck('text')->all()) {
+            if ($texts === $commentable->comments->pluck('text')->all()) {
                 return true;
             }
 
             $updatedIds = [];
             foreach ($texts as $index => $text) {
-                if ($comments->count() < ($index + 1)) {
+                if ($previousCount < ($index + 1)) {
                     $remainingTexts = array_slice($attributes['comments'], $index + 1);
                     $commentable->attachComments(...$remainingTexts);
                     break;
                 }
 
                 /** @var Comment $comment */
-                $comment = $comments->get($index);
+                $comment = $commentable->comments->get($index);
                 $comment->text = $text;
                 $comment->save();
 
                 $updatedIds[] = $comment->id;
             }
 
-            if ($comments->count() > count($texts)) {
+            if ($commentable->comments->count() > count($texts)) {
                 $commentable->comments()
                     ->whereNotIn('id', $updatedIds)
                     ->delete();

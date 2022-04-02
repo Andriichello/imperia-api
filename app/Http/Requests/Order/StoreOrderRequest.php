@@ -93,15 +93,15 @@ class StoreOrderRequest extends StoreRequest
         return array_merge(
             $rules,
             Comment::rulesForAttaching(),
-            Comment::rulesForAttaching('spaces.'),
-            Comment::rulesForAttaching('tickets.'),
-            Comment::rulesForAttaching('products.'),
-            Comment::rulesForAttaching('services.'),
+            Comment::rulesForAttaching('spaces.*.'),
+            Comment::rulesForAttaching('tickets.*.'),
+            Comment::rulesForAttaching('products.*.'),
+            Comment::rulesForAttaching('services.*.'),
             Discount::rulesForAttaching(),
-            Discount::rulesForAttaching('spaces.'),
-            Discount::rulesForAttaching('tickets.'),
-            Discount::rulesForAttaching('products.'),
-            Discount::rulesForAttaching('services.'),
+            Discount::rulesForAttaching('spaces.*.'),
+            Discount::rulesForAttaching('tickets.*.'),
+            Discount::rulesForAttaching('products.*.'),
+            Discount::rulesForAttaching('services.*.'),
         );
     }
 

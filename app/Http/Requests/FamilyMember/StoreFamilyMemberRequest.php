@@ -26,7 +26,7 @@ class StoreFamilyMemberRequest extends StoreRequest
                     'min:2',
                 ],
                 'relation' => [
-                    'required',
+                    'nullable',
                     'string',
                     FamilyRelation::getValidationRule(),
                 ],
@@ -50,7 +50,8 @@ class StoreFamilyMemberRequest extends StoreRequest
      *   description="Store family member request",
      *   required={"name", "relation", "birthdate", "relative_id"},
      *   @OA\Property(property="name", type="string", example="Kate"),
-     *   @OA\Property(property="relation", type="string", enum={"child", "parent", "grandparent", "partner"}),
+     *   @OA\Property(property="relation", type="string", nullable="true",
+     *     enum={"child", "parent", "grandparent", "partner"}),
      *   @OA\Property(property="birthdate", type="string", format="date", example="1992-10-16"),
      *   @OA\Property(property="relative_id", type="integer", example=1,
      *     description="The id of the customer, who is related to this family member."),

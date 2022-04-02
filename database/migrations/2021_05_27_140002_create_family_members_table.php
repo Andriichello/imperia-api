@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('relative_id');
             $table->string('name', 50);
-            $table->string('relation', 50);
+            $table->string('relation', 15)->nullable();
             $table->date('birthdate');
             $table->timestamps();
             $table->softDeletes();

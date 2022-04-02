@@ -98,12 +98,18 @@ class OrderControllerTest extends RegisteringTestCase
                     'space_id' => $this->space->id,
                     'start_at' => $this->banquet->start_at,
                     'end_at' => $this->banquet->end_at,
+                    'comments' => [
+                        ['text' => 'Comment for space.'],
+                    ],
                 ]
             ],
             'tickets' => [
                 [
                     'ticket_id' => $this->ticket->id,
                     'amount' => 5,
+                    'comments' => [
+                        ['text' => 'Comment for ticket.'],
+                    ],
                 ]
             ],
             'services' => [
@@ -111,12 +117,18 @@ class OrderControllerTest extends RegisteringTestCase
                     'service_id' => $this->service->id,
                     'amount' => 2,
                     'duration' => 90,
+                    'comments' => [
+                        ['text' => 'Comment for service.'],
+                    ],
                 ]
             ],
             'products' => [
                 [
                     'product_id' => $this->product->id,
                     'amount' => 2,
+                    'comments' => [
+                        ['text' => 'Comment for product.'],
+                    ],
                 ]
             ],
         ];
@@ -151,6 +163,11 @@ class OrderControllerTest extends RegisteringTestCase
         $order = Order::query()->findOrFail(data_get($response, 'data.id'));
         $this->assertCount(3, $order->comments);
         $this->assertCount(1, $order->discounts);
+
+        $this->assertCount(1, $order->spaces->first()->comments);
+        $this->assertCount(1, $order->tickets->first()->comments);
+        $this->assertCount(1, $order->services->first()->comments);
+        $this->assertCount(1, $order->products->first()->comments);
 
         $response = $this->postJson(route('api.orders.store'), $this->attributes);
         $response->assertUnprocessable();
