@@ -32,7 +32,7 @@ class MediaSeeder extends Seeder
         foreach (File::allFiles('./public/storage/media' . $folder) as $file) {
             MediaModel::query()
                 ->create([
-                    'type' => "Image",
+                    'type' => "image",
                     'name' => $file->getFilename(),
                     'title' => $file->getFilenameWithoutExtension(),
                     'folder' => $folder,
