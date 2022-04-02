@@ -9,7 +9,7 @@ return [
      * @var string
      */
 
-    'disk' => env('FILESYSTEM_DRIVER', 'public'),
+    'disk' => env('FILESYSTEM_MEDIA', 'local'),
 
     /**
      * Will use to return base url of media file.
@@ -17,7 +17,8 @@ return [
      * @var string
      */
 
-    'url' => 's3' == env('FILESYSTEM_DRIVER') ? env('AWS_URL', '') : env('APP_URL', '') . '/storage',
+    'url' => 'local' === env('FILESYSTEM_MEDIA') ? env('APP_URL') . '/storage'
+        : env('GOOGLE_CLOUD_BUCKET_URL'),
 
     /**
      * Store files `together` or in separate `folders`
@@ -64,11 +65,11 @@ return [
      */
 
     'types' => [
-        'Image' => ['jpg', 'jpeg', 'png', 'gif', 'svg'],
-        'Docs' => ['doc', 'xls', 'docx', 'xlsx', 'pdf'],
-        'Audio' => ['mp3'],
-        'Video' => ['mp4'],
-        #'Other' => ['*'],
+        'image' => ['jpg', 'jpeg', 'png', 'gif', 'svg'],
+        'docs' => ['doc', 'xls', 'docx', 'xlsx', 'pdf'],
+        'audio' => ['mp3'],
+        'video' => ['mp4'],
+        // 'other' => ['*'],
     ],
 
     /**
@@ -80,8 +81,8 @@ return [
      */
 
     'max_size' => [
-        'Image' => 2097152,
-        'Docs' => 5242880,
+        'image' => 2097152,
+        'docs' => 5242880,
     ],
 
     /**
