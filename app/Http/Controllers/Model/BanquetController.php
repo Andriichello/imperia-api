@@ -117,12 +117,14 @@ class BanquetController extends CrudController
      *   )
      * ),
      * @OA\Patch(
-     *   path="/api/banquets",
+     *   path="/api/banquets/{id}",
      *   summary="Update banquet.",
      *   operationId="updateBanquet",
      *   security={{"bearerAuth": {}}},
      *   tags={"banquets"},
      *
+     *  @OA\Parameter(name="id", required=true, in="path", example=1, @OA\Schema(type="integer"),
+     *     description="Id of the banquet."),
      *  @OA\RequestBody(
      *     required=true,
      *     description="Update banquet request object.",

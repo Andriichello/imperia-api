@@ -49,7 +49,7 @@ class TicketOrderFieldResource extends JsonResource
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="ticket-order-fields"),
      *   @OA\Property(property="order_id", type="integer", example=1),
-     *   @OA\Property(property="space_id", type="integer", example=1),
+     *   @OA\Property(property="ticket_id", type="integer", example=1),
      *   @OA\Property(property="amount", type="integer", example=5),
      *   @OA\Property(property="total", type="float", example=125),
      *   @OA\Property(property="discounts_amount", type="float", example=25.55),

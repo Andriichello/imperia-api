@@ -12,6 +12,10 @@
         {
             "url": "http://localhost:8080",
             "description": "Current server"
+        },
+        {
+            "url": "https://imperia-api.herokuapp.com",
+            "description": "Production server"
         }
     ],
     "paths": {
@@ -232,51 +236,6 @@
                         "bearerAuth": []
                     }
                 ]
-            },
-            "patch": {
-                "tags": [
-                    "banquets"
-                ],
-                "summary": "Update banquet.",
-                "operationId": "updateBanquet",
-                "requestBody": {
-                    "description": "Update banquet request object.",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/UpdateBanquetRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Update banquet response object.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UpdateBanquetResponse"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
             }
         },
         "/api/banquets/{id}": {
@@ -369,6 +328,63 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/DestroyBanquetResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "banquets"
+                ],
+                "summary": "Update banquet.",
+                "operationId": "updateBanquet",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the banquet.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "description": "Update banquet request object.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateBanquetRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update banquet response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UpdateBanquetResponse"
                                 }
                             }
                         }
@@ -5156,7 +5172,7 @@
                         "type": "integer",
                         "example": 1
                     },
-                    "space_id": {
+                    "ticket_id": {
                         "type": "integer",
                         "example": 1
                     },

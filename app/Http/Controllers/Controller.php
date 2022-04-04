@@ -37,6 +37,10 @@ abstract class Controller extends BaseController
      *   @OA\Server(
      *     url=L5_SWAGGER_CONST_HOST,
      *     description="Current server"
+     *   ),
+     *   @OA\Server(
+     *     url="https://imperia-api.herokuapp.com",
+     *     description="Production server"
      *   )
      * ),
      * @OA\SecurityScheme(
