@@ -1928,6 +1928,13 @@
                 "operationId": "showOrderByBanquetId",
                 "parameters": [
                     {
+                        "name": "include",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/OrderIncludes"
+                        }
+                    },
+                    {
                         "name": "id",
                         "in": "path",
                         "description": "Id of the banquet.",

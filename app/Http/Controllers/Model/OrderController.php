@@ -117,6 +117,8 @@ class OrderController extends CrudController
      *   security={{"bearerAuth": {}}},
      *   tags={"orders", "banquets"},
      *
+     *  @OA\Parameter(name="include", in="query",
+     *     @OA\Schema(ref ="#/components/schemas/OrderIncludes")),
      *  @OA\Parameter(name="id", required=true, in="path", example=1, @OA\Schema(type="integer"),
      *     description="Id of the banquet."),
      *
