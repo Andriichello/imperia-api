@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('loggable_id');
             $table->string('loggable_type');
             $table->string('title', 25)->nullable();
-            $table->json('metadata');
+            $table->text('metadata');
             $table->timestamps();
         });
     }
