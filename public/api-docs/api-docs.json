@@ -2946,9 +2946,9 @@
                 "type": "object"
             },
             "BanquetIncludes": {
-                "description": "Coma-separated list of inluded relations.\n    Available relations: `creator`, `customer`, `comments`, `discounts`",
+                "description": "Coma-separated list of inluded relations.\n    Available relations: `creator`, `customer`, `comments`",
                 "type": "string",
-                "example": "creator,customer,comments,discounts"
+                "example": "creator,customer,comments"
             },
             "IndexBanquetResponse": {
                 "description": "Index banquets response object.",
@@ -4554,8 +4554,6 @@
                     "end_at",
                     "paid_at",
                     "advance_amount",
-                    "total",
-                    "discounted_total",
                     "order_id",
                     "creator_id",
                     "customer_id"
@@ -4623,14 +4621,6 @@
                     },
                     "advance_amount": {
                         "type": "integer",
-                        "example": 125.55
-                    },
-                    "total": {
-                        "type": "float",
-                        "example": 125.55
-                    },
-                    "discounted_total": {
-                        "type": "float",
                         "example": 125.55
                     },
                     "order_id": {
