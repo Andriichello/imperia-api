@@ -26,7 +26,7 @@ use Illuminate\Support\Collection;
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  *
- * @property float $total
+ * @property array $totals
  * @property Banquet $banquet
  * @property SpaceOrderField[]|Collection $spaces
  * @property TicketOrderField[]|Collection $tickets
@@ -94,7 +94,7 @@ class Order extends BaseModel implements
      * @var string[]
      */
     protected $appends = [
-        'total',
+        'totals',
     ];
 
     /**
@@ -148,18 +148,24 @@ class Order extends BaseModel implements
     }
 
     /**
-     * Accessor for total price of all items within the model.
+     * Accessor for total prices of ordered items per type.
      *
-     * @return float
+     * @return array = [
+     *   'all' => 'float',
+     *   'spaces' => 'float',
+     *   'tickets' => 'float',
+     *   'products' => 'float',
+     *   'services' => 'float'
+     * ]
      */
-    public function getTotalAttribute(): float
+    public function getTotalsAttribute(): array
     {
-        $total = $this->spaces->sum('total');
-        $total += $this->tickets->sum('total');
-        $total += $this->services->sum('total');
-        $total += $this->products->sum('total');
+        $totals = collect(['spaces', 'tickets', 'products', 'services'])
+            ->mapWithKeys(function ($relation) {
+                return [$relation => round($this->$relation->sum('total'), 2)];
+            });
 
-        return round($total, 2);
+        return $totals->put('all', round($totals->sum(), 2))->all();
     }
 
     /**

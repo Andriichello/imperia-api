@@ -32,7 +32,7 @@ class OrderResource extends JsonResource
         return [
             'id' => $this->id,
             'type' => $this->type,
-            'total' => $this->total,
+            'totals' => $this->totals,
             'banquet_id' => $this->banquet_id,
             'spaces' => new SpaceOrderFieldCollection($this->whenLoaded('spaces')),
             'tickets' => new TicketOrderFieldCollection($this->whenLoaded('tickets')),
@@ -45,13 +45,24 @@ class OrderResource extends JsonResource
 
     /**
      * @OA\Schema(
+     *   schema="OrderTotals",
+     *   description="Order totals resource object",
+     *   required = {"all", "spaces", "tickets", "services", "products"},
+     *   @OA\Property(property="all", type="float", example=40.04),
+     *   @OA\Property(property="spaces", type="float", example=10.01),
+     *   @OA\Property(property="tickets", type="float", example=10.01),
+     *   @OA\Property(property="services", type="float", example=10.01),
+     *   @OA\Property(property="products", type="float", example=10.01)
+     * ),
+     *
+     * @OA\Schema(
      *   schema="Order",
      *   description="Order resource object",
-     *   required = {"id", "type", "total", "banquet_id", "discounts_amount",
+     *   required = {"id", "type", "totals", "banquet_id", "discounts_amount",
      *     "discounts_percent", "discounted_total"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="orders"),
-     *   @OA\Property(property="total", type="float", example=125.55),
+     *   @OA\Property(property="totals", ref ="#/components/schemas/OrderTotals"),
      *   @OA\Property(property="discounts_amount", type="float", example=25.55),
      *   @OA\Property(property="discounts_percent", type="float", example=12.5),
      *   @OA\Property(property="discounted_total", type="float", example=100),

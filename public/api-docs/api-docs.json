@@ -5318,12 +5318,45 @@
                 },
                 "type": "object"
             },
+            "OrderTotals": {
+                "description": "Order totals resource object",
+                "required": [
+                    "all",
+                    "spaces",
+                    "tickets",
+                    "services",
+                    "products"
+                ],
+                "properties": {
+                    "all": {
+                        "type": "float",
+                        "example": 40.04
+                    },
+                    "spaces": {
+                        "type": "float",
+                        "example": 10.01
+                    },
+                    "tickets": {
+                        "type": "float",
+                        "example": 10.01
+                    },
+                    "services": {
+                        "type": "float",
+                        "example": 10.01
+                    },
+                    "products": {
+                        "type": "float",
+                        "example": 10.01
+                    }
+                },
+                "type": "object"
+            },
             "Order": {
                 "description": "Order resource object",
                 "required": [
                     "id",
                     "type",
-                    "total",
+                    "totals",
                     "banquet_id",
                     "discounts_amount",
                     "discounts_percent",
@@ -5338,9 +5371,8 @@
                         "type": "string",
                         "example": "orders"
                     },
-                    "total": {
-                        "type": "float",
-                        "example": 125.55
+                    "totals": {
+                        "$ref": "#/components/schemas/OrderTotals"
                     },
                     "discounts_amount": {
                         "type": "float",
