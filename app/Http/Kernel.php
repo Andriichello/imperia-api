@@ -49,7 +49,6 @@ class Kernel extends HttpKernel
         ConvertEmptyStringsToNull::class,
         /** Custom */
         HttpsProtocol::class,
-        HandleCors::class,
         ForceJsonOnApi::class,
     ];
 
