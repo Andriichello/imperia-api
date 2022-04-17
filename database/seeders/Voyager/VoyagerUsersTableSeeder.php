@@ -3,6 +3,7 @@
 namespace Database\Seeders\Voyager;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class VoyagerUsersTableSeeder extends Seeder
 {
@@ -25,7 +26,7 @@ class VoyagerUsersTableSeeder extends Seeder
                 'email' => 'admin@mail.com',
                 'avatar' => 'users/default.png',
                 'email_verified_at' => NULL,
-                'password' => '$2y$10$3Nl4Q3R/D8Rdr1ls6DVydePSDj5BszU.N2yYkZkF5lBbB1dKuMS6K',
+                'password' => Hash::make('pa$$w0rd'),
                 'remember_token' => NULL,
                 'settings' => '{"locale":"uk"}',
             ),
@@ -37,7 +38,7 @@ class VoyagerUsersTableSeeder extends Seeder
                 'email' => 'manager@mail.com',
                 'avatar' => 'users/default.png',
                 'email_verified_at' => NULL,
-                'password' => '$2y$10$dniFr3ootB/I0yOQ3GBkxeIR.YoQsl4pgf4lv/lNhrtlzWrJLTkpS',
+                'password' => Hash::make('pa$$w0rd'),
                 'remember_token' => NULL,
                 'settings' => '{"locale":"uk"}',
             ),
@@ -49,7 +50,7 @@ class VoyagerUsersTableSeeder extends Seeder
                 'email' => 'owner@mail.com',
                 'avatar' => 'users/default.png',
                 'email_verified_at' => NULL,
-                'password' => '$2y$10$lN3KcoXB7QSXIavLsc/RAuQmo8N74YposJW.ZWe6Mvh98Eip/6RW2',
+                'password' => Hash::make('pa$$w0rd'),
                 'remember_token' => NULL,
                 'settings' => '{"locale":"uk"}',
             ),
@@ -61,7 +62,7 @@ class VoyagerUsersTableSeeder extends Seeder
                 'email' => 'editor@mail.com',
                 'avatar' => 'users/default.png',
                 'email_verified_at' => NULL,
-                'password' => '$2y$10$LCp5CK4NRzOP2.XS1K35w.5TwNdbnAZxT7TNREqvzR9txuAxpVexO',
+                'password' => Hash::make('pa$$w0rd'),
                 'remember_token' => NULL,
                 'settings' => '{"locale":"uk"}',
             ),
