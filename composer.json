@@ -33,7 +33,7 @@
         "orangehill/iseed": "^3.0",
         "symfony/console": "^5.2",
         "symfony/validator": "^5.2",
-        "tcg/voyager": "master"
+        "tcg/voyager": "*"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
