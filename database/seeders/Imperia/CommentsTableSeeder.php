@@ -30,7 +30,7 @@ class CommentsTableSeeder extends Seeder
             ),
             1 =>
             array (
-                'id' => 1,
+                'id' => 2,
                 'text' => 'serve at 17:00',
                 'target_id' => 8,
                 'target_type' => 'products',
@@ -41,7 +41,7 @@ class CommentsTableSeeder extends Seeder
             ),
             2 =>
             array (
-                'id' => 2,
+                'id' => 3,
                 'text' => 'serve at 19:00',
                 'target_id' => 12,
                 'target_type' => 'products',
@@ -52,7 +52,7 @@ class CommentsTableSeeder extends Seeder
             ),
             3 =>
             array (
-                'id' => 2,
+                'id' => 4,
                 'text' => 'serve at 18:00',
                 'target_id' => 12,
                 'target_type' => 'products',
@@ -63,7 +63,7 @@ class CommentsTableSeeder extends Seeder
             ),
             4 =>
             array (
-                'id' => 3,
+                'id' => 5,
                 'text' => 'serve at 20:00',
                 'target_id' => 13,
                 'target_type' => 'products',
@@ -74,7 +74,7 @@ class CommentsTableSeeder extends Seeder
             ),
             5 =>
             array (
-                'id' => 3,
+                'id' => 6,
                 'text' => 'with additional cheese',
                 'target_id' => 12,
                 'target_type' => 'products',
@@ -85,7 +85,7 @@ class CommentsTableSeeder extends Seeder
             ),
             6 =>
             array (
-                'id' => 4,
+                'id' => 7,
                 'text' => 'with additional parsley',
                 'target_id' => 13,
                 'target_type' => 'products',
@@ -96,7 +96,7 @@ class CommentsTableSeeder extends Seeder
             ),
             7 =>
             array (
-                'id' => 4,
+                'id' => 8,
                 'text' => 'serve at 17:00',
                 'target_id' => 10,
                 'target_type' => 'products',
@@ -107,7 +107,7 @@ class CommentsTableSeeder extends Seeder
             ),
             8 =>
             array (
-                'id' => 5,
+                'id' => 9,
                 'text' => 'serve at 20:00',
                 'target_id' => 3,
                 'target_type' => 'services',
@@ -118,7 +118,7 @@ class CommentsTableSeeder extends Seeder
             ),
             9 =>
             array (
-                'id' => 5,
+                'id' => 10,
                 'text' => 'with additional caramel',
                 'target_id' => 10,
                 'target_type' => 'products',
@@ -129,7 +129,7 @@ class CommentsTableSeeder extends Seeder
             ),
             10 =>
             array (
-                'id' => 6,
+                'id' => 11,
                 'text' => 'replace melon with kiwi',
                 'target_id' => 3,
                 'target_type' => 'services',
@@ -140,7 +140,7 @@ class CommentsTableSeeder extends Seeder
             ),
             11 =>
             array (
-                'id' => 6,
+                'id' => 12,
                 'text' => 'start at 17:30',
                 'target_id' => 1,
                 'target_type' => 'services',
@@ -151,7 +151,7 @@ class CommentsTableSeeder extends Seeder
             ),
             12 =>
             array (
-                'id' => 7,
+                'id' => 13,
                 'text' => 'make sure clowns are not scary of children',
                 'target_id' => 1,
                 'target_type' => 'services',
