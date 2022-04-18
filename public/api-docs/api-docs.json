@@ -4771,15 +4771,17 @@
                         "type": "string",
                         "example": "Doe"
                     },
-                    "email": {
-                        "type": "integer",
-                        "example": "john.doe@email.com"
-                    },
                     "phone": {
                         "type": "string",
                         "example": "+380507777777"
                     },
+                    "email": {
+                        "nullable": "true",
+                        "type": "string",
+                        "example": "john.doe@email.com"
+                    },
                     "birthdate": {
+                        "nullable": "true",
                         "type": "string",
                         "format": "date",
                         "example": "1986-01-26"
