@@ -31,11 +31,11 @@ class UpdateCustomerRequest extends UpdateRequest
                 ],
                 'email' => [
                     'email',
-                    'unique:customers,email'
+                    'unique:customers,email,' . $this->id()
                 ],
                 'phone' => [
                     'regex:/(\+?[0-9]{1,2})?[0-9]{10,12}/',
-                    'unique:customers,phone'
+                    'unique:customers,phone,' . $this->id()
                 ],
                 'birthdate' => [
                     'date',
