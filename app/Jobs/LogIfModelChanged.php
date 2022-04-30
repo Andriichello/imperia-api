@@ -4,23 +4,13 @@ namespace App\Jobs;
 
 use App\Models\BaseModel;
 use App\Models\Interfaces\LoggableInterface;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
 
 /**
  * Class LogIfModelChanged.
  */
-class LogIfModelChanged implements ShouldQueue
+class LogIfModelChanged extends BaseJob
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
-
     /**
      * @var BaseModel|LoggableInterface
      */
