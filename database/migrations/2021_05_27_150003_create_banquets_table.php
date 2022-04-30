@@ -23,6 +23,7 @@ return new class extends Migration {
             $table->dateTime('start_at');
             $table->dateTime('end_at');
             $table->dateTime('paid_at')->nullable();
+            $table->text('metadata')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

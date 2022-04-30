@@ -31,12 +31,12 @@ use Illuminate\Support\Collection;
  * @property int|null $order_id
  * @property int $creator_id
  * @property int $customer_id
+ * @property string|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  *
- * @property float $total
- * @property float $discounted_total
+ * @property array|null $totals
  *
  * @property Order|null $order
  * @property User|null $creator
@@ -54,6 +54,15 @@ class Banquet extends BaseModel implements
     use SoftDeletableTrait;
     use CommentableTrait;
     use LoggableTrait;
+
+    /**
+     * The model's attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'metadata' => '{}',
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -145,23 +154,13 @@ class Banquet extends BaseModel implements
     }
 
     /**
-     * Accessor for total price of banquet.
+     * Accessor for the array of last stored order totals.
      *
-     * @return float
+     * @return array|null
      */
-    public function getTotalAttribute(): float
+    public function getTotalsAttribute(): ?array
     {
-        return data_get($this->order, 'total', 0.0);
-    }
-
-    /**
-     * Accessor for discounted total price of banquet.
-     *
-     * @return float
-     */
-    public function getDiscountedTotalAttribute(): float
-    {
-        return data_get($this->order, 'discounted_total', 0.0);
+        return $this->getFromJson('metadata', 'totals');
     }
 
     /**
