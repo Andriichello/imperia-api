@@ -2,6 +2,7 @@
 
 namespace App\Subscribers;
 
+use App\Jobs\StoreTotals;
 use App\Models\Orders\Order;
 
 /**
@@ -18,6 +19,6 @@ class OrderSubscriber extends BaseSubscriber
 
     public function saved(Order $order)
     {
-        //
+        dispatch(new StoreTotals($order));
     }
 }
