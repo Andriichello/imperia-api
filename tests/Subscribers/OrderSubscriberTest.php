@@ -35,9 +35,7 @@ class OrderSubscriberTest extends TestCase
 
         $this->app->instance(OrderSubscriber::class, $subscriber);
 
-        $order = Order::factory()
-            ->withBanquet($this->banquet)
-            ->create();
+        $order = Order::factory()->withBanquet($this->banquet)->create();
 
         $order->setToJson('metadata', 'test', 'value');
         $order->save();
