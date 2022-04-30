@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Traits\SoftDeletableTrait;
+use App\Traits\StaticMethodsAccess;
 use Carbon\Carbon;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -36,6 +37,7 @@ use Spatie\Permission\Traits\HasRoles;
  */
 class User extends Authenticatable implements SoftDeletableInterface
 {
+    use StaticMethodsAccess;
     use SoftDeletableTrait;
     use HasApiTokens;
     use Notifiable;

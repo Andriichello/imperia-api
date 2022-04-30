@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Interfaces\JsonFieldInterface;
 use App\Models\Traits\JsonFieldTrait;
+use App\Traits\StaticMethodsAccess;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
 class BaseModel extends Model implements JsonFieldInterface
 {
     use JsonFieldTrait;
+    use StaticMethodsAccess;
 
     /**
      * The accessors to append to the model's array form.
