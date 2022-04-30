@@ -18,6 +18,6 @@ class OrderSubscriber extends BaseSubscriber
 
     public function saved(Order $order)
     {
-        //;
+        //
     }
 }
