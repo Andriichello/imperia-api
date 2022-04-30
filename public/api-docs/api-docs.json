@@ -4554,6 +4554,7 @@
                     "end_at",
                     "paid_at",
                     "advance_amount",
+                    "totals",
                     "order_id",
                     "creator_id",
                     "customer_id"
@@ -4622,6 +4623,9 @@
                     "advance_amount": {
                         "type": "integer",
                         "example": 125.55
+                    },
+                    "totals": {
+                        "$ref": "#/components/schemas/OrderTotals"
                     },
                     "order_id": {
                         "nullable": "true",
