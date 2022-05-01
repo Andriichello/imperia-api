@@ -2,7 +2,6 @@
 
 namespace App\Subscribers;
 
-use App\Jobs\StoreTotals;
 use App\Models\Orders\Order;
 
 /**
@@ -13,12 +12,17 @@ class OrderSubscriber extends BaseSubscriber
     protected function map(): void
     {
         $this->map = [
-            Order::eloquentEvent('saved') => 'saved',
+            Order::eloquentEvent('deleted') => 'deleted',
         ];
     }
 
-    public function saved(Order $order)
+    public function deleted(Order $order)
     {
-        dispatch(new StoreTotals($order));
+        if (empty($order->banquet)) {
+            return;
+        }
+
+        $order->banquet->totals = null;
+        $order->banquet->save();
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Tests\Models\Traits;
 
-use App\Jobs\LogIfModelChanged;
+use App\Jobs\Morph\LogIfModelChanged;
 use App\Models\Morphs\Log;
 use Illuminate\Support\Facades\Bus;
 use Tests\Models\Stubs\LoggableStub;

@@ -27,17 +27,28 @@ class OrderSubscriberTest extends TestCase
      *
      * @throws Exception
      */
-    public function testSaved()
+    public function testDeleted()
     {
-        $subscriber = $this->createPartialMock(OrderSubscriber::class, ['saved']);
+        $this->banquet->totals = ['key' => 'value'];
+        $this->banquet->save();
+
+        $this->assertNotEmpty($this->banquet->fresh()->totals);
+
+        $order = Order::factory()->withBanquet($this->banquet)->create();
+        $order->forceDelete();
+
+        $this->assertEmpty($this->banquet->fresh()->totals);
+
+        $subscriber = $this->createPartialMock(OrderSubscriber::class, ['deleted']);
         $subscriber->expects($this->atLeast(2))
-            ->method('saved');
+            ->method('deleted');
 
         $this->app->instance(OrderSubscriber::class, $subscriber);
 
         $order = Order::factory()->withBanquet($this->banquet)->create();
+        $order->forceDelete();
 
-        $order->setToJson('metadata', 'test', 'value');
-        $order->save();
+        $order = Order::factory()->withBanquet($this->banquet)->create();
+        $order->delete();
     }
 }
