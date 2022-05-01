@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Jobs\Order\CalculateTotals;
 use App\Models\Orders\Order;
 use App\Models\Orders\ProductOrderField;
 use App\Models\Orders\ServiceOrderField;
@@ -36,6 +37,7 @@ class OrderRepository extends CrudRepository
             $this->createOrUpdateRelations($order, $attributes);
             $this->createComments($order, $attributes);
             $this->createDiscounts($order, $attributes);
+            CalculateTotals::dispatchSync($order);
 
             return $order->fresh();
         });
@@ -51,6 +53,7 @@ class OrderRepository extends CrudRepository
             $this->createOrUpdateRelations($model, $attributes);
             $this->updateComments($model, $attributes);
             $this->updateDiscounts($model, $attributes);
+            CalculateTotals::dispatchSync($model);
 
             return true;
         });
