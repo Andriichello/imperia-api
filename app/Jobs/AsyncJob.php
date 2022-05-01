@@ -11,7 +11,7 @@ use Illuminate\Queue\SerializesModels;
 /**
  * Class BaseJob.
  */
-abstract class BaseJob implements ShouldQueue
+abstract class AsyncJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;

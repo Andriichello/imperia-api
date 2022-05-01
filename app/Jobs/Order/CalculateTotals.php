@@ -1,14 +1,18 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Jobs\Order;
 
+use App\Jobs\AsyncJob;
 use App\Models\Orders\Order;
 
 /**
  * Class CalculateTotals.
  */
-class StoreTotals extends BaseJob
+class CalculateTotals extends AsyncJob
 {
+    /**
+     * @var Order
+     */
     protected Order $order;
 
     /**
@@ -28,10 +32,10 @@ class StoreTotals extends BaseJob
      */
     public function handle(): void
     {
-        $banquet = $this->order->banquet;
-        if ($banquet->canBeEdited()) {
-            $banquet->setToJson('metadata', 'totals', $this->order->totals);
-            $banquet->save();
-        }
+        $this->order->totals = $this->order->calculateTotals();
+        $this->order->save();
+
+        $this->order->banquet->totals = $this->order->totals;
+        $this->order->banquet->save();
     }
 }

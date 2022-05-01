@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Jobs\Morph;
 
+use App\Jobs\AsyncJob;
 use App\Models\BaseModel;
 use App\Models\Interfaces\LoggableInterface;
 use Illuminate\Support\Arr;
@@ -9,7 +10,7 @@ use Illuminate\Support\Arr;
 /**
  * Class LogIfModelChanged.
  */
-class LogIfModelChanged extends BaseJob
+class LogIfModelChanged extends AsyncJob
 {
     /**
      * @var BaseModel|LoggableInterface

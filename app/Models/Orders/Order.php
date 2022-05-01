@@ -15,6 +15,7 @@ use Database\Factories\Orders\OrderFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 /**
@@ -26,7 +27,7 @@ use Illuminate\Support\Collection;
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  *
- * @property array $totals
+ * @property array|null $totals
  * @property Banquet $banquet
  * @property SpaceOrderField[]|Collection $spaces
  * @property TicketOrderField[]|Collection $tickets
@@ -148,24 +149,78 @@ class Order extends BaseModel implements
     }
 
     /**
-     * Accessor for total prices of ordered items per type.
+     * Calculate total prices of ordered items per type.
      *
      * @return array = [
      *   'all' => 'float',
      *   'spaces' => 'float',
      *   'tickets' => 'float',
      *   'products' => 'float',
-     *   'services' => 'float'
+     *   'services' => 'float',
+     *   'timestamp' => 'int'
      * ]
      */
-    public function getTotalsAttribute(): array
+    public function calculateTotals(): array
     {
         $totals = collect(['spaces', 'tickets', 'products', 'services'])
             ->mapWithKeys(function ($relation) {
                 return [$relation => round($this->$relation->sum('total'), 2)];
             });
+        $totals->put('all', round($totals->sum(), 2));
+        $totals->put('timestamp', time());
 
-        return $totals->put('all', round($totals->sum(), 2))->all();
+        return $totals->all();
+    }
+
+    /**
+     * Determine if given and stored totals are different.
+     *
+     * @param ?array $totals
+     * @param bool $timestamp
+     *
+     * @return bool
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     */
+    public function areTotalsDifferent(?array $totals, bool $timestamp = false): bool
+    {
+        $new = $totals ?? [];
+        $old = $this->totals ?? [];
+
+        if (!$timestamp) {
+            Arr::forget($new, 'timestamp');
+            Arr::forget($old, 'timestamp');
+        }
+
+        return $new !== $old;
+    }
+
+    /**
+     * Accessor for total prices of ordered items per type.
+     *
+     * @return ?array = [
+     *   'all' => 'float',
+     *   'spaces' => 'float',
+     *   'tickets' => 'float',
+     *   'products' => 'float',
+     *   'services' => 'float',
+     *   'timestamp' => 'int'
+     * ]
+     */
+    public function getTotalsAttribute(): ?array
+    {
+        return $this->getFromJson('metadata', 'totals');
+    }
+
+    /**
+     * Mutator for total prices of ordered items per type.
+     *
+     * @param array|null $totals
+     *
+     * @return void
+     */
+    public function setTotalsAttribute(?array $totals): void
+    {
+        $this->setToJson('metadata', 'totals', $totals);
     }
 
     /**
