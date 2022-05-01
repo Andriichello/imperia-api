@@ -156,11 +156,37 @@ class Banquet extends BaseModel implements
     /**
      * Accessor for the array of last stored order totals.
      *
-     * @return array|null
+     * @return ?array = [
+     *   'all' => 'float',
+     *   'spaces' => 'float',
+     *   'tickets' => 'float',
+     *   'products' => 'float',
+     *   'services' => 'float',
+     *   'timestamp' => 'int'
+     * ]
      */
     public function getTotalsAttribute(): ?array
     {
         return $this->getFromJson('metadata', 'totals');
+    }
+
+    /**
+     * Mutator for the array of last stored order totals.
+     *
+     * @param ?array $totals = [
+     *   'all' => 'float',
+     *   'spaces' => 'float',
+     *   'tickets' => 'float',
+     *   'products' => 'float',
+     *   'services' => 'float',
+     *   'timestamp' => 'int'
+     * ]
+     *
+     * @return void
+     */
+    public function setTotalsAttribute(?array $totals): void
+    {
+        $this->setToJson('metadata', 'totals', $totals);
     }
 
     /**
