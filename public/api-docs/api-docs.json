@@ -5360,10 +5360,7 @@
                     "id",
                     "type",
                     "totals",
-                    "banquet_id",
-                    "discounts_amount",
-                    "discounts_percent",
-                    "discounted_total"
+                    "banquet_id"
                 ],
                 "properties": {
                     "id": {
@@ -5376,18 +5373,6 @@
                     },
                     "totals": {
                         "$ref": "#/components/schemas/OrderTotals"
-                    },
-                    "discounts_amount": {
-                        "type": "float",
-                        "example": 25.55
-                    },
-                    "discounts_percent": {
-                        "type": "float",
-                        "example": 12.5
-                    },
-                    "discounted_total": {
-                        "type": "float",
-                        "example": 100
                     },
                     "banquet_id": {
                         "type": "integer",
