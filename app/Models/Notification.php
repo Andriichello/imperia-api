@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Queries\NotificationQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\NotificationFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 
@@ -15,9 +16,13 @@ use Illuminate\Database\Query\Builder as DatabaseBuilder;
  * @property int|null $sender_id
  * @property int $receiver_id
  * @property string $channel
- * @property string|null $data
+ * @property array|null $data
+ * @property string|null $subject
+ * @property string|null $body
+ * @property array|null $payload
  * @property Carbon $send_at
  * @property Carbon|null $sent_at
+ * @property Carbon|null $seen_at
  *
  * @property User $sender
  * @property User|null $receiver
@@ -27,6 +32,8 @@ use Illuminate\Database\Query\Builder as DatabaseBuilder;
  */
 class Notification extends BaseModel
 {
+    use HasFactory;
+
     /**
      * Indicates if the model should be timestamped.
      *
@@ -64,6 +71,7 @@ class Notification extends BaseModel
     protected $casts = [
         'send_at' => 'datetime',
         'sent_at' => 'datetime',
+        'seen_at' => 'datetime',
     ];
 
     /**
@@ -103,6 +111,82 @@ class Notification extends BaseModel
     public function receiver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'receiver_id', 'id');
+    }
+
+    /**
+     * Accessor for the data attribute.
+     *
+     * @return ?array
+     */
+    public function getDataAttribute(): ?array
+    {
+        return $this->getJson('data');
+    }
+
+    /**
+     * Accessor for the data's subject attribute.
+     *
+     * @return ?string
+     */
+    public function getSubjectAttribute(): ?string
+    {
+        return $this->getFromJson('data', 'subject');
+    }
+
+    /**
+     * Mutator for the data's subject attribute.
+     *
+     * @param ?string $subject
+     *
+     * @return void
+     */
+    public function setSubjectAttribute(?string $subject): void
+    {
+        $this->setToJson('data', 'subject', $subject);
+    }
+
+    /**
+     * Accessor for the data's body attribute.
+     *
+     * @return ?string
+     */
+    public function getBodyAttribute(): ?string
+    {
+        return $this->getFromJson('data', 'body');
+    }
+
+    /**
+     * Mutator for the data's body attribute.
+     *
+     * @param ?string $body
+     *
+     * @return void
+     */
+    public function setBodyAttribute(?string $body): void
+    {
+        $this->setToJson('data', 'body', $body);
+    }
+
+    /**
+     * Accessor for the data's payload attribute.
+     *
+     * @return ?array
+     */
+    public function getPayloadAttribute(): ?array
+    {
+        return $this->getFromJson('data', 'payload');
+    }
+
+    /**
+     * Mutator for the data's payload attribute.
+     *
+     * @param ?array $payload
+     *
+     * @return void
+     */
+    public function setPayloadAttribute(?array $payload): void
+    {
+        $this->setToJson('data', 'payload', $payload);
     }
 
     /**

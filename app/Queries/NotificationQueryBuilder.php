@@ -15,16 +15,29 @@ use Illuminate\Database\Query\Builder as DatabaseBuilder;
 class NotificationQueryBuilder extends EloquentBuilder
 {
     /**
+     * Extract ids from given users.
+     *
+     * @param User|int ...$users
+     *
+     * @return array
+     */
+    protected function extractUserIds(User|int ...$users): array
+    {
+        $closure = fn(User|int $user) => is_int($user) ? $user : $user->id;
+
+        return array_map($closure, $users);
+    }
+
+    /**
      * Only notifications that given user send.
      *
-     * @param User|int $user
+     * @param User|int ...$users
      *
      * @return static
      */
-    public function fromUser(User|int $user): static
+    public function fromUsers(User|int ...$users): static
     {
-        $userId = is_int($user) ? $user : $user->id;
-        $this->where('sender_id', $userId);
+        $this->whereIn('sender_id', $this->extractUserIds(...$users));
 
         return $this;
     }
@@ -42,16 +55,27 @@ class NotificationQueryBuilder extends EloquentBuilder
     }
 
     /**
-     * Only notifications that given user receive.
+     * Only notifications that is not from system.
      *
-     * @param User|int $user
+     * @return $this
+     */
+    public function notFromSystem(): static
+    {
+        $this->whereNotNull('sender_id');
+
+        return $this;
+    }
+
+    /**
+     * Only notifications that given users receive.
+     *
+     * @param User|int ...$users
      *
      * @return static
      */
-    public function toUser(User|int $user): static
+    public function toUsers(User|int ...$users): static
     {
-        $userId = is_int($user) ? $user : $user->id;
-        $this->where('receiver_id', $userId);
+        $this->whereIn('receiver_id', $this->extractUserIds(...$users));
 
         return $this;
     }
@@ -81,14 +105,67 @@ class NotificationQueryBuilder extends EloquentBuilder
     }
 
     /**
-     * Only notifications that should be sent next.
+     * Only notifications that should already be sent.
      *
      * @return $this
      */
-    public function nextToBeSent(): static
+    public function sendNow(): static
     {
         $this->wasNotSent()
             ->where('send_at', '<=', now());
+
+        return $this;
+    }
+
+    /**
+     * Only notifications that should be sent later.
+     *
+     * @return $this
+     */
+    public function sendLater(): static
+    {
+        $this->wasNotSent()
+            ->where('send_at', '>', now());
+
+        return $this;
+    }
+
+    /**
+     * Only notifications that was seen.
+     *
+     * @return $this
+     */
+    public function wasSeen(): static
+    {
+        $this->whereNotNull('seen_at');
+
+        return $this;
+    }
+
+    /**
+     * Only notifications that wasn't seen.
+     *
+     * @return $this
+     */
+    public function wasNotSeen(): static
+    {
+        $this->whereNull('seen_at');
+
+        return $this;
+    }
+
+    /**
+     * Only notifications in given channels.
+     *
+     * @param string ...$channels
+     *
+     * @return $this
+     */
+    public function inChannels(string ...$channels): static
+    {
+        if (empty($channels) === false) {
+            $this->whereIn('channel', $channels);
+        }
 
         return $this;
     }
