@@ -32,6 +32,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Carbon|null $deleted_at
  *
  * @property Banquet[]|Collection $banquets
+ * @property Notification[]|Collection $inbounds
+ * @property Notification[]|Collection $outbounds
  *
  * @method static UserFactory factory(...$parameters)
  */
@@ -91,6 +93,8 @@ class User extends Authenticatable implements SoftDeletableInterface
      */
     protected $relations = [
         'banquets',
+        'inbounds',
+        'outbounds',
     ];
 
     /**
@@ -101,6 +105,26 @@ class User extends Authenticatable implements SoftDeletableInterface
     public function banquets(): HasMany
     {
         return $this->hasMany(Banquet::class, 'creator_id', 'id');
+    }
+
+    /**
+     * Notifications, which user have received or should receive.
+     *
+     * @return HasMany
+     */
+    public function inbounds(): HasMany
+    {
+        return $this->hasMany(Notification::class, 'receiver_id', 'id');
+    }
+
+    /**
+     * Notifications, which user have sent or scheduled to be sent.
+     *
+     * @return HasMany
+     */
+    public function outbounds(): HasMany
+    {
+        return $this->hasMany(Notification::class, 'sender_id', 'id');
     }
 
     /**
