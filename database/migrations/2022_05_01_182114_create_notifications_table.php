@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-new class extends Migration {
+return new class extends Migration {
     /**
      * Run the migrations.
      *
@@ -20,6 +20,7 @@ new class extends Migration {
             $table->text('data')->nullable();
             $table->timestamp('send_at');
             $table->timestamp('sent_at')->nullable();
+            $table->timestamp('seen_at')->nullable();
 
             $table->foreign('sender_id')
                 ->references('id')->on('users')
