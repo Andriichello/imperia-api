@@ -5321,6 +5321,51 @@
                 },
                 "type": "object"
             },
+            "Notification": {
+                "description": "Notification resource object",
+                "required": [
+                    "id",
+                    "type",
+                    "sender_id",
+                    "receiver_id",
+                    "subject",
+                    "body",
+                    "payload"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "menus"
+                    },
+                    "subject": {
+                        "type": "string",
+                        "example": "Order status change"
+                    },
+                    "body": {
+                        "nullable": "true",
+                        "type": "string",
+                        "example": "Your order was accepted"
+                    },
+                    "payload": {
+                        "nullable": "true",
+                        "type": "object"
+                    },
+                    "sender_id": {
+                        "nullable": "true",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "receiver_id": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
             "OrderTotals": {
                 "description": "Order totals resource object",
                 "required": [
