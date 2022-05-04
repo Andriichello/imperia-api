@@ -63,9 +63,12 @@ abstract class CrudController extends Controller
     /**
      * Get eloquent query builder instance.
      *
+     * @param CrudRequest $request
+     *
      * @return EloquentBuilder
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    protected function builder(): EloquentBuilder
+    protected function builder(CrudRequest $request): EloquentBuilder
     {
         return $this->repository->builder();
     }
@@ -79,7 +82,7 @@ abstract class CrudController extends Controller
      */
     protected function spatieBuilder(CrudRequest $request): SpatieBuilder
     {
-        return $request->spatieBuilder($this->builder());
+        return $request->spatieBuilder($this->builder($request));
     }
 
     /**

@@ -2,17 +2,13 @@
 
 namespace App\Queries;
 
-use App\Models\Orders\Order;
-use App\Models\Space;
+use App\Enums\UserRole;
 use App\Models\User;
-use DateTimeInterface;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Database\Query\Builder as DatabaseBuilder;
 
 /**
  * Class NotificationQueryBuilder.
  */
-class NotificationQueryBuilder extends EloquentBuilder
+class NotificationQueryBuilder extends BaseQueryBuilder
 {
     /**
      * Extract ids from given users.
@@ -78,6 +74,27 @@ class NotificationQueryBuilder extends EloquentBuilder
         $this->whereIn('receiver_id', $this->extractUserIds(...$users));
 
         return $this;
+    }
+
+    /**
+     * Only notifications that are available for given user.
+     *
+     * @param User|int $user
+     *
+     * @return static
+     */
+    public function forUser(User|int $user): static
+    {
+        $closure = function (NotificationQueryBuilder $builder) use ($user) {
+            $builder->fromUsers($user)
+                ->orWhereWrapped(
+                    function (NotificationQueryBuilder $builder) use ($user) {
+                        $builder->toUsers($user)->wasSent();
+                    }
+                );
+        };
+
+        return $this->whereWrapped($closure);
     }
 
     /**

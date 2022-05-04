@@ -136,6 +136,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                         'icon' => null,
                         'resources' => [
                             \App\Nova\User::class,
+                            \App\Nova\Notification::class,
                             \App\Nova\Role::class,
                         ]
                     ]),

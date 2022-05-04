@@ -2,12 +2,19 @@
 
 namespace App\Http\Controllers\Model;
 
+use App\Enums\NotificationChannel;
+use App\Enums\UserRole;
 use App\Http\Controllers\CrudController;
+use App\Http\Requests\CrudRequest;
 use App\Http\Requests\Notification\IndexNotificationRequest;
 use App\Http\Requests\Notification\ShowNotificationRequest;
 use App\Http\Resources\Notification\NotificationCollection;
 use App\Http\Resources\Notification\NotificationResource;
+use App\Queries\NotificationQueryBuilder;
 use App\Repositories\NotificationRepository;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Query\Builder;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class NotificationController.
@@ -38,6 +45,22 @@ class NotificationController extends CrudController
         parent::__construct($repository);
         $this->actions['index'] = IndexNotificationRequest::class;
         $this->actions['show'] = ShowNotificationRequest::class;
+    }
+
+    /**
+     * @param CrudRequest $request
+     *
+     * @return EloquentBuilder
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    protected function builder(CrudRequest $request): EloquentBuilder
+    {
+        /** @var NotificationQueryBuilder $builder */
+        $builder = parent::builder($request);
+
+        $channels = [NotificationChannel::Default];
+        return $builder->inChannels(...$channels)
+            ->forUser($request->user());
     }
 
     /**

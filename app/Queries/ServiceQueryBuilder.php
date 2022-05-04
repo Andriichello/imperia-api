@@ -3,12 +3,11 @@
 namespace App\Queries;
 
 use App\Models\Orders\Order;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 /**
  * Class ServiceQueryBuilder.
  */
-class ServiceQueryBuilder extends EloquentBuilder
+class ServiceQueryBuilder extends BaseQueryBuilder
 {
     use CategorizableQueryBuilder;
 
