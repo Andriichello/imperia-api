@@ -9,6 +9,7 @@ use App\Http\Controllers\Model\CommentController;
 use App\Http\Controllers\Model\CustomerController;
 use App\Http\Controllers\Model\FamilyMemberController;
 use App\Http\Controllers\Model\MenuController;
+use App\Http\Controllers\Model\NotificationController;
 use App\Http\Controllers\Model\OrderController;
 use App\Http\Controllers\Model\ProductController;
 use App\Http\Controllers\Model\ServiceController;
@@ -40,6 +41,10 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
     Route::apiResource('users', UserController::class)
         ->only('index', 'show', 'store', 'update', 'destroy')
         ->parameters(['users' => 'id']);
+
+    Route::apiResource('notifications', NotificationController::class)
+        ->only('index', 'show')
+        ->parameters(['notifications' => 'id']);
 
     Route::post('/customers/{id}/restore', [CustomerController::class, 'restore'])->name('customers.restore');
     Route::apiResource('customers', CustomerController::class)
