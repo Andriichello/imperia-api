@@ -16,7 +16,7 @@ use Illuminate\Database\Query\Builder as DatabaseBuilder;
  * @property int|null $sender_id
  * @property int $receiver_id
  * @property string $channel
- * @property array|null $data
+ * @property string|null $data
  * @property string|null $subject
  * @property string|null $body
  * @property array|null $payload
@@ -111,16 +111,6 @@ class Notification extends BaseModel
     public function receiver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'receiver_id', 'id');
-    }
-
-    /**
-     * Accessor for the data attribute.
-     *
-     * @return ?array
-     */
-    public function getDataAttribute(): ?array
-    {
-        return $this->getJson('data');
     }
 
     /**
