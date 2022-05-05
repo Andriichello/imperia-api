@@ -68,7 +68,6 @@ class NotificationController extends CrudController
             ->forUser($request->user());
     }
 
-
     /**
      * Show notification by id. If user, who makes a request is a
      * receiver of the notification then it is marked as seen.
@@ -82,7 +81,7 @@ class NotificationController extends CrudController
         $notification = $request->getNotification();
 
         if ($request->isByReceiver()) {
-            $notification->seen_at = $request->get('seen_at');
+            $notification->seen_at = now();
             $notification->save();
         }
 

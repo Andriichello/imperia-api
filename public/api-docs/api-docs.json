@@ -5759,9 +5759,11 @@
                     "type",
                     "sender_id",
                     "receiver_id",
+                    "channel",
                     "subject",
-                    "body",
-                    "payload"
+                    "send_at",
+                    "sent_at",
+                    "seen_at"
                 ],
                 "properties": {
                     "id": {
@@ -5770,7 +5772,7 @@
                     },
                     "type": {
                         "type": "string",
-                        "example": "menus"
+                        "example": "notifications"
                     },
                     "channel": {
                         "type": "string",
@@ -5797,6 +5799,23 @@
                     "receiver_id": {
                         "type": "integer",
                         "example": 1
+                    },
+                    "send_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2022-01-12 23:00:00"
+                    },
+                    "sent_at": {
+                        "nullable": "true",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2022-01-12 23:00:00"
+                    },
+                    "seen_at": {
+                        "nullable": "true",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "null"
                     }
                 },
                 "type": "object"

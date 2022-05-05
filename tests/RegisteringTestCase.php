@@ -118,4 +118,16 @@ abstract class RegisteringTestCase extends TestCase
         Sanctum::actingAs($user, ['*']);
         return $user;
     }
+
+    /**
+     * Set the environment so that given user makes a request.
+     *
+     * @param User $user
+     *
+     * @return void
+     */
+    public function actAs(User $user): void
+    {
+        Sanctum::actingAs($user, ['*']);
+    }
 }
