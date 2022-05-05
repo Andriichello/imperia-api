@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
@@ -11,6 +12,25 @@ use Illuminate\Routing\Redirector;
  */
 class BaseRequest extends FormRequest
 {
+    /**
+     * Message, which should be displayed on failed authorization attempt.
+     *
+     * @var string
+     */
+    protected string $message = 'You are not authorized to perform this request.';
+
+    /**
+     * Handle a failed authorization attempt.
+     *
+     * @return void
+     *
+     * @throws AuthorizationException
+     */
+    protected function failedAuthorization(): void
+    {
+        throw new AuthorizationException($this->message);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *

@@ -26,6 +26,19 @@ class CrudRequest extends BaseRequest
     }
 
     /**
+     * Get the id of user making the request.
+     *
+     * @param mixed $guard
+     *
+     * @return ?int
+     */
+    public function userId(mixed $guard = null): ?int
+    {
+        $user = parent::user($guard);
+        return $user ? $user->id : null;
+    }
+
+    /**
      * Determine if user, who makes the request is an admin.
      *
      * @return bool

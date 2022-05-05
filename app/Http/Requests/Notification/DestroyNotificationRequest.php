@@ -1,16 +1,18 @@
 <?php
 
-namespace App\Http\Requests\User;
+namespace App\Http\Requests\Notification;
 
 use App\Enums\UserRole;
 use App\Http\Requests\Crud\DestroyRequest;
+use App\Models\Notification;
+use App\Models\Orders\Order;
 use App\Models\User;
 use App\Repositories\UserRepository;
 
 /**
- * Class DestroyUserRequest.
+ * Class DestroyNotificationRequest.
  */
-class DestroyUserRequest extends DestroyRequest
+class DestroyNotificationRequest extends DestroyRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -34,15 +36,14 @@ class DestroyUserRequest extends DestroyRequest
      */
     public function authorize(): bool
     {
-        /** @var User $user */
-        $user = $this->user();
-        /** @var User $target */
-        $target = (new UserRepository())->find($this->id());
-
-        if ($user->id === $target->id) {
+        if ($this->isByAdmin()) {
             return true;
         }
 
-        return $user->hasRole(UserRole::Admin) && !$target->hasRole(UserRole::Admin);
+        /** @var Notification $notification */
+        $notification = Notification::query()
+            ->findOrFail($this->id());
+
+        return $notification->sender_id === $this->userId();
     }
 }
