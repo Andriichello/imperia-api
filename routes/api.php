@@ -43,7 +43,7 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
         ->parameters(['users' => 'id']);
 
     Route::apiResource('notifications', NotificationController::class)
-        ->only('index', 'show')
+        ->only('index', 'show', 'store', 'update', 'destroy')
         ->parameters(['notifications' => 'id']);
 
     Route::post('/customers/{id}/restore', [CustomerController::class, 'restore'])->name('customers.restore');
