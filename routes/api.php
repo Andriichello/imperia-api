@@ -42,6 +42,7 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
         ->only('index', 'show', 'store', 'update', 'destroy')
         ->parameters(['users' => 'id']);
 
+    Route::get('/notifications/poll', [NotificationController::class, 'poll'])->name('notifications.poll');
     Route::apiResource('notifications', NotificationController::class)
         ->only('index', 'show', 'store', 'update', 'destroy')
         ->parameters(['notifications' => 'id']);

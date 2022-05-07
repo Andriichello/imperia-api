@@ -50,6 +50,12 @@ class NotificationResource extends JsonResource
 
     /**
      * @OA\Schema(
+     *   schema="NotificationsPoll",
+     *   description="Notifications poll resource object",
+     *   required = {"count"},
+     *   @OA\Property(property="count", type="integer", example=1),
+     * )
+     * @OA\Schema(
      *   schema="Notification",
      *   description="Notification resource object",
      *   required = {"id", "type", "sender_id", "receiver_id", "channel", "subject",

@@ -7,7 +7,7 @@ use App\Http\Controllers\CrudController;
 use App\Http\Requests\CrudRequest;
 use App\Http\Requests\Notification\DestroyNotificationRequest;
 use App\Http\Requests\Notification\IndexNotificationRequest;
-use App\Http\Requests\Notification\SeeNotificationRequest;
+use App\Http\Requests\Notification\PollNotificationsRequest;
 use App\Http\Requests\Notification\ShowNotificationRequest;
 use App\Http\Requests\Notification\StoreNotificationRequest;
 use App\Http\Requests\Notification\UpdateNotificationRequest;
@@ -17,6 +17,7 @@ use App\Http\Responses\ApiResponse;
 use App\Queries\NotificationQueryBuilder;
 use App\Repositories\NotificationRepository;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class NotificationController.
@@ -55,10 +56,10 @@ class NotificationController extends CrudController
     /**
      * @param CrudRequest $request
      *
-     * @return EloquentBuilder
+     * @return NotificationQueryBuilder
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    protected function builder(CrudRequest $request): EloquentBuilder
+    protected function builder(CrudRequest $request): NotificationQueryBuilder
     {
         /** @var NotificationQueryBuilder $builder */
         $builder = parent::builder($request);
@@ -86,6 +87,34 @@ class NotificationController extends CrudController
         }
 
         return $this->asResourceResponse($notification);
+    }
+
+    /**
+     * Poll notifications count.
+     *
+     * @param PollNotificationsRequest $request
+     *
+     * @return ApiResponse
+     */
+    protected function poll(PollNotificationsRequest $request): ApiResponse
+    {
+        $builder = $this->builder($request);
+
+        if ($request->has('seen')) {
+            $request->boolean('seen') ? $builder->wasSeen() : $builder->wasNotSeen();
+        }
+        if ($request->has('system')) {
+            $request->boolean('system') ? $builder->fromSystem() : $builder->notFromSystem();
+        }
+        if ($request->has('sender_id')) {
+            $builder->fromUsers((int)$request->get('sender_id'));
+        }
+
+        $data = [
+            'count' => $builder->count(),
+        ];
+
+        return ApiResponse::make(compact('data'));
     }
 
     /**
@@ -124,6 +153,33 @@ class NotificationController extends CrudController
      *     response=200,
      *     description="Show notification response object.",
      *     @OA\JsonContent(ref ="#/components/schemas/ShowNotificationResponse")
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     description="Unauthenticated.",
+     *     @OA\JsonContent(ref ="#/components/schemas/UnauthenticatedResponse")
+     *   )
+     * ),
+     * @OA\Get(
+     *   path="/api/notifications/poll",
+     *   summary="Poll notifications.",
+     *   operationId="pollNotifications",
+     *   security={{"bearerAuth": {}}},
+     *   tags={"notifications"},
+     *
+     *   @OA\Parameter(name="seen", in="query", required=false,
+     *     @OA\Schema(type="boolean", example="false"),
+     *     description="Optional, false by default (only unseen notifications)."),
+     *   @OA\Parameter(name="system", in="query", required=false,
+     *     @OA\Schema(type="boolean", example="false"),
+     *     description="Optional, if true, then filters to notifications sent by system."),
+     *   @OA\Parameter(name="sender_id", in="query", required=false,
+     *     @OA\Schema(type="integer", example=1)),
+     *
+     *   @OA\Response(
+     *     response=200,
+     *     description="Poll notifications response object.",
+     *     @OA\JsonContent(ref ="#/components/schemas/PollNotificationsResponse")
      *   ),
      *   @OA\Response(
      *     response=401,
@@ -213,6 +269,13 @@ class NotificationController extends CrudController
      *   required = {"data", "meta", "message"},
      *   @OA\Property(property="data", type="array", @OA\Items(ref ="#/components/schemas/Notification")),
      *   @OA\Property(property="meta", ref ="#/components/schemas/PaginationMeta"),
+     *   @OA\Property(property="message", type="string", example="Success"),
+     * ),
+     * @OA\Schema(
+     *   schema="PollNotificationsResponse",
+     *   description="Poll notifications response object.",
+     *   required = {"data", "meta", "message"},
+     *   @OA\Property(property="data", ref ="#/components/schemas/NotificationsPoll"),
      *   @OA\Property(property="message", type="string", example="Success"),
      * ),
      * @OA\Schema(

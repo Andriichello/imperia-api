@@ -26,7 +26,7 @@ class CategoriesFilter implements Filter
      * @return void
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(Builder $query, mixed $value, string $property)
+    public function __invoke(Builder $query, mixed $value, string $property): void
     {
         /** @var BaseModel $model */
         $model = $query->getModel();
