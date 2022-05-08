@@ -37,7 +37,7 @@ class UpdateUserRequest extends UpdateRequest
             return true;
         }
 
-        return $user->hasRole(UserRole::Admin) && !$target->hasRole(UserRole::Admin);
+        return $user->isAdmin() && !$target->isAdmin();
     }
 
     /**

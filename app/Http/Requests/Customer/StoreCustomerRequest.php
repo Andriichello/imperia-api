@@ -32,12 +32,12 @@ class StoreCustomerRequest extends StoreRequest
                     'min:2',
                 ],
                 'email' => [
-                    'nullable',
+                    'required',
                     'email',
                     'unique:customers,email'
                 ],
                 'phone' => [
-                    'required',
+                    'nullable',
                     'regex:/(\+?[0-9]{1,2})?[0-9]{10,12}/',
                     'unique:customers,phone'
                 ],
@@ -57,8 +57,8 @@ class StoreCustomerRequest extends StoreRequest
      *   required={"name", "surname", "email", "phone", "birthdate"},
      *   @OA\Property(property="name", type="string", example="John"),
      *   @OA\Property(property="surname", type="string", example="Forrester"),
-     *   @OA\Property(property="email", type="string", nullable="true", example="ben.forrester@email.com"),
-     *   @OA\Property(property="phone", type="string", example="+380507777777",
+     *   @OA\Property(property="email", type="string", example="ben.forrester@email.com"),
+     *   @OA\Property(property="phone", type="string", nullable="true", example="+380507777777",
      *     description="Phone number may start with a plus and must contain only digits 0-9."),
      *   @OA\Property(property="birthdate", type="string", nullable="true", format="date", example="1992-10-16"),
      * )

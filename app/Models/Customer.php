@@ -11,22 +11,25 @@ use App\Models\Traits\SoftDeletableTrait;
 use Carbon\Carbon;
 use Database\Factories\CustomerFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
 
 /**
  * Class Customer.
  *
+ * @property int|null $user_id
  * @property string $name
  * @property string $surname
  * @property string $fullName
  * @property string $phone
- * @property string|null $email
+ * @property string $email
  * @property Carbon|null $birthdate
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  *
+ * @property User|null $user
  * @property FamilyMember[]|Collection $familyMembers
  *
  * @method static CustomerFactory factory(...$parameters)
@@ -69,6 +72,7 @@ class Customer extends BaseModel implements
      * @var array
      */
     protected $relations = [
+        'user',
         'familyMembers',
     ];
 
@@ -81,6 +85,16 @@ class Customer extends BaseModel implements
         'email',
         'phone',
     ];
+
+    /**
+     * Related user.
+     *
+     * @return BelongsTo
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 
     /**
      * Related family members.

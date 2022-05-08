@@ -46,7 +46,8 @@ abstract class RegisteringTestCase extends TestCase
      * @var array
      */
     protected array $registerFormData = [
-        'name' => 'Test Testers',
+        'name' => 'Test',
+        'surname' => 'Testers',
         'email' => 'test@email.com',
         'password' => 'pa$$w0rd',
     ];
@@ -61,7 +62,8 @@ abstract class RegisteringTestCase extends TestCase
         parent::setUp();
 
         $this->registerFormData = [
-            'name' => 'Test Testers',
+            'name' => 'Test',
+            'surname' => 'Testers',
             'email' => 'test@email.com',
             'password' => 'pa$$w0rd',
         ];

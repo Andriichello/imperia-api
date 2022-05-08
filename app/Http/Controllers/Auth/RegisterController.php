@@ -2,18 +2,45 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\User\UserResource;
 use App\Http\Responses\ApiResponse;
+use App\Repositories\CustomerRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Class RegisterController.
  */
 class RegisterController extends Controller
 {
+    /**
+     * @var UserRepository
+     */
+    protected UserRepository $userRepository;
+
+    /**
+     * @var CustomerRepository
+     */
+    protected CustomerRepository $customerRepository;
+
+    /**
+     * RegisterController contstructor.
+     *
+     * @param UserRepository $userRepository
+     * @param CustomerRepository $customerRepository
+     */
+    public function __construct(
+        UserRepository $userRepository,
+        CustomerRepository $customerRepository
+    ) {
+        $this->userRepository = $userRepository;
+        $this->customerRepository = $customerRepository;
+    }
+
     /**
      * Register user.
      *
@@ -41,13 +68,26 @@ class RegisterController extends Controller
      * )
      *
      * @param RegisterRequest $request
-     * @param UserRepository $repository
      *
      * @return JsonResponse
      */
-    public function __invoke(RegisterRequest $request, UserRepository $repository): JsonResponse
+    public function __invoke(RegisterRequest $request): JsonResponse
     {
-        $user = $repository->create($request->validated());
+        $user = DB::transaction(function () use ($request) {
+            $data = $request->validated();
+            $role = data_get($data, 'role', UserRole::Customer);
+
+            $user = $this->userRepository->create($data, $role);
+
+            if ($role === UserRole::Customer) {
+                $customer = $this->customerRepository->create($data);
+                $customer->user_id = $user->id;
+                $customer->save();
+            }
+
+            return $user;
+        });
+
         $token = $user->createToken($request->userAgent());
 
         $data = [

@@ -5,6 +5,8 @@ namespace App\Repositories;
 use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 /**
@@ -19,14 +21,21 @@ class UserRepository extends CrudRepository
      */
     protected Model|string $model = User::class;
 
-    public function create(array $attributes, string $role = UserRole::Admin): User
+    public function create(array $attributes, string $role = UserRole::Customer): User
     {
-        /** @var User $user */
-        $user = parent::create($attributes);
-        $user->setRememberToken(Str::random(10));
-        $user->save();
+        if (Arr::has($attributes, ['name', 'surname'])) {
+            $attributes['name'] = $attributes['name'] . ' ' . $attributes['surname'];
+        }
 
-        $user->assignRole($role);
-        return $user;
+        return DB::transaction(function () use ($attributes, $role) {
+            /** @var User $user */
+            $user = parent::create($attributes);
+            $user->setRememberToken(Str::random(10));
+            $user->save();
+
+            $user->assignRole($role);
+
+            return $user;
+        });
     }
 }

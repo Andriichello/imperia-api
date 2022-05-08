@@ -4350,19 +4350,33 @@
                 "description": "Register user request",
                 "required": [
                     "name",
+                    "surnane",
                     "email",
                     "password"
                 ],
                 "properties": {
                     "name": {
                         "type": "string",
-                        "example": "John Doe"
+                        "example": "John"
+                    },
+                    "surname": {
+                        "type": "string",
+                        "example": "Doe"
                     },
                     "email": {
                         "type": "string",
                         "example": "john.doe@email.com"
                     },
+                    "phone": {
+                        "nullable": "true",
+                        "type": "string",
+                        "example": "null"
+                    },
                     "password": {
+                        "type": "string",
+                        "example": "pa$$w0rd"
+                    },
+                    "password_confirmation": {
                         "type": "string",
                         "example": "pa$$w0rd"
                     }
@@ -4607,11 +4621,11 @@
                         "example": "Forrester"
                     },
                     "email": {
-                        "nullable": "true",
                         "type": "string",
                         "example": "ben.forrester@email.com"
                     },
                     "phone": {
+                        "nullable": "true",
                         "description": "Phone number may start with a plus and must contain only digits 0-9.",
                         "type": "string",
                         "example": "+380507777777"
@@ -6388,6 +6402,7 @@
                 "required": [
                     "id",
                     "type",
+                    "customer_id",
                     "name",
                     "email",
                     "email_verified_at"
@@ -6400,6 +6415,11 @@
                     "type": {
                         "type": "string",
                         "example": "users"
+                    },
+                    "customer_id": {
+                        "nullable": "true",
+                        "type": "integer",
+                        "example": "null"
                     },
                     "name": {
                         "type": "string",

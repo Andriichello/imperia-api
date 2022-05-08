@@ -84,10 +84,7 @@ class Banquet extends Resource
                 ->creationRules('required', 'min:0'),
 
             Number::make('Total')
-                ->exceptOnForms()
-                ->readonly(),
-
-            Number::make('Discounted Total')
+                ->resolveUsing(fn() => data_get($this->totals, 'all'))
                 ->exceptOnForms()
                 ->readonly(),
 
@@ -140,7 +137,6 @@ class Banquet extends Resource
             'description' => false,
             'advance_amount' => true,
             'total' => true,
-            'discounted_total' => true,
             'start_at' => true,
             'end_at' => true,
             'comments' => false,

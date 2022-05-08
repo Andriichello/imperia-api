@@ -59,6 +59,7 @@ class Notification extends Resource
                 ->nullable(),
 
             Code::make('Payload')
+                ->resolveUsing(fn() => json_encode($this->payload, JSON_PRETTY_PRINT))
                 ->autoHeight()
                 ->rules(['nullable', 'json'])
                 ->json(),

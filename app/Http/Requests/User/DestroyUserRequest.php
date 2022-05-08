@@ -43,6 +43,6 @@ class DestroyUserRequest extends DestroyRequest
             return true;
         }
 
-        return $user->hasRole(UserRole::Admin) && !$target->hasRole(UserRole::Admin);
+        return $user->isAdmin() && !$target->isAdmin();
     }
 }

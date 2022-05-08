@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\UserRole;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Traits\SoftDeletableTrait;
 use App\Traits\StaticMethodsAccess;
@@ -9,6 +10,7 @@ use Carbon\Carbon;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
@@ -20,6 +22,7 @@ use Spatie\Permission\Traits\HasRoles;
  * Class User.
  *
  * @property int $id
+ * @property int|null $customer_id
  * @property string $type
  * @property string $name
  * @property string $email
@@ -31,6 +34,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  *
+ * @property Customer|null $customer
  * @property Banquet[]|Collection $banquets
  * @property Notification[]|Collection $inbounds
  * @property Notification[]|Collection $outbounds
@@ -92,10 +96,21 @@ class User extends Authenticatable implements SoftDeletableInterface
      * @var array
      */
     protected $relations = [
+        'customer',
         'banquets',
         'inbounds',
         'outbounds',
     ];
+
+    /**
+     * Customer associated with the model.
+     *
+     * @return HasOne
+     */
+    public function customer(): HasOne
+    {
+        return $this->hasOne(Customer::class, 'user_id', 'id');
+    }
 
     /**
      * Banquets associated with the model.
@@ -150,6 +165,16 @@ class User extends Authenticatable implements SoftDeletableInterface
     }
 
     /**
+     * Accessor for the related customer id.
+     *
+     * @return int|null
+     */
+    public function getOrderIdAttribute(): ?int
+    {
+        return $this->customer()->pluck('id')->first();
+    }
+
+    /**
      * Determines if given password is the same as current one.
      *
      * @param string $password
@@ -159,5 +184,36 @@ class User extends Authenticatable implements SoftDeletableInterface
     public function isCurrentPassword(string $password): bool
     {
         return Hash::check($password, $this->getOriginal('password'));
+    }
+
+    /**
+     * Determine if user is a customer.
+     *
+     * @return bool
+     */
+    public function isAdmin(): bool
+    {
+        return $this->hasRole(UserRole::Admin);
+    }
+
+    /**
+     * Determine if user is a customer.
+     *
+     * @return bool
+     */
+    public function isManager(): bool
+    {
+        return $this->hasRole(UserRole::Manager);
+    }
+
+    /**
+     * Determine if user is a customer.
+     *
+     * @return bool
+     */
+    public function isCustomer(): bool
+    {
+        return $this->hasRole(UserRole::Customer)
+            && $this->customer()->exists();
     }
 }

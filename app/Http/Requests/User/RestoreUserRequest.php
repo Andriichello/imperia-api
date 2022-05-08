@@ -17,7 +17,7 @@ class RestoreUserRequest extends RestoreRequest
      */
     public function authorize(): bool
     {
-        return $this->user()->hasRole(UserRole::Admin);
+        return $this->isByAdmin();
     }
 
     /**

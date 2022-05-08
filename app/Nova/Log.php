@@ -57,7 +57,7 @@ class Log extends Resource
                 ->exceptOnForms(),
 
             Code::make('Metadata')
-                ->height(50)
+                ->autoHeight()
                 ->readonly()
                 ->json(),
 

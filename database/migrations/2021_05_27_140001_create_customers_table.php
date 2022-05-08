@@ -15,13 +15,18 @@ return new class extends Migration
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id')->nullable()
+                ->unique('customers_unique_USER_ID');
             $table->string('name', 50);
             $table->string('surname', 50);
-            $table->string('phone', 25)->unique('customers_unique_PHONE');
-            $table->string('email', 50)->nullable();
+            $table->string('phone', 25)->nullable()
+                ->unique('customers_unique_PHONE');
+            $table->string('email', 75)->unique('customers_unique_EMAIL');
             $table->date('birthdate')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 

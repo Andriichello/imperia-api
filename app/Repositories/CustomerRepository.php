@@ -20,7 +20,7 @@ class CustomerRepository extends CrudRepository
      */
     protected Model|string $model = Customer::class;
 
-    public function create(array $attributes): Model
+    public function create(array $attributes): Customer
     {
         /** @var Customer $model */
         $model = parent::create($attributes);

@@ -65,18 +65,6 @@ class TicketOrderField extends Resource
                 ->exceptOnForms()
                 ->readonly(),
 
-            Number::make('Discounted Total')
-                ->exceptOnForms()
-                ->readonly(),
-
-            Number::make('Discounts Amount')
-                ->exceptOnForms()
-                ->readonly(),
-
-            Number::make('Discounts Percent')
-                ->exceptOnForms()
-                ->readonly(),
-
             MorphToMany::make('Discounts', 'discounts', Discount::class),
 
             MorphMany::make('Comments', 'comments', Comment::class),
@@ -107,9 +95,6 @@ class TicketOrderField extends Resource
             'ticket' => true,
             'amount' => true,
             'discounts' => false,
-            'discounted_total' => true,
-            'discounts_amount' => true,
-            'discounts_percent' => true,
             'comments' => false,
             'created_at' => false,
             'updated_at' => false,

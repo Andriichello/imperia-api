@@ -2,6 +2,7 @@
 
 namespace Tests\Http\Controllers\Auth;
 
+use App\Models\User;
 use Tests\RegisteringTestCase;
 
 /**
@@ -19,7 +20,8 @@ class RegisterControllerTest extends RegisteringTestCase
         $response = $this->postJson(
             '/api/register',
             [
-                'name' => 'Test Testers',
+                'name' => $name = 'Test',
+                'surname' => $surname = 'Testers',
                 'email' => 'test@email.com',
                 'password' => 'pa$$w0rd',
             ],
@@ -33,6 +35,17 @@ class RegisterControllerTest extends RegisteringTestCase
             ],
             'message'
         ]);
+
+        /** @var User $user */
+        $user = User::query()->findOrFail($response->json('data.user.id'));
+
+        $this->assertNotEmpty($user->customer);
+
+        $this->assertEquals($name . ' ' . $surname, $user->name);
+        $this->assertEquals($name . ' ' . $surname, $user->customer->fullName);
+
+        $this->assertStringContainsString($user->customer->name, $name);
+        $this->assertStringContainsString($user->customer->surname, $surname);
     }
 
     /**

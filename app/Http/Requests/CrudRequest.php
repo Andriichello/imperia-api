@@ -45,7 +45,7 @@ class CrudRequest extends BaseRequest
      */
     public function isByAdmin(): bool
     {
-        return $this->user()->hasRole(UserRole::Admin);
+        return $this->user()->isAdmin();
     }
 
     /**
@@ -55,6 +55,16 @@ class CrudRequest extends BaseRequest
      */
     public function isByManager(): bool
     {
-        return $this->user()->hasRole(UserRole::Manager);
+        return $this->user()->isManager();
+    }
+
+    /**
+     * Determine if user, who makes the request is a customer.
+     *
+     * @return bool
+     */
+    public function isByCustomer(): bool
+    {
+        return $this->user()->isCustomer();
     }
 }

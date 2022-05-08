@@ -70,18 +70,6 @@ class ServiceOrderField extends Resource
                 ->exceptOnForms()
                 ->readonly(),
 
-            Number::make('Discounted Total')
-                ->exceptOnForms()
-                ->readonly(),
-
-            Number::make('Discounts Amount')
-                ->exceptOnForms()
-                ->readonly(),
-
-            Number::make('Discounts Percent')
-                ->exceptOnForms()
-                ->readonly(),
-
             MorphToMany::make('Discounts', 'discounts', Discount::class),
 
             MorphMany::make('Comments', 'comments', Comment::class),
@@ -113,9 +101,6 @@ class ServiceOrderField extends Resource
             'amount' => true,
             'duration' => true,
             'discounts' => false,
-            'discounted_total' => true,
-            'discounts_amount' => true,
-            'discounts_percent' => true,
             'comments' => false,
             'created_at' => false,
             'updated_at' => false,

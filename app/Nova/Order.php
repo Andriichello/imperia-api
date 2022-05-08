@@ -58,22 +58,14 @@ class Order extends Resource
             BelongsTo::make('Banquet'),
 
             Code::make('Metadata')
-                ->height(50)
-                ->json(),
+                ->resolveUsing(fn() => json_encode(json_decode($this->metadata), JSON_PRETTY_PRINT))
+                ->autoHeight()
+                ->json()
+                ->exceptOnForms()
+                ->readonly(),
 
             Number::make('Total')
-                ->exceptOnForms()
-                ->readonly(),
-
-            Number::make('Discounted Total')
-                ->exceptOnForms()
-                ->readonly(),
-
-            Number::make('Discounts Amount')
-                ->exceptOnForms()
-                ->readonly(),
-
-            Number::make('Discounts Percent')
+                ->resolveUsing(fn() => data_get($this->totals, 'all'))
                 ->exceptOnForms()
                 ->readonly(),
 
@@ -114,9 +106,6 @@ class Order extends Resource
             'banquet' => true,
             'metadata' => true,
             'total' => true,
-            'discounted_total' => true,
-            'discounts_amount' => true,
-            'discounts_percent' => true,
             'spaces' => false,
             'tickets' => false,
             'products' => false,

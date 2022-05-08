@@ -21,18 +21,35 @@ class RegisterRequest extends BaseRequest
                 'required',
                 'string',
                 'min:2',
-                'max:100',
+                'max:50',
+                "regex:/^[\p{L} ,.'-]+$/u"
+            ],
+            'surname' => [
+                'required',
+                'string',
+                'min:2',
+                'max:50',
+                "regex:/^[\p{L} ,.'-]+$/u"
             ],
             'email' => [
                 'required',
                 'email',
                 'unique:users',
             ],
+            'phone' => [
+                'nullable',
+                'regex:/(\+?[0-9]{1,2})?[0-9]{10,12}/',
+                'unique:customers,phone'
+            ],
             'password' => [
                 'required',
                 'string',
                 'min:8',
                 'max:255',
+            ],
+            'password_confirmation' => [
+                'sometimes',
+                'same:password',
             ],
         ];
     }
@@ -41,10 +58,13 @@ class RegisterRequest extends BaseRequest
      * @OA\Schema(
      *   schema="RegisterRequest",
      *   description="Register user request",
-     *   required={"name", "email", "password"},
-     *   @OA\Property(property="name", type="string", example="John Doe"),
+     *   required={"name", "surnane", "email", "password"},
+     *   @OA\Property(property="name", type="string", example="John"),
+     *   @OA\Property(property="surname", type="string", example="Doe"),
      *   @OA\Property(property="email", type="string", example="john.doe@email.com"),
-     *   @OA\Property(property="password", type="string", example="pa$$w0rd")
+     *   @OA\Property(property="phone", type="string", nullable="true", example="null"),
+     *   @OA\Property(property="password", type="string", example="pa$$w0rd"),
+     *   @OA\Property(property="password_confirmation", type="string", example="pa$$w0rd"),
      * )
      */
 }

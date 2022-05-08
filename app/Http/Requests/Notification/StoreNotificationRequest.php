@@ -55,7 +55,7 @@ class StoreNotificationRequest extends ShowRequest
         );
     }
 
-    protected function prepareForValidation()
+    protected function prepareForValidation(): void
     {
         $this->mergeIfMissing([
             'send_at' => now(),

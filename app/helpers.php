@@ -55,3 +55,23 @@ if (!function_exists('slugClass')) {
         return Str::plural(strtolower($slug));
     }
 }
+
+if (!function_exists('splitName')) {
+
+    /**
+     * Get first and last name from the full name
+     *
+     * @param string $name
+     *
+     * @return array
+     */
+    function splitName(string $name): array
+    {
+        $name = trim($name);
+
+        $lastName = !str_contains($name, ' ') ? null : preg_replace('#.*\s([\w-]*)$#', '$1', $name);
+        $firstName = trim(preg_replace('#' . preg_quote($lastName, '#') . '#', '', $name));
+
+        return [$firstName, $lastName];
+    }
+}
