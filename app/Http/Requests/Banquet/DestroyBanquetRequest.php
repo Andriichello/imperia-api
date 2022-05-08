@@ -18,7 +18,7 @@ class DestroyBanquetRequest extends DestroyRequest
      *
      * @throws AuthorizationException
      */
-    protected function failedAuthorization()
+    protected function failedAuthorization(): void
     {
         $message = 'Banquet can\'t be deleted,'
             . ' because it\'s in a on-editable state.';

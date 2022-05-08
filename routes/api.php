@@ -16,6 +16,7 @@ use App\Http\Controllers\Model\ServiceController;
 use App\Http\Controllers\Model\SpaceController;
 use App\Http\Controllers\Model\TicketController;
 use App\Http\Controllers\Model\UserController;
+use App\Http\Controllers\Other\InvoiceController;
 use App\Http\Responses\ApiResponse;
 use Illuminate\Support\Facades\Route;
 
@@ -95,6 +96,9 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
     Route::apiResource('banquets', BanquetController::class)
         ->only('index', 'show', 'store', 'update', 'destroy')
         ->parameters(['banquets' => 'id']);
+
+    Route::get('/banquets/{id}/invoice', [InvoiceController::class, 'view'])->name('banquets.invoice');
+    Route::get('/banquets/{id}/invoice/pdf', [InvoiceController::class, 'pdf'])->name('banquets.invoice-pdf');
 });
 
 Route::fallback(function () {

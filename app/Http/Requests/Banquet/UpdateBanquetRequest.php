@@ -22,7 +22,7 @@ class UpdateBanquetRequest extends UpdateRequest
      *
      * @throws AuthorizationException
      */
-    protected function failedAuthorization()
+    protected function failedAuthorization(): void
     {
         $message = 'Banquet can\'t be updated,'
             . ' because it\'s in a non-editable state.';

@@ -18,7 +18,7 @@ class UpdateOrderRequest extends UpdateRequest
      *
      * @throws AuthorizationException
      */
-    protected function failedAuthorization()
+    protected function failedAuthorization(): void
     {
         $message = 'Order can\'t be updated, because banquet'
             . ' to which it belongs is in non-editable state.';

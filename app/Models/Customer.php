@@ -19,6 +19,7 @@ use Illuminate\Support\Collection;
  *
  * @property string $name
  * @property string $surname
+ * @property string $fullName
  * @property string $phone
  * @property string|null $email
  * @property Carbon|null $birthdate
@@ -89,5 +90,15 @@ class Customer extends BaseModel implements
     public function familyMembers(): HasMany
     {
         return $this->hasMany(FamilyMember::class, 'relative_id', 'id');
+    }
+
+    /**
+     * Accessor for the customer's full name.
+     *
+     * @return string
+     */
+    public function getFullNameAttribute(): string
+    {
+        return "$this->name $this->surname";
     }
 }
