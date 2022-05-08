@@ -3,27 +3,15 @@
 namespace App\Http\Requests\Banquet;
 
 use App\Http\Requests\Crud\DestroyRequest;
+use App\Http\Requests\Traits\GuardsBanquet;
 use App\Models\Banquet;
-use Illuminate\Auth\Access\AuthorizationException;
 
 /**
  * Class DestroyBanquetRequest.
  */
 class DestroyBanquetRequest extends DestroyRequest
 {
-    /**
-     * Handle a failed authorization attempt.
-     *
-     * @return void
-     *
-     * @throws AuthorizationException
-     */
-    protected function failedAuthorization(): void
-    {
-        $message = 'Banquet can\'t be deleted,'
-            . ' because it\'s in a on-editable state.';
-        throw new AuthorizationException($message);
-    }
+    use GuardsBanquet;
 
     /**
      * Determine if the user is authorized to make this request.
@@ -35,7 +23,8 @@ class DestroyBanquetRequest extends DestroyRequest
         /** @var Banquet $banquet */
         $banquet = Banquet::query()
             ->findOrFail($this->id());
-        return $banquet->canBeEdited();
+
+        return $this->canEdit($this->user(), $banquet);
     }
 
     /**

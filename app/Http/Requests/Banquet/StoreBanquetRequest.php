@@ -73,6 +73,16 @@ class StoreBanquetRequest extends StoreRequest
         );
     }
 
+    protected function prepareForValidation(): void
+    {
+        $user = $this->user();
+        $this->mergeIfMissing(['creator_id' => $user->id]);
+
+        if ($user->isCustomer()) {
+            $this->merge(['customer_id' => $user->customer_id]);
+        }
+    }
+
     /**
      * @OA\Schema(
      *   schema="StoreBanquetRequest",

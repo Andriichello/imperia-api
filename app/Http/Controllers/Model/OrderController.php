@@ -60,6 +60,7 @@ class OrderController extends CrudController
         $model = $this->spatieBuilder($request)->withTrashed()
             ->where('banquet_id', $banquetId)
             ->firstOrFail();
+
         return $this->asResourceResponse($model);
     }
 
