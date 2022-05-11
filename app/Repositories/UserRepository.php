@@ -29,7 +29,7 @@ class UserRepository extends CrudRepository
 
         /** @var User $user */
         $user = parent::create($attributes);
-        $user->setRememberToken(Str::random(10));
+        $user->setRememberToken(Str::random(64));
         $user->save();
 
         $user->assignRole($role);

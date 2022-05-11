@@ -17,6 +17,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class User.
@@ -151,6 +152,7 @@ class User extends Authenticatable implements SoftDeletableInterface
      */
     public function setPasswordAttribute(string $password)
     {
+        (new ConsoleOutput())->writeln('setting password: ' . $password);
         $this->attributes['password'] = Hash::make($password);
     }
 
@@ -169,7 +171,7 @@ class User extends Authenticatable implements SoftDeletableInterface
      *
      * @return int|null
      */
-    public function getOrderIdAttribute(): ?int
+    public function getCustomerIdAttribute(): ?int
     {
         return $this->customer()->pluck('id')->first();
     }

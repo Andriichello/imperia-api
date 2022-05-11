@@ -67,7 +67,10 @@ class User extends Resource
             Password::make('Password')
                 ->onlyOnForms()
                 ->creationRules('required', 'string', 'min:8')
-                ->updateRules('nullable', 'string', 'min:8'),
+                ->updateRules('nullable', 'string', 'min:8')
+                ->fillUsing(function($request, $model, $attribute, $requestAttribute) {
+                    $model->password = ($request[$requestAttribute]);
+                }),
 
             HasMany::make('Roles'),
 
