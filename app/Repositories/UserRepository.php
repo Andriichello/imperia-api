@@ -27,15 +27,13 @@ class UserRepository extends CrudRepository
             $attributes['name'] = $attributes['name'] . ' ' . $attributes['surname'];
         }
 
-        return DB::transaction(function () use ($attributes, $role) {
-            /** @var User $user */
-            $user = parent::create($attributes);
-            $user->setRememberToken(Str::random(10));
-            $user->save();
+        /** @var User $user */
+        $user = parent::create($attributes);
+        $user->setRememberToken(Str::random(10));
+        $user->save();
 
-            $user->assignRole($role);
+        $user->assignRole($role);
 
-            return $user;
-        });
+        return $user;
     }
 }
