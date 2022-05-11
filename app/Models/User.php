@@ -5,19 +5,20 @@ namespace App\Models;
 use App\Enums\UserRole;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Traits\SoftDeletableTrait;
+use App\Queries\UserQueryBuilder;
 use App\Traits\StaticMethodsAccess;
 use Carbon\Carbon;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class User.
@@ -40,6 +41,7 @@ use Symfony\Component\Console\Output\ConsoleOutput;
  * @property Notification[]|Collection $inbounds
  * @property Notification[]|Collection $outbounds
  *
+ * @method static UserQueryBuilder query()
  * @method static UserFactory factory(...$parameters)
  */
 class User extends Authenticatable implements SoftDeletableInterface
@@ -152,7 +154,6 @@ class User extends Authenticatable implements SoftDeletableInterface
      */
     public function setPasswordAttribute(string $password)
     {
-        (new ConsoleOutput())->writeln('setting password: ' . $password);
         $this->attributes['password'] = Hash::make($password);
     }
 
@@ -217,5 +218,15 @@ class User extends Authenticatable implements SoftDeletableInterface
     {
         return $this->hasRole(UserRole::Customer)
             && $this->customer()->exists();
+    }
+
+    /**
+     * @param DatabaseBuilder $query
+     *
+     * @return UserQueryBuilder
+     */
+    public function newEloquentBuilder($query): UserQueryBuilder
+    {
+        return new UserQueryBuilder($query);
     }
 }
