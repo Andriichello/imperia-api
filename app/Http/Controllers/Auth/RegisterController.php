@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Enums\UserRole;
+use App\Events\User\Registered;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\User\UserResource;
@@ -10,7 +10,6 @@ use App\Http\Responses\ApiResponse;
 use App\Repositories\CustomerRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Class RegisterController.
@@ -73,22 +72,9 @@ class RegisterController extends Controller
      */
     public function __invoke(RegisterRequest $request): JsonResponse
     {
-        $user = DB::transaction(function () use ($request) {
-            $data = $request->validated();
-            $role = data_get($data, 'role', UserRole::Customer);
-
-            $user = $this->userRepository->create($data, $role);
-
-            if ($role === UserRole::Customer) {
-                $customer = $this->customerRepository->create($data);
-                $customer->user_id = $user->id;
-                $customer->save();
-            }
-
-            return $user;
-        });
-
+        $user = $this->userRepository->create($request->validated());
         $token = $user->createToken($request->userAgent());
+        event(new Registered($user, $request->get('phone')));
 
         $data = [
             'token' => $token->plainTextToken,
