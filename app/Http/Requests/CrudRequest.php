@@ -14,57 +14,12 @@ class CrudRequest extends BaseRequest
     use WithSpatie;
 
     /**
-     * Get the user making the request.
+     * Get ability, which should be checked for the request.
      *
-     * @param mixed $guard
-     *
-     * @return User
+     * @return string|null
      */
-    public function user(mixed $guard = null): User
+    public function getAbility(): ?string
     {
-        return parent::user($guard);
-    }
-
-    /**
-     * Get the id of user making the request.
-     *
-     * @param mixed $guard
-     *
-     * @return ?int
-     */
-    public function userId(mixed $guard = null): ?int
-    {
-        $user = parent::user($guard);
-        return $user ? $user->id : null;
-    }
-
-    /**
-     * Determine if user, who makes the request is an admin.
-     *
-     * @return bool
-     */
-    public function isByAdmin(): bool
-    {
-        return $this->user()->isAdmin();
-    }
-
-    /**
-     * Determine if user, who makes the request is a manager.
-     *
-     * @return bool
-     */
-    public function isByManager(): bool
-    {
-        return $this->user()->isManager();
-    }
-
-    /**
-     * Determine if user, who makes the request is a customer.
-     *
-     * @return bool
-     */
-    public function isByCustomer(): bool
-    {
-        return $this->user()->isCustomer();
+        return null;
     }
 }

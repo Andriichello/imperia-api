@@ -3,12 +3,13 @@
 namespace App\Http\Requests\Crud;
 
 use App\Http\Requests\CrudRequest;
+use App\Http\Requests\Interfaces\WithTargetInterface;
 use App\Http\Requests\Traits\WithTarget;
 
 /**
  * Class DestroyRequest.
  */
-class DestroyRequest extends CrudRequest
+class DestroyRequest extends CrudRequest implements WithTargetInterface
 {
     use WithTarget;
 
@@ -37,6 +38,16 @@ class DestroyRequest extends CrudRequest
     public function force(): bool
     {
         return (bool) $this->get('force', false);
+    }
+
+    /**
+     * Get ability, which should be checked for the request.
+     *
+     * @return string|null
+     */
+    public function getAbility(): ?string
+    {
+        return $this->force() ? 'forceDelete' : 'delete';
     }
 
     /**

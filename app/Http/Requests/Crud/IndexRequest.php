@@ -25,6 +25,16 @@ class IndexRequest extends CrudRequest
     }
 
     /**
+     * Get ability, which should be checked for the request.
+     *
+     * @return string|null
+     */
+    public function getAbility(): ?string
+    {
+        return 'viewAny';
+    }
+
+    /**
      * @OA\Schema(
      *   schema="DeletedParameter",
      *   description="Query parameter, which determines if soft-deleted records should be
