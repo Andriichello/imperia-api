@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Model;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\CrudController;
+use App\Http\Requests\CrudRequest;
 use App\Http\Requests\User\DestroyUserRequest;
 use App\Http\Requests\User\IndexUserRequest;
 use App\Http\Requests\User\MeUserRequest;
@@ -12,6 +14,10 @@ use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Resources\User\UserCollection;
 use App\Http\Resources\User\UserResource;
+use App\Models\User;
+use App\Policies\CrudPolicyInterface;
+use App\Policies\UserPolicy;
+use App\Queries\UserQueryBuilder;
 use App\Repositories\UserRepository;
 use Illuminate\Http\JsonResponse;
 
@@ -56,6 +62,35 @@ class UserController extends CrudController
     public function __construct(UserRepository $repository)
     {
         parent::__construct($repository);
+        $this->policy = new UserPolicy();
+    }
+
+    /**
+     * Get eloquent query builder instance.
+     *
+     * @param CrudRequest $request
+     *
+     * @return UserQueryBuilder
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    protected function builder(CrudRequest $request): UserQueryBuilder
+    {
+        $user = $request->user();
+        /** @var UserQueryBuilder $builder */
+        $builder = parent::builder($request);
+
+        if ($user->isManager()) {
+            return $builder->whereWrapped(function (UserQueryBuilder $query) use ($user) {
+                $query->onlyRoles(UserRole::Customer)
+                    ->orWhere('user_id', $user->id);
+            });
+        }
+
+        if ($user->isCustomer()) {
+            return $builder->where('user_id', $user->id);
+        }
+
+        return $builder;
     }
 
     /**

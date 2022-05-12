@@ -11,6 +11,8 @@ use App\Http\Requests\Crud\UpdateRequest;
 use App\Http\Requests\CrudRequest;
 use App\Http\Responses\ApiResponse;
 use App\Models\BaseModel;
+use App\Policies\CrudPolicy;
+use App\Policies\CrudPolicyInterface;
 use App\Repositories\Interfaces\CrudRepositoryInterface;
 use BadMethodCallException;
 use Exception;
@@ -42,6 +44,13 @@ abstract class CrudController extends Controller
         'destroy' => DestroyRequest::class,
         'restore' => RestoreRequest::class,
     ];
+
+    /**
+     * Controller's model crud repository.
+     *
+     * @var CrudPolicyInterface
+     */
+    protected CrudPolicyInterface $policy;
 
     /**
      * Controller's model crud repository.
@@ -140,10 +149,27 @@ abstract class CrudController extends Controller
         $actionRequest = $this->getActionRequest($action);
         $specificRequest = $actionRequest::createFrom($request);
 
+        $this->runPolicy($specificRequest);
         $specificRequest->validateResolved();
 
         $method = 'handle' . ucfirst($action);
         return $this->$method($specificRequest);
+    }
+
+    /**
+     * Check if user is authorized to perform request.
+     *
+     * @param CrudRequest $request
+     *
+     * @return void
+     * @throws AuthorizationException
+     */
+    protected function runPolicy(CrudRequest $request): void
+    {
+        $result = empty($this->policy) || $this->policy->determine($request);
+        if ($result === false) {
+            throw new AuthorizationException();
+        }
     }
 
     /**

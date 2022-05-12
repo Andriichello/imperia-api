@@ -210,6 +210,16 @@ class User extends Authenticatable implements SoftDeletableInterface
     }
 
     /**
+     * Determine if user is a stuff member.
+     *
+     * @return bool
+     */
+    public function isStuff(): bool
+    {
+        return $this->hasAnyRole(UserRole::Admin, UserRole::Manager);
+    }
+
+    /**
      * Determine if user is a customer.
      *
      * @return bool

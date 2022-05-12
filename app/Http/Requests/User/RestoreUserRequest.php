@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\User;
 
-use App\Enums\UserRole;
 use App\Http\Requests\Crud\RestoreRequest;
 
 /**
@@ -10,16 +9,6 @@ use App\Http\Requests\Crud\RestoreRequest;
  */
 class RestoreUserRequest extends RestoreRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize(): bool
-    {
-        return $this->isByAdmin();
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *

@@ -235,18 +235,18 @@ class UserControllerTest extends RegisteringTestCase
      */
     public function testRestoreSoftDeletedUser()
     {
-        $admin = $this->register(
+        $manager = $this->register(
             [
                 'name' => 'Tony Brown',
                 'email' => 'tony.brown@email.com',
                 'password' => 'pa$$w0rd',
             ],
-            UserRole::Admin,
+            UserRole::Manager,
         );
-        $admin->delete();
+        $manager->delete();
 
         $response = $this->postJson(
-            route('api.users.restore', ['id' => $admin->id]),
+            route('api.users.restore', ['id' => $manager->id]),
         );
 
         $response->assertOk();
@@ -254,6 +254,6 @@ class UserControllerTest extends RegisteringTestCase
             'message',
         ]);
 
-        $this->assertEmpty($admin->fresh()->deleted_at);
+        $this->assertEmpty($manager->fresh()->deleted_at);
     }
 }
