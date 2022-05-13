@@ -128,6 +128,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                             \App\Nova\Discount::class,
                             \App\Nova\Comment::class,
                             \App\Nova\Log::class,
+                            \App\Nova\Notification::class,
                         ]
                     ]),
                     TopLevelResource::make([
@@ -137,7 +138,6 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                         'resources' => [
                             \App\Nova\User::class,
                             \App\Nova\Role::class,
-                            \App\Nova\Notification::class,
                         ]
                     ]),
                 ],
