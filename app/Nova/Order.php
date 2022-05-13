@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use App\Nova\Actions\CalculateTotals;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Code;
@@ -43,6 +44,20 @@ class Order extends Resource
     public static $search = [
         'id',
     ];
+
+    /**
+     * Get the actions available for the resource.
+     *
+     * @param Request $request
+     *
+     * @return array
+     */
+    public function actions(Request $request): array
+    {
+        return [
+            new CalculateTotals(),
+        ];
+    }
 
     /**
      * Get the fields displayed by the resource.

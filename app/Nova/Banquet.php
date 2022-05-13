@@ -4,6 +4,7 @@ namespace App\Nova;
 
 use App\Enums\BanquetState;
 use App\Models\Scopes\ArchivedScope;
+use App\Nova\Actions\CalculateTotals;
 use App\Nova\Options\BanquetStateOptions;
 use App\Queries\OrderQueryBuilder;
 use Illuminate\Database\Eloquent\Builder;
@@ -52,6 +53,20 @@ class Banquet extends Resource
     public static $search = [
         'id', 'title', 'description',
     ];
+
+    /**
+     * Get the actions available for the resource.
+     *
+     * @param Request $request
+     *
+     * @return array
+     */
+    public function actions(Request $request): array
+    {
+        return [
+            new CalculateTotals(),
+        ];
+    }
 
     /**
      * Get the fields displayed by the resource.
