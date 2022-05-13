@@ -2,14 +2,14 @@
 
 namespace App\Providers;
 
-use ClassicO\NovaMediaLibrary\NovaMediaLibrary;
+use App\Nova\Tools\BackupTool;
+use App\Nova\Tools\MediaTool;
 use DigitalCreative\CollapsibleResourceManager\CollapsibleResourceManager;
 use DigitalCreative\CollapsibleResourceManager\Resources\TopLevelResource;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\Cards\Help;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
-use Spatie\BackupTool\BackupTool;
 
 /**
  * Class NovaServiceProvider.
@@ -142,7 +142,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     ]),
                 ],
             ]),
-            new NovaMediaLibrary(),
+            new MediaTool(),
             new BackupTool(),
         ];
     }
