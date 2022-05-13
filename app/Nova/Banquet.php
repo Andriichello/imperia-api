@@ -3,7 +3,10 @@
 namespace App\Nova;
 
 use App\Enums\BanquetState;
+use App\Models\Scopes\ArchivedScope;
 use App\Nova\Options\BanquetStateOptions;
+use App\Queries\BanquetQueryBuilder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Jagdeepbanga\NovaDateTime\NovaDateTime;
@@ -15,6 +18,7 @@ use Laravel\Nova\Fields\MorphMany;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Http\Requests\NovaRequest;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
@@ -48,6 +52,32 @@ class Banquet extends Resource
     public static $search = [
         'id', 'title', 'description',
     ];
+
+    /**
+     * Build an "index" query for the given resource.
+     *
+     * @param NovaRequest $request
+     * @param BanquetQueryBuilder $query
+     *
+     * @return Builder
+     */
+    public static function indexQuery(NovaRequest $request, $query): Builder
+    {
+        /** @var User $user */
+        $user = $request->user();
+        if ($user->isStaff()) {
+            return $query;
+        }
+
+        return $query->whereWrapped(
+            function (BanquetQueryBuilder $query) use ($user) {
+                $query->where('creator_id', $user->id);
+                if ($user->customer_id) {
+                    $query->orWhere('customer_id', $user->customer_id);
+                }
+            }
+        );
+    }
 
     /**
      * Get the fields displayed by the resource.

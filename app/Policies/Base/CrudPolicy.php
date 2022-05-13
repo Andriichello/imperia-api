@@ -8,7 +8,6 @@ use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class CrudPolicy.
@@ -49,7 +48,6 @@ abstract class CrudPolicy implements CrudPolicyInterface
      */
     public function determineMissing(string $ability, mixed ...$args): bool
     {
-        (new ConsoleOutput())->writeln(static::class . ' -> ' . $ability);
         return true;
     }
 

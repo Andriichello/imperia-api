@@ -6,7 +6,6 @@ use App\Models\Banquet;
 use App\Models\User;
 use App\Policies\Base\CrudPolicy;
 use Illuminate\Database\Eloquent\Model;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class BanquetPolicy.
@@ -33,7 +32,6 @@ class BanquetPolicy extends CrudPolicy
      */
     public function viewAny(User $user): bool
     {
-        (new ConsoleOutput())->writeln('BanquetPolicy -> ' . __FUNCTION__ . ': true');
         return true;
     }
 
@@ -47,12 +45,9 @@ class BanquetPolicy extends CrudPolicy
      */
     public function view(User $user, Banquet $banquet): bool
     {
-        $result = $user->id === $banquet->creator_id
+        return $user->id === $banquet->creator_id
             || $user->customer_id === $banquet->customer_id
             || $user->isStaff();
-
-        (new ConsoleOutput())->writeln('BanquetPolicy -> ' . __FUNCTION__ . ($result ? ': true' : ': false'));
-        return $result;
     }
 
     /**
@@ -65,7 +60,6 @@ class BanquetPolicy extends CrudPolicy
      */
     public function create(User $user): bool
     {
-        (new ConsoleOutput())->writeln('BanquetPolicy -> ' . __FUNCTION__ . ': true');
         return true;
     }
 
@@ -80,16 +74,12 @@ class BanquetPolicy extends CrudPolicy
     public function update(User $user, Banquet $banquet): bool
     {
         if (!$banquet->canBeEdited()) {
-            (new ConsoleOutput())->writeln('BanquetPolicy -> ' . __FUNCTION__ . ': false');
             return false;
         }
 
-        $result = $user->id === $banquet->creator_id
+        return $user->id === $banquet->creator_id
             || $user->customer_id === $banquet->customer_id
             || $user->isStaff();
-
-        (new ConsoleOutput())->writeln('BanquetPolicy -> ' . __FUNCTION__ . ($result ? ': true' : ': false'));
-        return $result;
     }
 
     /**
@@ -103,16 +93,12 @@ class BanquetPolicy extends CrudPolicy
     public function delete(User $user, Banquet $banquet): bool
     {
         if (!$banquet->canBeEdited()) {
-            (new ConsoleOutput())->writeln('BanquetPolicy -> ' . __FUNCTION__ . ': false');
             return false;
         }
 
-        $result = $user->id === $banquet->creator_id
+        return $user->id === $banquet->creator_id
             || $user->customer_id === $banquet->customer_id
             || $user->isStaff();
-
-        (new ConsoleOutput())->writeln('BanquetPolicy -> ' . __FUNCTION__ . ($result ? ': true' : ': false'));
-        return $result;
     }
 
     /**
@@ -126,12 +112,9 @@ class BanquetPolicy extends CrudPolicy
      */
     public function restore(User $user, Banquet $banquet): bool
     {
-        $result = $user->id === $banquet->creator_id
+        return $user->id === $banquet->creator_id
             || $user->customer_id === $banquet->customer_id
             || $user->isStaff();
-
-        (new ConsoleOutput())->writeln('BanquetPolicy -> ' . __FUNCTION__ . ($result ? ': true' : ': false'));
-        return $result;
     }
 
     /**
@@ -146,13 +129,9 @@ class BanquetPolicy extends CrudPolicy
     public function forceDelete(User $user, Banquet $banquet): bool
     {
         if (!$banquet->canBeEdited()) {
-            (new ConsoleOutput())->writeln('BanquetPolicy -> ' . __FUNCTION__ . ': false');
             return false;
         }
 
-        $result = $user->isStaff();
-
-        (new ConsoleOutput())->writeln('BanquetPolicy -> ' . __FUNCTION__ . ($result ? ': true' : ': false'));
-        return $result;
+        return $user->isStaff();
     }
 }
