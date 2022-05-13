@@ -7,6 +7,7 @@ use App\Http\Requests\Ticket\IndexTicketRequest;
 use App\Http\Requests\Ticket\ShowTicketRequest;
 use App\Http\Resources\Ticket\TicketCollection;
 use App\Http\Resources\Ticket\TicketResource;
+use App\Policies\TicketPolicy;
 use App\Repositories\TicketRepository;
 
 /**
@@ -32,10 +33,12 @@ class TicketController extends CrudController
      * TicketController constructor.
      *
      * @param TicketRepository $repository
+     * @param TicketPolicy $policy
      */
-    public function __construct(TicketRepository $repository)
+    public function __construct(TicketRepository $repository, TicketPolicy $policy)
     {
-        parent::__construct($repository);
+        parent::__construct($repository, $policy);
+
         $this->actions['index'] = IndexTicketRequest::class;
         $this->actions['show'] = ShowTicketRequest::class;
     }

@@ -9,9 +9,7 @@ use App\Http\Requests\Customer\StoreCustomerRequest;
 use App\Http\Requests\Customer\UpdateCustomerRequest;
 use App\Http\Resources\Customer\CustomerCollection;
 use App\Http\Resources\Customer\CustomerResource;
-use App\Models\Customer;
 use App\Policies\CustomerPolicy;
-use App\Policies\UserPolicy;
 use App\Repositories\CustomerRepository;
 
 /**
@@ -36,12 +34,12 @@ class CustomerController extends CrudController
     /**
      * CustomerController constructor.
      *
-     * @param  CustomerRepository $repository
+     * @param CustomerRepository $repository
+     * @param CustomerPolicy $policy
      */
-    public function __construct(CustomerRepository $repository)
+    public function __construct(CustomerRepository $repository, CustomerPolicy $policy)
     {
-        parent::__construct($repository);
-        $this->policy = new CustomerPolicy();
+        parent::__construct($repository, $policy);
 
         $this->actions['index'] = IndexCustomerRequest::class;
         $this->actions['show'] = ShowCustomerRequest::class;

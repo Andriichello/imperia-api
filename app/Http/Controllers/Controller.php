@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Traits\PaginationTrait;
 use App\Http\Responses\ApiResponse;
-use App\Policies\CrudPolicy;
 use Exception;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;

@@ -29,42 +29,4 @@ class ShowNotificationRequest extends ShowRequest
             ]
         );
     }
-
-    /**
-     * @return Notification
-     */
-    public function getNotification(): Notification
-    {
-        if (isset($this->notification)) {
-            return $this->notification;
-        }
-
-        /** @var Notification $notification */
-        $notification = Notification::query()
-            ->findOrFail($this->id());
-
-        return $this->notification = $notification;
-    }
-
-    public function isBySender(): bool
-    {
-        return $this->getNotification()->sender_id === $this->userId();
-    }
-
-    public function isByReceiver(): bool
-    {
-        $notification = $this->getNotification();
-        return $notification->sent_at
-            && $notification->receiver_id === $this->userId();
-    }
-
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize(): bool
-    {
-        return $this->isBySender() || $this->isByReceiver();
-    }
 }

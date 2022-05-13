@@ -7,6 +7,7 @@ use App\Http\Requests\Product\IndexProductRequest;
 use App\Http\Requests\Product\ShowProductRequest;
 use App\Http\Resources\Product\ProductCollection;
 use App\Http\Resources\Product\ProductResource;
+use App\Policies\ProductPolicy;
 use App\Repositories\ProductRepository;
 
 /**
@@ -32,10 +33,12 @@ class ProductController extends CrudController
      * ProductController constructor.
      *
      * @param ProductRepository $repository
+     * @param ProductPolicy $policy
      */
-    public function __construct(ProductRepository $repository)
+    public function __construct(ProductRepository $repository, ProductPolicy $policy)
     {
-        parent::__construct($repository);
+        parent::__construct($repository, $policy);
+
         $this->actions['index'] = IndexProductRequest::class;
         $this->actions['show'] = ShowProductRequest::class;
     }

@@ -14,13 +14,16 @@ use App\Http\Requests\Notification\UpdateNotificationRequest;
 use App\Http\Resources\Notification\NotificationCollection;
 use App\Http\Resources\Notification\NotificationResource;
 use App\Http\Responses\ApiResponse;
+use App\Models\Notification;
+use App\Policies\NotificationPolicy;
 use App\Queries\NotificationQueryBuilder;
 use App\Repositories\NotificationRepository;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Symfony\Component\Console\Output\ConsoleOutput;
+use Illuminate\Auth\Access\AuthorizationException;
 
 /**
  * Class NotificationController.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class NotificationController extends CrudController
 {
@@ -42,10 +45,12 @@ class NotificationController extends CrudController
      * NotificationController constructor.
      *
      * @param NotificationRepository $repository
+     * @param NotificationPolicy $policy
      */
-    public function __construct(NotificationRepository $repository)
+    public function __construct(NotificationRepository $repository, NotificationPolicy $policy)
     {
-        parent::__construct($repository);
+        parent::__construct($repository, $policy);
+
         $this->actions['index'] = IndexNotificationRequest::class;
         $this->actions['show'] = ShowNotificationRequest::class;
         $this->actions['store'] = StoreNotificationRequest::class;
@@ -76,17 +81,21 @@ class NotificationController extends CrudController
      * @param ShowNotificationRequest $request
      *
      * @return ApiResponse
+     * @throws AuthorizationException
      */
     protected function show(ShowNotificationRequest $request): ApiResponse
     {
-        $notification = $request->getNotification();
+        $this->checkPolicy($request);
 
-        if ($request->isByReceiver()) {
+        /** @var Notification|null $notification */
+        $notification = $request->target(Notification::class);
+
+        if ($notification && $notification->receiver_id === $request->userId()) {
             $notification->seen_at = now();
             $notification->save();
         }
 
-        return $this->asResourceResponse($notification);
+        return $this->handleShow($request);
     }
 
     /**

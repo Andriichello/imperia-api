@@ -9,6 +9,7 @@ use App\Http\Requests\FamilyMember\StoreFamilyMemberRequest;
 use App\Http\Requests\FamilyMember\UpdateFamilyMemberRequest;
 use App\Http\Resources\FamilyMember\FamilyMemberCollection;
 use App\Http\Resources\FamilyMember\FamilyMemberResource;
+use App\Policies\FamilyMemberPolicy;
 use App\Repositories\FamilyMemberRepository;
 
 /**
@@ -33,11 +34,13 @@ class FamilyMemberController extends CrudController
     /**
      * FamilyMemberController constructor.
      *
-     * @param  FamilyMemberRepository $repository
+     * @param FamilyMemberRepository $repository
+     * @param FamilyMemberPolicy $policy
      */
-    public function __construct(FamilyMemberRepository $repository)
+    public function __construct(FamilyMemberRepository $repository, FamilyMemberPolicy $policy)
     {
-        parent::__construct($repository);
+        parent::__construct($repository, $policy);
+
         $this->actions['index'] = IndexFamilyMemberRequest::class;
         $this->actions['show'] = ShowFamilyMemberRequest::class;
         $this->actions['store'] = StoreFamilyMemberRequest::class;

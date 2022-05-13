@@ -11,8 +11,7 @@ use App\Http\Requests\Crud\UpdateRequest;
 use App\Http\Requests\CrudRequest;
 use App\Http\Responses\ApiResponse;
 use App\Models\BaseModel;
-use App\Policies\CrudPolicy;
-use App\Policies\CrudPolicyInterface;
+use App\Policies\Base\CrudPolicyInterface;
 use App\Repositories\Interfaces\CrudRepositoryInterface;
 use BadMethodCallException;
 use Exception;
@@ -26,6 +25,13 @@ use Throwable;
 
 /**
  * Class CrudController.
+ *
+ * @method ApiResponse index(IndexRequest $request)
+ * @method ApiResponse show(ShowRequest $request)
+ * @method ApiResponse store(StoreRequest $request)
+ * @method ApiResponse update(UpdateRequest $request)
+ * @method ApiResponse destroy(DestroyRequest $request)
+ * @method ApiResponse restore(RestoreRequest $request)
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
@@ -63,10 +69,12 @@ abstract class CrudController extends Controller
      * CrudController constructor.
      *
      * @param CrudRepositoryInterface $repository
+     * @param CrudPolicyInterface $policy
      */
-    public function __construct(CrudRepositoryInterface $repository)
+    public function __construct(CrudRepositoryInterface $repository, CrudPolicyInterface $policy)
     {
         $this->repository = $repository;
+        $this->policy = $policy;
     }
 
     /**
@@ -149,7 +157,7 @@ abstract class CrudController extends Controller
         $actionRequest = $this->getActionRequest($action);
         $specificRequest = $actionRequest::createFrom($request);
 
-        $this->runPolicy($specificRequest);
+        $this->checkPolicy($specificRequest);
         $specificRequest->validateResolved();
 
         $method = 'handle' . ucfirst($action);
@@ -164,7 +172,7 @@ abstract class CrudController extends Controller
      * @return void
      * @throws AuthorizationException
      */
-    protected function runPolicy(CrudRequest $request): void
+    protected function checkPolicy(CrudRequest $request): void
     {
         $result = empty($this->policy) || $this->policy->determine($request);
         if ($result === false) {

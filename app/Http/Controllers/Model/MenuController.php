@@ -7,6 +7,7 @@ use App\Http\Requests\Menu\IndexMenuRequest;
 use App\Http\Requests\Menu\ShowMenuRequest;
 use App\Http\Resources\Menu\MenuCollection;
 use App\Http\Resources\Menu\MenuResource;
+use App\Policies\MenuPolicy;
 use App\Repositories\MenuRepository;
 
 /**
@@ -32,10 +33,12 @@ class MenuController extends CrudController
      * MenuController constructor.
      *
      * @param MenuRepository $repository
+     * @param MenuPolicy $policy
      */
-    public function __construct(MenuRepository $repository)
+    public function __construct(MenuRepository $repository, MenuPolicy $policy)
     {
-        parent::__construct($repository);
+        parent::__construct($repository, $policy);
+
         $this->actions['index'] = IndexMenuRequest::class;
         $this->actions['show'] = ShowMenuRequest::class;
     }

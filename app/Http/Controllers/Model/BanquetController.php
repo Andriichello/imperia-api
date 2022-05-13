@@ -2,19 +2,15 @@
 
 namespace App\Http\Controllers\Model;
 
-use App\Enums\NotificationChannel;
 use App\Http\Controllers\CrudController;
 use App\Http\Requests\Banquet\IndexBanquetRequest;
 use App\Http\Requests\Banquet\ShowBanquetRequest;
 use App\Http\Requests\Banquet\StoreBanquetRequest;
 use App\Http\Requests\Banquet\UpdateBanquetRequest;
-use App\Http\Requests\CrudRequest;
 use App\Http\Resources\Banquet\BanquetCollection;
 use App\Http\Resources\Banquet\BanquetResource;
-use App\Queries\BaseQueryBuilder;
-use App\Queries\NotificationQueryBuilder;
+use App\Policies\BanquetPolicy;
 use App\Repositories\BanquetRepository;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 /**
  * Class BanquetController.
@@ -39,10 +35,12 @@ class BanquetController extends CrudController
      * BanquetController constructor.
      *
      * @param BanquetRepository $repository
+     * @param BanquetPolicy $policy
      */
-    public function __construct(BanquetRepository $repository)
+    public function __construct(BanquetRepository $repository, BanquetPolicy $policy)
     {
-        parent::__construct($repository);
+        parent::__construct($repository, $policy);
+
         $this->actions['index'] = IndexBanquetRequest::class;
         $this->actions['show'] = ShowBanquetRequest::class;
         $this->actions['store'] = StoreBanquetRequest::class;

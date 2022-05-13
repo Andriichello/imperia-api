@@ -2,10 +2,7 @@
 
 namespace App\Http\Requests\Notification;
 
-use App\Enums\NotificationChannel;
-use App\Http\Requests\Crud\ShowRequest;
 use App\Http\Requests\Crud\UpdateRequest;
-use App\Models\Notification;
 
 /**
  * Class UpdateNotificationRequest.
@@ -44,20 +41,6 @@ class UpdateNotificationRequest extends UpdateRequest
                 ],
             ]
         );
-    }
-
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize(): bool
-    {
-        /** @var Notification $notification */
-        $notification = Notification::query()
-            ->findOrFail($this->id());
-
-        return !$notification->sent_at && $notification->sender_id === $this->userId();
     }
 
     /**

@@ -5,6 +5,8 @@ namespace App\Http\Requests\Banquet;
 use App\Http\Requests\Crud\DestroyRequest;
 use App\Http\Requests\Traits\GuardsBanquet;
 use App\Models\Banquet;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
  * Class DestroyBanquetRequest.

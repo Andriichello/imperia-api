@@ -7,6 +7,7 @@ use App\Http\Requests\Service\IndexServiceRequest;
 use App\Http\Requests\Service\ShowServiceRequest;
 use App\Http\Resources\Service\ServiceCollection;
 use App\Http\Resources\Service\ServiceResource;
+use App\Policies\ServicePolicy;
 use App\Repositories\ServiceRepository;
 
 /**
@@ -32,10 +33,12 @@ class ServiceController extends CrudController
      * ServiceController constructor.
      *
      * @param ServiceRepository $repository
+     * @param ServicePolicy $policy
      */
-    public function __construct(ServiceRepository $repository)
+    public function __construct(ServiceRepository $repository, ServicePolicy $policy)
     {
-        parent::__construct($repository);
+        parent::__construct($repository, $policy);
+
         $this->actions['index'] = IndexServiceRequest::class;
         $this->actions['show'] = ShowServiceRequest::class;
     }

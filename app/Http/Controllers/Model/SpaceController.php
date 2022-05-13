@@ -4,13 +4,14 @@ namespace App\Http\Controllers\Model;
 
 use App\Http\Controllers\CrudController;
 use App\Http\Requests\Space\IndexSpaceRequest;
-use App\Http\Requests\Space\SpaceReservationsRequest;
 use App\Http\Requests\Space\ShowSpaceRequest;
+use App\Http\Requests\Space\SpaceReservationsRequest;
 use App\Http\Resources\Field\SpaceReservationCollection;
 use App\Http\Resources\ResourcePaginator;
 use App\Http\Resources\Space\SpaceCollection;
 use App\Http\Resources\Space\SpaceResource;
 use App\Models\Orders\SpaceOrderField;
+use App\Policies\SpacePolicy;
 use App\Repositories\SpaceRepository;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
@@ -38,10 +39,12 @@ class SpaceController extends CrudController
      * SpaceController constructor.
      *
      * @param SpaceRepository $repository
+     * @param SpacePolicy $policy
      */
-    public function __construct(SpaceRepository $repository)
+    public function __construct(SpaceRepository $repository, SpacePolicy $policy)
     {
-        parent::__construct($repository);
+        parent::__construct($repository, $policy);
+
         $this->actions['index'] = IndexSpaceRequest::class;
         $this->actions['show'] = ShowSpaceRequest::class;
     }

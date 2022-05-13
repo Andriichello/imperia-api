@@ -3,42 +3,12 @@
 namespace App\Http\Requests\Order;
 
 use App\Http\Requests\Crud\UpdateRequest;
-use App\Models\Orders\Order;
-use Illuminate\Auth\Access\AuthorizationException;
 
 /**
  * Class UpdateOrderRequest.
  */
 class UpdateOrderRequest extends UpdateRequest
 {
-    /**
-     * Handle a failed authorization attempt.
-     *
-     * @return void
-     *
-     * @throws AuthorizationException
-     */
-    protected function failedAuthorization(): void
-    {
-        $message = 'Order can\'t be updated, because banquet'
-            . ' to which it belongs is in non-editable state.';
-
-        throw new AuthorizationException($message);
-    }
-
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize(): bool
-    {
-        /** @var Order $order */
-        $order = Order::query()
-            ->findOrFail($this->id());
-        return $order->canBeEdited();
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *
