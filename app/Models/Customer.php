@@ -8,11 +8,13 @@ use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Traits\CommentableTrait;
 use App\Models\Traits\LoggableTrait;
 use App\Models\Traits\SoftDeletableTrait;
+use App\Queries\CustomerQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\CustomerFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
 
 /**
@@ -32,6 +34,7 @@ use Illuminate\Support\Collection;
  * @property User|null $user
  * @property FamilyMember[]|Collection $familyMembers
  *
+ * @method static CustomerQueryBuilder query()
  * @method static CustomerFactory factory(...$parameters)
  */
 class Customer extends BaseModel implements
@@ -114,5 +117,15 @@ class Customer extends BaseModel implements
     public function getFullNameAttribute(): string
     {
         return "$this->name $this->surname";
+    }
+
+    /**
+     * @param DatabaseBuilder $query
+     *
+     * @return CustomerQueryBuilder
+     */
+    public function newEloquentBuilder($query): CustomerQueryBuilder
+    {
+        return new CustomerQueryBuilder($query);
     }
 }

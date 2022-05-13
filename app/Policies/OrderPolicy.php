@@ -45,7 +45,7 @@ class OrderPolicy extends CrudPolicy
      */
     public function view(User $user, Order $order): bool
     {
-        return $user->isStuff()
+        return $user->isStaff()
             || $order->banquet->creator_id === $user->id
             || $order->banquet->customer_id === $user->customer_id;
     }
@@ -77,7 +77,7 @@ class OrderPolicy extends CrudPolicy
             return false;
         }
 
-        return $user->isStuff() || $order->banquet->creator_id === $user->id;
+        return $user->isStaff() || $order->banquet->creator_id === $user->id;
     }
 
     /**
@@ -94,7 +94,7 @@ class OrderPolicy extends CrudPolicy
             return false;
         }
 
-        return $user->isStuff() || $order->banquet->creator_id === $user->id;
+        return $user->isStaff() || $order->banquet->creator_id === $user->id;
     }
 
     /**
@@ -111,7 +111,7 @@ class OrderPolicy extends CrudPolicy
             return false;
         }
 
-        return $user->isStuff() || $order->banquet->creator_id === $user->id;
+        return $user->isStaff() || $order->banquet->creator_id === $user->id;
     }
 
     /**
@@ -128,6 +128,6 @@ class OrderPolicy extends CrudPolicy
             return false;
         }
 
-        return $user->isStuff() || $order->banquet->creator_id === $user->id;
+        return $user->isStaff() || $order->banquet->creator_id === $user->id;
     }
 }

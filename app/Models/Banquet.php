@@ -11,11 +11,13 @@ use App\Models\Orders\Order;
 use App\Models\Traits\CommentableTrait;
 use App\Models\Traits\LoggableTrait;
 use App\Models\Traits\SoftDeletableTrait;
+use App\Queries\BanquetQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\BanquetFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
 
 /**
@@ -43,6 +45,7 @@ use Illuminate\Support\Collection;
  * @property Customer|null $customer
  * @property Comment[]|Collection $comments
  *
+ * @method static BanquetQueryBuilder query()
  * @method static BanquetFactory factory(...$parameters)
  */
 class Banquet extends BaseModel implements
@@ -207,5 +210,15 @@ class Banquet extends BaseModel implements
     public function canBeEdited(): bool
     {
         return $this->state !== BanquetState::Completed;
+    }
+
+    /**
+     * @param DatabaseBuilder $query
+     *
+     * @return BanquetQueryBuilder
+     */
+    public function newEloquentBuilder($query): BanquetQueryBuilder
+    {
+        return new BanquetQueryBuilder($query);
     }
 }

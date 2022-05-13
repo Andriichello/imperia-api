@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Queries;
+namespace App\Queries\Traits;
 
 use App\Models\Morphs\Category;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use App\Queries\BaseQueryBuilder;
 
 /**
- * Trait CategorizableQueryBuilder.
+ * Trait Categorizable.
  *
- * @mixin EloquentBuilder
+ * @mixin BaseQueryBuilder
  */
-trait CategorizableQueryBuilder
+trait Categorizable
 {
     /**
      * @param Category ...$categories

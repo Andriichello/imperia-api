@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Model;
 
 use App\Http\Controllers\CrudController;
+use App\Http\Requests\CrudRequest;
 use App\Http\Requests\FamilyMember\IndexFamilyMemberRequest;
 use App\Http\Requests\FamilyMember\ShowFamilyMemberRequest;
 use App\Http\Requests\FamilyMember\StoreFamilyMemberRequest;
@@ -10,6 +11,7 @@ use App\Http\Requests\FamilyMember\UpdateFamilyMemberRequest;
 use App\Http\Resources\FamilyMember\FamilyMemberCollection;
 use App\Http\Resources\FamilyMember\FamilyMemberResource;
 use App\Policies\FamilyMemberPolicy;
+use App\Queries\FamilyMemberQueryBuilder;
 use App\Repositories\FamilyMemberRepository;
 
 /**
@@ -45,6 +47,27 @@ class FamilyMemberController extends CrudController
         $this->actions['show'] = ShowFamilyMemberRequest::class;
         $this->actions['store'] = StoreFamilyMemberRequest::class;
         $this->actions['update'] = UpdateFamilyMemberRequest::class;
+    }
+
+    /**
+     * Get eloquent query builder instance.
+     *
+     * @param CrudRequest $request
+     *
+     * @return FamilyMemberQueryBuilder
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    protected function builder(CrudRequest $request): FamilyMemberQueryBuilder
+    {
+        /** @var FamilyMemberQueryBuilder $builder */
+        $builder = parent::builder($request);
+
+        $user = $request->user();
+        if ($user->isStaff()) {
+            return $builder;
+        }
+
+        return $builder->where('relative_id', $user->customer_id);
     }
 
     /**

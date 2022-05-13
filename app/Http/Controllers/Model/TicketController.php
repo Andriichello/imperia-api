@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Model;
 
 use App\Http\Controllers\CrudController;
+use App\Http\Requests\CrudRequest;
 use App\Http\Requests\Ticket\IndexTicketRequest;
 use App\Http\Requests\Ticket\ShowTicketRequest;
 use App\Http\Resources\Ticket\TicketCollection;
 use App\Http\Resources\Ticket\TicketResource;
 use App\Policies\TicketPolicy;
+use App\Queries\TicketQueryBuilder;
 use App\Repositories\TicketRepository;
 
 /**
@@ -60,6 +62,7 @@ class TicketController extends CrudController
      *   @OA\Parameter(name="filter[categories]", required=false, in="query", example="2,3",
      *     @OA\Schema(type="string"), description="Coma-separated array of category ids. Limits tickets to those
      * that have at least one of given categories attached to them"),
+     *   @OA\Parameter(name="archived", in="query", @OA\Schema(ref ="#/components/schemas/ArchivedParameter")),
      *
      *   @OA\Response(
      *     response=200,

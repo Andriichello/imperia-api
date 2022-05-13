@@ -33,6 +33,6 @@ class FamilyMemberPolicy extends CrudPolicy
      */
     public function before(User $user, string $ability): bool
     {
-        return $user->isStuff();
+        return $user->isStaff();
     }
 }

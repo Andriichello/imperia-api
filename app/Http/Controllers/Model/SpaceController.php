@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Model;
 
 use App\Http\Controllers\CrudController;
+use App\Http\Requests\CrudRequest;
 use App\Http\Requests\Space\IndexSpaceRequest;
 use App\Http\Requests\Space\ShowSpaceRequest;
 use App\Http\Requests\Space\SpaceReservationsRequest;
@@ -12,6 +13,7 @@ use App\Http\Resources\Space\SpaceCollection;
 use App\Http\Resources\Space\SpaceResource;
 use App\Models\Orders\SpaceOrderField;
 use App\Policies\SpacePolicy;
+use App\Queries\SpaceQueryBuilder;
 use App\Repositories\SpaceRepository;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
@@ -86,6 +88,7 @@ class SpaceController extends CrudController
      *   @OA\Parameter(name="filter[categories]", required=false, in="query", example="2,3",
      *     @OA\Schema(type="string"), description="Coma-separated array of category ids. Limits spaces to those
      * that have at least one of given categories attached to them"),
+     *   @OA\Parameter(name="archived", in="query", @OA\Schema(ref ="#/components/schemas/ArchivedParameter")),
      *
      *   @OA\Response(
      *     response=200,

@@ -31,7 +31,7 @@ class CustomerPolicy extends CrudPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isStuff();
+        return $user->isStaff();
     }
 
     /**
@@ -44,7 +44,7 @@ class CustomerPolicy extends CrudPolicy
      */
     public function view(User $user, Customer $customer): bool
     {
-        return $customer->user_id === $user->id || $user->isStuff();
+        return $customer->user_id === $user->id || $user->isStaff();
     }
 
     /**
@@ -56,7 +56,7 @@ class CustomerPolicy extends CrudPolicy
      */
     public function create(User $user): bool
     {
-        return $user->isStuff();
+        return $user->isStaff();
     }
 
     /**
@@ -69,7 +69,7 @@ class CustomerPolicy extends CrudPolicy
      */
     public function update(User $user, Customer $customer): bool
     {
-        return $customer->user_id === $user->id || $user->isStuff();
+        return $customer->user_id === $user->id || $user->isStaff();
     }
 
     /**
@@ -82,7 +82,7 @@ class CustomerPolicy extends CrudPolicy
      */
     public function delete(User $user, Customer $customer): bool
     {
-        return $customer->user_id === $user->id || $user->isStuff();
+        return $customer->user_id === $user->id || $user->isStaff();
     }
 
     /**
@@ -96,7 +96,7 @@ class CustomerPolicy extends CrudPolicy
      */
     public function restore(User $user, Customer $customer): bool
     {
-        return $user->isStuff();
+        return $user->isStaff();
     }
 
     /**
@@ -110,6 +110,6 @@ class CustomerPolicy extends CrudPolicy
      */
     public function forceDelete(User $user, Customer $customer): bool
     {
-        return $user->isStuff();
+        return $user->isStaff();
     }
 }

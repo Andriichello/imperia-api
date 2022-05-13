@@ -29,6 +29,17 @@ interface CrudPolicyInterface
     public function determine(CrudRequest $request): Response|bool;
 
     /**
+     * Determine if ability should be authorized
+     * if method with same name is missing.
+     *
+     * @param string $ability
+     * @param mixed ...$args
+     *
+     * @return bool
+     */
+    public function determineMissing(string $ability, mixed ...$args): bool;
+
+    /**
      * Perform pre-authorization checks.
      *
      * @param User $user

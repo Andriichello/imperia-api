@@ -26,6 +26,34 @@ abstract class CrudPolicy implements CrudPolicyInterface
     /**
      * Determine if user is allowed to perform request.
      *
+     * @param string $name
+     * @param array $arguments
+     *
+     * @return bool
+     */
+    public function __call(string $name, array $arguments): bool
+    {
+        return $this->determineMissing($name, ...$arguments);
+    }
+
+    /**
+     * Determine if ability should be authorized
+     * if method with same name is missing.
+     *
+     * @param string $ability
+     * @param mixed ...$args
+     *
+     * @return bool
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function determineMissing(string $ability, mixed ...$args): bool
+    {
+        return true;
+    }
+
+    /**
+     * Determine if user is allowed to perform request.
+     *
      * @param CrudRequest $request
      *
      * @return Response|bool

@@ -47,7 +47,7 @@ class BanquetPolicy extends CrudPolicy
     {
         return $user->id === $banquet->creator_id
             || $user->customer_id === $banquet->customer_id
-            || $user->isStuff();
+            || $user->isStaff();
     }
 
     /**
@@ -79,7 +79,7 @@ class BanquetPolicy extends CrudPolicy
 
         return $user->id === $banquet->creator_id
             || $user->customer_id === $banquet->customer_id
-            || $user->isStuff();
+            || $user->isStaff();
     }
 
     /**
@@ -98,7 +98,7 @@ class BanquetPolicy extends CrudPolicy
 
         return $user->id === $banquet->creator_id
             || $user->customer_id === $banquet->customer_id
-            || $user->isStuff();
+            || $user->isStaff();
     }
 
     /**
@@ -114,7 +114,7 @@ class BanquetPolicy extends CrudPolicy
     {
         return $user->id === $banquet->creator_id
             || $user->customer_id === $banquet->customer_id
-            || $user->isStuff();
+            || $user->isStaff();
     }
 
     /**
@@ -132,6 +132,6 @@ class BanquetPolicy extends CrudPolicy
             return false;
         }
 
-        return $user->isStuff();
+        return $user->isStaff();
     }
 }

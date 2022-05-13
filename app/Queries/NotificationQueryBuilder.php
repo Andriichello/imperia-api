@@ -2,7 +2,6 @@
 
 namespace App\Queries;
 
-use App\Enums\UserRole;
 use App\Models\User;
 
 /**
@@ -10,20 +9,6 @@ use App\Models\User;
  */
 class NotificationQueryBuilder extends BaseQueryBuilder
 {
-    /**
-     * Extract ids from given users.
-     *
-     * @param User|int ...$users
-     *
-     * @return array
-     */
-    protected function extractUserIds(User|int ...$users): array
-    {
-        $closure = fn(User|int $user) => is_int($user) ? $user : $user->id;
-
-        return array_map($closure, $users);
-    }
-
     /**
      * Only notifications that given user send.
      *
@@ -33,7 +18,7 @@ class NotificationQueryBuilder extends BaseQueryBuilder
      */
     public function fromUsers(User|int ...$users): static
     {
-        $this->whereIn('sender_id', $this->extractUserIds(...$users));
+        $this->whereIn('sender_id', $this->extract('id', ...$users));
 
         return $this;
     }
@@ -71,7 +56,7 @@ class NotificationQueryBuilder extends BaseQueryBuilder
      */
     public function toUsers(User|int ...$users): static
     {
-        $this->whereIn('receiver_id', $this->extractUserIds(...$users));
+        $this->whereIn('receiver_id', $this->extract('id', ...$users));
 
         return $this;
     }

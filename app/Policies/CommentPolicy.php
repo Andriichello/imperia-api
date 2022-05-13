@@ -70,7 +70,7 @@ class CommentPolicy extends CrudPolicy
             return $target->canBeEdited();
         }
 
-        if ($user->isStuff()) {
+        if ($user->isStaff()) {
             return true;
         }
         // customer shouldn't be able to edit comments on him

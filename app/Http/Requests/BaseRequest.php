@@ -108,6 +108,16 @@ class BaseRequest extends FormRequest
     }
 
     /**
+     * Determine if user, who makes the request is a staff member.
+     *
+     * @return bool
+     */
+    public function isByStaff(): bool
+    {
+        return $this->user()->isStaff();
+    }
+
+    /**
      * Determine if user, who makes the request is a customer.
      *
      * @return bool

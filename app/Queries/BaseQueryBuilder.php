@@ -68,4 +68,25 @@ class BaseQueryBuilder extends EloquentBuilder
 
         return $this;
     }
+
+    /**
+     * Extract column from given items.
+     *
+     * @param string $key
+     * @param mixed ...$items
+     *
+     * @return array
+     */
+    protected function extract(string $key, mixed ...$items): array
+    {
+        $closure = function (mixed $item) use ($key) {
+            if (is_array($item) || is_object($item)) {
+                return data_get($item, $key);
+            }
+
+            return $item;
+        };
+
+        return array_map($closure, $items);
+    }
 }

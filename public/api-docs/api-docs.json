@@ -1559,6 +1559,13 @@
                         "schema": {
                             "$ref": "#/components/schemas/PageNumber"
                         }
+                    },
+                    {
+                        "name": "archived",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/ArchivedParameter"
+                        }
                     }
                 ],
                 "responses": {
@@ -2406,6 +2413,13 @@
                             "type": "string"
                         },
                         "example": "2,3"
+                    },
+                    {
+                        "name": "archived",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/ArchivedParameter"
+                        }
                     }
                 ],
                 "responses": {
@@ -2540,6 +2554,13 @@
                             "type": "string"
                         },
                         "example": "2,3"
+                    },
+                    {
+                        "name": "archived",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/ArchivedParameter"
+                        }
                     }
                 ],
                 "responses": {
@@ -2674,6 +2695,13 @@
                             "type": "string"
                         },
                         "example": "2,3"
+                    },
+                    {
+                        "name": "archived",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/ArchivedParameter"
+                        }
                     }
                 ],
                 "responses": {
@@ -2877,6 +2905,13 @@
                             "type": "string"
                         },
                         "example": "2,3"
+                    },
+                    {
+                        "name": "archived",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/ArchivedParameter"
+                        }
                     }
                 ],
                 "responses": {
@@ -6437,6 +6472,16 @@
                     }
                 },
                 "type": "object"
+            },
+            "ArchivedParameter": {
+                "description": "Query parameter, which determines if archived records should be\n    fetched from database. Available relations: `only`, `with` and `without`, which is a default one.",
+                "type": "string",
+                "enum": [
+                    "only",
+                    "with",
+                    "without"
+                ],
+                "example": "without"
             }
         },
         "securitySchemes": {

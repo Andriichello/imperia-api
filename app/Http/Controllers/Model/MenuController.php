@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Model;
 
 use App\Http\Controllers\CrudController;
+use App\Http\Requests\CrudRequest;
 use App\Http\Requests\Menu\IndexMenuRequest;
 use App\Http\Requests\Menu\ShowMenuRequest;
 use App\Http\Resources\Menu\MenuCollection;
 use App\Http\Resources\Menu\MenuResource;
 use App\Policies\MenuPolicy;
+use App\Queries\MenuQueryBuilder;
 use App\Repositories\MenuRepository;
 
 /**
@@ -55,6 +57,7 @@ class MenuController extends CrudController
      *     @OA\Schema(ref ="#/components/schemas/MenuIncludes")),
      *   @OA\Parameter(name="page[size]", in="query", @OA\Schema(ref ="#/components/schemas/PageSize")),
      *   @OA\Parameter(name="page[number]", in="query", @OA\Schema(ref ="#/components/schemas/PageNumber")),
+     *   @OA\Parameter(name="archived", in="query", @OA\Schema(ref ="#/components/schemas/ArchivedParameter")),
      *
      *   @OA\Response(
      *     response=200,

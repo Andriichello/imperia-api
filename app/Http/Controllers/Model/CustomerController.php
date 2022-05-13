@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Model;
 
 use App\Http\Controllers\CrudController;
+use App\Http\Requests\CrudRequest;
 use App\Http\Requests\Customer\IndexCustomerRequest;
 use App\Http\Requests\Customer\ShowCustomerRequest;
 use App\Http\Requests\Customer\StoreCustomerRequest;
@@ -10,6 +11,7 @@ use App\Http\Requests\Customer\UpdateCustomerRequest;
 use App\Http\Resources\Customer\CustomerCollection;
 use App\Http\Resources\Customer\CustomerResource;
 use App\Policies\CustomerPolicy;
+use App\Queries\CustomerQueryBuilder;
 use App\Repositories\CustomerRepository;
 
 /**
@@ -45,6 +47,27 @@ class CustomerController extends CrudController
         $this->actions['show'] = ShowCustomerRequest::class;
         $this->actions['store'] = StoreCustomerRequest::class;
         $this->actions['update'] = UpdateCustomerRequest::class;
+    }
+
+    /**
+     * Get eloquent query builder instance.
+     *
+     * @param CrudRequest $request
+     *
+     * @return CustomerQueryBuilder
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    protected function builder(CrudRequest $request): CustomerQueryBuilder
+    {
+        /** @var CustomerQueryBuilder $builder */
+        $builder = parent::builder($request);
+
+        $user = $request->user();
+        if ($user->isStaff()) {
+            return $builder;
+        }
+
+        return $builder->where('id', $user->customer_id);
     }
 
     /**

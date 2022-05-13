@@ -3,13 +3,20 @@
 namespace App\Queries;
 
 use App\Models\Orders\Order;
+use App\Queries\Interfaces\ArchivableInterface;
+use App\Queries\Interfaces\CategorizableInterface;
+use App\Queries\Traits\Archivable;
+use App\Queries\Traits\Categorizable;
 
 /**
  * Class ProductQueryBuilder.
  */
-class ProductQueryBuilder extends BaseQueryBuilder
+class ProductQueryBuilder extends BaseQueryBuilder implements
+    ArchivableInterface,
+    CategorizableInterface
 {
-    use CategorizableQueryBuilder;
+    use Archivable;
+    use Categorizable;
 
     /**
      * @param Order|int $order

@@ -25,7 +25,7 @@ class SoftDeletableScope extends SoftDeletingScope
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function apply(Builder $builder, Model $model)
+    public function apply(Builder $builder, Model $model): void
     {
         $type = request('filter.deleted', request('deleted', 'without'));
         if (in_array($type, ['only', 'with', 'without'])) {

@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Queries\FamilyMemberQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\FamilyMemberFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Query\Builder as DatabaseBuilder;
 
 /**
  * Class FamilyMember.
@@ -19,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @property Customer $relative
  *
+ * @method static FamilyMemberQueryBuilder query()
  * @method static FamilyMemberFactory factory(...$parameters)
  */
 class FamilyMember extends BaseModel
@@ -63,5 +66,15 @@ class FamilyMember extends BaseModel
     public function relative(): BelongsTo
     {
         return $this->belongsTo(Customer::class, 'relative_id', 'id');
+    }
+
+    /**
+     * @param DatabaseBuilder $query
+     *
+     * @return FamilyMemberQueryBuilder
+     */
+    public function newEloquentBuilder($query): FamilyMemberQueryBuilder
+    {
+        return new FamilyMemberQueryBuilder($query);
     }
 }
