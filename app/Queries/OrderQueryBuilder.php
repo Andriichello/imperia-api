@@ -6,9 +6,9 @@ use App\Models\Customer;
 use App\Models\User;
 
 /**
- * Class BanquetQueryBuilder.
+ * Class OrderQueryBuilder.
  */
-class BanquetQueryBuilder extends BaseQueryBuilder
+class OrderQueryBuilder extends BaseQueryBuilder
 {
     /**
      * Apply index query conditions.
@@ -24,14 +24,17 @@ class BanquetQueryBuilder extends BaseQueryBuilder
             return $this;
         }
 
-        $this->whereWrapped(
-            function (BanquetQueryBuilder $query) use ($user) {
-                $query->where('creator_id', $user->id);
-                if ($user->customer_id) {
-                    $query->orWhere('customer_id', $user->customer_id);
+        if ($user->isCustomer()) {
+            $this->whereHas(
+                'banquet',
+                function (BanquetQueryBuilder $query) use ($user) {
+                    $query->where('creator_id', $user->id);
+                    if ($user->customer_id) {
+                        $query->orWhere('customer_id', $user->customer_id);
+                    }
                 }
-            }
-        );
+            );
+        }
 
         return $this;
     }

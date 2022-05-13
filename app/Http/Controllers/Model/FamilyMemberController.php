@@ -62,12 +62,7 @@ class FamilyMemberController extends CrudController
         /** @var FamilyMemberQueryBuilder $builder */
         $builder = parent::builder($request);
 
-        $user = $request->user();
-        if ($user->isStaff()) {
-            return $builder;
-        }
-
-        return $builder->where('relative_id', $user->customer_id);
+        return $builder->index($request->user());
     }
 
     /**

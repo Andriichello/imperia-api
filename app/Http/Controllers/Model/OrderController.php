@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Model;
 
 use App\Http\Controllers\CrudController;
+use App\Http\Requests\CrudRequest;
 use App\Http\Requests\Order\IndexOrderRequest;
 use App\Http\Requests\Order\ShowOrderRequest;
 use App\Http\Requests\Order\StoreOrderRequest;
@@ -12,6 +13,7 @@ use App\Http\Resources\Order\OrderResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Banquet;
 use App\Policies\OrderPolicy;
+use App\Queries\OrderQueryBuilder;
 use App\Repositories\OrderRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
@@ -48,6 +50,22 @@ class OrderController extends CrudController
         $this->actions['show'] = ShowOrderRequest::class;
         $this->actions['store'] = StoreOrderRequest::class;
         $this->actions['update'] = UpdateOrderRequest::class;
+    }
+
+    /**
+     * Get eloquent query builder instance.
+     *
+     * @param CrudRequest $request
+     *
+     * @return OrderQueryBuilder
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    protected function builder(CrudRequest $request): OrderQueryBuilder
+    {
+        /** @var OrderQueryBuilder $builder */
+        $builder = parent::builder($request);
+
+        return $builder->index($request->user());
     }
 
     /**

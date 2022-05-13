@@ -10,11 +10,13 @@ use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Traits\CommentableTrait;
 use App\Models\Traits\DiscountableTrait;
 use App\Models\Traits\SoftDeletableTrait;
+use App\Queries\OrderQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\Orders\OrderFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
@@ -34,6 +36,7 @@ use Illuminate\Support\Collection;
  * @property ServiceOrderField[]|Collection $services
  * @property ProductOrderField[]|Collection $products
  *
+ * @method static OrderQueryBuilder query()
  * @method static OrderFactory factory(...$parameters)
  */
 class Order extends BaseModel implements
@@ -231,5 +234,15 @@ class Order extends BaseModel implements
     public function canBeEdited(): bool
     {
         return $this->banquet->canBeEdited();
+    }
+
+    /**
+     * @param DatabaseBuilder $query
+     *
+     * @return OrderQueryBuilder
+     */
+    public function newEloquentBuilder($query): OrderQueryBuilder
+    {
+        return new OrderQueryBuilder($query);
     }
 }

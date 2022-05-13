@@ -62,19 +62,7 @@ class BanquetController extends CrudController
         /** @var BanquetQueryBuilder $builder */
         $builder = parent::builder($request);
 
-        $user = $request->user();
-        if ($user->isStaff()) {
-            return $builder;
-        }
-
-        return $builder->whereWrapped(
-            function (BanquetQueryBuilder $query) use ($user) {
-                $query->where('creator_id', $user->id);
-                if ($user->customer_id) {
-                    $query->orWhere('customer_id', $user->customer_id);
-                }
-            }
-        );
+        return $builder->index($request->user());
     }
 
     /**

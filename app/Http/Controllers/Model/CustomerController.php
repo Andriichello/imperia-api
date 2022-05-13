@@ -62,12 +62,7 @@ class CustomerController extends CrudController
         /** @var CustomerQueryBuilder $builder */
         $builder = parent::builder($request);
 
-        $user = $request->user();
-        if ($user->isStaff()) {
-            return $builder;
-        }
-
-        return $builder->where('id', $user->customer_id);
+        return $builder->index($request->user());
     }
 
     /**

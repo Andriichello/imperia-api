@@ -2,6 +2,7 @@
 
 namespace App\Queries;
 
+use App\Enums\NotificationChannel;
 use App\Models\User;
 
 /**
@@ -9,6 +10,22 @@ use App\Models\User;
  */
 class NotificationQueryBuilder extends BaseQueryBuilder
 {
+    /**
+     * Apply index query conditions.
+     *
+     * @param User $user
+     *
+     * @return static
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function index(User $user): static
+    {
+        $this->inChannels(NotificationChannel::Default)
+            ->forUser($user);
+
+        return $this;
+    }
+
     /**
      * Only notifications that given user send.
      *

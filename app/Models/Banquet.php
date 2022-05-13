@@ -12,6 +12,7 @@ use App\Models\Traits\CommentableTrait;
 use App\Models\Traits\LoggableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use App\Queries\BanquetQueryBuilder;
+use App\Queries\OrderQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\BanquetFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

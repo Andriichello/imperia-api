@@ -2,14 +2,29 @@
 
 namespace App\Queries;
 
+use App\Models\User;
+use App\Queries\Interfaces\IndexableInterface;
 use Closure;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 /**
  * Class BaseQueryBuilder.
  */
-class BaseQueryBuilder extends EloquentBuilder
+class BaseQueryBuilder extends EloquentBuilder implements IndexableInterface
 {
+    /**
+     * Apply index query conditions.
+     *
+     * @param User $user
+     *
+     * @return static
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function index(User $user): static
+    {
+        return $this;
+    }
+
     /**
      * Add a wrapped where statement to the query.
      *

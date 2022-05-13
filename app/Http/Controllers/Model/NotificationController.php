@@ -69,9 +69,7 @@ class NotificationController extends CrudController
         /** @var NotificationQueryBuilder $builder */
         $builder = parent::builder($request);
 
-        $channels = [NotificationChannel::Default];
-        return $builder->inChannels(...$channels)
-            ->forUser($request->user());
+        return $builder->index($request->user());
     }
 
     /**

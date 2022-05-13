@@ -68,22 +68,10 @@ class UserController extends CrudController
      */
     protected function builder(CrudRequest $request): UserQueryBuilder
     {
-        $user = $request->user();
         /** @var UserQueryBuilder $builder */
         $builder = parent::builder($request);
 
-        if ($user->isManager()) {
-            return $builder->whereWrapped(function (UserQueryBuilder $query) use ($user) {
-                $query->onlyRoles(UserRole::Customer)
-                    ->orWhere('user_id', $user->id);
-            });
-        }
-
-        if ($user->isCustomer()) {
-            return $builder->where('user_id', $user->id);
-        }
-
-        return $builder;
+        return $builder->index($request->user());
     }
 
     /**

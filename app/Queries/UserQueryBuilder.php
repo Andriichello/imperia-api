@@ -2,6 +2,8 @@
 
 namespace App\Queries;
 
+use App\Enums\UserRole;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -9,6 +11,32 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class UserQueryBuilder extends BaseQueryBuilder
 {
+    /**
+     * Apply index query conditions.
+     *
+     * @param User $user
+     *
+     * @return static
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function index(User $user): static
+    {
+        if ($user->isManager()) {
+            $this->whereWrapped(function (UserQueryBuilder $query) use ($user) {
+                $query->onlyRoles(UserRole::Customer)
+                    ->orWhere('user_id', $user->id);
+            });
+
+            return $this;
+        }
+
+        if ($user->isCustomer()) {
+            $this->where('user_id', $user->id);
+        }
+
+        return $this;
+    }
+
     /**
      * Only users that have given roles.
      *
