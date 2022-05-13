@@ -2,9 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\UserRole;
 use App\Http\Requests\Traits\WithSpatie;
-use App\Models\User;
 
 /**
  * Class CrudRequest.

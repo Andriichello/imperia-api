@@ -6,6 +6,7 @@ use App\Http\Requests\CrudRequest;
 use App\Http\Requests\Interfaces\WithTargetInterface;
 use App\Http\Requests\Traits\WithTarget;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
  * Class RestoreRequest.
@@ -37,17 +38,5 @@ class RestoreRequest extends CrudRequest implements WithTargetInterface
     public function getAbility(): ?string
     {
         return 'restore';
-    }
-
-    /**
-     * Get model with target id.
-     *
-     * @param Model|string $model
-     *
-     * @return ?Model
-     */
-    public function target(Model|string $model): ?Model
-    {
-        return $this->trashedTarget($model);
     }
 }
