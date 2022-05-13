@@ -5,8 +5,8 @@ namespace App\Nova;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\Gravatar;
-use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\MorphToMany;
 use Laravel\Nova\Fields\Password;
 use Laravel\Nova\Fields\Text;
 
@@ -72,7 +72,7 @@ class User extends Resource
                     $model->password = ($request[$requestAttribute]);
                 }),
 
-            HasMany::make('Roles'),
+            MorphToMany::make('Roles'),
 
             DateTime::make('Email Verified At')
                 ->exceptOnForms(),

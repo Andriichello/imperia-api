@@ -4,10 +4,8 @@ namespace App\Nova;
 
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\DateTime;
-use Laravel\Nova\Fields\Gravatar;
-use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Password;
+use Laravel\Nova\Fields\MorphToMany;
 use Laravel\Nova\Fields\Text;
 
 /**
@@ -60,7 +58,7 @@ class Role extends Resource
                 ->hideWhenCreating()
                 ->hideWhenUpdating(),
 
-            HasMany::make('Users'),
+            MorphToMany::make('Users'),
 
             DateTime::make('Created At')
                 ->sortable()
