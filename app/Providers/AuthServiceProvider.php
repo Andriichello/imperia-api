@@ -36,6 +36,7 @@ class AuthServiceProvider extends ServiceProvider
         Morphs\Comment::class => Policies\CommentPolicy::class,
         Morphs\Discount::class => Policies\DiscountPolicy::class,
         /** Other */
+        \Spatie\Permission\Models\Role::class => Policies\RolePolicy::class,
         Models\Notification::class => Policies\NotificationPolicy::class,
     ];
 

@@ -6,6 +6,7 @@ use App\Models\Morphs\Discount;
 use App\Models\User;
 use App\Policies\Base\CrudPolicy;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Response;
 
 /**
  * Class DiscountPolicy.
@@ -28,9 +29,9 @@ class DiscountPolicy extends CrudPolicy
      * @param User $user
      * @param string $ability
      *
-     * @return bool
+     * @return Response|bool|null
      */
-    public function before(User $user, string $ability): bool
+    public function before(User $user, string $ability): Response|bool|null
     {
         if (in_array($ability, ['viewAny', 'view'])) {
             return true;

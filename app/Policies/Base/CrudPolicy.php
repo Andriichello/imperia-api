@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class CrudPolicy.
@@ -48,6 +49,7 @@ abstract class CrudPolicy implements CrudPolicyInterface
      */
     public function determineMissing(string $ability, mixed ...$args): bool
     {
+        (new ConsoleOutput())->writeln(static::class . ' -> ' . $ability);
         return true;
     }
 
@@ -66,8 +68,9 @@ abstract class CrudPolicy implements CrudPolicyInterface
             return true;
         }
 
-        if (!$this->before($request->user(), $ability)) {
-            return false;
+        $before = $this->before($request->user(), $ability);
+        if ($before !== null) {
+            return $before;
         }
 
         if (!method_exists($this, $ability)) {
@@ -85,12 +88,12 @@ abstract class CrudPolicy implements CrudPolicyInterface
      * @param User $user
      * @param string $ability
      *
-     * @return bool
+     * @return Response|bool|null
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function before(User $user, string $ability): bool
+    public function before(User $user, string $ability): Response|bool|null
     {
-        return true;
+        return null;
     }
 
     /**

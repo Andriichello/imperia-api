@@ -216,7 +216,7 @@ class User extends Authenticatable implements SoftDeletableInterface
      */
     public function isStaff(): bool
     {
-        return $this->hasAnyRole(UserRole::Admin, UserRole::Manager);
+        return $this->isAdmin() || $this->isManager();
     }
 
     /**

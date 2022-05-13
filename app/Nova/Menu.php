@@ -2,13 +2,16 @@
 
 namespace App\Nova;
 
+use App\Models\Scopes\ArchivedScope;
 use ClassicO\NovaMediaLibrary\MediaLibrary;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
 /**
  * Class Menu.
@@ -39,6 +42,25 @@ class Menu extends Resource
     public static $search = [
         'id', 'title', 'description',
     ];
+
+    /**
+     * Build an "index" query for the given resource.
+     *
+     * @param NovaRequest $request
+     * @param Builder $query
+     *
+     * @return Builder
+     */
+    public static function indexQuery(NovaRequest $request, $query): Builder
+    {
+        /** @var User $user */
+        $user = $request->user();
+        if ($user->isAdmin()) {
+            $query->withoutGlobalScope(ArchivedScope::class);
+        }
+
+        return $query;
+    }
 
     /**
      * Get the fields displayed by the resource.

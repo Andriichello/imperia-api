@@ -45,9 +45,9 @@ interface CrudPolicyInterface
      * @param User $user
      * @param string $ability
      *
-     * @return bool
+     * @return Response|bool|null
      */
-    public function before(User $user, string $ability): bool;
+    public function before(User $user, string $ability): Response|bool|null;
 
     /**
      * Determines if user us higher than the target one.

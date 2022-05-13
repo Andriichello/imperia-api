@@ -7,11 +7,12 @@ use App\Models\User;
 use App\Policies\Base\CrudPolicy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
+use Spatie\Permission\Models\Role;
 
 /**
- * Class MenuPolicy.
+ * Class RolePolicy.
  */
-class MenuPolicy extends CrudPolicy
+class RolePolicy extends CrudPolicy
 {
     /**
      * Get the model of the policy.
@@ -20,7 +21,7 @@ class MenuPolicy extends CrudPolicy
      */
     public function model(): Model|string
     {
-        return Menu::class;
+        return Role::class;
     }
 
     /**
@@ -30,13 +31,14 @@ class MenuPolicy extends CrudPolicy
      * @param string $ability
      *
      * @return Response|bool|null
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function before(User $user, string $ability): Response|bool|null
     {
         if (in_array($ability, ['view', 'viewAny'])) {
-            return true;
+            return $user->isAdmin();
         }
 
-        return $user->isStaff();
+        return false;
     }
 }
