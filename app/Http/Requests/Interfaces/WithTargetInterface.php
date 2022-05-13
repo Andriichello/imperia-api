@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Interfaces;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
  * Interface WithTargetInterface.
@@ -10,11 +11,13 @@ use Illuminate\Database\Eloquent\Model;
 interface WithTargetInterface
 {
     /**
-     * Get route id parameter.
+     * Get|set route id parameter.
+     *
+     * @param mixed $id
      *
      * @return mixed
      */
-    public function id(): mixed;
+    public function id(mixed $id): mixed;
 
     /**
      * Get model with target id.
@@ -26,11 +29,12 @@ interface WithTargetInterface
     public function target(Model|string $model): ?Model;
 
     /**
-     * Get trashed model with target id.
+     * Get model with target id or throw an exception.
      *
      * @param Model|string $model
      *
-     * @return ?Model
+     * @return Model
+     * @throws ModelNotFoundException
      */
-    public function trashedTarget(Model|string $model): ?Model;
+    public function targetOrFail(Model|string $model): Model;
 }
