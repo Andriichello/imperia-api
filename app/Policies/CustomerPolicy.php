@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Customer;
 use App\Models\User;
+use App\Policies\Base\CrudPolicy;
 use Illuminate\Database\Eloquent\Model;
 
 /**

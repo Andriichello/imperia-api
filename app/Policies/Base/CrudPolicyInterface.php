@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Policies;
+namespace App\Policies\Base;
 
 use App\Http\Requests\CrudRequest;
 use App\Models\User;
