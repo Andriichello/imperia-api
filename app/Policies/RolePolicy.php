@@ -41,4 +41,16 @@ class RolePolicy extends CrudPolicy
 
         return false;
     }
+
+    /**
+     * Determine whether the user can view any models.
+     *
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function viewAny(User $user): bool
+    {
+        return $user->isAdmin();
+    }
 }
