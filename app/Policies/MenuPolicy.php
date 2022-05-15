@@ -37,6 +37,6 @@ class MenuPolicy extends CrudPolicy
             return true;
         }
 
-        return $user->isStaff();
+        return $user->isAdmin();
     }
 }
