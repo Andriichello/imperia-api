@@ -22,6 +22,6 @@ class BackupTool extends SpatieBackupTool
         /** @var User|null $user */
         $user = $request->user();
 
-        return $user && $user->isStaff();
+        return $user && $user->isAdmin();
     }
 }
