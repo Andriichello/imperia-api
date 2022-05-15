@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Morphs\Category;
 use App\Models\Service;
 use App\Models\User;
 use App\Policies\Base\CrudPolicy;
@@ -37,6 +38,35 @@ class ServicePolicy extends CrudPolicy
             return true;
         }
 
+        return $user->isAdmin();
+    }
+
+    /**
+     * Determine if user can attach categories to model.
+     *
+     * @param User $user
+     * @param Service $service
+     *
+     * @return Response|bool|null
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function attachAnyCategory(User $user, Service $service): Response|bool|null
+    {
+        return $user->isAdmin();
+    }
+
+    /**
+     * Determine if user can detach category from model.
+     *
+     * @param User $user
+     * @param Service $service
+     * @param Category $category
+     *
+     * @return Response|bool|null
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function detachCategory(User $user, Service $service, Category $category): Response|bool|null
+    {
         return $user->isAdmin();
     }
 }
