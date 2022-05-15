@@ -96,9 +96,16 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
     Route::apiResource('banquets', BanquetController::class)
         ->only('index', 'show', 'store', 'update', 'destroy')
         ->parameters(['banquets' => 'id']);
+});
 
-    Route::get('/banquets/{id}/invoice', [InvoiceController::class, 'view'])->name('banquets.invoice');
-    Route::get('/banquets/{id}/invoice/pdf', [InvoiceController::class, 'pdf'])->name('banquets.invoice-pdf');
+Route::group(['middleware' => 'auth:signature', 'as' => 'api.'], function () {
+    Route::get('/orders/{id}/invoice', [InvoiceController::class, 'view'])->name('orders.invoice');
+    Route::get('/orders/{id}/invoice/pdf', [InvoiceController::class, 'pdf'])->name('orders.invoice-pdf');
+
+    Route::get('/banquets/{id}/invoice', [InvoiceController::class, 'viewThroughBanquet'])
+        ->name('banquets.invoice');
+    Route::get('/banquets/{id}/invoice/pdf', [InvoiceController::class, 'pdfThroughBanquet'])
+        ->name('banquets.invoice-pdf');
 });
 
 Route::fallback(function () {

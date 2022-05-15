@@ -2,10 +2,14 @@
 
 namespace App\Providers;
 
+use App\Guards\SignatureGuard;
+use App\Helpers\SignatureHelper;
 use App\Models as Models;
 use App\Models\Morphs as Morphs;
 use App\Policies as Policies;
+use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Class AuthServiceProvider.
@@ -48,5 +52,13 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
+
+        Auth::extend('signature', function (Application $app, $name, $config) {
+            return new SignatureGuard(
+                Auth::createUserProvider($config['provider']),
+                $app->make('request'),
+                $app->make(SignatureHelper::class),
+            );
+        });
     }
 }

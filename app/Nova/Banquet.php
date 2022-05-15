@@ -5,6 +5,7 @@ namespace App\Nova;
 use App\Enums\BanquetState;
 use App\Models\Scopes\ArchivedScope;
 use App\Nova\Actions\CalculateTotals;
+use App\Nova\Actions\GenerateInvoice;
 use App\Nova\Options\BanquetStateOptions;
 use App\Queries\OrderQueryBuilder;
 use Illuminate\Database\Eloquent\Builder;
@@ -65,6 +66,7 @@ class Banquet extends Resource
     {
         return [
             new CalculateTotals(),
+            new GenerateInvoice(),
         ];
     }
 

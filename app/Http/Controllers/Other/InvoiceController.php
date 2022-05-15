@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Invoice\ShowInvoiceRequest;
 use App\Invoices\InvoiceFactory;
 use App\Models\Banquet;
+use App\Models\Orders\Order;
 use Exception;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\View\View;
@@ -17,7 +18,7 @@ use Illuminate\Http\Response;
 class InvoiceController extends Controller
 {
     /**
-     * Generate banquet's order invoice html.
+     * Generate order invoice html.
      *
      * @param ShowInvoiceRequest $request
      *
@@ -27,15 +28,32 @@ class InvoiceController extends Controller
      */
     public function view(ShowInvoiceRequest $request): View
     {
-        /** @var Banquet $banquet */
-        $banquet = Banquet::query()
-            ->findOrFail($request->id());
+        /** @var Order $target */
+        $target = $request->targetOrFail(Order::class);
 
-        if (!$banquet->order) {
-            throw new Exception('Banquet has no order.');
+        return InvoiceFactory::fromOrder($target)->render()->toHtml();
+    }
+
+    /**
+     * Generate banquet's order invoice html.
+     *
+     * @param ShowInvoiceRequest $request
+     *
+     * @return View
+     * @throws BindingResolutionException
+     * @throws Exception
+     */
+    public function viewThroughBanquet(ShowInvoiceRequest $request): View
+    {
+        /** @var Banquet $target */
+        $target = $request->targetOrFail(Banquet::class);
+
+        if ($target->order) {
+            $request->id($target->order_id);
+            return $this->view($request);
         }
 
-        return InvoiceFactory::fromOrder($banquet->order)->render()->toHtml();
+        throw new Exception('Banquet has no order.');
     }
 
     /**
@@ -49,14 +67,31 @@ class InvoiceController extends Controller
      */
     public function pdf(ShowInvoiceRequest $request): Response
     {
-        /** @var Banquet $banquet */
-        $banquet = Banquet::query()
-            ->findOrFail($request->id());
+        /** @var Order $target */
+        $target = $request->targetOrFail(Order::class);
 
-        if (!$banquet->order) {
-            throw new Exception('Banquet has no order.');
+        return InvoiceFactory::fromOrder($target)->stream();
+    }
+
+    /**
+     * Generate banquet's order invoice pdf.
+     *
+     * @param ShowInvoiceRequest $request
+     *
+     * @return Response
+     * @throws BindingResolutionException
+     * @throws Exception
+     */
+    public function pdfThroughBanquet(ShowInvoiceRequest $request): Response
+    {
+        /** @var Banquet $target */
+        $target = $request->targetOrFail(Banquet::class);
+
+        if ($target->order) {
+            $request->id($target->order_id);
+            return $this->pdf($request);
         }
 
-        return InvoiceFactory::fromOrder($banquet->order)->stream();
+        throw new Exception('Banquet has no order.');
     }
 }

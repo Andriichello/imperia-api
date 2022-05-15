@@ -49,6 +49,10 @@ return [
             'provider' => 'users',
             'hash' => false,
         ],
+        'signature' => [
+            'driver' => 'signature',
+            'provider' => 'users',
+        ]
     ],
 
     /*
@@ -73,6 +77,10 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
+
+        'signature' => [
+            'driver' => 'signature',
+        ]
 
         // 'users' => [
         //     'driver' => 'database',

@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use App\Nova\Actions\CalculateTotals;
+use App\Nova\Actions\GenerateInvoice;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Code;
@@ -56,6 +57,7 @@ class Order extends Resource
     {
         return [
             new CalculateTotals(),
+            new GenerateInvoice(),
         ];
     }
 

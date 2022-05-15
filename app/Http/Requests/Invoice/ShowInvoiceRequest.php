@@ -19,19 +19,12 @@ class ShowInvoiceRequest extends ShowRequest
         return array_merge(
             parent::rules(),
             [
-                //
+                'signature' => [
+                    'required',
+                    'string',
+                    'min:32'
+                ]
             ]
         );
-    }
-
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize(): bool
-    {
-        // todo: enable customer to see invoices for his/her banquets
-        return $this->isByManager() || $this->isByAdmin();
     }
 }
