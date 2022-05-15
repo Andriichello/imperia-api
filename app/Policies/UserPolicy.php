@@ -26,6 +26,7 @@ class UserPolicy extends CrudPolicy
      * Determine whether the user can view any models.
      *
      * @param User $user
+     *
      * @return bool
      */
     public function viewAny(User $user): bool
@@ -38,6 +39,7 @@ class UserPolicy extends CrudPolicy
      *
      * @param User $user
      * @param User $model
+     *
      * @return bool
      */
     public function view(User $user, User $model): bool
@@ -52,18 +54,11 @@ class UserPolicy extends CrudPolicy
      * @param string ...$roles
      *
      * @return bool
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function create(User $user, string ...$roles): bool
     {
-        if (!in_array(UserRole::Admin, $roles)) {
-            return $user->isAdmin();
-        }
-
-        if (!in_array(UserRole::Manager, $roles)) {
-            return $user->isManager();
-        }
-
-        return false;
+        return $user->isAdmin();
     }
 
     /**
