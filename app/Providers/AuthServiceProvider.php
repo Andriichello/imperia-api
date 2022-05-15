@@ -49,16 +49,32 @@ class AuthServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function register()
     {
         $this->registerPolicies();
 
-        Auth::extend('signature', function (Application $app, $name, $config) {
+        $this->app->bind(SignatureGuard::class, function () {
+            $provider = config('auth.guards.signature.provider', 'users');
+
             return new SignatureGuard(
-                Auth::createUserProvider($config['provider']),
-                $app->make('request'),
-                $app->make(SignatureHelper::class),
+                Auth::createUserProvider($provider),
+                app('request'),
+                app(SignatureHelper::class),
             );
         });
+
+        Auth::extend('signature', function () {
+            return app(SignatureGuard::class);
+        });
+    }
+
+    /**
+     * Boot any authentication / authorization services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        //
     }
 }

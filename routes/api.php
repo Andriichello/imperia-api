@@ -98,7 +98,7 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
         ->parameters(['banquets' => 'id']);
 });
 
-Route::group(['middleware' => 'auth:signature', 'as' => 'api.'], function () {
+Route::group(['middleware' => ['auth:signature,sanctum'], 'as' => 'api.'], function () {
     Route::get('/orders/{id}/invoice', [InvoiceController::class, 'view'])->name('orders.invoice');
     Route::get('/orders/{id}/invoice/pdf', [InvoiceController::class, 'pdf'])->name('orders.invoice-pdf');
 

@@ -4,7 +4,6 @@ namespace App\Http\Requests\Banquet;
 
 use App\Helpers\BanquetHelper;
 use App\Http\Requests\Crud\UpdateRequest;
-use App\Http\Requests\Traits\GuardsBanquet;
 use App\Models\Banquet;
 use App\Models\Morphs\Comment;
 use App\Models\Morphs\Discount;
@@ -15,22 +14,6 @@ use Illuminate\Contracts\Validation\Validator;
  */
 class UpdateBanquetRequest extends UpdateRequest
 {
-    use GuardsBanquet;
-
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize(): bool
-    {
-        /** @var Banquet $banquet */
-        $banquet = Banquet::query()
-            ->findOrFail($this->id());
-
-        return $this->canEdit($this->user(), $banquet);
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *

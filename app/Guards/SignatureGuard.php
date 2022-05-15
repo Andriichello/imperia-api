@@ -2,45 +2,49 @@
 
 namespace App\Guards;
 
-use App\Helpers\SignatureHelper;
-use Illuminate\Auth\TokenGuard;
+use App\Helpers\Interfaces\SignatureHelperInterface;
+use Illuminate\Auth\GuardHelpers;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Http\Request;
 
 /**
  * Class SignatureGuard.
  */
-class SignatureGuard extends TokenGuard
+class SignatureGuard implements Guard
 {
+    use GuardHelpers;
+
+    /**
+     * The request instance.
+     *
+     * @var Request
+     */
+    protected Request $request;
+
     /**
      * The signature helper.
      *
-     * @var SignatureHelper
+     * @var SignatureHelperInterface
      */
-    protected SignatureHelper $signer;
+    protected SignatureHelperInterface $signer;
 
     /**
      * Create a new authentication guard.
      *
      * @param UserProvider $provider
      * @param Request $request
-     * @param string $inputKey
-     * @param string $storageKey
-     * @param bool $hash
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @param SignatureHelperInterface $signer
      */
     public function __construct(
         UserProvider $provider,
         Request $request,
-        $inputKey = 'api_token',
-        $storageKey = 'api_token',
-        $hash = false,
+        SignatureHelperInterface $signer,
     ) {
-        parent::__construct($provider, $request, $inputKey, $storageKey, $hash);
-
-        $this->signer = app(SignatureHelper::class);
+        $this->provider = $provider;
+        $this->request = $request;
+        $this->signer = $signer;
     }
 
     /**
@@ -50,13 +54,16 @@ class SignatureGuard extends TokenGuard
      */
     public function user()
     {
-        if (parent::user()) {
+        if (isset($this->user)) {
             return $this->user;
         }
 
         $signature = $this->getSignatureForRequest();
-        $id = $this->signer->userId($signature);
+        if (empty($signature)) {
+            return null;
+        }
 
+        $id = $this->signer->userId($signature);
         if (!$id || !$this->signer->verify($signature)) {
             return null;
         }
@@ -78,21 +85,35 @@ class SignatureGuard extends TokenGuard
      * Validate a user's credentials.
      *
      * @param array $credentials
+     *
      * @return bool
      */
     public function validate(array $credentials = [])
     {
-        if (parent::validate()) {
-            return true;
+        $signature = data_get($credentials, 'signature');
+        if (empty($signature)) {
+            return false;
         }
 
-        $signature = data_get($credentials, 'signature', '');
         $id = $this->signer->userId($signature);
-
         if (!$id || !$this->signer->verify($signature)) {
             return false;
         }
 
         return $this->provider->retrieveById($id) !== null;
+    }
+
+    /**
+     * Set request instance.
+     *
+     * @param Request $request
+     *
+     * @return static
+     */
+    public function setRequest(Request $request): static
+    {
+        $this->request = $request;
+
+        return $this;
     }
 }

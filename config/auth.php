@@ -78,10 +78,6 @@ return [
             'model' => App\Models\User::class,
         ],
 
-        'signature' => [
-            'driver' => 'signature',
-        ]
-
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
