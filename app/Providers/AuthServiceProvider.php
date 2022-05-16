@@ -7,7 +7,6 @@ use App\Helpers\SignatureHelper;
 use App\Models as Models;
 use App\Models\Morphs as Morphs;
 use App\Policies as Policies;
-use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Auth;
 
@@ -39,8 +38,8 @@ class AuthServiceProvider extends ServiceProvider
         Morphs\Category::class => Policies\CategoryPolicy::class,
         Morphs\Comment::class => Policies\CommentPolicy::class,
         Morphs\Discount::class => Policies\DiscountPolicy::class,
-        /** Other */
         \Spatie\Permission\Models\Role::class => Policies\RolePolicy::class,
+        /** Other */
         Models\Notification::class => Policies\NotificationPolicy::class,
     ];
 

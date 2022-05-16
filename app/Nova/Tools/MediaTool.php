@@ -19,6 +19,14 @@ class MediaTool extends NovaMediaLibrary
      */
     public function authorizedToSee(Request $request): bool
     {
+        $nonEditing = $request->isMethod('get')
+            || str_ends_with($request->path(), '/nova-media-library/get')
+            || str_ends_with($request->path(), '/nova-media-library/folders');
+
+        if ($nonEditing) {
+            return true;
+        }
+
         /** @var User|null $user */
         $user = $request->user();
 
