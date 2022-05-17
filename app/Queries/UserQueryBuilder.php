@@ -21,20 +21,20 @@ class UserQueryBuilder extends BaseQueryBuilder
      */
     public function index(User $user): static
     {
+        if ($user->isAdmin()) {
+            return $this;
+        }
+
         if ($user->isManager()) {
             $this->whereWrapped(function (UserQueryBuilder $query) use ($user) {
                 $query->onlyRoles(UserRole::Customer)
-                    ->orWhere('user_id', $user->id);
+                    ->orWhere('id', $user->id);
             });
 
             return $this;
         }
 
-        if ($user->isCustomer()) {
-            $this->where('user_id', $user->id);
-        }
-
-        return $this;
+        return $this->where('id', $user->id);
     }
 
     /**

@@ -29,10 +29,11 @@ class UserPolicy extends CrudPolicy
      * @param User $user
      *
      * @return bool
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdmin();
+        return true;
     }
 
     /**
@@ -72,7 +73,8 @@ class UserPolicy extends CrudPolicy
      */
     public function update(User $user, User $model): bool
     {
-        return $user->is($model) || $this->isHigher($user, $model);
+        return $user->is($model)
+            || ($this->isHigher($user, $model) && $user->isAdmin());
     }
 
     /**
@@ -85,7 +87,8 @@ class UserPolicy extends CrudPolicy
      */
     public function delete(User $user, User $model): bool
     {
-        return $user->is($model) || $this->isHigher($user, $model);
+        return $user->is($model)
+            || ($this->isHigher($user, $model) && $user->isAdmin());
     }
 
     /**
@@ -98,7 +101,8 @@ class UserPolicy extends CrudPolicy
      */
     public function restore(User $user, User $model): bool
     {
-        return $user->is($model) || $this->isHigher($user, $model);
+        return $user->is($model)
+            || ($this->isHigher($user, $model) && $user->isAdmin());
     }
 
     /**
@@ -111,7 +115,8 @@ class UserPolicy extends CrudPolicy
      */
     public function forceDelete(User $user, User $model): bool
     {
-        return $user->is($model) || $this->isHigher($user, $model);
+        return $user->is($model)
+            || ($this->isHigher($user, $model) && $user->isAdmin());
     }
 
     /**
@@ -124,7 +129,7 @@ class UserPolicy extends CrudPolicy
      */
     public function attachAnyRole(User $user, User $model): bool
     {
-        return $this->isHigher($user, $model);
+        return $this->isHigher($user, $model) && $user->isAdmin();
     }
 
     /**
@@ -138,7 +143,7 @@ class UserPolicy extends CrudPolicy
      */
     public function attachRole(User $user, User $model, Role $role): bool
     {
-        return $this->isHigher($user, $model)
+        return ($this->isHigher($user, $model) && $user->isAdmin())
             && strtolower(data_get($role, 'name', '')) !== strtolower(UserRole::Admin);
     }
 
@@ -154,6 +159,6 @@ class UserPolicy extends CrudPolicy
      */
     public function detachRole(User $user, User $model, Role $role): bool
     {
-        return $this->isHigher($user, $model);
+        return $this->isHigher($user, $model)  && $user->isAdmin();
     }
 }
