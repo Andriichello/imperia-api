@@ -32,6 +32,7 @@ use Illuminate\Support\Collection;
  * @property Carbon|null $deleted_at
  *
  * @property User|null $user
+ * @property Banquet[]|Collection $banquets
  * @property FamilyMember[]|Collection $familyMembers
  *
  * @method static CustomerQueryBuilder query()
@@ -76,6 +77,7 @@ class Customer extends BaseModel implements
      */
     protected $relations = [
         'user',
+        'banquets',
         'familyMembers',
     ];
 
@@ -97,6 +99,16 @@ class Customer extends BaseModel implements
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    /**
+     * Related banquets.
+     *
+     * @return HasMany
+     */
+    public function banquets(): HasMany
+    {
+        return $this->hasMany(Banquet::class, 'customer_id', 'id');
     }
 
     /**

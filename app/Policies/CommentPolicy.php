@@ -3,7 +3,6 @@
 namespace App\Policies;
 
 use App\Models\Banquet;
-use App\Models\Customer;
 use App\Models\Morphs\Comment;
 use App\Models\Orders\Order;
 use App\Models\User;
@@ -63,17 +62,20 @@ class CommentPolicy extends CrudPolicy
     public function hasEditRights(User $user, Comment $comment): bool
     {
         $target = $comment->commentable;
-        if ($target instanceof Order) {
-            return $target->canBeEdited();
+        if ($target instanceof Order && !$target->canBeEdited()) {
+            return false;
         }
-        if ($target instanceof Banquet) {
-            return $target->canBeEdited();
+        if ($target instanceof Banquet && !$target->canBeEdited()) {
+            return false;
         }
 
         if ($user->isStaff()) {
             return true;
         }
-        // customer shouldn't be able to edit comments on him
-        return ($target instanceof Customer) === false;
+
+        return Comment::query()
+            ->asForCustomer($user)
+            ->whereKey($comment->id)
+            ->exists();
     }
 }
