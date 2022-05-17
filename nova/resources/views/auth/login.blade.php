@@ -42,13 +42,19 @@
         </label>
 
 
-        @if (\Laravel\Nova\Nova::resetsPasswords())
         <div class="ml-auto">
-            <a class="text-primary dim font-bold no-underline" href="{{ route('nova.password.request') }}">
-                {{ __('Forgot Your Password?') }}
+            <a class="text-primary dim font-bold no-underline" href="{{ route('nova.register') }}">
+                {{ __('Don\'t have an account?') }}
             </a>
         </div>
-        @endif
+
+{{--        @if (\Laravel\Nova\Nova::resetsPasswords())--}}
+{{--        <div class="ml-auto">--}}
+{{--            <a class="text-primary dim font-bold no-underline" href="{{ route('nova.password.request') }}">--}}
+{{--                {{ __('Forgot Your Password?') }}--}}
+{{--            </a>--}}
+{{--        </div>--}}
+{{--        @endif--}}
     </div>
 
     <button class="w-full btn btn-default btn-primary hover:bg-primary-dark" type="submit">

@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Events\User\Registered;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\User\UserResource;
 use App\Http\Responses\ApiResponse;
-use App\Repositories\CustomerRepository;
 use App\Repositories\UserRepository;
+use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\JsonResponse;
 
 /**
@@ -16,28 +15,21 @@ use Illuminate\Http\JsonResponse;
  */
 class RegisterController extends Controller
 {
+    use RegistersUsers;
+
     /**
      * @var UserRepository
      */
     protected UserRepository $userRepository;
 
     /**
-     * @var CustomerRepository
-     */
-    protected CustomerRepository $customerRepository;
-
-    /**
-     * RegisterController contstructor.
+     * RegisterController constructor.
      *
      * @param UserRepository $userRepository
-     * @param CustomerRepository $customerRepository
      */
-    public function __construct(
-        UserRepository $userRepository,
-        CustomerRepository $customerRepository
-    ) {
+    public function __construct(UserRepository $userRepository)
+    {
         $this->userRepository = $userRepository;
-        $this->customerRepository = $customerRepository;
     }
 
     /**
@@ -72,9 +64,8 @@ class RegisterController extends Controller
      */
     public function __invoke(RegisterRequest $request): JsonResponse
     {
-        $user = $this->userRepository->create($request->validated());
+        $user = $this->userRepository->register($request->validated());
         $token = $user->createToken($request->userAgent());
-        event(new Registered($user, $request->get('phone')));
 
         $data = [
             'token' => $token->plainTextToken,
