@@ -35,6 +35,7 @@ class AuthServiceProvider extends ServiceProvider
         Models\Space::class => Policies\SpacePolicy::class,
         Models\Ticket::class => Policies\TicketPolicy::class,
         /** Morphs */
+        Morphs\Log::class => Policies\LogPolicy::class,
         Morphs\Category::class => Policies\CategoryPolicy::class,
         Morphs\Comment::class => Policies\CommentPolicy::class,
         Morphs\Discount::class => Policies\DiscountPolicy::class,

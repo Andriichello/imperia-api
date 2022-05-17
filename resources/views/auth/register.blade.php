@@ -63,6 +63,14 @@
             <input class="form-control form-input form-input-bordered w-full @error('password') is-invalid @enderror" id="password-confirm" type="password" name="password_confirmation" required autocomplete="new-password">
         </div>
 
+        <div class="flex mb-6">
+            <div class="ml-auto">
+                <a class="text-primary dim font-bold no-underline" href="{{ route('nova.login') }}">
+                    {{ __('Already have an account?') }}
+                </a>
+            </div>
+        </div>
+
         <button class="w-full btn btn-default btn-primary hover:bg-primary-dark" type="submit">
             {{ __('form.register') }}
         </button>

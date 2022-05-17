@@ -5,14 +5,9 @@ namespace App\Http\Controllers\Other;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Repositories\UserRepository;
-use Illuminate\Contracts\Auth\Guard;
-use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Auth\RegistersUsers;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
-use Laravel\Nova\Nova;
 
 /**
  * Class NovaRegisterController.
@@ -41,17 +36,7 @@ class NovaRegisterController extends Controller
      */
     public function redirectTo(): string
     {
-        return Nova::path();
-    }
-
-    /**
-     * Get the guard to be used during registration.
-     *
-     * @return Guard|StatefulGuard
-     */
-    protected function guard(): Guard|StatefulGuard
-    {
-        return Auth::guard('web');
+        return route('nova.login');
     }
 
     /**
@@ -69,16 +54,12 @@ class NovaRegisterController extends Controller
      *
      * @param RegisterRequest $request
      *
-     * @return JsonResponse|RedirectResponse
+     * @return RedirectResponse
      */
-    public function register(RegisterRequest $request): JsonResponse|RedirectResponse
+    public function register(RegisterRequest $request): RedirectResponse
     {
-        $user = $this->userRepository->register($request->validated());
-        // @phpstan-ignore-next-line
-        $this->guard()->login($user);
+        $this->userRepository->register($request->validated());
 
-        return $request->wantsJson()
-            ? new JsonResponse([], 201)
-            : redirect($this->redirectPath());
+        return redirect($this->redirectPath());
     }
 }
