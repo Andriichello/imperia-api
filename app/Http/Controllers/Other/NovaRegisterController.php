@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Other;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Repositories\UserRepository;
-use Illuminate\Auth\RequestGuard;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Contracts\View\View;

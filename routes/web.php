@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Other\NovaRegisterController;
 use Illuminate\Support\Facades\Route;
+use Laravel\Nova\Http\Middleware\RedirectIfAuthenticated;
 use Laravel\Nova\Nova;
 
 /*
@@ -20,7 +21,7 @@ Route::get('/', function () {
 });
 
 Route::domain(config('nova.domain', null))
-    ->middleware('web')
+    ->middleware(['web', RedirectIfAuthenticated::class])
     ->as('nova.')
     ->prefix(Nova::path())
     ->group(function () {
