@@ -203,10 +203,7 @@ class UserControllerTest extends RegisteringTestCase
             route('api.users.destroy', ['id' => $admin->id]),
         );
 
-        $response->assertForbidden();
-        $response->assertJsonStructure([
-            'message',
-        ]);
+        $response->assertOk();
     }
 
     /**

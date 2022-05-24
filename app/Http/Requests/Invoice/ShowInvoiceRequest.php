@@ -39,12 +39,12 @@ class ShowInvoiceRequest extends ShowRequest
         }
 
         $name = request()->route()->getName();
-        if (contains($name, 'api.banquets')) {
+        if (str_contains($name, 'api.banquets')) {
             /** @var Banquet $banquet */
             $banquet = $this->targetOrFail(Banquet::class);
         }
 
-        if (contains($name, 'api.orders')) {
+        if (str_contains($name, 'api.orders')) {
             /** @var Order $order */
             $order = $this->targetOrFail(Order::class);
             $banquet = $order->banquet;
