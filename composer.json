@@ -24,7 +24,7 @@
         "inspheric/nova-indicator-field": "^1.43",
         "jagdeepbanga/nova-date-time": "^1.0",
         "laravel/framework": "^8.65",
-        "laravel/nova": "*",
+        "laravel/nova": "3.*",
         "laravel/sanctum": "^2.11",
         "laravel/scout": "^9.4",
         "laravel/tinker": "^2.5",
@@ -70,8 +70,8 @@
     },
     "repositories": [
         {
-            "type": "path",
-            "url": "./nova"
+            "type": "composer",
+            "url": "https://nova.laravel.com"
         },
         {
             "type": "path",
