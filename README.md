@@ -1,4 +1,6 @@
 ## `imperia-api`
+Staging url: https://imperia-api.herokuapp.com.
+
 There are multiple steps to make the application running locally via docker. By default, docker container is mapped to `localhost:8080`.
 
 - Have docker installed and running.
