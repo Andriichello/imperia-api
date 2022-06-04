@@ -4,6 +4,7 @@ There are multiple steps to make the application running locally via docker. By 
 - Have docker installed and running.
 - Make sure you have `make` command available. In Windows, you can install it with `choco install make` command (run cmd as admin).
 - Clone the project and checkout `master` branch.
+- Ask a backend developer for `auth.json` file and place it into the root directory of the project.
 - Run `make init` inside the project root directory. It will build the docker image and execute `init.sh` script in `imperia_api` container.
 - Run `make start` in order to start `imperia_api` container for development.
 - Run `make bash` in order to connect to the `imperia_api` container's bash.
