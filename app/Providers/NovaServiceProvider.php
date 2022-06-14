@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Andriichello\Marketplace\Marketplace;
 use App\Nova\Tools\BackupTool;
 use App\Nova\Tools\MediaTool;
 use DigitalCreative\CollapsibleResourceManager\CollapsibleResourceManager;
@@ -87,6 +88,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     public function tools(): array
     {
         return [
+            new Marketplace(),
             new CollapsibleResourceManager([
                 'navigation' => [
                     TopLevelResource::make([

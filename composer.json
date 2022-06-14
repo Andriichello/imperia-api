@@ -37,7 +37,8 @@
         "symfony/console": "^5.2",
         "symfony/http-client": "^6.0",
         "symfony/mailgun-mailer": "^6.0",
-        "symfony/validator": "^5.2"
+        "symfony/validator": "^5.2",
+        "andriichello/marketplace": "*"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
@@ -76,6 +77,10 @@
         {
             "type": "path",
             "url": "./nova-components/ColumnsCard"
+        },
+        {
+            "type": "path",
+            "url": "./nova-components/Marketplace"
         }
     ],
     "scripts": {
