@@ -1,10 +1,8 @@
 <?php
 
-use App\Http\Resources\Category\CategoryCollection;
 use App\Http\Resources\Menu\MenuCollection;
 use App\Http\Resources\Product\ProductCollection;
 use App\Models\Menu;
-use App\Models\Morphs\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -28,22 +26,15 @@ Route::get('/menus', function () {
     return ['menus' => new MenuCollection($menus)];
 });
 
-Route::get('/categories', function (Request $request) {
-    $targets = ['products', 'tickets', 'spaces', 'services'];
-    $target = $request->get('target');
-    if (!in_array($target, $targets)) {
-        $target = $targets[0];
+Route::get('/products', function (Request $request) {
+    $query = Product::query();
+
+    if ($request->has('menu_id')) {
+        $query->withMenu((int) $request->get('menu_id'));
+    }
+    if ($request->has('category_id')) {
+        $query->withAllOfCategories((int) $request->get('category_id'));
     }
 
-    $categories = Category::query()
-        ->target($target)
-        ->get();
-
-    return ['categories' => new CategoryCollection($categories)];
-});
-
-Route::get('/products', function (Request $request) {
-    $products = Product::query()->get();
-
-    return ['products' => new ProductCollection($products)];
+    return ['products' => new ProductCollection($query->get())];
 });

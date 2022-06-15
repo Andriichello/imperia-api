@@ -68,6 +68,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {
@@ -81,7 +82,6 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       menus: [],
-      categories: [],
       products: [],
       columns: [],
       selections: {
@@ -92,8 +92,6 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.getMenus();
-    this.getCategories();
-    this.getProducts();
   },
   methods: {
     getMenus: function getMenus() {
@@ -101,28 +99,32 @@ __webpack_require__.r(__webpack_exports__);
 
       Nova.request().get('/nova-vendor/marketplace/menus').then(function (response) {
         _this.menus = response.data.menus;
-      });
-    },
-    getCategories: function getCategories() {
-      var _this2 = this;
 
-      Nova.request().get('/nova-vendor/marketplace/categories').then(function (response) {
-        _this2.categories = response.data.categories;
+        if (_this.menus.length === 0) {
+          _this.selections.menu = null;
+          _this.selections.category = null;
+        } else {
+          _this.toggleMenu(_this.menus[0]);
+        }
+
+        _this.getProducts();
       });
     },
     getProducts: function getProducts() {
-      var _this3 = this;
+      var _this2 = this;
 
-      Nova.request().get('/nova-vendor/marketplace/products').then(function (response) {
-        _this3.setProducts(response.data.products);
+      var url = '/nova-vendor/marketplace/products';
+      var query = '?menu_id=' + this.selections.menu.id;
+
+      if (this.selections.category) {
+        query += '&category_id=' + this.selections.category.id;
+      }
+
+      Nova.request().get(url + query).then(function (response) {
+        _this2.products = response.data.products;
+
+        _this2.calculateColumns(_this2.products);
       });
-    },
-    setProducts: function setProducts(products) {
-      this.products = products;
-      this.calculateColumns(products);
-    },
-    calculateColumns: function calculateColumns(products) {
-      this.columns = this.splitOnColumns(products, 2);
     },
     splitOnColumns: function splitOnColumns(array, number) {
       var columns = [[], []];
@@ -131,39 +133,24 @@ __webpack_require__.r(__webpack_exports__);
       });
       return columns;
     },
-    toggleMenu: function toggleMenu(menuId) {
-      console.log('toggleMenu...');
-      console.log('selections:', this.selections);
-      console.log('products:', this.products);
-      var filtered = this.products;
-
-      if (this.selections.menu === menuId) {
-        this.selections.menu = null;
-      } else {
-        this.selections.menu = menuId;
-        filtered = this.products.filter(function (p) {
-          return p.menu_id === menuId;
-        });
-      }
-
-      this.calculateColumns(filtered);
+    calculateColumns: function calculateColumns(products) {
+      this.columns = this.splitOnColumns(products, 2);
     },
-    toggleCategory: function toggleCategory(categoryId) {
-      console.log('toggleCategory...');
-      console.log('selections:', this.selections);
-      console.log('products:', this.products);
-      var filtered = this.products;
-
-      if (this.selections.category === categoryId) {
-        this.selections.category = null;
-      } else {
-        this.selections.category = categoryId;
-        filtered = this.products.filter(function (p) {
-          return p.category_ids.includes(categoryId);
-        });
+    toggleMenu: function toggleMenu(menu) {
+      if (this.selections.menu === menu) {
+        return;
       }
 
-      this.calculateColumns(filtered);
+      this.selections.menu = menu;
+      this.getProducts();
+    },
+    toggleCategory: function toggleCategory(category) {
+      if (this.selections.category === category) {
+        category = null;
+      }
+
+      this.selections.category = category;
+      this.getProducts();
     }
   }
 });
@@ -203,7 +190,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.vue-horizontal {\n    flex-wrap: wrap;\n}\n.marketplace {\n    padding: 12px 42px 12px 42px;\n}\n.menus {\n    align-self: center;\n    justify-self: center;\n    padding: 6px 8px 6px 8px;\n}\n.menus-item {\n    display: flex;\n    align-items: center;\n    margin-right: 36px;\n    padding: 8px 12px 8px 12px;\n    /*background: #F3DA8D;*/\n    background: #FFFFFF;\n    border-radius: 4px;\n}\n.menus-item-text {\n    font-style: normal;\n    font-weight: 500;\n    font-size: 24px;\n    line-height: 28px;\n    text-align: center;\n}\n.categories {\n    justify-content: center;\n    align-items: center;\n    padding: 6px 8px 6px 8px;\n}\n.categories-item {\n    display: flex;\n    flex-direction: column;\n    justify-content: space-between;\n    align-items: center;\n    width: 88px;\n    height: 88px;\n    margin-right: 12px;\n    padding: 8px 12px 8px 12px;\n    /*background: #F3DA8D;*/\n    background: #FFFFFF;\n    border-radius: 4px;\n    text-align: center;\n}\n.categories-item-img {\n    width: 72px;\n    height: 48px;\n}\n.categories-item-span {\n    align-self: center;\n    justify-self: center;\n    font-style: normal;\n    font-weight: 400;\n    font-size: 10px;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.list {\n    display: flex;\n    flex-wrap: wrap;\n    gap: 16px;\n    margin-top: 16px;\n    padding: 0 8px 0 8px;\n}\n.list-col {\n    flex-basis: 212px;\n    display: flex;\n    flex-direction: column;\n    flex-grow: 1;\n    flex-wrap: wrap;\n    justify-content: start;\n    align-items: stretch;\n    gap: 16px;\n}\n.list-item {\n    height: 100px;\n    display: flex;\n    flex-direction: row;\n    flex-wrap: wrap;\n    gap: 4px;\n    align-items: center;\n    justify-content: space-between;\n    padding: 8px;\n    background: #FFFFFF;\n    border-radius: 4px;\n}\n.list-item-img {\n    width: 64px;\n    height: 64px;\n}\n.list-item-details {\n    display: flex;\n    flex-direction: column;\n    flex-grow: 1;\n    flex-wrap: wrap;\n    gap: 4px;\n    flex-basis: 128px;\n    align-items: center;\n    justify-content: space-between;\n}\n.list-item-title {\n    height: 14px;\n    display: block;\n    font-style: normal;\n    font-weight: 400;\n    font-size: 12px;\n    line-height: 14px;\n    text-align: center;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.list-item-description {\n    height: 36px;\n    display: block;\n    max-lines: 3;\n    line-clamp: 3;\n    font-style: normal;\n    font-weight: 300;\n    font-size: 10px;\n    line-height: 12px;\n    text-align: center;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.list-item-info {\n    display: flex;\n    flex-direction: row;\n    align-self: stretch;\n    justify-self: stretch;\n    padding: 0 8px 0 8px;\n}\n.list-item-weight {\n    display: block;\n    flex-grow: 1;\n    font-style: normal;\n    font-weight: 300;\n    font-size: 10px;\n    line-height: 12px;\n    text-align: start;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.list-item-price {\n    display: block;\n    flex-grow: 1;\n    font-style: normal;\n    font-weight: 400;\n    font-size: 12px;\n    line-height: 14px;\n    text-align: end;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.vue-horizontal {\n    flex-wrap: wrap;\n}\n.active {\n    background: #F3DA8D;\n}\n.non-active {\n    background: #FFFFFF;\n}\n.marketplace {\n    padding: 12px 42px 12px 42px;\n}\n.menus {\n    align-self: center;\n    justify-self: center;\n    padding: 6px 8px 6px 8px;\n}\n.menus-item {\n    display: flex;\n    align-items: center;\n    margin-right: 36px;\n    padding: 8px 12px 8px 12px;\n    border-radius: 4px;\n}\n.menus-item-text {\n    font-style: normal;\n    font-weight: 500;\n    font-size: 24px;\n    line-height: 28px;\n    text-align: center;\n}\n.categories {\n    justify-content: center;\n    align-items: center;\n    padding: 6px 8px 6px 8px;\n}\n.categories-item {\n    display: flex;\n    flex-direction: column;\n    justify-content: space-between;\n    align-items: center;\n    width: 88px;\n    height: 88px;\n    margin-right: 12px;\n    padding: 8px 12px 8px 12px;\n    border-radius: 4px;\n    text-align: center;\n}\n.categories-item-img {\n    width: 72px;\n    height: 48px;\n}\n.categories-item-span {\n    align-self: center;\n    justify-self: center;\n    font-style: normal;\n    font-weight: 400;\n    font-size: 10px;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.list {\n    display: flex;\n    flex-wrap: wrap;\n    gap: 16px;\n    margin-top: 16px;\n    padding: 0 8px 0 8px;\n}\n.list-col {\n    flex-basis: 212px;\n    display: flex;\n    flex-direction: column;\n    flex-grow: 1;\n    flex-wrap: wrap;\n    justify-content: start;\n    align-items: stretch;\n    gap: 16px;\n}\n.list-item {\n    height: 100px;\n    display: flex;\n    flex-direction: row;\n    flex-wrap: wrap;\n    gap: 4px;\n    align-items: center;\n    justify-content: space-between;\n    padding: 8px;\n    background: #FFFFFF;\n    border-radius: 4px;\n}\n.list-item-img {\n    width: 64px;\n    height: 64px;\n}\n.list-item-details {\n    display: flex;\n    flex-direction: column;\n    flex-grow: 1;\n    flex-wrap: wrap;\n    gap: 4px;\n    flex-basis: 128px;\n    align-items: center;\n    justify-content: space-between;\n}\n.list-item-title {\n    height: 14px;\n    display: block;\n    font-style: normal;\n    font-weight: 400;\n    font-size: 12px;\n    line-height: 14px;\n    text-align: center;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.list-item-description {\n    height: 36px;\n    display: block;\n    max-lines: 3;\n    line-clamp: 3;\n    font-style: normal;\n    font-weight: 300;\n    font-size: 10px;\n    line-height: 12px;\n    text-align: center;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.list-item-info {\n    display: flex;\n    flex-direction: row;\n    align-self: stretch;\n    justify-self: stretch;\n    padding: 0 8px 0 8px;\n}\n.list-item-weight {\n    display: block;\n    flex-grow: 1;\n    font-style: normal;\n    font-weight: 300;\n    font-size: 10px;\n    line-height: 12px;\n    text-align: start;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.list-item-price {\n    display: block;\n    flex-grow: 1;\n    font-style: normal;\n    font-weight: 400;\n    font-size: 12px;\n    line-height: 14px;\n    text-align: end;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1259,9 +1246,10 @@ var render = function () {
               "section",
               {
                 staticClass: "menus-item",
+                class: { active: _vm.selections.menu === menu },
                 on: {
                   click: function ($event) {
-                    return _vm.toggleMenu(menu.id)
+                    return _vm.toggleMenu(menu)
                   },
                 },
               },
@@ -1285,14 +1273,15 @@ var render = function () {
             staticClass: "vue-horizontal categories",
             attrs: { snap: "center" },
           },
-          _vm._l(_vm.categories, function (category) {
+          _vm._l(_vm.selections.menu.categories, function (category) {
             return _c(
               "section",
               {
                 staticClass: "categories-item",
+                class: { active: _vm.selections.category === category },
                 on: {
                   click: function ($event) {
-                    return _vm.toggleCategory(category.id)
+                    return _vm.toggleCategory(category)
                   },
                 },
               },

@@ -3,8 +3,9 @@
         <div class="marketplace">
 
             <VueHorizontal class="vue-horizontal menus" snap="center">
-                <section class="menus-item" v-for="menu in menus"
-                         @click="toggleMenu(menu.id)">
+                <section class="menus-item" :class="{active: selections.menu === menu}"
+                         @click="toggleMenu(menu)"
+                         v-for="menu in menus">
                     <span class="menus-item-text">
                         {{ menu.title }}
                     </span>
@@ -12,8 +13,9 @@
             </VueHorizontal>
 
             <VueHorizontal class="vue-horizontal categories" snap="center">
-                <section class="categories-item" v-for="category in categories"
-                         @click="toggleCategory(category.id)">
+                <section class="categories-item" :class="{active: selections.category === category}"
+                         @click="toggleCategory(category)"
+                         v-for="category in selections.menu.categories">
                     <img class="categories-item-img" :alt="category.title"
                          :src="category.media.length ? category.media[0].url : category.default_media[0].url"/>
                     <span class="categories-item-span">
@@ -27,7 +29,6 @@
                     <div class="list-item" v-for="item in items">
                         <img class="list-item-img" :alt="item.title"
                              :src="item.media.length ? item.media[0].url : item.default_media[0].url"/>
-
                         <div class="list-item-details">
                             <span class="list-item-title">
                                 {{ item.title }}
@@ -67,7 +68,6 @@ export default {
     data() {
         return {
             menus: [],
-            categories: [],
             products: [],
             columns: [],
             selections: {
@@ -78,73 +78,60 @@ export default {
     },
     mounted() {
         this.getMenus();
-        this.getCategories();
-        this.getProducts();
     },
     methods: {
         getMenus() {
             Nova.request().get('/nova-vendor/marketplace/menus')
                 .then(response => {
                     this.menus = response.data.menus;
-                });
-        },
-        getCategories() {
-            Nova.request().get('/nova-vendor/marketplace/categories')
-                .then(response => {
-                    this.categories = response.data.categories;
+
+                    if (this.menus.length === 0) {
+                        this.selections.menu = null;
+                        this.selections.category = null;
+                    } else {
+                        this.toggleMenu(this.menus[0]);
+                    }
+
+                    this.getProducts();
                 });
         },
         getProducts() {
-            Nova.request().get('/nova-vendor/marketplace/products')
+            let url = '/nova-vendor/marketplace/products';
+            let query = '?menu_id=' + this.selections.menu.id;
+
+            if (this.selections.category) {
+                query += '&category_id=' + this.selections.category.id;
+            }
+
+            Nova.request().get(url + query)
                 .then(response => {
-                    this.setProducts(response.data.products);
+                    this.products = response.data.products;
+                    this.calculateColumns(this.products);
                 });
-        },
-        setProducts(products) {
-            this.products = products;
-            this.calculateColumns(products);
-        },
-        calculateColumns(products) {
-            this.columns = this.splitOnColumns(products, 2);
         },
         splitOnColumns(array, number) {
             const columns = [[], []]
             array.forEach((value, index) => {
                 columns[index % number].push(value);
             });
-
             return columns;
         },
-        toggleMenu(menuId) {
-            console.log('toggleMenu...');
-            console.log('selections:', this.selections);
-            console.log('products:', this.products);
-            let filtered = this.products;
-            if (this.selections.menu === menuId) {
-                this.selections.menu = null;
-            } else {
-                this.selections.menu = menuId;
-                filtered = this.products.filter(p => {
-                    return p.menu_id === menuId;
-                });
-            }
-
-            this.calculateColumns(filtered)
+        calculateColumns(products) {
+            this.columns = this.splitOnColumns(products, 2);
         },
-        toggleCategory(categoryId) {
-            console.log('toggleCategory...');
-            console.log('selections:', this.selections);
-            console.log('products:', this.products);
-            let filtered = this.products;
-            if (this.selections.category === categoryId) {
-                this.selections.category = null;
-            } else {
-                this.selections.category = categoryId;
-                filtered = this.products.filter(p => {
-                    return p.category_ids.includes(categoryId);
-                });
+        toggleMenu(menu) {
+            if (this.selections.menu === menu) {
+                return;
             }
-            this.calculateColumns(filtered)
+            this.selections.menu = menu;
+            this.getProducts();
+        },
+        toggleCategory(category) {
+            if (this.selections.category === category) {
+                category = null;
+            }
+            this.selections.category = category;
+            this.getProducts();
         },
     }
 }
@@ -153,6 +140,14 @@ export default {
 <style>
 .vue-horizontal {
     flex-wrap: wrap;
+}
+
+.active {
+    background: #F3DA8D;
+}
+
+.non-active {
+    background: #FFFFFF;
 }
 
 .marketplace {
@@ -170,8 +165,6 @@ export default {
     align-items: center;
     margin-right: 36px;
     padding: 8px 12px 8px 12px;
-    /*background: #F3DA8D;*/
-    background: #FFFFFF;
     border-radius: 4px;
 }
 
@@ -198,8 +191,6 @@ export default {
     height: 88px;
     margin-right: 12px;
     padding: 8px 12px 8px 12px;
-    /*background: #F3DA8D;*/
-    background: #FFFFFF;
     border-radius: 4px;
     text-align: center;
 }
