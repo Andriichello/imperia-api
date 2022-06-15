@@ -69,6 +69,48 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {
@@ -98,13 +140,14 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       Nova.request().get('/nova-vendor/marketplace/menus').then(function (response) {
-        _this.menus = response.data.menus;
+        console.log('menus: ', response);
+        _this.menus = response.data;
 
-        if (_this.menus.length === 0) {
+        if (_this.menus.data.length === 0) {
           _this.selections.menu = null;
           _this.selections.category = null;
         } else {
-          _this.toggleMenu(_this.menus[0]);
+          _this.toggleMenu(_this.menus.data[0]);
         }
 
         _this.getProducts();
@@ -113,8 +156,10 @@ __webpack_require__.r(__webpack_exports__);
     getProducts: function getProducts() {
       var _this2 = this;
 
+      var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+      var size = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 10;
       var url = '/nova-vendor/marketplace/products';
-      var query = '?menu_id=' + this.selections.menu.id;
+      var query = '?filter[menu_id]=' + this.selections.menu.id;
 
       if (this.selections.category) {
         var contains = this.selections.menu.categories.find(function (c) {
@@ -122,14 +167,17 @@ __webpack_require__.r(__webpack_exports__);
         });
 
         if (contains) {
-          query += '&category_id=' + this.selections.category.id;
+          query += '&filter[categories]=' + this.selections.category.id;
         }
       }
 
+      query += '&page[size]=' + size;
+      query += '&page[number]=' + page;
       Nova.request().get(url + query).then(function (response) {
-        _this2.products = response.data.products;
+        console.log('products: ', response);
+        _this2.products = response.data;
 
-        _this2.calculateColumns(_this2.products);
+        _this2.calculateColumns(_this2.products.data);
       });
     },
     splitOnColumns: function splitOnColumns(array, number) {
@@ -196,7 +244,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.vue-horizontal {\n    flex-wrap: wrap;\n}\n.active {\n    background: #F3DA8D;\n}\n.non-active {\n    background: #FFFFFF;\n}\n.marketplace {\n    padding: 12px 42px 12px 42px;\n}\n.menus {\n    align-self: center;\n    justify-self: center;\n    padding: 6px 8px 6px 8px;\n}\n.menus-item {\n    display: flex;\n    align-items: center;\n    margin-right: 36px;\n    padding: 8px 12px 8px 12px;\n    border-radius: 4px;\n}\n.menus-item-text {\n    font-style: normal;\n    font-weight: 500;\n    font-size: 24px;\n    line-height: 28px;\n    text-align: center;\n}\n.categories {\n    justify-content: center;\n    align-items: center;\n    padding: 6px 8px 6px 8px;\n}\n.categories-item {\n    display: flex;\n    flex-direction: column;\n    justify-content: space-between;\n    align-items: center;\n    width: 88px;\n    height: 88px;\n    margin-right: 12px;\n    padding: 8px 12px 8px 12px;\n    border-radius: 4px;\n    text-align: center;\n}\n.categories-item-img {\n    width: 72px;\n    height: 48px;\n}\n.categories-item-span {\n    align-self: center;\n    justify-self: center;\n    font-style: normal;\n    font-weight: 400;\n    font-size: 10px;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.list {\n    display: flex;\n    flex-wrap: wrap;\n    gap: 16px;\n    margin-top: 16px;\n    padding: 0 8px 0 8px;\n}\n.list-col {\n    flex-basis: 212px;\n    display: flex;\n    flex-direction: column;\n    flex-grow: 1;\n    flex-wrap: wrap;\n    justify-content: start;\n    align-items: stretch;\n    gap: 16px;\n}\n.list-item {\n    height: 100px;\n    display: flex;\n    flex-direction: row;\n    flex-wrap: wrap;\n    gap: 4px;\n    align-items: center;\n    justify-content: space-between;\n    padding: 8px;\n    background: #FFFFFF;\n    border-radius: 4px;\n}\n.list-item-img {\n    width: 64px;\n    height: 64px;\n}\n.list-item-details {\n    display: flex;\n    flex-direction: column;\n    flex-grow: 1;\n    flex-wrap: wrap;\n    gap: 4px;\n    flex-basis: 128px;\n    align-items: center;\n    justify-content: space-between;\n}\n.list-item-title {\n    height: 14px;\n    display: block;\n    font-style: normal;\n    font-weight: 400;\n    font-size: 12px;\n    line-height: 14px;\n    text-align: center;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.list-item-description {\n    height: 36px;\n    display: block;\n    max-lines: 3;\n    line-clamp: 3;\n    font-style: normal;\n    font-weight: 300;\n    font-size: 10px;\n    line-height: 12px;\n    text-align: center;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.list-item-info {\n    display: flex;\n    flex-direction: row;\n    align-self: stretch;\n    justify-self: stretch;\n    padding: 0 8px 0 8px;\n}\n.list-item-weight {\n    display: block;\n    flex-grow: 1;\n    font-style: normal;\n    font-weight: 300;\n    font-size: 10px;\n    line-height: 12px;\n    text-align: start;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.list-item-price {\n    display: block;\n    flex-grow: 1;\n    font-style: normal;\n    font-weight: 400;\n    font-size: 12px;\n    line-height: 14px;\n    text-align: end;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.vue-horizontal {\n    flex-wrap: wrap;\n}\n.active {\n    background: #F3DA8D;\n}\n.non-active {\n    background: #FFFFFF;\n}\n.marketplace {\n    /*padding: 12px 42px 12px 42px;*/\n}\n.menus {\n    align-self: center;\n    justify-self: center;\n}\n.menus-item {\n    display: flex;\n    align-items: center;\n    margin-right: 36px;\n    padding: 8px 12px 8px 12px;\n    border-radius: 4px;\n}\n.menus-item-text {\n    font-style: normal;\n    font-weight: 500;\n    font-size: 24px;\n    line-height: 28px;\n    text-align: center;\n}\n.categories {\n    justify-content: center;\n    align-items: center;\n    margin-top: 16px;\n}\n.categories-item {\n    display: flex;\n    flex-direction: column;\n    justify-content: space-between;\n    align-items: center;\n    width: 88px;\n    height: 88px;\n    margin-right: 12px;\n    padding: 8px 12px 8px 12px;\n    border-radius: 4px;\n    text-align: center;\n}\n.categories-item-img {\n    width: 72px;\n    height: 48px;\n}\n.categories-item-span {\n    align-self: center;\n    justify-self: center;\n    font-style: normal;\n    font-weight: 400;\n    font-size: 10px;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.list {\n    display: flex;\n    flex-wrap: wrap;\n    gap: 16px;\n    margin-top: 16px;\n}\n.list-col {\n    flex-basis: 212px;\n    display: flex;\n    flex-direction: column;\n    flex-grow: 1;\n    flex-wrap: wrap;\n    justify-content: start;\n    align-items: stretch;\n    gap: 16px;\n}\n.list-item {\n    height: 100px;\n    display: flex;\n    flex-direction: row;\n    flex-wrap: wrap;\n    gap: 4px;\n    align-items: center;\n    justify-content: space-between;\n    padding: 8px;\n    background: #FFFFFF;\n    border-radius: 4px;\n}\n.list-item-img {\n    width: 64px;\n    height: 64px;\n}\n.list-item-details {\n    display: flex;\n    flex-direction: column;\n    flex-grow: 1;\n    flex-wrap: wrap;\n    gap: 4px;\n    flex-basis: 128px;\n    align-items: center;\n    justify-content: space-between;\n}\n.list-item-title {\n    height: 14px;\n    display: block;\n    font-style: normal;\n    font-weight: 400;\n    font-size: 12px;\n    line-height: 14px;\n    text-align: center;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.list-item-description {\n    height: 36px;\n    display: block;\n    max-lines: 3;\n    line-clamp: 3;\n    font-style: normal;\n    font-weight: 300;\n    font-size: 10px;\n    line-height: 12px;\n    text-align: center;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.list-item-info {\n    display: flex;\n    flex-direction: row;\n    align-self: stretch;\n    justify-self: stretch;\n    padding: 0 8px 0 8px;\n}\n.list-item-weight {\n    display: block;\n    flex-grow: 1;\n    font-style: normal;\n    font-weight: 300;\n    font-size: 10px;\n    line-height: 12px;\n    text-align: start;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.list-item-price {\n    display: block;\n    flex-grow: 1;\n    font-style: normal;\n    font-weight: 400;\n    font-size: 12px;\n    line-height: 14px;\n    text-align: end;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.pagination {\n    display: flex;\n    flex-wrap: wrap;\n    align-items: center;\n    justify-content: space-between;\n    margin-top: 16px;\n    background: #FFFFFF;\n    border-radius: 4px;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1247,7 +1295,7 @@ var render = function () {
         _c(
           "VueHorizontal",
           { staticClass: "vue-horizontal menus", attrs: { snap: "center" } },
-          _vm._l(_vm.menus, function (menu) {
+          _vm._l(_vm.menus.data, function (menu) {
             return _c(
               "section",
               {
@@ -1376,6 +1424,116 @@ var render = function () {
           }),
           0
         ),
+        _vm._v(" "),
+        _c("nav", { staticClass: "pagination" }, [
+          _c("div", [
+            _c("span", { staticClass: "text-sm text-80 px-4 ml-auto" }, [
+              _vm._v(
+                "\n                    " +
+                  _vm._s(_vm.products.meta.from) +
+                  "-" +
+                  _vm._s(_vm.products.meta.to) +
+                  " of " +
+                  _vm._s(_vm.products.meta.total) +
+                  "\n                "
+              ),
+            ]),
+          ]),
+          _vm._v(" "),
+          _c("div", [
+            _c(
+              "button",
+              {
+                staticClass:
+                  "font-mono btn btn-link h-9 min-w-9 px-2 border-r border-50 text-80 opacity-50",
+                attrs: { disabled: _vm.products.meta.current_page <= 1 },
+                on: {
+                  click: function ($event) {
+                    return _vm.getProducts(1)
+                  },
+                },
+              },
+              [_vm._v("\n                    «\n                ")]
+            ),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass:
+                  "font-mono btn btn-link h-9 min-w-9 px-2 border-r border-50 text-80 opacity-50",
+                attrs: { disabled: _vm.products.meta.current_page <= 1 },
+                on: {
+                  click: function ($event) {
+                    return _vm.getProducts(_vm.products.meta.current_page - 1)
+                  },
+                },
+              },
+              [_vm._v("\n                    ‹\n                ")]
+            ),
+            _vm._v(" "),
+            _c("span", { staticClass: "text-sm text-80 px-4 ml-auto" }, [
+              _vm._v(
+                "\n                    " +
+                  _vm._s(_vm.products.meta.current_page) +
+                  "\n                "
+              ),
+            ]),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass:
+                  "font-mono btn btn-link h-9 min-w-9 px-2 border-r border-50 text-80 opacity-50",
+                attrs: {
+                  disabled:
+                    _vm.products.meta.current_page >=
+                    _vm.products.meta.last_page,
+                },
+                on: {
+                  click: function ($event) {
+                    return _vm.getProducts(_vm.products.meta.current_page + 1)
+                  },
+                },
+              },
+              [_vm._v("\n                    ›\n                ")]
+            ),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass:
+                  "font-mono btn btn-link h-9 min-w-9 px-2 border-r border-50 text-80 opacity-50",
+                attrs: {
+                  disabled:
+                    _vm.products.meta.current_page >=
+                    _vm.products.meta.last_page,
+                },
+                on: {
+                  click: function ($event) {
+                    return _vm.getProducts(_vm.products.meta.last_page)
+                  },
+                },
+              },
+              [_vm._v("\n                    »\n                ")]
+            ),
+          ]),
+          _vm._v(" "),
+          _c("div", [
+            _c(
+              "button",
+              {
+                staticClass:
+                  "font-mono btn btn-link h-9 min-w-9 px-2 border-r border-50 text-80 opacity-50",
+                on: {
+                  click: function ($event) {
+                    return _vm.getProducts(_vm.products.meta.current_page)
+                  },
+                },
+              },
+              [_vm._v("\n                    ↻\n                ")]
+            ),
+          ]),
+        ]),
       ],
       1
     ),

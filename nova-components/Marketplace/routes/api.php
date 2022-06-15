@@ -1,10 +1,9 @@
 <?php
 
-use App\Http\Resources\Menu\MenuCollection;
-use App\Http\Resources\Product\ProductCollection;
-use App\Models\Menu;
-use App\Models\Product;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Model\MenuController;
+use App\Http\Controllers\Model\ProductController;
+use App\Http\Requests\Menu\IndexMenuRequest;
+use App\Http\Requests\Product\IndexProductRequest;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,23 +17,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/menus', function () {
-    $menus = Menu::query()
-        ->archived(false)
-        ->get();
-
-    return ['menus' => new MenuCollection($menus)];
+Route::get('/menus', function (IndexMenuRequest $request) {
+    /** @var MenuController $controller */
+    $controller = app(MenuController::class);
+    return $controller->index($request);
 });
 
-Route::get('/products', function (Request $request) {
-    $query = Product::query();
-
-    if ($request->has('menu_id')) {
-        $query->withMenu((int) $request->get('menu_id'));
-    }
-    if ($request->has('category_id')) {
-        $query->withAllOfCategories((int) $request->get('category_id'));
-    }
-
-    return ['products' => new ProductCollection($query->get())];
+Route::get('/products', function (IndexProductRequest $request) {
+    /** @var ProductController $controller */
+    $controller = app(ProductController::class);
+    return $controller->index($request);
 });

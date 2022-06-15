@@ -5,7 +5,7 @@
             <VueHorizontal class="vue-horizontal menus" snap="center">
                 <section class="menus-item" :class="{active: selections.menu === menu}"
                          @click="toggleMenu(menu)"
-                         v-for="menu in menus">
+                         v-for="menu in menus.data">
                     <span class="menus-item-text">
                         {{ menu.title }}
                     </span>
@@ -48,8 +48,50 @@
                         </div>
                     </div>
                 </div>
-
             </div>
+
+            <nav class="pagination">
+                <div>
+                    <span class="text-sm text-80 px-4 ml-auto">
+                        {{ products.meta.from }}-{{ products.meta.to }} of {{ products.meta.total }}
+                    </span>
+                </div>
+
+                <div>
+                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-r border-50 text-80 opacity-50"
+                            :disabled="products.meta.current_page <= 1"
+                            @click="getProducts(1)">
+                        «
+                    </button>
+                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-r border-50 text-80 opacity-50"
+                            :disabled="products.meta.current_page <= 1"
+                            @click="getProducts(products.meta.current_page - 1)">
+                        ‹
+                    </button>
+                    <span class="text-sm text-80 px-4 ml-auto">
+                        {{ products.meta.current_page }}
+                    </span>
+                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-r border-50 text-80 opacity-50"
+                            :disabled="products.meta.current_page >= products.meta.last_page"
+                            @click="getProducts(products.meta.current_page + 1)">
+                        ›
+                    </button>
+
+                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-r border-50 text-80 opacity-50"
+                            :disabled="products.meta.current_page >= products.meta.last_page"
+                            @click="getProducts(products.meta.last_page)">
+                        »
+                    </button>
+                </div>
+
+                <div>
+                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-r border-50 text-80 opacity-50"
+                            @click="getProducts(products.meta.current_page)">
+                        ↻
+                    </button>
+                </div>
+            </nav>
+
         </div>
     </div>
 </template>
@@ -83,21 +125,23 @@ export default {
         getMenus() {
             Nova.request().get('/nova-vendor/marketplace/menus')
                 .then(response => {
-                    this.menus = response.data.menus;
+                    console.log('menus: ', response);
 
-                    if (this.menus.length === 0) {
+                    this.menus = response.data;
+
+                    if (this.menus.data.length === 0) {
                         this.selections.menu = null;
                         this.selections.category = null;
                     } else {
-                        this.toggleMenu(this.menus[0]);
+                        this.toggleMenu(this.menus.data[0]);
                     }
 
                     this.getProducts();
                 });
         },
-        getProducts() {
+        getProducts(page = 1, size = 10) {
             let url = '/nova-vendor/marketplace/products';
-            let query = '?menu_id=' + this.selections.menu.id;
+            let query = '?filter[menu_id]=' + this.selections.menu.id;
 
             if (this.selections.category) {
                 const contains = this.selections.menu.categories.find(c => {
@@ -105,14 +149,19 @@ export default {
                     });
 
                 if (contains) {
-                    query += '&category_id=' + this.selections.category.id;
+                    query += '&filter[categories]=' + this.selections.category.id ;
                 }
             }
 
+            query += '&page[size]=' + size;
+            query += '&page[number]=' + page;
+
             Nova.request().get(url + query)
                 .then(response => {
-                    this.products = response.data.products;
-                    this.calculateColumns(this.products);
+                    console.log('products: ', response);
+
+                    this.products = response.data;
+                    this.calculateColumns(this.products.data);
                 });
         },
         splitOnColumns(array, number) {
@@ -157,13 +206,12 @@ export default {
 }
 
 .marketplace {
-    padding: 12px 42px 12px 42px;
+    /*padding: 12px 42px 12px 42px;*/
 }
 
 .menus {
     align-self: center;
     justify-self: center;
-    padding: 6px 8px 6px 8px;
 }
 
 .menus-item {
@@ -185,7 +233,7 @@ export default {
 .categories {
     justify-content: center;
     align-items: center;
-    padding: 6px 8px 6px 8px;
+    margin-top: 16px;
 }
 
 .categories-item {
@@ -221,7 +269,6 @@ export default {
     flex-wrap: wrap;
     gap: 16px;
     margin-top: 16px;
-    padding: 0 8px 0 8px;
 }
 
 .list-col {
@@ -320,5 +367,15 @@ export default {
     text-align: end;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.pagination {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 16px;
+    background: #FFFFFF;
+    border-radius: 4px;
 }
 </style>
