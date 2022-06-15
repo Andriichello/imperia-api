@@ -13,7 +13,8 @@
             </VueHorizontal>
 
             <VueHorizontal class="vue-horizontal categories" snap="center">
-                <section class="categories-item" :class="{active: selections.category === category}"
+                <section class="categories-item"
+                         :class="{active: selections.category === category}"
                          @click="toggleCategory(category)"
                          v-for="category in selections.menu.categories">
                     <img class="categories-item-img" :alt="category.title"
@@ -23,6 +24,28 @@
                     </span>
                 </section>
             </VueHorizontal>
+
+            <div class="filters">
+                <div class="search">
+                    <div>
+                        <input class="search-input h-9 min-w-9 px-2 border-50 text-80 opacity-80"
+                               ref="search" type="text"
+                               placeholder="Enter search string..."
+                               @keyup.enter="applySearch(getSearch())"/>
+                    </div>
+                    <div style="margin-left: 4px">
+                        <button class="search-button btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80"
+                                @click="applySearch(getSearch())">
+                            search
+                        </button>
+                        <button class="search-button btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80"
+                                v-show="this.selections.search && this.selections.search.length"
+                                @click="applySearch('')">
+                            x
+                        </button>
+                    </div>
+                </div>
+            </div>
 
             <div class="list flex-gap">
                 <div class="list-col" v-for="items in columns">
@@ -52,18 +75,19 @@
 
             <nav class="pagination">
                 <div>
-                    <span class="text-sm text-80 px-4 ml-auto">
-                        {{ products.meta.from }}-{{ products.meta.to }} of {{ products.meta.total }}
-                    </span>
+                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-r border-50 text-80 opacity-80"
+                            @click="getProducts(products.meta.current_page)">
+                        ↻
+                    </button>
                 </div>
 
                 <div>
-                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-r border-50 text-80 opacity-50"
+                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-l border-r border-50 text-80 opacity-80"
                             :disabled="products.meta.current_page <= 1"
                             @click="getProducts(1)">
                         «
                     </button>
-                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-r border-50 text-80 opacity-50"
+                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-r border-50 text-80 opacity-80"
                             :disabled="products.meta.current_page <= 1"
                             @click="getProducts(products.meta.current_page - 1)">
                         ‹
@@ -71,13 +95,13 @@
                     <span class="text-sm text-80 px-4 ml-auto">
                         {{ products.meta.current_page }}
                     </span>
-                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-r border-50 text-80 opacity-50"
+                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-l border-r border-50 text-80 opacity-80"
                             :disabled="products.meta.current_page >= products.meta.last_page"
                             @click="getProducts(products.meta.current_page + 1)">
                         ›
                     </button>
 
-                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-r border-50 text-80 opacity-50"
+                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-r border-50 text-80 opacity-80"
                             :disabled="products.meta.current_page >= products.meta.last_page"
                             @click="getProducts(products.meta.last_page)">
                         »
@@ -85,11 +109,11 @@
                 </div>
 
                 <div>
-                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-r border-50 text-80 opacity-50"
-                            @click="getProducts(products.meta.current_page)">
-                        ↻
-                    </button>
+                    <span v-if="products.data.length" class="text-sm text-80 px-4 ml-auto">
+                        {{ products.meta.from }}-{{ products.meta.to }} of {{ products.meta.total }}
+                    </span>
                 </div>
+
             </nav>
 
         </div>
@@ -113,6 +137,7 @@ export default {
             products: [],
             columns: [],
             selections: {
+                search: null,
                 menu: null,
                 category: null,
             }
@@ -122,11 +147,15 @@ export default {
         this.getMenus();
     },
     methods: {
+        getSearch() {
+            return this.$refs && this.$refs.search ? this.$refs.search.value : null;
+        },
+        setSearch(search) {
+            this.$refs.search.value = search;
+        },
         getMenus() {
             Nova.request().get('/nova-vendor/marketplace/menus')
                 .then(response => {
-                    console.log('menus: ', response);
-
                     this.menus = response.data;
 
                     if (this.menus.data.length === 0) {
@@ -152,17 +181,27 @@ export default {
                     query += '&filter[categories]=' + this.selections.category.id ;
                 }
             }
+            if (this.selections.search) {
+                query += '&filter[title]=' + this.selections.search ;
+            }
 
             query += '&page[size]=' + size;
             query += '&page[number]=' + page;
 
             Nova.request().get(url + query)
                 .then(response => {
-                    console.log('products: ', response);
-
                     this.products = response.data;
                     this.calculateColumns(this.products.data);
                 });
+        },
+        applySearch(search) {
+            if (this.selections.search === search) {
+                return;
+            }
+            this.setSearch(search);
+
+            this.selections.search = search;
+            this.getProducts();
         },
         splitOnColumns(array, number) {
             const columns = [[], []]
@@ -220,6 +259,7 @@ export default {
     margin-right: 36px;
     padding: 8px 12px 8px 12px;
     border-radius: 4px;
+    user-select: none;
 }
 
 .menus-item-text {
@@ -247,6 +287,7 @@ export default {
     padding: 8px 12px 8px 12px;
     border-radius: 4px;
     text-align: center;
+    user-select: none;
 }
 
 .categories-item-img {
@@ -262,6 +303,56 @@ export default {
     font-size: 10px;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    margin-top: 16px;
+}
+
+.search {
+    width: fit-content;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.search-input {
+    outline: none;
+    border: none;
+    background-image: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+
+    flex-basis: 180px;
+    flex-grow: 1;
+    padding: 8px 12px 8px 12px;
+    border-radius: 4px;
+    background-color: #FFFFFF;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 16px;
+    text-align: start;
+    max-lines: 1;
+}
+
+.search-button {
+    flex-basis: 60px;
+    padding: 8px 12px 8px 12px;
+    border-radius: 4px;
+    background-color: #FFFFFF;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 16px;
+    text-align: center;
+    max-lines: 1;
 }
 
 .list {
@@ -298,6 +389,7 @@ export default {
 .list-item-img {
     width: 64px;
     height: 64px;
+    user-select: none;
 }
 
 .list-item-details {
