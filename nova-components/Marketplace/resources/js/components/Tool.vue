@@ -100,7 +100,13 @@ export default {
             let query = '?menu_id=' + this.selections.menu.id;
 
             if (this.selections.category) {
-                query += '&category_id=' + this.selections.category.id;
+                const contains = this.selections.menu.categories.find(c => {
+                        return this.selections.category.id === c.id
+                    });
+
+                if (contains) {
+                    query += '&category_id=' + this.selections.category.id;
+                }
             }
 
             Nova.request().get(url + query)

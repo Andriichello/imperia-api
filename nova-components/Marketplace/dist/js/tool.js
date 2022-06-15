@@ -117,7 +117,13 @@ __webpack_require__.r(__webpack_exports__);
       var query = '?menu_id=' + this.selections.menu.id;
 
       if (this.selections.category) {
-        query += '&category_id=' + this.selections.category.id;
+        var contains = this.selections.menu.categories.find(function (c) {
+          return _this2.selections.category.id === c.id;
+        });
+
+        if (contains) {
+          query += '&category_id=' + this.selections.category.id;
+        }
       }
 
       Nova.request().get(url + query).then(function (response) {
