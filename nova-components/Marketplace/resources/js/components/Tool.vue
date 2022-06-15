@@ -233,7 +233,9 @@ export default {
 
 <style>
 .vue-horizontal {
-    flex-wrap: wrap;
+    max-width: 100%;
+    justify-content: center;
+    align-items: center;
 }
 
 .active {
@@ -245,6 +247,10 @@ export default {
 }
 
 .marketplace {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
     /*padding: 12px 42px 12px 42px;*/
 }
 
@@ -256,7 +262,8 @@ export default {
 .menus-item {
     display: flex;
     align-items: center;
-    margin-right: 36px;
+    margin-left: 16px;
+    margin-right: 16px;
     padding: 8px 12px 8px 12px;
     border-radius: 4px;
     user-select: none;
@@ -271,8 +278,8 @@ export default {
 }
 
 .categories {
-    justify-content: center;
-    align-items: center;
+    align-self: center;
+    justify-self: center;
     margin-top: 16px;
 }
 
@@ -283,7 +290,8 @@ export default {
     align-items: center;
     width: 88px;
     height: 88px;
-    margin-right: 12px;
+    margin-left: 8px;
+    margin-right: 8px;
     padding: 8px 12px 8px 12px;
     border-radius: 4px;
     text-align: center;

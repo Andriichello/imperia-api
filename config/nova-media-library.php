@@ -9,7 +9,7 @@ return [
      * @var string
      */
 
-    'disk' => env('FILESYSTEM_MEDIA', 'local'),
+    'disk' => env('FILESYSTEM_MEDIA', 'public'),
 
     /**
      * Will use to return base url of media file.
@@ -17,8 +17,8 @@ return [
      * @var string
      */
 
-    'url' => 'local' === env('FILESYSTEM_MEDIA') ? env('APP_URL') . '/storage'
-        : env('GOOGLE_CLOUD_BUCKET_URL'),
+    'url' => in_array(env('FILESYSTEM_MEDIA'), ['local', 'public'])
+        ? env('APP_URL') . '/storage' : env('GOOGLE_CLOUD_BUCKET_URL'),
 
     /**
      * Store files `together` or in separate `folders`

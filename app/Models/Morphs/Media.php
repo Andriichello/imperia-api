@@ -39,4 +39,28 @@ class Media extends MediaModel
     {
         return new MediaQueryBuilder($query);
     }
+
+    /**
+     * Media url accessor.
+     *
+     * @return string
+     */
+    public function getUrlAttribute(): string
+    {
+        $url = config('nova-media-library.url', '');
+        return $url . $this->path;
+    }
+
+    /**
+     * Media path accessor.
+     *
+     * @return string
+     */
+    public function getPathAttribute(): string
+    {
+        $base = config('nova-media-library.folder', '');
+        $base = ltrim($base, '/public');
+
+        return '/' . ltrim($base . $this->folder . $this->name, '/');
+    }
 }
