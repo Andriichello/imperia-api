@@ -1,14 +1,14 @@
 <template>
-    <div>
+    <div style="display: flex; justify-content: center; align-items: center;">
         <div class="marketplace">
 
             <VueHorizontal class="vue-horizontal menus" snap="center">
                 <section class="menus-item" :class="{active: selections.menu === menu}"
                          @click="toggleMenu(menu)"
                          v-for="menu in menus.data">
-                    <span class="menus-item-text">
-                        {{ menu.title }}
-                    </span>
+                <span class="menus-item-text">
+                    {{ menu.title }}
+                </span>
                 </section>
             </VueHorizontal>
 
@@ -39,7 +39,6 @@
                             search
                         </button>
                         <button class="search-button btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80"
-                                v-show="this.selections.search && this.selections.search.length"
                                 @click="applySearch('')">
                             x
                         </button>
@@ -53,68 +52,76 @@
                         <img class="list-item-img" :alt="item.title"
                              :src="item.media.length ? item.media[0].url : item.default_media[0].url"/>
                         <div class="list-item-details">
-                            <span class="list-item-title">
-                                {{ item.title }}
-                            </span>
+                        <span class="list-item-title">
+                            {{ item.title }}
+                        </span>
                             <span class="list-item-description">
-                                {{ item.description }}
-                            </span>
+                            {{ item.description }}
+                        </span>
 
                             <div class="list-item-info">
-                                <span class="list-item-weight">
-                                    {{ item.weight }}g
-                                </span>
+                            <span class="list-item-weight">
+                                {{ item.weight }}g
+                            </span>
                                 <span class="list-item-price">
-                                    ${{ item.price }}
-                                </span>
+                                ${{ item.price }}
+                            </span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <nav class="pagination">
-                <div>
-                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-r border-50 text-80 opacity-80"
-                            @click="getProducts(products.meta.current_page)">
-                        ↻
-                    </button>
+            <nav class="pagination" v-show="this.products && this.products.data && this.products.data.length">
+                <div style="flex-grow: 1; flex-basis: 150px;">
+<!--                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80"-->
+<!--                            @click="getProducts(products.meta.current_page)">-->
+<!--                        ↻-->
+<!--                    </button>-->
                 </div>
 
                 <div>
-                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-l border-r border-50 text-80 opacity-80"
+                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80"
                             :disabled="products.meta.current_page <= 1"
                             @click="getProducts(1)">
                         «
                     </button>
-                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-r border-50 text-80 opacity-80"
+                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80"
                             :disabled="products.meta.current_page <= 1"
                             @click="getProducts(products.meta.current_page - 1)">
                         ‹
                     </button>
                     <span class="text-sm text-80 px-4 ml-auto">
-                        {{ products.meta.current_page }}
-                    </span>
-                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-l border-r border-50 text-80 opacity-80"
+                    {{ products.meta.current_page }}
+                </span>
+                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80"
                             :disabled="products.meta.current_page >= products.meta.last_page"
                             @click="getProducts(products.meta.current_page + 1)">
                         ›
                     </button>
 
-                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-r border-50 text-80 opacity-80"
+                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80"
                             :disabled="products.meta.current_page >= products.meta.last_page"
                             @click="getProducts(products.meta.last_page)">
                         »
                     </button>
                 </div>
 
-                <div>
+                <div style="display: flex; justify-content: end; flex-grow: 1; flex-basis: 150px;">
                     <span v-if="products.data.length" class="text-sm text-80 px-4 ml-auto">
                         {{ products.meta.from }}-{{ products.meta.to }} of {{ products.meta.total }}
                     </span>
                 </div>
-
             </nav>
+
+            <div class="no-results" v-show="!this.products || !this.products.data || !this.products.data.length">
+                <img class="no-results-img"
+                     alt="No results"
+                     src="/storage/media/defaults/dish.svg"/>
+                <span class="no-results-text">
+                    No results...
+                </span>
+            </div>
 
         </div>
     </div>
@@ -247,11 +254,17 @@ export default {
 }
 
 .marketplace {
+    width: 100%;
+    max-width: 1000px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: stretch;
-    /*padding: 12px 42px 12px 42px;*/
+    background-color: white;
+    border-radius: 4px;
+    padding: 16px 16px 16px 16px;
+
+    color: #1D1D1B;
 }
 
 .menus {
@@ -341,7 +354,7 @@ export default {
     flex-grow: 1;
     padding: 8px 12px 8px 12px;
     border-radius: 4px;
-    background-color: #FFFFFF;
+    background-color: #eef1f4;
     font-style: normal;
     font-weight: 400;
     font-size: 14px;
@@ -354,7 +367,7 @@ export default {
     flex-basis: 60px;
     padding: 8px 12px 8px 12px;
     border-radius: 4px;
-    background-color: #FFFFFF;
+    background-color: #eef1f4;
     font-style: normal;
     font-weight: 400;
     font-size: 14px;
@@ -366,8 +379,9 @@ export default {
 .list {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 64px;
     margin-top: 16px;
+    padding: 0px 32px 0px 32px;
 }
 
 .list-col {
@@ -477,5 +491,30 @@ export default {
     margin-top: 16px;
     background: #FFFFFF;
     border-radius: 4px;
+}
+
+.no-results {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 64px 64px 64px 64px;
+}
+
+.no-results-img {
+    width: 100px;
+    height: 100px;
+}
+
+.no-results-text {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 28px;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 </style>

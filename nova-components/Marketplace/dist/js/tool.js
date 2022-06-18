@@ -135,6 +135,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {
@@ -286,7 +293,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.vue-horizontal {\n    max-width: 100%;\n    justify-content: center;\n    align-items: center;\n}\n.active {\n    background: #F3DA8D;\n}\n.non-active {\n    background: #FFFFFF;\n}\n.marketplace {\n    display: flex;\n    flex-direction: column;\n    justify-content: center;\n    align-items: stretch;\n    /*padding: 12px 42px 12px 42px;*/\n}\n.menus {\n    align-self: center;\n    justify-self: center;\n}\n.menus-item {\n    display: flex;\n    align-items: center;\n    margin-left: 16px;\n    margin-right: 16px;\n    padding: 8px 12px 8px 12px;\n    border-radius: 4px;\n    -webkit-user-select: none;\n       -moz-user-select: none;\n        -ms-user-select: none;\n            user-select: none;\n}\n.menus-item-text {\n    font-style: normal;\n    font-weight: 500;\n    font-size: 24px;\n    line-height: 28px;\n    text-align: center;\n}\n.categories {\n    align-self: center;\n    justify-self: center;\n    margin-top: 16px;\n}\n.categories-item {\n    display: flex;\n    flex-direction: column;\n    justify-content: space-between;\n    align-items: center;\n    width: 88px;\n    height: 88px;\n    margin-left: 8px;\n    margin-right: 8px;\n    padding: 8px 12px 8px 12px;\n    border-radius: 4px;\n    text-align: center;\n    -webkit-user-select: none;\n       -moz-user-select: none;\n        -ms-user-select: none;\n            user-select: none;\n}\n.categories-item-img {\n    width: 72px;\n    height: 48px;\n}\n.categories-item-span {\n    align-self: center;\n    justify-self: center;\n    font-style: normal;\n    font-weight: 400;\n    font-size: 10px;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.filters {\n    display: flex;\n    flex-wrap: wrap;\n    justify-content: center;\n    align-items: center;\n    margin-top: 16px;\n}\n.search {\n    width: -webkit-fit-content;\n    width: -moz-fit-content;\n    width: fit-content;\n    display: flex;\n    flex-wrap: wrap;\n    justify-content: space-between;\n    align-items: center;\n}\n.search-input {\n    outline: none;\n    border: none;\n    background-image: none;\n    box-shadow: none;\n\n    flex-basis: 180px;\n    flex-grow: 1;\n    padding: 8px 12px 8px 12px;\n    border-radius: 4px;\n    background-color: #FFFFFF;\n    font-style: normal;\n    font-weight: 400;\n    font-size: 14px;\n    line-height: 16px;\n    text-align: start;\n    max-lines: 1;\n}\n.search-button {\n    flex-basis: 60px;\n    padding: 8px 12px 8px 12px;\n    border-radius: 4px;\n    background-color: #FFFFFF;\n    font-style: normal;\n    font-weight: 400;\n    font-size: 14px;\n    line-height: 16px;\n    text-align: center;\n    max-lines: 1;\n}\n.list {\n    display: flex;\n    flex-wrap: wrap;\n    gap: 16px;\n    margin-top: 16px;\n}\n.list-col {\n    flex-basis: 212px;\n    display: flex;\n    flex-direction: column;\n    flex-grow: 1;\n    flex-wrap: wrap;\n    justify-content: start;\n    align-items: stretch;\n    gap: 16px;\n}\n.list-item {\n    height: 100px;\n    display: flex;\n    flex-direction: row;\n    flex-wrap: wrap;\n    gap: 4px;\n    align-items: center;\n    justify-content: space-between;\n    padding: 8px;\n    background: #FFFFFF;\n    border-radius: 4px;\n}\n.list-item-img {\n    width: 64px;\n    height: 64px;\n    -webkit-user-select: none;\n       -moz-user-select: none;\n        -ms-user-select: none;\n            user-select: none;\n}\n.list-item-details {\n    display: flex;\n    flex-direction: column;\n    flex-grow: 1;\n    flex-wrap: wrap;\n    gap: 4px;\n    flex-basis: 128px;\n    align-items: center;\n    justify-content: space-between;\n}\n.list-item-title {\n    height: 14px;\n    display: block;\n    font-style: normal;\n    font-weight: 400;\n    font-size: 12px;\n    line-height: 14px;\n    text-align: center;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.list-item-description {\n    height: 36px;\n    display: block;\n    max-lines: 3;\n    line-clamp: 3;\n    font-style: normal;\n    font-weight: 300;\n    font-size: 10px;\n    line-height: 12px;\n    text-align: center;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.list-item-info {\n    display: flex;\n    flex-direction: row;\n    align-self: stretch;\n    justify-self: stretch;\n    padding: 0 8px 0 8px;\n}\n.list-item-weight {\n    display: block;\n    flex-grow: 1;\n    font-style: normal;\n    font-weight: 300;\n    font-size: 10px;\n    line-height: 12px;\n    text-align: start;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.list-item-price {\n    display: block;\n    flex-grow: 1;\n    font-style: normal;\n    font-weight: 400;\n    font-size: 12px;\n    line-height: 14px;\n    text-align: end;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.pagination {\n    display: flex;\n    flex-wrap: wrap;\n    align-items: center;\n    justify-content: space-between;\n    margin-top: 16px;\n    background: #FFFFFF;\n    border-radius: 4px;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.vue-horizontal {\n    max-width: 100%;\n    justify-content: center;\n    align-items: center;\n}\n.active {\n    background: #F3DA8D;\n}\n.non-active {\n    background: #FFFFFF;\n}\n.marketplace {\n    width: 100%;\n    max-width: 1000px;\n    display: flex;\n    flex-direction: column;\n    justify-content: center;\n    align-items: stretch;\n    background-color: white;\n    border-radius: 4px;\n    padding: 16px 16px 16px 16px;\n\n    color: #1D1D1B;\n}\n.menus {\n    align-self: center;\n    justify-self: center;\n}\n.menus-item {\n    display: flex;\n    align-items: center;\n    margin-left: 16px;\n    margin-right: 16px;\n    padding: 8px 12px 8px 12px;\n    border-radius: 4px;\n    -webkit-user-select: none;\n       -moz-user-select: none;\n        -ms-user-select: none;\n            user-select: none;\n}\n.menus-item-text {\n    font-style: normal;\n    font-weight: 500;\n    font-size: 24px;\n    line-height: 28px;\n    text-align: center;\n}\n.categories {\n    align-self: center;\n    justify-self: center;\n    margin-top: 16px;\n}\n.categories-item {\n    display: flex;\n    flex-direction: column;\n    justify-content: space-between;\n    align-items: center;\n    width: 88px;\n    height: 88px;\n    margin-left: 8px;\n    margin-right: 8px;\n    padding: 8px 12px 8px 12px;\n    border-radius: 4px;\n    text-align: center;\n    -webkit-user-select: none;\n       -moz-user-select: none;\n        -ms-user-select: none;\n            user-select: none;\n}\n.categories-item-img {\n    width: 72px;\n    height: 48px;\n}\n.categories-item-span {\n    align-self: center;\n    justify-self: center;\n    font-style: normal;\n    font-weight: 400;\n    font-size: 10px;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.filters {\n    display: flex;\n    flex-wrap: wrap;\n    justify-content: center;\n    align-items: center;\n    margin-top: 16px;\n}\n.search {\n    width: -webkit-fit-content;\n    width: -moz-fit-content;\n    width: fit-content;\n    display: flex;\n    flex-wrap: wrap;\n    justify-content: space-between;\n    align-items: center;\n}\n.search-input {\n    outline: none;\n    border: none;\n    background-image: none;\n    box-shadow: none;\n\n    flex-basis: 180px;\n    flex-grow: 1;\n    padding: 8px 12px 8px 12px;\n    border-radius: 4px;\n    background-color: #eef1f4;\n    font-style: normal;\n    font-weight: 400;\n    font-size: 14px;\n    line-height: 16px;\n    text-align: start;\n    max-lines: 1;\n}\n.search-button {\n    flex-basis: 60px;\n    padding: 8px 12px 8px 12px;\n    border-radius: 4px;\n    background-color: #eef1f4;\n    font-style: normal;\n    font-weight: 400;\n    font-size: 14px;\n    line-height: 16px;\n    text-align: center;\n    max-lines: 1;\n}\n.list {\n    display: flex;\n    flex-wrap: wrap;\n    gap: 64px;\n    margin-top: 16px;\n    padding: 0px 32px 0px 32px;\n}\n.list-col {\n    flex-basis: 212px;\n    display: flex;\n    flex-direction: column;\n    flex-grow: 1;\n    flex-wrap: wrap;\n    justify-content: start;\n    align-items: stretch;\n    gap: 16px;\n}\n.list-item {\n    height: 100px;\n    display: flex;\n    flex-direction: row;\n    flex-wrap: wrap;\n    gap: 4px;\n    align-items: center;\n    justify-content: space-between;\n    padding: 8px;\n    background: #FFFFFF;\n    border-radius: 4px;\n}\n.list-item-img {\n    width: 64px;\n    height: 64px;\n    -webkit-user-select: none;\n       -moz-user-select: none;\n        -ms-user-select: none;\n            user-select: none;\n}\n.list-item-details {\n    display: flex;\n    flex-direction: column;\n    flex-grow: 1;\n    flex-wrap: wrap;\n    gap: 4px;\n    flex-basis: 128px;\n    align-items: center;\n    justify-content: space-between;\n}\n.list-item-title {\n    height: 14px;\n    display: block;\n    font-style: normal;\n    font-weight: 400;\n    font-size: 12px;\n    line-height: 14px;\n    text-align: center;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.list-item-description {\n    height: 36px;\n    display: block;\n    max-lines: 3;\n    line-clamp: 3;\n    font-style: normal;\n    font-weight: 300;\n    font-size: 10px;\n    line-height: 12px;\n    text-align: center;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.list-item-info {\n    display: flex;\n    flex-direction: row;\n    align-self: stretch;\n    justify-self: stretch;\n    padding: 0 8px 0 8px;\n}\n.list-item-weight {\n    display: block;\n    flex-grow: 1;\n    font-style: normal;\n    font-weight: 300;\n    font-size: 10px;\n    line-height: 12px;\n    text-align: start;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.list-item-price {\n    display: block;\n    flex-grow: 1;\n    font-style: normal;\n    font-weight: 400;\n    font-size: 12px;\n    line-height: 14px;\n    text-align: end;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.pagination {\n    display: flex;\n    flex-wrap: wrap;\n    align-items: center;\n    justify-content: space-between;\n    margin-top: 16px;\n    background: #FFFFFF;\n    border-radius: 4px;\n}\n.no-results {\n    display: flex;\n    flex-direction: column;\n    flex-wrap: wrap;\n    align-items: center;\n    justify-content: space-between;\n    gap: 16px;\n    padding: 64px 64px 64px 64px;\n}\n.no-results-img {\n    width: 100px;\n    height: 100px;\n}\n.no-results-text {\n    font-style: normal;\n    font-weight: 500;\n    font-size: 24px;\n    line-height: 28px;\n    text-align: center;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1329,327 +1336,391 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c(
-      "div",
-      { staticClass: "marketplace" },
-      [
-        _c(
-          "VueHorizontal",
-          { staticClass: "vue-horizontal menus", attrs: { snap: "center" } },
-          _vm._l(_vm.menus.data, function (menu) {
-            return _c(
-              "section",
-              {
-                staticClass: "menus-item",
-                class: { active: _vm.selections.menu === menu },
-                on: {
-                  click: function ($event) {
-                    return _vm.toggleMenu(menu)
-                  },
-                },
-              },
-              [
-                _c("span", { staticClass: "menus-item-text" }, [
-                  _vm._v(
-                    "\n                    " +
-                      _vm._s(menu.title) +
-                      "\n                "
-                  ),
-                ]),
-              ]
-            )
-          }),
-          0
-        ),
-        _vm._v(" "),
-        _c(
-          "VueHorizontal",
-          {
-            staticClass: "vue-horizontal categories",
-            attrs: { snap: "center" },
-          },
-          _vm._l(_vm.selections.menu.categories, function (category) {
-            return _c(
-              "section",
-              {
-                staticClass: "categories-item",
-                class: { active: _vm.selections.category === category },
-                on: {
-                  click: function ($event) {
-                    return _vm.toggleCategory(category)
-                  },
-                },
-              },
-              [
-                _c("img", {
-                  staticClass: "categories-item-img",
-                  attrs: {
-                    alt: category.title,
-                    src: category.media.length
-                      ? category.media[0].url
-                      : category.default_media[0].url,
-                  },
-                }),
-                _vm._v(" "),
-                _c("span", { staticClass: "categories-item-span" }, [
-                  _vm._v(
-                    "\n                    " +
-                      _vm._s(category.title) +
-                      "\n                "
-                  ),
-                ]),
-              ]
-            )
-          }),
-          0
-        ),
-        _vm._v(" "),
-        _c("div", { staticClass: "filters" }, [
-          _c("div", { staticClass: "search" }, [
-            _c("div", [
-              _c("input", {
-                ref: "search",
-                staticClass:
-                  "search-input h-9 min-w-9 px-2 border-50 text-80 opacity-80",
-                attrs: { type: "text", placeholder: "Enter search string..." },
-                on: {
-                  keyup: function ($event) {
-                    if (
-                      !$event.type.indexOf("key") &&
-                      _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
-                    ) {
-                      return null
-                    }
-                    _vm.applySearch(_vm.getSearch())
-                  },
-                },
-              }),
-            ]),
-            _vm._v(" "),
-            _c("div", { staticStyle: { "margin-left": "4px" } }, [
-              _c(
-                "button",
+  return _c(
+    "div",
+    {
+      staticStyle: {
+        display: "flex",
+        "justify-content": "center",
+        "align-items": "center",
+      },
+    },
+    [
+      _c(
+        "div",
+        { staticClass: "marketplace" },
+        [
+          _c(
+            "VueHorizontal",
+            { staticClass: "vue-horizontal menus", attrs: { snap: "center" } },
+            _vm._l(_vm.menus.data, function (menu) {
+              return _c(
+                "section",
                 {
-                  staticClass:
-                    "search-button btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80",
+                  staticClass: "menus-item",
+                  class: { active: _vm.selections.menu === menu },
                   on: {
                     click: function ($event) {
-                      _vm.applySearch(_vm.getSearch())
+                      return _vm.toggleMenu(menu)
                     },
                   },
                 },
                 [
-                  _vm._v(
-                    "\n                        search\n                    "
-                  ),
+                  _c("span", { staticClass: "menus-item-text" }, [
+                    _vm._v(
+                      "\n                    " +
+                        _vm._s(menu.title) +
+                        "\n                "
+                    ),
+                  ]),
                 ]
-              ),
-              _vm._v(" "),
-              _c(
-                "button",
+              )
+            }),
+            0
+          ),
+          _vm._v(" "),
+          _c(
+            "VueHorizontal",
+            {
+              staticClass: "vue-horizontal categories",
+              attrs: { snap: "center" },
+            },
+            _vm._l(_vm.selections.menu.categories, function (category) {
+              return _c(
+                "section",
                 {
-                  directives: [
-                    {
-                      name: "show",
-                      rawName: "v-show",
-                      value:
-                        this.selections.search && this.selections.search.length,
-                      expression:
-                        "this.selections.search && this.selections.search.length",
-                    },
-                  ],
-                  staticClass:
-                    "search-button btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80",
+                  staticClass: "categories-item",
+                  class: { active: _vm.selections.category === category },
                   on: {
                     click: function ($event) {
-                      return _vm.applySearch("")
+                      return _vm.toggleCategory(category)
                     },
                   },
                 },
-                [_vm._v("\n                        x\n                    ")]
-              ),
-            ]),
-          ]),
-        ]),
-        _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "list flex-gap" },
-          _vm._l(_vm.columns, function (items) {
-            return _c(
-              "div",
-              { staticClass: "list-col" },
-              _vm._l(items, function (item) {
-                return _c("div", { staticClass: "list-item" }, [
+                [
                   _c("img", {
-                    staticClass: "list-item-img",
+                    staticClass: "categories-item-img",
                     attrs: {
-                      alt: item.title,
-                      src: item.media.length
-                        ? item.media[0].url
-                        : item.default_media[0].url,
+                      alt: category.title,
+                      src: category.media.length
+                        ? category.media[0].url
+                        : category.default_media[0].url,
                     },
                   }),
                   _vm._v(" "),
-                  _c("div", { staticClass: "list-item-details" }, [
-                    _c("span", { staticClass: "list-item-title" }, [
-                      _vm._v(
-                        "\n                            " +
-                          _vm._s(item.title) +
-                          "\n                        "
-                      ),
-                    ]),
+                  _c("span", { staticClass: "categories-item-span" }, [
+                    _vm._v(
+                      "\n                        " +
+                        _vm._s(category.title) +
+                        "\n                    "
+                    ),
+                  ]),
+                ]
+              )
+            }),
+            0
+          ),
+          _vm._v(" "),
+          _c("div", { staticClass: "filters" }, [
+            _c("div", { staticClass: "search" }, [
+              _c("div", [
+                _c("input", {
+                  ref: "search",
+                  staticClass:
+                    "search-input h-9 min-w-9 px-2 border-50 text-80 opacity-80",
+                  attrs: {
+                    type: "text",
+                    placeholder: "Enter search string...",
+                  },
+                  on: {
+                    keyup: function ($event) {
+                      if (
+                        !$event.type.indexOf("key") &&
+                        _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                      ) {
+                        return null
+                      }
+                      _vm.applySearch(_vm.getSearch())
+                    },
+                  },
+                }),
+              ]),
+              _vm._v(" "),
+              _c("div", { staticStyle: { "margin-left": "4px" } }, [
+                _c(
+                  "button",
+                  {
+                    staticClass:
+                      "search-button btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80",
+                    on: {
+                      click: function ($event) {
+                        _vm.applySearch(_vm.getSearch())
+                      },
+                    },
+                  },
+                  [
+                    _vm._v(
+                      "\n                            search\n                        "
+                    ),
+                  ]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass:
+                      "search-button btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80",
+                    on: {
+                      click: function ($event) {
+                        return _vm.applySearch("")
+                      },
+                    },
+                  },
+                  [
+                    _vm._v(
+                      "\n                            x\n                        "
+                    ),
+                  ]
+                ),
+              ]),
+            ]),
+          ]),
+          _vm._v(" "),
+          _c(
+            "div",
+            { staticClass: "list flex-gap" },
+            _vm._l(_vm.columns, function (items) {
+              return _c(
+                "div",
+                { staticClass: "list-col" },
+                _vm._l(items, function (item) {
+                  return _c("div", { staticClass: "list-item" }, [
+                    _c("img", {
+                      staticClass: "list-item-img",
+                      attrs: {
+                        alt: item.title,
+                        src: item.media.length
+                          ? item.media[0].url
+                          : item.default_media[0].url,
+                      },
+                    }),
                     _vm._v(" "),
-                    _c("span", { staticClass: "list-item-description" }, [
-                      _vm._v(
-                        "\n                            " +
-                          _vm._s(item.description) +
-                          "\n                        "
-                      ),
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "list-item-info" }, [
-                      _c("span", { staticClass: "list-item-weight" }, [
+                    _c("div", { staticClass: "list-item-details" }, [
+                      _c("span", { staticClass: "list-item-title" }, [
                         _vm._v(
-                          "\n                                " +
-                            _vm._s(item.weight) +
-                            "g\n                            "
+                          "\n                            " +
+                            _vm._s(item.title) +
+                            "\n                        "
                         ),
                       ]),
                       _vm._v(" "),
-                      _c("span", { staticClass: "list-item-price" }, [
+                      _c("span", { staticClass: "list-item-description" }, [
                         _vm._v(
-                          "\n                                $" +
-                            _vm._s(item.price) +
-                            "\n                            "
+                          "\n                            " +
+                            _vm._s(item.description) +
+                            "\n                        "
                         ),
                       ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "list-item-info" }, [
+                        _c("span", { staticClass: "list-item-weight" }, [
+                          _vm._v(
+                            "\n                                " +
+                              _vm._s(item.weight) +
+                              "g\n                            "
+                          ),
+                        ]),
+                        _vm._v(" "),
+                        _c("span", { staticClass: "list-item-price" }, [
+                          _vm._v(
+                            "\n                                $" +
+                              _vm._s(item.price) +
+                              "\n                            "
+                          ),
+                        ]),
+                      ]),
                     ]),
-                  ]),
-                ])
+                  ])
+                }),
+                0
+              )
+            }),
+            0
+          ),
+          _vm._v(" "),
+          _c(
+            "nav",
+            {
+              directives: [
+                {
+                  name: "show",
+                  rawName: "v-show",
+                  value:
+                    this.products &&
+                    this.products.data &&
+                    this.products.data.length,
+                  expression:
+                    "this.products && this.products.data && this.products.data.length",
+                },
+              ],
+              staticClass: "pagination",
+            },
+            [
+              _c("div", {
+                staticStyle: { "flex-grow": "1", "flex-basis": "150px" },
               }),
-              0
-            )
-          }),
-          0
-        ),
-        _vm._v(" "),
-        _c("nav", { staticClass: "pagination" }, [
-          _c("div", [
-            _c(
-              "button",
-              {
-                staticClass:
-                  "font-mono btn btn-link h-9 min-w-9 px-2 border-r border-50 text-80 opacity-80",
-                on: {
-                  click: function ($event) {
-                    return _vm.getProducts(_vm.products.meta.current_page)
+              _vm._v(" "),
+              _c("div", [
+                _c(
+                  "button",
+                  {
+                    staticClass:
+                      "font-mono btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80",
+                    attrs: { disabled: _vm.products.meta.current_page <= 1 },
+                    on: {
+                      click: function ($event) {
+                        return _vm.getProducts(1)
+                      },
+                    },
                   },
-                },
-              },
-              [_vm._v("\n                    ↻\n                ")]
-            ),
-          ]),
-          _vm._v(" "),
-          _c("div", [
-            _c(
-              "button",
-              {
-                staticClass:
-                  "font-mono btn btn-link h-9 min-w-9 px-2 border-l border-r border-50 text-80 opacity-80",
-                attrs: { disabled: _vm.products.meta.current_page <= 1 },
-                on: {
-                  click: function ($event) {
-                    return _vm.getProducts(1)
+                  [_vm._v("\n                        «\n                    ")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass:
+                      "font-mono btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80",
+                    attrs: { disabled: _vm.products.meta.current_page <= 1 },
+                    on: {
+                      click: function ($event) {
+                        return _vm.getProducts(
+                          _vm.products.meta.current_page - 1
+                        )
+                      },
+                    },
                   },
-                },
-              },
-              [_vm._v("\n                    «\n                ")]
-            ),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                staticClass:
-                  "font-mono btn btn-link h-9 min-w-9 px-2 border-r border-50 text-80 opacity-80",
-                attrs: { disabled: _vm.products.meta.current_page <= 1 },
-                on: {
-                  click: function ($event) {
-                    return _vm.getProducts(_vm.products.meta.current_page - 1)
-                  },
-                },
-              },
-              [_vm._v("\n                    ‹\n                ")]
-            ),
-            _vm._v(" "),
-            _c("span", { staticClass: "text-sm text-80 px-4 ml-auto" }, [
-              _vm._v(
-                "\n                    " +
-                  _vm._s(_vm.products.meta.current_page) +
-                  "\n                "
-              ),
-            ]),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                staticClass:
-                  "font-mono btn btn-link h-9 min-w-9 px-2 border-l border-r border-50 text-80 opacity-80",
-                attrs: {
-                  disabled:
-                    _vm.products.meta.current_page >=
-                    _vm.products.meta.last_page,
-                },
-                on: {
-                  click: function ($event) {
-                    return _vm.getProducts(_vm.products.meta.current_page + 1)
-                  },
-                },
-              },
-              [_vm._v("\n                    ›\n                ")]
-            ),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                staticClass:
-                  "font-mono btn btn-link h-9 min-w-9 px-2 border-r border-50 text-80 opacity-80",
-                attrs: {
-                  disabled:
-                    _vm.products.meta.current_page >=
-                    _vm.products.meta.last_page,
-                },
-                on: {
-                  click: function ($event) {
-                    return _vm.getProducts(_vm.products.meta.last_page)
-                  },
-                },
-              },
-              [_vm._v("\n                    »\n                ")]
-            ),
-          ]),
-          _vm._v(" "),
-          _c("div", [
-            _vm.products.data.length
-              ? _c("span", { staticClass: "text-sm text-80 px-4 ml-auto" }, [
+                  [_vm._v("\n                        ‹\n                    ")]
+                ),
+                _vm._v(" "),
+                _c("span", { staticClass: "text-sm text-80 px-4 ml-auto" }, [
                   _vm._v(
                     "\n                    " +
-                      _vm._s(_vm.products.meta.from) +
-                      "-" +
-                      _vm._s(_vm.products.meta.to) +
-                      " of " +
-                      _vm._s(_vm.products.meta.total) +
+                      _vm._s(_vm.products.meta.current_page) +
                       "\n                "
                   ),
-                ])
-              : _vm._e(),
-          ]),
-        ]),
-      ],
-      1
-    ),
-  ])
+                ]),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass:
+                      "font-mono btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80",
+                    attrs: {
+                      disabled:
+                        _vm.products.meta.current_page >=
+                        _vm.products.meta.last_page,
+                    },
+                    on: {
+                      click: function ($event) {
+                        return _vm.getProducts(
+                          _vm.products.meta.current_page + 1
+                        )
+                      },
+                    },
+                  },
+                  [_vm._v("\n                        ›\n                    ")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass:
+                      "font-mono btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80",
+                    attrs: {
+                      disabled:
+                        _vm.products.meta.current_page >=
+                        _vm.products.meta.last_page,
+                    },
+                    on: {
+                      click: function ($event) {
+                        return _vm.getProducts(_vm.products.meta.last_page)
+                      },
+                    },
+                  },
+                  [_vm._v("\n                        »\n                    ")]
+                ),
+              ]),
+              _vm._v(" "),
+              _c(
+                "div",
+                {
+                  staticStyle: {
+                    display: "flex",
+                    "justify-content": "end",
+                    "flex-grow": "1",
+                    "flex-basis": "150px",
+                  },
+                },
+                [
+                  _vm.products.data.length
+                    ? _c(
+                        "span",
+                        { staticClass: "text-sm text-80 px-4 ml-auto" },
+                        [
+                          _vm._v(
+                            "\n                        " +
+                              _vm._s(_vm.products.meta.from) +
+                              "-" +
+                              _vm._s(_vm.products.meta.to) +
+                              " of " +
+                              _vm._s(_vm.products.meta.total) +
+                              "\n                    "
+                          ),
+                        ]
+                      )
+                    : _vm._e(),
+                ]
+              ),
+            ]
+          ),
+          _vm._v(" "),
+          _c(
+            "div",
+            {
+              directives: [
+                {
+                  name: "show",
+                  rawName: "v-show",
+                  value:
+                    !this.products ||
+                    !this.products.data ||
+                    !this.products.data.length,
+                  expression:
+                    "!this.products || !this.products.data || !this.products.data.length",
+                },
+              ],
+              staticClass: "no-results",
+            },
+            [
+              _c("img", {
+                staticClass: "no-results-img",
+                attrs: {
+                  alt: "No results",
+                  src: "/storage/media/defaults/dish.svg",
+                },
+              }),
+              _vm._v(" "),
+              _c("span", { staticClass: "no-results-text" }, [
+                _vm._v("\n                    No results...\n                "),
+              ]),
+            ]
+          ),
+        ],
+        1
+      ),
+    ]
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
