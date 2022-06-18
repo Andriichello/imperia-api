@@ -1,26 +1,36 @@
 <template>
-    <div style="display: flex; justify-content: center; align-items: center;">
-        <div class="marketplace">
+    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <div class="tabs">
+            <div class="tabs-item" :class="{selected: tab === t}"
+                 @click="toggleTab(t)"
+                 v-for="t in tabs">
+                    <img class="tabs-item-img" :alt="t.title" :src="t.image"/>
+                    <span class="tabs-item-text">
+                        {{ t.title }}
+                    </span>
+            </div>
+        </div>
 
-            <VueHorizontal class="vue-horizontal menus" snap="center">
-                <section class="menus-item" :class="{active: selections.menu === menu}"
-                         @click="toggleMenu(menu)"
-                         v-for="menu in menus.data">
-                <span class="menus-item-text">
-                    {{ menu.title }}
-                </span>
+        <div class="marketplace">
+            <VueHorizontal class="vue-horizontal menus" snap="center" v-if="tab && tab.menus">
+                <section class="menus-item" :class="{active: tab.filters.menu === m}"
+                         @click="toggleMenu(tab, m)"
+                         v-for="m in tab.menus.data">
+                    <span class="menus-item-text">
+                        {{ m.title }}
+                    </span>
                 </section>
             </VueHorizontal>
 
-            <VueHorizontal class="vue-horizontal categories" snap="center">
+            <VueHorizontal class="vue-horizontal categories" snap="center" v-if="tab && (tab.categories || (tab.filters.menu && tab.filters.menu.categories))">
                 <section class="categories-item"
-                         :class="{active: selections.category === category}"
-                         @click="toggleCategory(category)"
-                         v-for="category in selections.menu.categories">
-                    <img class="categories-item-img" :alt="category.title"
-                         :src="category.media.length ? category.media[0].url : category.default_media[0].url"/>
+                         :class="{active: tab.filters.category === c}"
+                         @click="toggleCategory(tab, c)"
+                         v-for="c in tab.target === 'products' ? tab.filters.menu.categories : tab.categories.data">
+                    <img class="categories-item-img" :alt="c.title"
+                         :src="c.media.length ? c.media[0].url : c.default_media[0].url"/>
                     <span class="categories-item-span">
-                        {{ category.title }}
+                        {{ c.title }}
                     </span>
                 </section>
             </VueHorizontal>
@@ -31,15 +41,16 @@
                         <input class="search-input h-9 min-w-9 px-2 border-50 text-80 opacity-80"
                                ref="search" type="text"
                                placeholder="Enter search string..."
-                               @keyup.enter="applySearch(getSearch())"/>
+                               :value="tab ? tab.filters.search : ''"
+                               @keyup.enter="applySearch(tab, getSearch())"/>
                     </div>
                     <div style="margin-left: 4px">
                         <button class="search-button btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80"
-                                @click="applySearch(getSearch())">
+                                @click="applySearch(tab, getSearch())">
                             search
                         </button>
                         <button class="search-button btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80"
-                                @click="applySearch('')">
+                                @click="applySearch(tab,'')">
                             x
                         </button>
                     </div>
@@ -47,77 +58,77 @@
             </div>
 
             <div class="list flex-gap">
-                <div class="list-col" v-for="items in columns">
-                    <div class="list-item" v-for="item in items">
+                <div class="list-col" v-for="column in tab.columns">
+                    <div class="list-item" v-for="item in column">
                         <img class="list-item-img" :alt="item.title"
                              :src="item.media.length ? item.media[0].url : item.default_media[0].url"/>
                         <div class="list-item-details">
-                        <span class="list-item-title">
-                            {{ item.title }}
-                        </span>
+                            <span class="list-item-title">
+                                {{ item.title }}
+                            </span>
                             <span class="list-item-description">
                             {{ item.description }}
-                        </span>
+                            </span>
 
                             <div class="list-item-info">
-                            <span class="list-item-weight">
-                                {{ item.weight }}g
-                            </span>
-                                <span class="list-item-price">
-                                ${{ item.price }}
-                            </span>
+                                <span class="list-item-weight" v-show="item.weight">
+                                    {{ item.weight < 1000 ? item.weight + 'g' : (item.weight / 1000.0).toFixed(2) + 'kg' }}
+                                </span>
+                                <span class="list-item-price" :class="{'list-item-price-centered': !item.weight}">
+                                    {{ item.price ? '$' + item.price : 'Free'}}
+                                </span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <nav class="pagination" v-show="this.products && this.products.data && this.products.data.length">
+            <nav class="pagination" v-show="tab.items && tab.items.data && tab.items.data.length">
                 <div style="flex-grow: 1; flex-basis: 150px;">
 <!--                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80"-->
-<!--                            @click="getProducts(products.meta.current_page)">-->
+<!--                            @click="fetchItems(tab, tab.items.current_page)">-->
 <!--                        ↻-->
 <!--                    </button>-->
                 </div>
 
                 <div>
                     <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80"
-                            :disabled="products.meta.current_page <= 1"
-                            @click="getProducts(1)">
+                            :disabled="tab.items.meta.current_page <= 1"
+                            @click="fetchItems(tab,1)">
                         «
                     </button>
                     <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80"
-                            :disabled="products.meta.current_page <= 1"
-                            @click="getProducts(products.meta.current_page - 1)">
+                            :disabled="tab.items.meta.current_page <= 1"
+                            @click="fetchItems(tab, tab.items.meta.current_page - 1)">
                         ‹
                     </button>
                     <span class="text-sm text-80 px-4 ml-auto">
-                    {{ products.meta.current_page }}
+                    {{ tab.items.meta.current_page }}
                 </span>
                     <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80"
-                            :disabled="products.meta.current_page >= products.meta.last_page"
-                            @click="getProducts(products.meta.current_page + 1)">
+                            :disabled="tab.items.meta.current_page >= tab.items.meta.last_page"
+                            @click="fetchItems(tab, tab.items.meta.current_page + 1)">
                         ›
                     </button>
 
                     <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80"
-                            :disabled="products.meta.current_page >= products.meta.last_page"
-                            @click="getProducts(products.meta.last_page)">
+                            :disabled="tab.items.meta.current_page >= tab.items.meta.last_page"
+                            @click="fetchItems(tab, tab.items.meta.last_page)">
                         »
                     </button>
                 </div>
 
                 <div style="display: flex; justify-content: end; flex-grow: 1; flex-basis: 150px;">
-                    <span v-if="products.data.length" class="text-sm text-80 px-4 ml-auto">
-                        {{ products.meta.from }}-{{ products.meta.to }} of {{ products.meta.total }}
+                    <span v-if="tab.items.data.length" class="text-sm text-80 px-4 ml-auto">
+                        {{ tab.items.meta.from }}-{{ tab.items.meta.to }} of {{ tab.items.meta.total }}
                     </span>
                 </div>
             </nav>
 
-            <div class="no-results" v-show="!this.products || !this.products.data || !this.products.data.length">
+            <div class="no-results" v-show="!tab.items || !tab.items.data || !tab.items.data.length">
                 <img class="no-results-img"
                      alt="No results"
-                     src="/storage/media/defaults/dish.svg"/>
+                     :src="tab.image"/>
                 <span class="no-results-text">
                     No results...
                 </span>
@@ -140,18 +151,74 @@ export default {
     },
     data() {
         return {
-            menus: [],
-            products: [],
-            columns: [],
-            selections: {
-                search: null,
-                menu: null,
-                category: null,
-            }
+            tab: null,
+            tabs: [
+                {
+                    title: 'Menus',
+                    target: 'products',
+                    image: '/storage/media/defaults/dish.svg',
+                    /** from api **/
+                    menus: null,
+                    items: null,
+                    /** for display **/
+                    columns: [],
+                    /** filters **/
+                    filters: {
+                        menu: null,
+                        category: null,
+                        search: null,
+                    }
+                },
+                {
+                    title: 'Spaces',
+                    target: 'spaces',
+                    image: '/storage/media/defaults/table.svg',
+                    /** from api **/
+                    categories: null,
+                    items: null,
+                    /** for display **/
+                    columns: [],
+                    /** filters **/
+                    filters: {
+                        category: null,
+                        search: null,
+                    }
+                },
+                {
+                    title: 'Tickets',
+                    target: 'tickets',
+                    image: '/storage/media/defaults/ticket.svg',
+                    /** from api **/
+                    categories: null,
+                    items: null,
+                    /** for display **/
+                    columns: [],
+                    /** filters **/
+                    filters: {
+                        category: null,
+                        search: null,
+                    }
+                },
+                {
+                    title: 'Services',
+                    target: 'services',
+                    image: '/storage/media/defaults/magic.svg',
+                    /** from api **/
+                    categories: null,
+                    items: null,
+                    /** for display **/
+                    columns: [],
+                    /** filters **/
+                    filters: {
+                        category: null,
+                        search: null,
+                    }
+                }
+            ],
         };
     },
     mounted() {
-        this.getMenus();
+        this.toggleTab(this.tabs[0]);
     },
     methods: {
         getSearch() {
@@ -160,79 +227,113 @@ export default {
         setSearch(search) {
             this.$refs.search.value = search;
         },
-        getMenus() {
+        fetchMenus(tab) {
             Nova.request().get('/nova-vendor/marketplace/menus')
                 .then(response => {
-                    this.menus = response.data;
+                    tab.menus = response.data;
 
-                    if (this.menus.data.length === 0) {
-                        this.selections.menu = null;
-                        this.selections.category = null;
+                    if (tab.menus.data.length === 0) {
+                        tab.filters.menu = null;
+                        tab.filters.category = null;
                     } else {
-                        this.toggleMenu(this.menus.data[0]);
+                        this.toggleMenu(tab, tab.menus.data[0]);
                     }
-
-                    this.getProducts();
                 });
         },
-        getProducts(page = 1, size = 10) {
-            let url = '/nova-vendor/marketplace/products';
-            let query = '?filter[menu_id]=' + this.selections.menu.id;
+        fetchItemsQuery(tab, page = 1, size = 10) {
+            const url = `/nova-vendor/marketplace/${tab.target}`;
+            let query = `?page[size]=${size}&page[number]=${page}`;
 
-            if (this.selections.category) {
-                const contains = this.selections.menu.categories.find(c => {
-                        return this.selections.category.id === c.id
-                    });
-
-                if (contains) {
-                    query += '&filter[categories]=' + this.selections.category.id ;
+            if (tab.filters.menu) {
+                query += `&filter[menu_id]=${tab.filters.menu.id}`
+            }
+            if (tab.filters.search) {
+                query += `&filter[title]=${tab.filters.search}`
+            }
+            if (tab.filters.category) {
+                if (!tab.filters.menu) {
+                    query += `&filter[categories]=${tab.filters.category.id}`;
+                } else if (tab.filters.menu.categories.includes(tab.filters.category)) {
+                    query += `&filter[categories]=${tab.filters.category.id}`;
                 }
             }
-            if (this.selections.search) {
-                query += '&filter[title]=' + this.selections.search ;
-            }
 
-            query += '&page[size]=' + size;
-            query += '&page[number]=' + page;
-
-            Nova.request().get(url + query)
+            return url + query;
+        },
+        fetchItems(tab, page = 1, size = 10) {
+            Nova.request().get(this.fetchItemsQuery(tab, page, size))
                 .then(response => {
-                    this.products = response.data;
-                    this.calculateColumns(this.products.data);
+                    tab.items = response.data;
+                    this.calculateColumns(tab, tab.items.data);
                 });
         },
-        applySearch(search) {
-            if (this.selections.search === search) {
-                return;
-            }
-            this.setSearch(search);
-
-            this.selections.search = search;
-            this.getProducts();
+        fetchCategoriesQuery(tab) {
+            return `/nova-vendor/marketplace/categories?filter[target]=${tab.target}`;
         },
-        splitOnColumns(array, number) {
+        fetchCategories(tab) {
+            Nova.request().get(this.fetchCategoriesQuery(tab))
+                .then(response => {
+                    tab.categories = response.data;
+                });
+        },
+        splitOnColumns(items, number) {
             const columns = [[], []]
-            array.forEach((value, index) => {
-                columns[index % number].push(value);
+            items.forEach((item, index) => {
+                columns[index % number].push(item);
             });
             return columns;
         },
-        calculateColumns(products) {
-            this.columns = this.splitOnColumns(products, 2);
+        calculateColumns(tab, items) {
+            tab.columns = this.splitOnColumns(items, 2);
         },
-        toggleMenu(menu) {
-            if (this.selections.menu === menu) {
+        applySearch(tab, search) {
+            if (tab.filters.search === search) {
                 return;
             }
-            this.selections.menu = menu;
-            this.getProducts();
+
+            tab.filters.search = search;
+            this.fetchItems(tab);
         },
-        toggleCategory(category) {
-            if (this.selections.category === category) {
+        toggleTab(tab) {
+            if (this.tab === tab) {
+                return;
+            }
+
+            this.tab = tab;
+            if (tab.target === 'products') {
+                if (!tab.menus || !tab.menus.data || !tab.menus.data.length) {
+                    this.fetchMenus(tab);
+                    return;
+                }
+            }
+
+            if (tab.target !== 'products') {
+                if (!tab.categories || !tab.categories.data || !tab.categories.data.length) {
+                    this.fetchCategories(tab);
+                }
+            }
+
+            if (!tab.items || !tab.items.data || !tab.items.length) {
+                this.fetchItems(tab);
+            }
+        },
+        toggleMenu(tab, menu) {
+            if (tab.filters.menu === menu) {
+                return;
+            }
+            tab.filters.menu = menu;
+            if (menu) {
+                tab.categories = menu.categories;
+            }
+
+            this.fetchItems(tab);
+        },
+        toggleCategory(tab, category) {
+            if (tab.filters.category === category) {
                 category = null;
             }
-            this.selections.category = category;
-            this.getProducts();
+            tab.filters.category = category;
+            this.fetchItems(tab);
         },
     }
 }
@@ -253,6 +354,45 @@ export default {
     background: #FFFFFF;
 }
 
+.tabs {
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+    align-items: stretch;
+}
+
+.tabs-item {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 8px 16px 8px 16px;
+    cursor: pointer;
+    border-bottom: 4px solid white;
+}
+
+.tabs-item.selected {
+    border-bottom: 4px solid #F3DA8D;
+}
+
+.tabs-item-img {
+    width: 28px;
+    height: 28px;
+}
+
+.tabs-item-text {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 23px;
+    text-align: center;
+    max-lines: 1;
+}
+
 .marketplace {
     width: 100%;
     max-width: 1000px;
@@ -261,7 +401,7 @@ export default {
     justify-content: center;
     align-items: stretch;
     background-color: white;
-    border-radius: 4px;
+    border-bottom: 4px;
     padding: 16px 16px 16px 16px;
 
     color: #1D1D1B;
@@ -277,23 +417,25 @@ export default {
     align-items: center;
     margin-left: 16px;
     margin-right: 16px;
+    margin-bottom: 16px;
     padding: 8px 12px 8px 12px;
     border-radius: 4px;
     user-select: none;
+    cursor: pointer;
 }
 
 .menus-item-text {
     font-style: normal;
     font-weight: 500;
-    font-size: 24px;
-    line-height: 28px;
+    font-size: 18px;
+    line-height: 20px;
     text-align: center;
 }
 
 .categories {
     align-self: center;
     justify-self: center;
-    margin-top: 16px;
+    margin-bottom: 16px;
 }
 
 .categories-item {
@@ -305,10 +447,11 @@ export default {
     height: 88px;
     margin-left: 8px;
     margin-right: 8px;
-    padding: 8px 12px 8px 12px;
+    padding: 8px 8px 8px 8px;
     border-radius: 4px;
     text-align: center;
     user-select: none;
+    cursor: pointer;
 }
 
 .categories-item-img {
@@ -331,7 +474,6 @@ export default {
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    margin-top: 16px;
 }
 
 .search {
@@ -381,7 +523,7 @@ export default {
     flex-wrap: wrap;
     gap: 64px;
     margin-top: 16px;
-    padding: 0px 32px 0px 32px;
+    padding: 0 32px 0 32px;
 }
 
 .list-col {
@@ -412,6 +554,7 @@ export default {
     width: 64px;
     height: 64px;
     user-select: none;
+    cursor: pointer;
 }
 
 .list-item-details {
@@ -481,6 +624,10 @@ export default {
     text-align: end;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.list-item-price-centered {
+    text-align: center;
 }
 
 .pagination {
