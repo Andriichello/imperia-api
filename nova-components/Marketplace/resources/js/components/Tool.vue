@@ -85,10 +85,10 @@
 
             <nav class="pagination" v-show="tab.items && tab.items.data && tab.items.data.length">
                 <div style="flex-grow: 1; flex-basis: 150px;">
-<!--                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80"-->
-<!--                            @click="fetchItems(tab, tab.items.current_page)">-->
-<!--                        ↻-->
-<!--                    </button>-->
+                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80"
+                            @click="fetchItems(tab, tab.items.current_page)">
+                        ↻
+                    </button>
                 </div>
 
                 <div>
@@ -156,7 +156,7 @@ export default {
                 {
                     title: 'Menus',
                     target: 'products',
-                    image: '/storage/media/defaults/dish.svg',
+                    image: '/images/dish.svg',
                     /** from api **/
                     menus: null,
                     items: null,
@@ -172,7 +172,7 @@ export default {
                 {
                     title: 'Spaces',
                     target: 'spaces',
-                    image: '/storage/media/defaults/table.svg',
+                    image: '/images/table.svg',
                     /** from api **/
                     categories: null,
                     items: null,
@@ -187,7 +187,7 @@ export default {
                 {
                     title: 'Tickets',
                     target: 'tickets',
-                    image: '/storage/media/defaults/ticket.svg',
+                    image: '/images/ticket.svg',
                     /** from api **/
                     categories: null,
                     items: null,
@@ -202,7 +202,7 @@ export default {
                 {
                     title: 'Services',
                     target: 'services',
-                    image: '/storage/media/defaults/magic.svg',
+                    image: '/images/magic.svg',
                     /** from api **/
                     categories: null,
                     items: null,

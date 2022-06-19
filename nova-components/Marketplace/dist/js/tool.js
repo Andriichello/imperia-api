@@ -169,7 +169,7 @@ __webpack_require__.r(__webpack_exports__);
       tabs: [{
         title: 'Menus',
         target: 'products',
-        image: '/storage/media/defaults/dish.svg',
+        image: '/images/dish.svg',
 
         /** from api **/
         menus: null,
@@ -187,7 +187,7 @@ __webpack_require__.r(__webpack_exports__);
       }, {
         title: 'Spaces',
         target: 'spaces',
-        image: '/storage/media/defaults/table.svg',
+        image: '/images/table.svg',
 
         /** from api **/
         categories: null,
@@ -204,7 +204,7 @@ __webpack_require__.r(__webpack_exports__);
       }, {
         title: 'Tickets',
         target: 'tickets',
-        image: '/storage/media/defaults/ticket.svg',
+        image: '/images/ticket.svg',
 
         /** from api **/
         categories: null,
@@ -221,7 +221,7 @@ __webpack_require__.r(__webpack_exports__);
       }, {
         title: 'Services',
         target: 'services',
-        image: '/storage/media/defaults/magic.svg',
+        image: '/images/magic.svg',
 
         /** from api **/
         categories: null,
@@ -1483,9 +1483,9 @@ var render = function () {
               _vm._v(" "),
               _c("span", { staticClass: "tabs-item-text" }, [
                 _vm._v(
-                  "\n                        " +
+                  "\n                    " +
                     _vm._s(t.title) +
-                    "\n                    "
+                    "\n                "
                 ),
               ]),
             ]
@@ -1520,9 +1520,9 @@ var render = function () {
                     [
                       _c("span", { staticClass: "menus-item-text" }, [
                         _vm._v(
-                          "\n                        " +
+                          "\n                    " +
                             _vm._s(m.title) +
-                            "\n                    "
+                            "\n                "
                         ),
                       ]),
                     ]
@@ -1570,9 +1570,9 @@ var render = function () {
                         _vm._v(" "),
                         _c("span", { staticClass: "categories-item-span" }, [
                           _vm._v(
-                            "\n                        " +
+                            "\n                    " +
                               _vm._s(c.title) +
-                              "\n                    "
+                              "\n                "
                           ),
                         ]),
                       ]
@@ -1623,7 +1623,7 @@ var render = function () {
                   },
                   [
                     _vm._v(
-                      "\n                            search\n                        "
+                      "\n                        search\n                    "
                     ),
                   ]
                 ),
@@ -1639,11 +1639,7 @@ var render = function () {
                       },
                     },
                   },
-                  [
-                    _vm._v(
-                      "\n                            x\n                        "
-                    ),
-                  ]
+                  [_vm._v("\n                        x\n                    ")]
                 ),
               ]),
             ]),
@@ -1671,17 +1667,17 @@ var render = function () {
                     _c("div", { staticClass: "list-item-details" }, [
                       _c("span", { staticClass: "list-item-title" }, [
                         _vm._v(
-                          "\n                                " +
+                          "\n                            " +
                             _vm._s(item.title) +
-                            "\n                            "
+                            "\n                        "
                         ),
                       ]),
                       _vm._v(" "),
                       _c("span", { staticClass: "list-item-description" }, [
                         _vm._v(
-                          "\n                            " +
+                          "\n                        " +
                             _vm._s(item.description) +
-                            "\n                            "
+                            "\n                        "
                         ),
                       ]),
                       _vm._v(" "),
@@ -1701,13 +1697,13 @@ var render = function () {
                           },
                           [
                             _vm._v(
-                              "\n                                    " +
+                              "\n                                " +
                                 _vm._s(
                                   item.weight < 1000
                                     ? item.weight + "g"
                                     : (item.weight / 1000.0).toFixed(2) + "kg"
                                 ) +
-                                "\n                                "
+                                "\n                            "
                             ),
                           ]
                         ),
@@ -1720,9 +1716,9 @@ var render = function () {
                           },
                           [
                             _vm._v(
-                              "\n                                    " +
+                              "\n                                " +
                                 _vm._s(item.price ? "$" + item.price : "Free") +
-                                "\n                                "
+                                "\n                            "
                             ),
                           ]
                         ),
@@ -1754,9 +1750,28 @@ var render = function () {
               staticClass: "pagination",
             },
             [
-              _c("div", {
-                staticStyle: { "flex-grow": "1", "flex-basis": "150px" },
-              }),
+              _c(
+                "div",
+                { staticStyle: { "flex-grow": "1", "flex-basis": "150px" } },
+                [
+                  _c(
+                    "button",
+                    {
+                      staticClass:
+                        "font-mono btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80",
+                      on: {
+                        click: function ($event) {
+                          return _vm.fetchItems(
+                            _vm.tab,
+                            _vm.tab.items.current_page
+                          )
+                        },
+                      },
+                    },
+                    [_vm._v("\n                    ↻\n                ")]
+                  ),
+                ]
+              ),
               _vm._v(" "),
               _c("div", [
                 _c(
@@ -1771,7 +1786,7 @@ var render = function () {
                       },
                     },
                   },
-                  [_vm._v("\n                        «\n                    ")]
+                  [_vm._v("\n                    «\n                ")]
                 ),
                 _vm._v(" "),
                 _c(
@@ -1789,14 +1804,14 @@ var render = function () {
                       },
                     },
                   },
-                  [_vm._v("\n                        ‹\n                    ")]
+                  [_vm._v("\n                    ‹\n                ")]
                 ),
                 _vm._v(" "),
                 _c("span", { staticClass: "text-sm text-80 px-4 ml-auto" }, [
                   _vm._v(
-                    "\n                    " +
+                    "\n                " +
                       _vm._s(_vm.tab.items.meta.current_page) +
-                      "\n                "
+                      "\n            "
                   ),
                 ]),
                 _vm._v(" "),
@@ -1819,7 +1834,7 @@ var render = function () {
                       },
                     },
                   },
-                  [_vm._v("\n                        ›\n                    ")]
+                  [_vm._v("\n                    ›\n                ")]
                 ),
                 _vm._v(" "),
                 _c(
@@ -1841,7 +1856,7 @@ var render = function () {
                       },
                     },
                   },
-                  [_vm._v("\n                        »\n                    ")]
+                  [_vm._v("\n                    »\n                ")]
                 ),
               ]),
               _vm._v(" "),
@@ -1862,13 +1877,13 @@ var render = function () {
                         { staticClass: "text-sm text-80 px-4 ml-auto" },
                         [
                           _vm._v(
-                            "\n                        " +
+                            "\n                    " +
                               _vm._s(_vm.tab.items.meta.from) +
                               "-" +
                               _vm._s(_vm.tab.items.meta.to) +
                               " of " +
                               _vm._s(_vm.tab.items.meta.total) +
-                              "\n                    "
+                              "\n                "
                           ),
                         ]
                       )
@@ -1902,7 +1917,7 @@ var render = function () {
               }),
               _vm._v(" "),
               _c("span", { staticClass: "no-results-text" }, [
-                _vm._v("\n                    No results...\n                "),
+                _vm._v("\n                No results...\n            "),
               ]),
             ]
           ),
