@@ -75,7 +75,7 @@
                                     {{ item.weight < 1000 ? item.weight + 'g' : (item.weight / 1000.0).toFixed(2) + 'kg' }}
                                 </span>
                                 <span class="list-item-price" :class="{'list-item-price-centered': !item.weight}">
-                                    {{ item.price ? '$' + item.price : 'Free'}}
+                                    {{ priceOf(item) }}
                                 </span>
                             </div>
                         </div>
@@ -226,6 +226,26 @@ export default {
         },
         setSearch(search) {
             this.$refs.search.value = search;
+        },
+        priceOf(item) {
+            if (!item) {
+                return '';
+            }
+
+            if (item.price === 0) {
+                return 'Free';
+            } else if (item.price > 0) {
+                return '$' + item.price;
+            }
+
+            let price = null;
+            if (item.once_paid_price) {
+                price = '$' + item.once_paid_price;
+            }
+            if (item.hourly_paid_price) {
+                price = (price ? price + ' + ' : '') + '$' + item.hourly_paid_price + '/hour';
+            }
+            return price ?? '';
         },
         fetchMenus(tab) {
             Nova.request().get('/nova-vendor/marketplace/menus')

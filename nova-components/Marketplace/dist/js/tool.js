@@ -248,6 +248,31 @@ __webpack_require__.r(__webpack_exports__);
     setSearch: function setSearch(search) {
       this.$refs.search.value = search;
     },
+    priceOf: function priceOf(item) {
+      var _price;
+
+      if (!item) {
+        return '';
+      }
+
+      if (item.price === 0) {
+        return 'Free';
+      } else if (item.price > 0) {
+        return '$' + item.price;
+      }
+
+      var price = null;
+
+      if (item.once_paid_price) {
+        price = '$' + item.once_paid_price;
+      }
+
+      if (item.hourly_paid_price) {
+        price = (price ? price + ' + ' : '') + '$' + item.hourly_paid_price + '/hour';
+      }
+
+      return (_price = price) !== null && _price !== void 0 ? _price : '';
+    },
     fetchMenus: function fetchMenus(tab) {
       var _this = this;
 
@@ -1717,7 +1742,7 @@ var render = function () {
                           [
                             _vm._v(
                               "\n                                " +
-                                _vm._s(item.price ? "$" + item.price : "Free") +
+                                _vm._s(_vm.priceOf(item)) +
                                 "\n                            "
                             ),
                           ]
