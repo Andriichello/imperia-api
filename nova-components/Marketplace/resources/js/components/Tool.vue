@@ -1,5 +1,5 @@
 <template>
-    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+    <div style="display: flex; flex-direction: column; justify-content: start; align-items: center; min-height: 1000px">
         <div class="tabs">
             <div class="tabs-item" :class="{selected: tab === t}"
                  @click="toggleTab(t)"
@@ -400,15 +400,15 @@ export default {
 }
 
 .tabs-item-img {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
 }
 
 .tabs-item-text {
     font-style: normal;
     font-weight: 500;
-    font-size: 20px;
-    line-height: 23px;
+    font-size: 22px;
+    line-height: 25px;
     text-align: center;
     max-lines: 1;
 }
@@ -446,9 +446,9 @@ export default {
 
 .menus-item-text {
     font-style: normal;
-    font-weight: 500;
-    font-size: 18px;
-    line-height: 20px;
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 25px;
     text-align: center;
 }
 
@@ -463,8 +463,8 @@ export default {
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    width: 88px;
-    height: 88px;
+    width: 110px;
+    height: 110px;
     margin-left: 8px;
     margin-right: 8px;
     padding: 8px 8px 8px 8px;
@@ -475,16 +475,17 @@ export default {
 }
 
 .categories-item-img {
-    width: 72px;
-    height: 48px;
+    width: 94px;
+    height: 70px;
 }
 
 .categories-item-span {
+    height: 16px;
     align-self: center;
     justify-self: center;
     font-style: normal;
     font-weight: 400;
-    font-size: 10px;
+    font-size: 14px;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -519,8 +520,8 @@ export default {
     background-color: #eef1f4;
     font-style: normal;
     font-weight: 400;
-    font-size: 14px;
-    line-height: 16px;
+    font-size: 16px;
+    line-height: 18px;
     text-align: start;
     max-lines: 1;
 }
@@ -532,8 +533,8 @@ export default {
     background-color: #eef1f4;
     font-style: normal;
     font-weight: 400;
-    font-size: 14px;
-    line-height: 16px;
+    font-size: 16px;
+    line-height: 18px;
     text-align: center;
     max-lines: 1;
 }
@@ -562,7 +563,7 @@ export default {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 4px;
+    gap: 12px;
     align-items: center;
     justify-content: space-between;
     padding: 8px;
@@ -571,8 +572,8 @@ export default {
 }
 
 .list-item-img {
-    width: 64px;
-    height: 64px;
+    width: 72px;
+    height: 72px;
     user-select: none;
     cursor: pointer;
 }
@@ -589,26 +590,26 @@ export default {
 }
 
 .list-item-title {
-    height: 14px;
+    height: 18px;
     display: block;
     font-style: normal;
     font-weight: 400;
-    font-size: 12px;
-    line-height: 14px;
+    font-size: 16px;
+    line-height: 18px;
     text-align: center;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .list-item-description {
-    height: 36px;
+    height: 48px;
     display: block;
     max-lines: 3;
     line-clamp: 3;
     font-style: normal;
     font-weight: 300;
-    font-size: 10px;
-    line-height: 12px;
+    font-size: 14px;
+    line-height: 16px;
     text-align: center;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -627,8 +628,8 @@ export default {
     flex-grow: 1;
     font-style: normal;
     font-weight: 300;
-    font-size: 10px;
-    line-height: 12px;
+    font-size: 14px;
+    line-height: 16px;
     text-align: start;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -639,8 +640,8 @@ export default {
     flex-grow: 1;
     font-style: normal;
     font-weight: 400;
-    font-size: 12px;
-    line-height: 14px;
+    font-size: 16px;
+    line-height: 18px;
     text-align: end;
     overflow: hidden;
     text-overflow: ellipsis;
