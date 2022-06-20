@@ -14,7 +14,7 @@ interface ArchivableInterface
      *
      * @param bool $value
      *
-     * @return BaseQueryBuilder
+     * @return static
      */
-    public function archived(bool $value): BaseQueryBuilder;
+    public function archived(bool $value): static;
 }

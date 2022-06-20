@@ -13,14 +13,14 @@ interface CategorizableInterface
     /**
      * @param Category ...$categories
      *
-     * @return BaseQueryBuilder
+     * @return static
      */
-    public function withAllOfCategories(Category ...$categories): BaseQueryBuilder;
+    public function withAllOfCategories(Category ...$categories): static;
 
     /**
      * @param Category ...$categories
      *
-     * @return BaseQueryBuilder
+     * @return static
      */
-    public function withAnyOfCategories(Category ...$categories): BaseQueryBuilder;
+    public function withAnyOfCategories(Category ...$categories): static;
 }

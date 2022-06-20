@@ -30,6 +30,13 @@ class Role extends Resource
     public static $title = 'name';
 
     /**
+     * Indicates if the resource should be globally searchable.
+     *
+     * @var bool
+     */
+    public static $globallySearchable = false;
+
+    /**
      * The columns that should be searched.
      *
      * @var array

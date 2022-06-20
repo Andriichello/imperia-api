@@ -1,18 +1,18 @@
 <?php
 
-namespace Customs\ColumnsCard;
+namespace Andriichello\Marketplace;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Laravel\Nova\Nova;
+use Andriichello\Marketplace\Http\Middleware\Authorize;
 
 /**
- * Class CardServiceProvider.
+ * Class ToolServiceProvider.
  *
  * @property Application $app
  */
-class CardServiceProvider extends ServiceProvider
+class ToolServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap any application services.
@@ -21,18 +21,19 @@ class CardServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'marketplace');
+
         $this->app->booted(function () {
             $this->routes();
         });
 
-        Nova::serving(function () {
-            Nova::script('columns-card', __DIR__ . '/../dist/js/card.js');
-            Nova::style('columns-card', __DIR__ . '/../dist/css/card.css');
-        });
+        // Nova::serving(function (ServingNova $event) {
+        //
+        // });
     }
 
     /**
-     * Register the card's routes.
+     * Register the tool's routes.
      *
      * @return void
      */
@@ -43,8 +44,8 @@ class CardServiceProvider extends ServiceProvider
             return;
         }
 
-        Route::middleware(['nova'])
-            ->prefix('nova-vendor/columns-card')
+        Route::middleware(['nova', Authorize::class])
+            ->prefix('nova-vendor/marketplace')
             ->group(__DIR__ . '/../routes/api.php');
     }
 
