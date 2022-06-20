@@ -78,7 +78,7 @@ class Order extends Resource
                 ->resolveUsing(fn() => json_encode(json_decode($this->metadata), JSON_PRETTY_PRINT))
                 ->autoHeight()
                 ->json()
-                ->exceptOnForms()
+                ->onlyOnDetail()
                 ->readonly(),
 
             Number::make('Total')
@@ -121,7 +121,6 @@ class Order extends Resource
         return [
             'id' => true,
             'banquet' => true,
-            'metadata' => true,
             'total' => true,
             'spaces' => false,
             'tickets' => false,

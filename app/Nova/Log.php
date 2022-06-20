@@ -64,9 +64,11 @@ class Log extends Resource
                 ->exceptOnForms(),
 
             Code::make('Metadata')
+                ->resolveUsing(fn() => json_encode(json_decode($this->metadata), JSON_PRETTY_PRINT))
                 ->autoHeight()
+                ->json()
                 ->readonly()
-                ->json(),
+                ->showOnIndex(),
 
             DateTime::make('Created At')
                 ->sortable()
@@ -126,7 +128,7 @@ class Log extends Resource
         return [
             'id' => true,
             'title' => true,
-            'metadata' => true,
+            'metadata' => false,
             'loggable' => true,
             'created_at' => false,
             'updated_at' => false,

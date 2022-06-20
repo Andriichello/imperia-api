@@ -62,7 +62,8 @@ class Notification extends Resource
                 ->resolveUsing(fn() => json_encode($this->payload, JSON_PRETTY_PRINT))
                 ->autoHeight()
                 ->rules(['nullable', 'json'])
-                ->json(),
+                ->json()
+                ->showOnIndex(),
 
             Select::make('Channel')
                 ->displayUsingLabels()
