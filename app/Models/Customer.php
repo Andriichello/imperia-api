@@ -8,26 +8,34 @@ use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Traits\CommentableTrait;
 use App\Models\Traits\LoggableTrait;
 use App\Models\Traits\SoftDeletableTrait;
+use App\Queries\CustomerQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\CustomerFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
 
 /**
  * Class Customer.
  *
+ * @property int|null $user_id
  * @property string $name
  * @property string $surname
+ * @property string $fullName
  * @property string $phone
- * @property string|null $email
+ * @property string $email
  * @property Carbon|null $birthdate
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  *
+ * @property User|null $user
+ * @property Banquet[]|Collection $banquets
  * @property FamilyMember[]|Collection $familyMembers
  *
+ * @method static CustomerQueryBuilder query()
  * @method static CustomerFactory factory(...$parameters)
  */
 class Customer extends BaseModel implements
@@ -68,6 +76,8 @@ class Customer extends BaseModel implements
      * @var array
      */
     protected $relations = [
+        'user',
+        'banquets',
         'familyMembers',
     ];
 
@@ -82,6 +92,26 @@ class Customer extends BaseModel implements
     ];
 
     /**
+     * Related user.
+     *
+     * @return BelongsTo
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    /**
+     * Related banquets.
+     *
+     * @return HasMany
+     */
+    public function banquets(): HasMany
+    {
+        return $this->hasMany(Banquet::class, 'customer_id', 'id');
+    }
+
+    /**
      * Related family members.
      *
      * @return HasMany
@@ -89,5 +119,25 @@ class Customer extends BaseModel implements
     public function familyMembers(): HasMany
     {
         return $this->hasMany(FamilyMember::class, 'relative_id', 'id');
+    }
+
+    /**
+     * Accessor for the customer's full name.
+     *
+     * @return string
+     */
+    public function getFullNameAttribute(): string
+    {
+        return "$this->name $this->surname";
+    }
+
+    /**
+     * @param DatabaseBuilder $query
+     *
+     * @return CustomerQueryBuilder
+     */
+    public function newEloquentBuilder($query): CustomerQueryBuilder
+    {
+        return new CustomerQueryBuilder($query);
     }
 }

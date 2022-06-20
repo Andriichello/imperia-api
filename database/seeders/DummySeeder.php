@@ -14,7 +14,6 @@ use App\Models\Service;
 use App\Models\Space;
 use App\Models\Ticket;
 use App\Models\User;
-use ClassicO\NovaMediaLibrary\Core\Model as MediaModel;
 use Illuminate\Database\Seeder;
 
 /**
@@ -69,39 +68,67 @@ class DummySeeder extends Seeder
      */
     public function seedCustomers(): void
     {
-        $johnDoe = Customer::factory()
-            ->create([
-                'name' => 'John',
-                'surname' => 'Doe',
-                'email' => 'john.doe@email.com',
-                'phone' => '+380507777777',
-                'birthdate' => '1986-01-26',
-            ]);
-        $johnDoe->attachComments(
+        User::factory()
+            ->withCustomer(
+                [
+                    'name' => $name = 'Customer',
+                    'surname' => $surname = 'Customers',
+                    'email' => $email = 'customer@email.com',
+                    'phone' => '+380501111111',
+                    'birthdate' => '1987-06-05',
+                ]
+            )->create(
+                [
+                    'name' => "$name $surname",
+                    'email' => $email,
+                ]
+            );
+
+        $john = User::factory()
+            ->withCustomer(
+                [
+                    'name' => $name = 'John',
+                    'surname' => $surname = 'Doe',
+                    'email' => $email = 'john.doe@email.com',
+                    'phone' => '+380502222222',
+                    'birthdate' => '1986-01-26',
+                ]
+            )->create(
+                [
+                    'name' => "$name $surname",
+                    'email' => $email,
+                ]
+            );
+
+        $john->customer->attachComments(
             'This is the first test customer.',
             'John Doe is a typical fake name.',
         );
         FamilyMember::factory()
-            ->withRelative($johnDoe, FamilyRelation::Child())
+            ->withRelative($john->customer, FamilyRelation::Child())
             ->create([
                 'name' => 'Jenny Doe',
                 'birthdate' => '2010-07-03',
             ]);
         FamilyMember::factory()
-            ->withRelative($johnDoe, FamilyRelation::Child())
+            ->withRelative($john->customer, FamilyRelation::Child())
             ->create([
                 'name' => 'Tommy Doe',
                 'birthdate' => '2013-07-03',
             ]);
 
-        Customer::factory()
-            ->create([
-                'name' => 'Richard',
-                'surname' => 'Jefferson',
-                'email' => 'richard.jefferson@email.com',
-                'phone' => '+380505555555',
-                'birthdate' => '1973-08-03',
-            ])->attachComments('He played in NBA for Cleveland Cavaliers.');
+        $richard = Customer::factory()
+            ->create(
+                [
+                    'name' => 'Richard',
+                    'surname' => 'Jefferson',
+                    'email' => 'richard.jefferson@email.com',
+                    'phone' => '+380503333333',
+                    'birthdate' => '1973-08-03',
+                ]
+            );
+
+        $richard->attachComments('He played in NBA for Cleveland Cavaliers.');
     }
 
     /**

@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Model;
 
 use App\Http\Controllers\CrudController;
+use App\Http\Requests\CrudRequest;
 use App\Http\Requests\Product\IndexProductRequest;
 use App\Http\Requests\Product\ShowProductRequest;
 use App\Http\Resources\Product\ProductCollection;
 use App\Http\Resources\Product\ProductResource;
+use App\Policies\ProductPolicy;
+use App\Queries\ProductQueryBuilder;
 use App\Repositories\ProductRepository;
 
 /**
@@ -32,10 +35,12 @@ class ProductController extends CrudController
      * ProductController constructor.
      *
      * @param ProductRepository $repository
+     * @param ProductPolicy $policy
      */
-    public function __construct(ProductRepository $repository)
+    public function __construct(ProductRepository $repository, ProductPolicy $policy)
     {
-        parent::__construct($repository);
+        parent::__construct($repository, $policy);
+
         $this->actions['index'] = IndexProductRequest::class;
         $this->actions['show'] = ShowProductRequest::class;
     }
@@ -59,6 +64,7 @@ class ProductController extends CrudController
      *   @OA\Parameter(name="filter[categories]", required=false, in="query", example="2,3",
      *     @OA\Schema(type="string"), description="Coma-separated array of category ids. Limits products to those
      * that have at least one of given categories attached to them"),
+     *   @OA\Parameter(name="archived", in="query", @OA\Schema(ref ="#/components/schemas/ArchivedParameter")),
      *
      *   @OA\Response(
      *     response=200,

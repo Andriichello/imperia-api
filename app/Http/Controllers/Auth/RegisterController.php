@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\User\UserResource;
 use App\Http\Responses\ApiResponse;
 use App\Repositories\UserRepository;
+use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\JsonResponse;
 
 /**
@@ -14,6 +15,23 @@ use Illuminate\Http\JsonResponse;
  */
 class RegisterController extends Controller
 {
+    use RegistersUsers;
+
+    /**
+     * @var UserRepository
+     */
+    protected UserRepository $userRepository;
+
+    /**
+     * RegisterController constructor.
+     *
+     * @param UserRepository $userRepository
+     */
+    public function __construct(UserRepository $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
+
     /**
      * Register user.
      *
@@ -41,13 +59,12 @@ class RegisterController extends Controller
      * )
      *
      * @param RegisterRequest $request
-     * @param UserRepository $repository
      *
      * @return JsonResponse
      */
-    public function __invoke(RegisterRequest $request, UserRepository $repository): JsonResponse
+    public function __invoke(RegisterRequest $request): JsonResponse
     {
-        $user = $repository->create($request->validated());
+        $user = $this->userRepository->register($request->validated());
         $token = $user->createToken($request->userAgent());
 
         $data = [

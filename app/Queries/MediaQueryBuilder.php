@@ -2,13 +2,12 @@
 
 namespace App\Queries;
 
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Support\Str;
 
 /**
  * Class MediaQueryBuilder.
  */
-class MediaQueryBuilder extends EloquentBuilder
+class MediaQueryBuilder extends BaseQueryBuilder
 {
     /**
      * @param string $folder

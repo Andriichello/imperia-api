@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Customer;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -39,5 +40,31 @@ class CustomerFactory extends Factory
             'email' => $email,
             'birthdate' => $this->faker->dateTimeBetween('-50 years', '-20 years'),
         ];
+    }
+
+    /**
+     * Indicate that customer should be created from user.
+     *
+     * @param User $user
+     *
+     * @return static
+     */
+    public function fromUser(User $user): static
+    {
+        return $this->state(
+            function (array $attributes) use ($user) {
+                [$name, $surname] = splitName($user->name);
+
+                return array_merge(
+                    $attributes,
+                    [
+                        'name' => $name,
+                        'surname' => $surname,
+                        'email' => $user->email,
+                        'user_id' => $user->id,
+                    ]
+                );
+            }
+        );
     }
 }

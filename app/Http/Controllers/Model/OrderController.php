@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Model;
 
 use App\Http\Controllers\CrudController;
+use App\Http\Requests\CrudRequest;
 use App\Http\Requests\Order\IndexOrderRequest;
 use App\Http\Requests\Order\ShowOrderRequest;
 use App\Http\Requests\Order\StoreOrderRequest;
@@ -11,7 +12,10 @@ use App\Http\Resources\Order\OrderCollection;
 use App\Http\Resources\Order\OrderResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Banquet;
+use App\Policies\OrderPolicy;
+use App\Queries\OrderQueryBuilder;
 use App\Repositories\OrderRepository;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
  * Class OrderController.
@@ -36,10 +40,12 @@ class OrderController extends CrudController
      * OrderController constructor.
      *
      * @param OrderRepository $repository
+     * @param OrderPolicy $policy
      */
-    public function __construct(OrderRepository $repository)
+    public function __construct(OrderRepository $repository, OrderPolicy $policy)
     {
-        parent::__construct($repository);
+        parent::__construct($repository, $policy);
+
         $this->actions['index'] = IndexOrderRequest::class;
         $this->actions['show'] = ShowOrderRequest::class;
         $this->actions['store'] = StoreOrderRequest::class;
@@ -47,20 +53,40 @@ class OrderController extends CrudController
     }
 
     /**
+     * Get eloquent query builder instance.
+     *
+     * @param CrudRequest $request
+     *
+     * @return OrderQueryBuilder
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    protected function builder(CrudRequest $request): OrderQueryBuilder
+    {
+        /** @var OrderQueryBuilder $builder */
+        $builder = parent::builder($request);
+
+        return $builder->index($request->user());
+    }
+
+    /**
      * Show order by banquet id.
      *
-     * @param int $banquetId
      * @param ShowOrderRequest $request
      *
      * @return ApiResponse
+     * @throws ModelNotFoundException
      */
-    protected function showByBanquetId(int $banquetId, ShowOrderRequest $request): ApiResponse
+    protected function showByBanquetId(ShowOrderRequest $request): ApiResponse
     {
-        /** @var Banquet $model @phpstan-ignore-next-line */
-        $model = $this->spatieBuilder($request)->withTrashed()
-            ->where('banquet_id', $banquetId)
-            ->firstOrFail();
-        return $this->asResourceResponse($model);
+        /** @var Banquet $banquet */
+        $banquet = $request->targetOrFail(Banquet::class);
+
+        if ($banquet->order_id) {
+            $request->id($banquet->order_id);
+            return $this->show($request);
+        }
+
+        throw new ModelNotFoundException("There is no order for selected banquet (id: $banquet->id)");
     }
 
     /**

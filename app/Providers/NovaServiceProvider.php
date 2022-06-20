@@ -2,14 +2,15 @@
 
 namespace App\Providers;
 
-use ClassicO\NovaMediaLibrary\NovaMediaLibrary;
+use Andriichello\Marketplace\Marketplace;
+use App\Nova\Tools\BackupTool;
+use App\Nova\Tools\MediaTool;
 use DigitalCreative\CollapsibleResourceManager\CollapsibleResourceManager;
 use DigitalCreative\CollapsibleResourceManager\Resources\TopLevelResource;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\Cards\Help;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
-use Spatie\BackupTool\BackupTool;
 
 /**
  * Class NovaServiceProvider.
@@ -87,6 +88,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     public function tools(): array
     {
         return [
+            new Marketplace(),
             new CollapsibleResourceManager([
                 'navigation' => [
                     TopLevelResource::make([
@@ -128,6 +130,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                             \App\Nova\Discount::class,
                             \App\Nova\Comment::class,
                             \App\Nova\Log::class,
+                            \App\Nova\Notification::class,
                         ]
                     ]),
                     TopLevelResource::make([
@@ -141,7 +144,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     ]),
                 ],
             ]),
-            new NovaMediaLibrary(),
+            new MediaTool(),
             new BackupTool(),
         ];
     }

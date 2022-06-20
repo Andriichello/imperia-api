@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Model;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\CrudController;
+use App\Http\Requests\CrudRequest;
 use App\Http\Requests\User\DestroyUserRequest;
 use App\Http\Requests\User\IndexUserRequest;
 use App\Http\Requests\User\MeUserRequest;
@@ -12,28 +14,18 @@ use App\Http\Requests\User\StoreUserRequest;
 use App\Http\Requests\User\UpdateUserRequest;
 use App\Http\Resources\User\UserCollection;
 use App\Http\Resources\User\UserResource;
+use App\Policies\UserPolicy;
+use App\Queries\UserQueryBuilder;
 use App\Repositories\UserRepository;
 use Illuminate\Http\JsonResponse;
 
 /**
  * Class UserController.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class UserController extends CrudController
 {
-    /**
-     * Available controller's actions.
-     *
-     * @var string[]
-     */
-    protected array $actions = [
-        'index' => IndexUserRequest::class,
-        'show' => ShowUserRequest::class,
-        'store' => StoreUserRequest::class,
-        'update' => UpdateUserRequest::class,
-        'destroy' => DestroyUserRequest::class,
-        'restore' => RestoreUserRequest::class,
-    ];
-
     /**
      * Controller's model resource class.
      *
@@ -52,10 +44,34 @@ class UserController extends CrudController
      * UserController constructor.
      *
      * @param UserRepository $repository
+     * @param UserPolicy $policy
      */
-    public function __construct(UserRepository $repository)
+    public function __construct(UserRepository $repository, UserPolicy $policy)
     {
-        parent::__construct($repository);
+        parent::__construct($repository, $policy);
+
+        $this->actions['index'] = IndexUserRequest::class;
+        $this->actions['show'] = ShowUserRequest::class;
+        $this->actions['store'] = StoreUserRequest::class;
+        $this->actions['update'] = UpdateUserRequest::class;
+        $this->actions['destroy'] = DestroyUserRequest::class;
+        $this->actions['restore'] = RestoreUserRequest::class;
+    }
+
+    /**
+     * Get eloquent query builder instance.
+     *
+     * @param CrudRequest $request
+     *
+     * @return UserQueryBuilder
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    protected function builder(CrudRequest $request): UserQueryBuilder
+    {
+        /** @var UserQueryBuilder $builder */
+        $builder = parent::builder($request);
+
+        return $builder->index($request->user());
     }
 
     /**

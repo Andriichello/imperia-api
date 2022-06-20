@@ -2,16 +2,20 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\ArchivableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Morphs\Category;
+use App\Models\Traits\ArchivableTrait;
 use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
+use App\Queries\MenuQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\MenuFactory;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
 
 /**
@@ -28,13 +32,16 @@ use Illuminate\Support\Collection;
  * @property Product[]|Collection $products
  * @property Category[]|Collection $categories
  *
+ * @method static MenuQueryBuilder query()
  * @method static MenuFactory factory(...$parameters)
  */
 class Menu extends BaseModel implements
+    ArchivableInterface,
     SoftDeletableInterface
 {
     use HasFactory;
     use SoftDeletableTrait;
+    use ArchivableTrait;
     use MediableTrait;
 
     /**
@@ -122,5 +129,15 @@ class Menu extends BaseModel implements
             $this->attributes['categories'] = $this->categories()->get();
         }
         return $this->attributes['categories'];
+    }
+
+    /**
+     * @param DatabaseBuilder $query
+     *
+     * @return MenuQueryBuilder
+     */
+    public function newEloquentBuilder($query): MenuQueryBuilder
+    {
+        return new MenuQueryBuilder($query);
     }
 }

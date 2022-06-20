@@ -4,10 +4,12 @@ namespace App\Models\Morphs;
 
 use App\Models\BaseModel;
 use App\Models\Traits\MediableTrait;
+use App\Queries\CategoryQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\Morphs\CategoryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
 
 /**
@@ -23,6 +25,7 @@ use Illuminate\Support\Collection;
  *
  * @property Categorizable[]|Collection $categorizables
  *
+ * @method static CategoryQueryBuilder query()
  * @method static CategoryFactory factory(...$parameters)
  */
 class Category extends BaseModel
@@ -72,5 +75,15 @@ class Category extends BaseModel
     public function setTargetAttribute(?string $target): void
     {
         $this->attributes['target'] = $target ? slugClass($target) : null;
+    }
+
+    /**
+     * @param DatabaseBuilder $query
+     *
+     * @return CategoryQueryBuilder
+     */
+    public function newEloquentBuilder($query): CategoryQueryBuilder
+    {
+        return new CategoryQueryBuilder($query);
     }
 }

@@ -3,10 +3,12 @@
 namespace App\Models\Morphs;
 
 use App\Models\BaseModel;
+use App\Queries\CommentQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\Morphs\CommentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Query\Builder as DatabaseBuilder;
 
 /**
  * Class Comment.
@@ -19,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  *
  * @property BaseModel $commentable
  *
+ * @method static CommentQueryBuilder query()
  * @method static CommentFactory factory(...$parameters)
  */
 class Comment extends BaseModel
@@ -88,5 +91,15 @@ class Comment extends BaseModel
                 'max:255',
             ],
         ];
+    }
+
+    /**
+     * @param DatabaseBuilder $query
+     *
+     * @return CommentQueryBuilder
+     */
+    public function newEloquentBuilder($query): CommentQueryBuilder
+    {
+        return new CommentQueryBuilder($query);
     }
 }

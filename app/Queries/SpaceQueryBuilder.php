@@ -4,16 +4,22 @@ namespace App\Queries;
 
 use App\Models\Orders\Order;
 use App\Models\Space;
+use App\Queries\Interfaces\ArchivableInterface;
+use App\Queries\Interfaces\CategorizableInterface;
+use App\Queries\Traits\Archivable;
+use App\Queries\Traits\Categorizable;
 use DateTimeInterface;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 
 /**
  * Class SpaceQueryBuilder.
  */
-class SpaceQueryBuilder extends EloquentBuilder
+class SpaceQueryBuilder extends BaseQueryBuilder implements
+    ArchivableInterface,
+    CategorizableInterface
 {
-    use CategorizableQueryBuilder;
+    use Archivable;
+    use Categorizable;
 
     /**
      * @param Order|int $order

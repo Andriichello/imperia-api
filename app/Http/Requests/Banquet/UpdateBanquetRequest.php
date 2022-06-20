@@ -7,7 +7,6 @@ use App\Http\Requests\Crud\UpdateRequest;
 use App\Models\Banquet;
 use App\Models\Morphs\Comment;
 use App\Models\Morphs\Discount;
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Validation\Validator;
 
 /**
@@ -15,34 +14,6 @@ use Illuminate\Contracts\Validation\Validator;
  */
 class UpdateBanquetRequest extends UpdateRequest
 {
-    /**
-     * Handle a failed authorization attempt.
-     *
-     * @return void
-     *
-     * @throws AuthorizationException
-     */
-    protected function failedAuthorization()
-    {
-        $message = 'Banquet can\'t be updated,'
-            . ' because it\'s in a non-editable state.';
-        throw new AuthorizationException($message);
-    }
-
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize(): bool
-    {
-        /** @var Banquet $banquet */
-        $banquet = Banquet::query()
-            ->findOrFail($this->id());
-
-        return $banquet->canBeEdited();
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *

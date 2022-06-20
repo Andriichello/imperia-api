@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\UserRole;
+use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
@@ -56,5 +57,45 @@ class UserFactory extends Factory
             ->afterCreating(function (User $user) use ($role) {
                 $user->assignRole($role->value);
             });
+    }
+
+    /**
+     * Indicate that user should be created with customer.
+     *
+     * @param array $attributes
+     *
+     * @return static
+     */
+    public function withCustomer(array $attributes = []): static
+    {
+        return $this->state([])
+            ->afterCreating(function (User $user) use ($attributes) {
+                Customer::factory()->fromUser($user)
+                    ->create($attributes);
+
+                $user->assignRole(UserRole::Customer);
+            });
+    }
+
+    /**
+     * Indicate that user should be created from customer.
+     *
+     * @param Customer $customer
+     *
+     * @return static
+     */
+    public function fromCustomer(Customer $customer): static
+    {
+        return $this->state(
+            function (array $attributes) use ($customer) {
+                return array_merge(
+                    $attributes,
+                    [
+                        'name' => $customer->fullName,
+                        'email' => $customer->email,
+                    ]
+                );
+            }
+        );
     }
 }

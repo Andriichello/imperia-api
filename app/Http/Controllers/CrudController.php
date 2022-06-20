@@ -11,6 +11,7 @@ use App\Http\Requests\Crud\UpdateRequest;
 use App\Http\Requests\CrudRequest;
 use App\Http\Responses\ApiResponse;
 use App\Models\BaseModel;
+use App\Policies\Base\CrudPolicyInterface;
 use App\Repositories\Interfaces\CrudRepositoryInterface;
 use BadMethodCallException;
 use Exception;
@@ -24,6 +25,13 @@ use Throwable;
 
 /**
  * Class CrudController.
+ *
+ * @method ApiResponse index(IndexRequest $request)
+ * @method ApiResponse show(ShowRequest $request)
+ * @method ApiResponse store(StoreRequest $request)
+ * @method ApiResponse update(UpdateRequest $request)
+ * @method ApiResponse destroy(DestroyRequest $request)
+ * @method ApiResponse restore(RestoreRequest $request)
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
@@ -46,6 +54,13 @@ abstract class CrudController extends Controller
     /**
      * Controller's model crud repository.
      *
+     * @var CrudPolicyInterface
+     */
+    protected CrudPolicyInterface $policy;
+
+    /**
+     * Controller's model crud repository.
+     *
      * @var CrudRepositoryInterface
      */
     protected CrudRepositoryInterface $repository;
@@ -54,18 +69,23 @@ abstract class CrudController extends Controller
      * CrudController constructor.
      *
      * @param CrudRepositoryInterface $repository
+     * @param CrudPolicyInterface $policy
      */
-    public function __construct(CrudRepositoryInterface $repository)
+    public function __construct(CrudRepositoryInterface $repository, CrudPolicyInterface $policy)
     {
         $this->repository = $repository;
+        $this->policy = $policy;
     }
 
     /**
      * Get eloquent query builder instance.
      *
+     * @param CrudRequest $request
+     *
      * @return EloquentBuilder
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    protected function builder(): EloquentBuilder
+    protected function builder(CrudRequest $request): EloquentBuilder
     {
         return $this->repository->builder();
     }
@@ -79,7 +99,7 @@ abstract class CrudController extends Controller
      */
     protected function spatieBuilder(CrudRequest $request): SpatieBuilder
     {
-        return $request->spatieBuilder($this->builder());
+        return $request->spatieBuilder($this->builder($request));
     }
 
     /**
@@ -137,10 +157,27 @@ abstract class CrudController extends Controller
         $actionRequest = $this->getActionRequest($action);
         $specificRequest = $actionRequest::createFrom($request);
 
+        $this->checkPolicy($specificRequest);
         $specificRequest->validateResolved();
 
         $method = 'handle' . ucfirst($action);
         return $this->$method($specificRequest);
+    }
+
+    /**
+     * Check if user is authorized to perform request.
+     *
+     * @param CrudRequest $request
+     *
+     * @return void
+     * @throws AuthorizationException
+     */
+    protected function checkPolicy(CrudRequest $request): void
+    {
+        $result = empty($this->policy) || $this->policy->determine($request);
+        if ($result === false) {
+            throw new AuthorizationException();
+        }
     }
 
     /**

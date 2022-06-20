@@ -31,6 +31,13 @@ class Log extends Resource
     public static $title = 'title';
 
     /**
+     * Indicates if the resource should be globally searchable.
+     *
+     * @var bool
+     */
+    public static $globallySearchable = false;
+
+    /**
      * The columns that should be searched.
      *
      * @var array
@@ -57,9 +64,11 @@ class Log extends Resource
                 ->exceptOnForms(),
 
             Code::make('Metadata')
-                ->height(50)
+                ->resolveUsing(fn() => json_encode(json_decode($this->metadata), JSON_PRETTY_PRINT))
+                ->autoHeight()
+                ->json()
                 ->readonly()
-                ->json(),
+                ->showOnIndex(),
 
             DateTime::make('Created At')
                 ->sortable()
@@ -119,7 +128,7 @@ class Log extends Resource
         return [
             'id' => true,
             'title' => true,
-            'metadata' => true,
+            'metadata' => false,
             'loggable' => true,
             'created_at' => false,
             'updated_at' => false,

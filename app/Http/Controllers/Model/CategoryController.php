@@ -7,6 +7,7 @@ use App\Http\Requests\Category\IndexCategoryRequest;
 use App\Http\Requests\Category\ShowCategoryRequest;
 use App\Http\Resources\Category\CategoryCollection;
 use App\Http\Resources\Category\CategoryResource;
+use App\Policies\CategoryPolicy;
 use App\Repositories\CategoryRepository;
 
 /**
@@ -32,10 +33,12 @@ class CategoryController extends CrudController
      * CategoryController constructor.
      *
      * @param CategoryRepository $repository
+     * @param CategoryPolicy $policy
      */
-    public function __construct(CategoryRepository $repository)
+    public function __construct(CategoryRepository $repository, CategoryPolicy $policy)
     {
-        parent::__construct($repository);
+        parent::__construct($repository, $policy);
+
         $this->actions['index'] = IndexCategoryRequest::class;
         $this->actions['show'] = ShowCategoryRequest::class;
     }

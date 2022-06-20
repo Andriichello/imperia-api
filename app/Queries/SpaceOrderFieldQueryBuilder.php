@@ -5,13 +5,12 @@ namespace App\Queries;
 use App\Models\Orders\Order;
 use App\Models\Space;
 use DateTimeInterface;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 
 /**
  * Class SpaceOrderFieldQueryBuilder.
  */
-class SpaceOrderFieldQueryBuilder extends EloquentBuilder
+class SpaceOrderFieldQueryBuilder extends BaseQueryBuilder
 {
     /**
      * @param Order|int $order

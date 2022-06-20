@@ -3,8 +3,14 @@
 namespace App\Nova;
 
 use App\Enums\BanquetState;
+use App\Models\Scopes\ArchivedScope;
+use App\Nova\Actions\CalculateTotals;
+use App\Nova\Actions\GenerateInvoice;
 use App\Nova\Options\BanquetStateOptions;
+use App\Queries\OrderQueryBuilder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Jagdeepbanga\NovaDateTime\NovaDateTime;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\DateTime;
@@ -14,6 +20,8 @@ use Laravel\Nova\Fields\MorphMany;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Http\Requests\NovaRequest;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class Banquet.
@@ -46,6 +54,21 @@ class Banquet extends Resource
     public static $search = [
         'id', 'title', 'description',
     ];
+
+    /**
+     * Get the actions available for the resource.
+     *
+     * @param Request $request
+     *
+     * @return array
+     */
+    public function actions(Request $request): array
+    {
+        return [
+            new CalculateTotals(),
+            new GenerateInvoice(),
+        ];
+    }
 
     /**
      * Get the fields displayed by the resource.
@@ -84,10 +107,7 @@ class Banquet extends Resource
                 ->creationRules('required', 'min:0'),
 
             Number::make('Total')
-                ->exceptOnForms()
-                ->readonly(),
-
-            Number::make('Discounted Total')
+                ->resolveUsing(fn() => data_get($this->totals, 'all'))
                 ->exceptOnForms()
                 ->readonly(),
 
@@ -140,7 +160,6 @@ class Banquet extends Resource
             'description' => false,
             'advance_amount' => true,
             'total' => true,
-            'discounted_total' => true,
             'start_at' => true,
             'end_at' => true,
             'comments' => false,

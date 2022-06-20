@@ -9,12 +9,14 @@ use App\Http\Controllers\Model\CommentController;
 use App\Http\Controllers\Model\CustomerController;
 use App\Http\Controllers\Model\FamilyMemberController;
 use App\Http\Controllers\Model\MenuController;
+use App\Http\Controllers\Model\NotificationController;
 use App\Http\Controllers\Model\OrderController;
 use App\Http\Controllers\Model\ProductController;
 use App\Http\Controllers\Model\ServiceController;
 use App\Http\Controllers\Model\SpaceController;
 use App\Http\Controllers\Model\TicketController;
 use App\Http\Controllers\Model\UserController;
+use App\Http\Controllers\Other\InvoiceController;
 use App\Http\Responses\ApiResponse;
 use Illuminate\Support\Facades\Route;
 
@@ -40,6 +42,11 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
     Route::apiResource('users', UserController::class)
         ->only('index', 'show', 'store', 'update', 'destroy')
         ->parameters(['users' => 'id']);
+
+    Route::get('/notifications/poll', [NotificationController::class, 'poll'])->name('notifications.poll');
+    Route::apiResource('notifications', NotificationController::class)
+        ->only('index', 'show', 'store', 'update', 'destroy')
+        ->parameters(['notifications' => 'id']);
 
     Route::post('/customers/{id}/restore', [CustomerController::class, 'restore'])->name('customers.restore');
     Route::apiResource('customers', CustomerController::class)
@@ -89,6 +96,16 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
     Route::apiResource('banquets', BanquetController::class)
         ->only('index', 'show', 'store', 'update', 'destroy')
         ->parameters(['banquets' => 'id']);
+});
+
+Route::group(['middleware' => ['auth:signature,sanctum'], 'as' => 'api.'], function () {
+    Route::get('/orders/{id}/invoice', [InvoiceController::class, 'view'])->name('orders.invoice');
+    Route::get('/orders/{id}/invoice/pdf', [InvoiceController::class, 'pdf'])->name('orders.invoice-pdf');
+
+    Route::get('/banquets/{id}/invoice', [InvoiceController::class, 'viewThroughBanquet'])
+        ->name('banquets.invoice');
+    Route::get('/banquets/{id}/invoice/pdf', [InvoiceController::class, 'pdfThroughBanquet'])
+        ->name('banquets.invoice-pdf');
 });
 
 Route::fallback(function () {

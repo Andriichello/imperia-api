@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Models\User;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
@@ -11,6 +13,25 @@ use Illuminate\Routing\Redirector;
  */
 class BaseRequest extends FormRequest
 {
+    /**
+     * Message, which should be displayed on failed authorization attempt.
+     *
+     * @var string
+     */
+    protected string $message = 'You are not authorized to perform this request.';
+
+    /**
+     * Handle a failed authorization attempt.
+     *
+     * @return void
+     *
+     * @throws AuthorizationException
+     */
+    protected function failedAuthorization(): void
+    {
+        throw new AuthorizationException($this->message);
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -39,5 +60,70 @@ class BaseRequest extends FormRequest
         $obj->setRedirector(app(Redirector::class));
 
         return $obj;
+    }
+
+    /**
+     * Get the user making the request.
+     *
+     * @param mixed $guard
+     *
+     * @return User
+     */
+    public function user(mixed $guard = null): User
+    {
+        return parent::user($guard);
+    }
+
+    /**
+     * Get the id of user making the request.
+     *
+     * @param mixed $guard
+     *
+     * @return ?int
+     */
+    public function userId(mixed $guard = null): ?int
+    {
+        $user = parent::user($guard);
+        return $user ? $user->id : null;
+    }
+
+    /**
+     * Determine if user, who makes the request is an admin.
+     *
+     * @return bool
+     */
+    public function isByAdmin(): bool
+    {
+        return $this->user()->isAdmin();
+    }
+
+    /**
+     * Determine if user, who makes the request is a manager.
+     *
+     * @return bool
+     */
+    public function isByManager(): bool
+    {
+        return $this->user()->isManager();
+    }
+
+    /**
+     * Determine if user, who makes the request is a staff member.
+     *
+     * @return bool
+     */
+    public function isByStaff(): bool
+    {
+        return $this->user()->isStaff();
+    }
+
+    /**
+     * Determine if user, who makes the request is a customer.
+     *
+     * @return bool
+     */
+    public function isByCustomer(): bool
+    {
+        return $this->user()->isCustomer();
     }
 }

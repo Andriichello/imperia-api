@@ -7,6 +7,7 @@ use App\Http\Requests\Discount\IndexDiscountRequest;
 use App\Http\Requests\Discount\ShowDiscountRequest;
 use App\Http\Resources\Discount\DiscountCollection;
 use App\Http\Resources\Discount\DiscountResource;
+use App\Policies\DiscountPolicy;
 use App\Repositories\DiscountRepository;
 
 /**
@@ -32,10 +33,12 @@ class DiscountController extends CrudController
      * DiscountController constructor.
      *
      * @param DiscountRepository $repository
+     * @param DiscountPolicy $policy
      */
-    public function __construct(DiscountRepository $repository)
+    public function __construct(DiscountRepository $repository, DiscountPolicy $policy)
     {
-        parent::__construct($repository);
+        parent::__construct($repository, $policy);
+
         $this->actions['index'] = IndexDiscountRequest::class;
         $this->actions['show'] = ShowDiscountRequest::class;
     }

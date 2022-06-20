@@ -2,44 +2,15 @@
 
 namespace App\Http\Requests\User;
 
-use App\Enums\UserRole;
 use App\Http\Requests\Crud\UpdateRequest;
 use App\Models\User;
-use App\Repositories\UserRepository;
+use Illuminate\Contracts\Validation\Validator;
 
 /**
  * Class UpdateUserRequest.
  */
 class UpdateUserRequest extends UpdateRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize(): bool
-    {
-        /** @var User $user */
-        $user = $this->user();
-        /** @var User $target */
-        $target = (new UserRepository())->find($this->id());
-
-        if ($this->has('current_password')) {
-            if (!$target->isCurrentPassword($this->get('current_password'))) {
-                $this->validator->errors()
-                    ->add('current_password', 'Invalid current password');
-
-                return false;
-            }
-        }
-
-        if ($user->id === $target->id) {
-            return true;
-        }
-
-        return $user->hasRole(UserRole::Admin) && !$target->hasRole(UserRole::Admin);
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -71,6 +42,23 @@ class UpdateUserRequest extends UpdateRequest
                 ],
             ]
         );
+    }
+
+    public function withValidator(Validator $validator)
+    {
+        if ($this->missing('current_password')) {
+            return;
+        }
+
+        $validator->after(function (Validator $validator) {
+            /** @var User $target */
+            $target = $this->target(User::class);
+
+            if (!$target->isCurrentPassword($this->get('current_password'))) {
+                $validator->errors()
+                    ->add('current_password', 'Invalid current password');
+            }
+        });
     }
 
     /**

@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\ArchivableInterface;
 use App\Models\Interfaces\CategorizableInterface;
 use App\Models\Interfaces\LoggableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
+use App\Models\Traits\ArchivableTrait;
 use App\Models\Traits\CategorizableTrait;
 use App\Models\Traits\LoggableTrait;
 use App\Models\Traits\MediableTrait;
@@ -38,11 +40,13 @@ use Illuminate\Database\Query\Builder as DatabaseBuilder;
 class Product extends BaseModel implements
     SoftDeletableInterface,
     CategorizableInterface,
+    ArchivableInterface,
     LoggableInterface
 {
     use HasFactory;
     use SoftDeletableTrait;
     use CategorizableTrait;
+    use ArchivableTrait;
     use LoggableTrait;
     use MediableTrait;
 

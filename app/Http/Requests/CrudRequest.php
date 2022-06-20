@@ -10,4 +10,14 @@ use App\Http\Requests\Traits\WithSpatie;
 class CrudRequest extends BaseRequest
 {
     use WithSpatie;
+
+    /**
+     * Get ability, which should be checked for the request.
+     *
+     * @return string|null
+     */
+    public function getAbility(): ?string
+    {
+        return null;
+    }
 }

@@ -1559,6 +1559,13 @@
                         "schema": {
                             "$ref": "#/components/schemas/PageNumber"
                         }
+                    },
+                    {
+                        "name": "archived",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/ArchivedParameter"
+                        }
                     }
                 ],
                 "responses": {
@@ -1623,6 +1630,332 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ShowMenuResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/notifications": {
+            "get": {
+                "tags": [
+                    "notifications"
+                ],
+                "summary": "Index notifications.",
+                "operationId": "indexNotifications",
+                "parameters": [
+                    {
+                        "name": "page[size]",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/PageSize"
+                        }
+                    },
+                    {
+                        "name": "page[number]",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/PageNumber"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Index notifications response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IndexNotificationResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "notifications"
+                ],
+                "summary": "Store notification.",
+                "operationId": "storeNotification",
+                "requestBody": {
+                    "description": "Store notification request object.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreNotificationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Create notification response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StoreNotificationResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/notifications/{id}": {
+            "get": {
+                "tags": [
+                    "notifications"
+                ],
+                "summary": "Show notification by id.",
+                "operationId": "showNotification",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the notification.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Show notification response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ShowNotificationResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "notifications"
+                ],
+                "summary": "Delete notification.",
+                "operationId": "destroyNotification",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the notification.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "description": "Delete request object.",
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DestroyRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Delete notification response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DestroyNotificationResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "notifications"
+                ],
+                "summary": "Update notification.",
+                "operationId": "updateNotification",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the notification.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "description": "Update notification request object.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateNotificationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update notification response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UpdateNotificationResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/notifications/poll": {
+            "get": {
+                "tags": [
+                    "notifications"
+                ],
+                "summary": "Poll notifications.",
+                "operationId": "pollNotifications",
+                "parameters": [
+                    {
+                        "name": "seen",
+                        "in": "query",
+                        "description": "Optional, false by default (only unseen notifications).",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": "false"
+                        }
+                    },
+                    {
+                        "name": "system",
+                        "in": "query",
+                        "description": "Optional, if true, then filters to notifications sent by system.",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": "false"
+                        }
+                    },
+                    {
+                        "name": "sender_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Poll notifications response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PollNotificationsResponse"
                                 }
                             }
                         }
@@ -2080,6 +2413,13 @@
                             "type": "string"
                         },
                         "example": "2,3"
+                    },
+                    {
+                        "name": "archived",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/ArchivedParameter"
+                        }
                     }
                 ],
                 "responses": {
@@ -2214,6 +2554,13 @@
                             "type": "string"
                         },
                         "example": "2,3"
+                    },
+                    {
+                        "name": "archived",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/ArchivedParameter"
+                        }
                     }
                 ],
                 "responses": {
@@ -2348,6 +2695,13 @@
                             "type": "string"
                         },
                         "example": "2,3"
+                    },
+                    {
+                        "name": "archived",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/ArchivedParameter"
+                        }
                     }
                 ],
                 "responses": {
@@ -2551,6 +2905,13 @@
                             "type": "string"
                         },
                         "example": "2,3"
+                    },
+                    {
+                        "name": "archived",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/ArchivedParameter"
+                        }
                     }
                 ],
                 "responses": {
@@ -3474,6 +3835,129 @@
                 "type": "string",
                 "example": "products"
             },
+            "IndexNotificationResponse": {
+                "description": "Index notifications response object.",
+                "required": [
+                    "data",
+                    "meta",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Notification"
+                        }
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/PaginationMeta"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "PollNotificationsResponse": {
+                "description": "Poll notifications response object.",
+                "required": [
+                    "data",
+                    "meta",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/NotificationsPoll"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "ShowNotificationResponse": {
+                "description": "Show notification response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Notification"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "StoreNotificationResponse": {
+                "description": "Store notification response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Notification"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Created"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateNotificationResponse": {
+                "description": "Update notification response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Notification"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "DestroyNotificationResponse": {
+                "description": "Delete notification response object.",
+                "required": [
+                    "message"
+                ],
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Deleted"
+                    }
+                },
+                "type": "object"
+            },
+            "RestoreNotificationResponse": {
+                "description": "Restore notification response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Notification"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
             "OrderIncludes": {
                 "description": "Coma-separated list of inluded relations. Available relations:\n    `comments`, `spaces.comments`, `tickets.comments`, `products.comments`, `services.comments`",
                 "type": "string",
@@ -3901,19 +4385,33 @@
                 "description": "Register user request",
                 "required": [
                     "name",
+                    "surnane",
                     "email",
                     "password"
                 ],
                 "properties": {
                     "name": {
                         "type": "string",
-                        "example": "John Doe"
+                        "example": "John"
+                    },
+                    "surname": {
+                        "type": "string",
+                        "example": "Doe"
                     },
                     "email": {
                         "type": "string",
                         "example": "john.doe@email.com"
                     },
+                    "phone": {
+                        "nullable": "true",
+                        "type": "string",
+                        "example": "null"
+                    },
                     "password": {
+                        "type": "string",
+                        "example": "pa$$w0rd"
+                    },
+                    "password_confirmation": {
                         "type": "string",
                         "example": "pa$$w0rd"
                     }
@@ -4158,11 +4656,11 @@
                         "example": "Forrester"
                     },
                     "email": {
-                        "nullable": "true",
                         "type": "string",
                         "example": "ben.forrester@email.com"
                     },
                     "phone": {
+                        "nullable": "true",
                         "description": "Phone number may start with a plus and must contain only digits 0-9.",
                         "type": "string",
                         "example": "+380507777777"
@@ -4290,6 +4788,73 @@
                         "description": "The id of the customer, who is related to this family member.",
                         "type": "integer",
                         "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "StoreNotificationRequest": {
+                "description": "Store notification request",
+                "required": [
+                    "subject",
+                    "body",
+                    "payload",
+                    "receiver_id"
+                ],
+                "properties": {
+                    "subject": {
+                        "type": "string",
+                        "example": "Notification subject."
+                    },
+                    "body": {
+                        "type": "string",
+                        "example": "Notification body..."
+                    },
+                    "payload": {
+                        "nullable": "true",
+                        "type": "object",
+                        "example": "{}"
+                    },
+                    "receiver_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "channel": {
+                        "type": "string",
+                        "enum": [
+                            "default"
+                        ],
+                        "example": "default"
+                    },
+                    "send_at": {
+                        "description": "Date and time when notification should be sent. Only future values are acceptable.",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2022-12-12 10:00:00"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateNotificationRequest": {
+                "description": "Update notification request",
+                "properties": {
+                    "subject": {
+                        "type": "string",
+                        "example": "Notification subject."
+                    },
+                    "body": {
+                        "type": "string",
+                        "example": "Notification body..."
+                    },
+                    "payload": {
+                        "nullable": "true",
+                        "type": "object",
+                        "example": "{}"
+                    },
+                    "send_at": {
+                        "description": "Date and time when notification should be sent. Only future values are acceptable.",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2022-12-12 10:00:00"
                     }
                 },
                 "type": "object"
@@ -5321,6 +5886,87 @@
                 },
                 "type": "object"
             },
+            "NotificationsPoll": {
+                "description": "Notifications poll resource object",
+                "required": [
+                    "count"
+                ],
+                "properties": {
+                    "count": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "Notification": {
+                "description": "Notification resource object",
+                "required": [
+                    "id",
+                    "type",
+                    "sender_id",
+                    "receiver_id",
+                    "channel",
+                    "subject",
+                    "send_at",
+                    "sent_at",
+                    "seen_at"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "notifications"
+                    },
+                    "channel": {
+                        "type": "string",
+                        "example": "default"
+                    },
+                    "subject": {
+                        "type": "string",
+                        "example": "Order status change"
+                    },
+                    "body": {
+                        "nullable": "true",
+                        "type": "string",
+                        "example": "Your order was accepted"
+                    },
+                    "payload": {
+                        "nullable": "true",
+                        "type": "object"
+                    },
+                    "sender_id": {
+                        "nullable": "true",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "receiver_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "send_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2022-01-12 23:00:00"
+                    },
+                    "sent_at": {
+                        "nullable": "true",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2022-01-12 23:00:00"
+                    },
+                    "seen_at": {
+                        "nullable": "true",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "null"
+                    }
+                },
+                "type": "object"
+            },
             "OrderTotals": {
                 "description": "Order totals resource object",
                 "required": [
@@ -5791,6 +6437,7 @@
                 "required": [
                     "id",
                     "type",
+                    "customer_id",
                     "name",
                     "email",
                     "email_verified_at"
@@ -5803,6 +6450,11 @@
                     "type": {
                         "type": "string",
                         "example": "users"
+                    },
+                    "customer_id": {
+                        "nullable": "true",
+                        "type": "integer",
+                        "example": "null"
                     },
                     "name": {
                         "type": "string",
@@ -5820,6 +6472,16 @@
                     }
                 },
                 "type": "object"
+            },
+            "ArchivedParameter": {
+                "description": "Query parameter, which determines if archived records should be\n    fetched from database. Available relations: `only`, `with` and `without`, which is a default one.",
+                "type": "string",
+                "enum": [
+                    "only",
+                    "with",
+                    "without"
+                ],
+                "example": "without"
             }
         },
         "securitySchemes": {

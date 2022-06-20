@@ -7,8 +7,11 @@ use App\Http\Requests\Banquet\IndexBanquetRequest;
 use App\Http\Requests\Banquet\ShowBanquetRequest;
 use App\Http\Requests\Banquet\StoreBanquetRequest;
 use App\Http\Requests\Banquet\UpdateBanquetRequest;
+use App\Http\Requests\CrudRequest;
 use App\Http\Resources\Banquet\BanquetCollection;
 use App\Http\Resources\Banquet\BanquetResource;
+use App\Policies\BanquetPolicy;
+use App\Queries\BanquetQueryBuilder;
 use App\Repositories\BanquetRepository;
 
 /**
@@ -34,14 +37,32 @@ class BanquetController extends CrudController
      * BanquetController constructor.
      *
      * @param BanquetRepository $repository
+     * @param BanquetPolicy $policy
      */
-    public function __construct(BanquetRepository $repository)
+    public function __construct(BanquetRepository $repository, BanquetPolicy $policy)
     {
-        parent::__construct($repository);
+        parent::__construct($repository, $policy);
+
         $this->actions['index'] = IndexBanquetRequest::class;
         $this->actions['show'] = ShowBanquetRequest::class;
         $this->actions['store'] = StoreBanquetRequest::class;
         $this->actions['update'] = UpdateBanquetRequest::class;
+    }
+
+    /**
+     * Get eloquent query builder instance.
+     *
+     * @param CrudRequest $request
+     *
+     * @return BanquetQueryBuilder
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    protected function builder(CrudRequest $request): BanquetQueryBuilder
+    {
+        /** @var BanquetQueryBuilder $builder */
+        $builder = parent::builder($request);
+
+        return $builder->index($request->user());
     }
 
     /**

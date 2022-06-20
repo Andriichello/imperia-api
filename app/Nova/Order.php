@@ -2,6 +2,8 @@
 
 namespace App\Nova;
 
+use App\Nova\Actions\CalculateTotals;
+use App\Nova\Actions\GenerateInvoice;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Code;
@@ -45,6 +47,21 @@ class Order extends Resource
     ];
 
     /**
+     * Get the actions available for the resource.
+     *
+     * @param Request $request
+     *
+     * @return array
+     */
+    public function actions(Request $request): array
+    {
+        return [
+            new CalculateTotals(),
+            new GenerateInvoice(),
+        ];
+    }
+
+    /**
      * Get the fields displayed by the resource.
      *
      * @param Request $request
@@ -58,22 +75,14 @@ class Order extends Resource
             BelongsTo::make('Banquet'),
 
             Code::make('Metadata')
-                ->height(50)
-                ->json(),
+                ->resolveUsing(fn() => json_encode(json_decode($this->metadata), JSON_PRETTY_PRINT))
+                ->autoHeight()
+                ->json()
+                ->onlyOnDetail()
+                ->readonly(),
 
             Number::make('Total')
-                ->exceptOnForms()
-                ->readonly(),
-
-            Number::make('Discounted Total')
-                ->exceptOnForms()
-                ->readonly(),
-
-            Number::make('Discounts Amount')
-                ->exceptOnForms()
-                ->readonly(),
-
-            Number::make('Discounts Percent')
+                ->resolveUsing(fn() => data_get($this->totals, 'all'))
                 ->exceptOnForms()
                 ->readonly(),
 
@@ -112,11 +121,7 @@ class Order extends Resource
         return [
             'id' => true,
             'banquet' => true,
-            'metadata' => true,
             'total' => true,
-            'discounted_total' => true,
-            'discounts_amount' => true,
-            'discounts_percent' => true,
             'spaces' => false,
             'tickets' => false,
             'products' => false,

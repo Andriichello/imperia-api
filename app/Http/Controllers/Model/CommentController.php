@@ -9,6 +9,7 @@ use App\Http\Requests\Comment\StoreCommentRequest;
 use App\Http\Requests\Comment\UpdateCommentRequest;
 use App\Http\Resources\Comment\CommentCollection;
 use App\Http\Resources\Comment\CommentResource;
+use App\Policies\CommentPolicy;
 use App\Repositories\CommentRepository;
 
 /**
@@ -31,13 +32,15 @@ class CommentController extends CrudController
     protected string $collectionClass = CommentCollection::class;
 
     /**
-     * CommentRepository constructor.
+     * CommentController constructor.
      *
      * @param CommentRepository $repository
+     * @param CommentPolicy $policy
      */
-    public function __construct(CommentRepository $repository)
+    public function __construct(CommentRepository $repository, CommentPolicy $policy)
     {
-        parent::__construct($repository);
+        parent::__construct($repository, $policy);
+
         $this->actions['index'] = IndexCommentRequest::class;
         $this->actions['show'] = ShowCommentRequest::class;
         $this->actions['store'] = StoreCommentRequest::class;

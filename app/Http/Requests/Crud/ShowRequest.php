@@ -3,12 +3,13 @@
 namespace App\Http\Requests\Crud;
 
 use App\Http\Requests\CrudRequest;
+use App\Http\Requests\Interfaces\WithTargetInterface;
 use App\Http\Requests\Traits\WithTarget;
 
 /**
  * Class ShowRequest.
  */
-class ShowRequest extends CrudRequest
+class ShowRequest extends CrudRequest implements WithTargetInterface
 {
     use WithTarget;
 
@@ -25,5 +26,15 @@ class ShowRequest extends CrudRequest
                 //
             ]
         );
+    }
+
+    /**
+     * Get ability, which should be checked for the request.
+     *
+     * @return string|null
+     */
+    public function getAbility(): ?string
+    {
+        return 'view';
     }
 }

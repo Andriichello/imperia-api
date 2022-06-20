@@ -3,12 +3,15 @@
 namespace App\Http\Requests\Crud;
 
 use App\Http\Requests\CrudRequest;
+use App\Http\Requests\Interfaces\WithTargetInterface;
 use App\Http\Requests\Traits\WithTarget;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
  * Class RestoreRequest.
  */
-class RestoreRequest extends CrudRequest
+class RestoreRequest extends CrudRequest implements WithTargetInterface
 {
     use WithTarget;
 
@@ -25,5 +28,15 @@ class RestoreRequest extends CrudRequest
                 //
             ]
         );
+    }
+
+    /**
+     * Get ability, which should be checked for the request.
+     *
+     * @return string|null
+     */
+    public function getAbility(): ?string
+    {
+        return 'restore';
     }
 }

@@ -90,7 +90,7 @@ class ServiceOrderField extends BaseModel implements
     public function getTotalAttribute(): float
     {
         $total = $this->service->once_paid_price +
-            $this->service->hourly_paid_price * $this->duration;
+            $this->service->hourly_paid_price * ($this->duration / 60.0);
         return round($total * $this->amount, 2);
     }
 }

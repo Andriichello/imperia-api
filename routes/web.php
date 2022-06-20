@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\Other\NovaRegisterController;
 use Illuminate\Support\Facades\Route;
+use Laravel\Nova\Http\Middleware\RedirectIfAuthenticated;
+use Laravel\Nova\Nova;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +19,12 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::domain(config('nova.domain', null))
+    ->middleware(['web', RedirectIfAuthenticated::class])
+    ->as('nova.')
+    ->prefix(Nova::path())
+    ->group(function () {
+        Route::get('register', [NovaRegisterController::class, 'showRegistrationForm'])->name('register');
+        Route::post('register', [NovaRegisterController::class, 'register']);
+    });

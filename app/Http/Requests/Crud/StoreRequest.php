@@ -23,4 +23,14 @@ class StoreRequest extends CrudRequest
             ]
         );
     }
+
+    /**
+     * Get ability, which should be checked for the request.
+     *
+     * @return string|null
+     */
+    public function getAbility(): ?string
+    {
+        return 'create';
+    }
 }

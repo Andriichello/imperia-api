@@ -49,6 +49,10 @@ return [
             'provider' => 'users',
             'hash' => false,
         ],
+        'signature' => [
+            'driver' => 'signature',
+            'provider' => 'users',
+        ]
     ],
 
     /*

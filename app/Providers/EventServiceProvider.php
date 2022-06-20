@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Subscribers\OrderSubscriber;
+use App\Subscribers\UserSubscriber;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 /**
@@ -23,6 +24,7 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $subscribe = [
+        UserSubscriber::class,
         OrderSubscriber::class,
     ];
 

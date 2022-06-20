@@ -2,25 +2,31 @@
 
 namespace App\Queries;
 
-use App\Models\Orders\Order;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use App\Models\Menu;
+use App\Queries\Interfaces\ArchivableInterface;
+use App\Queries\Interfaces\CategorizableInterface;
+use App\Queries\Traits\Archivable;
+use App\Queries\Traits\Categorizable;
 
 /**
  * Class ProductQueryBuilder.
  */
-class ProductQueryBuilder extends EloquentBuilder
+class ProductQueryBuilder extends BaseQueryBuilder implements
+    ArchivableInterface,
+    CategorizableInterface
 {
-    use CategorizableQueryBuilder;
+    use Archivable;
+    use Categorizable;
 
     /**
-     * @param Order|int $order
+     * @param Menu|int $menu
      *
      * @return static
      */
-    public function withOrder(Order|int $order): static
+    public function withMenu(Menu|int $menu): static
     {
-        $orderId = is_int($order) ? $order : $order->id;
-        $this->where('order_id', $orderId);
+        $menuId = is_int($menu) ? $menu : $menu->id;
+        $this->where('products.menu_id', $menuId);
 
         return $this;
     }

@@ -19,7 +19,7 @@ class CardServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         $this->app->booted(function () {
             $this->routes();
@@ -36,7 +36,7 @@ class CardServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function routes()
+    protected function routes(): void
     {
         // @phpstan-ignore-next-line
         if ($this->app->routesAreCached()) {
@@ -53,7 +53,7 @@ class CardServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         //
     }

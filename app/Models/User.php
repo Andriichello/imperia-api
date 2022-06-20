@@ -2,13 +2,17 @@
 
 namespace App\Models;
 
+use App\Enums\UserRole;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Traits\SoftDeletableTrait;
+use App\Queries\UserQueryBuilder;
 use App\Traits\StaticMethodsAccess;
 use Carbon\Carbon;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
@@ -20,6 +24,7 @@ use Spatie\Permission\Traits\HasRoles;
  * Class User.
  *
  * @property int $id
+ * @property int|null $customer_id
  * @property string $type
  * @property string $name
  * @property string $email
@@ -31,8 +36,12 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  *
+ * @property Customer|null $customer
  * @property Banquet[]|Collection $banquets
+ * @property Notification[]|Collection $inbounds
+ * @property Notification[]|Collection $outbounds
  *
+ * @method static UserQueryBuilder query()
  * @method static UserFactory factory(...$parameters)
  */
 class User extends Authenticatable implements SoftDeletableInterface
@@ -90,8 +99,21 @@ class User extends Authenticatable implements SoftDeletableInterface
      * @var array
      */
     protected $relations = [
+        'customer',
         'banquets',
+        'inbounds',
+        'outbounds',
     ];
+
+    /**
+     * Customer associated with the model.
+     *
+     * @return HasOne
+     */
+    public function customer(): HasOne
+    {
+        return $this->hasOne(Customer::class, 'user_id', 'id');
+    }
 
     /**
      * Banquets associated with the model.
@@ -101,6 +123,26 @@ class User extends Authenticatable implements SoftDeletableInterface
     public function banquets(): HasMany
     {
         return $this->hasMany(Banquet::class, 'creator_id', 'id');
+    }
+
+    /**
+     * Notifications, which user have received or should receive.
+     *
+     * @return HasMany
+     */
+    public function inbounds(): HasMany
+    {
+        return $this->hasMany(Notification::class, 'receiver_id', 'id');
+    }
+
+    /**
+     * Notifications, which user have sent or scheduled to be sent.
+     *
+     * @return HasMany
+     */
+    public function outbounds(): HasMany
+    {
+        return $this->hasMany(Notification::class, 'sender_id', 'id');
     }
 
     /**
@@ -126,6 +168,16 @@ class User extends Authenticatable implements SoftDeletableInterface
     }
 
     /**
+     * Accessor for the related customer id.
+     *
+     * @return int|null
+     */
+    public function getCustomerIdAttribute(): ?int
+    {
+        return $this->customer()->pluck('id')->first();
+    }
+
+    /**
      * Determines if given password is the same as current one.
      *
      * @param string $password
@@ -135,5 +187,56 @@ class User extends Authenticatable implements SoftDeletableInterface
     public function isCurrentPassword(string $password): bool
     {
         return Hash::check($password, $this->getOriginal('password'));
+    }
+
+    /**
+     * Determine if user is a customer.
+     *
+     * @return bool
+     */
+    public function isAdmin(): bool
+    {
+        return $this->hasRole(UserRole::Admin);
+    }
+
+    /**
+     * Determine if user is a customer.
+     *
+     * @return bool
+     */
+    public function isManager(): bool
+    {
+        return $this->hasRole(UserRole::Manager);
+    }
+
+    /**
+     * Determine if user is a staff member.
+     *
+     * @return bool
+     */
+    public function isStaff(): bool
+    {
+        return $this->isAdmin() || $this->isManager();
+    }
+
+    /**
+     * Determine if user is a customer.
+     *
+     * @return bool
+     */
+    public function isCustomer(): bool
+    {
+        return $this->hasRole(UserRole::Customer)
+            && $this->customer()->exists();
+    }
+
+    /**
+     * @param DatabaseBuilder $query
+     *
+     * @return UserQueryBuilder
+     */
+    public function newEloquentBuilder($query): UserQueryBuilder
+    {
+        return new UserQueryBuilder($query);
     }
 }

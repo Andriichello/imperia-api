@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use App\Queries\Interfaces\IndexableInterface;
 use Customs\ColumnsCard\HasColumnsFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -26,7 +27,8 @@ abstract class Resource extends NovaResource
      */
     public static function indexQuery(NovaRequest $request, $query): Builder
     {
-        return $query;
+        return $query instanceof IndexableInterface
+            ? $query->index($request->user()) : $query;
     }
 
     /**
