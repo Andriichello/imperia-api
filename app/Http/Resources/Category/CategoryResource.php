@@ -31,8 +31,8 @@ class CategoryResource extends JsonResource
             'target' => $this->target,
             'title' => $this->title,
             'description' => $this->description,
-            'media' => new MediaCollection($this->media),
-            'default_media' => new MediaCollection($this->default_media),
+//            'media' => new MediaCollection($this->media),
+//            'default_media' => new MediaCollection($this->default_media),
         ];
     }
 

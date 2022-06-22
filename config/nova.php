@@ -5,6 +5,7 @@ use Laravel\Nova\Http\Middleware\Authenticate;
 use Laravel\Nova\Http\Middleware\Authorize;
 use Laravel\Nova\Http\Middleware\BootTools;
 use Laravel\Nova\Http\Middleware\DispatchServingNovaEvent;
+use Laravel\Nova\Http\Middleware\HandleInertiaRequests;
 
 return [
 
@@ -32,7 +33,7 @@ return [
     |
     */
 
-    'name' => env('NOVA_APP_NAME', 'Imperia'),
+    'name' => env('NOVA_APP_NAME', env('APP_NAME')),
 
     /*
     |--------------------------------------------------------------------------
@@ -112,9 +113,14 @@ return [
 
     'middleware' => [
         'web',
-        Authenticate::class,
+        HandleInertiaRequests::class,
         DispatchServingNovaEvent::class,
         BootTools::class,
+    ],
+
+    'api_middleware' => [
+        'nova',
+        Authenticate::class,
         Authorize::class,
     ],
 
@@ -130,6 +136,19 @@ return [
     */
 
     'pagination' => 'links',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Nova Storage Disk
+    |--------------------------------------------------------------------------
+    |
+    | This configuration option allows you to define the default disk that
+    | will be used to store files using the Image, File, and other file
+    | related field types. You're welcome to use any configured disk.
+    |
+    */
+
+    'storage_disk' => env('NOVA_STORAGE_DISK', 'public'),
 
     /*
     |--------------------------------------------------------------------------

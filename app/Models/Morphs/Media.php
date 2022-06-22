@@ -2,10 +2,10 @@
 
 namespace App\Models\Morphs;
 
+use App\Models\BaseModel;
 use App\Models\Traits\JsonFieldTrait;
 use App\Queries\MediaQueryBuilder;
 use Carbon\Carbon;
-use ClassicO\NovaMediaLibrary\Core\Model as MediaModel;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 
 /**
@@ -26,7 +26,7 @@ use Illuminate\Database\Query\Builder as DatabaseBuilder;
  *
  * @method static MediaQueryBuilder query()
  */
-class Media extends MediaModel
+class Media extends BaseModel
 {
     use JsonFieldTrait;
 

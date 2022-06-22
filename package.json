@@ -8,18 +8,15 @@
         "hot": "mix watch --hot",
         "prod": "npm run production",
         "production": "mix --production",
-        "build-menu": "cd nova-components/Menu && npm run dev",
-        "build-menu-prod": "cd nova-components/Menu && npm run prod",
         "build-marketplace": "cd nova-components/Marketplace && npm run dev",
-        "build-marketplace-prod": "cd nova-components/Marketplace && npm run prod"
+        "build-marketplace-prod": "cd nova-components/Marketplace && npm run prod",
+        "build-columns-card": "cd nova-components/ColumnsCard && npm run dev",
+        "build-columns-card-prod": "cd nova-components/ColumnsCard && npm run prod"
     },
     "devDependencies": {
         "axios": "^0.21",
         "laravel-mix": "^6.0.6",
         "lodash": "^4.17.19",
         "postcss": "^8.1.14"
-    },
-    "dependencies": {
-        "vue-collapsible-component": "^0.1.3"
     }
 }

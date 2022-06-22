@@ -2,9 +2,8 @@
 
 namespace Andriichello\Marketplace;
 
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\View\Factory;
-use Illuminate\View\View;
+use Illuminate\Http\Request;
+use Laravel\Nova\Menu\MenuSection;
 use Laravel\Nova\Nova;
 use Laravel\Nova\Tool;
 
@@ -22,12 +21,17 @@ class Marketplace extends Tool
     }
 
     /**
-     * Build the view that renders the navigation links for the tool.
+     * Build the menu that renders the navigation links for the tool.
      *
-     * @return \Illuminate\Contracts\View\View|Factory|string|View|Application
+     * @param Request $request
+     *
+     * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function renderNavigation(): \Illuminate\Contracts\View\View|Factory|string|View|Application
+    public function menu(Request $request): mixed
     {
-        return view('marketplace::navigation');
+        return MenuSection::make('Marketplace')
+            ->path('/marketplace')
+            ->icon('server');
     }
 }

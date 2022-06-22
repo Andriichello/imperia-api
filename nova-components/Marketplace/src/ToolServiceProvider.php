@@ -2,10 +2,12 @@
 
 namespace Andriichello\Marketplace;
 
+use Andriichello\Marketplace\Http\Middleware\Authorize;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Andriichello\Marketplace\Http\Middleware\Authorize;
+use Laravel\Nova\Http\Middleware\Authenticate;
+use Laravel\Nova\Nova;
 
 /**
  * Class ToolServiceProvider.
@@ -21,8 +23,6 @@ class ToolServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'marketplace');
-
         $this->app->booted(function () {
             $this->routes();
         });
@@ -43,6 +43,9 @@ class ToolServiceProvider extends ServiceProvider
         if ($this->app->routesAreCached()) {
             return;
         }
+
+        Nova::router(['nova', Authenticate::class, Authorize::class], 'marketplace')
+            ->group(__DIR__ . '/../routes/inertia.php');
 
         Route::middleware(['nova', Authorize::class])
             ->prefix('nova-vendor/marketplace')

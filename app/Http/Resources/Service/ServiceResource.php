@@ -36,8 +36,8 @@ class ServiceResource extends JsonResource
             'archived' => $this->archived,
             'categories' => new CategoryCollection($this->whenLoaded('categories')),
             'category_ids' => $categoryIds,
-            'media' => new MediaCollection($this->media),
-            'default_media' => new MediaCollection($this->default_media),
+//            'media' => new MediaCollection($this->media),
+//            'default_media' => new MediaCollection($this->default_media),
         ];
     }
 

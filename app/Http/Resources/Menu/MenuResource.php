@@ -34,8 +34,8 @@ class MenuResource extends JsonResource
             'archived' => $this->archived,
             'products' => new ProductCollection($this->whenLoaded('products')),
             'categories' => new CategoryCollection($this->categories),
-            'media' => new MediaCollection($this->media),
-            'default_media' => new MediaCollection($this->default_media),
+//            'media' => new MediaCollection($this->media),
+//            'default_media' => new MediaCollection($this->default_media),
         ];
     }
 

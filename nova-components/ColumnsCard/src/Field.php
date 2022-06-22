@@ -1,6 +1,6 @@
 <?php
 
-namespace Customs\ColumnsCard;
+namespace Andriichello\ColumnsCard;
 
 use JsonSerializable;
 

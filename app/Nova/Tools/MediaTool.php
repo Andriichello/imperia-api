@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 /**
  * Class MediaTool.
  */
-class MediaTool extends NovaMediaLibrary
+class MediaTool
 {
     /**
      * Determine if tool should be visible to user, who makes request.

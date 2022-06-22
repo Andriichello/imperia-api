@@ -1,10 +1,9 @@
 <?php
 
-namespace Customs\ColumnsCard;
+namespace Andriichello\ColumnsCard;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\MergeValue;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Laravel\Nova\Fields\BelongsToMany;
@@ -12,7 +11,6 @@ use Laravel\Nova\Fields\Field as NovaField;
 use Laravel\Nova\Fields\FieldCollection;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\FilterDecoder;
-use Laravel\Nova\Filters\Filter;
 use Laravel\Nova\Http\Controllers\ActionController;
 use Laravel\Nova\Http\Controllers\FilterController;
 use Laravel\Nova\Http\Controllers\LensController;
@@ -85,25 +83,22 @@ trait HasColumnsFilter
     }
 
     /**
-     * Get currently checked fields.
+     * Get currently checked attributes.
      *
      * @return array
      */
-    public function getFilterFields(): array
+    public function getFilteredAttributes(): array
     {
         $decoder = new FilterDecoder(request('filters'));
-        $filters = collect($decoder->decodeFromBase64String());
+        $filter = collect($decoder->decodeFromBase64String())
+            ->first(fn($f) => data_get($f, ColumnsFilter::class));
 
-        $filter = $filters
-            ->where('class', ColumnsFilter::class)
-            ->first();
-
-        $value = data_get($filter, 'value', []);
-        if (!is_array($value)) {
+        $attributes = data_get($filter, ColumnsFilter::class);
+        if (!is_array($attributes)) {
             return session($this->getCacheKey(), []);
         }
 
-        return Arr::pluck($value, 'checked', 'attribute');
+        return $attributes;
     }
 
     /**
@@ -134,15 +129,8 @@ trait HasColumnsFilter
      */
     private function getCheckedFields(FieldCollection $available): FieldCollection
     {
-        $stored = $this->getFilterFields();
-
-        return $available
-            ->filter(function ($field) use ($stored) {
-                if (array_key_exists($field->attribute, $stored)) {
-                    return $stored[$field->attribute];
-                }
-                return data_get($field, 'checked', false);
-            });
+        $attributes = $this->getFilteredAttributes();
+        return $available->filter(fn($field) => in_array($field->attribute, $attributes));
     }
 
     /**
@@ -182,10 +170,10 @@ trait HasColumnsFilter
     public function resolveFilters(NovaRequest $request): Collection
     {
         if ($this->shouldApplyColumnsFilter($request)) {
-            $fields = $this->getFilterFields();
+            $attributes = $this->getFilteredAttributes();
 
-            if ($fields) {
-                session([$this->getCacheKey() => $fields]);
+            if ($attributes) {
+                session([$this->getCacheKey() => $attributes]);
             }
         }
 

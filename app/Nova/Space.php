@@ -3,7 +3,6 @@
 namespace App\Nova;
 
 use App\Models\Scopes\ArchivedScope;
-use ClassicO\NovaMediaLibrary\MediaLibrary;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
@@ -75,8 +74,8 @@ class Space extends Resource
         return [
             ID::make()->sortable(),
 
-            MediaLibrary::make('Media', 'media_ids')
-                ->array('gallery'),
+//            MediaLibrary::make('Media', 'media_ids')
+//                ->array('gallery'),
 
             Text::make('Title')
                 ->updateRules('sometimes', 'min:1', 'max:50')

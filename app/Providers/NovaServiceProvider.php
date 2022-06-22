@@ -3,10 +3,8 @@
 namespace App\Providers;
 
 use Andriichello\Marketplace\Marketplace;
+use App\Nova\Dashboards\Main;
 use App\Nova\Tools\BackupTool;
-use App\Nova\Tools\MediaTool;
-use DigitalCreative\CollapsibleResourceManager\CollapsibleResourceManager;
-use DigitalCreative\CollapsibleResourceManager\Resources\TopLevelResource;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\Cards\Help;
 use Laravel\Nova\Nova;
@@ -77,7 +75,9 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      */
     protected function dashboards(): array
     {
-        return [];
+        return [
+            new Main(),
+        ];
     }
 
     /**
@@ -89,62 +89,62 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     {
         return [
             new Marketplace(),
-            new CollapsibleResourceManager([
-                'navigation' => [
-                    TopLevelResource::make([
-                        'label' => 'Offers',
-                        'expanded' => false,
-                        'icon' => null,
-                        'resources' => [
-                            \App\Nova\Banquet::class,
-                            \App\Nova\Order::class,
-                        ]
-                    ]),
-                    TopLevelResource::make([
-                        'label' => 'Items',
-                        'expanded' => false,
-                        'icon' => null,
-                        'resources' => [
-                            \App\Nova\Menu::class,
-                            \App\Nova\Product::class,
-                            \App\Nova\Ticket::class,
-                            \App\Nova\Space::class,
-                            \App\Nova\Service::class,
-                        ]
-                    ]),
-                    TopLevelResource::make([
-                        'label' => 'People',
-                        'expanded' => false,
-                        'icon' => null,
-                        'resources' => [
-                            \App\Nova\Customer::class,
-                            \App\Nova\FamilyMember::class,
-                        ]
-                    ]),
-                    TopLevelResource::make([
-                        'label' => 'Attachments',
-                        'expanded' => false,
-                        'icon' => null,
-                        'resources' => [
-                            \App\Nova\Category::class,
-                            \App\Nova\Discount::class,
-                            \App\Nova\Comment::class,
-                            \App\Nova\Log::class,
-                            \App\Nova\Notification::class,
-                        ]
-                    ]),
-                    TopLevelResource::make([
-                        'label' => 'Management',
-                        'expanded' => false,
-                        'icon' => null,
-                        'resources' => [
-                            \App\Nova\User::class,
-                            \App\Nova\Role::class,
-                        ]
-                    ]),
-                ],
-            ]),
-            new MediaTool(),
+//            new CollapsibleResourceManager([
+//                'navigation' => [
+//                    TopLevelResource::make([
+//                        'label' => 'Offers',
+//                        'expanded' => false,
+//                        'icon' => null,
+//                        'resources' => [
+//                            \App\Nova\Banquet::class,
+//                            \App\Nova\Order::class,
+//                        ]
+//                    ]),
+//                    TopLevelResource::make([
+//                        'label' => 'Items',
+//                        'expanded' => false,
+//                        'icon' => null,
+//                        'resources' => [
+//                            \App\Nova\Menu::class,
+//                            \App\Nova\Product::class,
+//                            \App\Nova\Ticket::class,
+//                            \App\Nova\Space::class,
+//                            \App\Nova\Service::class,
+//                        ]
+//                    ]),
+//                    TopLevelResource::make([
+//                        'label' => 'People',
+//                        'expanded' => false,
+//                        'icon' => null,
+//                        'resources' => [
+//                            \App\Nova\Customer::class,
+//                            \App\Nova\FamilyMember::class,
+//                        ]
+//                    ]),
+//                    TopLevelResource::make([
+//                        'label' => 'Attachments',
+//                        'expanded' => false,
+//                        'icon' => null,
+//                        'resources' => [
+//                            \App\Nova\Category::class,
+//                            \App\Nova\Discount::class,
+//                            \App\Nova\Comment::class,
+//                            \App\Nova\Log::class,
+//                            \App\Nova\Notification::class,
+//                        ]
+//                    ]),
+//                    TopLevelResource::make([
+//                        'label' => 'Management',
+//                        'expanded' => false,
+//                        'icon' => null,
+//                        'resources' => [
+//                            \App\Nova\User::class,
+//                            \App\Nova\Role::class,
+//                        ]
+//                    ]),
+//                ],
+//            ]),
+//            new MediaTool(),
             new BackupTool(),
         ];
     }
