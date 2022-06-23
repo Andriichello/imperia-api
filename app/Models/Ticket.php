@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Interfaces\ArchivableInterface;
 use App\Models\Interfaces\CategorizableInterface;
 use App\Models\Interfaces\LoggableInterface;
+use App\Models\Interfaces\MediableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Traits\ArchivableTrait;
 use App\Models\Traits\CategorizableTrait;
@@ -36,7 +37,8 @@ class Ticket extends BaseModel implements
     SoftDeletableInterface,
     CategorizableInterface,
     ArchivableInterface,
-    LoggableInterface
+    LoggableInterface,
+    MediableInterface
 {
     use HasFactory;
     use SoftDeletableTrait;

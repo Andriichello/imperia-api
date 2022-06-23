@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Interfaces\ArchivableInterface;
+use App\Models\Interfaces\MediableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Morphs\Category;
 use App\Models\Traits\ArchivableTrait;
@@ -37,7 +38,8 @@ use Illuminate\Support\Collection;
  */
 class Menu extends BaseModel implements
     ArchivableInterface,
-    SoftDeletableInterface
+    SoftDeletableInterface,
+    MediableInterface
 {
     use HasFactory;
     use SoftDeletableTrait;

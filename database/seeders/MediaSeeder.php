@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use ClassicO\NovaMediaLibrary\Core\Model as MediaModel;
+use App\Models\Morphs\Media;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
 
@@ -30,7 +30,8 @@ class MediaSeeder extends Seeder
     public function seedFolder(string $folder)
     {
         foreach (File::allFiles('./public/storage/media' . $folder) as $file) {
-            MediaModel::query()
+            Media::
+            Media::query()
                 ->create([
                     'type' => "image",
                     'name' => $file->getFilename(),
