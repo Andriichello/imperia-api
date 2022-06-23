@@ -28,7 +28,7 @@
                          @click="toggleCategory(tab, c)"
                          v-for="c in tab.target === 'products' ? tab.filters.menu.categories : tab.categories.data">
                     <img class="categories-item-img" :alt="c.title"
-                         :src="tab.image"/>
+                         :src="c.media && c.media.length ? c.media[0].original_url : tab.image"/>
                     <span class="categories-item-span">
                         {{ c.title }}
                     </span>
@@ -61,7 +61,7 @@
                 <div class="list-col" v-for="column in tab.columns">
                     <div class="list-item" v-for="item in column">
                         <img class="list-item-img" :alt="item.title"
-                             :src="tab.image"/>
+                             :src="item.media && item.media.length ? item.media[0].original_url : tab.image"/>
                         <div class="list-item-details">
                             <span class="list-item-title">
                                 {{ item.title }}
@@ -85,19 +85,19 @@
 
             <nav class="pagination" v-if="tab && tab.items && tab.items.data && tab.items.data.length">
                 <div style="flex-grow: 1; flex-basis: 150px;">
-                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80"
+                    <button class="pagination-button font-mono btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80"
                             @click="fetchItems(tab, tab.items.meta.current_page)">
                         ↻
                     </button>
                 </div>
 
                 <div>
-                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80"
+                    <button class="pagination-button font-mono btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80"
                             :disabled="tab.items.meta.current_page <= 1"
                             @click="fetchItems(tab,1)">
                         «
                     </button>
-                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80"
+                    <button class="pagination-button font-mono btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80"
                             :disabled="tab.items.meta.current_page <= 1"
                             @click="fetchItems(tab, tab.items.meta.current_page - 1)">
                         ‹
@@ -105,13 +105,13 @@
                     <span class="text-sm text-80 px-4 ml-auto">
                     {{ tab.items.meta.current_page }}
                 </span>
-                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80"
+                    <button class="pagination-button font-mono btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80"
                             :disabled="tab.items.meta.current_page >= tab.items.meta.last_page"
                             @click="fetchItems(tab, tab.items.meta.current_page + 1)">
                         ›
                     </button>
 
-                    <button class="font-mono btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80"
+                    <button class="pagination-button font-mono btn btn-link h-9 min-w-9 px-2 border-50 text-80 opacity-80"
                             :disabled="tab.items.meta.current_page >= tab.items.meta.last_page"
                             @click="fetchItems(tab, tab.items.meta.last_page)">
                         »
@@ -318,6 +318,8 @@ export default {
             this.fetchItems(tab);
         },
         toggleTab(tab) {
+            console.log(tab.categories);
+
             if (this.tab === tab) {
                 return;
             }
@@ -536,9 +538,10 @@ export default {
     -moz-box-shadow: none;
     box-shadow: none;
 
-    flex-basis: 180px;
+    flex-basis: 80px;
     flex-grow: 1;
     padding: 8px 12px 8px 12px;
+    margin-left: 4px;
     border-radius: 4px;
     background-color: #eef1f4;
     font-style: normal;
@@ -552,6 +555,7 @@ export default {
 .search-button {
     flex-basis: 60px;
     padding: 8px 12px 8px 12px;
+    margin-right: 4px;
     border-radius: 4px;
     background-color: #eef1f4;
     font-style: normal;
@@ -684,6 +688,15 @@ export default {
     border-radius: 4px;
 }
 
+.pagination-button {
+
+}
+
+.pagination-button:disabled,
+.pagination-button[disabled]{
+    opacity: 40%;
+}
+
 .no-results {
     display: flex;
     flex-direction: column;
@@ -707,5 +720,36 @@ export default {
     text-align: center;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+@media screen and (max-width: 600px) {
+    .tabs-item {
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+    }
+
+    .tabs-item-img {
+        width: 32px;
+        height: 32px;
+        align-self: center;
+        justify-self: center;
+    }
+
+    .tabs-item-text {
+        width: 0;
+        flex-grow: 0;
+        visibility: collapse;
+    }
+
+    .search{
+        width: auto;
+    }
+
+    .search-input {
+        min-width: 100px;
+        flex-grow: 1;
+        flex-basis: 100px;
+    }
 }
 </style>
