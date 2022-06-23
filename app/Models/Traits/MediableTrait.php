@@ -32,6 +32,18 @@ trait MediableTrait
     protected bool $deletePreservingMedia = false;
 
     /**
+     * Determines whether media, which is attached to the model
+     * should be deleted when model is deleted.
+     *
+     * @return bool
+     */
+    public function shouldDeletePreservingMedia(): bool
+    {
+        // there is a mistake in the original logic
+        return !$this->deletePreservingMedia;
+    }
+
+    /**
      * Class name to default media relative path mappings.
      *
      * @var array

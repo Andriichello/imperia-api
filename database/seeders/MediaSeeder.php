@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\Morphs\Media;
+use App\Models\Morphs\Category;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 
 /**
  * Class MediaSeeder.
@@ -12,38 +14,46 @@ use Illuminate\Support\Facades\File;
 class MediaSeeder extends Seeder
 {
     /**
+     * @var Category
+     */
+    protected Category $category;
+
+    /**
      * Run the database seeds.
      *
      * @return void
+     * @throws FileDoesNotExist|FileIsTooBig
      */
-    public function run()
+    public function run(): void
     {
-        $this->seedFolder('/defaults/');
-        $this->seedFolder('/categories/');
+        $this->category = Category::factory()
+            ->create([
+                'slug' => 'temporary',
+                'title' => 'Temporary',
+                'target' => null,
+                'description' => null,
+            ]);
+
+        $this->seedFolder('/defaults/', 'defaults');
+        $this->seedFolder('/categories/', 'categories');
+
+        $this->category->delete();
     }
 
     /**
      * @param string $folder
+     * @param string $collection
      *
      * @return void
+     * @throws FileDoesNotExist|FileIsTooBig
      */
-    public function seedFolder(string $folder)
+    public function seedFolder(string $folder, string $collection): void
     {
         foreach (File::allFiles('./public/storage/media' . $folder) as $file) {
-            Media::
-            Media::query()
-                ->create([
-                    'type' => "image",
-                    'name' => $file->getFilename(),
-                    'title' => $file->getFilenameWithoutExtension(),
-                    'folder' => $folder,
-                    'private' => false,
-                    'lp' => false,
-                    'options' => [
-                        'mime' => 'image',
-                        'size' => round($file->getSize() / 1024.0, 3) . ' kb',
-                    ],
-                ]);
+            $path = '/media' . $folder . $file->getFilename();
+            $this->category->addMediaFromDisk($path, 'public')
+                ->preservingOriginal()
+                ->toMediaCollection($collection);
         }
     }
 }

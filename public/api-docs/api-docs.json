@@ -5808,6 +5808,7 @@
                         "example": "svg"
                     },
                     "mime_type": {
+                        "nullable": "true",
                         "type": "string",
                         "example": "image/svg+xml"
                     },
@@ -5820,6 +5821,7 @@
                         "example": "http://localhost/storage/drinks.svg"
                     },
                     "order_column": {
+                        "nullable": "true",
                         "type": "integer",
                         "example": "1"
                     },

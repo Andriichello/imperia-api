@@ -48,10 +48,10 @@ class MediaResource extends JsonResource
      *   @OA\Property(property="name", type="string", example="drinks"),
      *   @OA\Property(property="file_name", type="string", example="drinks.svg"),
      *   @OA\Property(property="file_type", type="string", example="svg"),
-     *   @OA\Property(property="mime_type", type="string", example="image/svg+xml"),
+     *   @OA\Property(property="mime_type", type="string", nullable="true", example="image/svg+xml"),
      *   @OA\Property(property="preview_url", type="string", example=""),
      *   @OA\Property(property="original_url", type="string", example="http://localhost/storage/drinks.svg"),
-     *   @OA\Property(property="order_column", type="integer", example="1"),
+     *   @OA\Property(property="order_column", type="integer", nullable="true", example="1"),
      *   @OA\Property(property="collection_name", type="string", example="images"),
      * )
      */
