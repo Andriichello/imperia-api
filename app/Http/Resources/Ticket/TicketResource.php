@@ -35,8 +35,7 @@ class TicketResource extends JsonResource
             'archived' => $this->archived,
             'categories' => new CategoryCollection($this->whenLoaded('categories')),
             'category_ids' => $categoryIds,
-//            'media' => new MediaCollection($this->media),
-//            'default_media' => new MediaCollection($this->default_media),
+            'media' => new MediaCollection($this->media),
         ];
     }
 
@@ -45,7 +44,7 @@ class TicketResource extends JsonResource
      *   schema="Ticket",
      *   description="Ticket resource object",
      *   required = {"id", "type", "title", "description", "price",
-     *      "category_ids", "media", "default_media"},
+     *      "category_ids", "media"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="tickets"),
      *   @OA\Property(property="title", type="string", example="Child ticket"),
@@ -55,7 +54,6 @@ class TicketResource extends JsonResource
      *   @OA\Property(property="categories", type="array", @OA\Items(ref ="#/components/schemas/Category")),
      *   @OA\Property(property="category_ids", type="array", @OA\Items(type="integer", example=1)),
      *   @OA\Property(property="media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
-     *   @OA\Property(property="default_media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
      * )
      */
 }

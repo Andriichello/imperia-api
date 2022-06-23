@@ -16,6 +16,7 @@
         "darkaonline/l5-swagger": "8.0.9",
         "doctrine/dbal": "^2.5",
         "dyrynda/laravel-cascade-soft-deletes": "^4.1",
+        "ebess/advanced-nova-media-library": "^4.0",
         "fakerphp/faker": "^1.9.1",
         "fideloper/proxy": "^4.4",
         "fruitcake/laravel-cors": "^2.0",

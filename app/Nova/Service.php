@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use App\Models\Scopes\ArchivedScope;
+use Ebess\AdvancedNovaMediaLibrary\Fields\Images;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
@@ -74,8 +75,8 @@ class Service extends Resource
         return [
             ID::make()->sortable(),
 
-//            MediaLibrary::make('Media', 'media_ids')
-//                ->array('gallery'),
+            Images::make('Images', 'images')
+                ->enableExistingMedia(),
 
             Text::make('Title')
                 ->updateRules('sometimes', 'min:1', 'max:50')
@@ -123,7 +124,7 @@ class Service extends Resource
     {
         return [
             'id' => true,
-            'media_ids' => ['label' => 'Media', 'checked' => true],
+            'images' => true,
             'title' => true,
             'description' => false,
             'once_paid_price' => true,

@@ -5235,8 +5235,7 @@
                     "target",
                     "title",
                     "description",
-                    "media",
-                    "default_media"
+                    "media"
                 ],
                 "properties": {
                     "id": {
@@ -5265,12 +5264,6 @@
                         "example": "Some text..."
                     },
                     "media": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Media"
-                        }
-                    },
-                    "default_media": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Media"
@@ -5785,11 +5778,13 @@
                     "id",
                     "type",
                     "name",
-                    "title",
-                    "url",
-                    "path",
-                    "folder",
-                    "private"
+                    "file_name",
+                    "file_type",
+                    "mime_type",
+                    "preview_url",
+                    "original_url",
+                    "order_column",
+                    "collection_name"
                 ],
                 "properties": {
                     "id": {
@@ -5802,27 +5797,35 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "mojito-1645908379CXJyz.jpg"
+                        "example": "drinks"
                     },
-                    "title": {
+                    "file_name": {
                         "type": "string",
-                        "example": "Mojito"
+                        "example": "drinks.svg"
                     },
-                    "url": {
+                    "file_type": {
                         "type": "string",
-                        "example": "http://localhost/storage/mojito-1645908379CXJyz.jpg"
+                        "example": "svg"
                     },
-                    "path": {
+                    "mime_type": {
                         "type": "string",
-                        "example": "/mojito-1645908379CXJyz.jpg"
+                        "example": "image/svg+xml"
                     },
-                    "folder": {
+                    "preview_url": {
                         "type": "string",
-                        "example": "/"
+                        "example": ""
                     },
-                    "private": {
-                        "type": "boolean",
-                        "example": "false"
+                    "original_url": {
+                        "type": "string",
+                        "example": "http://localhost/storage/drinks.svg"
+                    },
+                    "order_column": {
+                        "type": "integer",
+                        "example": "1"
+                    },
+                    "collection_name": {
+                        "type": "string",
+                        "example": "images"
                     }
                 },
                 "type": "object"
@@ -5835,8 +5838,7 @@
                     "title",
                     "description",
                     "categories",
-                    "media",
-                    "default_media"
+                    "media"
                 ],
                 "properties": {
                     "id": {
@@ -5872,12 +5874,6 @@
                         }
                     },
                     "media": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Media"
-                        }
-                    },
-                    "default_media": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Media"
@@ -6074,8 +6070,7 @@
                     "weight",
                     "menu_id",
                     "category_ids",
-                    "media",
-                    "default_media"
+                    "media"
                 ],
                 "properties": {
                     "id": {
@@ -6124,12 +6119,6 @@
                         }
                     },
                     "media": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Media"
-                        }
-                    },
-                    "default_media": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Media"
@@ -6232,8 +6221,7 @@
                     "once_paid_price",
                     "hourly_paid_price",
                     "category_ids",
-                    "media",
-                    "default_media"
+                    "media"
                 ],
                 "properties": {
                     "id": {
@@ -6282,12 +6270,6 @@
                         "items": {
                             "$ref": "#/components/schemas/Media"
                         }
-                    },
-                    "default_media": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Media"
-                        }
                     }
                 },
                 "type": "object"
@@ -6303,8 +6285,7 @@
                     "number",
                     "price",
                     "category_ids",
-                    "media",
-                    "default_media"
+                    "media"
                 ],
                 "properties": {
                     "id": {
@@ -6357,12 +6338,6 @@
                         "items": {
                             "$ref": "#/components/schemas/Media"
                         }
-                    },
-                    "default_media": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Media"
-                        }
                     }
                 },
                 "type": "object"
@@ -6376,8 +6351,7 @@
                     "description",
                     "price",
                     "category_ids",
-                    "media",
-                    "default_media"
+                    "media"
                 ],
                 "properties": {
                     "id": {
@@ -6418,12 +6392,6 @@
                         }
                     },
                     "media": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Media"
-                        }
-                    },
-                    "default_media": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Media"

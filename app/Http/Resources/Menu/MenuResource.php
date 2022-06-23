@@ -34,8 +34,7 @@ class MenuResource extends JsonResource
             'archived' => $this->archived,
             'products' => new ProductCollection($this->whenLoaded('products')),
             'categories' => new CategoryCollection($this->categories),
-//            'media' => new MediaCollection($this->media),
-//            'default_media' => new MediaCollection($this->default_media),
+            'media' => new MediaCollection($this->media),
         ];
     }
 
@@ -43,7 +42,7 @@ class MenuResource extends JsonResource
      * @OA\Schema(
      *   schema="Menu",
      *   description="Menu resource object",
-     *   required = {"id", "type", "title", "description", "categories", "media", "default_media"},
+     *   required = {"id", "type", "title", "description", "categories", "media"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="menus"),
      *   @OA\Property(property="title", type="string", example="Kitchen"),
@@ -52,7 +51,6 @@ class MenuResource extends JsonResource
      *   @OA\Property(property="products", type="array", @OA\Items(ref ="#/components/schemas/Product")),
      *   @OA\Property(property="categories", type="array", @OA\Items(ref ="#/components/schemas/Category")),
      *   @OA\Property(property="media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
-     *   @OA\Property(property="default_media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
      * )
      */
 }

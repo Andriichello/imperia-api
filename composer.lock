@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7b07c54d1e589f72dbb93abb5273aa1d",
+    "content-hash": "b66187905ac7ea0118db18e964ac3b64",
     "packages": [
         {
             "name": "andriichello/columns-card",
@@ -1536,6 +1536,54 @@
                 "source": "https://github.com/michaeldyrynda/laravel-cascade-soft-deletes/tree/4.2.0"
             },
             "time": "2022-01-26T03:50:42+00:00"
+        },
+        {
+            "name": "ebess/advanced-nova-media-library",
+            "version": "4.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ebess/advanced-nova-media-library.git",
+                "reference": "9ba38f2e478a6962c41b55e8c644b3d65866f227"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ebess/advanced-nova-media-library/zipball/9ba38f2e478a6962c41b55e8c644b3d65866f227",
+                "reference": "9ba38f2e478a6962c41b55e8c644b3d65866f227",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^8.0|^9.0",
+                "laravel/nova": "^4.0",
+                "php": ">=7.4",
+                "spatie/laravel-medialibrary": "^8.0|^9.0|^10.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Ebess\\AdvancedNovaMediaLibrary\\AdvancedNovaMediaLibraryServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Ebess\\AdvancedNovaMediaLibrary\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Laravel Nova tools for managing the Spatie media library.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "support": {
+                "issues": "https://github.com/ebess/advanced-nova-media-library/issues",
+                "source": "https://github.com/ebess/advanced-nova-media-library/tree/4.0.3"
+            },
+            "time": "2022-05-01T18:48:48+00:00"
         },
         {
             "name": "egulias/email-validator",
