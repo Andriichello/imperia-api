@@ -74,6 +74,7 @@ class Product extends BaseModel implements
      */
     protected $relations = [
         'menu',
+        'media',
         'categories',
     ];
 

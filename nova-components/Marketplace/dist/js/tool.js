@@ -436,7 +436,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
       "class": "categories-item-img",
       alt: c.title,
-      src: c.media && c.media.length ? c.media[0].original_url : $data.tab.image
+      src: c.media && c.media.length ? c.media[0].url : $data.tab.image
     }, null, 8
     /* PROPS */
     , _hoisted_12), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_13, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(c.title), 1
@@ -472,7 +472,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_20, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
         "class": "list-item-img",
         alt: item.title,
-        src: item.media && item.media.length ? item.media[0].original_url : $data.tab.image
+        src: item.media && item.media.length ? item.media[0].url : $data.tab.image
       }, null, 8
       /* PROPS */
       , _hoisted_21), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_22, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_23, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(item.title), 1

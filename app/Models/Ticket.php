@@ -84,6 +84,7 @@ class Ticket extends BaseModel implements
      * @var array
      */
     protected $relations = [
+        'media',
         'categories',
     ];
 

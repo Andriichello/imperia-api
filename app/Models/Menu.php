@@ -89,6 +89,7 @@ class Menu extends BaseModel implements
      * @var array
      */
     protected $relations = [
+        'media',
         'products',
     ];
 

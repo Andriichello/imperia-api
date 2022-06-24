@@ -88,6 +88,7 @@ class Service extends BaseModel implements
      * @var array
      */
     protected $relations = [
+        'media',
         'categories',
     ];
 

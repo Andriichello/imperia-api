@@ -37,6 +37,7 @@ class ServiceResource extends JsonResource
             'categories' => new CategoryCollection($this->whenLoaded('categories')),
             'category_ids' => $categoryIds,
             'media' => new MediaCollection($this->media),
+            'default_media' => new MediaCollection($this->default_media),
         ];
     }
 
@@ -45,7 +46,7 @@ class ServiceResource extends JsonResource
      *   schema="Service",
      *   description="Service resource object",
      *   required = {"id", "type", "title", "description", "once_paid_price", "hourly_paid_price",
-     *      "category_ids", "media"},
+     *      "category_ids", "media", "default_media"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="services"),
      *   @OA\Property(property="title", type="string", example="Clown Show"),
@@ -56,6 +57,7 @@ class ServiceResource extends JsonResource
      *   @OA\Property(property="categories", type="array", @OA\Items(ref ="#/components/schemas/Category")),
      *   @OA\Property(property="category_ids", type="array", @OA\Items(type="integer", example=1)),
      *   @OA\Property(property="media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
+     *   @OA\Property(property="default_media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
      * )
      */
 }

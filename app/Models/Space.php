@@ -88,6 +88,7 @@ class Space extends BaseModel implements
      * @var array
      */
     protected $relations = [
+        'media',
         'categories',
     ];
 

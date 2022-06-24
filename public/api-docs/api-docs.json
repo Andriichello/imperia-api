@@ -6279,7 +6279,8 @@
                     "title",
                     "description",
                     "categories",
-                    "media"
+                    "media",
+                    "default_media"
                 ],
                 "properties": {
                     "id": {
@@ -6315,6 +6316,12 @@
                         }
                     },
                     "media": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Media"
+                        }
+                    },
+                    "default_media": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Media"
@@ -6511,7 +6518,8 @@
                     "weight",
                     "menu_id",
                     "category_ids",
-                    "media"
+                    "media",
+                    "default_media"
                 ],
                 "properties": {
                     "id": {
@@ -6560,6 +6568,12 @@
                         }
                     },
                     "media": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Media"
+                        }
+                    },
+                    "default_media": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Media"
@@ -6662,7 +6676,8 @@
                     "once_paid_price",
                     "hourly_paid_price",
                     "category_ids",
-                    "media"
+                    "media",
+                    "default_media"
                 ],
                 "properties": {
                     "id": {
@@ -6711,6 +6726,12 @@
                         "items": {
                             "$ref": "#/components/schemas/Media"
                         }
+                    },
+                    "default_media": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Media"
+                        }
                     }
                 },
                 "type": "object"
@@ -6726,7 +6747,8 @@
                     "number",
                     "price",
                     "category_ids",
-                    "media"
+                    "media",
+                    "default_media"
                 ],
                 "properties": {
                     "id": {
@@ -6779,6 +6801,12 @@
                         "items": {
                             "$ref": "#/components/schemas/Media"
                         }
+                    },
+                    "default_media": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Media"
+                        }
                     }
                 },
                 "type": "object"
@@ -6792,7 +6820,8 @@
                     "description",
                     "price",
                     "category_ids",
-                    "media"
+                    "media",
+                    "default_media"
                 ],
                 "properties": {
                     "id": {
@@ -6833,6 +6862,12 @@
                         }
                     },
                     "media": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Media"
+                        }
+                    },
+                    "default_media": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Media"

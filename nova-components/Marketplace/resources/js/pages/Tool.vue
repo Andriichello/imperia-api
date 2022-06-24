@@ -28,7 +28,7 @@
                          @click="toggleCategory(tab, c)"
                          v-for="c in tab.target === 'products' ? tab.filters.menu.categories : tab.categories.data">
                     <img class="categories-item-img" :alt="c.title"
-                         :src="c.media && c.media.length ? c.media[0].original_url : tab.image"/>
+                         :src="c.media && c.media.length ? c.media[0].url : tab.image"/>
                     <span class="categories-item-span">
                         {{ c.title }}
                     </span>
@@ -61,7 +61,7 @@
                 <div class="list-col" v-for="column in tab.columns">
                     <div class="list-item" v-for="item in column">
                         <img class="list-item-img" :alt="item.title"
-                             :src="item.media && item.media.length ? item.media[0].original_url : tab.image"/>
+                             :src="item.media && item.media.length ? item.media[0].url : tab.image"/>
                         <div class="list-item-details">
                             <span class="list-item-title">
                                 {{ item.title }}
