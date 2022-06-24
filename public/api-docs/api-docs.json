@@ -6217,13 +6217,12 @@
                     "id",
                     "type",
                     "name",
-                    "file_name",
-                    "file_type",
-                    "mime_type",
-                    "preview_url",
-                    "original_url",
-                    "order_column",
-                    "collection_name"
+                    "extension",
+                    "title",
+                    "description",
+                    "disk",
+                    "folder",
+                    "url"
                 ],
                 "properties": {
                     "id": {
@@ -6236,37 +6235,34 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "drinks"
-                    },
-                    "file_name": {
-                        "type": "string",
                         "example": "drinks.svg"
                     },
-                    "file_type": {
+                    "extension": {
                         "type": "string",
                         "example": "svg"
                     },
-                    "mime_type": {
+                    "title": {
                         "nullable": "true",
                         "type": "string",
-                        "example": "image/svg+xml"
+                        "example": "Drinks"
                     },
-                    "preview_url": {
+                    "description": {
+                        "nullable": "true",
+                        "type": "string"
+                    },
+                    "disk": {
+                        "nullable": "true",
                         "type": "string",
-                        "example": ""
+                        "example": "public"
                     },
-                    "original_url": {
+                    "folder": {
+                        "description": "Must start and end with `/`.",
+                        "type": "string",
+                        "example": "/"
+                    },
+                    "url": {
                         "type": "string",
                         "example": "http://localhost/storage/drinks.svg"
-                    },
-                    "order_column": {
-                        "nullable": "true",
-                        "type": "integer",
-                        "example": "1"
-                    },
-                    "collection_name": {
-                        "type": "string",
-                        "example": "images"
                     }
                 },
                 "type": "object"

@@ -318,8 +318,6 @@ export default {
             this.fetchItems(tab);
         },
         toggleTab(tab) {
-            console.log(tab.categories);
-
             if (this.tab === tab) {
                 return;
             }

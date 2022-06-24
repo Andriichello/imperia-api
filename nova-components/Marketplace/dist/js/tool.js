@@ -211,8 +211,6 @@ __webpack_require__.r(__webpack_exports__);
       this.fetchItems(tab);
     },
     toggleTab: function toggleTab(tab) {
-      console.log(tab.categories);
-
       if (this.tab === tab) {
         return;
       }

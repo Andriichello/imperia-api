@@ -8,6 +8,7 @@ use App\Models\Customer;
 use App\Models\FamilyMember;
 use App\Models\Menu;
 use App\Models\Morphs\Category;
+use App\Models\Morphs\Media;
 use App\Models\Product;
 use App\Models\Service;
 use App\Models\Space;
@@ -137,18 +138,21 @@ class DummySeeder extends Seeder
      * Seed tickets.
      *
      * @return void
-     * @throws FileDoesNotExist|FileIsTooBig
      */
     public function seedTickets(): void
     {
+        /** @var Media $workdayMedia */
+        $workdayMedia = Media::query()
+            ->folder('/media/categories/')
+            ->name('workday.svg')
+            ->first();
         $workdayCategory = Category::factory()->create([
             'slug' => 'work-day-tickets',
             'target' => slugClass(Ticket::class),
             'title' => 'Work Day Tickets',
             'description' => 'Tickets that are available from Monday to Thursday.',
         ]);
-        $workdayCategory->copyMedia(storage_path('app/public/media/categories/workday.svg'))
-            ->toMediaCollection('images');
+        $workdayCategory->attachMedia($workdayMedia);
 
         $ticket = Ticket::factory()->create([
             'title' => 'Child workday ticket',
@@ -164,14 +168,18 @@ class DummySeeder extends Seeder
         ]);
         $ticket->attachCategories($workdayCategory);
 
+        /** @var Media $weekendMedia */
+        $weekendMedia = Media::query()
+            ->folder('/media/categories/')
+            ->name('weekend.svg')
+            ->first();
         $weekendCategory = Category::factory()->create([
             'slug' => 'weekend-tickets',
             'target' => slugClass(Ticket::class),
             'title' => 'Weekend Tickets',
             'description' => 'Tickets that are available from Friday to Sunday.',
         ]);
-        $weekendCategory->copyMedia(storage_path('app/public/media/categories/weekend.svg'))
-            ->toMediaCollection('images');
+        $weekendCategory->attachMedia($weekendMedia);
 
         $ticket = Ticket::factory()->create([
             'title' => 'Child weekend ticket',
@@ -192,18 +200,21 @@ class DummySeeder extends Seeder
      * Seed services.
      *
      * @return void
-     * @throws FileDoesNotExist|FileIsTooBig
      */
     public function seedServices(): void
     {
+        /** @var Media $indoorsMedia */
+        $indoorsMedia = Media::query()
+            ->folder('/media/categories/')
+            ->name('indoor.svg')
+            ->first();
         $indoorsCategory = Category::factory()->create([
             'slug' => 'indoors',
             'target' => slugClass(Service::class),
             'title' => 'Indoors',
             'description' => null,
         ]);
-        $indoorsCategory->copyMedia(storage_path('app/public/media/categories/indoor.svg'))
-            ->toMediaCollection('images');
+        $indoorsCategory->attachMedia($indoorsMedia);
 
         $service = Service::factory()->create([
             'title' => 'Clown Show',
@@ -218,14 +229,18 @@ class DummySeeder extends Seeder
         ]);
         $service->attachCategories($indoorsCategory);
 
+        /** @var Media $outdoorsMedia */
+        $outdoorsMedia = Media::query()
+            ->folder('/media/categories/')
+            ->name('outdoor.svg')
+            ->first();
         $outdoorsCategory = Category::factory()->create([
             'slug' => 'outdoors',
             'target' => slugClass(Service::class),
             'title' => 'Outdoors',
             'description' => null,
         ]);
-        $outdoorsCategory->copyMedia(storage_path('app/public/media/categories/outdoor.svg'))
-            ->toMediaCollection('images');
+        $outdoorsCategory->attachMedia($outdoorsMedia);
 
         $service = Service::factory()->create([
             'title' => 'Fire Show',
@@ -246,27 +261,34 @@ class DummySeeder extends Seeder
      * Seed spaces.
      *
      * @return void
-     * @throws FileDoesNotExist|FileIsTooBig
      */
     public function seedSpaces(): void
     {
+        /** @var Media $roomsMedia */
+        $roomsMedia = Media::query()
+            ->folder('/media/defaults/')
+            ->name('door.svg')
+            ->first();
         $roomsCategory = Category::factory()->create([
             'slug' => 'rooms',
             'target' => slugClass(Space::class),
             'title' => 'Rooms',
             'description' => null,
         ]);
-        $roomsCategory->copyMedia(storage_path('app/public/media/defaults/door.svg'))
-            ->toMediaCollection('images');
+        $roomsCategory->attachMedia($roomsMedia);
 
+        /** @var Media $tablesMedia */
+        $tablesMedia = Media::query()
+            ->folder('/media/defaults/')
+            ->name('table.svg')
+            ->first();
         $tablesCategory = Category::factory()->create([
             'slug' => 'tables',
             'target' => slugClass(Space::class),
             'title' => 'Tables',
             'description' => null,
         ]);
-        $tablesCategory->copyMedia(storage_path('app/public/media/defaults/table.svg'))
-            ->toMediaCollection('images');
+        $tablesCategory->attachMedia($tablesMedia);
 
         for ($i = 1; $i <= 2; $i++) {
             for ($j = 1; $j <= 5; $j++) {
@@ -276,8 +298,7 @@ class DummySeeder extends Seeder
                     'number' => $j,
                     'price' => 0.0,
                 ]);
-                $table->copyMedia(storage_path('app/public/media/defaults/table.svg'))
-                    ->toMediaCollection('images');
+                $table->attachMedia($tablesMedia);
                 $table->attachCategories($tablesCategory);
 
                 if ($j <= 3) {
@@ -287,8 +308,7 @@ class DummySeeder extends Seeder
                         'number' => $j,
                         'price' => rand(1, 10) * 10,
                     ]);
-                    $room->copyMedia(storage_path('app/public/media/defaults/door.svg'))
-                        ->toMediaCollection('images');
+                    $room->attachMedia($roomsMedia);
                     $room->attachCategories($roomsCategory);
                 }
             }
@@ -299,7 +319,6 @@ class DummySeeder extends Seeder
      * Seed products.
      *
      * @return void
-     * @throws FileDoesNotExist|FileIsTooBig
      */
     public function seedProducts(): void
     {
@@ -324,18 +343,21 @@ class DummySeeder extends Seeder
      * @param Menu $kitchen
      *
      * @return void
-     * @throws FileDoesNotExist|FileIsTooBig
      */
     public function seedPizza(Menu $kitchen): void
     {
+        /** @var Media $pizzaMedia */
+        $pizzaMedia = Media::query()
+            ->folder('/media/categories/')
+            ->name('pizza.svg')
+            ->first();
         $pizzaCategory = Category::factory()->create([
             'slug' => 'pizza',
             'target' => slugClass(Product::class),
             'title' => 'Pizza',
             'description' => null,
         ]);
-        $pizzaCategory->copyMedia(storage_path('app/public/media/categories/pizza.svg'))
-            ->toMediaCollection('images');
+        $pizzaCategory->attachMedia($pizzaMedia);
 
         $product = Product::factory()->withMenu($kitchen)->create([
             'title' => 'Margarita',
@@ -344,8 +366,7 @@ class DummySeeder extends Seeder
             'price' => 125,
             'weight' => 480,
         ]);
-        $product->copyMedia(storage_path('app/public/media/categories/pizza.svg'))
-            ->toMediaCollection('images');
+        $product->attachMedia($pizzaMedia);
         $product->attachCategories($pizzaCategory);
 
         $product = Product::factory()->withMenu($kitchen)->create([
@@ -354,8 +375,7 @@ class DummySeeder extends Seeder
             'price' => 130,
             'weight' => 420,
         ]);
-        $product->copyMedia(storage_path('app/public/media/categories/pizza.svg'))
-            ->toMediaCollection('images');
+        $product->attachMedia($pizzaMedia);
         $product->attachCategories($pizzaCategory);
 
         $product = Product::factory()->withMenu($kitchen)->create([
@@ -365,8 +385,7 @@ class DummySeeder extends Seeder
             'price' => 160,
             'weight' => 450,
         ]);
-        $product->copyMedia(storage_path('app/public/media/categories/pizza.svg'))
-            ->toMediaCollection('images');
+        $product->attachMedia($pizzaMedia);
         $product->attachCategories($pizzaCategory);
     }
 
@@ -376,26 +395,28 @@ class DummySeeder extends Seeder
      * @param Menu $kitchen
      *
      * @return void
-     * @throws FileDoesNotExist|FileIsTooBig
      */
     public function seedSoups(Menu $kitchen): void
     {
+        /** @var Media $soupsMedia */
+        $soupsMedia = Media::query()
+            ->folder('/media/categories/')
+            ->name('soup.svg')
+            ->first();
         $soupsCategory = Category::factory()->create([
             'slug' => 'soups',
             'target' => slugClass(Product::class),
             'title' => 'Soups',
             'description' => null,
         ]);
-        $soupsCategory->copyMedia(storage_path('app/public/media/categories/soup.svg'))
-            ->toMediaCollection('images');
+        $soupsCategory->attachMedia($soupsMedia);
 
         $product = Product::factory()->withMenu($kitchen)->create([
             'title' => 'Tomato Soup',
             'price' => 80,
             'weight' => 300,
         ]);
-        $product->copyMedia(storage_path('app/public/media/categories/soup.svg'))
-            ->toMediaCollection('images');
+        $product->attachMedia($soupsMedia);
         $product->attachCategories($soupsCategory);
 
         $product = Product::factory()->withMenu($kitchen)->create([
@@ -403,8 +424,7 @@ class DummySeeder extends Seeder
             'price' => 95,
             'weight' => 350,
         ]);
-        $product->copyMedia(storage_path('app/public/media/categories/soup.svg'))
-            ->toMediaCollection('images');
+        $product->attachMedia($soupsMedia);
         $product->attachCategories($soupsCategory);
     }
 
@@ -414,26 +434,28 @@ class DummySeeder extends Seeder
      * @param Menu $kitchen
      *
      * @return void
-     * @throws FileDoesNotExist|FileIsTooBig
      */
     public function seedDesserts(Menu $kitchen): void
     {
+        /** @var Media $dessertsMedia */
+        $dessertsMedia = Media::query()
+            ->folder('/media/categories/')
+            ->name('croissant.svg')
+            ->first();
         $dessertsCategory = Category::factory()->create([
             'slug' => 'desserts',
             'target' => slugClass(Product::class),
             'title' => 'Desserts',
             'description' => null,
         ]);
-        $dessertsCategory->copyMedia(storage_path('app/public/media/categories/croissant.svg'))
-            ->toMediaCollection('images');
+        $dessertsCategory->attachMedia($dessertsMedia);
 
         $product = Product::factory()->withMenu($kitchen)->create([
             'title' => 'Tiramisu',
             'price' => 75,
             'weight' => 150,
         ]);
-        $product->copyMedia(storage_path('app/public/media/categories/croissant.svg'))
-            ->toMediaCollection('images');
+        $product->attachMedia($dessertsMedia);
         $product->attachCategories($dessertsCategory);
 
         $product = Product::factory()->withMenu($kitchen)->create([
@@ -441,8 +463,7 @@ class DummySeeder extends Seeder
             'price' => 60,
             'weight' => 120,
         ]);
-        $product->copyMedia(storage_path('app/public/media/categories/croissant.svg'))
-            ->toMediaCollection('images');
+        $product->attachMedia($dessertsMedia);
         $product->attachCategories($dessertsCategory);
     }
 
@@ -452,26 +473,28 @@ class DummySeeder extends Seeder
      * @param Menu $bar
      *
      * @return void
-     * @throws FileDoesNotExist|FileIsTooBig
      */
     public function seedCocktails(Menu $bar): void
     {
+        /** @var Media $alcoholicMedia */
+        $alcoholicMedia = Media::query()
+            ->folder('/media/categories/')
+            ->name('alcoholic.svg')
+            ->first();
         $alcoholicCategory = Category::factory()->create([
             'slug' => 'alcoholic',
             'target' => slugClass(Product::class),
             'title' => 'Alcoholic',
             'description' => null,
         ]);
-        $alcoholicCategory->copyMedia(storage_path('app/public/media/categories/alcoholic.svg'))
-            ->toMediaCollection('images');
+        $alcoholicCategory->attachMedia($alcoholicMedia);
 
         $product = Product::factory()->withMenu($bar)->create([
             'title' => 'Martini',
             'price' => 85,
             'weight' => 120,
         ]);
-        $product->copyMedia(storage_path('app/public/media/categories/alcoholic.svg'))
-            ->toMediaCollection('images');
+        $product->attachMedia($alcoholicMedia);
         $product->attachCategories($alcoholicCategory);
 
         $product = Product::factory()->withMenu($bar)->create([
@@ -480,18 +503,21 @@ class DummySeeder extends Seeder
             'price' => 72,
             'weight' => 170,
         ]);
-        $product->copyMedia(storage_path('app/public/media/categories/alcoholic.svg'))
-            ->toMediaCollection('images');
+        $product->attachMedia($alcoholicMedia);
         $product->attachCategories($alcoholicCategory);
 
+        /** @var Media $nonalcoholicMedia */
+        $nonalcoholicMedia = Media::query()
+            ->folder('/media/categories/')
+            ->name('non-alcoholic.svg')
+            ->first();
         $nonalcoholicCategory = Category::factory()->create([
             'slug' => 'non-alcoholic',
             'target' => slugClass(Product::class),
             'title' => 'Non-alcoholic',
             'description' => null,
         ]);
-        $nonalcoholicCategory->copyMedia(storage_path('app/public/media/categories/non-alcoholic.svg'))
-            ->toMediaCollection('images');
+        $nonalcoholicCategory->attachMedia($nonalcoholicMedia);
 
         $product = Product::factory()->withMenu($bar)->create([
             'title' => 'Mojito',
@@ -499,8 +525,7 @@ class DummySeeder extends Seeder
             'price' => 45,
             'weight' => 250,
         ]);
-        $product->copyMedia(storage_path('app/public/media/categories/non-alcoholic.svg'))
-            ->toMediaCollection('images');
+        $product->attachMedia($nonalcoholicMedia);
         $product->attachCategories($nonalcoholicCategory);
 
         $product = Product::factory()->withMenu($bar)->create([
@@ -509,8 +534,7 @@ class DummySeeder extends Seeder
             'price' => 30,
             'weight' => 200,
         ]);
-        $product->copyMedia(storage_path('app/public/media/categories/non-alcoholic.svg'))
-            ->toMediaCollection('images');
+        $product->attachMedia($nonalcoholicMedia);
         $product->attachCategories($nonalcoholicCategory);
     }
 }

@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\Morphs\Category;
+use App\Helpers\Interfaces\MediaHelperInterface;
+use App\Helpers\MediaHelper;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
-use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
-use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 
 /**
  * Class MediaSeeder.
@@ -14,46 +13,37 @@ use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 class MediaSeeder extends Seeder
 {
     /**
-     * @var Category
+     * @var MediaHelperInterface
      */
-    protected Category $category;
+    protected MediaHelperInterface $helper;
 
     /**
      * Run the database seeds.
      *
      * @return void
-     * @throws FileDoesNotExist|FileIsTooBig
      */
     public function run(): void
     {
-        $this->category = Category::factory()
-            ->create([
-                'slug' => 'temporary',
-                'title' => 'Temporary',
-                'target' => null,
-                'description' => null,
-            ]);
+        $this->helper = new MediaHelper();
 
-        $this->seedFolder('/defaults/', 'defaults');
-        $this->seedFolder('/categories/', 'categories');
-
-        $this->category->delete();
+        $this->seedFolder('/defaults/');
+        $this->seedFolder('/categories/');
     }
 
     /**
      * @param string $folder
-     * @param string $collection
      *
      * @return void
-     * @throws FileDoesNotExist|FileIsTooBig
      */
-    public function seedFolder(string $folder, string $collection): void
+    public function seedFolder(string $folder): void
     {
         foreach (File::allFiles('./public/storage/media' . $folder) as $file) {
             $path = '/media' . $folder . $file->getFilename();
-            $this->category->addMediaFromDisk($path, 'public')
-                ->preservingOriginal()
-                ->toMediaCollection($collection);
+
+            $media = $this->helper->existing($path, 'public');
+            $media->title = ucfirst($file->getFilenameWithoutExtension());
+
+            $media->save();
         }
     }
 }
