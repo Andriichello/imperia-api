@@ -54,8 +54,8 @@ class Category extends Resource
         return [
             ID::make()->sortable(),
 
-            Images::make('Images', 'images')
-                ->enableExistingMedia(),
+//            Images::make('Images', 'images')
+//                ->enableExistingMedia(),
 
             Text::make('Slug')
                 ->rules('required', 'min:1', 'max:50')
@@ -114,7 +114,7 @@ class Category extends Resource
     {
         return [
             'id' => true,
-            'images' => true,
+//            'images' => true,
             'slug' => true,
             'target' => true,
             'title' => true,

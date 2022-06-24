@@ -78,8 +78,8 @@ class Product extends Resource
 
             BelongsTo::make('Menu'),
 
-            Images::make('Images', 'images')
-                ->enableExistingMedia(),
+//            Images::make('Images', 'images')
+//                ->enableExistingMedia(),
 
             Text::make('Title')
                 ->updateRules('sometimes', 'min:1', 'max:50')
@@ -128,7 +128,7 @@ class Product extends Resource
         return [
             'id' => true,
             'menu' => true,
-            'images' => true,
+//            'images' => true,
             'title' => true,
             'description' => false,
             'price' => true,

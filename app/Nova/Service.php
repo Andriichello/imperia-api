@@ -75,8 +75,8 @@ class Service extends Resource
         return [
             ID::make()->sortable(),
 
-            Images::make('Images', 'images')
-                ->enableExistingMedia(),
+//            Images::make('Images', 'images')
+//                ->enableExistingMedia(),
 
             Text::make('Title')
                 ->updateRules('sometimes', 'min:1', 'max:50')
@@ -124,7 +124,7 @@ class Service extends Resource
     {
         return [
             'id' => true,
-            'images' => true,
+//            'images' => true,
             'title' => true,
             'description' => false,
             'once_paid_price' => true,
