@@ -2,45 +2,111 @@
 
 namespace App\Models\Morphs;
 
-use App\Models\Traits\JsonFieldTrait;
+use App\Models\BaseModel;
 use App\Queries\MediaQueryBuilder;
 use Carbon\Carbon;
+use Database\Factories\Morphs\MediaFactory;
+use Exception;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
-use Spatie\MediaLibrary\MediaCollections\Models\Media as BaseMedia;
+use Illuminate\Support\Collection;
 
 /**
  * Class Media.
  *
- * @property int $id
- * @property int $model_id
- * @property string $model_type
- * @property string|null $uuid
- * @property string $collection_name
  * @property string $name
- * @property string $file_name
- * @property string|null $mime_type
+ * @property string $extension
+ * @property string|null $title
+ * @property string|null $description
  * @property string $disk
- * @property string|null $conversions_disk
- * @property int $size
- * @property array $manipulations
- * @property array $custom_properties
- * @property array $generated_conversions
- * @property array $responsive_images
- * @property int|null $order_column
+ * @property string $folder
+ * @property string|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
- * @property string $type
- * @property string $extension
- * @property string $human_readable_size
- * @property string $preview_url
- * @property string $original_url
+ * @property string $url
+ * @property Mediable[]|Collection $mediables
  *
  * @method static MediaQueryBuilder query()
+ * @method static MediaFactory factory(...$parameters)
  */
-class Media extends BaseMedia
+class Media extends BaseModel
 {
-    use JsonFieldTrait;
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var string[]
+     */
+    protected $fillable = [
+        'name',
+        'extension',
+        'title',
+        'description',
+        'disk',
+        'folder',
+        'metadata',
+    ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var string[]
+     */
+    protected $appends = [
+        'url',
+    ];
+
+    /**
+     * The loadable relationships for the model.
+     *
+     * @var array
+     */
+    protected $relations = [
+        'mediables',
+    ];
+
+    /**
+     * Related mediables.
+     *
+     * @return HasMany
+     */
+    public function mediables(): HasMany
+    {
+        return $this->hasMany(Mediable::class, 'media_id', 'id');
+    }
+
+    /**
+     * Accessor for Media url.
+     *
+     * @return string
+     * @throws Exception
+     */
+    public function getUrlAttribute(): string
+    {
+        return $this->baseUrl($this->disk) . $this->folder . $this->name;
+    }
+
+    /**
+     * Get base url for given disk.
+     *
+     * @param string $disk
+     *
+     * @return string
+     * @throws Exception
+     */
+    public static function baseUrl(string $disk): string
+    {
+        $url = rtrim(env('APP_URL'), '/');
+
+        if ($disk === 'public') {
+            return $url . '/storage';
+        }
+        if ($disk === 'google-cloud') {
+            return rtrim(env('GOOGLE_CLOUD_BUCKET_URL'), '/');
+        }
+
+        throw new Exception("No baseUrl mapping for '$disk'.");
+    }
 
     /**
      * @param DatabaseBuilder $query

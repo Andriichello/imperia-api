@@ -60,6 +60,15 @@ class Discount extends BaseModel implements
     ];
 
     /**
+     * The loadable relationships for the model.
+     *
+     * @var array
+     */
+    protected $relations = [
+        'discountables',
+    ];
+
+    /**
      * Array of column names changes of which should be logged.
      *
      * @var array
