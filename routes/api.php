@@ -8,6 +8,7 @@ use App\Http\Controllers\Model\CategoryController;
 use App\Http\Controllers\Model\CommentController;
 use App\Http\Controllers\Model\CustomerController;
 use App\Http\Controllers\Model\FamilyMemberController;
+use App\Http\Controllers\Model\MediaController;
 use App\Http\Controllers\Model\MenuController;
 use App\Http\Controllers\Model\NotificationController;
 use App\Http\Controllers\Model\OrderController;
@@ -81,6 +82,10 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
     Route::apiResource('comments', CommentController::class)
         ->only('index', 'show', 'store', 'update', 'destroy')
         ->parameters(['comments' => 'id']);
+
+    Route::apiResource('media', MediaController::class)
+        ->only('index', 'show', 'store', 'update', 'destroy')
+        ->parameters(['media' => 'id']);
 
     Route::apiResource('categories', CategoryController::class)
         ->only('index', 'show')

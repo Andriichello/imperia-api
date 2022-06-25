@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Model;
 use App\Helpers\MediaHelper;
 use App\Http\Controllers\CrudController;
 use App\Http\Requests\Crud\DestroyRequest;
-use App\Http\Requests\Crud\IndexRequest;
-use App\Http\Requests\Crud\ShowRequest;
+use App\Http\Requests\Media\IndexMediaRequest;
+use App\Http\Requests\Media\ShowMediaRequest;
 use App\Http\Requests\Media\StoreMediaRequest;
 use App\Http\Requests\Media\UpdateMediaRequest;
 use App\Http\Resources\Media\MediaCollection;
@@ -47,8 +47,8 @@ class MediaController extends CrudController
     {
         parent::__construct($repository, $policy);
 
-        $this->actions['index'] = IndexRequest::class;
-        $this->actions['show'] = ShowRequest::class;
+        $this->actions['index'] = IndexMediaRequest::class;
+        $this->actions['show'] = ShowMediaRequest::class;
         $this->actions['destroy'] = DestroyRequest::class;
     }
 
@@ -145,6 +145,15 @@ class MediaController extends CrudController
      *
      *   @OA\Parameter(name="page[size]", in="query", @OA\Schema(ref ="#/components/schemas/PageSize")),
      *   @OA\Parameter(name="page[number]", in="query", @OA\Schema(ref ="#/components/schemas/PageNumber")),
+     *   @OA\Parameter(name="filter[name]", required=false, in="query", example="Cafe",
+     *     @OA\Schema(type="string"), description="Can be used for searches. Is partial."),
+     *   @OA\Parameter(name="filter[extension]", required=false, in="query", example="svg",
+     *     @OA\Schema(type="string"), description="Can be used for searches. Is partial."),
+     *   @OA\Parameter(name="filter[disk]", required=false, in="query", example="public",
+     *     @OA\Schema(type="string"), description="Can be used for searches. Is partial."),
+     *   @OA\Parameter(name="filter[folder]", required=false, in="query", example="/categories/",
+     *     @OA\Schema(type="string"), description="Can be used for searches. Is partial."),
+     *
      *
      *   @OA\Response(
      *     response=200,

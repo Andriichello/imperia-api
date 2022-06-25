@@ -1552,6 +1552,46 @@
                         "schema": {
                             "$ref": "#/components/schemas/PageNumber"
                         }
+                    },
+                    {
+                        "name": "filter[name]",
+                        "in": "query",
+                        "description": "Can be used for searches. Is partial.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "Cafe"
+                    },
+                    {
+                        "name": "filter[extension]",
+                        "in": "query",
+                        "description": "Can be used for searches. Is partial.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "svg"
+                    },
+                    {
+                        "name": "filter[disk]",
+                        "in": "query",
+                        "description": "Can be used for searches. Is partial.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "public"
+                    },
+                    {
+                        "name": "filter[folder]",
+                        "in": "query",
+                        "description": "Can be used for searches. Is partial.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "/categories/"
                     }
                 ],
                 "responses": {
