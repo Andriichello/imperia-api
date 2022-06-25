@@ -114,7 +114,7 @@ class MediaHelper implements MediaHelperInterface
         $this->upload($from, $to, $disk);
 
         $media = $this->existing($to, $disk);
-        $media->save();
+        $media->touch();
 
         return $media;
     }
@@ -135,7 +135,7 @@ class MediaHelper implements MediaHelperInterface
 
         if ($this->bucket($disk)->move($from, $to)) {
             $media->fill($this->attributes($to, $disk));
-            $media->save();
+            $media->touch();
 
             return true;
         }
@@ -167,7 +167,7 @@ class MediaHelper implements MediaHelperInterface
             $this->upload($from, $to, $disk);
 
             $media->fill($this->attributes($to, $disk));
-            $media->save();
+            $media->touch();
 
             if ($media->exists && $path !== $to) {
                 $this->delete($path, $disk);
@@ -181,7 +181,7 @@ class MediaHelper implements MediaHelperInterface
             $this->move($path, $to, $disk);
 
             $media->fill($this->attributes($to, $disk));
-            $media->save();
+            $media->touch();
 
             return $media;
         }

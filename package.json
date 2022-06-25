@@ -11,7 +11,9 @@
         "build-marketplace": "cd nova-components/Marketplace && npm run dev",
         "build-marketplace-prod": "cd nova-components/Marketplace && npm run prod",
         "build-columns-card": "cd nova-components/ColumnsCard && npm run dev",
-        "build-columns-card-prod": "cd nova-components/ColumnsCard && npm run prod"
+        "build-columns-card-prod": "cd nova-components/ColumnsCard && npm run prod",
+        "build-media": "cd nova-components/Media && npm run dev",
+        "build-media-prod": "cd nova-components/Media && npm run prod"
     },
     "devDependencies": {
         "axios": "^0.21",

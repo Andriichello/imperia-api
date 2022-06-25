@@ -4,12 +4,24 @@ namespace App\Http\Requests\Media;
 
 use App\Http\Requests\Crud\IndexRequest;
 use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
 
 /**
  * Class IndexMediaRequest.
  */
 class IndexMediaRequest extends IndexRequest
 {
+    public function getAllowedSorts(): array
+    {
+        return array_merge(
+            parent::getAllowedSorts(),
+            [
+                AllowedSort::field('created_at'),
+                AllowedSort::field('updated_at'),
+            ]
+        );
+    }
+
     public function getAllowedFilters(): array
     {
         return array_merge(

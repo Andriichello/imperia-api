@@ -22,6 +22,7 @@ class StoreMediaRequest extends StoreRequest
                 'file' => [
                     'required',
                     'file',
+                    'image',
                     'max:10240', // 10MB
                 ],
                 'name' => [
@@ -74,7 +75,7 @@ class StoreMediaRequest extends StoreRequest
     {
         $this->mergeIfMissing([
             'disk' => env('FILESYSTEM_MEDIA', 'public'),
-            'folder' => '/media/',
+            'folder' => '/media/uploaded/',
         ]);
     }
 

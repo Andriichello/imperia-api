@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b66187905ac7ea0118db18e964ac3b64",
+    "content-hash": "b8facd650540dcc80a645a6e1bb2d36f",
     "packages": [
         {
             "name": "andriichello/columns-card",
@@ -64,6 +64,42 @@
             "autoload": {
                 "psr-4": {
                     "Andriichello\\Marketplace\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "A Laravel Nova tool.",
+            "keywords": [
+                "laravel",
+                "nova"
+            ],
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "andriichello/media",
+            "version": "dev-custom-media",
+            "dist": {
+                "type": "path",
+                "url": "./nova-components/Media",
+                "reference": "27bc3530abeac2e6fdbfacf94d3da3e0f9f2a3b2"
+            },
+            "require": {
+                "php": "^7.3|^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Andriichello\\Media\\ToolServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Andriichello\\Media\\": "src/"
                 }
             },
             "license": [
@@ -186,16 +222,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.228.2",
+            "version": "3.228.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "e7c4d70aef99e71f9114a302ec576dc2689df283"
+                "reference": "4dad57c95c7ff1dfcea29a7877ce64720b3318c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/e7c4d70aef99e71f9114a302ec576dc2689df283",
-                "reference": "e7c4d70aef99e71f9114a302ec576dc2689df283",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/4dad57c95c7ff1dfcea29a7877ce64720b3318c3",
+                "reference": "4dad57c95c7ff1dfcea29a7877ce64720b3318c3",
                 "shasum": ""
             },
             "require": {
@@ -271,9 +307,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.228.2"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.228.3"
             },
-            "time": "2022-06-23T18:17:44+00:00"
+            "time": "2022-06-24T20:24:09+00:00"
         },
         {
             "name": "barryvdh/laravel-dompdf",

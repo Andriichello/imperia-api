@@ -78,7 +78,7 @@ class MediaController extends CrudController
             $media->setJson('metadata', (array)$metadata);
         }
 
-        return $this->asResourceResponse($media);
+        return $this->asResourceResponse($media->fresh(), 200, 'Uploaded');
     }
 
     /**
@@ -113,7 +113,7 @@ class MediaController extends CrudController
             $media->setJson('metadata', (array)$request->get('metadata'));
         }
 
-        return $this->asResourceResponse($media->fresh());
+        return $this->asResourceResponse($media->fresh(), 200, 'Updated');
     }
 
     /**
@@ -130,9 +130,10 @@ class MediaController extends CrudController
         $media = $request->targetOrFail(Media::class);
 
         $helper = new MediaHelper();
-        $helper->delete($media, $media->disk);
 
-        return $this->handleDestroy($request);
+        return $helper->delete($media, $media->disk)
+            ? ApiResponse::make([], 200, 'Deleted')
+            : ApiResponse::make([], 500, 'Failed to delete');
     }
 
     /**

@@ -2,14 +2,14 @@
 
 namespace App\Nova\Tools;
 
+use Andriichello\Media\Media;
 use App\Models\User;
-use ClassicO\NovaMediaLibrary\NovaMediaLibrary;
 use Illuminate\Http\Request;
 
 /**
  * Class MediaTool.
  */
-class MediaTool
+class MediaTool extends Media
 {
     /**
      * Determine if tool should be visible to user, who makes request.

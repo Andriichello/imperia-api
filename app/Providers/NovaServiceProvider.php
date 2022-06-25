@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use Andriichello\Marketplace\Marketplace;
+use Andriichello\Media\Media;
 use App\Nova\Dashboards\Main;
 use App\Nova\Tools\BackupTool;
+use App\Nova\Tools\MediaTool;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\Cards\Help;
 use Laravel\Nova\Nova;
@@ -144,7 +146,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
 //                    ]),
 //                ],
 //            ]),
-//            new MediaTool(),
+            new MediaTool(),
             new BackupTool(),
         ];
     }
