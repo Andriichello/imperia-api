@@ -25,7 +25,7 @@ class StoreMediaRequest extends StoreRequest
                     'required',
                     'file',
                     'image',
-                    'max:10240', // 10MB
+                    'max:' . config('media.max_size'),
                 ],
                 'name' => [
                     'required',
@@ -77,19 +77,24 @@ class StoreMediaRequest extends StoreRequest
         );
     }
 
-    protected function prepareForValidation(): void
+    /**
+     * Get form request fields' default values.
+     *
+     * @return array
+     */
+    protected function defaults(): array
     {
-        $this->mergeIfMissing([
-            'disk' => env('FILESYSTEM_MEDIA', 'public'),
-            'folder' => '/media/uploaded/',
-        ]);
+        return [
+            'disk' => config('media.disk'),
+            'folder' => config('media.folder'),
+        ];
     }
 
     /**
      * @OA\Schema(
      *   schema="StoreMediaRequest",
      *   description="Store media request",
-     *   required = {"file", "name", "folder"},
+     *   required = {"file", "name"},
      *  @OA\MediaType(mediaType="multipart/form-data",
      *    @OA\Schema(@OA\Property(property="file", type="string", format="binary"))),
      *   @OA\Property(property="file", type="string", format="binary"),

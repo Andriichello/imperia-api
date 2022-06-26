@@ -13,14 +13,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ['index', 'resource', 'resourceName', 'resourceId', 'field'],
-  mounted: function mounted() {
-    console.log('index: ', this.index);
-    console.log('resource: ', this.resource);
-    console.log('resourceName: ', this.resourceName);
-    console.log('resourceId: ', this.resourceId);
-    console.log('field: ', this.field);
-  }
+  props: ['index', 'resource', 'resourceName', 'resourceId', 'field']
 });
 
 /***/ }),

@@ -83,6 +83,8 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
         ->only('index', 'show', 'store', 'update', 'destroy')
         ->parameters(['comments' => 'id']);
 
+    Route::get('/model-media', [MediaController::class, 'getModelMedia'])->name('media.get-model-media');
+    Route::post('/model-media', [MediaController::class, 'setModelMedia'])->name('media.set-model-media');
     Route::apiResource('media', MediaController::class)
         ->only('index', 'show', 'store', 'update', 'destroy')
         ->parameters(['media' => 'id']);

@@ -7,7 +7,6 @@ use App\Models\Traits\SoftDeletableTrait;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Trait WithTarget.
@@ -65,8 +64,6 @@ trait WithTarget
             // @phpstan-ignore-next-line
             $builder->withTrashed();
         }
-
-        (new ConsoleOutput())->writeln('sql: ' . $builder->toSql());
 
         return $builder;
     }

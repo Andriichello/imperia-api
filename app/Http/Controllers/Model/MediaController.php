@@ -2,22 +2,25 @@
 
 namespace App\Http\Controllers\Model;
 
-use App\Helpers\MediaHelper;
 use App\Http\Controllers\CrudController;
 use App\Http\Requests\Crud\DestroyRequest;
+use App\Http\Requests\CrudRequest;
+use App\Http\Requests\Media\GetModelMediaRequest;
 use App\Http\Requests\Media\IndexMediaRequest;
+use App\Http\Requests\Media\SetModelMediaRequest;
 use App\Http\Requests\Media\ShowMediaRequest;
 use App\Http\Requests\Media\StoreMediaRequest;
 use App\Http\Requests\Media\UpdateMediaRequest;
 use App\Http\Resources\Media\MediaCollection;
 use App\Http\Resources\Media\MediaResource;
 use App\Http\Responses\ApiResponse;
-use App\Models\Morphs\Media;
+use App\Models\BaseModel;
+use App\Models\Interfaces\MediableInterface;
 use App\Policies\MediaPolicy;
+use App\Queries\MediaQueryBuilder;
 use App\Repositories\MediaRepository;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
-use Symfony\Component\Console\Output\ConsoleOutput;
-use Throwable;
+use Exception;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
  * Class MediaController.
@@ -50,98 +53,92 @@ class MediaController extends CrudController
 
         $this->actions['index'] = IndexMediaRequest::class;
         $this->actions['show'] = ShowMediaRequest::class;
+        $this->actions['store'] = StoreMediaRequest::class;
+        $this->actions['update'] = UpdateMediaRequest::class;
         $this->actions['destroy'] = DestroyRequest::class;
     }
 
     /**
-     * Store file and record it as media.
+     * Get eloquent query builder instance.
      *
-     * @param StoreMediaRequest $request
+     * @param CrudRequest $request
      *
-     * @return ApiResponse
-     * @throws FileNotFoundException
+     * @return MediaQueryBuilder
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function store(StoreMediaRequest $request): ApiResponse
+    protected function builder(CrudRequest $request): MediaQueryBuilder
     {
-        $disk = $request->get('disk');
+        /** @var MediaQueryBuilder $builder */
+        $builder = parent::builder($request);
 
-        $from = $request->file('file');
-        $to = $request->get('folder') . $request->get('name');
-
-        $helper = new MediaHelper();
-        $media = $helper->store($from, $to, $disk);
-
-        $media->title = $request->get('title');
-        $media->description = $request->get('description');
-
-        $metadata = $request->get('metadata');
-        if ($metadata) {
-            $media->setJson('metadata', (array)$metadata);
-        }
-
-        $media->touch();
-
-        return $this->asResourceResponse($media->fresh(), 200, 'Uploaded');
+        return $builder;
     }
 
     /**
-     * Update file and/or it's media record.
+     * Get model's media.
      *
-     * @param UpdateMediaRequest $request
+     * @param GetModelMediaRequest $request
      *
      * @return ApiResponse
-     * @throws FileNotFoundException
+     * @throws Exception
      */
-    public function update(UpdateMediaRequest $request): ApiResponse
+    public function getModelMedia(GetModelMediaRequest $request): ApiResponse
     {
-        /** @var Media $media */
-        $media = $request->targetOrFail(Media::class);
+        $modelId = $request->get('model_id');
+        $modelType = $request->get('model_type');
 
-        (new ConsoleOutput())->writeln('media: ' . json_encode($media->toArray(), JSON_PRETTY_PRINT));
-        (new ConsoleOutput())->writeln('all: ' . json_encode($request->all(), JSON_PRETTY_PRINT));
+        $builder = $this->builder($request)
+            ->attachedBy($modelId, $modelType);
 
-        $disk = $request->get('disk', $media->disk);
-
-        $from = $request->file('file');
-        $to = $request->get('folder', $media->folder) . $request->get('name', $media->name);
-
-        $helper = new MediaHelper();
-        $media = $helper->update($media, $from, $to, $disk);
-
-        if ($request->has('title')) {
-            $media->title = $request->get('title');
-        }
-        if ($request->has('description')) {
-            $media->description = $request->get('description');
-        }
-
-        if ($request->has('metadata')) {
-            $media->setJson('metadata', (array)$request->get('metadata'));
-        }
-
-        $media->touch();
-
-        return $this->asResourceResponse($media->fresh(), 200, 'Updated');
+        $data = new MediaCollection($builder->get());
+        return ApiResponse::make(compact('data'));
     }
 
     /**
-     * Delete file and it's media record.
+     * Set model's media.
      *
-     * @param DestroyRequest $request
+     * @param SetModelMediaRequest $request
      *
      * @return ApiResponse
-     * @throws FileNotFoundException|Throwable
+     * @throws Exception
      */
-    public function destroy(DestroyRequest $request): ApiResponse
+    public function setModelMedia(SetModelMediaRequest $request): ApiResponse
     {
-        /** @var Media $media */
-        $media = $request->targetOrFail(Media::class);
+        $modelId = $request->get('model_id');
+        $modelType = $request->get('model_type');
 
-        $helper = new MediaHelper();
+        /** @var BaseModel|null $model */
+        $model = Relation::getMorphedModel($modelType);
 
-        return $helper->delete($media, $media->disk)
-            ? ApiResponse::make([], 200, 'Deleted')
-            : ApiResponse::make([], 500, 'Failed to delete');
+        if (empty($model)) {
+            throw new Exception(
+                'There is no such class with morph: ' . $modelType
+            );
+        }
+
+        /** @var MediableInterface $target */
+        $target = $model::query()->findOrFail($modelId);
+
+        if (!($target instanceof MediableInterface)) {
+            throw new Exception(
+                'Target model must implement MediableInterface.'
+            );
+        }
+
+        $builder = $this->builder($request)
+            ->attachedBy($modelId, $modelType);
+
+        $attached = $builder->pluck('id')->all();
+        $given = $request->ids();
+
+        $add = array_diff($given, $attached);
+        $target->media()->attach($add);
+
+        $remove = array_diff($attached, $given);
+        $target->media()->detach($remove);
+
+        $data = new MediaCollection($target->media()->get());
+        return ApiResponse::make(compact('data'));
     }
 
     /**
@@ -275,7 +272,53 @@ class MediaController extends CrudController
      *     description="Unauthenticated.",
      *     @OA\JsonContent(ref ="#/components/schemas/UnauthenticatedResponse")
      *   )
-     * )
+     * ),
+     * @OA\Get(
+     *   path="/api/model-media",
+     *   summary="Get model's media.",
+     *   operationId="getModelMedia",
+     *   security={{"bearerAuth": {}}},
+     *   tags={"media"},
+     *
+     *   @OA\Parameter(name="model_id", required=true, in="query", example="1",
+     *     @OA\Schema(type="integer"), description="Id of the target model."),
+     *   @OA\Parameter(name="model_type", required=true, in="query", example="products",
+     *     @OA\Schema(type="string"), description="Morph type of the target model."),
+     *
+     *   @OA\Response(
+     *     response=200,
+     *     description="Get model's media response object.",
+     *     @OA\JsonContent(ref ="#/components/schemas/GetModelMediaResponse")
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     description="Unauthenticated.",
+     *     @OA\JsonContent(ref ="#/components/schemas/UnauthenticatedResponse")
+     *   )
+     * ),
+     * @OA\Post(
+     *   path="/api/model-media",
+     *   summary="Set model's media.",
+     *   operationId="setModelMedia",
+     *   security={{"bearerAuth": {}}},
+     *   tags={"media"},
+     *
+     *  @OA\RequestBody(
+     *     required=false,
+     *     description="Set model's media request object.",
+     *     @OA\JsonContent(ref ="#/components/schemas/SetModelMediaRequest")
+     *   ),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Create media response object.",
+     *     @OA\JsonContent(ref ="#/components/schemas/SetModelMediaResponse")
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     description="Unauthenticated.",
+     *     @OA\JsonContent(ref ="#/components/schemas/UnauthenticatedResponse")
+     *   )
+     * ),
      *
      * @OA\Schema(
      *   schema="IndexMediaResponse",
@@ -311,6 +354,20 @@ class MediaController extends CrudController
      *   description="Delete banquet response object.",
      *   required = {"message"},
      *   @OA\Property(property="message", type="string", example="Deleted"),
-     * )
+     * ),
+     * @OA\Schema(
+     *   schema="GetModelMediaResponse",
+     *   description="Get model's media response object.",
+     *   required = {"data", "message"},
+     *   @OA\Property(property="data", type="array", @OA\Items(ref ="#/components/schemas/Media")),
+     *   @OA\Property(property="message", type="string", example="Success"),
+     * ),
+     * @OA\Schema(
+     *   schema="SetModelMediaResponse",
+     *   description="Set model's media response object.",
+     *   required = {"data", "message"},
+     *   @OA\Property(property="data", type="array", @OA\Items(ref ="#/components/schemas/Media")),
+     *   @OA\Property(property="message", type="string", example="Success"),
+     * ),
      */
 }

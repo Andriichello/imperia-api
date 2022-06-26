@@ -26,7 +26,7 @@ class UpdateMediaRequest extends UpdateRequest
                     'sometimes',
                     'file',
                     'image',
-                    'max:10240', // 10MB
+                    'max:' . config('media.max_size'),
                 ],
                 'name' => [
                     'sometimes',

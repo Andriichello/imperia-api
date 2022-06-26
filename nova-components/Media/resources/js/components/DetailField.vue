@@ -38,12 +38,5 @@
 <script>
 export default {
     props: ['index', 'resource', 'resourceName', 'resourceId', 'field'],
-    mounted() {
-        console.log('index: ', this.index);
-        console.log('resource: ', this.resource);
-        console.log('resourceName: ', this.resourceName);
-        console.log('resourceId: ', this.resourceId);
-        console.log('field: ', this.field);
-    },
 }
 </script>
