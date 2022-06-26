@@ -2,8 +2,8 @@
 
 namespace App\Nova;
 
+use Andriichello\Media\MediaField;
 use App\Models\Scopes\ArchivedScope;
-use Ebess\AdvancedNovaMediaLibrary\Fields\Images;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
@@ -78,6 +78,8 @@ class Product extends Resource
 
             BelongsTo::make('Menu'),
 
+            MediaField::make('Media'),
+
 //            Images::make('Images', 'images')
 //                ->enableExistingMedia(),
 
@@ -128,7 +130,7 @@ class Product extends Resource
         return [
             'id' => true,
             'menu' => true,
-//            'images' => true,
+            'media' => true,
             'title' => true,
             'description' => false,
             'price' => true,

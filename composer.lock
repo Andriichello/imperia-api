@@ -84,7 +84,7 @@
             "dist": {
                 "type": "path",
                 "url": "./nova-components/Media",
-                "reference": "27bc3530abeac2e6fdbfacf94d3da3e0f9f2a3b2"
+                "reference": "d51c97ba9b3198a9868dc8b4133a8ed1f4a68ebd"
             },
             "require": {
                 "php": "^7.3|^8.0"
@@ -93,7 +93,8 @@
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Andriichello\\Media\\ToolServiceProvider"
+                        "Andriichello\\Media\\ToolServiceProvider",
+                        "Andriichello\\Media\\FieldServiceProvider"
                     ]
                 }
             },
