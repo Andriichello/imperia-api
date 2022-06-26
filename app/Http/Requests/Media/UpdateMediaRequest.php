@@ -3,6 +3,9 @@
 namespace App\Http\Requests\Media;
 
 use App\Http\Requests\Crud\UpdateRequest;
+use App\Models\Morphs\Media;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Validation\Rule;
 
 /**
  * Class UpdateMediaRequest.
@@ -64,6 +67,30 @@ class UpdateMediaRequest extends UpdateRequest
                     'object',
                 ],
             ]
+        );
+    }
+
+    public function withValidator(Validator $validator)
+    {
+        /** @var Media $media */
+        $media = $this->targetOrFail(Media::class);
+
+        $validator->sometimes(
+            'name',
+            [
+                Rule::unique(Media::class)
+                    ->where('folder', $this->get('folder', $media->folder))
+                    ->where('disk', $this->get('disk', $media->disk))
+                    ->where('name', $this->get('name', $media->name))
+                    ->ignore($media->id),
+            ],
+            function () use ($media) {
+                if ($this->has('name') && $media->name !== $this->get('name')) {
+                    return true;
+                }
+
+                return $this->has('folder') && $media->folder !== $this->get('folder');
+            }
         );
     }
 

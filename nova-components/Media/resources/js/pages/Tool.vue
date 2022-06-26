@@ -29,7 +29,7 @@
                 <label
                     class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center font-bold px-4 h-9 text-sm flex-shrink-0">
                     <input id="upload-file-input" type="file" accept="image/*"
-                           hidden multiple @change="selectFilesForUpload"/>
+                           hidden multiple @change="uploadFiles"/>
                     Upload
                 </label>
 
@@ -168,102 +168,140 @@
                     <label
                         class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center font-bold px-4 h-9 text-sm flex-shrink-0">
                         <input id="replace-file-input" type="file" accept="image/*"
-                               hidden @change=""/>
+                               hidden @change="replaceFiles"/>
                         Replace
                     </label>
                 </div>
             </div>
 
             <div class="media-view-content">
-                <div class="media-view-img-div" >
-                    <img class="media-view-img" :alt="view.item.title ?? view.item.name" :src="view.item.url"/>
+                <div class="media-view-img-div">
+                    <img class="media-view-img" v-if="view.item.extension !== 'svg'"
+                         :alt="view.item.title ?? view.item.name" :src="view.item.url"/>
+                    <object class="media-view-img" style="min-width: 100px; min-height: 100px" v-else
+                            :data="view.item.url" type="image/svg+xml"/>
                 </div>
 
                 <div class="media-view-details">
-                    <div class="media-view-details-row">
-                        <span class="media-view-details-row-header">
-                            ID
-                        </span>
-                        <span class="media-view-details-row-value">
-                            {{ view.item.id }}
-                        </span>
+                    <div class="field-wrapper flex flex-col border-b border-gray-100 dark:border-gray-700 md:flex-row">
+                        <div class="px-6 md:px-8 mt-2 md:mt-0 w-full md:w-1/5 md:py-5">
+                            <label class="inline-block pt-2 leading-tight" for="item-id">
+                                ID
+                            </label>
+                        </div>
+                        <div class="mt-1 md:mt-0 pb-5 px-6 md:px-8 w-full md:w-3/5 md:py-5">
+                            <input class="w-full form-control form-input form-input-bordered" disabled
+                                   id="item-id" type="text" placeholder="ID" v-model="view.item.id">
+                        </div>
                     </div>
-                    <div class="media-view-details-row">
-                        <span class="media-view-details-row-header">
-                            Name
-                        </span>
-                        <span class="media-view-details-row-value">
-                            {{ view.item.name }}
-                        </span>
+
+                    <div class="field-wrapper flex flex-col border-b border-gray-100 dark:border-gray-700 md:flex-row">
+                        <div class="px-6 md:px-8 mt-2 md:mt-0 w-full md:w-1/5 md:py-5">
+                            <label class="inline-block pt-2 leading-tight" for="item-name">
+                                Name
+                            </label>
+                        </div>
+                        <div class="mt-1 md:mt-0 pb-5 px-6 md:px-8 w-full md:w-3/5 md:py-5">
+                            <input class="w-full form-control form-input form-input-bordered"
+                                   id="item-name" type="text" placeholder="Name" v-model="update.name">
+                        </div>
                     </div>
-                    <div class="media-view-details-row">
-                        <span class="media-view-details-row-header">
-                            Extension
-                        </span>
-                        <span class="media-view-details-row-value">
-                            {{ view.item.extension }}
-                        </span>
+
+                    <div class="field-wrapper flex flex-col border-b border-gray-100 dark:border-gray-700 md:flex-row">
+                        <div class="px-6 md:px-8 mt-2 md:mt-0 w-full md:w-1/5 md:py-5">
+                            <label class="inline-block pt-2 leading-tight" for="item-title">
+                                Title
+                            </label>
+                        </div>
+                        <div class="mt-1 md:mt-0 pb-5 px-6 md:px-8 w-full md:w-3/5 md:py-5">
+                            <input class="w-full form-control form-input form-input-bordered"
+                                   id="item-title" type="text" placeholder="Title" v-model="update.title">
+                        </div>
                     </div>
-                    <div class="media-view-details-row">
-                        <span class="media-view-details-row-header">
-                            Title
-                        </span>
-                        <span class="media-view-details-row-value">
-                            {{ view.item.title }}
-                        </span>
+
+                    <div class="field-wrapper flex flex-col border-b border-gray-100 dark:border-gray-700 md:flex-row">
+                        <div class="px-6 md:px-8 mt-2 md:mt-0 w-full md:w-1/5 md:py-5">
+                            <label class="inline-block pt-2 leading-tight" for="item-description">
+                                Description
+                            </label>
+                        </div>
+                        <div class="mt-1 md:mt-0 pb-5 px-6 md:px-8 w-full md:w-3/5 md:py-5">
+                            <input class="w-full form-control form-input form-input-bordered"
+                                   id="item-description" type="text" placeholder="Description" v-model="update.description">
+                        </div>
                     </div>
-                    <div class="media-view-details-row">
-                        <span class="media-view-details-row-header">
-                            Description
-                        </span>
-                        <span class="media-view-details-row-value">
-                            {{ view.item.description }}
-                        </span>
+
+                    <div class="field-wrapper flex flex-col border-b border-gray-100 dark:border-gray-700 md:flex-row">
+                        <div class="px-6 md:px-8 mt-2 md:mt-0 w-full md:w-1/5 md:py-5">
+                            <label class="inline-block pt-2 leading-tight" for="item-extension">
+                                Extension
+                            </label>
+                        </div>
+                        <div class="mt-1 md:mt-0 pb-5 px-6 md:px-8 w-full md:w-3/5 md:py-5">
+                            <input class="w-full form-control form-input form-input-bordered" disabled
+                                   id="item-extension" type="text" placeholder="Extension" v-model="view.item.extension">
+                        </div>
                     </div>
-                    <div class="media-view-details-row">
-                        <span class="media-view-details-row-header">
-                            Disk
-                        </span>
-                        <span class="media-view-details-row-value">
-                            {{ view.item.disk }}
-                        </span>
+
+                    <div class="field-wrapper flex flex-col border-b border-gray-100 dark:border-gray-700 md:flex-row">
+                        <div class="px-6 md:px-8 mt-2 md:mt-0 w-full md:w-1/5 md:py-5">
+                            <label class="inline-block pt-2 leading-tight" for="item-disk">
+                                Disk
+                            </label>
+                        </div>
+                        <div class="mt-1 md:mt-0 pb-5 px-6 md:px-8 w-full md:w-3/5 md:py-5">
+                            <input class="w-full form-control form-input form-input-bordered" disabled
+                                   id="item-disk" type="text" placeholder="Disk" v-model="view.item.disk">
+                        </div>
                     </div>
-                    <div class="media-view-details-row">
-                        <span class="media-view-details-row-header">
-                            Folder
-                        </span>
-                        <span class="media-view-details-row-value">
-                            {{ view.item.folder }}
-                        </span>
+
+                    <div class="field-wrapper flex flex-col border-b border-gray-100 dark:border-gray-700 md:flex-row">
+                        <div class="px-6 md:px-8 mt-2 md:mt-0 w-full md:w-1/5 md:py-5">
+                            <label class="inline-block pt-2 leading-tight" for="item-disk">
+                                Folder
+                            </label>
+                        </div>
+                        <div class="mt-1 md:mt-0 pb-5 px-6 md:px-8 w-full md:w-3/5 md:py-5">
+                            <input class="w-full form-control form-input form-input-bordered" disabled
+                                   id="item-folder" type="text" placeholder="Folder" v-model="view.item.folder">
+                        </div>
                     </div>
-                    <div class="media-view-details-row">
-                         <span class="media-view-details-row-header">
-                            Url
-                        </span>
-                        <a class="media-view-details-row-data media-view-link" target="_blank" :href="view.item.url">
-                            Open
-                        </a>
+
+                    <div class="field-wrapper flex flex-col border-b border-gray-100 dark:border-gray-700 md:flex-row">
+                        <div class="px-6 md:px-8 mt-2 md:mt-0 w-full md:w-1/5 md:py-5">
+                            <label class="media-view-link inline-block pt-2 leading-tight" for="item-url">
+                                <a id="item-url" :href="view.item.url" target="_blank">
+                                    Url
+                                </a>
+                            </label>
+                        </div>
+                        <div class="mt-1 md:mt-0 pb-5 px-6 md:px-8 w-full md:w-3/5 md:py-5">
+                            <input class="w-full form-control form-input form-input-bordered" disabled
+                                   id="item-url" type="text" placeholder="Url" v-model="view.item.url">
+                        </div>
                     </div>
+
                 </div>
             </div>
 
             <div class="media-actions">
+                <div class="media-actions-group"></div>
+
                 <div class="media-actions-group">
                     <button
-                        class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center font-bold px-4 h-9 text-sm flex-shrink-0"
-                        @click="">
-                        Update
-                    </button>
-                    <button
                         class="shadow relative bg-red-500 hover:bg-red-400 text-white cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 shadow relative bg-red-500 hover:bg-red-400 text-white"
-                        @click="">
+                        @click="deleteItem()">
                         Delete
                     </button>
+                    <button
+                        class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center font-bold px-4 h-9 text-sm flex-shrink-0"
+                        @click="updateItem()">
+                        Update
+                    </button>
                 </div>
-
-                <div class="media-actions-group"></div>
             </div>
         </Card>
+
     </div>
 </template>
 
@@ -272,12 +310,24 @@ export default {
     data() {
         return {
             items: null,
-            loading: false,
+            update: {
+                loading: false,
+                name: '',
+                title: '',
+                description: '',
+            },
+            replace: {
+                loading: false,
+                total: 0,
+                done: 0,
+            },
             upload: {
+                loading: false,
                 total: 0,
                 done: 0,
             },
             delete: {
+                loading: false,
                 items: [],
                 total: 0,
                 done: 0,
@@ -340,14 +390,17 @@ export default {
             Nova.request().get(this.fetchItemsQuery(page, size))
                 .then(response => {
                     this.items = response.data;
+
+                    if (this.view.item && this.items.data) {
+                        this.items.data.forEach(item => {
+                            if (this.view.item.id === item.id) {
+                                this.viewItem(item);
+                            }
+                        });
+                    }
                 });
         },
-        viewItem(item) {
-            this.view.item = item;
-        },
-        closeItem() {
-            this.view.item = null;
-        },
+
         toggleMode() {
             this.view.item = null;
             this.selections.items = [];
@@ -358,6 +411,14 @@ export default {
                 this.selections.mode = 'select';
             }
         },
+        toggleDisplay() {
+            if (this.selections.display === 'list') {
+                this.selections.display = 'gallery';
+            } else if (this.selections.display === 'gallery') {
+                this.selections.display = 'list';
+            }
+        },
+
         toggleSelect(item) {
             if (this.selections.items.includes(item)) {
                 this.selections.items = this.selections.items.filter(i => {
@@ -374,42 +435,114 @@ export default {
                 this.selections.items = this.items.data;
             }
         },
-        toggleDisplay() {
-            if (this.selections.display === 'list') {
-                this.selections.display = 'gallery';
-            } else if (this.selections.display === 'gallery') {
-                this.selections.display = 'list';
+
+        viewItem(item) {
+            this.view.item = item;
+
+            this.update.name = item.name ? item.name : '';
+            this.update.title = item.title ? item.title : '';
+            this.update.description = item.description ? item.description : '';
+        },
+        closeItem() {
+            this.view.item = null;
+        },
+        deleteItem() {
+            this.delete.done = 0;
+            this.delete.total = 1;
+            this.delete.items = [this.view.item];
+
+            this.deleteFile(0);
+        },
+        updateItem() {
+            const data = new FormData();
+            data.append('name', this.update.name);
+            data.append('title', this.update.title);
+            data.append('description', this.update.description);
+
+            Nova.request().post('/nova-vendor/media/items/' + this.view.item.id + '?_method=PATCH', data)
+                .then(r => {
+                    this.update.lodaing = false;
+
+                    this.fetchItems();
+
+                    if (r.data.message) {
+                        Nova.$toasted.show(r.data.message);
+                    }
+                })
+                .catch(e => {
+                    Nova.$toasted.error(e);
+                });
+        },
+
+        replaceFinish() {
+            this.replace.loading = false;
+            Nova.$toasted.success(`Replaced: ${this.replace.done}/${this.replace.total}`);
+
+            this.fetchItems();
+        },
+        replaceFile(index) {
+            let file = this.files[index];
+
+            if (!file) {
+                return this.replaceFinish();
             }
+
+            let config = {headers: {'Content-Type': 'multipart/form-data'}};
+            let data = new FormData();
+            data.append('file', file);
+            data.append('name', file.name);
+
+            Nova.request().post('/nova-vendor/media/items/' + this.view.item.id + '?_method=PATCH', data, config)
+                .then(r => {
+                    this.replace.done++;
+
+                    if (r.data.message) {
+                        Nova.$toasted.show(r.data.message);
+                    }
+
+                    this.replaceFile(index + 1);
+                })
+                .catch(e => {
+                    let message = e;
+
+                    if (e.response && e.response.data) {
+                        console.log(e.response);
+                        if (e.response.data.message) {
+                            message = e.response.data.message;
+                        }
+                    }
+
+                    Nova.$toasted.error(message);
+
+                    this.replaceFile(index + 1);
+                });
         },
-        clearUpload(length = 0) {
-            this.upload.done = 0;
-            this.upload.total = length;
-        },
-        selectFilesForUpload(input) {
+        replaceFiles(input) {
             if (!input.target.files.length) {
                 return;
             }
 
-            this.loading = true;
-            this.clearUpload(input.target.files.length);
+            this.replace.done = 0;
+            this.replace.total = input.target.files.length;
+            this.replace.loading = true;
 
             this.files = Object.assign({}, input.target.files);
-            this.uploadFile(0);
+            this.replaceFile(0);
 
-            document.getElementById('upload-file-input').value = null;
+            document.getElementById('replace-file-input').value = null;
         },
-        uploadCheck() {
-            this.loading = false;
+
+        uploadFinish() {
+            this.upload.loading = false;
             Nova.$toasted.success(`Uploaded: ${this.upload.done}/${this.upload.total}`);
 
             this.fetchItems();
         },
         uploadFile(index) {
             let file = this.files[index];
-            console.log('File: ', file);
 
             if (!file) {
-                return this.uploadCheck();
+                return this.uploadFinish();
             }
 
             let config = {headers: {'Content-Type': 'multipart/form-data'}};
@@ -428,32 +561,50 @@ export default {
                     this.uploadFile(index + 1);
                 })
                 .catch(e => {
-                    Nova.$toasted.error(e);
+                    let message = e;
+
+                    if (e.response && e.response.data) {
+                        console.log(e.response);
+                        if (e.response.data.message) {
+                            message = e.response.data.message;
+                        }
+                    }
+
+                    Nova.$toasted.error(message);
 
                     this.uploadFile(index + 1);
                 });
         },
-        deleteFiles() {
-            this.delete.done = 0;
-            this.delete.items = this.selections.items;
-            this.delete.total = this.delete.items.length;
+        uploadFiles(input) {
+            if (!input.target.files.length) {
+                return;
+            }
 
-            this.selections.items = [];
+            this.upload.done = 0;
+            this.upload.total = input.target.files.length;
+            this.upload.loading = true;
 
-            this.deleteFile(0);
+            this.files = Object.assign({}, input.target.files);
+            this.uploadFile(0);
+
+            document.getElementById('upload-file-input').value = null;
         },
-        deleteCheck() {
-            this.loading = false;
+
+        deleteFinish() {
+            this.delete.loading = false;
             Nova.$toasted.success(`Deleted: ${this.delete.done}/${this.delete.total}`);
 
             this.fetchItems();
+
+            if (this.view.item) {
+                this.closeItem();
+            }
         },
         deleteFile(index) {
             let item = this.delete.items[index];
-            console.log('Item: ', item);
 
             if (!item) {
-                return this.deleteCheck();
+                return this.deleteFinish();
             }
 
             Nova.request().delete('/nova-vendor/media/items/' + item.id)
@@ -471,6 +622,16 @@ export default {
 
                     this.deleteFile(index + 1);
                 });
+        },
+        deleteFiles() {
+            this.delete.done = 0;
+            this.delete.items = this.selections.items;
+            this.delete.total = this.delete.items.length;
+            this.delete.loading = true;
+
+            this.selections.items = [];
+
+            this.deleteFile(0);
         },
     }
 }
@@ -494,7 +655,7 @@ export default {
 .media-view-content {
     width: 100%;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: space-between;
     flex-wrap: wrap;
     align-items: center;
@@ -545,7 +706,6 @@ export default {
 }
 
 .media-view-img-div {
-    max-width: 100%;
     flex-grow: 2;
     display: flex;
     flex-direction: row;
@@ -629,6 +789,7 @@ export default {
     width: 100px;
     height: 100px;
     border-radius: 4px;
+    object-fit: cover;
     background-image: linear-gradient(45deg, rgba(241, 245, 249, 0.5), rgba(100, 116, 139, 0.4));
 }
 

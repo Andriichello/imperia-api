@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Media;
 
 use App\Http\Requests\Crud\StoreRequest;
+use App\Models\Morphs\Media;
+use Illuminate\Validation\Rule;
 
 /**
  * Class StoreMediaRequest.
@@ -30,6 +32,10 @@ class StoreMediaRequest extends StoreRequest
                     'string',
                     'min:1',
                     'max:255',
+                    Rule::unique(Media::class)
+                        ->where('folder', $this->get('folder'))
+                        ->where('name', $this->get('name')),
+
                 ],
                 'title' => [
                     'nullable',

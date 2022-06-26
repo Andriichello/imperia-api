@@ -16,6 +16,7 @@ use App\Models\Morphs\Media;
 use App\Policies\MediaPolicy;
 use App\Repositories\MediaRepository;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Symfony\Component\Console\Output\ConsoleOutput;
 use Throwable;
 
 /**
@@ -78,6 +79,8 @@ class MediaController extends CrudController
             $media->setJson('metadata', (array)$metadata);
         }
 
+        $media->touch();
+
         return $this->asResourceResponse($media->fresh(), 200, 'Uploaded');
     }
 
@@ -93,6 +96,9 @@ class MediaController extends CrudController
     {
         /** @var Media $media */
         $media = $request->targetOrFail(Media::class);
+
+        (new ConsoleOutput())->writeln('media: ' . json_encode($media->toArray(), JSON_PRETTY_PRINT));
+        (new ConsoleOutput())->writeln('all: ' . json_encode($request->all(), JSON_PRETTY_PRINT));
 
         $disk = $request->get('disk', $media->disk);
 
@@ -112,6 +118,8 @@ class MediaController extends CrudController
         if ($request->has('metadata')) {
             $media->setJson('metadata', (array)$request->get('metadata'));
         }
+
+        $media->touch();
 
         return $this->asResourceResponse($media->fresh(), 200, 'Updated');
     }

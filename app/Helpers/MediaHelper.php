@@ -10,7 +10,6 @@ use Illuminate\Http\File;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class MediaHelper.
@@ -156,14 +155,9 @@ class MediaHelper implements MediaHelperInterface
      */
     public function update(Media $media, File|UploadedFile|null $from, string $to, string $disk): Media
     {
-        (new ConsoleOutput())->writeln('update...');
-        (new ConsoleOutput())->writeln('to: ' . $to);
-
         $path = $media->folder . $media->name;
-        (new ConsoleOutput())->writeln('path: ' . $path);
 
         if ($from !== null) {
-            (new ConsoleOutput())->writeln('from...');
             $this->upload($from, $to, $disk);
 
             $media->fill($this->attributes($to, $disk));
@@ -177,7 +171,6 @@ class MediaHelper implements MediaHelperInterface
         }
 
         if ($to && $to !== $path) {
-            (new ConsoleOutput())->writeln('to...');
             $this->move($path, $to, $disk);
 
             $media->fill($this->attributes($to, $disk));
