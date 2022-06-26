@@ -21,6 +21,7 @@ use Illuminate\Support\Collection;
  * @property string $disk
  * @property string $folder
  * @property string|null $metadata
+ * @property int|null $order
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *

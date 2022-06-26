@@ -5345,6 +5345,11 @@
                     "id": {
                         "type": "integer",
                         "example": 1
+                    },
+                    "order": {
+                        "nullable": "true",
+                        "type": "integer",
+                        "example": 1
                     }
                 },
                 "type": "object"
@@ -6437,6 +6442,7 @@
                     "description",
                     "disk",
                     "folder",
+                    "order",
                     "url"
                 ],
                 "properties": {
@@ -6474,6 +6480,11 @@
                         "description": "Must start and end with `/`.",
                         "type": "string",
                         "example": "/"
+                    },
+                    "order": {
+                        "nullable": "true",
+                        "type": "integer",
+                        "example": 1
                     },
                     "url": {
                         "type": "string",

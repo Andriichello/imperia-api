@@ -69,8 +69,7 @@ class MediaQueryBuilder extends BaseQueryBuilder
                 ->where('mediables.mediable_id', $id);
         };
 
-        $this->join('mediables', $joinClause)
-            ->select('media.*');
+        $this->join('mediables', $joinClause);
 
         return $this;
     }

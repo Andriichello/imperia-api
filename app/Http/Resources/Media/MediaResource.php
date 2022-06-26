@@ -32,6 +32,7 @@ class MediaResource extends JsonResource
             'description' => $this->description,
             'disk' => $this->disk,
             'folder' => $this->folder,
+            'order' => $this->order,
             'url' => $this->url,
         ];
     }
@@ -41,7 +42,7 @@ class MediaResource extends JsonResource
      *   schema="Media",
      *   description="Media resource object",
      *   required = {"id", "type", "name", "extension", "title",
-     *     "description", "disk", "folder", "url"},
+     *     "description", "disk", "folder", "order", "url"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="media"),
      *   @OA\Property(property="name", type="string", example="drinks.svg"),
@@ -51,6 +52,7 @@ class MediaResource extends JsonResource
      *   @OA\Property(property="disk", type="string", nullable="true", example="public"),
      *   @OA\Property(property="folder", type="string", example="/",
      *     description="Must start and end with `/`."),
+     *   @OA\Property(property="order", type="integer", nullable="true", example=1),
      *   @OA\Property(property="url", type="string", example="http://localhost/storage/drinks.svg"),
      * )
      */

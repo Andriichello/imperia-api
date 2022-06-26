@@ -18,7 +18,6 @@ return new class extends Migration
             $table->unsignedBigInteger('mediable_id');
             $table->string('mediable_type');
             $table->unsignedSmallInteger('order')->nullable();
-            $table->timestamps();
 
             $table->unique(['media_id', 'mediable_id', 'mediable_type'], 'mediables_ids_type_unique');
             $table->foreign('media_id')->references('id')->on('media')->onDelete('cascade');

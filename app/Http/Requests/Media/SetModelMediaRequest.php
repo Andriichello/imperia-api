@@ -39,6 +39,12 @@ class SetModelMediaRequest extends CrudRequest
                 'required',
                 'integer',
                 'exists:media,id',
+            ],
+            'media.*.order' => [
+                'sometimes',
+                'nullable',
+                'integer',
+                'min:0',
             ]
         ];
     }
@@ -69,6 +75,7 @@ class SetModelMediaRequest extends CrudRequest
      *   description="Attaching media",
      *   required={"id"},
      *   @OA\Property(property="id", type="integer", example=1),
+     *   @OA\Property(property="order", type="integer", nullable="true", example=1),
      *  ),
      *
      * @OA\Schema(

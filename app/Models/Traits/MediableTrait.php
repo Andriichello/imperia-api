@@ -58,7 +58,7 @@ trait MediableTrait
             Mediable::class, // morph relation table
             'mediable_id', // morph table pivot key to current model
             'media_id' // morph table pivot key to related model
-        );
+        )->withPivot('order');
     }
 
     /**
