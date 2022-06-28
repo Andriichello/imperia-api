@@ -88,6 +88,17 @@ class Media extends BaseModel
     }
 
     /**
+     * Accessor for Media's order.
+     *
+     * @return int|null
+     * @throws Exception
+     */
+    public function getOrderAttribute(): ?int
+    {
+        return data_get($this, 'pivot.order');
+    }
+
+    /**
      * Get base url for given disk.
      *
      * @param string $disk

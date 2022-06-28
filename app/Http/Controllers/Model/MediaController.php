@@ -75,38 +75,16 @@ class MediaController extends CrudController
     }
 
     /**
-     * Get model's media.
+     * Find mediable model by id and type.
      *
-     * @param GetModelMediaRequest $request
+     * @param int $modelId
+     * @param string $modelType
      *
-     * @return ApiResponse
+     * @return MediableInterface
      * @throws Exception
      */
-    public function getModelMedia(GetModelMediaRequest $request): ApiResponse
+    protected function findMediable(int $modelId, string $modelType): MediableInterface
     {
-        $modelId = $request->get('model_id');
-        $modelType = $request->get('model_type');
-
-        $builder = $this->builder($request)
-            ->attachedBy($modelId, $modelType);
-
-        $data = new MediaCollection($builder->get());
-        return ApiResponse::make(compact('data'));
-    }
-
-    /**
-     * Set model's media.
-     *
-     * @param SetModelMediaRequest $request
-     *
-     * @return ApiResponse
-     * @throws Exception
-     */
-    public function setModelMedia(SetModelMediaRequest $request): ApiResponse
-    {
-        $modelId = $request->get('model_id');
-        $modelType = $request->get('model_type');
-
         /** @var BaseModel|null $model */
         $model = Relation::getMorphedModel($modelType);
 
@@ -125,10 +103,44 @@ class MediaController extends CrudController
             );
         }
 
-        $builder = $this->builder($request)
-            ->attachedBy($modelId, $modelType);
+        return $target;
+    }
 
-        $attached = $builder->pluck('id')->all();
+    /**
+     * Get model's media.
+     *
+     * @param GetModelMediaRequest $request
+     *
+     * @return ApiResponse
+     * @throws Exception
+     */
+    public function getModelMedia(GetModelMediaRequest $request): ApiResponse
+    {
+        $modelId = $request->get('model_id');
+        $modelType = $request->get('model_type');
+
+        $target = $this->findMediable($modelId, $modelType);
+
+        $data = new MediaCollection($target->media()->get());
+        return ApiResponse::make(compact('data'));
+    }
+
+    /**
+     * Set model's media.
+     *
+     * @param SetModelMediaRequest $request
+     *
+     * @return ApiResponse
+     * @throws Exception
+     */
+    public function setModelMedia(SetModelMediaRequest $request): ApiResponse
+    {
+        $modelId = $request->get('model_id');
+        $modelType = $request->get('model_type');
+
+        $target = $this->findMediable($modelId, $modelType);
+
+        $attached = $target->media()->pluck('id')->all();
         $given = $request->ids();
 
         $add = array_diff($given, $attached);
