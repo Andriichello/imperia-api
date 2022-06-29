@@ -2,7 +2,8 @@
 
 namespace Database\Seeders;
 
-use ClassicO\NovaMediaLibrary\Core\Model as MediaModel;
+use App\Helpers\Interfaces\MediaHelperInterface;
+use App\Helpers\MediaHelper;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
 
@@ -12,12 +13,19 @@ use Illuminate\Support\Facades\File;
 class MediaSeeder extends Seeder
 {
     /**
+     * @var MediaHelperInterface
+     */
+    protected MediaHelperInterface $helper;
+
+    /**
      * Run the database seeds.
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
+        $this->helper = new MediaHelper();
+
         $this->seedFolder('/defaults/');
         $this->seedFolder('/categories/');
     }
@@ -27,22 +35,15 @@ class MediaSeeder extends Seeder
      *
      * @return void
      */
-    public function seedFolder(string $folder)
+    public function seedFolder(string $folder): void
     {
         foreach (File::allFiles('./public/storage/media' . $folder) as $file) {
-            MediaModel::query()
-                ->create([
-                    'type' => "image",
-                    'name' => $file->getFilename(),
-                    'title' => $file->getFilenameWithoutExtension(),
-                    'folder' => $folder,
-                    'private' => false,
-                    'lp' => false,
-                    'options' => [
-                        'mime' => 'image',
-                        'size' => round($file->getSize() / 1024.0, 3) . ' kb',
-                    ],
-                ]);
+            $path = '/media' . $folder . $file->getFilename();
+
+            $media = $this->helper->existing($path, 'public');
+            $media->title = ucfirst($file->getFilenameWithoutExtension());
+
+            $media->save();
         }
     }
 }

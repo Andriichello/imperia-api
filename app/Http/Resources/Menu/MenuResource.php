@@ -43,7 +43,8 @@ class MenuResource extends JsonResource
      * @OA\Schema(
      *   schema="Menu",
      *   description="Menu resource object",
-     *   required = {"id", "type", "title", "description", "categories", "media", "default_media"},
+     *   required = {"id", "type", "title", "description", "categories",
+     *     "media", "default_media"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="menus"),
      *   @OA\Property(property="title", type="string", example="Kitchen"),

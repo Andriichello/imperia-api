@@ -3,6 +3,7 @@
 namespace App\Models\Morphs;
 
 use App\Models\BaseModel;
+use App\Models\Interfaces\MediableInterface;
 use App\Models\Traits\MediableTrait;
 use App\Queries\CategoryQueryBuilder;
 use Carbon\Carbon;
@@ -28,7 +29,7 @@ use Illuminate\Support\Collection;
  * @method static CategoryQueryBuilder query()
  * @method static CategoryFactory factory(...$parameters)
  */
-class Category extends BaseModel
+class Category extends BaseModel implements MediableInterface
 {
     use HasFactory;
     use MediableTrait;

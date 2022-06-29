@@ -2,8 +2,8 @@
 
 namespace App\Nova;
 
+use Andriichello\ColumnsCard\HasColumnsFilter;
 use App\Queries\Interfaces\IndexableInterface;
-use Customs\ColumnsCard\HasColumnsFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Laravel\Nova\Http\Requests\NovaRequest;

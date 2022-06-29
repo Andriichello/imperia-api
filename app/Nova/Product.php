@@ -2,8 +2,8 @@
 
 namespace App\Nova;
 
+use Andriichello\Media\MediaField;
 use App\Models\Scopes\ArchivedScope;
-use ClassicO\NovaMediaLibrary\MediaLibrary;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
@@ -78,8 +78,7 @@ class Product extends Resource
 
             BelongsTo::make('Menu'),
 
-            MediaLibrary::make('Media', 'media_ids')
-                ->array('gallery'),
+            MediaField::make('Media'),
 
             Text::make('Title')
                 ->updateRules('sometimes', 'min:1', 'max:50')
@@ -128,7 +127,7 @@ class Product extends Resource
         return [
             'id' => true,
             'menu' => true,
-            'media_ids' => ['label' => 'Media', 'checked' => true],
+            'media' => true,
             'title' => true,
             'description' => false,
             'price' => true,

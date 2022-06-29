@@ -1,16 +1,14 @@
 <?php
 
-namespace Customs\ColumnsCard;
+namespace Andriichello\ColumnsCard;
 
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Nova\Events\ServingNova;
 use Laravel\Nova\Nova;
 
 /**
  * Class CardServiceProvider.
- *
- * @property Application $app
  */
 class CardServiceProvider extends ServiceProvider
 {
@@ -19,7 +17,7 @@ class CardServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot(): void
+    public function boot()
     {
         $this->app->booted(function () {
             $this->routes();
@@ -36,7 +34,7 @@ class CardServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function routes(): void
+    protected function routes()
     {
         // @phpstan-ignore-next-line
         if ($this->app->routesAreCached()) {
@@ -53,7 +51,7 @@ class CardServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register(): void
+    public function register()
     {
         //
     }

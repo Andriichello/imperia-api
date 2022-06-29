@@ -1,12 +1,10 @@
 let mix = require('laravel-mix')
 
+require('./nova.mix')
+
 mix
   .setPublicPath('dist')
   .js('resources/js/tool.js', 'js')
-  .vue({ version: 2 })
-  .sass('resources/sass/tool.scss', 'css')
-  .webpackConfig({
-    externals: {
-      Vue: 'vue',
-    },
-  })
+  .vue({ version: 3 })
+  .css('resources/css/tool.css', 'css')
+  .nova('andriichello/markarketplace')

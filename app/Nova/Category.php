@@ -3,7 +3,7 @@
 namespace App\Nova;
 
 use App\Nova\Options\MorphOptions;
-use ClassicO\NovaMediaLibrary\MediaLibrary;
+use Ebess\AdvancedNovaMediaLibrary\Fields\Images;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
@@ -54,6 +54,9 @@ class Category extends Resource
         return [
             ID::make()->sortable(),
 
+//            Images::make('Images', 'images')
+//                ->enableExistingMedia(),
+
             Text::make('Slug')
                 ->rules('required', 'min:1', 'max:50')
                 ->creationRules('unique:categories,slug')
@@ -64,9 +67,6 @@ class Category extends Resource
                 ->options(MorphOptions::categorizable())
                 ->nullable()
                 ->displayUsingLabels(),
-
-            MediaLibrary::make('Media', 'media_ids')
-                ->array('gallery'),
 
             Text::make('Title')
                 ->rules('required', 'min:1', 'max:50'),
@@ -114,9 +114,9 @@ class Category extends Resource
     {
         return [
             'id' => true,
+//            'images' => true,
             'slug' => true,
             'target' => true,
-            'media_ids' => ['label' => 'Media', 'checked' => true],
             'title' => true,
             'description' => false,
             'created_at' => false,

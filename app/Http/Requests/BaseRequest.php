@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
@@ -39,9 +40,17 @@ class BaseRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            //
-        ];
+        return [];
+    }
+
+    /**
+     * Get form request fields' default values.
+     *
+     * @return array
+     */
+    protected function defaults(): array
+    {
+        return [];
     }
 
     /**
@@ -60,6 +69,22 @@ class BaseRequest extends FormRequest
         $obj->setRedirector(app(Redirector::class));
 
         return $obj;
+    }
+
+    /**
+     * Get the validator instance for the request.
+     *
+     * @return Validator
+     */
+    protected function getValidatorInstance(): Validator
+    {
+        $defaults = $this->defaults();
+
+        if (!empty($defaults)) {
+            $this->mergeIfMissing($defaults);
+        }
+
+        return parent::getValidatorInstance();
     }
 
     /**

@@ -8,6 +8,7 @@ use App\Models\Orders\Order;
 use Illuminate\Support\Collection;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
 class CalculateTotals extends Action
 {
@@ -35,9 +36,12 @@ class CalculateTotals extends Action
     /**
      * Get the fields available on the action.
      *
+     * @param NovaRequest $request
+     *
      * @return array
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function fields(): array
+    public function fields(NovaRequest $request): array
     {
         return [];
     }
