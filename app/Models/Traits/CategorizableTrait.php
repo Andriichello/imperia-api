@@ -43,7 +43,7 @@ trait CategorizableTrait
      */
     public function attachCategories(Category ...$categories): void
     {
-        $this->categories()->attach(Arr::pluck($categories, 'id'));
+        $this->categories()->attach(extractValues('id', ...$categories));
     }
 
     /**
@@ -55,7 +55,7 @@ trait CategorizableTrait
      */
     public function detachCategories(Category ...$categories): void
     {
-        $this->categories()->detach(Arr::pluck($categories, 'id'));
+        $this->categories()->detach(extractValues('id', ...$categories));
     }
 
     /**

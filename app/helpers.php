@@ -75,3 +75,27 @@ if (!function_exists('splitName')) {
         return [$firstName, $lastName];
     }
 }
+
+if (!function_exists('extractValues')) {
+
+    /**
+     * Extract column from given items.
+     *
+     * @param string $key
+     * @param mixed ...$items
+     *
+     * @return array
+     */
+    function extractValues(string $key, mixed ...$items): array
+    {
+        $closure = function (mixed $item) use ($key) {
+            if (is_array($item) || is_object($item)) {
+                return data_get($item, $key);
+            }
+
+            return $item;
+        };
+
+        return array_map($closure, $items);
+    }
+}

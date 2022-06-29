@@ -15,6 +15,8 @@ use App\Models\Space;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 
 /**
  * Class DummySeeder.
@@ -25,8 +27,9 @@ class DummySeeder extends Seeder
      * Seed the database for testing.
      *
      * @return void
+     * @throws FileDoesNotExist|FileIsTooBig
      */
-    public function run()
+    public function run(): void
     {
         $this->seedUsers();
         $this->seedCustomers();
@@ -140,8 +143,8 @@ class DummySeeder extends Seeder
     {
         /** @var Media $workdayMedia */
         $workdayMedia = Media::query()
-            ->fromFolder('categories')
-            ->where('name', 'workday.svg')
+            ->folder('/media/categories/')
+            ->name('workday.svg')
             ->first();
         $workdayCategory = Category::factory()->create([
             'slug' => 'work-day-tickets',
@@ -167,8 +170,8 @@ class DummySeeder extends Seeder
 
         /** @var Media $weekendMedia */
         $weekendMedia = Media::query()
-            ->fromFolder('categories')
-            ->where('name', 'weekend.svg')
+            ->folder('/media/categories/')
+            ->name('weekend.svg')
             ->first();
         $weekendCategory = Category::factory()->create([
             'slug' => 'weekend-tickets',
@@ -202,8 +205,8 @@ class DummySeeder extends Seeder
     {
         /** @var Media $indoorsMedia */
         $indoorsMedia = Media::query()
-            ->fromFolder('categories')
-            ->where('name', 'indoor.svg')
+            ->folder('/media/categories/')
+            ->name('indoor.svg')
             ->first();
         $indoorsCategory = Category::factory()->create([
             'slug' => 'indoors',
@@ -228,8 +231,8 @@ class DummySeeder extends Seeder
 
         /** @var Media $outdoorsMedia */
         $outdoorsMedia = Media::query()
-            ->fromFolder('categories')
-            ->where('name', 'outdoor.svg')
+            ->folder('/media/categories/')
+            ->name('outdoor.svg')
             ->first();
         $outdoorsCategory = Category::factory()->create([
             'slug' => 'outdoors',
@@ -263,8 +266,8 @@ class DummySeeder extends Seeder
     {
         /** @var Media $roomsMedia */
         $roomsMedia = Media::query()
-            ->fromFolder('defaults')
-            ->where('name', 'door.svg')
+            ->folder('/media/defaults/')
+            ->name('door.svg')
             ->first();
         $roomsCategory = Category::factory()->create([
             'slug' => 'rooms',
@@ -276,8 +279,8 @@ class DummySeeder extends Seeder
 
         /** @var Media $tablesMedia */
         $tablesMedia = Media::query()
-            ->fromFolder('defaults')
-            ->where('name', 'table.svg')
+            ->folder('/media/defaults/')
+            ->name('table.svg')
             ->first();
         $tablesCategory = Category::factory()->create([
             'slug' => 'tables',
@@ -345,8 +348,8 @@ class DummySeeder extends Seeder
     {
         /** @var Media $pizzaMedia */
         $pizzaMedia = Media::query()
-            ->fromFolder('categories')
-            ->where('name', 'pizza.svg')
+            ->folder('/media/categories/')
+            ->name('pizza.svg')
             ->first();
         $pizzaCategory = Category::factory()->create([
             'slug' => 'pizza',
@@ -397,8 +400,8 @@ class DummySeeder extends Seeder
     {
         /** @var Media $soupsMedia */
         $soupsMedia = Media::query()
-            ->fromFolder('categories')
-            ->where('name', 'soup.svg')
+            ->folder('/media/categories/')
+            ->name('soup.svg')
             ->first();
         $soupsCategory = Category::factory()->create([
             'slug' => 'soups',
@@ -436,8 +439,8 @@ class DummySeeder extends Seeder
     {
         /** @var Media $dessertsMedia */
         $dessertsMedia = Media::query()
-            ->fromFolder('categories')
-            ->where('name', 'croissant.svg')
+            ->folder('/media/categories/')
+            ->name('croissant.svg')
             ->first();
         $dessertsCategory = Category::factory()->create([
             'slug' => 'desserts',
@@ -475,8 +478,8 @@ class DummySeeder extends Seeder
     {
         /** @var Media $alcoholicMedia */
         $alcoholicMedia = Media::query()
-            ->fromFolder('categories')
-            ->where('name', 'alcoholic.svg')
+            ->folder('/media/categories/')
+            ->name('alcoholic.svg')
             ->first();
         $alcoholicCategory = Category::factory()->create([
             'slug' => 'alcoholic',
@@ -505,8 +508,8 @@ class DummySeeder extends Seeder
 
         /** @var Media $nonalcoholicMedia */
         $nonalcoholicMedia = Media::query()
-            ->fromFolder('categories')
-            ->where('name', 'non-alcoholic.svg')
+            ->folder('/media/categories/')
+            ->name('non-alcoholic.svg')
             ->first();
         $nonalcoholicCategory = Category::factory()->create([
             'slug' => 'non-alcoholic',

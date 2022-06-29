@@ -1,6 +1,6 @@
 <?php
 
-namespace Customs\ColumnsCard;
+namespace Andriichello\ColumnsCard;
 
 use Illuminate\Support\Collection;
 use Laravel\Nova\Card;

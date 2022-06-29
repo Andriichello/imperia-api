@@ -1,28 +1,26 @@
 <template>
     <card class="columns-card lex flex-col p-6">
 
-        <div id="header">
+        <div class="header">
             <h4>{{ settings.title }}</h4>
 
-            <button class="btn btn-default btn-primary"
+            <button class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center font-bold px-4 h-9 text-sm flex-shrink-0"
                     @click="applyFields">
                 Save
             </button>
         </div>
 
-        <ul id="checkboxes">
-            <li v-for="model of models"
+        <ul class="checkboxes">
+            <li v-for="field of fields"
                 id="fields" class="pt-1 pb-1">
 
-                <label :for="model.attribute" class="label flex items-center">
+                <label :for="field.attribute" class="label flex items-center">
 
-                    <input :id="model.attribute"
-                           :checked="model.checked"
-                           type="checkbox"
-                           class="checkbox"
-                           @change="onFieldToggled">
+                    <input class="checkbox" type="checkbox"
+                           :checked="field.checked"
+                           @change="toggleField(field)">
 
-                    <span class="ml-3">{{ model.label }}</span>
+                    <span class="ml-3">{{ field.label }}</span>
 
                 </label>
             </li>
@@ -33,104 +31,89 @@
 </template>
 
 <script>
-
-
-import {isEmpty} from "lodash";
-import {Filterable, mapProps} from "laravel-nova";
-import HandlesActions from "../../../../../nova/resources/js/mixins/HandlesActions";
-import {escapeUnicode} from "../../../../../nova/resources/js/util/escapeUnicode";
+import isEmpty from "lodash";
+import Filterable from "../../../../../vendor/laravel/nova/resources/js/mixins/Filterable.js";
+import {escapeUnicode} from "../../../../../vendor/laravel/nova/resources/js/util/escapeUnicode.js";
 
 export default {
     props: [
         'card',
-
-        ...mapProps([
-            'resourceName',
-            'viaResource',
-            'viaResourceId',
-            'viaRelationship'
-        ])
+        // The following props are only available on resource detail cards...
+        'resource',
+        'resourceId',
+        'viaResource',
+        'viaResourceId',
+        'viaRelationship',
+        // The following props are available on index as well...
+        'resourceName',
     ],
-    mixins: [Filterable, HandlesActions],
+    mixins: [Filterable],
     data() {
         const settings = this.card.settings;
-        const fields = this.relevantFields(this.card.fields, this.cached(settings.cache.key, 'fields'));
+        const fields = this.relevantFields(this.card.fields, this.cachedAttributes());
+        const attributes = this.getCheckedAttributes(fields);
 
         return {
-            fields: fields,
-            models: fields,
             settings: settings,
+            fields: fields,
+            attributes: attributes,
+            filterIsActive: false,
         }
     },
     mounted() {
         this.applyFields();
     },
-
     methods: {
-        cache(cacheKey, value, property = undefined) {
-            try {
-                if (property == null) {
-                    localStorage.setItem(cacheKey, JSON.stringify(value));
-                    return true;
-                }
-
-                const item = JSON.parse(localStorage.getItem(cacheKey));
-                item[property] = value;
-
-                return this.cache(cacheKey, item);
-            } catch (error) {
-                return false;
-            }
+        getChecked(fields) {
+            return fields.filter(f => {
+                return f.checked;
+            });
         },
-
-        cached(cacheKey, property = undefined) {
-            try {
-                const item = JSON.parse(localStorage.getItem(cacheKey));
-                return property == null ? item : item[property];
-            } catch (error) {
-                return null
-            }
+        getAttributes(fields) {
+            return fields.map(f => {
+                return f.attribute;
+            })
+        },
+        getCheckedAttributes(fields) {
+            return this.getAttributes(this.getChecked(fields));
         },
 
         applyFields() {
             const query = this.getEncodedQueryString();
-
-            this.cache(this.settings.cache.key, {query: query, fields: this.fields});
+            this.cache(this.settings.cache.key, {
+                query: query,
+                fields: this.fields,
+                attributes: this.attributes
+            });
 
             this.updateColumnsFilter();
         },
+        toggleField(field) {
+            field.checked = !field.checked;
 
+            if (field.checked) {
+                if (!this.attributes.includes(field.attribute)) {
+                    this.attributes.push(field.attribute);
+                }
+            } else if (this.attributes.includes(field.attribute)) {
+                this.attributes = this.attributes.filter(a => a !== field.attribute);
+            }
+        },
         relevantFields(provided, stored) {
-            if (isEmpty(stored)) {
+            console.log('provided: ', provided);
+            console.log('stored: ', stored);
+
+            if (!Array.isArray(stored) || !stored.length) {
                 return provided;
             }
-
-            let fields = isEmpty(provided) ? [] : provided;
+            let fields = !Array.isArray(provided) || !provided.length ? [] : provided;
             for (const field of fields) {
-                for (const storedField of stored) {
-                    if (field.attribute !== storedField.attribute) {
-                        continue;
-                    }
-
-                    field.checked = storedField.checked;
-                }
+                field.checked = stored.includes(field.attribute)
             }
+
+            console.log('relevant: ', fields);
 
             return fields;
-        },
-
-        onFieldToggled(event) {
-            console.log('onFieldToggled')
-
-            const id = event.target.id;
-            const checked = event.target.checked;
-
-            for (let field of this.fields) {
-                if (field.attribute !== id) {
-                    continue;
-                }
-                field.checked = checked;
-            }
         },
 
         updateColumnsFilter() {
@@ -140,29 +123,49 @@ export default {
                 return;
             }
 
-            if (filter.currentValue === this.fields) {
-                return;
+            if (!this.arrayCompare(filter.currentValue, this.attributes)) {
+                console.log('ColumnsFilter have changed...');
+                filter.currentValue = this.attributes.map(a => a);
+            } else {
+                console.log('ColumnsFilter haven\'t changed...');
             }
-
-            filter.currentValue = this.fields;
-            this.filterChanged();
         },
-
         updateQueryString(value) {
-            console.log('updateQueryString');
+            const key = this.filterParameter;
+            const url = new URL(window.location.href);
 
             try {
-                const key = this.resourceName + '_filter';
-                const query = this.$router.history.current['query'];
-
-                if (query[key] === value[key]) {
-                    this.$router.replace({query: null});
+                if (url.searchParams.get(key) === value[key]) {
                     return;
                 }
             } catch (error) {
                 //
             }
-            this.$router.replace({query: value});
+
+            url.searchParams.set(key, value[key]);
+            this.$inertia.get(url);
+        },
+
+        cache(cacheKey, value, property = undefined) {
+            try {
+                if (property == null) {
+                    localStorage.setItem(cacheKey, JSON.stringify(value));
+                    return true;
+                }
+                const item = JSON.parse(localStorage.getItem(cacheKey));
+                item[property] = value;
+                return this.cache(cacheKey, item);
+            } catch (error) {
+                return false;
+            }
+        },
+        cached(cacheKey, property = undefined) {
+            try {
+                const item = JSON.parse(localStorage.getItem(cacheKey));
+                return property == null ? item : item[property];
+            } catch (error) {
+                return null
+            }
         },
 
         decodeObject(data) {
@@ -172,40 +175,58 @@ export default {
                 return {}
             }
         },
-
         encodeObject(data) {
             return btoa(escapeUnicode(JSON.stringify(data)));
         },
 
+        cachedAttributes() {
+            return this.cached(this.card.settings.cache.key, 'attributes');
+        },
         getEncodedQueryString() {
-            return this.encodeObject({...this.fields})
+            return this.encodeObject({...this.attributes})
+        },
+        cachedEncodedQueryString() {
+            return this.cached(this.card.settings.cache.key, 'query');
         },
 
-        cachedEncodedQueryString() {
-            return this.cached(this.settings.cache.key, 'query');
-        },
+        arrayCompare(left, right) {
+            if (!Array.isArray(left) || !Array.isArray(right) || left.length !== right.length) {
+                return false;
+            }
+
+            // .concat() to not mutate arguments
+            const arr1 = left.concat().sort();
+            const arr2 = right.concat().sort();
+
+            for (let i = 0; i < arr1.length; i++) {
+                if (arr1[i] !== arr2[i]) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
     },
 }
 </script>
 
-<style lang="scss">
-
-.columns-card {
-    height: auto
-}
-
-#header {
+<style>
+.header {
     display: flex;
     justify-content: space-between;
-
+    align-items: center;
     padding-bottom: 10px;
 }
 
-#checkboxes {
+.checkboxes {
     height: auto;
     column-count: 4;
     padding: 0;
     list-style-type: none;
+}
+
+.columns-card {
+    height: auto
 }
 
 li {
@@ -213,5 +234,4 @@ li {
     page-break-inside: avoid;
     break-inside: avoid;
 }
-
 </style>

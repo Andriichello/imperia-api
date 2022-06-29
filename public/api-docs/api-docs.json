@@ -1531,6 +1531,319 @@
                 ]
             }
         },
+        "/api/media": {
+            "get": {
+                "tags": [
+                    "media"
+                ],
+                "summary": "Index media.",
+                "operationId": "indexMedia",
+                "parameters": [
+                    {
+                        "name": "page[size]",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/PageSize"
+                        }
+                    },
+                    {
+                        "name": "page[number]",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/PageNumber"
+                        }
+                    },
+                    {
+                        "name": "filter[name]",
+                        "in": "query",
+                        "description": "Can be used for searches. Is partial.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "Cafe"
+                    },
+                    {
+                        "name": "filter[extension]",
+                        "in": "query",
+                        "description": "Can be used for searches. Is partial.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "svg"
+                    },
+                    {
+                        "name": "filter[disk]",
+                        "in": "query",
+                        "description": "Can be used for searches. Is partial.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "public"
+                    },
+                    {
+                        "name": "filter[folder]",
+                        "in": "query",
+                        "description": "Can be used for searches. Is partial.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "/categories/"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Index media response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IndexMediaResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "media"
+                ],
+                "summary": "Store media.",
+                "operationId": "storeMedia",
+                "requestBody": {
+                    "description": "Store media request object.",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "allOf": [
+                                    {
+                                        "properties": {
+                                            "file": {
+                                                "description": "File",
+                                                "type": "string",
+                                                "format": "binary"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    {
+                                        "$ref": "#/components/schemas/StoreMediaRequest"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Create media response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StoreMediaResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/media/{id}": {
+            "get": {
+                "tags": [
+                    "media"
+                ],
+                "summary": "Show media by id.",
+                "operationId": "showMedia",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the media.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Show media response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ShowMediaResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "media"
+                ],
+                "summary": "Delete media.",
+                "operationId": "destroyMedia",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the media.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "description": "Delete request object.",
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DestroyRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Delete media response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DestroyMediaResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "media"
+                ],
+                "summary": "Update media.",
+                "operationId": "updateMedia",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the media.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "description": "Update media request object.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateMediaRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update media response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UpdateMediaResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/menus": {
             "get": {
                 "tags": [
@@ -1630,6 +1943,109 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ShowMenuResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/model-media": {
+            "get": {
+                "tags": [
+                    "media"
+                ],
+                "summary": "Get model's media.",
+                "operationId": "getModelMedia",
+                "parameters": [
+                    {
+                        "name": "model_id",
+                        "in": "query",
+                        "description": "Id of the target model.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": "1"
+                    },
+                    {
+                        "name": "model_type",
+                        "in": "query",
+                        "description": "Morph type of the target model.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "products"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get model's media response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetModelMediaResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "media"
+                ],
+                "summary": "Set model's media.",
+                "operationId": "setModelMedia",
+                "requestBody": {
+                    "description": "Set model's media request object.",
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SetModelMediaRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Create media response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SetModelMediaResponse"
                                 }
                             }
                         }
@@ -3789,6 +4205,94 @@
                 "type": "string",
                 "example": "relative"
             },
+            "IndexMediaResponse": {
+                "description": "Index media response object.",
+                "required": [
+                    "data",
+                    "meta",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Media"
+                        }
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/PaginationMeta"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "ShowMediaResponse": {
+                "description": "Show media response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Media"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "StoreMediaResponse": {
+                "description": "Store media response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Media"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Created"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateMediaResponse": {
+                "description": "Update media response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Media"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "DestroyMediaResponse": {
+                "description": "Delete banquet response object.",
+                "required": [
+                    "message"
+                ],
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Deleted"
+                    }
+                },
+                "type": "object"
+            },
             "IndexMenuResponse": {
                 "description": "Index menus response object.",
                 "required": [
@@ -3834,6 +4338,46 @@
                 "description": "Coma-separated list of inluded relations.\n    Available relations: `products`",
                 "type": "string",
                 "example": "products"
+            },
+            "GetModelMediaResponse": {
+                "description": "Get model's media response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Media"
+                        }
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "SetModelMediaResponse": {
+                "description": "Set model's media response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Media"
+                        }
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
             },
             "IndexNotificationResponse": {
                 "description": "Index notifications response object.",
@@ -4792,6 +5336,117 @@
                 },
                 "type": "object"
             },
+            "StoreMediaRequest": {
+                "description": "Store media request",
+                "required": [
+                    "file",
+                    "name"
+                ],
+                "properties": {
+                    "file": {
+                        "type": "string",
+                        "format": "binary"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "drinks.svg"
+                    },
+                    "title": {
+                        "nullable": "true",
+                        "type": "string",
+                        "example": "Drinks"
+                    },
+                    "description": {
+                        "nullable": "true",
+                        "type": "string"
+                    },
+                    "disk": {
+                        "type": "string",
+                        "enum": [
+                            "public",
+                            "google-cloud"
+                        ],
+                        "example": "public"
+                    },
+                    "folder": {
+                        "description": "Must start and end with the `/`.",
+                        "type": "string",
+                        "example": "/media/"
+                    },
+                    "metadata": {
+                        "nullable": "true",
+                        "type": "object",
+                        "example": "{}"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateMediaRequest": {
+                "description": "Update media request",
+                "properties": {
+                    "file": {
+                        "type": "file"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "drinks.svg"
+                    },
+                    "title": {
+                        "nullable": "true",
+                        "type": "string",
+                        "example": "Drinks"
+                    },
+                    "description": {
+                        "nullable": "true",
+                        "type": "string"
+                    },
+                    "folder": {
+                        "description": "Must start and end with the `/`.",
+                        "type": "string",
+                        "example": "/media/"
+                    },
+                    "metadata": {
+                        "nullable": "true",
+                        "type": "object",
+                        "example": "{}"
+                    }
+                },
+                "type": "object"
+            },
+            "AttachingMedia": {
+                "description": "Attaching media",
+                "required": [
+                    "id"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "SetModelMediaRequest": {
+                "description": "Set model's media request",
+                "properties": {
+                    "model_id": {
+                        "type": "integer",
+                        "example": "1"
+                    },
+                    "model_type": {
+                        "type": "string",
+                        "example": "products"
+                    },
+                    "media": {
+                        "description": "Will be stored/updated according to the given order.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AttachingMedia"
+                        }
+                    }
+                },
+                "type": "object"
+            },
             "StoreNotificationRequest": {
                 "description": "Store notification request",
                 "required": [
@@ -5235,8 +5890,7 @@
                     "target",
                     "title",
                     "description",
-                    "media",
-                    "default_media"
+                    "media"
                 ],
                 "properties": {
                     "id": {
@@ -5265,12 +5919,6 @@
                         "example": "Some text..."
                     },
                     "media": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Media"
-                        }
-                    },
-                    "default_media": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Media"
@@ -5785,11 +6433,13 @@
                     "id",
                     "type",
                     "name",
+                    "extension",
                     "title",
-                    "url",
-                    "path",
+                    "description",
+                    "disk",
                     "folder",
-                    "private"
+                    "order",
+                    "url"
                 ],
                 "properties": {
                     "id": {
@@ -5802,27 +6452,39 @@
                     },
                     "name": {
                         "type": "string",
-                        "example": "mojito-1645908379CXJyz.jpg"
+                        "example": "drinks.svg"
+                    },
+                    "extension": {
+                        "type": "string",
+                        "example": "svg"
                     },
                     "title": {
+                        "nullable": "true",
                         "type": "string",
-                        "example": "Mojito"
+                        "example": "Drinks"
                     },
-                    "url": {
-                        "type": "string",
-                        "example": "http://localhost/storage/mojito-1645908379CXJyz.jpg"
+                    "description": {
+                        "nullable": "true",
+                        "type": "string"
                     },
-                    "path": {
+                    "disk": {
+                        "nullable": "true",
                         "type": "string",
-                        "example": "/mojito-1645908379CXJyz.jpg"
+                        "example": "public"
                     },
                     "folder": {
+                        "description": "Must start and end with `/`.",
                         "type": "string",
                         "example": "/"
                     },
-                    "private": {
-                        "type": "boolean",
-                        "example": "false"
+                    "order": {
+                        "nullable": "true",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "url": {
+                        "type": "string",
+                        "example": "http://localhost/storage/drinks.svg"
                     }
                 },
                 "type": "object"

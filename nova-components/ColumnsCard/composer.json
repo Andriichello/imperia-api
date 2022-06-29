@@ -1,23 +1,23 @@
 {
-    "name": "customs/columns-card",
-    "description": "A Laravel Nova card for selecting resource columns on index.",
+    "name": "andriichello/columns-card",
+    "description": "A Laravel Nova card.",
     "keywords": [
         "laravel",
         "nova"
     ],
     "license": "MIT",
     "require": {
-        "php": ">=7.1.0"
+        "php": "^7.3|^8.0"
     },
     "autoload": {
         "psr-4": {
-            "Customs\\ColumnsCard\\": "src/"
+            "Andriichello\\ColumnsCard\\": "src/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Customs\\ColumnsCard\\CardServiceProvider"
+                "Andriichello\\ColumnsCard\\CardServiceProvider"
             ]
         }
     },

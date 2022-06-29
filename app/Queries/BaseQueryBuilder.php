@@ -94,14 +94,6 @@ class BaseQueryBuilder extends EloquentBuilder implements IndexableInterface
      */
     protected function extract(string $key, mixed ...$items): array
     {
-        $closure = function (mixed $item) use ($key) {
-            if (is_array($item) || is_object($item)) {
-                return data_get($item, $key);
-            }
-
-            return $item;
-        };
-
-        return array_map($closure, $items);
+        return extractValues($key, ...$items);
     }
 }

@@ -47,7 +47,7 @@ trait DiscountableTrait
      */
     public function attachDiscounts(Discount ...$discounts): void
     {
-        $this->discounts()->attach(Arr::pluck($discounts, 'id'));
+        $this->discounts()->attach(extractValues('id', ...$discounts));
     }
 
     /**
@@ -59,7 +59,7 @@ trait DiscountableTrait
      */
     public function detachDiscounts(Discount ...$discounts): void
     {
-        $this->discounts()->detach(Arr::pluck($discounts, 'id'));
+        $this->discounts()->detach(extractValues('id', ...$discounts));
     }
 
     /**

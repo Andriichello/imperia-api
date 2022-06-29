@@ -32,7 +32,6 @@ class CategoryResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'media' => new MediaCollection($this->media),
-            'default_media' => new MediaCollection($this->default_media),
         ];
     }
 
@@ -40,7 +39,7 @@ class CategoryResource extends JsonResource
      * @OA\Schema(
      *   schema="Category",
      *   description="Category resource object",
-     *   required = {"id", "type", "slug", "target", "title", "description", "media", "default_media"},
+     *   required = {"id", "type", "slug", "target", "title", "description", "media"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="slug", type="string", example="pizza"),
      *   @OA\Property(property="type", type="string", example="categories"),
@@ -48,7 +47,6 @@ class CategoryResource extends JsonResource
      *   @OA\Property(property="title", type="string", example="Pizza"),
      *   @OA\Property(property="description", example="Some text...", nullable="true"),
      *   @OA\Property(property="media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
-     *   @OA\Property(property="default_media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
      * )
      */
 }

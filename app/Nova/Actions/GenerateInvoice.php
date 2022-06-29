@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Support\Collection;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
 /**
  * Class GenerateInvoice.
@@ -62,9 +63,12 @@ class GenerateInvoice extends Action
     /**
      * Get the fields available on the action.
      *
+     * @param NovaRequest $request
+     *
      * @return array
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function fields(): array
+    public function fields(NovaRequest $request): array
     {
         return [];
     }

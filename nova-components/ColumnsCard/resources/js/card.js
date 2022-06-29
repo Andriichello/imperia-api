@@ -1,5 +1,5 @@
-import ColumnsCard from './components/Card.vue'
+import Card from './components/Card'
 
-Nova.booting((Vue, router, store) => {
-  Vue.component('columns-card', ColumnsCard)
+Nova.booting((app, store) => {
+  app.component('columns-card', Card)
 })

@@ -55,7 +55,7 @@ trait PeriodicalTrait
      */
     public function attachPeriods(Period ...$periods): void
     {
-        $this->periods()->attach(Arr::pluck($periods, 'id'));
+        $this->periods()->attach(extractValues('id', ...$periods));
     }
 
     /**
@@ -67,7 +67,7 @@ trait PeriodicalTrait
      */
     public function detachPeriods(Period ...$periods): void
     {
-        $this->periods()->detach(Arr::pluck($periods, 'id'));
+        $this->periods()->detach(extractValues('id', ...$periods));
     }
 
     /**

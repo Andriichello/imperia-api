@@ -20,8 +20,6 @@ use Laravel\Nova\Fields\MorphMany;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
-use Laravel\Nova\Http\Requests\NovaRequest;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class Banquet.
