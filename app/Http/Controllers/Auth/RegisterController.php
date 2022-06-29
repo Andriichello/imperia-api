@@ -65,12 +65,8 @@ class RegisterController extends Controller
     public function __invoke(RegisterRequest $request): JsonResponse
     {
         $user = $this->userRepository->register($request->validated());
-        $token = $user->createToken($request->userAgent());
 
-        $data = [
-            'token' => $token->plainTextToken,
-            'user' => new UserResource($user),
-        ];
+        $data = ['user' => new UserResource($user)];
         return ApiResponse::make(['data' => $data], 201, 'Registered');
     }
 
@@ -79,8 +75,8 @@ class RegisterController extends Controller
      *   schema="RegisterResponse",
      *   description="Register user response object.",
      *   required = {"data", "message"},
-     *   @OA\Property(property="data", ref ="#/components/schemas/UserAndTokenResponse"),
-     *   @OA\Property(property="message", type="string", example="Success")
+     *   @OA\Property(property="data", ref ="#/components/schemas/User"),
+     *   @OA\Property(property="message", type="string", example="Registered")
      * )
      */
 }
