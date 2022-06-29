@@ -29,7 +29,6 @@
                             {{ item.title ?? item.name }}
                     </span>
                 </div>
-
             </div>
         </div>
     </div>
