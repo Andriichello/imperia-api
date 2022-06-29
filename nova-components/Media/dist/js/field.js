@@ -53,9 +53,6 @@ __webpack_require__.r(__webpack_exports__);
       }
     };
   },
-  mounted: function mounted() {
-    console.log('this: ', this);
-  },
   methods: {
     /**
      * Set the initial, internal value for the field.
@@ -64,7 +61,6 @@ __webpack_require__.r(__webpack_exports__);
       var _this$field$value;
 
       this.value = (_this$field$value = this.field.value) !== null && _this$field$value !== void 0 ? _this$field$value : [];
-      console.log('value: ', this.value);
     },
 
     /**
@@ -75,7 +71,6 @@ __webpack_require__.r(__webpack_exports__);
         return item.id;
       });
       formData.append(this.field.attribute, ids.join(','));
-      console.log('formData: ', formData);
     },
     openList: function openList() {
       this.fetchItems();
@@ -105,8 +100,6 @@ __webpack_require__.r(__webpack_exports__);
       this.attached.push(item);
     },
     positionItem: function positionItem(item, position) {
-      console.log('positionItem -> item: ', item);
-      console.log('positionItem -> position: ', position);
       var result = [];
       this.attached.forEach(function (a) {
         if (a.id === item.id) {

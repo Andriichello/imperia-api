@@ -506,7 +506,6 @@ export default {
                     let message = e;
 
                     if (e.response && e.response.data) {
-                        console.log(e.response);
                         if (e.response.data.message) {
                             message = e.response.data.message;
                         }
@@ -564,7 +563,6 @@ export default {
                     let message = e;
 
                     if (e.response && e.response.data) {
-                        console.log(e.response);
                         if (e.response.data.message) {
                             message = e.response.data.message;
                         }

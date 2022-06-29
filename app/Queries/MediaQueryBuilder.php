@@ -3,7 +3,6 @@
 namespace App\Queries;
 
 use App\Models\BaseModel;
-use App\Models\Morphs\Mediable;
 use Illuminate\Database\Query\JoinClause;
 
 /**

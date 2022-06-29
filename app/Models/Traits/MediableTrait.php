@@ -95,25 +95,70 @@ trait MediableTrait
     /**
      * Attach given media to the model.
      *
-     * @param Media ...$media
+     * @param Media|int ...$media
      *
-     * @return void
+     * @return static
      */
-    public function attachMedia(Media ...$media): void
+    public function attachMedia(Media|int ...$media): static
     {
-        $this->media()->attach(Arr::pluck($media, 'id'));
+        $this->media()->attach(extractValues('id', ...$media));
+
+        return $this;
     }
 
     /**
      * Detach given media from the model.
      *
-     * @param Media ...$media
+     * @param Media|int ...$media
+     *
+     * @return static
+     */
+    public function detachMedia(Media|int ...$media): static
+    {
+        $this->media()->detach(extractValues('id', ...$media));
+
+        return $this;
+    }
+
+    /**
+     * Order media in the same order as given.
+     *
+     * @param Media|int ...$media
+     *
+     * @return static
+     */
+    public function orderMedia(Media|int ...$media): static
+    {
+        $ids = extractValues('id', ...$media);
+
+        foreach ($ids as $index => $id) {
+            $this->media()
+                ->updateExistingPivot($id, ['order' => $index], false);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Set model's media.
+     *
+     * @param Media|int ...$media
      *
      * @return void
      */
-    public function detachMedia(Media ...$media): void
+    public function setMedia(Media|int ...$media): static
     {
-        $this->media()->detach(Arr::pluck($media, 'id'));
+        $given = extractValues('id', ...$media);
+        $attached = $this->media()->pluck('id')->all();
+
+        $add = array_diff($given, $attached);
+        $remove = array_diff($attached, $given);
+
+        $this->attachMedia(...$add)
+            ->detachMedia(...$remove)
+            ->orderMedia(...$given);
+
+        return $this;
     }
 
     /**

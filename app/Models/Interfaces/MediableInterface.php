@@ -23,20 +23,38 @@ interface MediableInterface
     /**
      * Attach given media to the model.
      *
-     * @param Media ...$media
+     * @param Media|int ...$media
      *
-     * @return void
+     * @return static
      */
-    public function attachMedia(Media ...$media): void;
+    public function attachMedia(Media|int ...$media): static;
 
     /**
      * Detach given media from the model.
      *
-     * @param Media ...$media
+     * @param Media|int ...$media
      *
-     * @return void
+     * @return static
      */
-    public function detachMedia(Media ...$media): void;
+    public function detachMedia(Media|int ...$media): static;
+
+    /**
+     * Order media in the same order as given.
+     *
+     * @param Media|int ...$media
+     *
+     * @return static
+     */
+    public function orderMedia(Media|int ...$media): static;
+
+    /**
+     * Set model's media.
+     *
+     * @param Media|int ...$media
+     *
+     * @return static
+     */
+    public function setMedia(Media|int ...$media): static;
 
     /**
      * Determines if model has media attached.

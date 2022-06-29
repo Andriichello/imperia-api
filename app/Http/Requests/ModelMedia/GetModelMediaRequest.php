@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Media;
+namespace App\Http\Requests\ModelMedia;
 
 use App\Http\Requests\CrudRequest;
 use Illuminate\Database\Eloquent\Relations\Relation;

@@ -1844,109 +1844,6 @@
                 ]
             }
         },
-        "/api/model-media": {
-            "get": {
-                "tags": [
-                    "media"
-                ],
-                "summary": "Get model's media.",
-                "operationId": "getModelMedia",
-                "parameters": [
-                    {
-                        "name": "model_id",
-                        "in": "query",
-                        "description": "Id of the target model.",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "example": "1"
-                    },
-                    {
-                        "name": "model_type",
-                        "in": "query",
-                        "description": "Morph type of the target model.",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "example": "products"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Get model's media response object.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/GetModelMediaResponse"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "post": {
-                "tags": [
-                    "media"
-                ],
-                "summary": "Set model's media.",
-                "operationId": "setModelMedia",
-                "requestBody": {
-                    "description": "Set model's media request object.",
-                    "required": false,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/SetModelMediaRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Create media response object.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/SetModelMediaResponse"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
         "/api/menus": {
             "get": {
                 "tags": [
@@ -2046,6 +1943,109 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ShowMenuResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/model-media": {
+            "get": {
+                "tags": [
+                    "media"
+                ],
+                "summary": "Get model's media.",
+                "operationId": "getModelMedia",
+                "parameters": [
+                    {
+                        "name": "model_id",
+                        "in": "query",
+                        "description": "Id of the target model.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": "1"
+                    },
+                    {
+                        "name": "model_type",
+                        "in": "query",
+                        "description": "Morph type of the target model.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "products"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get model's media response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetModelMediaResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "media"
+                ],
+                "summary": "Set model's media.",
+                "operationId": "setModelMedia",
+                "requestBody": {
+                    "description": "Set model's media request object.",
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SetModelMediaRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Create media response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SetModelMediaResponse"
                                 }
                             }
                         }
@@ -4293,46 +4293,6 @@
                 },
                 "type": "object"
             },
-            "GetModelMediaResponse": {
-                "description": "Get model's media response object.",
-                "required": [
-                    "data",
-                    "message"
-                ],
-                "properties": {
-                    "data": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Media"
-                        }
-                    },
-                    "message": {
-                        "type": "string",
-                        "example": "Success"
-                    }
-                },
-                "type": "object"
-            },
-            "SetModelMediaResponse": {
-                "description": "Set model's media response object.",
-                "required": [
-                    "data",
-                    "message"
-                ],
-                "properties": {
-                    "data": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Media"
-                        }
-                    },
-                    "message": {
-                        "type": "string",
-                        "example": "Success"
-                    }
-                },
-                "type": "object"
-            },
             "IndexMenuResponse": {
                 "description": "Index menus response object.",
                 "required": [
@@ -4378,6 +4338,46 @@
                 "description": "Coma-separated list of inluded relations.\n    Available relations: `products`",
                 "type": "string",
                 "example": "products"
+            },
+            "GetModelMediaResponse": {
+                "description": "Get model's media response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Media"
+                        }
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "SetModelMediaResponse": {
+                "description": "Set model's media response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Media"
+                        }
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
             },
             "IndexNotificationResponse": {
                 "description": "Index notifications response object.",
@@ -5336,44 +5336,6 @@
                 },
                 "type": "object"
             },
-            "AttachingMedia": {
-                "description": "Attaching media",
-                "required": [
-                    "id"
-                ],
-                "properties": {
-                    "id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "order": {
-                        "nullable": "true",
-                        "type": "integer",
-                        "example": 1
-                    }
-                },
-                "type": "object"
-            },
-            "SetModelMediaRequest": {
-                "description": "Set model's media request",
-                "properties": {
-                    "model_id": {
-                        "type": "integer",
-                        "example": "1"
-                    },
-                    "model_type": {
-                        "type": "string",
-                        "example": "products"
-                    },
-                    "media": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/AttachingMedia"
-                        }
-                    }
-                },
-                "type": "object"
-            },
             "StoreMediaRequest": {
                 "description": "Store media request",
                 "required": [
@@ -5447,6 +5409,40 @@
                         "nullable": "true",
                         "type": "object",
                         "example": "{}"
+                    }
+                },
+                "type": "object"
+            },
+            "AttachingMedia": {
+                "description": "Attaching media",
+                "required": [
+                    "id"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "SetModelMediaRequest": {
+                "description": "Set model's media request",
+                "properties": {
+                    "model_id": {
+                        "type": "integer",
+                        "example": "1"
+                    },
+                    "model_type": {
+                        "type": "string",
+                        "example": "products"
+                    },
+                    "media": {
+                        "description": "Will be stored/updated according to the given order.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AttachingMedia"
+                        }
                     }
                 },
                 "type": "object"

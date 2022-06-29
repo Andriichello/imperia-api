@@ -215,8 +215,6 @@ __webpack_require__.r(__webpack_exports__);
         var message = e;
 
         if (e.response && e.response.data) {
-          console.log(e.response);
-
           if (e.response.data.message) {
             message = e.response.data.message;
           }
@@ -273,8 +271,6 @@ __webpack_require__.r(__webpack_exports__);
         var message = e;
 
         if (e.response && e.response.data) {
-          console.log(e.response);
-
           if (e.response.data.message) {
             message = e.response.data.message;
           }

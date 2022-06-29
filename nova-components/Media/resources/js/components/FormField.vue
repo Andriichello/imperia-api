@@ -193,16 +193,12 @@ export default {
             }
         };
     },
-    mounted() {
-        console.log('this: ', this);
-    },
     methods: {
         /**
          * Set the initial, internal value for the field.
          */
         setInitialValue() {
             this.value = this.field.value ?? [];
-            console.log('value: ', this.value);
         },
 
         /**
@@ -211,8 +207,6 @@ export default {
         fill(formData) {
             const ids = this.attached.map(item => item.id);
             formData.append(this.field.attribute, ids.join(','));
-
-            console.log('formData: ', formData);
         },
 
         openList() {
@@ -249,9 +243,6 @@ export default {
         },
 
         positionItem(item, position) {
-            console.log('positionItem -> item: ', item);
-            console.log('positionItem -> position: ', position);
-
             const result = [];
 
             this.attached.forEach(a => {

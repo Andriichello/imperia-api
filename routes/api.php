@@ -8,6 +8,7 @@ use App\Http\Controllers\Model\CategoryController;
 use App\Http\Controllers\Model\CommentController;
 use App\Http\Controllers\Model\CustomerController;
 use App\Http\Controllers\Model\FamilyMemberController;
+use App\Http\Controllers\Model\ModelMediaController;
 use App\Http\Controllers\Model\MediaController;
 use App\Http\Controllers\Model\MenuController;
 use App\Http\Controllers\Model\NotificationController;
@@ -83,11 +84,12 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
         ->only('index', 'show', 'store', 'update', 'destroy')
         ->parameters(['comments' => 'id']);
 
-    Route::get('/model-media', [MediaController::class, 'getModelMedia'])->name('media.get-model-media');
-    Route::post('/model-media', [MediaController::class, 'setModelMedia'])->name('media.set-model-media');
-    Route::apiResource('media', MediaController::class)
+      Route::apiResource('media', MediaController::class)
         ->only('index', 'show', 'store', 'update', 'destroy')
         ->parameters(['media' => 'id']);
+
+    Route::get('/model-media', [ModelMediaController::class, 'getModelMedia'])->name('media.get-model-media');
+    Route::post('/model-media', [ModelMediaController::class, 'setModelMedia'])->name('media.set-model-media');
 
     Route::apiResource('categories', CategoryController::class)
         ->only('index', 'show')

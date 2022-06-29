@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Media;
+namespace App\Http\Requests\ModelMedia;
 
 use App\Http\Requests\CrudRequest;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -39,12 +39,6 @@ class SetModelMediaRequest extends CrudRequest
                 'required',
                 'integer',
                 'exists:media,id',
-            ],
-            'media.*.order' => [
-                'sometimes',
-                'nullable',
-                'integer',
-                'min:0',
             ]
         ];
     }
@@ -75,7 +69,6 @@ class SetModelMediaRequest extends CrudRequest
      *   description="Attaching media",
      *   required={"id"},
      *   @OA\Property(property="id", type="integer", example=1),
-     *   @OA\Property(property="order", type="integer", nullable="true", example=1),
      *  ),
      *
      * @OA\Schema(
@@ -84,7 +77,8 @@ class SetModelMediaRequest extends CrudRequest
      *   @OA\Property(property="model_id", type="integer", example="1"),
      *   @OA\Property(property="model_type", type="string", example="products"),
      *   @OA\Property(property="media", type="array",
-     *     @OA\Items(ref ="#/components/schemas/AttachingMedia")),
+     *     @OA\Items(ref ="#/components/schemas/AttachingMedia"),
+     *     description="Will be stored/updated according to the given order."),
      *  )
      */
 }
