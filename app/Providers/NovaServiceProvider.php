@@ -64,7 +64,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                 ])->icon('paper-clip')->collapsable(),
             ];
 
-            if ($request->user() && $request->user()->isStaff()) {
+            if ($request->user() && $request->user()->isAdmin()) {
                 $sections[] = MediaTool::section($request);
                 $sections[] = BackupTool::section($request);
             }
