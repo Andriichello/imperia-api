@@ -5,6 +5,7 @@ namespace App\Nova\Tools;
 use Andriichello\Media\Media;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Laravel\Nova\Menu\MenuSection;
 
 /**
  * Class MediaTool.
@@ -31,5 +32,33 @@ class MediaTool extends Media
         $user = $request->user();
 
         return $user && $user->isAdmin();
+    }
+
+    /**
+     * Build the menu that renders the navigation links for the tool.
+     *
+     * @param Request $request
+     *
+     * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function menu(Request $request): mixed
+    {
+        return self::section($request);
+    }
+
+    /**
+     * Build the menu that renders the navigation links for the tool.
+     *
+     * @param Request $request
+     *
+     * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public static function section(Request $request): mixed
+    {
+        return MenuSection::make('Media')
+            ->path('/media')
+            ->icon('photograph');
     }
 }

@@ -30,8 +30,21 @@ class Marketplace extends Tool
      */
     public function menu(Request $request): mixed
     {
+        return self::section($request);
+    }
+
+    /**
+     * Build the menu that renders the navigation links for the tool.
+     *
+     * @param Request $request
+     *
+     * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public static function section(Request $request): mixed
+    {
         return MenuSection::make('Marketplace')
             ->path('/marketplace')
-            ->icon('server');
+            ->icon('shopping-cart');
     }
 }

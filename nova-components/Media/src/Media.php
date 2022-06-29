@@ -30,6 +30,6 @@ class Media extends Tool
     {
         return MenuSection::make('Media')
             ->path('/media')
-            ->icon('server');
+            ->icon('photograph');
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Nova;
 
+use Andriichello\Media\MediaField;
 use App\Models\Scopes\ArchivedScope;
-use Ebess\AdvancedNovaMediaLibrary\Fields\Images;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
@@ -75,8 +75,7 @@ class Space extends Resource
         return [
             ID::make()->sortable(),
 
-//            Images::make('Images', 'images')
-//                ->enableExistingMedia(),
+            MediaField::make('Media'),
 
             Text::make('Title')
                 ->updateRules('sometimes', 'min:1', 'max:50')
@@ -128,7 +127,7 @@ class Space extends Resource
     {
         return [
             'id' => true,
-//            'images' => true,
+            'media' => true,
             'title' => true,
             'description' => false,
             'floor' => true,

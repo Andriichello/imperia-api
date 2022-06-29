@@ -80,9 +80,6 @@ class Product extends Resource
 
             MediaField::make('Media'),
 
-//            Images::make('Images', 'images')
-//                ->enableExistingMedia(),
-
             Text::make('Title')
                 ->updateRules('sometimes', 'min:1', 'max:50')
                 ->creationRules('required', 'min:1', 'max:50'),
