@@ -74,13 +74,12 @@ return [
 
     'path' => '/nova',
 
-//    'routes' => [
-//        // 'login' => '/login',
-//        // 'logout' => '/logout',
-//        // 'forgot_password' => '/forgot-password',
-//        // 'reset_password' => '/reset-password',
-//    ],
-
+    'routes' => [
+         'login' => '/nova/auth',
+        // 'logout' => '/logout',
+        // 'forgot_password' => '/forgot-password',
+        // 'reset_password' => '/reset-password',
+    ],
 
     /*
     |--------------------------------------------------------------------------

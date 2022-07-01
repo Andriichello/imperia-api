@@ -8,7 +8,7 @@
     "packages": [
         {
             "name": "andriichello/columns-card",
-            "version": "dev-custom-media",
+            "version": "dev-dev",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ColumnsCard",
@@ -44,7 +44,7 @@
         },
         {
             "name": "andriichello/marketplace",
-            "version": "dev-custom-media",
+            "version": "dev-dev",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/Marketplace",
@@ -80,7 +80,7 @@
         },
         {
             "name": "andriichello/media",
-            "version": "dev-custom-media",
+            "version": "dev-dev",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/Media",
@@ -223,16 +223,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.228.5",
+            "version": "3.229.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "8b6e626e02c42310c3ce8615acc7b2c992e48c97"
+                "reference": "142a872fd7172bf5d067f4e30e4f89593296fc8f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/8b6e626e02c42310c3ce8615acc7b2c992e48c97",
-                "reference": "8b6e626e02c42310c3ce8615acc7b2c992e48c97",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/142a872fd7172bf5d067f4e30e4f89593296fc8f",
+                "reference": "142a872fd7172bf5d067f4e30e4f89593296fc8f",
                 "shasum": ""
             },
             "require": {
@@ -308,9 +308,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.228.5"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.229.2"
             },
-            "time": "2022-06-28T18:13:37+00:00"
+            "time": "2022-07-01T18:16:42+00:00"
         },
         {
             "name": "barryvdh/laravel-dompdf",
@@ -3048,17 +3048,17 @@
         },
         {
             "name": "laravel/nova",
-            "version": "4.11.0",
+            "version": "4.11.1",
             "source": {
                 "type": "git",
                 "url": "git@github.com:laravel/nova.git",
-                "reference": "26f24d637debece2edff9a64a9dedec9fbb63a83"
+                "reference": "fb662b6a9100f0cd2a490fd09d627dc719b68d90"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-26f24d637debece2edff9a64a9dedec9fbb63a83-zip-943ffd.zip",
-                "reference": "26f24d637debece2edff9a64a9dedec9fbb63a83",
-                "shasum": "8fb10d2975d39a1542159cce36391095ffa1866a"
+                "url": "https://nova.laravel.com/dist/laravel/nova/laravel-nova-fb662b6a9100f0cd2a490fd09d627dc719b68d90-zip-927456.zip",
+                "reference": "fb662b6a9100f0cd2a490fd09d627dc719b68d90",
+                "shasum": "1c483517592690bbf39bb5708b6e904cf7da6af1"
             },
             "require": {
                 "brick/money": "^0.5.0",
@@ -3152,9 +3152,9 @@
                 "laravel"
             ],
             "support": {
-                "source": "https://github.com/laravel/nova/tree/v4.11.0"
+                "source": "https://github.com/laravel/nova/tree/v4.11.1"
             },
-            "time": "2022-06-28T17:19:53+00:00"
+            "time": "2022-06-29T19:17:37+00:00"
         },
         {
             "name": "laravel/sanctum",
@@ -4455,16 +4455,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "2.58.0",
+            "version": "2.59.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "97a34af22bde8d0ac20ab34b29d7bfe360902055"
+                "reference": "a9000603ea337c8df16cc41f8b6be95a65f4d0f5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/97a34af22bde8d0ac20ab34b29d7bfe360902055",
-                "reference": "97a34af22bde8d0ac20ab34b29d7bfe360902055",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/a9000603ea337c8df16cc41f8b6be95a65f4d0f5",
+                "reference": "a9000603ea337c8df16cc41f8b6be95a65f4d0f5",
                 "shasum": ""
             },
             "require": {
@@ -4479,11 +4479,12 @@
                 "doctrine/orm": "^2.7",
                 "friendsofphp/php-cs-fixer": "^3.0",
                 "kylekatarnls/multi-tester": "^2.0",
+                "ondrejmirtes/better-reflection": "*",
                 "phpmd/phpmd": "^2.9",
                 "phpstan/extension-installer": "^1.0",
-                "phpstan/phpstan": "^0.12.54 || ^1.0",
-                "phpunit/php-file-iterator": "^2.0.5",
-                "phpunit/phpunit": "^7.5.20 || ^8.5.23",
+                "phpstan/phpstan": "^0.12.99 || ^1.7.14",
+                "phpunit/php-file-iterator": "^2.0.5 || ^3.0.6",
+                "phpunit/phpunit": "^7.5.20 || ^8.5.26 || ^9.5.20",
                 "squizlabs/php_codesniffer": "^3.4"
             },
             "bin": [
@@ -4540,15 +4541,19 @@
             },
             "funding": [
                 {
-                    "url": "https://opencollective.com/Carbon",
-                    "type": "open_collective"
+                    "url": "https://github.com/sponsors/kylekatarnls",
+                    "type": "github"
                 },
                 {
-                    "url": "https://tidelift.com/funding/github/packagist/nesbot/carbon",
+                    "url": "https://opencollective.com/Carbon#sponsor",
+                    "type": "opencollective"
+                },
+                {
+                    "url": "https://tidelift.com/subscription/pkg/packagist-nesbot-carbon?utm_source=packagist-nesbot-carbon&utm_medium=referral&utm_campaign=readme",
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-04-25T19:31:17+00:00"
+            "time": "2022-06-29T21:43:55+00:00"
         },
         {
             "name": "nette/schema",
@@ -6363,16 +6368,16 @@
         },
         {
             "name": "spatie/laravel-permission",
-            "version": "5.5.4",
+            "version": "5.5.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-permission.git",
-                "reference": "cb86fd87b43fcfc493c3f2b1de6fad100c078146"
+                "reference": "f2303a70be60919811ca8afc313e8244fda00974"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-permission/zipball/cb86fd87b43fcfc493c3f2b1de6fad100c078146",
-                "reference": "cb86fd87b43fcfc493c3f2b1de6fad100c078146",
+                "url": "https://api.github.com/repos/spatie/laravel-permission/zipball/f2303a70be60919811ca8afc313e8244fda00974",
+                "reference": "f2303a70be60919811ca8afc313e8244fda00974",
                 "shasum": ""
             },
             "require": {
@@ -6433,7 +6438,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-permission/issues",
-                "source": "https://github.com/spatie/laravel-permission/tree/5.5.4"
+                "source": "https://github.com/spatie/laravel-permission/tree/5.5.5"
             },
             "funding": [
                 {
@@ -6441,7 +6446,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-05-16T12:09:59+00:00"
+            "time": "2022-06-29T23:11:42+00:00"
         },
         {
             "name": "spatie/laravel-query-builder",
@@ -10912,16 +10917,16 @@
         },
         {
             "name": "facade/ignition",
-            "version": "2.17.5",
+            "version": "2.17.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/facade/ignition.git",
-                "reference": "1d71996f83c9a5a7807331b8986ac890352b7a0c"
+                "reference": "6acd82e986a2ecee89e2e68adfc30a1936d1ab7c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/facade/ignition/zipball/1d71996f83c9a5a7807331b8986ac890352b7a0c",
-                "reference": "1d71996f83c9a5a7807331b8986ac890352b7a0c",
+                "url": "https://api.github.com/repos/facade/ignition/zipball/6acd82e986a2ecee89e2e68adfc30a1936d1ab7c",
+                "reference": "6acd82e986a2ecee89e2e68adfc30a1936d1ab7c",
                 "shasum": ""
             },
             "require": {
@@ -10986,7 +10991,7 @@
                 "issues": "https://github.com/facade/ignition/issues",
                 "source": "https://github.com/facade/ignition"
             },
-            "time": "2022-02-23T18:31:24+00:00"
+            "time": "2022-06-30T18:26:59+00:00"
         },
         {
             "name": "facade/ignition-contracts",

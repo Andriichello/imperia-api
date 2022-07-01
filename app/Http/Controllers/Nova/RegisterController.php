@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Other;
+namespace App\Http\Controllers\Nova;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
@@ -10,9 +10,9 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\RedirectResponse;
 
 /**
- * Class NovaRegisterController.
+ * Class RegisterController.
  */
-class NovaRegisterController extends Controller
+class RegisterController extends Controller
 {
     use RegistersUsers;
 
@@ -22,7 +22,7 @@ class NovaRegisterController extends Controller
     protected UserRepository $userRepository;
 
     /**
-     * NovaRegisterController constructor.
+     * RegisterController constructor.
      */
     public function __construct(UserRepository $userRepository)
     {
@@ -46,7 +46,7 @@ class NovaRegisterController extends Controller
      */
     public function showRegistrationForm(): View
     {
-        return view('auth.register');
+        return view('auth.register', ['action' => 'register']);
     }
 
     /**

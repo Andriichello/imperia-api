@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\Other\NovaRegisterController;
+use App\Http\Controllers\Nova\LoginController;
+use App\Http\Controllers\Nova\RegisterController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Nova\Http\Middleware\RedirectIfAuthenticated;
 use Laravel\Nova\Nova;
@@ -25,6 +26,9 @@ Route::domain(config('nova.domain', null))
     ->as('nova.')
     ->prefix(Nova::path())
     ->group(function () {
-        Route::get('register', [NovaRegisterController::class, 'showRegistrationForm'])->name('register');
-        Route::post('register', [NovaRegisterController::class, 'register']);
+        Route::get('auth', [LoginController::class, 'showLoginForm'])->name('auth');
+        Route::post('auth', [LoginController::class, 'login']);
+
+        Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+        Route::post('register', [RegisterController::class, 'register']);
     });
