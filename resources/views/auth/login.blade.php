@@ -26,7 +26,13 @@
         ]
     )
 
-    <div class="flex mb-6 justify-end">
+    <div class="flex mb-6 justify-between">
+        <label class="flex items-center select-none">
+            <input type="checkbox" class="checkbox mr-2" style="margin-right: 0.5rem;"
+                   name="remember" value="1">
+            Remember me
+        </label>
+
         <div class="ml-auto">
             <a class="text-gray-500 font-bold no-underline" href="/nova/register">
                 {{ __('Don\'t have an account?') }}
