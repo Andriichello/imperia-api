@@ -76,7 +76,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/RegisterResponse"
+                                    "$ref": "#/components/schemas/LogoutResponse"
                                 }
                             }
                         }
@@ -3650,11 +3650,11 @@
                 ],
                 "properties": {
                     "data": {
-                        "$ref": "#/components/schemas/UserAndTokenResponse"
+                        "$ref": "#/components/schemas/User"
                     },
                     "message": {
                         "type": "string",
-                        "example": "Success"
+                        "example": "Registered"
                     }
                 },
                 "type": "object"

@@ -25,7 +25,7 @@ class LogoutController extends Controller
      *   @OA\Response(
      *     response=200,
      *     description="User has been successfully logged out.",
-     *     @OA\JsonContent(ref ="#/components/schemas/RegisterResponse")
+     *     @OA\JsonContent(ref ="#/components/schemas/LogoutResponse")
      *  ),
      * )
      *
