@@ -94,8 +94,6 @@ class ProductOrderField extends Resource
             'order' => true,
             'product' => true,
             'amount' => true,
-            'discounts' => false,
-            'comments' => false,
             'created_at' => false,
             'updated_at' => false,
         ];

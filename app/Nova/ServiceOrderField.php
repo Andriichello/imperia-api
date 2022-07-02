@@ -100,8 +100,6 @@ class ServiceOrderField extends Resource
             'service' => true,
             'amount' => true,
             'duration' => true,
-            'discounts' => false,
-            'comments' => false,
             'created_at' => false,
             'updated_at' => false,
         ];

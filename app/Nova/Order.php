@@ -122,12 +122,6 @@ class Order extends Resource
             'id' => true,
             'banquet' => true,
             'total' => true,
-            'spaces' => false,
-            'tickets' => false,
-            'products' => false,
-            'services' => false,
-            'discounts' => false,
-            'comments' => false,
             'created_at' => false,
             'updated_at' => false,
         ];

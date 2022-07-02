@@ -91,7 +91,6 @@ class Role extends Resource
             'id' => true,
             'name' => true,
             'guard_name' => false,
-            'users' => false,
             'created_at' => false,
             'updated_at' => false,
         ];

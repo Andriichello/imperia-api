@@ -151,8 +151,6 @@ class Banquet extends Resource
             'total' => true,
             'start_at' => true,
             'end_at' => true,
-            'comments' => false,
-            'logs' => false,
             'paid_at' => false,
             'created_at' => false,
             'updated_at' => false,
