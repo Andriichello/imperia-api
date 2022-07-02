@@ -27,7 +27,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->job(new DispatchNotifications(100));
+        $schedule->job(new DispatchNotifications(100))->everyMinute();
     }
 
     /**

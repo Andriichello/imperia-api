@@ -128,7 +128,6 @@ class Log extends Resource
         return [
             'id' => true,
             'title' => true,
-            'metadata' => false,
             'loggable' => true,
             'created_at' => false,
             'updated_at' => false,
