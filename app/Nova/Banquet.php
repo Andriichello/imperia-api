@@ -3,15 +3,10 @@
 namespace App\Nova;
 
 use App\Enums\BanquetState;
-use App\Models\Scopes\ArchivedScope;
 use App\Nova\Actions\CalculateTotals;
 use App\Nova\Actions\GenerateInvoice;
 use App\Nova\Options\BanquetStateOptions;
-use App\Queries\OrderQueryBuilder;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
-use Jagdeepbanga\NovaDateTime\NovaDateTime;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasOne;
@@ -109,15 +104,11 @@ class Banquet extends Resource
                 ->exceptOnForms()
                 ->readonly(),
 
-            NovaDateTime::make('Start At')
-                ->pickerDefaultHour(9)
-                ->pickerDefaultMinute(0)
+            DateTime::make('Start At')
                 ->sortable()
                 ->rules('required', 'date'),
 
-            NovaDateTime::make('End At')
-                ->pickerDefaultHour(23)
-                ->pickerDefaultMinute(0)
+            DateTime::make('End At')
                 ->sortable()
                 ->rules('required', 'date', 'after:start_at'),
 

@@ -1,10 +1,12 @@
 {
-    "name": "laravel/laravel",
+    "name": "andriichello/imperia-api",
     "type": "project",
-    "description": "The Laravel Framework.",
+    "description": "The banquets managing api.",
     "keywords": [
-        "framework",
-        "laravel"
+        "api",
+        "nova",
+        "laravel",
+        "banquets"
     ],
     "license": "MIT",
     "require": {
@@ -22,7 +24,6 @@
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^6.0",
         "inspheric/nova-indicator-field": "^1.43",
-        "jagdeepbanga/nova-date-time": "^1.0",
         "laravel/framework": "^8.65",
         "laravel/nova": "4.*",
         "laravel/sanctum": "^2.11",
