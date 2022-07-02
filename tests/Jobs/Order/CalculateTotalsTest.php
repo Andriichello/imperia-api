@@ -5,10 +5,6 @@ namespace Tests\Jobs\Order;
 use App\Jobs\Order\CalculateTotals;
 use App\Models\Banquet;
 use App\Models\Orders\Order;
-use App\Models\Orders\SpaceOrderField;
-use App\Models\Space;
-use Carbon\Carbon;
-use Illuminate\Support\Collection;
 use Tests\TestCase;
 
 /**
