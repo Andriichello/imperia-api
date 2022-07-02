@@ -11,6 +11,7 @@ use Exception;
 use Illuminate\Support\Collection;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 /**
@@ -50,9 +51,21 @@ class GenerateInvoice extends Action
             $path = "api/orders/{$model->id}/invoice/pdf";
 
             $signature = (new Signature())
-                ->setExpiration(Carbon::now()->addDay())
                 ->setUserId(request()->user()->id)
                 ->setPath($path);
+
+            $availability = $fields->get('availability', 0);
+            switch ($availability) {
+                case 1:
+                    $signature->setExpiration(Carbon::now()->addDay());
+                    break;
+                case 2:
+                    $signature->setExpiration(Carbon::now()->addWeek());
+                    break;
+                case 3:
+                    $signature->setExpiration(Carbon::now()->addMonth());
+                    break;
+            }
 
             $helper = new SignatureHelper();
             $signature = $helper->encrypt($signature);
@@ -77,6 +90,15 @@ class GenerateInvoice extends Action
      */
     public function fields(NovaRequest $request): array
     {
-        return [];
+        return [
+            Select::make('Availability', 'availability')
+                ->default(0)
+                ->options([
+                    0 => __('Forever'),
+                    1 => __('Day'),
+                    2 => __('Week'),
+                    3 => __('Month'),
+                ]),
+        ];
     }
 }
