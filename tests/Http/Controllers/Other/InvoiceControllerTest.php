@@ -2,6 +2,7 @@
 
 namespace Tests\Http\Controllers\Other;
 
+use App\Helpers\Objects\Signature;
 use App\Helpers\SignatureHelper;
 use App\Models\Banquet;
 use App\Models\Customer;
@@ -12,7 +13,7 @@ use Carbon\Carbon;
 use Tests\RegisteringTestCase;
 
 /**
- * Class BanquetControllerTest.
+ * Class InvoiceControllerTest.
  */
 class InvoiceControllerTest extends RegisteringTestCase
 {
@@ -83,10 +84,14 @@ class InvoiceControllerTest extends RegisteringTestCase
         $id = $this->banquet->id;
         $url = route('api.banquets.invoice', compact('id'));
 
-        /** @var SignatureHelper $signer */
-        $signer = app(SignatureHelper::class);
+        /** @var SignatureHelper $helper */
+        $helper = app(SignatureHelper::class);
 
-        $signature = $signer->make($this->user, Carbon::now()->addHour());
+        $signature = (new Signature())
+            ->setExpiration(Carbon::now()->addHour())
+            ->setUserId($this->user->id);
+
+        $signature = $helper->encrypt($signature);
         $this->get($url . '?' . http_build_query(compact('signature')))
             ->assertOk();
     }

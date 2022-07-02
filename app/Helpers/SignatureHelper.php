@@ -3,69 +3,102 @@
 namespace App\Helpers;
 
 use App\Helpers\Interfaces\SignatureHelperInterface;
+use App\Helpers\Objects\Signature;
 use App\Models\User;
-use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 /**
- * Class BanquetHelper.
+ * Class SignatureHelper.
  */
 class SignatureHelper implements SignatureHelperInterface
 {
     /**
-     * Make a signature for given user.
+     * Encrypt signature.
      *
-     * @param User $user
-     * @param Carbon $expiration
+     * @param Signature $signature
      *
      * @return string
      */
-    public function make(User $user, Carbon $expiration): string
+    public function encrypt(Signature $signature): string
     {
-        $data = [
-            'user_id' => $user->id,
-            'expiration' => $expiration->timestamp,
-        ];
-
-        return encrypt($data);
+        return encrypt($signature->getPayload());
     }
 
     /**
-     * Extract user id from given signature.
+     * Decrypt signature.
      *
      * @param string $signature
      *
-     * @return mixed
+     * @return Signature
      */
-    public function userId(string $signature): mixed
+    public function decrypt(string $signature): Signature
     {
-        return data_get(decrypt($signature), 'user_id');
+        return new Signature((array)decrypt($signature));
     }
 
     /**
-     * Extract expiration timestamp from given signature.
+     * Determine if user exists.
      *
-     * @param string $signature
+     * @param Signature $signature
      *
-     * @return Carbon|null
+     * @return bool
      */
-    public function expiration(string $signature): ?Carbon
+    public function exists(Signature $signature): bool
     {
-        $expiration = data_get(decrypt($signature), 'expiration');
+        if (!$signature->getUserId()) {
+            return false;
+        }
 
-        return $expiration ? Carbon::createFromTimestamp($expiration) : null;
+        return User::query()
+            ->whereKey($signature->getUserId())
+            ->exists();
+    }
+
+    /**
+     * Determine if signature expired.
+     *
+     * @param Signature $signature
+     *
+     * @return bool
+     */
+    public function expired(Signature $signature): bool
+    {
+        if (!$signature->getExpiration()) {
+            return false;
+        }
+
+        return $signature->getExpiration()->isPast();
+    }
+
+    /**
+     * Determine signature enables to perform request.
+     *
+     * @param Signature $signature
+     * @param Request|null $request
+     *
+     * @return bool
+     */
+    public function enables(Signature $signature, ?Request $request): bool
+    {
+        if (!$signature->getPath() || !$request) {
+            return true;
+        }
+
+        return $signature->getPath() === $request->path();
     }
 
     /**
      * Check if given signature is valid.
      *
-     * @param string $signature
+     * @param Signature $signature
+     * @param Request|null $request
      *
      * @return bool
      */
-    public function verify(string $signature): bool
+    public function verify(Signature $signature, ?Request $request = null): bool
     {
-        $expiration = $this->expiration($signature);
-
-        return $expiration && $expiration->isFuture();
+        return !$this->expired($signature)
+            && $this->enables($signature, $request)
+            && $this->exists($signature);
     }
 }

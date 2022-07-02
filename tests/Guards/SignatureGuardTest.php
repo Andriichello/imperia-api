@@ -3,6 +3,7 @@
 namespace Tests\Guards;
 
 use App\Guards\SignatureGuard;
+use App\Helpers\Objects\Signature;
 use App\Helpers\SignatureHelper;
 use App\Models\User;
 use Carbon\Carbon;
@@ -36,14 +37,14 @@ class SignatureGuardTest extends RegisteringTestCase
      */
     public function testWithSignature()
     {
-        /** @var SignatureHelper $signer */
-        $signer = app(SignatureHelper::class);
+        /** @var SignatureHelper $helper */
+        $helper = app(SignatureHelper::class);
 
-        $user = $this->user;
-        $expiration = Carbon::now()->addHour();
+        $signature = (new Signature())
+            ->setExpiration(Carbon::now()->addHour())
+            ->setUserId($this->user->id);
 
-        $signature = $signer->make($user, $expiration);
-        $credentials = compact('signature');
+        $credentials = ['signature' => $helper->encrypt($signature)];
 
         /** @var SignatureGuard $guard */
         $guard = app(SignatureGuard::class);
@@ -56,6 +57,6 @@ class SignatureGuardTest extends RegisteringTestCase
         $resolved = $guard->user();
 
         $this->assertNotEmpty($resolved);
-        $this->assertTrue($user->is($resolved));
+        $this->assertTrue($this->user->is($resolved));
     }
 }

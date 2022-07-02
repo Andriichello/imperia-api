@@ -2,10 +2,8 @@
 
 namespace App\Helpers\Interfaces;
 
-use App\Enums\BanquetState;
-use App\Models\Banquet;
-use App\Models\User;
-use Carbon\Carbon;
+use App\Helpers\Objects\Signature;
+use Illuminate\Http\Request;
 
 /**
  * Interface SignatureHelperInterface.
@@ -13,30 +11,58 @@ use Carbon\Carbon;
 interface SignatureHelperInterface
 {
     /**
-     * Make a signature for given user.
+     * Encrypt signature.
      *
-     * @param User $user
-     * @param Carbon $expiration
+     * @param Signature $signature
      *
      * @return string
      */
-    public function make(User $user, Carbon $expiration): string;
+    public function encrypt(Signature $signature): string;
 
     /**
-     * Extract user id from given signature.
+     * Decrypt signature.
      *
      * @param string $signature
      *
-     * @return mixed
+     * @return Signature
      */
-    public function userId(string $signature): mixed;
+    public function decrypt(string $signature): Signature;
+
+    /**
+     * Determine if user exists.
+     *
+     * @param Signature $signature
+     *
+     * @return bool
+     */
+    public function exists(Signature $signature): bool;
+
+    /**
+     * Determine if signature expired.
+     *
+     * @param Signature $signature
+     *
+     * @return bool
+     */
+    public function expired(Signature $signature): bool;
+
+    /**
+     * Determine signature enables to perform request.
+     *
+     * @param Signature $signature
+     * @param Request|null $request
+     *
+     * @return bool
+     */
+    public function enables(Signature $signature, ?Request $request): bool;
 
     /**
      * Check if given signature is valid.
      *
-     * @param string $signature
+     * @param Signature $signature
+     * @param Request|null $request
      *
      * @return bool
      */
-    public function verify(string $signature): bool;
+    public function verify(Signature $signature, ?Request $request = null): bool;
 }

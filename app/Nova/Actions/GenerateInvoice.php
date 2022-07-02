@@ -2,6 +2,7 @@
 
 namespace App\Nova\Actions;
 
+use App\Helpers\Objects\Signature;
 use App\Helpers\SignatureHelper;
 use App\Models\Banquet;
 use App\Models\Orders\Order;
@@ -46,10 +47,16 @@ class GenerateInvoice extends Action
         }
 
         if (isset($id)) {
-            $signature = (new SignatureHelper())
-                ->make(request()->user(), Carbon::now()->addDay());
+            $path = "api/orders/{$model->id}/invoice/pdf";
 
-            $path = "/api/orders/{$model->id}/invoice/pdf";
+            $signature = (new Signature())
+                ->setExpiration(Carbon::now()->addDay())
+                ->setUserId(request()->user()->id)
+                ->setPath($path);
+
+            $helper = new SignatureHelper();
+            $signature = $helper->encrypt($signature);
+
             $query = http_build_query(compact('signature'));
 
             $url = url("$path?$query");
