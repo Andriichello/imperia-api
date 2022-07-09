@@ -87,7 +87,7 @@ class UserPolicy extends CrudPolicy
      */
     public function delete(User $user, User $model): bool
     {
-        return $user->is($model)
+        return !$user->is($model)
             || ($this->isHigher($user, $model) && $user->isAdmin());
     }
 
