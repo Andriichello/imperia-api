@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Auth;
 
 use App\Http\Requests\BaseRequest;
+use Illuminate\Validation\Rule;
 
 /**
  * Class RegisterRequest.
@@ -35,6 +36,8 @@ class RegisterRequest extends BaseRequest
                 'required',
                 'email',
                 'unique:users',
+                Rule::unique('customers', 'email')
+                    ->whereNotNull('user_id'),
             ],
             'phone' => [
                 'nullable',

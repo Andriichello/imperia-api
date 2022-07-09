@@ -66,8 +66,7 @@ class RegisterController extends Controller
     {
         $user = $this->userRepository->register($request->validated());
 
-        $data = ['user' => new UserResource($user)];
-        return ApiResponse::make(['data' => $data], 201, 'Registered');
+        return ApiResponse::make(['data' => new UserResource($user)], 201, 'Registered');
     }
 
     /**
