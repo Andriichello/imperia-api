@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\App;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class DatabaseSeeder.
