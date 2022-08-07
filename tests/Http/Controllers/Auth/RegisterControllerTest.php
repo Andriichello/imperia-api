@@ -29,6 +29,12 @@ class RegisterControllerTest extends RegisteringTestCase
         );
 
         $response->assertCreated();
+        $response->assertJsonStructure([
+            'data' => [
+                'user',
+            ],
+            'message'
+        ]);
 
         /** @var User $user */
         $user = User::query()->findOrFail($response->json('data.id'));
