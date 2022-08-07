@@ -30,10 +30,8 @@ class RegisterControllerTest extends RegisteringTestCase
 
         $response->assertCreated();
         $response->assertJsonStructure([
-            'data' => [
-                'user',
-            ],
-            'message'
+            'data',
+            'message',
         ]);
 
         /** @var User $user */
