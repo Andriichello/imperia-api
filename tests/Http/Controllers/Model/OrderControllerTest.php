@@ -86,11 +86,16 @@ class OrderControllerTest extends RegisteringTestCase
         $this->product = Product::factory()->create();
         $this->discount = Discount::factory()->create();
 
+        ;
+
         $this->banquet = Banquet::factory()
-            ->withCustomer(Customer::factory()->create())
+            ->withCustomer($customer = Customer::factory()->create())
             ->withCreator($this->user)
             ->withState(BanquetState::Draft)
             ->create();
+
+        $customer->user_id = $this->user;
+        $customer->save();
 
         $this->attributes = [
             'spaces' => [
