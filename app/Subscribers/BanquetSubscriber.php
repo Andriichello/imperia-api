@@ -25,6 +25,10 @@ class BanquetSubscriber extends BaseSubscriber
             return;
         }
 
+        if (!$banquet->customer_id || !$banquet->customer->user_id) {
+            return;
+        }
+
         $notification = new Notification();
 
         $notification->receiver_id = $banquet->customer->user_id;
