@@ -34,26 +34,22 @@ class BanquetSubscriber extends BaseSubscriber
         switch ($banquet->state) {
             case BanquetState::New:
                 $notification->subject = 'Order is being accepted.';
-                $notification->body = "Your order (id: {$banquet->order->id})"
-                    . " for banquet (id: {$banquet->id}) is being accepted.";
+                $notification->body = "Your order for banquet (id: {$banquet->id}) is being accepted.";
                 break;
 
             case BanquetState::Cancelled:
                 $notification->subject = 'Order is being cancelled.';
-                $notification->body = "Your order (id: {$banquet->order->id})"
-                    . " for banquet (id: {$banquet->id}) is being cancelled.";
+                $notification->body = "Your order for banquet (id: {$banquet->id}) is being cancelled.";
                 break;
 
             case BanquetState::Processing:
                 $notification->subject = 'Order is being processed.';
-                $notification->body = "Your order (id: {$banquet->order->id})"
-                    . " for banquet (id: {$banquet->id}) is being processed.";
+                $notification->body = "Your order for banquet (id: {$banquet->id}) is being processed.";
                 break;
 
             case BanquetState::Completed:
                 $notification->subject = 'Order is being completed.';
-                $notification->body = "Your order (id: {$banquet->order->id})"
-                    . " for banquet (id: {$banquet->id}) is being completed.";
+                $notification->body = "Your order for banquet (id: {$banquet->id}) is being completed.";
                 break;
 
             default:
