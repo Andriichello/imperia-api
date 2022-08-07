@@ -10,6 +10,7 @@ use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Traits\CommentableTrait;
 use App\Models\Traits\DiscountableTrait;
 use App\Models\Traits\SoftDeletableTrait;
+use App\Models\User;
 use App\Queries\OrderQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\Orders\OrderFactory;
@@ -231,10 +232,23 @@ class Order extends BaseModel implements
      *
      * @return bool
      */
-    public function canBeEdited(): bool
+    public function isEditable(): bool
     {
-        return $this->banquet->canBeEdited();
+        return $this->banquet->isEditable();
     }
+
+    /**
+     * Determine if order can be edited by the given user.
+     *
+     * @param User|null $user
+     *
+     * @return bool
+     */
+    public function canBeEditedBy(?User $user): bool
+    {
+        return $this->banquet->canBeEditedBy($user);
+    }
+
 
     /**
      * @param DatabaseBuilder $query
