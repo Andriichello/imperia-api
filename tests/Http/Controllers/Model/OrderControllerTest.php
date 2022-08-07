@@ -94,7 +94,7 @@ class OrderControllerTest extends RegisteringTestCase
             ->withState(BanquetState::Draft)
             ->create();
 
-        $customer->user_id = $this->user;
+        $customer->user_id = $this->user->id;
         $customer->save();
 
         $this->attributes = [
