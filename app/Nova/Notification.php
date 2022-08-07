@@ -103,7 +103,6 @@ class Notification extends Resource
             'id' => true,
             'subject' => true,
             'body' => true,
-            'payload' => false,
             'channel' => true,
             'sender' => false,
             'receiver' => false,

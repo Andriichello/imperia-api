@@ -2,8 +2,8 @@
 
 namespace App\Nova;
 
+use Andriichello\Media\MediaField;
 use App\Nova\Options\MorphOptions;
-use Ebess\AdvancedNovaMediaLibrary\Fields\Images;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
@@ -54,8 +54,7 @@ class Category extends Resource
         return [
             ID::make()->sortable(),
 
-//            Images::make('Images', 'images')
-//                ->enableExistingMedia(),
+            MediaField::make('Media'),
 
             Text::make('Slug')
                 ->rules('required', 'min:1', 'max:50')
@@ -114,7 +113,7 @@ class Category extends Resource
     {
         return [
             'id' => true,
-//            'images' => true,
+            'media' => true,
             'slug' => true,
             'target' => true,
             'title' => true,

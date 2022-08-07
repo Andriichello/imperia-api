@@ -217,12 +217,7 @@ class UserControllerTest extends RegisteringTestCase
             route('api.users.destroy', ['id' => $this->user->id]),
         );
 
-        $response->assertOk();
-        $response->assertJsonStructure([
-            'message',
-        ]);
-
-        $this->assertSoftDeleted($this->user);
+        $response->assertForbidden();
     }
 
     /**

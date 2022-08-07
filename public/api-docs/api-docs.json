@@ -6570,6 +6570,8 @@
                     "receiver_id",
                     "channel",
                     "subject",
+                    "body",
+                    "payload",
                     "send_at",
                     "sent_at",
                     "seen_at"

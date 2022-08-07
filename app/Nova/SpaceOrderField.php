@@ -89,8 +89,6 @@ class SpaceOrderField extends Resource
             'id' => true,
             'order' => true,
             'space' => true,
-            'discounts' => false,
-            'comments' => false,
             'created_at' => false,
             'updated_at' => false,
         ];

@@ -40,22 +40,23 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
         Nova::mainMenu(function (Request $request, Menu $menu) use ($tools) {
             $sections = [
                 Marketplace::section($request),
-                MenuSection::make('Offers', [
+                MenuSection::make(__('Offers'), [
                     MenuItem::resource(\App\Nova\Banquet::class),
                     MenuItem::resource(\App\Nova\Order::class),
                 ])->icon('briefcase')->collapsable(),
-                MenuSection::make('People', [
+                MenuSection::make(__('People'), [
+                    MenuItem::resource(\App\Nova\User::class),
                     MenuItem::resource(\App\Nova\Customer::class),
                     MenuItem::resource(\App\Nova\FamilyMember::class),
                 ])->icon('user')->collapsable(),
-                MenuSection::make('Items', [
+                MenuSection::make(__('Items'), [
                     MenuItem::resource(\App\Nova\Menu::class),
                     MenuItem::resource(\App\Nova\Product::class),
                     MenuItem::resource(\App\Nova\Ticket::class),
                     MenuItem::resource(\App\Nova\Space::class),
                     MenuItem::resource(\App\Nova\Service::class),
                 ])->icon('collection')->collapsable(),
-                MenuSection::make('Attachments', [
+                MenuSection::make(__('Attachments'), [
                     MenuItem::resource(\App\Nova\Category::class),
                     MenuItem::resource(\App\Nova\Discount::class),
                     MenuItem::resource(\App\Nova\Comment::class),

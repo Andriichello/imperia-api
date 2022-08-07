@@ -116,7 +116,6 @@ class Menu extends Resource
             'title' => true,
             'description' => false,
             'archived' => true,
-            'categories' => false,
             'created_at' => false,
             'updated_at' => false,
         ];

@@ -94,8 +94,6 @@ class TicketOrderField extends Resource
             'order' => true,
             'ticket' => true,
             'amount' => true,
-            'discounts' => false,
-            'comments' => false,
             'created_at' => false,
             'updated_at' => false,
         ];
