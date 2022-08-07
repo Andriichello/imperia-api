@@ -30,6 +30,12 @@ class BanquetSubscriber extends BaseSubscriber
         $notification->receiver_id = $banquet->customer->user_id;
         $notification->channel = NotificationChannel::Default;
         $notification->send_at = now();
+        $notification->payload = [
+            'type' => 'banquet.state.change',
+            'banquet_id' => $banquet->id,
+            'new_state' => $banquet->state,
+            'old_state' => $banquet->getOriginal('state'),
+        ];
 
         switch ($banquet->state) {
             case BanquetState::New:
