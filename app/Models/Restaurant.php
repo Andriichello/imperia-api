@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Traits\SoftDeletableTrait;
 use App\Queries\RestaurantQueryBuilder;
+use Carbon\Carbon;
 use Database\Factories\RestaurantFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -17,6 +19,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $city
  * @property string $place
  * @property string|null $metadata
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
  *
  * @method static RestaurantQueryBuilder query()
  * @method static RestaurantFactory factory(...$parameters)
@@ -24,6 +29,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Restaurant extends BaseModel
 {
     use HasFactory;
+    use SoftDeletableTrait;
 
     /**
      * The model's attributes.
