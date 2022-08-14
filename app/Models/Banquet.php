@@ -33,6 +33,7 @@ use Illuminate\Support\Collection;
  * @property int|null $order_id
  * @property int $creator_id
  * @property int $customer_id
+ * @property int|null $restaurant_id
  * @property string|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -44,6 +45,7 @@ use Illuminate\Support\Collection;
  * @property User|null $creator
  * @property Customer|null $customer
  * @property Comment[]|Collection $comments
+ * @property Restaurant|null $restaurant
  *
  * @method static BanquetQueryBuilder query()
  * @method static BanquetFactory factory(...$parameters)
@@ -82,6 +84,7 @@ class Banquet extends BaseModel implements
         'state',
         'creator_id',
         'customer_id',
+        'restaurant_id',
     ];
 
     /**
@@ -106,6 +109,7 @@ class Banquet extends BaseModel implements
         'creator',
         'customer',
         'comments',
+        'restaurant',
     ];
 
     /**
@@ -154,6 +158,16 @@ class Banquet extends BaseModel implements
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class, 'customer_id', 'id');
+    }
+
+    /**
+     * Get the restaurant associated with the model.
+     *
+     * @return BelongsTo
+     */
+    public function restaurant(): BelongsTo
+    {
+        return $this->belongsTo(Restaurant::class, 'restaurant_id', 'id');
     }
 
     /**

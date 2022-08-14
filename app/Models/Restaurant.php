@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Queries\RestaurantQueryBuilder;
 use Database\Factories\RestaurantFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Restaurant.
@@ -45,4 +46,14 @@ class Restaurant extends BaseModel
         'city',
         'place',
     ];
+
+    /**
+     * Banquets associated with the model.
+     *
+     * @return HasMany
+     */
+    public function banquets(): HasMany
+    {
+        return $this->hasMany(Banquet::class, 'restaurant_id', 'id');
+    }
 }
