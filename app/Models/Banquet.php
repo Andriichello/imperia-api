@@ -267,7 +267,7 @@ class Banquet extends BaseModel implements
 
         if ($user->isCustomer()) {
             return $this->isCustomer($user)
-                && $this->isInState(BanquetState::Draft);
+                && $this->isInState(BanquetState::Draft, BanquetState::New);
         }
 
         return false;
