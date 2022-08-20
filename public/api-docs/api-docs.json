@@ -3043,7 +3043,7 @@
                         "schema": {
                             "type": "integer"
                         },
-                        "example": "monday"
+                        "example": 1
                     }
                 ],
                 "responses": {

@@ -53,7 +53,7 @@ class ScheduleController extends CrudController
      *
      *  @OA\Parameter(name="filter[weekday]", in="query", example="monday", @OA\Schema(type="string",
      *     enum={"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"})),
-     *  @OA\Parameter(name="filter[restaurant_id]", in="query", example="monday", @OA\Schema(type="integer")),
+     *  @OA\Parameter(name="filter[restaurant_id]", in="query", example=1, @OA\Schema(type="integer")),
      *
      *   @OA\Response(
      *     response=200,
