@@ -7,8 +7,11 @@ use App\Http\Requests\Schedule\IndexScheduleRequest;
 use App\Http\Requests\Schedule\ShowScheduleRequest;
 use App\Http\Resources\Schedule\ScheduleCollection;
 use App\Http\Resources\Schedule\ScheduleResource;
+use App\Http\Responses\ApiResponse;
+use App\Models\Schedule;
 use App\Policies\SchedulePolicy;
 use App\Repositories\ScheduleRepository;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Class ScheduleController.
@@ -41,6 +44,47 @@ class ScheduleController extends CrudController
 
         $this->actions['index'] = IndexScheduleRequest::class;
         $this->actions['show'] = ShowScheduleRequest::class;
+    }
+
+    /**
+     * Index schedules for all week or a specific weekday.
+     *
+     * @param IndexScheduleRequest $request
+     *
+     * @return ApiResponse
+     */
+    public function index(IndexScheduleRequest $request): ApiResponse
+    {
+        $builder = $this->spatieBuilder($request);
+
+        if ($request->missing('filter.restaurant_id')) {
+            $builder->whereNull('restaurant_id');
+
+            return ApiResponse::make(['data' => new ScheduleCollection($builder->get())]);
+        }
+
+        $results = $builder->get()
+            ->mapWithKeys(function (Schedule $schedule) {
+                return [$schedule->weekday => $schedule];
+            });
+
+        $weekday = data_get($request->get('filter'), 'weekday');
+        if ($weekday && $results->has($weekday)) {
+            return ApiResponse::make(['data' => new ScheduleCollection($results->values())]);
+        }
+
+        $defaults = Schedule::query()
+            ->when($weekday, fn(Builder $query) => $query->where('weekday', $weekday))
+            ->get()
+            ->mapWithKeys(function (Schedule $schedule) {
+                return [$schedule->weekday => $schedule];
+            });
+
+        foreach ($results as $schedule) {
+            $defaults->put($schedule->weekday, $schedule);
+        }
+
+        return ApiResponse::make(['data' => new ScheduleCollection($defaults->values())]);
     }
 
     /**
@@ -84,7 +128,6 @@ class ScheduleController extends CrudController
      *     @OA\JsonContent(ref ="#/components/schemas/UnauthenticatedResponse")
      *   )
      * ),
-     *
      * @OA\Schema(
      *   schema="IndexScheduleResponse",
      *   description="Index schedules response object.",
