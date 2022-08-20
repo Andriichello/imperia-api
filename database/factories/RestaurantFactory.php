@@ -20,7 +20,7 @@ class RestaurantFactory extends Factory
      *
      * @var string|null
      */
-    protected $model = Notification::class;
+    protected $model = Restaurant::class;
 
     /**
      * Define the model's default state.

@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\MediableInterface;
+use App\Models\Interfaces\SoftDeletableInterface;
+use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use App\Queries\RestaurantQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\RestaurantFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\Builder as DatabaseBuilder;
 
 /**
  * Class Restaurant.
@@ -26,9 +30,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static RestaurantQueryBuilder query()
  * @method static RestaurantFactory factory(...$parameters)
  */
-class Restaurant extends BaseModel
+class Restaurant extends BaseModel implements
+    MediableInterface,
+    SoftDeletableInterface
 {
     use HasFactory;
+    use MediableTrait;
     use SoftDeletableTrait;
 
     /**
@@ -61,5 +68,15 @@ class Restaurant extends BaseModel
     public function banquets(): HasMany
     {
         return $this->hasMany(Banquet::class, 'restaurant_id', 'id');
+    }
+
+    /**
+     * @param DatabaseBuilder $query
+     *
+     * @return RestaurantQueryBuilder
+     */
+    public function newEloquentBuilder($query): RestaurantQueryBuilder
+    {
+        return new RestaurantQueryBuilder($query);
     }
 }

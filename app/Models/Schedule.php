@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Queries\RestaurantQueryBuilder;
 use App\Queries\ScheduleQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\ScheduleFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Query\Builder as DatabaseBuilder;
 
 /**
  * Class Schedule.
@@ -48,5 +50,15 @@ class Schedule extends BaseModel
     public function restaurant(): BelongsTo
     {
         return $this->belongsTo(Restaurant::class, 'restaurant_id', 'id');
+    }
+
+    /**
+     * @param DatabaseBuilder $query
+     *
+     * @return ScheduleQueryBuilder
+     */
+    public function newEloquentBuilder($query): ScheduleQueryBuilder
+    {
+        return new ScheduleQueryBuilder($query);
     }
 }
