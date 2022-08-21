@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use Andriichello\Marketplace\Marketplace;
-use Andriichello\Media\Media;
 use App\Nova\Dashboards\Main;
 use App\Nova\Tools\BackupTool;
 use App\Nova\Tools\MediaTool;
@@ -11,13 +10,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\Cards\Help;
 use Laravel\Nova\Menu\Menu;
-use Laravel\Nova\Menu\MenuGroup;
 use Laravel\Nova\Menu\MenuItem;
 use Laravel\Nova\Menu\MenuSection;
-use Laravel\Nova\Menu\MenuSeparator;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class NovaServiceProvider.

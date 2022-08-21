@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Banquet;
 
+use App\Enums\BanquetState;
 use App\Helpers\BanquetHelper;
 use App\Http\Requests\Crud\UpdateRequest;
 use App\Models\Banquet;
@@ -72,12 +73,16 @@ class UpdateBanquetRequest extends UpdateRequest
     {
         /** @var Banquet $banquet */
         $banquet = Banquet::query()->findOrFail($this->id());
+        // non-staff can only change banquet state between draft and new
+        $states = [BanquetState::Draft, BanquetState::New];
 
-        $helper = new BanquetHelper();
-        $states = array_merge(
-            $helper->availableTransferStates($banquet),
-            [$banquet->state],
-        );
+        if ($this->isByStaff()) {
+            $helper = new BanquetHelper();
+            $states = array_merge(
+                $helper->availableTransferStates($banquet),
+                [$banquet->state],
+            );
+        }
 
         $validator->sometimes(
             'state',
