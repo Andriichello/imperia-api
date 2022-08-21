@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\Service;
 use App\Models\Space;
 use App\Models\Ticket;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\Concerns\MakesHttpRequests;
 use Illuminate\Support\Collection;
@@ -77,6 +78,16 @@ class BanquetControllerTest extends RegisteringTestCase
         $this->customers = Customer::factory()
             ->count(3)
             ->create();
+
+        foreach ($this->customers as $customer) {
+            $user = User::factory()
+                ->fromCustomer($customer)
+                ->create();
+
+            /** @var Customer $customer */
+            $customer->user_id = $user->id;
+            $customer->save();
+        }
     }
 
     /**

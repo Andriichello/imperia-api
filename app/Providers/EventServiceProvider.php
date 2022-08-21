@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Subscribers\BanquetSubscriber;
 use App\Subscribers\OrderSubscriber;
 use App\Subscribers\UserSubscriber;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -26,6 +27,7 @@ class EventServiceProvider extends ServiceProvider
     protected $subscribe = [
         UserSubscriber::class,
         OrderSubscriber::class,
+        BanquetSubscriber::class,
     ];
 
     /**

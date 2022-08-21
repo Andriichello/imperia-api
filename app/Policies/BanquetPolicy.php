@@ -45,9 +45,9 @@ class BanquetPolicy extends CrudPolicy
      */
     public function view(User $user, Banquet $banquet): bool
     {
-        return $user->id === $banquet->creator_id
-            || $user->customer_id === $banquet->customer_id
-            || $user->isStaff();
+        return $user->isStaff()
+            || $banquet->isCreator($user)
+            || $banquet->isCustomer($user);
     }
 
     /**
@@ -73,13 +73,7 @@ class BanquetPolicy extends CrudPolicy
      */
     public function update(User $user, Banquet $banquet): bool
     {
-        if (!$banquet->canBeEdited()) {
-            return false;
-        }
-
-        return $user->id === $banquet->creator_id
-            || $user->customer_id === $banquet->customer_id
-            || $user->isStaff();
+        return $banquet->canBeEditedBy($user);
     }
 
     /**
@@ -92,13 +86,7 @@ class BanquetPolicy extends CrudPolicy
      */
     public function delete(User $user, Banquet $banquet): bool
     {
-        if (!$banquet->canBeEdited()) {
-            return false;
-        }
-
-        return $user->id === $banquet->creator_id
-            || $user->customer_id === $banquet->customer_id
-            || $user->isStaff();
+        return $banquet->canBeEditedBy($user);
     }
 
     /**
@@ -112,9 +100,7 @@ class BanquetPolicy extends CrudPolicy
      */
     public function restore(User $user, Banquet $banquet): bool
     {
-        return $user->id === $banquet->creator_id
-            || $user->customer_id === $banquet->customer_id
-            || $user->isStaff();
+        return $banquet->canBeEditedBy($user);
     }
 
     /**
@@ -128,10 +114,6 @@ class BanquetPolicy extends CrudPolicy
      */
     public function forceDelete(User $user, Banquet $banquet): bool
     {
-        if (!$banquet->canBeEdited()) {
-            return false;
-        }
-
-        return $user->isStaff();
+        return $banquet->canBeEditedBy($user) && $user->isStaff();
     }
 }

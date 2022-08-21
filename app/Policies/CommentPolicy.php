@@ -34,7 +34,6 @@ class CommentPolicy extends CrudPolicy
      */
     public function update(User $user, Comment $comment): bool
     {
-
         return $this->hasEditRights($user, $comment);
     }
 
@@ -62,10 +61,10 @@ class CommentPolicy extends CrudPolicy
     public function hasEditRights(User $user, Comment $comment): bool
     {
         $target = $comment->commentable;
-        if ($target instanceof Order && !$target->canBeEdited()) {
+        if ($target instanceof Order && !$target->canBeEditedBy($user)) {
             return false;
         }
-        if ($target instanceof Banquet && !$target->canBeEdited()) {
+        if ($target instanceof Banquet && !$target->canBeEditedBy($user)) {
             return false;
         }
 

@@ -217,13 +217,74 @@ class Banquet extends BaseModel implements
     }
 
     /**
+     * Determine if banquet is in one of given states.
+     *
+     * @param string ...$states
+     *
+     * @return bool
+     */
+    public function isInState(string ...$states): bool
+    {
+        return in_array($this->state, $states);
+    }
+
+    /**
      * Determine if banquet can be edited.
      *
      * @return bool
      */
-    public function canBeEdited(): bool
+    public function isEditable(): bool
     {
         return $this->state !== BanquetState::Completed;
+    }
+
+    /**
+     * Determine if user is a creator of the banquet.
+     *
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function isCreator(User $user): bool
+    {
+        return $user->id === $this->creator_id;
+    }
+
+    /**
+     * Determine if user is a customer for the banquet.
+     *
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function isCustomer(User $user): bool
+    {
+        return $user->customer_id === $this->customer_id;
+    }
+
+    /**
+     * Determine if banquet can be edited by the given user.
+     *
+     * @param User|null $user
+     *
+     * @return bool
+     */
+    public function canBeEditedBy(?User $user): bool
+    {
+        if ($user === null || !$this->isEditable()) {
+            return false;
+        }
+
+        if ($user->isStaff()) {
+            return true;
+        }
+
+        if ($user->isCustomer()) {
+            return $this->isCustomer($user)
+                && $this->isInState(BanquetState::Draft, BanquetState::New);
+        }
+
+        return false;
     }
 
     /**

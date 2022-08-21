@@ -6036,6 +6036,7 @@
                     "state",
                     "available_states",
                     "is_editable",
+                    "can_edit",
                     "title",
                     "description",
                     "start_at",
@@ -6084,6 +6085,11 @@
                     },
                     "is_editable": {
                         "description": "Determines if banquet can be edited.",
+                        "type": "boolean",
+                        "example": "true"
+                    },
+                    "can_edit": {
+                        "description": "Determines if logged in user can edit this banquet.",
                         "type": "boolean",
                         "example": "true"
                     },
