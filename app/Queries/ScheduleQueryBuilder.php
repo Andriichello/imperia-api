@@ -2,10 +2,6 @@
 
 namespace App\Queries;
 
-use App\Enums\NotificationChannel;
-use App\Models\Restaurant;
-use App\Models\User;
-
 /**
  * Class ScheduleQueryBuilder.
  */
@@ -35,6 +31,18 @@ class ScheduleQueryBuilder extends BaseQueryBuilder
     public function withRestaurant(mixed ...$restaurants): static
     {
         $this->whereIn('restaurant_id', $this->extract('id', $restaurants));
+
+        return $this;
+    }
+
+    /**
+     * Only schedules that are default ones.
+     *
+     * @return static
+     */
+    public function onlyDefaults(): static
+    {
+        $this->whereNull('restaurant_id');
 
         return $this;
     }

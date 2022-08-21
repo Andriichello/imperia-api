@@ -7193,6 +7193,19 @@
                     "place": {
                         "type": "string",
                         "example": "Koryatovycha Square, 1а"
+                    },
+                    "media": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Media"
+                        }
+                    },
+                    "schedules": {
+                        "description": "Restaurant's operative schedules.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Schedule"
+                        }
                     }
                 },
                 "type": "object"
@@ -7214,7 +7227,7 @@
                     },
                     "type": {
                         "type": "string",
-                        "example": "customers"
+                        "example": "schedules"
                     },
                     "weekday": {
                         "type": "string",

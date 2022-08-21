@@ -39,7 +39,7 @@ class ScheduleResource extends JsonResource
      *   description="Schedule resource object",
      *   required = {"id", "type", "weekday", "beg_hour", "end_hour", "restaurant_id"},
      *   @OA\Property(property="id", type="integer", example=1),
-     *   @OA\Property(property="type", type="string", example="customers"),
+     *   @OA\Property(property="type", type="string", example="schedules"),
      *   @OA\Property(property="weekday", type="string", example="monday",
      *     enum={"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"}),
      *   @OA\Property(property="beg_hour", type="integer", example=9,

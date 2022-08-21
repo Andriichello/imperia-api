@@ -8,8 +8,10 @@ use App\Http\Requests\Schedule\ShowScheduleRequest;
 use App\Http\Resources\Schedule\ScheduleCollection;
 use App\Http\Resources\Schedule\ScheduleResource;
 use App\Http\Responses\ApiResponse;
+use App\Models\Restaurant;
 use App\Models\Schedule;
 use App\Policies\SchedulePolicy;
+use App\Queries\ScheduleQueryBuilder;
 use App\Repositories\ScheduleRepository;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -55,36 +57,28 @@ class ScheduleController extends CrudController
      */
     public function index(IndexScheduleRequest $request): ApiResponse
     {
-        $builder = $this->spatieBuilder($request);
-
-        if ($request->missing('filter.restaurant_id')) {
-            $builder->whereNull('restaurant_id');
-
-            return ApiResponse::make(['data' => new ScheduleCollection($builder->get())]);
-        }
-
-        $results = $builder->get()
-            ->mapWithKeys(function (Schedule $schedule) {
-                return [$schedule->weekday => $schedule];
-            });
+        /** @var ScheduleQueryBuilder $builder */
+        $builder = $this->builder($request);
 
         $weekday = data_get($request->get('filter'), 'weekday');
-        if ($weekday && $results->has($weekday)) {
-            return ApiResponse::make(['data' => new ScheduleCollection($results->values())]);
+        $restaurantId = data_get($request->get('filter'), 'restaurant_id');
+
+        if (!$restaurantId) {
+            $schedules = $builder->onlyDefaults()
+                ->when($weekday, fn(Builder $query) => $query->where('weekday', $weekday))
+                ->get();
+
+            return ApiResponse::make(['data' => new ScheduleCollection($schedules)]);
         }
 
-        $defaults = Schedule::query()
-            ->when($weekday, fn(Builder $query) => $query->where('weekday', $weekday))
-            ->get()
-            ->mapWithKeys(function (Schedule $schedule) {
-                return [$schedule->weekday => $schedule];
-            });
+        /** @var Restaurant $restaurant */
+        $restaurant = Restaurant::query()
+            ->findOrFail($restaurantId);
 
-        foreach ($results as $schedule) {
-            $defaults->put($schedule->weekday, $schedule);
-        }
+        $schedules = $weekday ? $restaurant->operativeSchedules($weekday)
+            : $restaurant->operativeSchedules();
 
-        return ApiResponse::make(['data' => new ScheduleCollection($defaults->values())]);
+        return ApiResponse::make(['data' => new ScheduleCollection($schedules)]);
     }
 
     /**
