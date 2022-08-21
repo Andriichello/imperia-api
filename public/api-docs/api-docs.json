@@ -4902,9 +4902,6 @@
                             "$ref": "#/components/schemas/Schedule"
                         }
                     },
-                    "meta": {
-                        "$ref": "#/components/schemas/PaginationMeta"
-                    },
                     "message": {
                         "type": "string",
                         "example": "Success"

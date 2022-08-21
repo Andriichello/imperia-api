@@ -133,7 +133,6 @@ class ScheduleController extends CrudController
      *   description="Index schedules response object.",
      *   required = {"data", "meta", "message"},
      *   @OA\Property(property="data", type="array", @OA\Items(ref ="#/components/schemas/Schedule")),
-     *   @OA\Property(property="meta", ref ="#/components/schemas/PaginationMeta"),
      *   @OA\Property(property="message", type="string", example="Success"),
      * ),
      * @OA\Schema(
