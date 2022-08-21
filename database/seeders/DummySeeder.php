@@ -52,7 +52,13 @@ class DummySeeder extends Seeder
      */
     public function seedRestaurants(): void
     {
-        Restaurant::factory()
+        /** @var Media $restaurantMedia */
+        $restaurantMedia = Media::query()
+            ->folder('/media/defaults/')
+            ->name('restaurant.svg')
+            ->first();
+
+        $restaurant = Restaurant::factory()
             ->withSlug('first')
             ->create([
                 'name' => 'First',
@@ -60,8 +66,9 @@ class DummySeeder extends Seeder
                 'city' => 'Mynai',
                 'place' => 'Vul. Kozatsʹka, 2'
             ]);
+        $restaurant->attachMedia($restaurantMedia);
 
-        Restaurant::factory()
+        $restaurant = Restaurant::factory()
             ->withSlug('second')
             ->create([
                 'name' => 'Second',
@@ -69,8 +76,9 @@ class DummySeeder extends Seeder
                 'city' => 'Uzhhorod',
                 'place' => 'Sobranetsʹka St, 179А'
             ]);
+        $restaurant->attachMedia($restaurantMedia);
 
-        Restaurant::factory()
+        $restaurant = Restaurant::factory()
             ->withSlug('third')
             ->create([
                 'name' => 'Third',
@@ -78,6 +86,7 @@ class DummySeeder extends Seeder
                 'city' => 'Uzhhorod',
                 'place' => 'Koryatovycha Square, 1а'
             ]);
+        $restaurant->attachMedia($restaurantMedia);
     }
 
     /**
