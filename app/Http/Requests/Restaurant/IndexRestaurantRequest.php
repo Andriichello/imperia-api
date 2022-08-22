@@ -1,34 +1,22 @@
 <?php
 
-namespace App\Http\Requests\Banquet;
+namespace App\Http\Requests\Restaurant;
 
 use App\Http\Requests\Crud\IndexRequest;
 use Spatie\QueryBuilder\AllowedFilter;
 
 /**
- * Class IndexBanquetRequest.
+ * Class IndexRestaurantRequest.
  */
-class IndexBanquetRequest extends IndexRequest
+class IndexRestaurantRequest extends IndexRequest
 {
     public function getAllowedFilters(): array
     {
         return array_merge(
             parent::getAllowedFilters(),
             [
-                AllowedFilter::exact('restaurant_id'),
-            ]
-        );
-    }
-
-    public function getAllowedIncludes(): array
-    {
-        return array_merge(
-            parent::getAllowedIncludes(),
-            [
-                'creator',
-                'customer',
-                'comments',
-                'discounts',
+                AllowedFilter::exact('slug'),
+                AllowedFilter::partial('name'),
             ]
         );
     }

@@ -8,12 +8,14 @@ use App\Http\Controllers\Model\CategoryController;
 use App\Http\Controllers\Model\CommentController;
 use App\Http\Controllers\Model\CustomerController;
 use App\Http\Controllers\Model\FamilyMemberController;
-use App\Http\Controllers\Model\ModelMediaController;
 use App\Http\Controllers\Model\MediaController;
 use App\Http\Controllers\Model\MenuController;
+use App\Http\Controllers\Model\ModelMediaController;
 use App\Http\Controllers\Model\NotificationController;
 use App\Http\Controllers\Model\OrderController;
 use App\Http\Controllers\Model\ProductController;
+use App\Http\Controllers\Model\RestaurantController;
+use App\Http\Controllers\Model\ScheduleController;
 use App\Http\Controllers\Model\ServiceController;
 use App\Http\Controllers\Model\SpaceController;
 use App\Http\Controllers\Model\TicketController;
@@ -44,6 +46,14 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
     Route::apiResource('users', UserController::class)
         ->only('index', 'show', 'store', 'update', 'destroy')
         ->parameters(['users' => 'id']);
+
+    Route::apiResource('restaurants', RestaurantController::class)
+        ->only('index', 'show')
+        ->parameters(['restaurants' => 'id']);
+
+    Route::apiResource('schedules', ScheduleController::class)
+        ->only('index', 'show')
+        ->parameters(['schedules' => 'id']);
 
     Route::get('/notifications/poll', [NotificationController::class, 'poll'])->name('notifications.poll');
     Route::apiResource('notifications', NotificationController::class)

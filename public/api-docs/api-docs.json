@@ -143,6 +143,14 @@
                         }
                     },
                     {
+                        "name": "filter[restaurant_id]",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    },
+                    {
                         "name": "page[size]",
                         "in": "query",
                         "schema": {
@@ -2922,6 +2930,195 @@
                 ]
             }
         },
+        "/api/restaurants": {
+            "get": {
+                "tags": [
+                    "restaurants"
+                ],
+                "summary": "Index restaurants.",
+                "operationId": "indexRestaurants",
+                "parameters": [
+                    {
+                        "name": "filter[slug]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "first"
+                    },
+                    {
+                        "name": "filter[name]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "First"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Index restaurants response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IndexRestaurantResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/restaurants/{id}": {
+            "get": {
+                "tags": [
+                    "restaurants"
+                ],
+                "summary": "Show restaurant by id.",
+                "operationId": "showRestaurant",
+                "responses": {
+                    "200": {
+                        "description": "Show restaurant response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ShowRestaurantResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/schedules": {
+            "get": {
+                "tags": [
+                    "schedules"
+                ],
+                "summary": "Index schedules.",
+                "operationId": "indexSchedules",
+                "parameters": [
+                    {
+                        "name": "filter[weekday]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "monday",
+                                "tuesday",
+                                "wednesday",
+                                "thursday",
+                                "friday",
+                                "saturday",
+                                "sunday"
+                            ]
+                        },
+                        "example": "monday"
+                    },
+                    {
+                        "name": "filter[restaurant_id]",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Index schedules response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IndexScheduleResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/schedules/{id}": {
+            "get": {
+                "tags": [
+                    "schedules"
+                ],
+                "summary": "Show schedule by id.",
+                "operationId": "showSchedule",
+                "responses": {
+                    "200": {
+                        "description": "Show schedule response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ShowScheduleResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/services": {
             "get": {
                 "tags": [
@@ -4658,6 +4855,85 @@
                 "type": "string",
                 "example": "categories"
             },
+            "IndexRestaurantResponse": {
+                "description": "Index restaurant response object.",
+                "required": [
+                    "data",
+                    "meta",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Restaurant"
+                        }
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/PaginationMeta"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "ShowRestaurantResponse": {
+                "description": "Show restaurant response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Restaurant"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "IndexScheduleResponse": {
+                "description": "Index schedules response object.",
+                "required": [
+                    "data",
+                    "meta",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Schedule"
+                        }
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "ShowScheduleResponse": {
+                "description": "Show customer response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Schedule"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
             "IndexServiceResponse": {
                 "description": "Index services response object.",
                 "required": [
@@ -4998,6 +5274,11 @@
                         "type": "integer",
                         "example": 1
                     },
+                    "restaurant_id": {
+                        "nullable": "true",
+                        "type": "integer",
+                        "example": 1
+                    },
                     "advance_amount": {
                         "type": "float",
                         "example": 535.25
@@ -5057,6 +5338,11 @@
                         "example": 1
                     },
                     "customer_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "restaurant_id": {
+                        "nullable": "true",
                         "type": "integer",
                         "example": 1
                     },
@@ -5778,7 +6064,8 @@
                     "totals",
                     "order_id",
                     "creator_id",
-                    "customer_id"
+                    "customer_id",
+                    "restaurant_id"
                 ],
                 "properties": {
                     "id": {
@@ -5863,6 +6150,11 @@
                         "example": 1
                     },
                     "customer_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "restaurant_id": {
+                        "nullable": "true",
                         "type": "integer",
                         "example": 1
                     },
@@ -6888,6 +7180,114 @@
                     },
                     "links": {
                         "$ref": "#/components/schemas/Links"
+                    }
+                },
+                "type": "object"
+            },
+            "Restaurant": {
+                "description": "Restaurant resource object",
+                "required": [
+                    "id",
+                    "type",
+                    "slug",
+                    "name",
+                    "country",
+                    "city",
+                    "place",
+                    "media",
+                    "schedules"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "customers"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "first"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "First"
+                    },
+                    "country": {
+                        "type": "string",
+                        "example": "Ukraine"
+                    },
+                    "city": {
+                        "type": "string",
+                        "example": "Uzhhorod"
+                    },
+                    "place": {
+                        "type": "string",
+                        "example": "Koryatovycha Square, 1а"
+                    },
+                    "media": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Media"
+                        }
+                    },
+                    "schedules": {
+                        "description": "Restaurant's operative schedules.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Schedule"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "Schedule": {
+                "description": "Schedule resource object",
+                "required": [
+                    "id",
+                    "type",
+                    "weekday",
+                    "beg_hour",
+                    "end_hour",
+                    "restaurant_id"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "schedules"
+                    },
+                    "weekday": {
+                        "type": "string",
+                        "enum": [
+                            "monday",
+                            "tuesday",
+                            "wednesday",
+                            "thursday",
+                            "friday",
+                            "saturday",
+                            "sunday"
+                        ],
+                        "example": "monday"
+                    },
+                    "beg_hour": {
+                        "description": "Start hour of the day [0 ; 23].",
+                        "type": "integer",
+                        "example": 9
+                    },
+                    "end_hour": {
+                        "description": "Start hour of the day [0 ; 23]. If less then beg_hour it,\n     *   then it meens that it's a cross day schedule",
+                        "type": "integer",
+                        "example": 23
+                    },
+                    "restaurant_id": {
+                        "nullable": "true",
+                        "type": "integer",
+                        "example": null
                     }
                 },
                 "type": "object"

@@ -2,8 +2,6 @@
 
 namespace App\Http\Resources\Field;
 
-use App\Http\Resources\Comment\CommentCollection;
-use App\Http\Resources\Discount\DiscountCollection;
 use App\Models\Orders\SpaceOrderField;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;

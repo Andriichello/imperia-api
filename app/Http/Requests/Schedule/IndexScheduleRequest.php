@@ -1,34 +1,22 @@
 <?php
 
-namespace App\Http\Requests\Banquet;
+namespace App\Http\Requests\Schedule;
 
 use App\Http\Requests\Crud\IndexRequest;
 use Spatie\QueryBuilder\AllowedFilter;
 
 /**
- * Class IndexBanquetRequest.
+ * Class IndexScheduleRequest.
  */
-class IndexBanquetRequest extends IndexRequest
+class IndexScheduleRequest extends IndexRequest
 {
     public function getAllowedFilters(): array
     {
         return array_merge(
             parent::getAllowedFilters(),
             [
+                AllowedFilter::exact('weekday'),
                 AllowedFilter::exact('restaurant_id'),
-            ]
-        );
-    }
-
-    public function getAllowedIncludes(): array
-    {
-        return array_merge(
-            parent::getAllowedIncludes(),
-            [
-                'creator',
-                'customer',
-                'comments',
-                'discounts',
             ]
         );
     }

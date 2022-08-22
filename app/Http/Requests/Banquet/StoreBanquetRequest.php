@@ -64,6 +64,12 @@ class StoreBanquetRequest extends StoreRequest
                     'integer',
                     'exists:customers,id',
                 ],
+                'restaurant_id' => [
+                    'sometimes',
+                    'nullable',
+                    'integer',
+                    'exists:restaurants,id',
+                ],
                 'advance_amount' => [
                     'sometimes',
                     'numeric',
@@ -94,6 +100,7 @@ class StoreBanquetRequest extends StoreRequest
      *   @OA\Property(property="creator_id", type="integer", example=1,
      *     description="Id of the user, who created banquet."),
      *   @OA\Property(property="customer_id", type="integer", example=1),
+     *   @OA\Property(property="restaurant_id", type="integer", nullable="true", example=1),
      *   @OA\Property(property="advance_amount", type="float", example=535.25),
      *   @OA\Property(property="start_at", type="string", format="date-time", example="2022-01-12 10:00:00",
      *     description="Date and time of when banquet should start."),

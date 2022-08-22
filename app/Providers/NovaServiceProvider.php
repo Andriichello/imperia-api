@@ -59,6 +59,10 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(\App\Nova\Log::class),
                     MenuItem::resource(\App\Nova\Notification::class),
                 ])->icon('paper-clip')->collapsable(),
+                MenuSection::make(__('Restaurants'), [
+                    MenuItem::resource(\App\Nova\Restaurant::class),
+                    MenuItem::resource(\App\Nova\Schedule::class),
+                ])->icon('library')->collapsable(),
             ];
 
             if ($request->user() && $request->user()->isAdmin()) {

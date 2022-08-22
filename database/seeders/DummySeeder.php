@@ -4,12 +4,15 @@ namespace Database\Seeders;
 
 use App\Enums\FamilyRelation;
 use App\Enums\UserRole;
+use App\Enums\Weekday;
 use App\Models\Customer;
 use App\Models\FamilyMember;
 use App\Models\Menu;
 use App\Models\Morphs\Category;
 use App\Models\Morphs\Media;
 use App\Models\Product;
+use App\Models\Restaurant;
+use App\Models\Schedule;
 use App\Models\Service;
 use App\Models\Space;
 use App\Models\Ticket;
@@ -20,6 +23,8 @@ use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 
 /**
  * Class DummySeeder.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class DummySeeder extends Seeder
 {
@@ -27,16 +32,117 @@ class DummySeeder extends Seeder
      * Seed the database for testing.
      *
      * @return void
-     * @throws FileDoesNotExist|FileIsTooBig
      */
     public function run(): void
     {
+        $this->seedRestaurants();
+        $this->seedSchedules();
         $this->seedUsers();
         $this->seedCustomers();
         $this->seedTickets();
         $this->seedProducts();
         $this->seedServices();
         $this->seedSpaces();
+    }
+
+    /**
+     * Seed restaurants.
+     *
+     * @return void
+     */
+    public function seedRestaurants(): void
+    {
+        /** @var Media $restaurantMedia */
+        $restaurantMedia = Media::query()
+            ->folder('/media/defaults/')
+            ->name('restaurant.svg')
+            ->first();
+
+        $restaurant = Restaurant::factory()
+            ->withSlug('first')
+            ->create([
+                'name' => 'First',
+                'country' => 'Ukraine',
+                'city' => 'Mynai',
+                'place' => 'Vul. Kozatsʹka, 2'
+            ]);
+        $restaurant->attachMedia($restaurantMedia);
+
+        $restaurant = Restaurant::factory()
+            ->withSlug('second')
+            ->create([
+                'name' => 'Second',
+                'country' => 'Ukraine',
+                'city' => 'Uzhhorod',
+                'place' => 'Sobranetsʹka St, 179А'
+            ]);
+        $restaurant->attachMedia($restaurantMedia);
+
+        $restaurant = Restaurant::factory()
+            ->withSlug('third')
+            ->create([
+                'name' => 'Third',
+                'country' => 'Ukraine',
+                'city' => 'Uzhhorod',
+                'place' => 'Koryatovycha Square, 1а'
+            ]);
+        $restaurant->attachMedia($restaurantMedia);
+    }
+
+    /**
+     * Seed schedules.
+     *
+     * @return void
+     */
+    public function seedSchedules(): void
+    {
+        Schedule::factory()
+            ->withWeekday(Weekday::Monday)
+            ->create(['beg_hour' => 9, 'end_hour' => 22]);
+
+        Schedule::factory()
+            ->withWeekday(Weekday::Tuesday)
+            ->create(['beg_hour' => 9, 'end_hour' => 22]);
+
+        Schedule::factory()
+            ->withWeekday(Weekday::Wednesday)
+            ->create(['beg_hour' => 9, 'end_hour' => 22]);
+
+        Schedule::factory()
+            ->withWeekday(Weekday::Thursday)
+            ->create(['beg_hour' => 9, 'end_hour' => 22]);
+
+        Schedule::factory()
+            ->withWeekday(Weekday::Friday)
+            ->create(['beg_hour' => 9, 'end_hour' => 23]);
+
+        Schedule::factory()
+            ->withWeekday(Weekday::Saturday)
+            ->create(['beg_hour' => 11, 'end_hour' => 21]);
+
+        Schedule::factory()
+            ->withWeekday(Weekday::Sunday)
+            ->create(['beg_hour' => 11, 'end_hour' => 21]);
+
+        /** @var Restaurant $first */
+        $first = Restaurant::query()
+            ->withSlug('first')
+            ->first();
+
+        Schedule::factory()
+            ->withWeekday(Weekday::Friday)
+            ->withRestaurant($first)
+            ->create(['beg_hour' => 14, 'end_hour' => 3]);
+
+        /** @var Restaurant $second */
+        $second = Restaurant::query()
+            ->withSlug('second')
+            ->first();
+
+        Schedule::factory()
+            ->withWeekday(Weekday::Friday)
+            ->withRestaurant($second)
+            ->create(['beg_hour' => 9, 'end_hour' => 0]);
     }
 
     /**
