@@ -5,6 +5,7 @@ namespace App\Nova;
 use Andriichello\Media\MediaField;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\DateTime;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Text;
 
@@ -68,6 +69,8 @@ class Restaurant extends Resource
             Text::make('Place')
                 ->rules('required', 'min:1', 'max:255'),
 
+            HasMany::make('Banquets'),
+
             DateTime::make('Created At')
                 ->sortable()
                 ->exceptOnForms(),
@@ -96,6 +99,7 @@ class Restaurant extends Resource
             'country' => false,
             'city' => false,
             'place' => false,
+            'banquets' => false,
             'created_at' => false,
             'updated_at' => false,
         ];

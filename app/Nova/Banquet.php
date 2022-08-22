@@ -79,6 +79,9 @@ class Banquet extends Resource
                 ->default(BanquetState::Draft)
                 ->options(BanquetStateOptions::available($request, $this->resource)),
 
+            BelongsTo::make('Restaurant', 'restaurant', Restaurant::class)
+                ->nullable(),
+
             BelongsTo::make('Creator', 'creator', User::class)
                 ->withMeta(['belongsToId' => data_get($this->creator ?? $request->user(), 'id')]),
 
@@ -143,6 +146,7 @@ class Banquet extends Resource
         return [
             'id' => true,
             'state' => true,
+            'restaurant' => false,
             'creator' => false,
             'customer' => true,
             'title' => true,
