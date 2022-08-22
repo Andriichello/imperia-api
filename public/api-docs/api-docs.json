@@ -143,6 +143,14 @@
                         }
                     },
                     {
+                        "name": "filter[restaurant_id]",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    },
+                    {
                         "name": "page[size]",
                         "in": "query",
                         "schema": {
@@ -5266,6 +5274,11 @@
                         "type": "integer",
                         "example": 1
                     },
+                    "restaurant_id": {
+                        "nullable": "true",
+                        "type": "integer",
+                        "example": 1
+                    },
                     "advance_amount": {
                         "type": "float",
                         "example": 535.25
@@ -5325,6 +5338,11 @@
                         "example": 1
                     },
                     "customer_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "restaurant_id": {
+                        "nullable": "true",
                         "type": "integer",
                         "example": 1
                     },
@@ -6046,7 +6064,8 @@
                     "totals",
                     "order_id",
                     "creator_id",
-                    "customer_id"
+                    "customer_id",
+                    "restaurant_id"
                 ],
                 "properties": {
                     "id": {
@@ -6131,6 +6150,11 @@
                         "example": 1
                     },
                     "customer_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "restaurant_id": {
+                        "nullable": "true",
                         "type": "integer",
                         "example": 1
                     },
@@ -7169,7 +7193,9 @@
                     "name",
                     "country",
                     "city",
-                    "place"
+                    "place",
+                    "media",
+                    "schedules"
                 ],
                 "properties": {
                     "id": {

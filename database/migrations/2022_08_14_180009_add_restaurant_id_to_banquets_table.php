@@ -14,7 +14,7 @@ class AddRestaurantIdToBanquetsTable extends Migration
     public function up()
     {
         Schema::table('banquets', function (Blueprint $table) {
-            $table->unsignedBigInteger('restaurant_id')->nullable();
+            $table->unsignedBigInteger('restaurant_id')->nullable()->after('id');
 
             $table->foreign('restaurant_id')->references('id')->on('restaurants')->onDelete('cascade');
         });
