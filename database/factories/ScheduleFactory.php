@@ -32,7 +32,9 @@ class ScheduleFactory extends Factory
     {
         return [
             'beg_hour' => rand(0, 11),
+            'beg_minute' => 0,
             'end_hour' => rand(12, 23),
+            'end_minute' => 0,
             'weekday' => $this->faker->randomElement(Weekday::getValues()),
             'restaurant_id' => null,
         ];
