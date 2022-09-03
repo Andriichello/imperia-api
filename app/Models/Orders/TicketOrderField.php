@@ -58,6 +58,7 @@ class TicketOrderField extends BaseModel implements
      * @var string[]
      */
     protected $appends = [
+        'type',
         'total',
     ];
 

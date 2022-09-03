@@ -99,6 +99,7 @@ class Order extends BaseModel implements
      * @var string[]
      */
     protected $appends = [
+        'type',
         'totals',
     ];
 

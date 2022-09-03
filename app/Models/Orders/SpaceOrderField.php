@@ -64,6 +64,7 @@ class SpaceOrderField extends BaseModel implements
      * @var string[]
      */
     protected $appends = [
+        'type',
         'total',
         'duration',
     ];
