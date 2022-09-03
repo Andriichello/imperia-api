@@ -43,7 +43,7 @@ class HolidayResource extends JsonResource
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="customers"),
      *   @OA\Property(property="name", type="string", example="First"),
-     *   @OA\Property(property="description", type="string", nullable="true" example="First"),
+     *   @OA\Property(property="description", type="string", nullable="true", example="First"),
      *   @OA\Property(property="day", type="integer", example="Ukraine"),
      *   @OA\Property(property="month", type="integer", nullable="true", example="Uzhhorod"),
      *   @OA\Property(property="year", type="integer", nullable="true", example="Koryatovycha Square, 1а"),

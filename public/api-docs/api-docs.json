@@ -6725,6 +6725,58 @@
                 },
                 "type": "object"
             },
+            "Holiday": {
+                "description": "Holiday resource object",
+                "required": [
+                    "id",
+                    "type",
+                    "name",
+                    "description",
+                    "day",
+                    "month",
+                    "year",
+                    "restaurant_id"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "customers"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "First"
+                    },
+                    "description": {
+                        "nullable": "true",
+                        "type": "string",
+                        "example": "First"
+                    },
+                    "day": {
+                        "type": "integer",
+                        "example": "Ukraine"
+                    },
+                    "month": {
+                        "nullable": "true",
+                        "type": "integer",
+                        "example": "Uzhhorod"
+                    },
+                    "year": {
+                        "nullable": "true",
+                        "type": "integer",
+                        "example": "Koryatovycha Square, 1а"
+                    },
+                    "restaurant_id": {
+                        "nullable": "true",
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
             "Media": {
                 "description": "Media resource object",
                 "required": [
