@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
-use App\Enums\Weekday;
 use App\Models\Interfaces\MediableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
+use App\Queries\HolidayQueryBuilder;
 use App\Queries\RestaurantQueryBuilder;
+use App\Queries\ScheduleQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\RestaurantFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -98,9 +99,9 @@ class Restaurant extends BaseModel implements
      * Schedules that are default for all restaurants,
      * if there is no specific ones specified.
      *
-     * @return Builder
+     * @return ScheduleQueryBuilder
      */
-    public function defaultSchedules(): Builder
+    public function defaultSchedules(): ScheduleQueryBuilder
     {
         return Schedule::query()
             ->onlyDefaults();
@@ -130,6 +131,41 @@ class Restaurant extends BaseModel implements
 
             return $specific ?? $default;
         });
+    }
+
+    /**
+     * Holidays associated with the model.
+     *
+     * @return HasMany
+     */
+    public function holidays(): HasMany
+    {
+        return $this->hasMany(Holiday::class, 'restaurant_id', 'id');
+    }
+
+    /**
+     * Holidays that are default for all restaurants,
+     * if there is no specific ones specified.
+     *
+     * @return HolidayQueryBuilder
+     */
+    public function defaultHolidays(): HolidayQueryBuilder
+    {
+        return Holiday::query()
+            ->onlyDefaults();
+    }
+
+    /**
+     * Holidays are relevant for the restaurant (for one year).
+     *
+     * @return HolidayQueryBuilder
+     */
+    public function relevantHolidays(): HolidayQueryBuilder
+    {
+        return Holiday::query()
+            ->withRestaurant($this->id, null)
+            ->relevantFrom(now())
+            ->relevantUntil(now()->addYear());
     }
 
     /**
