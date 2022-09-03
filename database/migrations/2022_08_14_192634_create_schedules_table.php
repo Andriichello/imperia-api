@@ -18,7 +18,9 @@ class CreateSchedulesTable extends Migration
             $table->id();
             $table->enum('weekday', Weekday::getValues());
             $table->unsignedTinyInteger('beg_hour');
+            $table->unsignedTinyInteger('beg_minute')->default(0);
             $table->unsignedTinyInteger('end_hour');
+            $table->unsignedTinyInteger('end_minute')->default(0);
             $table->unsignedBigInteger('restaurant_id')->nullable();
             $table->timestamps();
 
