@@ -11,7 +11,6 @@ use App\Queries\RestaurantQueryBuilder;
 use App\Queries\ScheduleQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\RestaurantFactory;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
@@ -34,6 +33,10 @@ use Illuminate\Support\Collection;
  * @property Schedule[]|Collection $schedules
  * @property Schedule[]|Collection $defaultSchedules
  * @property Schedule[]|Collection $operativeSchedules
+ * @property Schedule[]|Collection $holidays
+ * @property Schedule[]|Collection $defaultHolidays
+ * @property Schedule[]|Collection $relevantHolidays
+ * @property Schedule[]|Collection $closestHolidays
  *
  * @method static RestaurantQueryBuilder query()
  * @method static RestaurantFactory factory(...$parameters)
@@ -182,11 +185,36 @@ class Restaurant extends BaseModel implements
     public function defaultHolidays(): HolidayQueryBuilder
     {
         return Holiday::query()
-            ->onlyDefaults();
+            ->onlyDefaults()
+            ->relevantFrom(now())
+            ->relevantUntil(now()->addYear());
     }
 
     /**
-     * Holidays are relevant for the restaurant (for one year).
+     * Load default holidays and set it into $defaultHolidays.
+     *
+     * @return Collection
+     */
+    public function loadDefaultHolidays(): Collection
+    {
+        /** @var Collection $holidays */
+        $holidays = $this->defaultHolidays()->get();
+
+        return $this->defaultHolidays = $holidays;
+    }
+
+    /**
+     * Accessor for holidays that are default for all restaurants (for one year).
+     *
+     * @return Collection
+     */
+    public function getDefaultHolidaysAttribute(): Collection
+    {
+        return $this->defaultHolidays ?? $this->loadDefaultHolidays();
+    }
+
+    /**
+     * Holidays that are relevant for the restaurant (for one year).
      *
      * @return HolidayQueryBuilder
      */
@@ -196,6 +224,72 @@ class Restaurant extends BaseModel implements
             ->withRestaurant($this->id, null)
             ->relevantFrom(now())
             ->relevantUntil(now()->addYear());
+    }
+
+    /**
+     * Load holidays that are relevant for the restaurant
+     * and set it into $relevantHolidays.
+     *
+     * @return Collection
+     */
+    public function loadRelevantHolidays(): Collection
+    {
+        /** @var Collection $holidays */
+        $holidays = $this->relevantHolidays()->get();
+
+        return $this->relevantHolidays = $holidays->sortBy('closest_date');
+    }
+
+    /**
+     * Accessor for holidays that are relevant for the restaurants (for one year).
+     *
+     * @return Collection
+     */
+    public function getRelevantHolidaysAttribute(): Collection
+    {
+        return $this->relevantHolidays ?? $this->loadRelevantHolidays();
+    }
+
+    /**
+     * Holidays that are relevant for the restaurant (for one year).
+     *
+     * @return HolidayQueryBuilder
+     */
+    public function closestHolidays(): HolidayQueryBuilder
+    {
+        $sub = Holiday::query();
+        // query holidays for next 7 days
+        for ($i = 0; $i < 7; $i++) {
+            $sub->orWhereWrapped(fn(HolidayQueryBuilder $query) => $query->relevantOn(now()->addDays($i)));
+        }
+
+        return Holiday::query()
+            ->withRestaurant($this->id, null)
+            ->addWrappedWhereQuery($sub);
+    }
+
+    /**
+     * Load holidays that are closest for the next week
+     * and set it into $closestHolidays.
+     *
+     * @return Collection
+     */
+    public function loadClosestHolidays(): Collection
+    {
+        /** @var Collection $holidays */
+        $holidays = $this->closestHolidays()->get();
+
+        return $this->closestHolidays = $holidays->sortBy('closest_date');
+    }
+
+    /**
+     * Accessor for holidays that are the closest ones (for one week).
+     *
+     * @return Collection
+     */
+    public function getClosestHolidaysAttribute(): Collection
+    {
+        return $this->closestHolidays ?? $this->loadClosestHolidays();
     }
 
     /**

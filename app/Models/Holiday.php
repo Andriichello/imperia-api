@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\HolidayHelper;
 use App\Queries\HolidayQueryBuilder;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
@@ -22,6 +23,7 @@ use Illuminate\Database\Query\Builder as DatabaseBuilder;
  * @property int|null $year
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property Carbon|null $closest_date
  *
  * @property Restaurant|null $restaurant
  *
@@ -44,6 +46,16 @@ class Holiday extends BaseModel
         'month',
         'year',
         'restaurant_id',
+    ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var string[]
+     */
+    protected $appends = [
+        'type',
+        'closest_date',
     ];
 
     /**
@@ -140,6 +152,16 @@ class Holiday extends BaseModel
         $third = !$this->year || $this->year < $date->year;
 
         return $first || $second || $third;
+    }
+
+    /**
+     * Accessor for the closest date of the holiday.
+     *
+     * @return CarbonInterface|null
+     */
+    public function getClosestDateAttribute(): ?CarbonInterface
+    {
+        return (new HolidayHelper())->closest($this);
     }
 
     /**
