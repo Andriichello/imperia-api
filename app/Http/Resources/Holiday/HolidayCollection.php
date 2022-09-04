@@ -10,4 +10,12 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 class HolidayCollection extends ResourceCollection
 {
     public $collects = HolidayResource::class;
+
+    public function __construct($resource)
+    {
+        $collection = collect($resource)
+            ->sortBy('closest_date');
+
+        parent::__construct($collection->values());
+    }
 }

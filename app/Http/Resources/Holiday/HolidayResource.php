@@ -32,6 +32,7 @@ class HolidayResource extends JsonResource
             'month' => $this->month,
             'year' => $this->year,
             'restaurant_id' => $this->restaurant_id,
+            'closest_date' => $this->closest_date,
         ];
     }
 
@@ -48,6 +49,8 @@ class HolidayResource extends JsonResource
      *   @OA\Property(property="month", type="integer", nullable="true", example="Uzhhorod"),
      *   @OA\Property(property="year", type="integer", nullable="true", example="Koryatovycha Square, 1а"),
      *   @OA\Property(property="restaurant_id", type="integer", nullable="true", example=1),
+     *   @OA\Property(property="closest_date", type="string", format="date-time",
+     *     nullable="true", example="2022-01-12 10:00:00",),
      * )
      */
 }

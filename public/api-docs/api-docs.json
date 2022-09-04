@@ -6773,6 +6773,12 @@
                         "nullable": "true",
                         "type": "integer",
                         "example": 1
+                    },
+                    "closest_date": {
+                        "nullable": "true",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2022-01-12 10:00:00"
                     }
                 },
                 "type": "object"
@@ -7289,6 +7295,13 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Schedule"
+                        }
+                    },
+                    "holidays": {
+                        "description": "Restaurant's closest holidays (for 7 days).",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Holiday"
                         }
                     }
                 },

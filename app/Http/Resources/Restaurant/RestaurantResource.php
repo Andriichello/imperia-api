@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Restaurant;
 
+use App\Http\Resources\Holiday\HolidayCollection;
 use App\Http\Resources\Media\MediaCollection;
 use App\Http\Resources\Schedule\ScheduleCollection;
 use App\Models\Restaurant;
@@ -35,6 +36,7 @@ class RestaurantResource extends JsonResource
             'place' => $this->place,
             'media' => new MediaCollection($this->media),
             'schedules' => new ScheduleCollection($this->operativeSchedules),
+            'holidays' => new HolidayCollection($this->closestHolidays),
         ];
     }
 
@@ -53,6 +55,8 @@ class RestaurantResource extends JsonResource
      *   @OA\Property(property="media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
      *   @OA\Property(property="schedules", type="array", @OA\Items(ref ="#/components/schemas/Schedule"),
      *     description="Restaurant's operative schedules."),
+     *   @OA\Property(property="holidays", type="array", @OA\Items(ref ="#/components/schemas/Holiday"),
+     *     description="Restaurant's closest holidays (for 7 days)."),
      * )
      */
 }
