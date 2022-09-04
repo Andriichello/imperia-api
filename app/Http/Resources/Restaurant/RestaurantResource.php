@@ -34,7 +34,7 @@ class RestaurantResource extends JsonResource
             'city' => $this->city,
             'place' => $this->place,
             'media' => new MediaCollection($this->media),
-            'schedules' => new ScheduleCollection($this->operativeSchedules()),
+            'schedules' => new ScheduleCollection($this->operativeSchedules),
         ];
     }
 

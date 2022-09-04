@@ -28,8 +28,13 @@ class ScheduleResource extends JsonResource
             'type' => $this->type,
             'weekday' => $this->weekday,
             'beg_hour' => $this->beg_hour,
+            'beg_minute' => $this->beg_minute,
             'end_hour' => $this->end_hour,
+            'end_minute' => $this->end_minute,
             'restaurant_id' => $this->restaurant_id,
+            'begs_in' => $this->begs_in,
+            'ends_in' => $this->ends_in,
+            'is_cross_date' => $this->is_cross_date,
         ];
     }
 
@@ -37,7 +42,8 @@ class ScheduleResource extends JsonResource
      * @OA\Schema(
      *   schema="Schedule",
      *   description="Schedule resource object",
-     *   required = {"id", "type", "weekday", "beg_hour", "end_hour", "restaurant_id"},
+     *   required = {"id", "type", "weekday", "beg_hour", "end_hour", "beg_minute",
+     *     "end_minute", "restaurant_id", "begs_in", "ends_in", "is_cross_date"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="schedules"),
      *   @OA\Property(property="weekday", type="string", example="monday",
@@ -45,9 +51,19 @@ class ScheduleResource extends JsonResource
      *   @OA\Property(property="beg_hour", type="integer", example=9,
      *     description="Start hour of the day [0 ; 23]."),
      *   @OA\Property(property="end_hour", type="integer", example=23,
-     *     description="Start hour of the day [0 ; 23]. If less then beg_hour it,
+     *     description="End hour of the day [0 ; 23]. If less then beg_hour it,
      *   then it meens that it's a cross day schedule"),
+     *   @OA\Property(property="beg_minute", type="integer", example=0,
+     *     description="Start minute of the day [0 ; 59]."),
+     *   @OA\Property(property="end_minute", type="integer", example=30,
+     *     description="End minute of the day [0 ; 59]."),
      *   @OA\Property(property="restaurant_id", type="integer", nullable="true", example=null),
+     *   @OA\Property(property="begs_in", type="integer", nullable="true", example=30,
+     *     description="Number of minutes untill the restaurant starts operating.
+     If null then restaurant is already operating on this schedule."),
+     *   @OA\Property(property="ends_in", type="integer", nullable="true", example=780,
+     *     description="Number of minutes untill the restaurant ends operating."),
+     *   @OA\Property(property="is_cross_date", type="boolean", example=false),
      * )
      */
 }

@@ -62,11 +62,10 @@ class ScheduleController extends CrudController
 
         $weekday = data_get($request->get('filter'), 'weekday');
         $restaurantId = data_get($request->get('filter'), 'restaurant_id');
-
         if (!$restaurantId) {
             $schedules = $builder->onlyDefaults()
                 ->when($weekday, fn(Builder $query) => $query->where('weekday', $weekday))
-                ->get();
+                ->get()->sortBy('begs_in');
 
             return ApiResponse::make(['data' => new ScheduleCollection($schedules)]);
         }
@@ -75,8 +74,10 @@ class ScheduleController extends CrudController
         $restaurant = Restaurant::query()
             ->findOrFail($restaurantId);
 
-        $schedules = $weekday ? $restaurant->operativeSchedules($weekday)
-            : $restaurant->operativeSchedules();
+        $schedules = $restaurant->operativeSchedules;
+        if ($weekday) {
+            $schedules = $schedules->filter(fn(Schedule $schedule) => $schedule->weekday === $weekday);
+        }
 
         return ApiResponse::make(['data' => new ScheduleCollection($schedules)]);
     }

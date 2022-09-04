@@ -32,6 +32,8 @@ use Illuminate\Support\Collection;
  * @property Carbon|null $deleted_at
  *
  * @property Schedule[]|Collection $schedules
+ * @property Schedule[]|Collection $defaultSchedules
+ * @property Schedule[]|Collection $operativeSchedules
  *
  * @method static RestaurantQueryBuilder query()
  * @method static RestaurantFactory factory(...$parameters)
@@ -108,29 +110,57 @@ class Restaurant extends BaseModel implements
     }
 
     /**
-     * Schedules that restaurant operates on.
-     *
-     * @param string ...$weekdays
+     * Load default schedules and set it into $defaultSchedules.
      *
      * @return Collection
      */
-    public function operativeSchedules(string ...$weekdays): Collection
+    public function loadDefaultSchedules(): Collection
     {
-        $defaults = $this->defaultSchedules()
-            ->when(count($weekdays), fn(Builder $query) => $query->whereIn('weekday', $weekdays))
-            ->get();
+        /** @var Collection $schedules */
+        $schedules = $this->defaultSchedules()
+            ->get()->sortBy('begs_in');
 
-        $specifics = $this->schedules()
-            ->when(count($weekdays), fn(Builder $query) => $query->whereIn('weekday', $weekdays))
-            ->get();
+        return $this->defaultSchedules = $schedules;
+    }
 
-        return $defaults->map(function (Schedule $default) use ($specifics) {
-            $specific = $specifics->first(
-                fn(Schedule $schedule) => $schedule->weekday === $default->weekday
-            );
+    /**
+     * Accessor for schedules that are default for all restaurants,
+     * if there is no specific ones specified.
+     *
+     * @return Collection
+     */
+    public function getDefaultSchedulesAttribute(): Collection
+    {
+        return $this->defaultSchedules ?? $this->loadDefaultSchedules();
+    }
 
-            return $specific ?? $default;
-        });
+    /**
+     * Load operative schedules and set it into $operativeSchedules.
+     *
+     * @return Collection
+     */
+    public function loadOperativeSchedules(): Collection
+    {
+        $schedules = $this->defaultSchedules
+            ->map(function (Schedule $default) {
+                $specific = $this->schedules->first(
+                    fn(Schedule $schedule) => $schedule->weekday === $default->weekday
+                );
+
+                return $specific ?? $default;
+            });
+
+        return $this->operativeSchedules = $schedules->sortBy('begs_in');
+    }
+
+    /**
+     * Accessor for schedules that restaurant operates on.
+     *
+     * @return Collection
+     */
+    public function getOperativeSchedulesAttribute(): Collection
+    {
+        return $this->operativeSchedules ?? $this->loadOperativeSchedules();
     }
 
     /**

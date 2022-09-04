@@ -118,7 +118,7 @@ class RestaurantTest extends TestCase
     public function testSchedules()
     {
         $schedules = $this->restaurant
-            ->operativeSchedules();
+            ->operativeSchedules;
 
         $this->assertCount(7, $schedules);
 

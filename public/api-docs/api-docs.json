@@ -7302,7 +7302,12 @@
                     "weekday",
                     "beg_hour",
                     "end_hour",
-                    "restaurant_id"
+                    "beg_minute",
+                    "end_minute",
+                    "restaurant_id",
+                    "begs_in",
+                    "ends_in",
+                    "is_cross_date"
                 ],
                 "properties": {
                     "id": {
@@ -7332,14 +7337,40 @@
                         "example": 9
                     },
                     "end_hour": {
-                        "description": "Start hour of the day [0 ; 23]. If less then beg_hour it,\n     *   then it meens that it's a cross day schedule",
+                        "description": "End hour of the day [0 ; 23]. If less then beg_hour it,\n     *   then it meens that it's a cross day schedule",
                         "type": "integer",
                         "example": 23
+                    },
+                    "beg_minute": {
+                        "description": "Start minute of the day [0 ; 59].",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "end_minute": {
+                        "description": "End minute of the day [0 ; 59].",
+                        "type": "integer",
+                        "example": 30
                     },
                     "restaurant_id": {
                         "nullable": "true",
                         "type": "integer",
                         "example": null
+                    },
+                    "begs_in": {
+                        "nullable": "true",
+                        "description": "Number of minutes untill the restaurant starts operating.\n     If null then restaurant is already operating on this schedule.",
+                        "type": "integer",
+                        "example": 30
+                    },
+                    "ends_in": {
+                        "nullable": "true",
+                        "description": "Number of minutes untill the restaurant ends operating.",
+                        "type": "integer",
+                        "example": 780
+                    },
+                    "is_cross_date": {
+                        "type": "boolean",
+                        "example": false
                     }
                 },
                 "type": "object"
