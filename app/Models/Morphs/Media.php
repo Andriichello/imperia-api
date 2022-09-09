@@ -54,6 +54,7 @@ class Media extends BaseModel
      * @var string[]
      */
     protected $appends = [
+        'type',
         'url',
     ];
 

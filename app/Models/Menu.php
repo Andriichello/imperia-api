@@ -80,6 +80,7 @@ class Menu extends BaseModel implements
      * @var string[]
      */
     protected $appends = [
+        'type',
         'categories',
     ];
 

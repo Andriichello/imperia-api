@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Http\Resources\Schedule;
+namespace App\Http\Resources\Holiday;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 /**
- * Class ScheduleCollection.
+ * Class HolidayCollection.
  */
-class ScheduleCollection extends ResourceCollection
+class HolidayCollection extends ResourceCollection
 {
-    public $collects = ScheduleResource::class;
+    public $collects = HolidayResource::class;
 
     public function __construct($resource)
     {
         $collection = collect($resource)
-            ->sortBy('begs_in');
+            ->sortBy('closest_date');
 
         parent::__construct($collection->values());
     }

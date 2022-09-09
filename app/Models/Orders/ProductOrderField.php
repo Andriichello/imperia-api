@@ -58,6 +58,7 @@ class ProductOrderField extends BaseModel implements
      * @var string[]
      */
     protected $appends = [
+        'type',
         'total',
     ];
 

@@ -1,11 +1,10 @@
 <?php
 
-use App\Enums\Weekday;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSchedulesTable extends Migration
+class CreateHolidaysTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,18 +13,19 @@ class CreateSchedulesTable extends Migration
      */
     public function up()
     {
-        Schema::create('schedules', function (Blueprint $table) {
+        Schema::create('holidays', function (Blueprint $table) {
             $table->id();
-            $table->enum('weekday', Weekday::getValues());
-            $table->unsignedTinyInteger('beg_hour');
-            $table->unsignedTinyInteger('beg_minute')->default(0);
-            $table->unsignedTinyInteger('end_hour');
-            $table->unsignedTinyInteger('end_minute')->default(0);
             $table->unsignedBigInteger('restaurant_id')->nullable();
+            $table->string('name');
+            $table->string('description')->nullable();
+            $table->unsignedTinyInteger('day');
+            $table->unsignedTinyInteger('month')->nullable();
+            $table->unsignedSmallInteger('year')->nullable();
             $table->timestamps();
 
-            $table->unique(['weekday', 'restaurant_id']);
+            $table->unique(['day', 'month', 'year', 'restaurant_id']);
             $table->foreign('restaurant_id')->references('id')->on('restaurants')->onDelete('cascade');
+
         });
     }
 
@@ -36,6 +36,6 @@ class CreateSchedulesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('schedules');
+        Schema::dropIfExists('holidays');
     }
 }

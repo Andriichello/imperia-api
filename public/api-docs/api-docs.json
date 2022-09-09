@@ -2991,6 +2991,18 @@
                 ],
                 "summary": "Show restaurant by id.",
                 "operationId": "showRestaurant",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the restaurant.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Show restaurant response object.",
@@ -3020,34 +3032,19 @@
                 ]
             }
         },
-        "/api/schedules": {
+        "/api/restaurants/{id}/schedules": {
             "get": {
                 "tags": [
-                    "schedules"
+                    "restaurants"
                 ],
-                "summary": "Index schedules.",
-                "operationId": "indexSchedules",
+                "summary": "Get restaurant's schedules.",
+                "operationId": "getSchedules",
                 "parameters": [
                     {
-                        "name": "filter[weekday]",
-                        "in": "query",
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "monday",
-                                "tuesday",
-                                "wednesday",
-                                "thursday",
-                                "friday",
-                                "saturday",
-                                "sunday"
-                            ]
-                        },
-                        "example": "monday"
-                    },
-                    {
-                        "name": "filter[restaurant_id]",
-                        "in": "query",
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the restaurant.",
+                        "required": true,
                         "schema": {
                             "type": "integer"
                         },
@@ -3056,11 +3053,11 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Index schedules response object.",
+                        "description": "Get restaurant's schedules response object.",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/IndexScheduleResponse"
+                                    "$ref": "#/components/schemas/GetSchedulesResponse"
                                 }
                             }
                         }
@@ -3083,20 +3080,51 @@
                 ]
             }
         },
-        "/api/schedules/{id}": {
+        "/api/restaurants/{id}/holidays": {
             "get": {
                 "tags": [
-                    "schedules"
+                    "restaurants"
                 ],
-                "summary": "Show schedule by id.",
-                "operationId": "showSchedule",
+                "summary": "Get restaurant's holidays.",
+                "operationId": "getHolidays",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the restaurant.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "days",
+                        "in": "query",
+                        "description": "Number of days, for which holidays should be returned.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "description": "Date starting from which holidays should be returned.",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        },
+                        "example": "2022-12-25"
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Show schedule response object.",
+                        "description": "Show restaurant's holidays response object.",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/ShowScheduleResponse"
+                                    "$ref": "#/components/schemas/GetHolidaysResponse"
                                 }
                             }
                         }
@@ -4896,11 +4924,10 @@
                 },
                 "type": "object"
             },
-            "IndexScheduleResponse": {
-                "description": "Index schedules response object.",
+            "GetSchedulesResponse": {
+                "description": "Get restaurant's schedules response object.",
                 "required": [
                     "data",
-                    "meta",
                     "message"
                 ],
                 "properties": {
@@ -4917,15 +4944,18 @@
                 },
                 "type": "object"
             },
-            "ShowScheduleResponse": {
-                "description": "Show customer response object.",
+            "GetHolidaysResponse": {
+                "description": "Get restaurant's holidays response object.",
                 "required": [
                     "data",
                     "message"
                 ],
                 "properties": {
                     "data": {
-                        "$ref": "#/components/schemas/Schedule"
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Holiday"
+                        }
                     },
                     "message": {
                         "type": "string",
@@ -6725,6 +6755,64 @@
                 },
                 "type": "object"
             },
+            "Holiday": {
+                "description": "Holiday resource object",
+                "required": [
+                    "id",
+                    "type",
+                    "name",
+                    "description",
+                    "day",
+                    "month",
+                    "year",
+                    "restaurant_id"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "holidays"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Random holiday"
+                    },
+                    "description": {
+                        "nullable": "true",
+                        "type": "string",
+                        "example": "null"
+                    },
+                    "day": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "month": {
+                        "nullable": "true",
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "year": {
+                        "nullable": "true",
+                        "type": "integer",
+                        "example": 2022
+                    },
+                    "restaurant_id": {
+                        "nullable": "true",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "closest_date": {
+                        "nullable": "true",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2022-01-12 10:00:00"
+                    }
+                },
+                "type": "object"
+            },
             "Media": {
                 "description": "Media resource object",
                 "required": [
@@ -7194,8 +7282,7 @@
                     "country",
                     "city",
                     "place",
-                    "media",
-                    "schedules"
+                    "media"
                 ],
                 "properties": {
                     "id": {
@@ -7231,13 +7318,6 @@
                         "items": {
                             "$ref": "#/components/schemas/Media"
                         }
-                    },
-                    "schedules": {
-                        "description": "Restaurant's operative schedules.",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Schedule"
-                        }
                     }
                 },
                 "type": "object"
@@ -7250,7 +7330,12 @@
                     "weekday",
                     "beg_hour",
                     "end_hour",
-                    "restaurant_id"
+                    "beg_minute",
+                    "end_minute",
+                    "restaurant_id",
+                    "begs_in",
+                    "ends_in",
+                    "is_cross_date"
                 ],
                 "properties": {
                     "id": {
@@ -7280,14 +7365,46 @@
                         "example": 9
                     },
                     "end_hour": {
-                        "description": "Start hour of the day [0 ; 23]. If less then beg_hour it,\n     *   then it meens that it's a cross day schedule",
+                        "description": "End hour of the day [0 ; 23]. If less then beg_hour it,\n     *   then it meens that it's a cross day schedule",
                         "type": "integer",
                         "example": 23
+                    },
+                    "beg_minute": {
+                        "description": "Start minute of the day [0 ; 59].",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "end_minute": {
+                        "description": "End minute of the day [0 ; 59].",
+                        "type": "integer",
+                        "example": 30
                     },
                     "restaurant_id": {
                         "nullable": "true",
                         "type": "integer",
                         "example": null
+                    },
+                    "begs_in": {
+                        "nullable": "true",
+                        "description": "Number of minutes untill the restaurant starts operating.\n     If null then restaurant is already operating on this schedule.",
+                        "type": "integer",
+                        "example": 30
+                    },
+                    "ends_in": {
+                        "nullable": "true",
+                        "description": "Number of minutes untill the restaurant ends operating.",
+                        "type": "integer",
+                        "example": 780
+                    },
+                    "is_cross_date": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "closest_date": {
+                        "nullable": "true",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2022-01-12 10:00:00"
                     }
                 },
                 "type": "object"

@@ -51,9 +51,10 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
         ->only('index', 'show')
         ->parameters(['restaurants' => 'id']);
 
-    Route::apiResource('schedules', ScheduleController::class)
-        ->only('index', 'show')
-        ->parameters(['schedules' => 'id']);
+    Route::get('/restaurants/{id}/schedules', [RestaurantController::class, 'getSchedules'])
+        ->name('restaurants.schedules');
+    Route::get('/restaurants/{id}/holidays', [RestaurantController::class, 'getHolidays'])
+        ->name('restaurants.holidays');
 
     Route::get('/notifications/poll', [NotificationController::class, 'poll'])->name('notifications.poll');
     Route::apiResource('notifications', NotificationController::class)
