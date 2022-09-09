@@ -2,16 +2,14 @@
 
 namespace App\Nova;
 
-use Andriichello\Media\MediaField;
-use App\Nova\Options\FamilyRelationOptions;
 use App\Nova\Options\WeekdayOptions;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
-use Laravel\Nova\Fields\Text;
 
 /**
  * Class Schedule.
@@ -63,10 +61,28 @@ class Schedule extends Resource
                 ->min(0)
                 ->max(23),
 
+            Number::make('Beg Minute')
+                ->default(0)
+                ->required()
+                ->min(0)
+                ->max(59),
+
             Number::make('End Hour')
                 ->required()
                 ->min(0)
                 ->max(23),
+
+            Number::make('End Minute')
+                ->default(0)
+                ->required()
+                ->min(0)
+                ->max(59),
+
+            Boolean::make('Is Cross Date')
+                ->readonly(),
+
+            DateTime::make('Closest Date')
+                ->readonly(),
 
             BelongsTo::make('Restaurant', 'restaurant', Restaurant::class)
                 ->nullable(),
@@ -95,8 +111,12 @@ class Schedule extends Resource
             'id' => true,
             'weekday' => true,
             'beg_hour' => true,
+            'beg_minute' => true,
             'end_hour' => true,
+            'end_minute' => true,
+            'is_cross_date' => false,
             'restaurant' => true,
+            'closest_date' => true,
             'created_at' => false,
             'updated_at' => false,
         ];

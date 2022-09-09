@@ -2,26 +2,26 @@
 
 namespace App\Nova;
 
-use Andriichello\Media\MediaField;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\DateTime;
-use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 
 /**
- * Class Restaurant.
+ * Class Holiday.
  *
- * @mixin \App\Models\Restaurant
+ * @mixin \App\Models\Holiday
  */
-class Restaurant extends Resource
+class Holiday extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static string $model = \App\Models\Restaurant::class;
+    public static string $model = \App\Models\Holiday::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -36,7 +36,7 @@ class Restaurant extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'slug', 'name',
+        'id', 'name', 'day',
     ];
 
     /**
@@ -50,30 +50,33 @@ class Restaurant extends Resource
         return [
             ID::make()->sortable(),
 
-            MediaField::make('Media'),
-
-            Text::make('Slug')
-                ->rules('required', 'min:1', 'max:255')
-                ->creationRules('unique:restaurants,slug')
-                ->updateRules('unique:restaurants,slug,{{resourceId}}'),
-
             Text::make('Name')
-                ->rules('required', 'min:1', 'max:255'),
+                ->updateRules('sometimes', 'min:1', 'max:255')
+                ->creationRules('required', 'min:1', 'max:255'),
 
-            Text::make('Country')
-                ->rules('required', 'min:1', 'max:255'),
+            Text::make('Description')
+                ->updateRules('nullable', 'min:1', 'max:255')
+                ->creationRules('nullable', 'min:1', 'max:255'),
 
-            Text::make('City')
-                ->rules('required', 'min:1', 'max:255'),
+            Number::make('Day')
+                ->required()
+                ->min(1)
+                ->max(31),
 
-            Text::make('Place')
-                ->rules('required', 'min:1', 'max:255'),
+            Number::make('Month')
+                ->nullable()
+                ->min(1)
+                ->max(12),
 
-            HasMany::make('Banquets'),
+            Number::make('Year')
+                ->nullable()
+                ->min(2000),
 
-            HasMany::make('Schedules'),
+            DateTime::make('Closest Date')
+                ->readonly(),
 
-            HasMany::make('Holidays'),
+            BelongsTo::make('Restaurant', 'restaurant', Restaurant::class)
+                ->nullable(),
 
             DateTime::make('Created At')
                 ->sortable()
@@ -97,15 +100,13 @@ class Restaurant extends Resource
     {
         return [
             'id' => true,
-            'media' => true,
-            'slug' => true,
             'name' => true,
-            'country' => false,
-            'city' => false,
-            'place' => false,
-            'banquets' => false,
-            'schedules' => false,
-            'holidays' => false,
+            'description' => true,
+            'day' => true,
+            'month' => true,
+            'year' => true,
+            'restaurant' => true,
+            'closest_date' => true,
             'created_at' => false,
             'updated_at' => false,
         ];
