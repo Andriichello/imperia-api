@@ -53,9 +53,10 @@ class Schedule extends BaseModel
 
     protected $appends = [
         'type',
-        'is_cross_date',
         'begs_in',
         'ends_in',
+        'closest_date',
+        'is_cross_date',
     ];
 
     /**

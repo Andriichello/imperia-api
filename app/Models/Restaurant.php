@@ -10,6 +10,7 @@ use App\Queries\HolidayQueryBuilder;
 use App\Queries\RestaurantQueryBuilder;
 use App\Queries\ScheduleQueryBuilder;
 use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Database\Factories\RestaurantFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -253,14 +254,20 @@ class Restaurant extends BaseModel implements
     /**
      * Holidays that are relevant for the restaurant (for one year).
      *
+     * @param int $days
+     * @param CarbonInterface|null $from
+     *
      * @return HolidayQueryBuilder
      */
-    public function closestHolidays(): HolidayQueryBuilder
+    public function closestHolidays(int $days = 7, ?CarbonInterface $from = null): HolidayQueryBuilder
     {
         $sub = Holiday::query();
-        // query holidays for next 7 days
-        for ($i = 0; $i < 7; $i++) {
-            $sub->orWhereWrapped(fn(HolidayQueryBuilder $query) => $query->relevantOn(now()->addDays($i)));
+        $date = ($from ?? now());
+
+        for ($i = 0; $i < $days; $i++) {
+            $sub->orWhereWrapped(function (HolidayQueryBuilder $query) use ($date, $i) {
+                $query->relevantOn($date->clone()->addDays($i));
+            });
         }
 
         return Holiday::query()

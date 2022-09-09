@@ -35,6 +35,7 @@ class ScheduleResource extends JsonResource
             'begs_in' => $this->begs_in,
             'ends_in' => $this->ends_in,
             'is_cross_date' => $this->is_cross_date,
+            'closest_date' => $this->closest_date,
         ];
     }
 
@@ -64,6 +65,8 @@ class ScheduleResource extends JsonResource
      *   @OA\Property(property="ends_in", type="integer", nullable="true", example=780,
      *     description="Number of minutes untill the restaurant ends operating."),
      *   @OA\Property(property="is_cross_date", type="boolean", example=false),
+     *   @OA\Property(property="closest_date", type="string", format="date-time",
+     *     nullable="true", example="2022-01-12 10:00:00",),
      * )
      */
 }

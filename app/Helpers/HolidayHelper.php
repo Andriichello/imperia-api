@@ -37,7 +37,8 @@ class HolidayHelper implements HolidayHelperInterface
      */
     public function closest(Holiday $holiday, ?CarbonInterface $to = null): ?CarbonInterface
     {
-        $closest = ($to ?? now())->clone()
+        $to = ($to ?? now())->clone();
+        $closest = $to->clone()
             ->setDays($holiday->day)
             ->setTime(0, 0);
 

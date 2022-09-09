@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Requests\Schedule;
+namespace App\Http\Requests\Holiday;
 
 use App\Http\Requests\Crud\IndexRequest;
 use Spatie\QueryBuilder\AllowedFilter;
 
 /**
- * Class IndexScheduleRequest.
+ * Class IndexHolidayRequest.
  */
-class IndexScheduleRequest extends IndexRequest
+class IndexHolidayRequest extends IndexRequest
 {
     public function getAllowedFilters(): array
     {

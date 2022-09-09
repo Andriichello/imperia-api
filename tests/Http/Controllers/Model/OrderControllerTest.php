@@ -86,8 +86,6 @@ class OrderControllerTest extends RegisteringTestCase
         $this->product = Product::factory()->create();
         $this->discount = Discount::factory()->create();
 
-        ;
-
         $this->banquet = Banquet::factory()
             ->withCustomer($customer = Customer::factory()->create())
             ->withCreator($this->user)
