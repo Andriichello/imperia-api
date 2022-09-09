@@ -79,9 +79,11 @@ class Schedule extends Resource
                 ->max(59),
 
             Boolean::make('Is Cross Date')
+                ->exceptOnForms()
                 ->readonly(),
 
             DateTime::make('Closest Date')
+                ->exceptOnForms()
                 ->readonly(),
 
             BelongsTo::make('Restaurant', 'restaurant', Restaurant::class)

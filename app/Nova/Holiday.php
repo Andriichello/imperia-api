@@ -73,6 +73,7 @@ class Holiday extends Resource
                 ->min(2000),
 
             DateTime::make('Closest Date')
+                ->exceptOnForms()
                 ->readonly(),
 
             BelongsTo::make('Restaurant', 'restaurant', Restaurant::class)
