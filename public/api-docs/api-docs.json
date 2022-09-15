@@ -6762,10 +6762,7 @@
                     "type",
                     "name",
                     "description",
-                    "day",
-                    "month",
-                    "year",
-                    "restaurant_id"
+                    "date"
                 ],
                 "properties": {
                     "id": {
@@ -6785,24 +6782,10 @@
                         "type": "string",
                         "example": "null"
                     },
-                    "day": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "month": {
-                        "nullable": "true",
-                        "type": "integer",
-                        "example": 10
-                    },
-                    "year": {
-                        "nullable": "true",
-                        "type": "integer",
-                        "example": 2022
-                    },
-                    "restaurant_id": {
-                        "nullable": "true",
-                        "type": "integer",
-                        "example": 1
+                    "date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2022-01-12"
                     },
                     "closest_date": {
                         "nullable": "true",
