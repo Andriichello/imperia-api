@@ -271,7 +271,7 @@ export default {
       let query = `?page[size]=${size}&page[number]=${page}`;
 
       if (tab.filters.menu) {
-        query += `&filter[menu_id]=${tab.filters.menu.id}`
+        query += `&filter[menus]=${tab.filters.menu.id}`
       }
       if (tab.filters.search) {
         query += `&filter[title]=${tab.filters.search}`
