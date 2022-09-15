@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Product;
 
 use App\Http\Filters\CategoriesFilter;
+use App\Http\Filters\MenusFilter;
+use App\Http\Filters\RestaurantsFilter;
 use App\Http\Requests\Crud\IndexRequest;
 use Spatie\QueryBuilder\AllowedFilter;
 
@@ -27,8 +29,12 @@ class IndexProductRequest extends IndexRequest
             parent::getAllowedFilters(),
             [
                 AllowedFilter::partial('title'),
-                AllowedFilter::exact('menu_id'),
+                AllowedFilter::custom('menus', new MenusFilter()),
                 AllowedFilter::custom('categories', new CategoriesFilter()),
+                AllowedFilter::custom(
+                    'restaurants',
+                    new RestaurantsFilter('restaurant_product', 'product_id')
+                ),
             ]
         );
     }

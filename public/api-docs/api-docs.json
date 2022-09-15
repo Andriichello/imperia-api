@@ -1882,6 +1882,16 @@
                         }
                     },
                     {
+                        "name": "filter[restaurants]",
+                        "in": "query",
+                        "description": "Coma-separated array of restaurant ids. Limits menus to those\n     * that are attached at least to one of those restaurants",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1"
+                    },
+                    {
                         "name": "archived",
                         "in": "query",
                         "schema": {
@@ -2819,14 +2829,14 @@
                         "example": "Mojito"
                     },
                     {
-                        "name": "filter[menu_id]",
+                        "name": "filter[menus]",
                         "in": "query",
-                        "description": "Limits products to those that belong to menu with given id",
+                        "description": "Coma-separated array of menu ids. Limits products to those\n     * that are attached at least to one of given menus",
                         "required": false,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         },
-                        "example": 1
+                        "example": "1,2"
                     },
                     {
                         "name": "filter[categories]",
@@ -2836,7 +2846,17 @@
                         "schema": {
                             "type": "string"
                         },
-                        "example": "2,3"
+                        "example": "2"
+                    },
+                    {
+                        "name": "filter[restaurants]",
+                        "in": "query",
+                        "description": "Coma-separated array of restaurant ids. Limits products to those\n     * that are attached at least to one of those restaurants",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1"
                     },
                     {
                         "name": "archived",
@@ -3197,6 +3217,16 @@
                         "example": "2,3"
                     },
                     {
+                        "name": "filter[restaurants]",
+                        "in": "query",
+                        "description": "Coma-separated array of restaurant ids. Limits services to those\n     * that are attached at least to one of those restaurants",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1"
+                    },
+                    {
                         "name": "archived",
                         "in": "query",
                         "schema": {
@@ -3336,6 +3366,16 @@
                             "type": "string"
                         },
                         "example": "2,3"
+                    },
+                    {
+                        "name": "filter[restaurants]",
+                        "in": "query",
+                        "description": "Coma-separated array of restaurant ids. Limits spaces to those\n     * that are attached at least to one of those restaurants",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1"
                     },
                     {
                         "name": "archived",
@@ -3546,6 +3586,16 @@
                             "type": "string"
                         },
                         "example": "2,3"
+                    },
+                    {
+                        "name": "filter[restaurants]",
+                        "in": "query",
+                        "description": "Coma-separated array of restaurant ids. Limits tickets to those\n     * that are attached at least to one of those restaurants",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1"
                     },
                     {
                         "name": "archived",

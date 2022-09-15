@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Menu;
 
+use App\Http\Filters\RestaurantsFilter;
 use App\Http\Requests\Crud\IndexRequest;
+use Spatie\QueryBuilder\AllowedFilter;
 
 /**
  * Class IndexMenuRequest.
@@ -15,6 +17,19 @@ class IndexMenuRequest extends IndexRequest
             parent::getAllowedIncludes(),
             [
                 'products',
+            ]
+        );
+    }
+
+    public function getAllowedFilters(): array
+    {
+        return array_merge(
+            parent::getAllowedFilters(),
+            [
+                AllowedFilter::custom(
+                    'restaurants',
+                    new RestaurantsFilter('restaurant_menu', 'menu_id')
+                ),
             ]
         );
     }
