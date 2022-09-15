@@ -12,10 +12,14 @@ return new class extends Migration {
      */
     public function up()
     {
-        Schema::table('banquets', function (Blueprint $table) {
-            $table->unsignedBigInteger('restaurant_id')->nullable()->after('id');
+        Schema::create('restaurant_space', function (Blueprint $table) {
+            $table->unsignedBigInteger('restaurant_id')->index();
+            $table->unsignedBigInteger('space_id')->index();
+
+            $table->primary(['restaurant_id', 'space_id']);
 
             $table->foreign('restaurant_id')->references('id')->on('restaurants')->onDelete('cascade');
+            $table->foreign('space_id')->references('id')->on('spaces')->onDelete('cascade');
         });
     }
 
@@ -26,10 +30,6 @@ return new class extends Migration {
      */
     public function down()
     {
-        Schema::table('banquets', function (Blueprint $table) {
-            $table->dropForeign(['restaurant_id']);
-
-            $table->dropColumn('restaurant_id');
-        });
+        Schema::dropIfExists('restaurant_space');
     }
 };
