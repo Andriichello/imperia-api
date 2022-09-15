@@ -60,7 +60,7 @@ class RestaurantController extends CrudController
     {
         /** @var Restaurant $restaurant */
         $restaurant = $request->targetOrFail(Restaurant::class);
-        $data = new ScheduleCollection($restaurant->loadOperativeSchedules());
+        $data = new ScheduleCollection($restaurant->schedules);
 
         return ApiResponse::make(compact('data'));
     }
@@ -76,12 +76,11 @@ class RestaurantController extends CrudController
     {
         /** @var Restaurant $restaurant */
         $restaurant = $request->targetOrFail(Restaurant::class);
-        $query = $restaurant->closestHolidays(
-            $request->get('days'),
-            $request->date('from')
-        );
 
-        $data = new HolidayCollection($query->get()->sortBy('closest_date'));
+        $query = $restaurant->holidays()
+            ->where('date', '>=', $request->date('from'));
+
+        $data = new HolidayCollection($query->get());
 
         return ApiResponse::make(compact('data'));
     }

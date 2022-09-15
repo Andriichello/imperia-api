@@ -17,12 +17,6 @@ class GetHolidaysRequest extends ShowRestaurantRequest
         return array_merge(
             parent::rules(),
             [
-                'days' => [
-                    'sometimes',
-                    'integer',
-                    'min:1',
-                    'max:31',
-                ],
                 'from' => [
                     'sometimes',
                     'date',
@@ -39,7 +33,6 @@ class GetHolidaysRequest extends ShowRestaurantRequest
     protected function prepareForValidation()
     {
         $this->mergeIfMissing([
-            'days' => 1,
             'from' => now()->setTime(0, 0),
         ]);
     }
