@@ -16,8 +16,9 @@ use App\Queries\ProductQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
+use Illuminate\Support\Collection;
 
 /**
  * Class Product.
@@ -26,14 +27,14 @@ use Illuminate\Database\Query\Builder as DatabaseBuilder;
  * @property string|null $description
  * @property float|null $price
  * @property float|null $weight
- * @property int|null $menu_id
  * @property bool $archived
  * @property string|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  *
- * @property Menu|null $menu
+ * @property Menu[]|Collection $menus
+ * @property Restaurant[]|Collection $restaurants
  *
  * @method static ProductQueryBuilder query()
  * @method static ProductFactory factory(...$parameters)
@@ -73,8 +74,9 @@ class Product extends BaseModel implements
      * @var array
      */
     protected $relations = [
-        'menu',
+        'menus',
         'media',
+        'restaurants',
         'categories',
     ];
 
@@ -98,13 +100,23 @@ class Product extends BaseModel implements
     ];
 
     /**
-     * Get the menu associated with the model.
+     * Get the restaurants associated with the model.
      *
-     * @return BelongsTo
+     * @return BelongsToMany
      */
-    public function menu(): BelongsTo
+    public function restaurants(): BelongsToMany
     {
-        return $this->belongsTo(Menu::class, 'menu_id', 'id');
+        return $this->belongsToMany(Restaurant::class, 'restaurant_product');
+    }
+
+    /**
+     * Menus associated with the model.
+     *
+     * @return BelongsToMany
+     */
+    public function menus(): BelongsToMany
+    {
+        return $this->belongsToMany(Menu::class, 'menu_product');
     }
 
     /**

@@ -7,7 +7,6 @@ use App\Models\Morphs\Period;
 use App\Models\Morphs\Periodical;
 use DateTime;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Illuminate\Support\Arr;
 
 /**
  * Trait PeriodicalTrait.

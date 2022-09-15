@@ -13,7 +13,6 @@ use App\Models\Space;
 use App\Models\Ticket;
 use App\Queries\MediaQueryBuilder;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 /**
