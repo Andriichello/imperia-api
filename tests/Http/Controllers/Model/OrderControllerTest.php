@@ -13,8 +13,6 @@ use App\Models\Product;
 use App\Models\Service;
 use App\Models\Space;
 use App\Models\Ticket;
-use App\Repositories\OrderRepository;
-use Carbon\Carbon;
 use Illuminate\Foundation\Testing\Concerns\MakesHttpRequests;
 use Illuminate\Support\Arr;
 use Tests\RegisteringTestCase;

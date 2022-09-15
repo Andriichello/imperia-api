@@ -2,14 +2,9 @@
 
 namespace Tests\Http\Controllers\Model;
 
-use App\Enums\FamilyRelation;
-use App\Models\Customer;
-use App\Models\FamilyMember;
 use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Foundation\Testing\Concerns\MakesHttpRequests;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Tests\RegisteringTestCase;
 
 /**

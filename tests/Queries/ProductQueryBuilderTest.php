@@ -2,11 +2,9 @@
 
 namespace Tests\Queries;
 
-use App\Enums\UserRole;
 use App\Models\Menu;
 use App\Models\Morphs\Category;
 use App\Models\Product;
-use App\Models\User;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
 
@@ -33,18 +31,24 @@ class ProductQueryBuilderTest extends TestCase
 
         $menu = Menu::factory()->create();
         $products = Product::factory()
-            ->withMenu($menu)
             ->count(2)
             ->create();
+
+        $products->each(function (Product $product) use ($menu) {
+            $menu->products()->attach($product->id);
+        });
 
         $this->menus->push($menu);
         $this->products->push(...$products->all());
 
         $menu = Menu::factory()->create();
         $products = Product::factory()
-            ->withMenu($menu)
             ->count(2)
             ->create();
+
+        $products->each(function (Product $product) use ($menu) {
+            $menu->products()->attach($product->id);
+        });
 
         $this->menus->push($menu);
         $this->products->push(...$products->all());
