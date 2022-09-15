@@ -16,9 +16,7 @@ use App\Queries\ServiceQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\ServiceFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
-use Illuminate\Support\Collection;
 
 /**
  * Class Service.
@@ -32,8 +30,6 @@ use Illuminate\Support\Collection;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
- *
- * @property Restaurant[]|Collection $restaurants
  *
  * @method static ServiceQueryBuilder query()
  * @method static ServiceFactory factory(...$parameters)
@@ -93,19 +89,8 @@ class Service extends BaseModel implements
      */
     protected $relations = [
         'media',
-        'restaurants',
         'categories',
     ];
-
-    /**
-     * Get the restaurants associated with the model.
-     *
-     * @return BelongsToMany
-     */
-    public function restaurants(): BelongsToMany
-    {
-        return $this->belongsToMany(Restaurant::class, 'restaurant_service');
-    }
 
     /**
      * @param DatabaseBuilder $query

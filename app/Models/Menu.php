@@ -14,7 +14,7 @@ use Carbon\Carbon;
 use Database\Factories\MenuFactory;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
@@ -32,7 +32,6 @@ use Illuminate\Support\Collection;
  *
  * @property Product[]|Collection $products
  * @property Category[]|Collection $categories
- * @property Restaurant[]|Collection $restaurants
  *
  * @method static MenuQueryBuilder query()
  * @method static MenuFactory factory(...$parameters)
@@ -82,6 +81,7 @@ class Menu extends BaseModel implements
      */
     protected $appends = [
         'type',
+        'categories',
     ];
 
     /**
@@ -91,28 +91,17 @@ class Menu extends BaseModel implements
      */
     protected $relations = [
         'media',
-        'restaurants',
         'products',
     ];
 
     /**
-     * Get the restaurants associated with the model.
-     *
-     * @return BelongsToMany
-     */
-    public function restaurants(): BelongsToMany
-    {
-        return $this->belongsToMany(Restaurant::class, 'restaurant_menu');
-    }
-
-    /**
      * Get the products associated with the model.
      *
-     * @return BelongsToMany
+     * @return HasMany
      */
-    public function products(): BelongsToMany
+    public function products(): HasMany
     {
-        return $this->belongsToMany(Product::class, 'menu_product');
+        return $this->hasMany(Product::class, 'menu_id', 'id');
     }
 
     /**
@@ -128,19 +117,9 @@ class Menu extends BaseModel implements
             ->join('categorizables', 'categorizables.category_id', '=', 'categories.id')
             ->where('categorizables.categorizable_type', $slug)
             ->join('products', 'products.id', '=', 'categorizables.categorizable_id')
-            ->whereIn('products.id', $this->products()->select('id'))
+            ->where('products.menu_id', $this->id)
             ->select('categories.*')
             ->distinct();
-    }
-
-    /**
-     * Load categories associated with products in menu and set it to $categories.
-     *
-     * @return Collection
-     */
-    public function loadCategories(): Collection
-    {
-        return $this->categories = $this->categories()->get();
     }
 
     /**
@@ -150,7 +129,10 @@ class Menu extends BaseModel implements
      */
     public function getCategoriesAttribute(): Collection
     {
-        return $this->categories ?? $this->loadCategories();
+        if (!isset($this->attributes['categories'])) {
+            $this->attributes['categories'] = $this->categories()->get();
+        }
+        return $this->attributes['categories'];
     }
 
     /**
