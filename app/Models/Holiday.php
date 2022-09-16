@@ -18,6 +18,7 @@ use Illuminate\Support\Collection;
  * @property int $id
  * @property string $name
  * @property string|null $description
+ * @property bool $repeating
  * @property Carbon $date
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -41,6 +42,7 @@ class Holiday extends BaseModel
         'name',
         'description',
         'date',
+        'repeating',
     ];
 
     /**

@@ -53,6 +53,20 @@ class HolidayQueryBuilder extends BaseQueryBuilder
     }
 
     /**
+     * Only holidays that are repeating.
+     *
+     * @param bool $repeating
+     *
+     * @return static
+     */
+    public function whereRepeating(bool $repeating): static
+    {
+        $this->where('repeating', $repeating);
+
+        return $this;
+    }
+
+    /**
      * Only holidays for given restaurants.
      *
      * @param mixed ...$restaurants
