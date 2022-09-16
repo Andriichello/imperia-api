@@ -14,7 +14,7 @@ use Carbon\Carbon;
 use Database\Factories\MenuFactory;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
@@ -32,6 +32,7 @@ use Illuminate\Support\Collection;
  *
  * @property Product[]|Collection $products
  * @property Category[]|Collection $categories
+ * @property Restaurant[]|Collection $restaurants
  *
  * @method static MenuQueryBuilder query()
  * @method static MenuFactory factory(...$parameters)
@@ -92,16 +93,27 @@ class Menu extends BaseModel implements
     protected $relations = [
         'media',
         'products',
+        'restaurants',
     ];
 
     /**
      * Get the products associated with the model.
      *
-     * @return HasMany
+     * @return BelongsToMany
      */
-    public function products(): HasMany
+    public function products(): BelongsToMany
     {
-        return $this->hasMany(Product::class, 'menu_id', 'id');
+        return $this->belongsToMany(Product::class, 'menu_product');
+    }
+
+    /**
+     * Get the restaurants associated with the model.
+     *
+     * @return BelongsToMany
+     */
+    public function restaurants(): BelongsToMany
+    {
+        return $this->belongsToMany(Restaurant::class, 'restaurant_menu');
     }
 
     /**

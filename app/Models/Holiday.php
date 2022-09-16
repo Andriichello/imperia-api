@@ -63,7 +63,7 @@ class Holiday extends BaseModel
     ];
 
     /**
-     * Restaurant associated with the model.
+     * Restaurants associated with the model.
      *
      * @return BelongsToMany
      */

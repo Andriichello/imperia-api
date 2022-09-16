@@ -16,7 +16,7 @@ use Carbon\Carbon;
 use Database\Factories\BanquetFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
 
@@ -133,11 +133,11 @@ class Banquet extends BaseModel implements
     /**
      * Order associated with the model.
      *
-     * @return HasOne
+     * @return HasOneThrough
      */
-    public function order(): HasOne
+    public function order(): HasOneThrough
     {
-        return $this->hasOne(Order::class, 'banquet_id', 'id');
+        return $this->hasOneThrough(Order::class, 'banquet_order');
     }
 
     /**

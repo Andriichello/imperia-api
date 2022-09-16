@@ -15,8 +15,8 @@ use App\Queries\OrderQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\Orders\OrderFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -24,14 +24,13 @@ use Illuminate\Support\Collection;
 /**
  * Class Order.
  *
- * @property int $banquet_id
  * @property string|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  *
  * @property array|null $totals
- * @property Banquet $banquet
+ * @property Banquet|null $banquet
  * @property SpaceOrderField[]|Collection $spaces
  * @property TicketOrderField[]|Collection $tickets
  * @property ServiceOrderField[]|Collection $services
@@ -57,15 +56,6 @@ class Order extends BaseModel implements
      */
     protected $attributes = [
         'metadata' => '{}',
-    ];
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var string[]
-     */
-    protected $fillable = [
-        'banquet_id',
     ];
 
     /**
@@ -106,11 +96,11 @@ class Order extends BaseModel implements
     /**
      * Banquet associated with the model.
      *
-     * @return BelongsTo
+     * @return HasOneThrough
      */
-    public function banquet(): BelongsTo
+    public function banquet(): HasOneThrough
     {
-        return $this->belongsTo(Banquet::class, 'banquet_id', 'id');
+        return $this->hasOneThrough(Banquet::class, 'banquet_order');
     }
 
     /**
@@ -249,7 +239,6 @@ class Order extends BaseModel implements
     {
         return $this->banquet->canBeEditedBy($user);
     }
-
 
     /**
      * @param DatabaseBuilder $query

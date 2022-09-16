@@ -75,6 +75,12 @@ class Restaurant extends BaseModel implements
      * @var array
      */
     protected $relations = [
+        'banquets',
+        'menus',
+        'products',
+        'spaces',
+        'tickets',
+        'services',
         'schedules',
         'holidays',
         'relevantHolidays',
@@ -88,6 +94,56 @@ class Restaurant extends BaseModel implements
     public function banquets(): HasMany
     {
         return $this->hasMany(Banquet::class, 'restaurant_id', 'id');
+    }
+
+    /**
+     * Menus associated with the model.
+     *
+     * @return BelongsToMany
+     */
+    public function menus(): BelongsToMany
+    {
+        return $this->belongsToMany(Menu::class, 'restaurant_menu');
+    }
+
+    /**
+     * Products associated with the model.
+     *
+     * @return BelongsToMany
+     */
+    public function products(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'restaurant_product');
+    }
+
+    /**
+     * Spaces associated with the model.
+     *
+     * @return BelongsToMany
+     */
+    public function spaces(): BelongsToMany
+    {
+        return $this->belongsToMany(Space::class, 'restaurant_space');
+    }
+
+    /**
+     * Tickets associated with the model.
+     *
+     * @return BelongsToMany
+     */
+    public function tickets(): BelongsToMany
+    {
+        return $this->belongsToMany(Ticket::class, 'restaurant_ticket');
+    }
+
+    /**
+     * Services associated with the model.
+     *
+     * @return BelongsToMany
+     */
+    public function services(): BelongsToMany
+    {
+        return $this->belongsToMany(Service::class, 'restaurant_service');
     }
 
     /**

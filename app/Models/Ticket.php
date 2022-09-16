@@ -16,7 +16,9 @@ use App\Queries\TicketQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\TicketFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
+use Illuminate\Support\Collection;
 
 /**
  * Class Space.
@@ -29,6 +31,8 @@ use Illuminate\Database\Query\Builder as DatabaseBuilder;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
+ *
+ * @property Restaurant[]|Collection $restaurants
  *
  * @method static TicketQueryBuilder query()
  * @method static TicketFactory factory(...$parameters)
@@ -86,7 +90,18 @@ class Ticket extends BaseModel implements
     protected $relations = [
         'media',
         'categories',
+        'restaurants',
     ];
+
+    /**
+     * Restaurants associated with the model.
+     *
+     * @return BelongsToMany
+     */
+    public function restaurants(): BelongsToMany
+    {
+        return $this->belongsToMany(Restaurant::class, 'restaurant_ticket');
+    }
 
     /**
      * @param DatabaseBuilder $query
