@@ -7155,7 +7155,6 @@
                     "description",
                     "price",
                     "weight",
-                    "menu_id",
                     "category_ids",
                     "media",
                     "default_media"
@@ -7184,10 +7183,6 @@
                     "weight": {
                         "type": "float",
                         "example": 120
-                    },
-                    "menu_id": {
-                        "type": "integer",
-                        "example": 1
                     },
                     "archived": {
                         "type": "boolean",

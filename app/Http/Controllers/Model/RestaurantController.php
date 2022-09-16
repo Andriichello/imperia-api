@@ -78,7 +78,8 @@ class RestaurantController extends CrudController
         $restaurant = $request->targetOrFail(Restaurant::class);
 
         $query = $restaurant->holidays()
-            ->where('date', '>=', $request->date('from'));
+            ->where('date', '>=', $request->date('from'))
+            ->limit(25);
 
         $data = new HolidayCollection($query->get());
 
