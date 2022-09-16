@@ -15,8 +15,8 @@ use App\Queries\OrderQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\Orders\OrderFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -31,6 +31,7 @@ use Illuminate\Support\Collection;
  *
  * @property array|null $totals
  * @property Banquet|null $banquet
+ * @property Banquet[]|Collection $banquets
  * @property SpaceOrderField[]|Collection $spaces
  * @property TicketOrderField[]|Collection $tickets
  * @property ServiceOrderField[]|Collection $services
@@ -94,13 +95,23 @@ class Order extends BaseModel implements
     ];
 
     /**
-     * Banquet associated with the model.
+     * Banquets associated with the model.
      *
-     * @return HasOneThrough
+     * @return BelongsToMany
      */
-    public function banquet(): HasOneThrough
+    public function banquets(): BelongsToMany
     {
-        return $this->hasOneThrough(Banquet::class, 'banquet_order');
+        return $this->belongsToMany(Banquet::class, 'banquet_order');
+    }
+
+    /**
+     * Get banquet associated with the model.
+     *
+     * @return Order|null
+     */
+    public function getBanquetAttribute(): ?Order
+    {
+        return $this->banquets->first();
     }
 
     /**

@@ -16,7 +16,7 @@ use Carbon\Carbon;
 use Database\Factories\BanquetFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
 
@@ -42,6 +42,7 @@ use Illuminate\Support\Collection;
  * @property array|null $totals
  *
  * @property Order|null $order
+ * @property Order[]|Collection $orders
  * @property User|null $creator
  * @property Customer|null $customer
  * @property Comment[]|Collection $comments
@@ -131,13 +132,23 @@ class Banquet extends BaseModel implements
     ];
 
     /**
-     * Order associated with the model.
+     * Orders associated with the model.
      *
-     * @return HasOneThrough
+     * @return BelongsToMany
      */
-    public function order(): HasOneThrough
+    public function orders(): BelongsToMany
     {
-        return $this->hasOneThrough(Order::class, 'banquet_order');
+        return $this->belongsToMany(Order::class, 'banquet_order');
+    }
+
+    /**
+     * Get order associated with the model.
+     *
+     * @return Order|null
+     */
+    public function getOrderAttribute(): ?Order
+    {
+        return $this->orders->first();
     }
 
     /**
