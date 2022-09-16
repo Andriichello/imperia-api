@@ -6,6 +6,7 @@ use App\Enums\BanquetState;
 use App\Enums\NotificationChannel;
 use App\Models\Banquet;
 use App\Models\Notification;
+use App\Models\Orders\Order;
 
 /**
  * Class BanquetSubscriber.
@@ -15,8 +16,17 @@ class BanquetSubscriber extends BaseSubscriber
     protected function map(): void
     {
         $this->map = [
+            Banquet::eloquentEvent('created') => 'created',
             Banquet::eloquentEvent('updating') => 'updating',
         ];
+    }
+
+    public function created(Banquet $banquet)
+    {
+        $order = new Order();
+        $order->save();
+
+        $banquet->orders()->attach($order->id);
     }
 
     public function updating(Banquet $banquet)
