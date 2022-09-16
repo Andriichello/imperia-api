@@ -35,7 +35,9 @@ class CalculateTotals extends AsyncJob
         $this->order->totals = $this->order->calculateTotals();
         $this->order->save();
 
-        $this->order->banquet->totals = $this->order->totals;
-        $this->order->banquet->save();
+        if ($this->order->banquet) {
+            $this->order->banquet->totals = $this->order->totals;
+            $this->order->banquet->save();
+        }
     }
 }

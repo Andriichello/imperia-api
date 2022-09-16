@@ -61,12 +61,21 @@ class Order extends BaseModel implements
     ];
 
     /**
+     * The attributes that are mass assignable.
+     *
+     * @var string[]
+     */
+    protected $fillable = [
+        'metadata',
+    ];
+
+    /**
      * The loadable relationships for the model.
      *
      * @var array
      */
     protected $relations = [
-        'banquet',
+        'banquets',
         'spaces',
         'tickets',
         'services',
@@ -103,7 +112,8 @@ class Order extends BaseModel implements
      */
     public function banquets(): BelongsToMany
     {
-        return $this->belongsToMany(Banquet::class, 'banquet_order');
+        return $this->belongsToMany(Banquet::class, 'banquet_order')
+            ->using(BanquetOrder::class);
     }
 
     /**

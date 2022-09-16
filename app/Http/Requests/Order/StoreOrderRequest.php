@@ -119,7 +119,8 @@ class StoreOrderRequest extends StoreRequest
                 'banquet_id' => [
                     'required',
                     'integer',
-                    'unique:orders,banquet_id',
+                    'exists:banquets,id',
+                    'unique:banquet_order,banquet_id',
                 ],
             ]
         );

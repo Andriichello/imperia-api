@@ -90,6 +90,8 @@ class OrderControllerTest extends RegisteringTestCase
             ->withState(BanquetState::Draft)
             ->create();
 
+        $this->banquet->orders()->detach($this->banquet->order_id);
+
         $customer->user_id = $this->user->id;
         $customer->save();
 
@@ -158,7 +160,8 @@ class OrderControllerTest extends RegisteringTestCase
             'data',
             'message'
         ]);
-        $this->assertDatabaseHas(Order::class, Arr::only($this->attributes, 'banquet_id'));
+
+        $this->assertEquals($this->banquet->fresh()->order_id, data_get($response->json('data'), 'id'));
 
         /** @var Order $order */
         $order = Order::query()->findOrFail(data_get($response, 'data.id'));

@@ -7,6 +7,7 @@ use App\Models\Interfaces\CommentableInterface;
 use App\Models\Interfaces\LoggableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Morphs\Comment;
+use App\Models\Orders\BanquetOrder;
 use App\Models\Orders\Order;
 use App\Models\Traits\CommentableTrait;
 use App\Models\Traits\LoggableTrait;
@@ -147,7 +148,8 @@ class Banquet extends BaseModel implements
      */
     public function orders(): BelongsToMany
     {
-        return $this->belongsToMany(Order::class, 'banquet_order');
+        return $this->belongsToMany(Order::class, 'banquet_order')
+            ->using(BanquetOrder::class);
     }
 
     /**
