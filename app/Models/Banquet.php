@@ -106,7 +106,7 @@ class Banquet extends BaseModel implements
      * @var array
      */
     protected $relations = [
-        'order',
+        'orders',
         'creator',
         'customer',
         'comments',
@@ -119,7 +119,7 @@ class Banquet extends BaseModel implements
      * @var array
      */
     protected array $cascadeDeletes = [
-        'order',
+        'orders',
     ];
 
     /**
@@ -129,6 +129,15 @@ class Banquet extends BaseModel implements
      */
     protected array $logFields = [
         'state',
+    ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var string[]
+     */
+    protected $appends = [
+        'order_id',
     ];
 
     /**
@@ -149,6 +158,16 @@ class Banquet extends BaseModel implements
     public function getOrderAttribute(): ?Order
     {
         return $this->orders->first();
+    }
+
+    /**
+     * Get id of order associated with the model.
+     *
+     * @return int|null
+     */
+    public function getOrderIdAttribute(): ?int
+    {
+        return $this->order?->id;
     }
 
     /**
@@ -215,16 +234,6 @@ class Banquet extends BaseModel implements
     public function setTotalsAttribute(?array $totals): void
     {
         $this->setToJson('metadata', 'totals', $totals);
-    }
-
-    /**
-     * Accessor for id of the order.
-     *
-     * @return int|null
-     */
-    public function getOrderIdAttribute(): ?int
-    {
-        return $this->order()->pluck('id')->first();
     }
 
     /**

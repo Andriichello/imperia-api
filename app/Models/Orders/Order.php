@@ -24,6 +24,7 @@ use Illuminate\Support\Collection;
 /**
  * Class Order.
  *
+ * @property int|null $banquet_id
  * @property string|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -92,6 +93,7 @@ class Order extends BaseModel implements
     protected $appends = [
         'type',
         'totals',
+        'banquet_id',
     ];
 
     /**
@@ -107,11 +109,21 @@ class Order extends BaseModel implements
     /**
      * Get banquet associated with the model.
      *
-     * @return Order|null
+     * @return Banquet|null
      */
-    public function getBanquetAttribute(): ?Order
+    public function getBanquetAttribute(): ?Banquet
     {
         return $this->banquets->first();
+    }
+
+    /**
+     * Get id of banquet associated with the model.
+     *
+     * @return int|null
+     */
+    public function getBanquetIdAttribute(): ?int
+    {
+        return $this->banquet?->id;
     }
 
     /**
