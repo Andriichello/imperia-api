@@ -129,7 +129,8 @@ class Menu extends BaseModel implements
             ->join('categorizables', 'categorizables.category_id', '=', 'categories.id')
             ->where('categorizables.categorizable_type', $slug)
             ->join('products', 'products.id', '=', 'categorizables.categorizable_id')
-            ->where('products.menu_id', $this->id)
+            ->join('menu_product', 'menu_product.product_id', '=', 'products.id')
+            ->where('menu_product.menu_id', $this->id)
             ->select('categories.*')
             ->distinct();
     }
