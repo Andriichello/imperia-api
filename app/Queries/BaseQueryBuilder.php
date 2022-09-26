@@ -26,6 +26,20 @@ class BaseQueryBuilder extends EloquentBuilder implements IndexableInterface
     }
 
     /**
+     * Create a new query instance for wrapped where condition.
+     *
+     * @return static
+     */
+    public function forWrappedWhere(): static
+    {
+        /** @var static $builder */
+        $builder = $this->model::query();
+        $builder->withoutGlobalScopes();
+
+        return $builder;
+    }
+
+    /**
      * Add a wrapped where statement to the query.
      *
      * @param Closure $callback
@@ -36,7 +50,7 @@ class BaseQueryBuilder extends EloquentBuilder implements IndexableInterface
     public function whereWrapped(Closure $callback, string $boolean = 'and'): static
     {
         call_user_func($callback, $query = $this->forWrappedWhere());
-        $this->addWrappedWhereQuery($query, $boolean);
+        $this->addNestedWhereQuery($query->getQuery(), $boolean);
 
         return $this;
     }
@@ -50,38 +64,7 @@ class BaseQueryBuilder extends EloquentBuilder implements IndexableInterface
      */
     public function orWhereWrapped(Closure $callback): static
     {
-        call_user_func($callback, $query = $this->forWrappedWhere());
-        $this->addWrappedWhereQuery($query, 'or');
-
-        return $this;
-    }
-
-
-    /**
-     * Create a new query instance for wrapped where condition.
-     *
-     * @return static
-     */
-    public function forWrappedWhere(): static
-    {
-        $builder = $this->model::query();
-        /** @var static $builder */
-        return $builder;
-    }
-
-    /**
-     * Add another query builder as a nested where to the query builder.
-     *
-     * @param BaseQueryBuilder $query
-     * @param string $boolean
-     *
-     * @return static
-     */
-    public function addWrappedWhereQuery(BaseQueryBuilder $query, string $boolean = 'and'): static
-    {
-        $this->addNestedWhereQuery($query->getQuery(), $boolean);
-
-        return $this;
+        return $this->whereWrapped($callback, 'or');
     }
 
     /**
