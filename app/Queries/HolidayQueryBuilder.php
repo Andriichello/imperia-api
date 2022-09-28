@@ -6,7 +6,7 @@ use Carbon\CarbonInterface;
 use Illuminate\Database\Query\Builder;
 
 /**
- * Class ScheduleQueryBuilder.
+ * Class HolidayQueryBuilder.
  */
 class HolidayQueryBuilder extends BaseQueryBuilder
 {
@@ -59,7 +59,7 @@ class HolidayQueryBuilder extends BaseQueryBuilder
      *
      * @return static
      */
-    public function whereRepeating(bool $repeating): static
+    public function repeating(bool $repeating): static
     {
         $this->where('repeating', $repeating);
 

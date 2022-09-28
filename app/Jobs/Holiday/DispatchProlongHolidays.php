@@ -21,7 +21,7 @@ class DispatchProlongHolidays extends AsyncJob
     public function handle(): void
     {
         Holiday::query()
-            ->whereRepeating(true)
+            ->repeating(true)
             ->relevantUntil(Carbon::yesterday())
             ->each(function (Holiday $holiday) {
                 dispatch(new ProlongHoliday($holiday));
