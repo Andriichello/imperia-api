@@ -15,6 +15,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Collection;
+use OpenApi\Annotations as OA;
 use Spatie\QueryBuilder\QueryBuilder as SpatieBuilder;
 
 /**

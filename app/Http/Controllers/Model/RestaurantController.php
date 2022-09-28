@@ -15,6 +15,7 @@ use App\Http\Responses\ApiResponse;
 use App\Models\Restaurant;
 use App\Policies\RestaurantPolicy;
 use App\Repositories\RestaurantRepository;
+use OpenApi\Annotations as OA;
 
 /**
  * Class RestaurantController.

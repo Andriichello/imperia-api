@@ -6,6 +6,7 @@ use App\Enums\BanquetState;
 use App\Http\Requests\Crud\StoreRequest;
 use App\Models\Morphs\Comment;
 use App\Models\Morphs\Discount;
+use OpenApi\Annotations as OA;
 
 /**
  * Class StoreBanquetRequest.

@@ -11,6 +11,7 @@ use App\Http\Resources\Menu\MenuResource;
 use App\Policies\MenuPolicy;
 use App\Queries\MenuQueryBuilder;
 use App\Repositories\MenuRepository;
+use OpenApi\Annotations as OA;
 
 /**
  * Class MenuController.

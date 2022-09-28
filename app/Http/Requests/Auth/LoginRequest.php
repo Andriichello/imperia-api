@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Auth;
 
 use App\Http\Requests\BaseRequest;
+use OpenApi\Annotations as OA;
 
 /**
  * Class LoginRequest.

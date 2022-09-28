@@ -11,6 +11,7 @@ use App\Http\Resources\Field\TicketOrderFieldCollection;
 use App\Models\Orders\Order;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use OpenApi\Annotations as OA;
 
 /**
  * Class OrderResource.

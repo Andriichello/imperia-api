@@ -8,6 +8,7 @@ use App\Http\Resources\Product\ProductCollection;
 use App\Models\Menu;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use OpenApi\Annotations as OA;
 
 /**
  * Class MenuResource.

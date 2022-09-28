@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Crud;
 
 use App\Http\Requests\CrudRequest;
+use OpenApi\Annotations as OA;
 
 /**
  * Class IndexRequest.

@@ -9,6 +9,7 @@ use App\Models\Banquet;
 use App\Models\Morphs\Comment;
 use App\Models\Morphs\Discount;
 use Illuminate\Contracts\Validation\Validator;
+use OpenApi\Annotations as OA;
 
 /**
  * Class UpdateBanquetRequest.

@@ -17,6 +17,7 @@ use App\Queries\SpaceQueryBuilder;
 use App\Repositories\SpaceRepository;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
+use OpenApi\Annotations as OA;
 
 /**
  * Class SpaceController.

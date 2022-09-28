@@ -11,6 +11,7 @@ use App\Http\Resources\Product\ProductResource;
 use App\Policies\ProductPolicy;
 use App\Queries\ProductQueryBuilder;
 use App\Repositories\ProductRepository;
+use OpenApi\Annotations as OA;
 
 /**
  * Class ProductController.

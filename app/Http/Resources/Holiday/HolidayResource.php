@@ -5,6 +5,7 @@ namespace App\Http\Resources\Holiday;
 use App\Models\Holiday;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use OpenApi\Annotations as OA;
 
 /**
  * Class HolidayResource.

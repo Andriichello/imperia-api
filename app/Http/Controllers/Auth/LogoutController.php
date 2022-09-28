@@ -7,6 +7,7 @@ use App\Http\Requests\BaseRequest;
 use App\Http\Responses\ApiResponse;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use OpenApi\Annotations as OA;
 
 /**
  * Class LogoutController.

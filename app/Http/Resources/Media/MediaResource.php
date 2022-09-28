@@ -5,6 +5,7 @@ namespace App\Http\Resources\Media;
 use App\Models\Morphs\Media;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use OpenApi\Annotations as OA;
 
 /**
  * Class MediaResource.

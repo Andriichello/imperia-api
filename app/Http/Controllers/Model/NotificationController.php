@@ -19,6 +19,7 @@ use App\Policies\NotificationPolicy;
 use App\Queries\NotificationQueryBuilder;
 use App\Repositories\NotificationRepository;
 use Illuminate\Auth\Access\AuthorizationException;
+use OpenApi\Annotations as OA;
 
 /**
  * Class NotificationController.

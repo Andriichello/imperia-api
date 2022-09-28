@@ -11,6 +11,7 @@ use App\Http\Resources\Comment\CommentCollection;
 use App\Http\Resources\Comment\CommentResource;
 use App\Policies\CommentPolicy;
 use App\Repositories\CommentRepository;
+use OpenApi\Annotations as OA;
 
 /**
  * Class CommentController.

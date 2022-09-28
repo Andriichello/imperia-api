@@ -9,6 +9,7 @@ use App\Http\Resources\Discount\DiscountCollection;
 use App\Http\Resources\Discount\DiscountResource;
 use App\Policies\DiscountPolicy;
 use App\Repositories\DiscountRepository;
+use OpenApi\Annotations as OA;
 
 /**
  * Class DiscountController.

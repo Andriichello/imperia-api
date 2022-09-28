@@ -9,6 +9,7 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use OpenApi\Annotations as OA;
 
 /**
  * Class ResourcePaginator.

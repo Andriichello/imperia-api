@@ -5,6 +5,7 @@ namespace App\Http\Requests\Crud;
 use App\Http\Requests\CrudRequest;
 use App\Http\Requests\Interfaces\WithTargetInterface;
 use App\Http\Requests\Traits\WithTarget;
+use OpenApi\Annotations as OA;
 
 /**
  * Class DestroyRequest.

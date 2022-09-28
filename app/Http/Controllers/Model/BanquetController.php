@@ -13,6 +13,7 @@ use App\Http\Resources\Banquet\BanquetResource;
 use App\Policies\BanquetPolicy;
 use App\Queries\BanquetQueryBuilder;
 use App\Repositories\BanquetRepository;
+use OpenApi\Annotations as OA;
 
 /**
  * Class BanquetController.

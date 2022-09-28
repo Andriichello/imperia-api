@@ -11,6 +11,7 @@ use App\Http\Resources\Ticket\TicketResource;
 use App\Policies\TicketPolicy;
 use App\Queries\TicketQueryBuilder;
 use App\Repositories\TicketRepository;
+use OpenApi\Annotations as OA;
 
 /**
  * Class TicketController.

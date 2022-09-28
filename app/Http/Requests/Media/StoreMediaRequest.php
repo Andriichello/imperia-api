@@ -5,6 +5,7 @@ namespace App\Http\Requests\Media;
 use App\Http\Requests\Crud\StoreRequest;
 use App\Models\Morphs\Media;
 use Illuminate\Validation\Rule;
+use OpenApi\Annotations as OA;
 
 /**
  * Class StoreMediaRequest.

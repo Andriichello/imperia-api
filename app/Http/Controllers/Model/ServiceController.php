@@ -11,6 +11,7 @@ use App\Http\Resources\Service\ServiceResource;
 use App\Policies\ServicePolicy;
 use App\Queries\ServiceQueryBuilder;
 use App\Repositories\ServiceRepository;
+use OpenApi\Annotations as OA;
 
 /**
  * Class ServiceController.

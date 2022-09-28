@@ -9,6 +9,7 @@ use App\Http\Resources\Category\CategoryCollection;
 use App\Http\Resources\Category\CategoryResource;
 use App\Policies\CategoryPolicy;
 use App\Repositories\CategoryRepository;
+use OpenApi\Annotations as OA;
 
 /**
  * Class CategoryController.
