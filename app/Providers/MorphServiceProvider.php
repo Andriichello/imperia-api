@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Banquet;
 use App\Models\Customer;
 use App\Models\FamilyMember;
+use App\Models\Holiday;
 use App\Models\Menu;
 use App\Models\Morphs\Categorizable;
 use App\Models\Morphs\Category;
@@ -20,10 +21,12 @@ use App\Models\Orders\ServiceOrderField;
 use App\Models\Orders\SpaceOrderField;
 use App\Models\Orders\TicketOrderField;
 use App\Models\Product;
+use App\Models\Schedule;
 use App\Models\Service;
 use App\Models\Space;
 use App\Models\Ticket;
 use App\Models\User;
+use App\Models\Restaurant;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 use Tests\Models\Stubs\BaseStub;
@@ -48,14 +51,18 @@ class MorphServiceProvider extends ServiceProvider
         User::class,
         Customer::class,
         FamilyMember::class,
-        /** Banquet */
-        Banquet::class,
+        /** Restaurants */
+        Restaurant::class,
+        Schedule::class,
+        Holiday::class,
         /** Items */
         Menu::class,
         Space::class,
         Ticket::class,
         Service::class,
         Product::class,
+        /** Banquet */
+        Banquet::class,
         /** Orders */
         Order::class,
         SpaceOrderField::class,
