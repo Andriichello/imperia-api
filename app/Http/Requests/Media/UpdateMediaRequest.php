@@ -6,6 +6,7 @@ use App\Http\Requests\Crud\UpdateRequest;
 use App\Models\Morphs\Media;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\Rule;
+use OpenApi\Annotations as OA;
 
 /**
  * Class UpdateMediaRequest.

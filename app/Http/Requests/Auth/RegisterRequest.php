@@ -4,6 +4,7 @@ namespace App\Http\Requests\Auth;
 
 use App\Http\Requests\BaseRequest;
 use Illuminate\Validation\Rule;
+use OpenApi\Annotations as OA;
 
 /**
  * Class RegisterRequest.

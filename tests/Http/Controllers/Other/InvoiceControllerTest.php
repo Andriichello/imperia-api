@@ -46,16 +46,13 @@ class InvoiceControllerTest extends RegisteringTestCase
         parent::setUp();
 
         $this->banquet = Banquet::factory()
+            ->withOrder(Order::factory()->create())
             ->withCustomer(Customer::factory()->create())
             ->withCreator($this->user)
             ->create();
 
-        $order = Order::factory()
-            ->withBanquet($this->banquet)
-            ->create();
-
         SpaceOrderField::factory()
-            ->withOrder($order)
+            ->withOrder($this->banquet->order)
             ->withSpace(Space::factory()->create())
             ->create();
     }

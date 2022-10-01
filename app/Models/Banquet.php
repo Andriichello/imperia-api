@@ -7,6 +7,7 @@ use App\Models\Interfaces\CommentableInterface;
 use App\Models\Interfaces\LoggableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Morphs\Comment;
+use App\Models\Orders\BanquetOrder;
 use App\Models\Orders\Order;
 use App\Models\Traits\CommentableTrait;
 use App\Models\Traits\LoggableTrait;
@@ -16,7 +17,7 @@ use Carbon\Carbon;
 use Database\Factories\BanquetFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
 
@@ -42,6 +43,7 @@ use Illuminate\Support\Collection;
  * @property array|null $totals
  *
  * @property Order|null $order
+ * @property Order[]|Collection $orders
  * @property User|null $creator
  * @property Customer|null $customer
  * @property Comment[]|Collection $comments
@@ -105,7 +107,7 @@ class Banquet extends BaseModel implements
      * @var array
      */
     protected $relations = [
-        'order',
+        'orders',
         'creator',
         'customer',
         'comments',
@@ -118,7 +120,7 @@ class Banquet extends BaseModel implements
      * @var array
      */
     protected array $cascadeDeletes = [
-        'order',
+        'orders',
     ];
 
     /**
@@ -131,13 +133,43 @@ class Banquet extends BaseModel implements
     ];
 
     /**
-     * Order associated with the model.
+     * The accessors to append to the model's array form.
      *
-     * @return HasOne
+     * @var string[]
      */
-    public function order(): HasOne
+    protected $appends = [
+        'order_id',
+    ];
+
+    /**
+     * Orders associated with the model.
+     *
+     * @return BelongsToMany
+     */
+    public function orders(): BelongsToMany
     {
-        return $this->hasOne(Order::class, 'banquet_id', 'id');
+        return $this->belongsToMany(Order::class, 'banquet_order')
+            ->using(BanquetOrder::class);
+    }
+
+    /**
+     * Get order associated with the model.
+     *
+     * @return Order|null
+     */
+    public function getOrderAttribute(): ?Order
+    {
+        return $this->orders->first();
+    }
+
+    /**
+     * Get id of order associated with the model.
+     *
+     * @return int|null
+     */
+    public function getOrderIdAttribute(): ?int
+    {
+        return $this->order?->id;
     }
 
     /**
@@ -204,16 +236,6 @@ class Banquet extends BaseModel implements
     public function setTotalsAttribute(?array $totals): void
     {
         $this->setToJson('metadata', 'totals', $totals);
-    }
-
-    /**
-     * Accessor for id of the order.
-     *
-     * @return int|null
-     */
-    public function getOrderIdAttribute(): ?int
-    {
-        return $this->order()->pluck('id')->first();
     }
 
     /**

@@ -5,6 +5,7 @@ namespace App\Http\Resources\Holiday;
 use App\Models\Holiday;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use OpenApi\Annotations as OA;
 
 /**
  * Class HolidayResource.
@@ -28,10 +29,7 @@ class HolidayResource extends JsonResource
             'type' => $this->type,
             'name' => $this->name,
             'description' => $this->description,
-            'day' => $this->day,
-            'month' => $this->month,
-            'year' => $this->year,
-            'restaurant_id' => $this->restaurant_id,
+            'date' => $this->date,
             'closest_date' => $this->closest_date,
         ];
     }
@@ -40,15 +38,12 @@ class HolidayResource extends JsonResource
      * @OA\Schema(
      *   schema="Holiday",
      *   description="Holiday resource object",
-     *   required = {"id", "type", "name", "description", "day", "month", "year", "restaurant_id"},
+     *   required = {"id", "type", "name", "description", "date"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="holidays"),
      *   @OA\Property(property="name", type="string", example="Random holiday"),
      *   @OA\Property(property="description", type="string", nullable="true", example="null"),
-     *   @OA\Property(property="day", type="integer", example=1),
-     *   @OA\Property(property="month", type="integer", nullable="true", example=10),
-     *   @OA\Property(property="year", type="integer", nullable="true", example=2022),
-     *   @OA\Property(property="restaurant_id", type="integer", nullable="true", example=1),
+     *   @OA\Property(property="date", type="string", format="date", example="2022-01-12",),
      *   @OA\Property(property="closest_date", type="string", format="date-time",
      *     nullable="true", example="2022-01-12 10:00:00",),
      * )

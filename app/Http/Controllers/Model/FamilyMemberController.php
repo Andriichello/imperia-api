@@ -13,6 +13,7 @@ use App\Http\Resources\FamilyMember\FamilyMemberResource;
 use App\Policies\FamilyMemberPolicy;
 use App\Queries\FamilyMemberQueryBuilder;
 use App\Repositories\FamilyMemberRepository;
+use OpenApi\Annotations as OA;
 
 /**
  * Class FamilyMemberController.

@@ -306,7 +306,12 @@
 </template>
 
 <script>
+import Card from '../../../../../vendor/laravel/nova/resources/js/components/Card'
+
 export default {
+  components: {
+    Card,
+  },
   data() {
     return {
       items: null,
@@ -447,6 +452,10 @@ export default {
       this.view.item = null;
     },
     deleteItem() {
+      if (!confirm('Delete selected item?')) {
+        return;
+      }
+
       this.delete.done = 0;
       this.delete.total = 1;
       this.delete.items = [this.view.item];

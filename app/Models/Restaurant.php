@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Database\Factories\RestaurantFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
@@ -32,12 +33,8 @@ use Illuminate\Support\Collection;
  * @property Carbon|null $deleted_at
  *
  * @property Schedule[]|Collection $schedules
- * @property Schedule[]|Collection $defaultSchedules
- * @property Schedule[]|Collection $operativeSchedules
  * @property Schedule[]|Collection $holidays
- * @property Schedule[]|Collection $defaultHolidays
  * @property Schedule[]|Collection $relevantHolidays
- * @property Schedule[]|Collection $closestHolidays
  *
  * @method static RestaurantQueryBuilder query()
  * @method static RestaurantFactory factory(...$parameters)
@@ -78,7 +75,15 @@ class Restaurant extends BaseModel implements
      * @var array
      */
     protected $relations = [
+        'banquets',
+        'menus',
+        'products',
+        'spaces',
+        'tickets',
+        'services',
         'schedules',
+        'holidays',
+        'relevantHolidays',
     ];
 
     /**
@@ -92,6 +97,56 @@ class Restaurant extends BaseModel implements
     }
 
     /**
+     * Menus associated with the model.
+     *
+     * @return BelongsToMany
+     */
+    public function menus(): BelongsToMany
+    {
+        return $this->belongsToMany(Menu::class, 'restaurant_menu');
+    }
+
+    /**
+     * Products associated with the model.
+     *
+     * @return BelongsToMany
+     */
+    public function products(): BelongsToMany
+    {
+        return $this->belongsToMany(Product::class, 'restaurant_product');
+    }
+
+    /**
+     * Spaces associated with the model.
+     *
+     * @return BelongsToMany
+     */
+    public function spaces(): BelongsToMany
+    {
+        return $this->belongsToMany(Space::class, 'restaurant_space');
+    }
+
+    /**
+     * Tickets associated with the model.
+     *
+     * @return BelongsToMany
+     */
+    public function tickets(): BelongsToMany
+    {
+        return $this->belongsToMany(Ticket::class, 'restaurant_ticket');
+    }
+
+    /**
+     * Services associated with the model.
+     *
+     * @return BelongsToMany
+     */
+    public function services(): BelongsToMany
+    {
+        return $this->belongsToMany(Service::class, 'restaurant_service');
+    }
+
+    /**
      * Schedules associated with the model.
      *
      * @return HasMany
@@ -102,201 +157,25 @@ class Restaurant extends BaseModel implements
     }
 
     /**
-     * Schedules that are default for all restaurants,
-     * if there is no specific ones specified.
-     *
-     * @return ScheduleQueryBuilder
-     */
-    public function defaultSchedules(): ScheduleQueryBuilder
-    {
-        return Schedule::query()
-            ->onlyDefaults();
-    }
-
-    /**
-     * Load default schedules and set it into $defaultSchedules.
-     *
-     * @return Collection
-     */
-    public function loadDefaultSchedules(): Collection
-    {
-        /** @var Collection $schedules */
-        $schedules = $this->defaultSchedules()
-            ->get()->sortBy('begs_in');
-
-        return $this->defaultSchedules = $schedules;
-    }
-
-    /**
-     * Accessor for schedules that are default for all restaurants,
-     * if there is no specific ones specified.
-     *
-     * @return Collection
-     */
-    public function getDefaultSchedulesAttribute(): Collection
-    {
-        return $this->defaultSchedules ?? $this->loadDefaultSchedules();
-    }
-
-    /**
-     * Load operative schedules and set it into $operativeSchedules.
-     *
-     * @return Collection
-     */
-    public function loadOperativeSchedules(): Collection
-    {
-        $schedules = $this->defaultSchedules
-            ->map(function (Schedule $default) {
-                $specific = $this->schedules->first(
-                    fn(Schedule $schedule) => $schedule->weekday === $default->weekday
-                );
-
-                return $specific ?? $default;
-            });
-
-        return $this->operativeSchedules = $schedules->sortBy('begs_in');
-    }
-
-    /**
-     * Accessor for schedules that restaurant operates on.
-     *
-     * @return Collection
-     */
-    public function getOperativeSchedulesAttribute(): Collection
-    {
-        return $this->operativeSchedules ?? $this->loadOperativeSchedules();
-    }
-
-    /**
      * Holidays associated with the model.
      *
-     * @return HasMany
+     * @return BelongsToMany
      */
-    public function holidays(): HasMany
+    public function holidays(): BelongsToMany
     {
-        return $this->hasMany(Holiday::class, 'restaurant_id', 'id');
-    }
-
-    /**
-     * Holidays that are default for all restaurants,
-     * if there is no specific ones specified.
-     *
-     * @return HolidayQueryBuilder
-     */
-    public function defaultHolidays(): HolidayQueryBuilder
-    {
-        return Holiday::query()
-            ->onlyDefaults()
-            ->relevantFrom(now())
-            ->relevantUntil(now()->addYear());
-    }
-
-    /**
-     * Load default holidays and set it into $defaultHolidays.
-     *
-     * @return Collection
-     */
-    public function loadDefaultHolidays(): Collection
-    {
-        /** @var Collection $holidays */
-        $holidays = $this->defaultHolidays()->get();
-
-        return $this->defaultHolidays = $holidays;
-    }
-
-    /**
-     * Accessor for holidays that are default for all restaurants (for one year).
-     *
-     * @return Collection
-     */
-    public function getDefaultHolidaysAttribute(): Collection
-    {
-        return $this->defaultHolidays ?? $this->loadDefaultHolidays();
+        return $this->belongsToMany(Holiday::class, 'restaurant_holiday')
+            ->orderBy('date');
     }
 
     /**
      * Holidays that are relevant for the restaurant (for one year).
      *
-     * @return HolidayQueryBuilder
+     * @return BelongsToMany
      */
-    public function relevantHolidays(): HolidayQueryBuilder
+    public function relevantHolidays(): BelongsToMany
     {
-        return Holiday::query()
-            ->withRestaurant($this->id, null)
-            ->relevantFrom(now())
-            ->relevantUntil(now()->addYear());
-    }
-
-    /**
-     * Load holidays that are relevant for the restaurant
-     * and set it into $relevantHolidays.
-     *
-     * @return Collection
-     */
-    public function loadRelevantHolidays(): Collection
-    {
-        /** @var Collection $holidays */
-        $holidays = $this->relevantHolidays()->get();
-
-        return $this->relevantHolidays = $holidays->sortBy('closest_date');
-    }
-
-    /**
-     * Accessor for holidays that are relevant for the restaurants (for one year).
-     *
-     * @return Collection
-     */
-    public function getRelevantHolidaysAttribute(): Collection
-    {
-        return $this->relevantHolidays ?? $this->loadRelevantHolidays();
-    }
-
-    /**
-     * Holidays that are relevant for the restaurant (for one year).
-     *
-     * @param int $days
-     * @param CarbonInterface|null $from
-     *
-     * @return HolidayQueryBuilder
-     */
-    public function closestHolidays(int $days = 7, ?CarbonInterface $from = null): HolidayQueryBuilder
-    {
-        $sub = Holiday::query();
-        $date = ($from ?? now());
-
-        for ($i = 0; $i < $days; $i++) {
-            $sub->orWhereWrapped(function (HolidayQueryBuilder $query) use ($date, $i) {
-                $query->relevantOn($date->clone()->addDays($i));
-            });
-        }
-
-        return Holiday::query()
-            ->withRestaurant($this->id, null)
-            ->addWrappedWhereQuery($sub);
-    }
-
-    /**
-     * Load holidays that are closest for the next week
-     * and set it into $closestHolidays.
-     *
-     * @return Collection
-     */
-    public function loadClosestHolidays(): Collection
-    {
-        /** @var Collection $holidays */
-        $holidays = $this->closestHolidays()->get();
-
-        return $this->closestHolidays = $holidays->sortBy('closest_date');
-    }
-
-    /**
-     * Accessor for holidays that are the closest ones (for one week).
-     *
-     * @return Collection
-     */
-    public function getClosestHolidaysAttribute(): Collection
-    {
-        return $this->closestHolidays ?? $this->loadClosestHolidays();
+        return $this->holidays()
+            ->where('date', '>=', now()->setTime(0, 0));
     }
 
     /**

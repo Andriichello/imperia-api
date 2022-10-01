@@ -8,6 +8,7 @@ use App\Nova\Actions\GenerateInvoice;
 use App\Nova\Options\BanquetStateOptions;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
@@ -87,7 +88,7 @@ class Banquet extends Resource
 
             BelongsTo::make('Customer', 'customer', Customer::class),
 
-            HasOne::make('Order'),
+            BelongsToMany::make('Orders'),
 
             Text::make('Title')
                 ->updateRules('sometimes', 'min:1', 'max:50')

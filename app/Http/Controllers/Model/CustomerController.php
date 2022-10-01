@@ -13,6 +13,7 @@ use App\Http\Resources\Customer\CustomerResource;
 use App\Policies\CustomerPolicy;
 use App\Queries\CustomerQueryBuilder;
 use App\Repositories\CustomerRepository;
+use OpenApi\Annotations as OA;
 
 /**
  * Class CustomerController.

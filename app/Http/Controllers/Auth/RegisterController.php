@@ -9,6 +9,7 @@ use App\Http\Responses\ApiResponse;
 use App\Repositories\UserRepository;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\JsonResponse;
+use OpenApi\Annotations as OA;
 
 /**
  * Class RegisterController.

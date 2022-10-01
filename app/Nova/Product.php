@@ -6,7 +6,7 @@ use Andriichello\Media\MediaField;
 use App\Models\Scopes\ArchivedScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
@@ -76,7 +76,7 @@ class Product extends Resource
         return [
             ID::make()->sortable(),
 
-            BelongsTo::make('Menu'),
+            BelongsToMany::make('Menus'),
 
             MediaField::make('Media'),
 
@@ -126,7 +126,7 @@ class Product extends Resource
     {
         return [
             'id' => true,
-            'menu' => true,
+            'menus' => false,
             'media' => true,
             'title' => true,
             'description' => false,

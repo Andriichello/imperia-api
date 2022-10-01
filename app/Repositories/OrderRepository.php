@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Jobs\Order\CalculateTotals;
+use App\Models\Banquet;
 use App\Models\Orders\Order;
 use App\Models\Orders\ProductOrderField;
 use App\Models\Orders\ServiceOrderField;
@@ -10,6 +11,7 @@ use App\Models\Orders\SpaceOrderField;
 use App\Models\Orders\TicketOrderField;
 use App\Repositories\Traits\CommentableRepositoryTrait;
 use App\Repositories\Traits\DiscountableRepositoryTrait;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -34,6 +36,19 @@ class OrderRepository extends CrudRepository
         return DB::transaction(function () use ($attributes) {
             /** @var Order $order */
             $order = parent::create($attributes);
+
+            if (data_get($attributes, 'banquet_id')) {
+                /** @var Banquet $banquet */
+                $banquet = Banquet::query()
+                    ->findOrFail(data_get($attributes, 'banquet_id'));
+
+                if ($banquet->orders()->exists()) {
+                    throw new Exception('Specified banquet already has an order attached to it.');
+                }
+
+                $banquet->orders()->attach($order->id);
+            }
+
             $this->createOrUpdateRelations($order, $attributes);
             $this->createComments($order, $attributes);
             $this->createDiscounts($order, $attributes);

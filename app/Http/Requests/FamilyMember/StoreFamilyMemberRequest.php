@@ -4,6 +4,7 @@ namespace App\Http\Requests\FamilyMember;
 
 use App\Enums\FamilyRelation;
 use App\Http\Requests\Crud\StoreRequest;
+use OpenApi\Annotations as OA;
 
 /**
  * Class StoreFamilyMemberRequest.

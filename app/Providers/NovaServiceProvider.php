@@ -3,9 +3,11 @@
 namespace App\Providers;
 
 use Andriichello\Marketplace\Marketplace;
+use App\Models\Banquet;
 use App\Nova\Dashboards\Main;
 use App\Nova\Tools\BackupTool;
 use App\Nova\Tools\MediaTool;
+use App\Subscribers\NovaSubscriber;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\Cards\Help;
@@ -31,9 +33,11 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     {
         parent::boot();
 
-        $tools = $this->tools();
+        Nova::serving(function () {
+            Banquet::observe(NovaSubscriber::class);
+        });
 
-        Nova::mainMenu(function (Request $request, Menu $menu) use ($tools) {
+        Nova::mainMenu(function (Request $request, Menu $menu) {
             $sections = [
                 Marketplace::section($request),
                 MenuSection::make(__('Offers'), [

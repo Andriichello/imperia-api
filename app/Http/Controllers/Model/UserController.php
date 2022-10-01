@@ -18,6 +18,7 @@ use App\Policies\UserPolicy;
 use App\Queries\UserQueryBuilder;
 use App\Repositories\UserRepository;
 use Illuminate\Http\JsonResponse;
+use OpenApi\Annotations as OA;
 
 /**
  * Class UserController.

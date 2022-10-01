@@ -11,6 +11,7 @@ use App\Http\Resources\Menu\MenuResource;
 use App\Policies\MenuPolicy;
 use App\Queries\MenuQueryBuilder;
 use App\Repositories\MenuRepository;
+use OpenApi\Annotations as OA;
 
 /**
  * Class MenuController.
@@ -57,6 +58,9 @@ class MenuController extends CrudController
      *     @OA\Schema(ref ="#/components/schemas/MenuIncludes")),
      *   @OA\Parameter(name="page[size]", in="query", @OA\Schema(ref ="#/components/schemas/PageSize")),
      *   @OA\Parameter(name="page[number]", in="query", @OA\Schema(ref ="#/components/schemas/PageNumber")),
+     *   @OA\Parameter(name="filter[restaurants]", required=false, in="query", example="1",
+     *   @OA\Schema(type="string"), description="Coma-separated array of restaurant ids. Limits menus to those
+     * that are attached at least to one of those restaurants"),
      *   @OA\Parameter(name="archived", in="query", @OA\Schema(ref ="#/components/schemas/ArchivedParameter")),
      *
      *   @OA\Response(

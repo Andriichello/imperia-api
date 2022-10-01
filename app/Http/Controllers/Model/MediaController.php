@@ -14,6 +14,7 @@ use App\Http\Resources\Media\MediaResource;
 use App\Policies\MediaPolicy;
 use App\Queries\MediaQueryBuilder;
 use App\Repositories\MediaRepository;
+use OpenApi\Annotations as OA;
 
 /**
  * Class MediaController.

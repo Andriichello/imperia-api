@@ -51,30 +51,25 @@ class RestaurantControllerTest extends RegisteringTestCase
      */
     public function seedHolidays()
     {
-        Holiday::factory()
-            ->withDay(1)
-            ->withMonth(1)
+        $holiday = Holiday::factory()
+            ->withDate(now()->subWeek())
             ->create();
+        $this->restaurant->holidays()->attach($holiday->id);
 
-        Holiday::factory()
-            ->withDay(2)
-            ->withMonth(1)
+        $holiday = Holiday::factory()
+            ->withDate(now())
             ->create();
+        $this->restaurant->holidays()->attach($holiday->id);
 
-        Holiday::factory()
-            ->withDay(3)
-            ->withMonth(1)
+        $holiday = Holiday::factory()
+            ->withDate(now()->addWeek())
             ->create();
+        $this->restaurant->holidays()->attach($holiday->id);
 
-        Holiday::factory()
-            ->withDay(1)
-            ->withMonth(8)
+        $holiday = Holiday::factory()
+            ->withDate(now()->addYear())
             ->create();
-
-        Holiday::factory()
-            ->withDay(2)
-            ->withMonth(8)
-            ->create();
+        $this->restaurant->holidays()->attach($holiday->id);
     }
 
     /**
@@ -85,37 +80,39 @@ class RestaurantControllerTest extends RegisteringTestCase
     public function seedSchedules()
     {
         Schedule::factory()
+            ->withRestaurant($this->restaurant)
             ->withWeekday(Weekday::Monday)
             ->create(['beg_hour' => 9, 'end_hour' => 22]);
 
         Schedule::factory()
+            ->withRestaurant($this->restaurant)
             ->withWeekday(Weekday::Tuesday)
             ->create(['beg_hour' => 9, 'end_hour' => 22]);
 
         Schedule::factory()
+            ->withRestaurant($this->restaurant)
             ->withWeekday(Weekday::Wednesday)
             ->create(['beg_hour' => 9, 'end_hour' => 22]);
 
         Schedule::factory()
+            ->withRestaurant($this->restaurant)
             ->withWeekday(Weekday::Thursday)
             ->create(['beg_hour' => 9, 'end_hour' => 22]);
 
         Schedule::factory()
+            ->withRestaurant($this->restaurant)
             ->withWeekday(Weekday::Friday)
             ->create(['beg_hour' => 9, 'end_hour' => 23]);
 
         Schedule::factory()
+            ->withRestaurant($this->restaurant)
             ->withWeekday(Weekday::Saturday)
             ->create(['beg_hour' => 11, 'end_hour' => 21]);
 
         Schedule::factory()
+            ->withRestaurant($this->restaurant)
             ->withWeekday(Weekday::Sunday)
             ->create(['beg_hour' => 11, 'end_hour' => 21]);
-
-        Schedule::factory()
-            ->withWeekday(Weekday::Friday)
-            ->withRestaurant($this->restaurant)
-            ->create(['beg_hour' => 14, 'end_hour' => 3]);
     }
 
     /**
@@ -152,21 +149,7 @@ class RestaurantControllerTest extends RegisteringTestCase
             'api.restaurants.holidays',
             [
                 'id' => $this->restaurant->id,
-                'days' => 1,
-                'from' => '2022-01-01',
-            ]
-        );
-        $response = $this->get($url);
-
-        $response->assertOk();
-        $response->assertJsonCount(1, 'data');
-
-        $url = route(
-            'api.restaurants.holidays',
-            [
-                'id' => $this->restaurant->id,
-                'days' => 5,
-                'from' => '2022-01-01',
+                'from' => now()->toDateString(),
             ]
         );
         $response = $this->get($url);
@@ -178,13 +161,24 @@ class RestaurantControllerTest extends RegisteringTestCase
             'api.restaurants.holidays',
             [
                 'id' => $this->restaurant->id,
-                'days' => 7,
-                'from' => '2022-08-01',
+                'from' => now()->addWeek()->toDateString(),
             ]
         );
         $response = $this->get($url);
 
         $response->assertOk();
         $response->assertJsonCount(2, 'data');
+
+        $url = route(
+            'api.restaurants.holidays',
+            [
+                'id' => $this->restaurant->id,
+                'from' => now()->addYear()->toDateString(),
+            ]
+        );
+        $response = $this->get($url);
+
+        $response->assertOk();
+        $response->assertJsonCount(1, 'data');
     }
 }

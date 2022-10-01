@@ -4,12 +4,9 @@ namespace App\Models\Interfaces;
 
 use App\Models\Morphs\Media;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Illuminate\Support\Collection;
 
 /**
  * Interface MediableInterface.
- *
- * @property Media[]|Collection $media
  */
 interface MediableInterface
 {

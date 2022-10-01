@@ -12,7 +12,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var _vendor_laravel_nova_resources_js_components_Card__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../../../vendor/laravel/nova/resources/js/components/Card */ "../../vendor/laravel/nova/resources/js/components/Card.vue");
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  components: {
+    Card: _vendor_laravel_nova_resources_js_components_Card__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
   data: function data() {
     return {
       items: null,
@@ -157,6 +162,10 @@ __webpack_require__.r(__webpack_exports__);
       this.view.item = null;
     },
     deleteItem: function deleteItem() {
+      if (!confirm('Delete selected item?')) {
+        return;
+      }
+
       this["delete"].done = 0;
       this["delete"].total = 1;
       this["delete"].items = [this.view.item];
@@ -334,6 +343,21 @@ __webpack_require__.r(__webpack_exports__);
       this.deleteFile(0);
     }
   }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!../../vendor/laravel/nova/resources/js/components/Card.vue?vue&type=script&lang=js":
+/*!**********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!../../vendor/laravel/nova/resources/js/components/Card.vue?vue&type=script&lang=js ***!
+  \**********************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({//
 });
 
 /***/ }),
@@ -905,6 +929,28 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!../../vendor/laravel/nova/resources/js/components/Card.vue?vue&type=template&id=1146dd21":
+/*!**************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!../../vendor/laravel/nova/resources/js/components/Card.vue?vue&type=template&id=1146dd21 ***!
+  \**************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "vue");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
+
+var _hoisted_1 = {
+  "class": "bg-white dark:bg-gray-800 rounded-lg shadow"
+};
+function render(_ctx, _cache, $props, $setup, $data, $options) {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.renderSlot)(_ctx.$slots, "default")]);
+}
+
+/***/ }),
+
 /***/ "./resources/js/tool.js":
 /*!******************************!*\
   !*** ./resources/js/tool.js ***!
@@ -936,7 +982,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.media-card {\n    min-height: 300px;\n}\n.media-view-card {\n    min-height: 300px;\n    display: flex;\n    flex-direction: column;\n    justify-content: space-between;\n    align-items: stretch;\n    justify-self: center;\n    align-self: center;\n}\n.media-view-content {\n    width: 100%;\n    display: flex;\n    flex-direction: row;\n    justify-content: space-between;\n    flex-wrap: wrap;\n    align-items: center;\n    justify-self: center;\n    align-self: center;\n    gap: 16px;\n    padding: 16px 16px 16px 16px;\n}\n.media-view-details {\n    flex-grow: 1;\n    display: flex;\n    flex-direction: column;\n    justify-content: space-between;\n    flex-wrap: wrap;\n    align-items: stretch;\n    justify-self: center;\n    align-self: center;\n    gap: 8px;\n}\n.media-view-details-row {\n    display: flex;\n    flex-direction: row;\n    justify-content: start;\n    align-items: start;\n    flex-wrap: wrap;\n}\n.media-view-details-row-header {\n    width: 100px;\n    font-style: normal;\n    font-weight: 600;\n    font-size: 16px;\n    text-align: start;\n    max-lines: 1;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.media-view-details-row-data {\n    font-style: normal;\n    font-weight: 400;\n    font-size: 16px;\n    text-align: start;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.media-view-img-div {\n    flex-grow: 2;\n    display: flex;\n    flex-direction: row;\n    justify-content: center;\n    align-items: center;\n}\n.media-view-img {\n    background-image: linear-gradient(45deg, rgba(241, 245, 249, 0.5), rgba(100, 116, 139, 0.4));\n    border-radius: 4px;\n}\n.media-view-link {\n    font-style: normal;\n    font-weight: 600;\n    font-size: 16px;\n    color: rgba(var(--colors-primary-500), 100%);\n}\n.media-actions {\n    width: 100%;\n    display: flex;\n    flex-direction: row;\n    flex-wrap: wrap;\n    justify-content: space-between;\n    align-items: center;\n    padding: 8px 8px 8px 8px;\n}\n.media-actions-group {\n    display: flex;\n    flex-direction: row;\n    justify-content: start;\n    align-items: center;\n    gap: 4px;\n}\n.media-filters {\n    width: 100%;\n    display: flex;\n    flex-direction: row;\n    flex-wrap: wrap;\n    justify-content: center;\n    align-items: center;\n    padding: 8px 8px 8px 8px;\n}\n.media-filters-input {\n    min-width: 120px;\n    max-width: 300px;\n}\n.media-filters-group {\n    display: flex;\n    flex-direction: row;\n    flex-wrap: wrap;\n    justify-content: center;\n    align-items: center;\n    gap: 16px;\n}\n.media-list {\n    display: flex;\n    flex-direction: row;\n    flex-wrap: wrap;\n    justify-content: stretch;\n    align-items: start;\n    gap: 8px;\n    padding: 16px 16px 16px 16px;\n}\n.media-list-item {\n    display: flex;\n    flex-direction: column;\n    justify-content: start;\n    align-items: center;\n    gap: 2px;\n}\n.media-list-item-img {\n    width: 100px;\n    height: 100px;\n    border-radius: 4px;\n    -o-object-fit: cover;\n       object-fit: cover;\n    background-image: linear-gradient(45deg, rgba(241, 245, 249, 0.5), rgba(100, 116, 139, 0.4));\n}\n.media-list-selection {\n    border: 4px solid rgba(var(--colors-primary-500), 100%);\n}\n.media-list-item-name {\n    width: 100px;\n    height: 16px;\n    font-style: normal;\n    font-weight: 400;\n    font-size: 14px;\n    text-align: center;\n    max-lines: 1;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.media-pagination {\n    display: flex;\n    flex-wrap: wrap;\n    align-items: center;\n    justify-content: space-between;\n    margin-top: 16px;\n    border-radius: 4px;\n}\n.media-pagination-button {\n}\n.media-pagination-button:disabled,\n.media-pagination-button[disabled] {\n    opacity: 40%;\n}\n.media-no-results {\n    display: flex;\n    flex-direction: column;\n    flex-wrap: wrap;\n    align-items: center;\n    justify-content: space-between;\n    gap: 16px;\n    padding: 48px 64px 64px 64px;\n}\n.media-no-results-img {\n    width: 100px;\n    height: 100px;\n}\n.media-no-results-text {\n    font-style: normal;\n    font-weight: 500;\n    font-size: 24px;\n    line-height: 28px;\n    text-align: center;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.media-card {\n  min-height: 300px;\n}\n.media-view-card {\n  min-height: 300px;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n  align-items: stretch;\n  justify-self: center;\n  align-self: center;\n}\n.media-view-content {\n  width: 100%;\n  display: flex;\n  flex-direction: row;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-self: center;\n  align-self: center;\n  gap: 16px;\n  padding: 16px 16px 16px 16px;\n}\n.media-view-details {\n  flex-grow: 1;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n  flex-wrap: wrap;\n  align-items: stretch;\n  justify-self: center;\n  align-self: center;\n  gap: 8px;\n}\n.media-view-details-row {\n  display: flex;\n  flex-direction: row;\n  justify-content: start;\n  align-items: start;\n  flex-wrap: wrap;\n}\n.media-view-details-row-header {\n  width: 100px;\n  font-style: normal;\n  font-weight: 600;\n  font-size: 16px;\n  text-align: start;\n  max-lines: 1;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.media-view-details-row-data {\n  font-style: normal;\n  font-weight: 400;\n  font-size: 16px;\n  text-align: start;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.media-view-img-div {\n  flex-grow: 2;\n  display: flex;\n  flex-direction: row;\n  justify-content: center;\n  align-items: center;\n}\n.media-view-img {\n  background-image: linear-gradient(45deg, rgba(241, 245, 249, 0.5), rgba(100, 116, 139, 0.4));\n  border-radius: 4px;\n}\n.media-view-link {\n  font-style: normal;\n  font-weight: 600;\n  font-size: 16px;\n  color: rgba(var(--colors-primary-500), 100%);\n}\n.media-actions {\n  width: 100%;\n  display: flex;\n  flex-direction: row;\n  flex-wrap: wrap;\n  justify-content: space-between;\n  align-items: center;\n  padding: 8px 8px 8px 8px;\n}\n.media-actions-group {\n  display: flex;\n  flex-direction: row;\n  justify-content: start;\n  align-items: center;\n  gap: 4px;\n}\n.media-filters {\n  width: 100%;\n  display: flex;\n  flex-direction: row;\n  flex-wrap: wrap;\n  justify-content: center;\n  align-items: center;\n  padding: 8px 8px 8px 8px;\n}\n.media-filters-input {\n  min-width: 120px;\n  max-width: 300px;\n}\n.media-filters-group {\n  display: flex;\n  flex-direction: row;\n  flex-wrap: wrap;\n  justify-content: center;\n  align-items: center;\n  gap: 16px;\n}\n.media-list {\n  display: flex;\n  flex-direction: row;\n  flex-wrap: wrap;\n  justify-content: stretch;\n  align-items: start;\n  gap: 8px;\n  padding: 16px 16px 16px 16px;\n}\n.media-list-item {\n  display: flex;\n  flex-direction: column;\n  justify-content: start;\n  align-items: center;\n  gap: 2px;\n}\n.media-list-item-img {\n  width: 100px;\n  height: 100px;\n  border-radius: 4px;\n  -o-object-fit: cover;\n     object-fit: cover;\n  background-image: linear-gradient(45deg, rgba(241, 245, 249, 0.5), rgba(100, 116, 139, 0.4));\n}\n.media-list-selection {\n  border: 4px solid rgba(var(--colors-primary-500), 100%);\n}\n.media-list-item-name {\n  width: 100px;\n  height: 16px;\n  font-style: normal;\n  font-weight: 400;\n  font-size: 14px;\n  text-align: center;\n  max-lines: 1;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.media-pagination {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n  margin-top: 16px;\n  border-radius: 4px;\n}\n.media-pagination-button {\n}\n.media-pagination-button:disabled,\n.media-pagination-button[disabled] {\n  opacity: 40%;\n}\n.media-no-results {\n  display: flex;\n  flex-direction: column;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n  gap: 16px;\n  padding: 48px 64px 64px 64px;\n}\n.media-no-results-img {\n  width: 100px;\n  height: 100px;\n}\n.media-no-results-text {\n  font-style: normal;\n  font-weight: 500;\n  font-size: 24px;\n  line-height: 28px;\n  text-align: center;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1388,6 +1434,33 @@ if (false) {}
 
 /***/ }),
 
+/***/ "../../vendor/laravel/nova/resources/js/components/Card.vue":
+/*!******************************************************************!*\
+  !*** ../../vendor/laravel/nova/resources/js/components/Card.vue ***!
+  \******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _Card_vue_vue_type_template_id_1146dd21__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Card.vue?vue&type=template&id=1146dd21 */ "../../vendor/laravel/nova/resources/js/components/Card.vue?vue&type=template&id=1146dd21");
+/* harmony import */ var _Card_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Card.vue?vue&type=script&lang=js */ "../../vendor/laravel/nova/resources/js/components/Card.vue?vue&type=script&lang=js");
+/* harmony import */ var _var_www_imperia_api_nova_components_Media_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./node_modules/vue-loader/dist/exportHelper.js */ "./node_modules/vue-loader/dist/exportHelper.js");
+
+
+
+
+;
+const __exports__ = /*#__PURE__*/(0,_var_www_imperia_api_nova_components_Media_node_modules_vue_loader_dist_exportHelper_js__WEBPACK_IMPORTED_MODULE_2__["default"])(_Card_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__["default"], [['render',_Card_vue_vue_type_template_id_1146dd21__WEBPACK_IMPORTED_MODULE_0__.render],['__file',"vendor/laravel/nova/resources/js/components/Card.vue"]])
+/* hot reload */
+if (false) {}
+
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (__exports__);
+
+/***/ }),
+
 /***/ "./resources/js/pages/Tool.vue?vue&type=script&lang=js":
 /*!*************************************************************!*\
   !*** ./resources/js/pages/Tool.vue?vue&type=script&lang=js ***!
@@ -1403,6 +1476,21 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "../../vendor/laravel/nova/resources/js/components/Card.vue?vue&type=script&lang=js":
+/*!******************************************************************************************!*\
+  !*** ../../vendor/laravel/nova/resources/js/components/Card.vue?vue&type=script&lang=js ***!
+  \******************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* reexport safe */ _nova_components_Media_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_nova_components_Media_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Card_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__["default"])
+/* harmony export */ });
+/* harmony import */ var _nova_components_Media_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_nova_components_Media_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Card_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../nova-components/Media/node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../../../nova-components/Media/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Card.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!../../vendor/laravel/nova/resources/js/components/Card.vue?vue&type=script&lang=js");
+ 
+
+/***/ }),
+
 /***/ "./resources/js/pages/Tool.vue?vue&type=template&id=ef10eebe":
 /*!*******************************************************************!*\
   !*** ./resources/js/pages/Tool.vue?vue&type=template&id=ef10eebe ***!
@@ -1414,6 +1502,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Tool_vue_vue_type_template_id_ef10eebe__WEBPACK_IMPORTED_MODULE_0__.render)
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Tool_vue_vue_type_template_id_ef10eebe__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Tool.vue?vue&type=template&id=ef10eebe */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/pages/Tool.vue?vue&type=template&id=ef10eebe");
+
+
+/***/ }),
+
+/***/ "../../vendor/laravel/nova/resources/js/components/Card.vue?vue&type=template&id=1146dd21":
+/*!************************************************************************************************!*\
+  !*** ../../vendor/laravel/nova/resources/js/components/Card.vue?vue&type=template&id=1146dd21 ***!
+  \************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _nova_components_Media_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_nova_components_Media_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_nova_components_Media_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Card_vue_vue_type_template_id_1146dd21__WEBPACK_IMPORTED_MODULE_0__.render)
+/* harmony export */ });
+/* harmony import */ var _nova_components_Media_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_nova_components_Media_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_nova_components_Media_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Card_vue_vue_type_template_id_1146dd21__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../../nova-components/Media/node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../../../../nova-components/Media/node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../../../../nova-components/Media/node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Card.vue?vue&type=template&id=1146dd21 */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!../../vendor/laravel/nova/resources/js/components/Card.vue?vue&type=template&id=1146dd21");
 
 
 /***/ }),

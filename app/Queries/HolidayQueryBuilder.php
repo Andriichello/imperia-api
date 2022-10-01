@@ -4,55 +4,12 @@ namespace App\Queries;
 
 use Carbon\CarbonInterface;
 use Illuminate\Database\Query\Builder;
-use Illuminate\Support\Arr;
 
 /**
- * Class ScheduleQueryBuilder.
+ * Class HolidayQueryBuilder.
  */
 class HolidayQueryBuilder extends BaseQueryBuilder
 {
-    /**
-     * Only holidays for given day.
-     *
-     * @param int ...$dates
-     *
-     * @return static
-     */
-    public function withDay(int ...$dates): static
-    {
-        $this->whereIn('date', $dates);
-
-        return $this;
-    }
-
-    /**
-     * Only holidays for given months.
-     *
-     * @param int|null ...$months
-     *
-     * @return static
-     */
-    public function withMonth(?int ...$months): static
-    {
-        $this->whereIn('month', $months);
-
-        return $this;
-    }
-
-    /**
-     * Only holidays for given years.
-     *
-     * @param int|null ...$years
-     *
-     * @return static
-     */
-    public function withYear(?int ...$years): static
-    {
-        $this->whereIn('year', $years);
-
-        return $this;
-    }
-
     /**
      * Only holidays for given date.
      *
@@ -62,30 +19,7 @@ class HolidayQueryBuilder extends BaseQueryBuilder
      */
     public function relevantOn(CarbonInterface $date): static
     {
-        $closure = function (Builder $query) use ($date) {
-            $query->where(
-                function (Builder $query) use ($date) {
-                    $query->whereNull('day')
-                        ->orWhere('day', $date->day);
-                }
-            );
-
-            $query->where(
-                function (Builder $query) use ($date) {
-                    $query->whereNull('month')
-                        ->orWhere('month', $date->month);
-                }
-            );
-
-            $query->where(
-                function (Builder $query) use ($date) {
-                    $query->whereNull('year')
-                        ->orWhere('year', $date->year);
-                }
-            );
-        };
-
-        $this->whereNested($closure);
+        $this->where('date', '=', $date->clone()->setTime(0, 0));
 
         return $this;
     }
@@ -99,66 +33,7 @@ class HolidayQueryBuilder extends BaseQueryBuilder
      */
     public function relevantFrom(CarbonInterface $date): static
     {
-        $closure = function (Builder $query) use ($date) {
-            $query->whereNested(
-                function (Builder $sub) use ($date) {
-                    $sub->where(
-                        function (Builder $query) use ($date) {
-                            $query->whereNull('day')
-                                ->orWhere('day', '>=', $date->day);
-                        }
-                    );
-
-                    $sub->where(
-                        function (Builder $query) use ($date) {
-                            $query->whereNull('month')
-                                ->orWhere('month', '=', $date->month);
-                        }
-                    );
-
-                    $sub->where(
-                        function (Builder $query) use ($date) {
-                            $query->whereNull('year')
-                                ->orWhere('year', '>=', $date->year);
-                        }
-                    );
-                },
-                'or'
-            );
-
-            $query->whereNested(
-                function (Builder $sub) use ($date) {
-                    $sub->where(
-                        function (Builder $query) use ($date) {
-                            $query->whereNull('month')
-                                ->orWhere('month', '>', $date->month);
-                        }
-                    );
-
-                    $sub->where(
-                        function (Builder $query) use ($date) {
-                            $query->whereNull('year')
-                                ->orWhere('year', '>=', $date->year);
-                        }
-                    );
-                },
-                'or'
-            );
-
-            $query->whereNested(
-                function (Builder $sub) use ($date) {
-                    $sub->where(
-                        function (Builder $query) use ($date) {
-                            $query->whereNull('year')
-                                ->orWhere('year', '>', $date->year);
-                        }
-                    );
-                },
-                'or'
-            );
-        };
-
-        $this->whereNested($closure);
+        $this->where('date', '>=', $date->clone()->setTime(0, 0));
 
         return $this;
     }
@@ -172,66 +47,21 @@ class HolidayQueryBuilder extends BaseQueryBuilder
      */
     public function relevantUntil(CarbonInterface $date): static
     {
-        $closure = function (Builder $query) use ($date) {
-            $query->whereNested(
-                function (Builder $sub) use ($date) {
-                    $sub->where(
-                        function (Builder $query) use ($date) {
-                            $query->whereNull('day')
-                                ->orWhere('day', '<=', $date->day);
-                        }
-                    );
+        $this->where('date', '<=', $date->clone()->setTime(0, 0));
 
-                    $sub->where(
-                        function (Builder $query) use ($date) {
-                            $query->whereNull('month')
-                                ->orWhere('month', '=', $date->month);
-                        }
-                    );
+        return $this;
+    }
 
-                    $sub->where(
-                        function (Builder $query) use ($date) {
-                            $query->whereNull('year')
-                                ->orWhere('year', '<=', $date->year);
-                        }
-                    );
-                },
-                'or'
-            );
-
-            $query->whereNested(
-                function (Builder $sub) use ($date) {
-                    $sub->where(
-                        function (Builder $query) use ($date) {
-                            $query->whereNull('month')
-                                ->orWhere('month', '<', $date->month);
-                        }
-                    );
-
-                    $sub->where(
-                        function (Builder $query) use ($date) {
-                            $query->whereNull('year')
-                                ->orWhere('year', '<=', $date->year);
-                        }
-                    );
-                },
-                'or'
-            );
-
-            $query->whereNested(
-                function (Builder $sub) use ($date) {
-                    $sub->where(
-                        function (Builder $query) use ($date) {
-                            $query->whereNull('year')
-                                ->orWhere('year', '<', $date->year);
-                        }
-                    );
-                },
-                'or'
-            );
-        };
-
-        $this->whereNested($closure);
+    /**
+     * Only holidays that are repeating.
+     *
+     * @param bool $repeating
+     *
+     * @return static
+     */
+    public function repeating(bool $repeating): static
+    {
+        $this->where('repeating', $repeating);
 
         return $this;
     }
@@ -253,18 +83,6 @@ class HolidayQueryBuilder extends BaseQueryBuilder
                 $query->orWhereNull('restaurant_id');
             }
         });
-
-        return $this;
-    }
-
-    /**
-     * Only holidays that are default ones.
-     *
-     * @return static
-     */
-    public function onlyDefaults(): static
-    {
-        $this->whereNull('restaurant_id');
 
         return $this;
     }

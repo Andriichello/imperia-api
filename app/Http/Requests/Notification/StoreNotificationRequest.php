@@ -4,6 +4,7 @@ namespace App\Http\Requests\Notification;
 
 use App\Enums\NotificationChannel;
 use App\Http\Requests\Crud\ShowRequest;
+use OpenApi\Annotations as OA;
 
 /**
  * Class StoreNotificationRequest.

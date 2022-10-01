@@ -6,6 +6,7 @@ use App\Enums\BanquetState;
 use App\Enums\UserRole;
 use App\Models\Banquet;
 use App\Models\Customer;
+use App\Models\Orders\Order;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -92,6 +93,22 @@ class BanquetFactory extends Factory
             function (array $attributes) use ($state) {
                 $attributes['state'] = is_string($state) ? $state : $state->value;
                 return $attributes;
+            }
+        );
+    }
+
+    /**
+     * Indicate order.
+     *
+     * @param Order|int $order
+     *
+     * @return static
+     */
+    public function withOrder(Order|int $order): static
+    {
+        return $this->afterCreating(
+            function (Banquet $model) use ($order) {
+                $model->orders()->attach(is_int($order) ? $order : $order->id);
             }
         );
     }

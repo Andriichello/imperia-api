@@ -5,6 +5,7 @@ namespace App\Http\Requests\Order;
 use App\Http\Requests\Crud\StoreRequest;
 use App\Models\Morphs\Comment;
 use App\Models\Morphs\Discount;
+use OpenApi\Annotations as OA;
 
 /**
  * Class StoreOrderRequest.
@@ -119,7 +120,8 @@ class StoreOrderRequest extends StoreRequest
                 'banquet_id' => [
                     'required',
                     'integer',
-                    'unique:orders,banquet_id',
+                    'exists:banquets,id',
+                    'unique:banquet_order,banquet_id',
                 ],
             ]
         );

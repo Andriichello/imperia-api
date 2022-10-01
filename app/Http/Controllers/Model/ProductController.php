@@ -11,6 +11,7 @@ use App\Http\Resources\Product\ProductResource;
 use App\Policies\ProductPolicy;
 use App\Queries\ProductQueryBuilder;
 use App\Repositories\ProductRepository;
+use OpenApi\Annotations as OA;
 
 /**
  * Class ProductController.
@@ -59,11 +60,15 @@ class ProductController extends CrudController
      *   @OA\Parameter(name="page[number]", in="query", @OA\Schema(ref ="#/components/schemas/PageNumber")),
      *   @OA\Parameter(name="filter[title]", required=false, in="query", example="Mojito",
      *     @OA\Schema(type="string"), description="Can be used for searches. Is partial."),
-     *   @OA\Parameter(name="filter[menu_id]", required=false, in="query", example=1,
-     *     @OA\Schema(type="integer"), description="Limits products to those that belong to menu with given id"),
-     *   @OA\Parameter(name="filter[categories]", required=false, in="query", example="2,3",
+     *   @OA\Parameter(name="filter[menus]", required=false, in="query", example="1,2",
+     *     @OA\Schema(type="string"), description="Coma-separated array of menu ids. Limits products to those
+     * that are attached at least to one of given menus"),
+     *   @OA\Parameter(name="filter[categories]", required=false, in="query", example="2",
      *     @OA\Schema(type="string"), description="Coma-separated array of category ids. Limits products to those
      * that have at least one of given categories attached to them"),
+     *   @OA\Parameter(name="filter[restaurants]", required=false, in="query", example="1",
+     *   @OA\Schema(type="string"), description="Coma-separated array of restaurant ids. Limits products to those
+     * that are attached at least to one of those restaurants"),
      *   @OA\Parameter(name="archived", in="query", @OA\Schema(ref ="#/components/schemas/ArchivedParameter")),
      *
      *   @OA\Response(

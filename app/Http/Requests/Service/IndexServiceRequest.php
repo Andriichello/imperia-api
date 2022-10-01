@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Service;
 
 use App\Http\Filters\CategoriesFilter;
+use App\Http\Filters\RestaurantsFilter;
 use App\Http\Requests\Crud\IndexRequest;
 use Spatie\QueryBuilder\AllowedFilter;
 
@@ -28,6 +29,10 @@ class IndexServiceRequest extends IndexRequest
             [
                 AllowedFilter::partial('title'),
                 AllowedFilter::custom('categories', new CategoriesFilter()),
+                AllowedFilter::custom(
+                    'restaurants',
+                    new RestaurantsFilter('restaurant_service', 'service_id')
+                ),
             ]
         );
     }

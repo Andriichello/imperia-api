@@ -17,6 +17,7 @@ use App\Queries\SpaceQueryBuilder;
 use App\Repositories\SpaceRepository;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
+use OpenApi\Annotations as OA;
 
 /**
  * Class SpaceController.
@@ -88,6 +89,9 @@ class SpaceController extends CrudController
      *   @OA\Parameter(name="filter[categories]", required=false, in="query", example="2,3",
      *     @OA\Schema(type="string"), description="Coma-separated array of category ids. Limits spaces to those
      * that have at least one of given categories attached to them"),
+     *   @OA\Parameter(name="filter[restaurants]", required=false, in="query", example="1",
+     *   @OA\Schema(type="string"), description="Coma-separated array of restaurant ids. Limits spaces to those
+     * that are attached at least to one of those restaurants"),
      *   @OA\Parameter(name="archived", in="query", @OA\Schema(ref ="#/components/schemas/ArchivedParameter")),
      *
      *   @OA\Response(

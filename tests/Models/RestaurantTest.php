@@ -37,63 +37,58 @@ class RestaurantTest extends TestCase
 
     public function seedHolidays()
     {
-        Holiday::factory()
-            ->withRestaurant($this->restaurant)
-            ->withDate(now()->subWeek())
-            ->create();
+        $dates = [
+            now()->subWeek(),
+            now(),
+            now()->addWeek(),
+            now()->addYear()->addWeek()
+        ];
 
-        Holiday::factory()
-            ->withDate(now())
-            ->create();
+        foreach ($dates as $date) {
+            $holiday = Holiday::factory()
+                ->withDate($date)
+                ->create();
 
-        Holiday::factory()
-            ->withRestaurant($this->restaurant)
-            ->withDate(now())
-            ->create();
-
-        Holiday::factory()
-            ->withDate(now()->addWeek())
-            ->create();
-
-        Holiday::factory()
-            ->withDate(now()->addYear()->addWeek())
-            ->create();
+            $this->restaurant->holidays()->attach($holiday->id);
+        }
     }
 
     public function seedSchedules()
     {
         Schedule::factory()
             ->withWeekday(Weekday::Monday)
+            ->withRestaurant($this->restaurant)
             ->create(['beg_hour' => 9, 'end_hour' => 22]);
 
         Schedule::factory()
             ->withWeekday(Weekday::Tuesday)
+            ->withRestaurant($this->restaurant)
             ->create(['beg_hour' => 9, 'end_hour' => 22]);
 
         Schedule::factory()
             ->withWeekday(Weekday::Wednesday)
+            ->withRestaurant($this->restaurant)
             ->create(['beg_hour' => 9, 'end_hour' => 22]);
 
         Schedule::factory()
             ->withWeekday(Weekday::Thursday)
+            ->withRestaurant($this->restaurant)
             ->create(['beg_hour' => 9, 'end_hour' => 22]);
 
         Schedule::factory()
             ->withWeekday(Weekday::Friday)
+            ->withRestaurant($this->restaurant)
             ->create(['beg_hour' => 9, 'end_hour' => 23]);
 
         Schedule::factory()
             ->withWeekday(Weekday::Saturday)
+            ->withRestaurant($this->restaurant)
             ->create(['beg_hour' => 11, 'end_hour' => 21]);
 
         Schedule::factory()
             ->withWeekday(Weekday::Sunday)
-            ->create(['beg_hour' => 11, 'end_hour' => 21]);
-
-        Schedule::factory()
-            ->withWeekday(Weekday::Friday)
             ->withRestaurant($this->restaurant)
-            ->create(['beg_hour' => 14, 'end_hour' => 3]);
+            ->create(['beg_hour' => 11, 'end_hour' => 21]);
     }
 
     public function testHolidays()
@@ -103,30 +98,12 @@ class RestaurantTest extends TestCase
             ->get();
 
         $this->assertCount(3, $holidays);
-
-        $holidays = $this->restaurant
-            ->relevantHolidays()
-            ->relevantOn($on = now())
-            ->get();
-
-        $this->assertCount(2, $holidays);
-        foreach ($holidays as $holiday) {
-            $holiday->relevantOn($on);
-        }
     }
 
     public function testSchedules()
     {
-        $schedules = $this->restaurant
-            ->operativeSchedules;
+        $schedules = $this->restaurant->schedules;
 
         $this->assertCount(7, $schedules);
-
-        foreach ($schedules as $schedule) {
-            /** @var Schedule $schedule */
-            $schedule->weekday === Weekday::Friday
-                ? $this->assertNotNull($schedule->restaurant_id)
-                : $this->assertNull($schedule->restaurant_id);
-        }
     }
 }

@@ -5,7 +5,7 @@ namespace App\Nova;
 use App\Nova\Actions\CalculateTotals;
 use App\Nova\Actions\GenerateInvoice;
 use Illuminate\Http\Request;
-use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Code;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
@@ -72,7 +72,7 @@ class Order extends Resource
         return [
             ID::make()->sortable(),
 
-            BelongsTo::make('Banquet'),
+            BelongsToMany::make('Banquets'),
 
             Code::make('Metadata')
                 ->resolveUsing(fn() => json_encode(json_decode($this->metadata), JSON_PRETTY_PRINT))
@@ -120,7 +120,7 @@ class Order extends Resource
     {
         return [
             'id' => true,
-            'banquet' => true,
+            'banquets' => true,
             'total' => true,
             'created_at' => false,
             'updated_at' => false,

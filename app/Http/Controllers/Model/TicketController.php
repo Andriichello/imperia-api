@@ -11,6 +11,7 @@ use App\Http\Resources\Ticket\TicketResource;
 use App\Policies\TicketPolicy;
 use App\Queries\TicketQueryBuilder;
 use App\Repositories\TicketRepository;
+use OpenApi\Annotations as OA;
 
 /**
  * Class TicketController.
@@ -62,6 +63,9 @@ class TicketController extends CrudController
      *   @OA\Parameter(name="filter[categories]", required=false, in="query", example="2,3",
      *     @OA\Schema(type="string"), description="Coma-separated array of category ids. Limits tickets to those
      * that have at least one of given categories attached to them"),
+     *   @OA\Parameter(name="filter[restaurants]", required=false, in="query", example="1",
+     *   @OA\Schema(type="string"), description="Coma-separated array of restaurant ids. Limits tickets to those
+     * that are attached at least to one of those restaurants"),
      *   @OA\Parameter(name="archived", in="query", @OA\Schema(ref ="#/components/schemas/ArchivedParameter")),
      *
      *   @OA\Response(

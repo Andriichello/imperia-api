@@ -4,6 +4,7 @@ namespace App\Http\Requests\FamilyMember;
 
 use App\Enums\FamilyRelation;
 use App\Http\Requests\Crud\UpdateRequest;
+use OpenApi\Annotations as OA;
 
 /**
  * Class UpdateFamilyMemberRequest.

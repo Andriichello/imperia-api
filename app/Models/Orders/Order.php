@@ -15,7 +15,7 @@ use App\Queries\OrderQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\Orders\OrderFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Arr;
@@ -24,14 +24,15 @@ use Illuminate\Support\Collection;
 /**
  * Class Order.
  *
- * @property int $banquet_id
+ * @property int|null $banquet_id
  * @property string|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  *
  * @property array|null $totals
- * @property Banquet $banquet
+ * @property Banquet|null $banquet
+ * @property Banquet[]|Collection $banquets
  * @property SpaceOrderField[]|Collection $spaces
  * @property TicketOrderField[]|Collection $tickets
  * @property ServiceOrderField[]|Collection $services
@@ -65,7 +66,7 @@ class Order extends BaseModel implements
      * @var string[]
      */
     protected $fillable = [
-        'banquet_id',
+        'metadata',
     ];
 
     /**
@@ -74,7 +75,7 @@ class Order extends BaseModel implements
      * @var array
      */
     protected $relations = [
-        'banquet',
+        'banquets',
         'spaces',
         'tickets',
         'services',
@@ -101,16 +102,38 @@ class Order extends BaseModel implements
     protected $appends = [
         'type',
         'totals',
+        'banquet_id',
     ];
 
     /**
-     * Banquet associated with the model.
+     * Banquets associated with the model.
      *
-     * @return BelongsTo
+     * @return BelongsToMany
      */
-    public function banquet(): BelongsTo
+    public function banquets(): BelongsToMany
     {
-        return $this->belongsTo(Banquet::class, 'banquet_id', 'id');
+        return $this->belongsToMany(Banquet::class, 'banquet_order')
+            ->using(BanquetOrder::class);
+    }
+
+    /**
+     * Get banquet associated with the model.
+     *
+     * @return Banquet|null
+     */
+    public function getBanquetAttribute(): ?Banquet
+    {
+        return $this->banquets->first();
+    }
+
+    /**
+     * Get id of banquet associated with the model.
+     *
+     * @return int|null
+     */
+    public function getBanquetIdAttribute(): ?int
+    {
+        return $this->banquet?->id;
     }
 
     /**
@@ -249,7 +272,6 @@ class Order extends BaseModel implements
     {
         return $this->banquet->canBeEditedBy($user);
     }
-
 
     /**
      * @param DatabaseBuilder $query

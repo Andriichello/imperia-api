@@ -7,6 +7,7 @@ use App\Http\Resources\FamilyMember\FamilyMemberCollection;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use OpenApi\Annotations as OA;
 
 /**
  * Class CustomerResource.

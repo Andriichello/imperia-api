@@ -5,6 +5,7 @@ namespace App\Http\Resources\Comment;
 use App\Models\Morphs\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use OpenApi\Annotations as OA;
 
 /**
  * Class CommentResource.

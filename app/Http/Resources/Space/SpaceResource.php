@@ -7,6 +7,7 @@ use App\Http\Resources\Media\MediaCollection;
 use App\Models\Space;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use OpenApi\Annotations as OA;
 
 /**
  * Class SpaceResource.

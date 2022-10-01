@@ -2,6 +2,7 @@
 
 namespace Database\Factories\Orders;
 
+use App\Enums\BanquetState;
 use App\Models\Banquet;
 use App\Models\Orders\Order;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -35,18 +36,17 @@ class OrderFactory extends Factory
     }
 
     /**
-     * Indicate creator.
+     * Indicate banquet.
      *
-     * @param Banquet $banquet
+     * @param Banquet|int $banquet
      *
      * @return static
      */
-    public function withBanquet(Banquet $banquet): static
+    public function withBanquet(Banquet|int $banquet): static
     {
-        return $this->state(
-            function (array $attributes) use ($banquet) {
-                $attributes['banquet_id'] = $banquet->id;
-                return $attributes;
+        return $this->afterCreating(
+            function (Order $model) use ($banquet) {
+                $model->banquets()->attach(is_int($banquet) ? $banquet : $banquet->id);
             }
         );
     }

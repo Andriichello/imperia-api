@@ -5,6 +5,7 @@ namespace App\Http\Requests\ModelMedia;
 use App\Http\Requests\CrudRequest;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
+use OpenApi\Annotations as OA;
 
 /**
  * Class SetModelMediaRequest.
