@@ -49,7 +49,7 @@ export default {
   gap: 12px;
   padding: 8px 16px 8px 16px;
   cursor: pointer;
-  border-bottom: 4px solid white;
+  border-bottom: 4px solid transparent;
 }
 
 .tabs-item.selected {

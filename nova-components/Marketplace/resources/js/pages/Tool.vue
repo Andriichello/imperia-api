@@ -1,5 +1,5 @@
 <template>
-  <div style="display: flex; flex-direction: column; justify-content: start; align-items: center; min-height: 1000px">
+  <Card style="display: flex; flex-direction: column; justify-content: start; align-items: center; min-height: 500px">
     <div class="marketplace">
       <Tabs :tab="tab" :tabs="tabs" v-if="tabs"
             @select-tab="onSelectTab"/>
@@ -16,7 +16,7 @@
       <NoResults v-if="!items || !items.data || !items.data.length"/>
       <Pagination v-if="items" @load-page="onLoadPage"/>
     </div>
-  </div>
+  </Card>
 </template>
 
 <script>
@@ -29,9 +29,11 @@ import Filters from '../components/Filters';
 import List from '../components/List';
 import Pagination from "../components/Pagination";
 import NoResults from "../components/NoResults";
+import Card from '../../../../../vendor/laravel/nova/resources/js/components/Card'
 
 export default {
   components: {
+    Card,
     Tabs,
     Menus,
     Categories,
@@ -99,6 +101,7 @@ export default {
 }
 
 .active {
+  color: rgba(var(--colors-gray-800), var(--tw-bg-opacity));
   background: #F3DA8D;
 }
 
@@ -113,10 +116,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: stretch;
-  background-color: white;
   border-radius: 4px;
   padding: 0 16px 16px 16px;
-
-  color: #1D1D1B;
 }
 </style>

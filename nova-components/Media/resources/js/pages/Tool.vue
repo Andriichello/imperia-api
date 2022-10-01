@@ -306,7 +306,12 @@
 </template>
 
 <script>
+import Card from '../../../../../vendor/laravel/nova/resources/js/components/Card'
+
 export default {
+  components: {
+    Card,
+  },
   data() {
     return {
       items: null,

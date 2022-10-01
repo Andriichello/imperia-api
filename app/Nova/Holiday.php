@@ -36,7 +36,7 @@ class Holiday extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'name', 'day',
+        'id', 'name', 'date',
     ];
 
     /**

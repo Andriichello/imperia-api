@@ -63,7 +63,6 @@ export default {
   align-items: center;
   justify-content: space-between;
   margin-top: 16px;
-  background: #FFFFFF;
   border-radius: 4px;
 }
 
