@@ -749,6 +749,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lodash_pickBy__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(lodash_pickBy__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var _FormField__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./FormField */ "../../vendor/laravel/nova/resources/js/mixins/FormField.js");
 /* harmony import */ var _propTypes__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./propTypes */ "../../vendor/laravel/nova/resources/js/mixins/propTypes.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 
 
 
@@ -761,7 +767,12 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   "extends": _FormField__WEBPACK_IMPORTED_MODULE_8__["default"],
-  props: (0,_propTypes__WEBPACK_IMPORTED_MODULE_9__.mapProps)(['shownViaNewRelationModal', 'field', 'viaResource', 'viaResourceId', 'viaRelationship', 'resourceName', 'resourceId', 'relatedResourceName', 'relatedResourceId']),
+  props: _objectSpread(_objectSpread({}, (0,_propTypes__WEBPACK_IMPORTED_MODULE_9__.mapProps)(['shownViaNewRelationModal', 'field', 'viaResource', 'viaResourceId', 'viaRelationship', 'resourceName', 'resourceId', 'relatedResourceName', 'relatedResourceId'])), {}, {
+    syncEndpoint: {
+      type: String,
+      required: false
+    }
+  }),
   data: function data() {
     return {
       dependentFieldDebouncer: null,
@@ -839,7 +850,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this3 = this;
 
       if (this.canceller !== null) this.canceller();
-      Nova.request().patch(this.syncFieldEndpoint, this.watchedFields, {
+      Nova.request().patch(this.syncEndpoint || this.syncFieldEndpoint, this.watchedFields, {
         params: lodash_pickBy__WEBPACK_IMPORTED_MODULE_7___default()({
           editing: true,
           editMode: this.editMode,
@@ -1769,7 +1780,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.media-form-link {\n    font-style: normal;\n    font-weight: 600;\n    font-size: 16px;\n}\n.media-form-actions {\n    width: 100%;\n    display: flex;\n    flex-direction: row;\n    flex-wrap: wrap;\n    justify-content: space-between;\n    align-items: center;\n    padding: 8px 8px 8px 8px;\n}\n.media-form-actions-group {\n    display: flex;\n    flex-direction: row;\n    justify-content: start;\n    align-items: center;\n    gap: 4px;\n}\n.media-form-filters {\n    width: 100%;\n    display: flex;\n    flex-direction: row;\n    flex-wrap: wrap;\n    justify-content: center;\n    align-items: center;\n    padding: 16px 8px 8px 8px;\n}\n.media-form-filters-input {\n    min-width: 120px;\n    max-width: 300px;\n}\n.media-form-filters-group {\n    display: flex;\n    flex-direction: row;\n    flex-wrap: wrap;\n    justify-content: center;\n    align-items: center;\n    gap: 16px;\n}\n.media-form-list {\n    display: flex;\n    flex-direction: row;\n    flex-wrap: wrap;\n    justify-content: stretch;\n    align-items: start;\n    gap: 8px;\n    padding-bottom: 8px;\n}\n.media-form-list-item {\n    display: flex;\n    flex-direction: column;\n    justify-content: start;\n    align-items: center;\n    gap: 2px;\n}\n.media-form-list-item-img {\n    width: 100px;\n    height: 100px;\n    border-radius: 4px;\n    -o-object-fit: cover;\n       object-fit: cover;\n    background-image: linear-gradient(45deg, rgba(241, 245, 249, 0.5), rgba(100, 116, 139, 0.4));\n}\n.media-form-list-item-name {\n    width: 100px;\n    height: 16px;\n    font-style: normal;\n    font-weight: 400;\n    font-size: 14px;\n    text-align: center;\n    max-lines: 1;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n.media-form-pagination {\n    display: flex;\n    flex-wrap: wrap;\n    align-items: center;\n    justify-content: space-between;\n    margin-top: 16px;\n    border-radius: 4px;\n}\n.media-form-pagination-button {\n}\n.media-form-pagination-button:disabled,\n.media-form-pagination-button[disabled] {\n    opacity: 40%;\n}\n.media-form-no-results {\n    display: flex;\n    flex-direction: column;\n    flex-wrap: wrap;\n    align-items: center;\n    justify-content: space-between;\n    gap: 16px;\n    padding: 48px 64px 64px 64px;\n}\n.media-form-no-results-text {\n    font-style: normal;\n    font-weight: 500;\n    font-size: 24px;\n    line-height: 28px;\n    text-align: center;\n    overflow: hidden;\n    text-overflow: ellipsis;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.media-form-link {\n  font-style: normal;\n  font-weight: 600;\n  font-size: 16px;\n}\n.media-form-actions {\n  width: 100%;\n  display: flex;\n  flex-direction: row;\n  flex-wrap: wrap;\n  justify-content: space-between;\n  align-items: center;\n  padding: 8px 8px 8px 8px;\n}\n.media-form-actions-group {\n  display: flex;\n  flex-direction: row;\n  justify-content: start;\n  align-items: center;\n  gap: 4px;\n}\n.media-form-filters {\n  width: 100%;\n  display: flex;\n  flex-direction: row;\n  flex-wrap: wrap;\n  justify-content: center;\n  align-items: center;\n  padding: 16px 8px 8px 8px;\n}\n.media-form-filters-input {\n  min-width: 120px;\n  max-width: 300px;\n}\n.media-form-filters-group {\n  display: flex;\n  flex-direction: row;\n  flex-wrap: wrap;\n  justify-content: center;\n  align-items: center;\n  gap: 16px;\n}\n.media-form-list {\n  display: flex;\n  flex-direction: row;\n  flex-wrap: wrap;\n  justify-content: stretch;\n  align-items: start;\n  gap: 8px;\n  padding-bottom: 8px;\n}\n.media-form-list-item {\n  display: flex;\n  flex-direction: column;\n  justify-content: start;\n  align-items: center;\n  gap: 2px;\n}\n.media-form-list-item-img {\n  width: 100px;\n  height: 100px;\n  border-radius: 4px;\n  -o-object-fit: cover;\n     object-fit: cover;\n  background-image: linear-gradient(45deg, rgba(241, 245, 249, 0.5), rgba(100, 116, 139, 0.4));\n}\n.media-form-list-item-name {\n  width: 100px;\n  height: 16px;\n  font-style: normal;\n  font-weight: 400;\n  font-size: 14px;\n  text-align: center;\n  max-lines: 1;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.media-form-pagination {\n  display: flex;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n  margin-top: 16px;\n  border-radius: 4px;\n}\n.media-form-pagination-button {\n}\n.media-form-pagination-button:disabled,\n.media-form-pagination-button[disabled] {\n  opacity: 40%;\n}\n.media-form-no-results {\n  display: flex;\n  flex-direction: column;\n  flex-wrap: wrap;\n  align-items: center;\n  justify-content: space-between;\n  gap: 16px;\n  padding: 48px 64px 64px 64px;\n}\n.media-form-no-results-text {\n  font-style: normal;\n  font-weight: 500;\n  font-size: 24px;\n  line-height: 28px;\n  text-align: center;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
