@@ -33,8 +33,7 @@ class BaseQueryBuilder extends EloquentBuilder implements IndexableInterface
     public function forWrappedWhere(): static
     {
         /** @var static $builder */
-        $builder = $this->model::query();
-        $builder->withoutGlobalScopes();
+        $builder = $this->model->newModelQuery();
 
         return $builder;
     }
