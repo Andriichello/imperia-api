@@ -1,5 +1,5 @@
 <template>
-  <Card style="display: flex; flex-direction: column; justify-content: start; align-items: center; min-height: 500px">
+  <Card style="display: flex; flex-direction: column; justify-content: start; align-items: center;">
     <div class="marketplace">
       <Tabs :tab="tab" :tabs="tabs" v-if="tabs"
             @select-tab="onSelectTab"/>
@@ -113,6 +113,7 @@ export default {
   width: 100%;
   max-width: 1000px;
   display: flex;
+  flex-grow: 1;
   flex-direction: column;
   justify-content: center;
   align-items: stretch;

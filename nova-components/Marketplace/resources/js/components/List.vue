@@ -47,6 +47,8 @@ export default {
 <style scoped>
 .list {
   display: flex;
+  flex-basis: 236px;
+  flex-grow: 1;
   flex-wrap: wrap;
   gap: 64px;
   margin-top: 16px;

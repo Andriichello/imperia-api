@@ -1122,8 +1122,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       "display": "flex",
       "flex-direction": "column",
       "justify-content": "start",
-      "align-items": "center",
-      "min-height": "500px"
+      "align-items": "center"
     }
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
@@ -1620,7 +1619,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.list[data-v-1856aeee] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 64px;\n  margin-top: 16px;\n  padding: 0 32px 0 32px;\n}\n.list-col[data-v-1856aeee] {\n  flex-basis: 212px;\n  display: flex;\n  flex-direction: column;\n  flex-grow: 1;\n  flex-wrap: wrap;\n  justify-content: start;\n  align-items: stretch;\n  gap: 16px;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.list[data-v-1856aeee] {\n  display: flex;\n  flex-basis: 236px;\n  flex-grow: 1;\n  flex-wrap: wrap;\n  gap: 64px;\n  margin-top: 16px;\n  padding: 0 32px 0 32px;\n}\n.list-col[data-v-1856aeee] {\n  flex-basis: 212px;\n  display: flex;\n  flex-direction: column;\n  flex-grow: 1;\n  flex-wrap: wrap;\n  justify-content: start;\n  align-items: stretch;\n  gap: 16px;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -1735,7 +1734,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.horizontal {\n  max-width: 100%;\n  display: flex;\n  flex-direction: row;\n  justify-content: flex-start;\n  align-items: center;\n  align-self: center;\n  justify-self: center;\n  overflow-x: auto;\n  -ms-overflow-style: none; /* for Internet Explorer, Edge */\n  scrollbar-width: none; /* for Firefox */\n}\n.horizontal::-webkit-scrollbar {\n  display: none; /* for Chrome, Safari, and Opera */\n}\n.active {\n  color: rgba(var(--colors-gray-800), var(--tw-bg-opacity));\n  background: #F3DA8D;\n}\n.non-active {\n  background: #FFFFFF;\n}\n.marketplace {\n  width: 100%;\n  max-width: 1000px;\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n  align-items: stretch;\n  border-radius: 4px;\n  padding: 0 16px 16px 16px;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.horizontal {\n  max-width: 100%;\n  display: flex;\n  flex-direction: row;\n  justify-content: flex-start;\n  align-items: center;\n  align-self: center;\n  justify-self: center;\n  overflow-x: auto;\n  -ms-overflow-style: none; /* for Internet Explorer, Edge */\n  scrollbar-width: none; /* for Firefox */\n}\n.horizontal::-webkit-scrollbar {\n  display: none; /* for Chrome, Safari, and Opera */\n}\n.active {\n  color: rgba(var(--colors-gray-800), var(--tw-bg-opacity));\n  background: #F3DA8D;\n}\n.non-active {\n  background: #FFFFFF;\n}\n.marketplace {\n  width: 100%;\n  max-width: 1000px;\n  display: flex;\n  flex-grow: 1;\n  flex-direction: column;\n  justify-content: center;\n  align-items: stretch;\n  border-radius: 4px;\n  padding: 0 16px 16px 16px;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
