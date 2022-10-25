@@ -2688,7 +2688,6 @@
         "/api/banquets/{id}/order": {
             "get": {
                 "tags": [
-                    "orders",
                     "banquets"
                 ],
                 "summary": "Show order by banquet id.",

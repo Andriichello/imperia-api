@@ -142,7 +142,7 @@ class OrderController extends CrudController
      *   summary="Show order by banquet id.",
      *   operationId="showOrderByBanquetId",
      *   security={{"bearerAuth": {}}},
-     *   tags={"orders", "banquets"},
+     *   tags={"banquets"},
      *
      *  @OA\Parameter(name="include", in="query",
      *     @OA\Schema(ref ="#/components/schemas/OrderIncludes")),
