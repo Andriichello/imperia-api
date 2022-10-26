@@ -17,7 +17,7 @@ class LogoutController extends Controller
     /**
      * Logout user.
      *
-     * @OA\Post  (
+     * @OA\Delete  (
      *   path="/api/logout",
      *   summary="Logout user.",
      *   operationId="logout",
