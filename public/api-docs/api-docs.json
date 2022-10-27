@@ -5286,7 +5286,8 @@
                     "name",
                     "surnane",
                     "email",
-                    "password"
+                    "password",
+                    "password_confirmation"
                 ],
                 "properties": {
                     "name": {

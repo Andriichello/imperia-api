@@ -52,7 +52,7 @@ class RegisterRequest extends BaseRequest
                 'max:255',
             ],
             'password_confirmation' => [
-                'sometimes',
+                'required',
                 'same:password',
             ],
         ];
@@ -62,7 +62,7 @@ class RegisterRequest extends BaseRequest
      * @OA\Schema(
      *   schema="RegisterRequest",
      *   description="Register user request",
-     *   required={"name", "surnane", "email", "password"},
+     *   required={"name", "surnane", "email", "password", "password_confirmation"},
      *   @OA\Property(property="name", type="string", example="John"),
      *   @OA\Property(property="surname", type="string", example="Doe"),
      *   @OA\Property(property="email", type="string", example="john.doe@email.com"),
