@@ -5,6 +5,7 @@ namespace App\Nova;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\DateTime;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
@@ -76,7 +77,7 @@ class Holiday extends Resource
                 ->exceptOnForms()
                 ->readonly(),
 
-            BelongsTo::make('Restaurant', 'restaurant', Restaurant::class)
+            HasMany::make('Restaurants', 'restaurants', Restaurant::class)
                 ->nullable(),
 
             DateTime::make('Created At')
@@ -106,7 +107,6 @@ class Holiday extends Resource
             'day' => true,
             'month' => true,
             'year' => true,
-            'restaurant' => true,
             'closest_date' => true,
             'created_at' => false,
             'updated_at' => false,
