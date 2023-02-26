@@ -8,7 +8,6 @@ use App\Nova\Actions\GenerateInvoice;
 use App\Nova\Options\BanquetStateOptions;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
-use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
@@ -103,7 +102,7 @@ class Banquet extends Resource
                 ->updateRules('sometimes', 'min:0')
                 ->creationRules('required', 'min:0'),
 
-            Number::make('Total')
+            Text::make('Total')
                 ->resolveUsing(fn() => data_get($this->totals, 'all'))
                 ->exceptOnForms()
                 ->readonly(),
