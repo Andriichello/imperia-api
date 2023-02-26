@@ -96,20 +96,4 @@ class BanquetFactory extends Factory
             }
         );
     }
-
-    /**
-     * Indicate order.
-     *
-     * @param Order|int $order
-     *
-     * @return static
-     */
-    public function withOrder(Order|int $order): static
-    {
-        return $this->afterCreating(
-            function (Banquet $model) use ($order) {
-                $model->orders()->attach(is_int($order) ? $order : $order->id);
-            }
-        );
-    }
 }

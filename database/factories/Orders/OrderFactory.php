@@ -44,9 +44,14 @@ class OrderFactory extends Factory
      */
     public function withBanquet(Banquet|int $banquet): static
     {
-        return $this->afterCreating(
-            function (Order $model) use ($banquet) {
-                $model->banquets()->attach(is_int($banquet) ? $banquet : $banquet->id);
+        return $this->state(
+            function (array $attributes) use ($banquet) {
+                return array_merge(
+                    $attributes,
+                    [
+                        'banquet_id' => is_int($banquet) ? $banquet : $banquet->id,
+                    ]
+                );
             }
         );
     }

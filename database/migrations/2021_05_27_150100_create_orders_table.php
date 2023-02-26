@@ -15,9 +15,12 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('banquet_id')->nullable();
             $table->text('metadata')->nullable();
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unique(['banquet_id']);
         });
     }
 

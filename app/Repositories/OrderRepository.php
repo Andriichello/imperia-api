@@ -37,18 +37,6 @@ class OrderRepository extends CrudRepository
             /** @var Order $order */
             $order = parent::create($attributes);
 
-            if (data_get($attributes, 'banquet_id')) {
-                /** @var Banquet $banquet */
-                $banquet = Banquet::query()
-                    ->findOrFail(data_get($attributes, 'banquet_id'));
-
-                if ($banquet->orders()->exists()) {
-                    throw new Exception('Specified banquet already has an order attached to it.');
-                }
-
-                $banquet->orders()->attach($order->id);
-            }
-
             $this->createOrUpdateRelations($order, $attributes);
             $this->createComments($order, $attributes);
             $this->createDiscounts($order, $attributes);
@@ -87,9 +75,10 @@ class OrderRepository extends CrudRepository
     {
         if (Arr::has($attributes, 'spaces')) {
             foreach ($attributes['spaces'] as $values) {
+                $identifiers = Arr::only($values, 'space_id');
                 /** @var SpaceOrderField $field */
                 $field = $order->spaces()
-                    ->updateOrCreate(Arr::only($values, 'space_id'), $values);
+                    ->updateOrCreate($identifiers, Arr::except($values, 'space_id'));
 
                 $this->updateComments($field, $values);
                 $this->updateDiscounts($field, $values);
@@ -104,7 +93,8 @@ class OrderRepository extends CrudRepository
             foreach ($attributes['tickets'] as $values) {
                 $identifiers = Arr::only($values, 'ticket_id');
                 /** @var TicketOrderField $field */
-                $field = $order->tickets()->updateOrCreate($identifiers, $values);
+                $field = $order->tickets()
+                    ->updateOrCreate($identifiers, Arr::except($values, 'ticket_id'));
 
                 $this->updateComments($field, $values);
                 $this->updateDiscounts($field, $values);
@@ -119,7 +109,8 @@ class OrderRepository extends CrudRepository
             foreach ($attributes['products'] as $values) {
                 $identifiers = Arr::only($values, 'product_id');
                 /** @var ProductOrderField $field */
-                $field = $order->products()->updateOrCreate($identifiers, $values);
+                $field = $order->products()
+                    ->updateOrCreate($identifiers, Arr::except($values, 'product_id'));
 
                 $this->updateComments($field, $values);
                 $this->updateDiscounts($field, $values);
@@ -134,7 +125,8 @@ class OrderRepository extends CrudRepository
             foreach ($attributes['services'] as $values) {
                 $identifiers = Arr::only($values, 'service_id');
                 /** @var ServiceOrderField $field */
-                $field = $order->services()->updateOrCreate($identifiers, $values);
+                $field = $order->services()
+                    ->updateOrCreate($identifiers, Arr::except($values, 'service_id'));
 
                 $this->updateComments($field, $values);
                 $this->updateDiscounts($field, $values);

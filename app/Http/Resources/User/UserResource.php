@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\User;
 
+use App\Http\Resources\Customer\CustomerResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -31,6 +32,7 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'email_verified_at' => $this->email_verified_at,
+            'customer' => new CustomerResource($this->whenLoaded('customer')),
         ];
     }
 
@@ -45,6 +47,7 @@ class UserResource extends JsonResource
      *   @OA\Property(property="name", type="string", example="Admin Admins"),
      *   @OA\Property(property="email", type="string", example="admin@email.com", nullable="true"),
      *   @OA\Property(property="email_verified_at", type="string", format="date-time", nullable="true"),
+     *   @OA\Property(property="customer", ref ="#/components/schemas/Customer"),
      * )
      */
 }

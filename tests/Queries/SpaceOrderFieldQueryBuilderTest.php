@@ -35,11 +35,14 @@ class SpaceOrderFieldQueryBuilderTest extends TestCase
         parent::setUp();
 
         $this->banquet = Banquet::factory()
-            ->withOrder(Order::factory()->create())
             ->create([
                 'start_at' => Carbon::now()->subMinutes(30),
                 'end_at' => Carbon::now()->addMinutes(30),
             ]);
+
+        Order::factory()
+            ->withBanquet($this->banquet)
+            ->create();
 
         $this->spaces = Space::factory()
             ->count(3)

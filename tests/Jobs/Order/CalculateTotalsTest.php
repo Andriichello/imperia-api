@@ -30,7 +30,10 @@ class CalculateTotalsTest extends TestCase
         BanquetOrder::unsetEventDispatcher();
 
         $this->banquet = Banquet::factory()
-            ->withOrder(Order::factory()->create())
+            ->create();
+
+        Order::factory()
+            ->withBanquet($this->banquet)
             ->create();
     }
 

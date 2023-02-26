@@ -47,8 +47,7 @@ class SpaceOrderFieldQueryBuilder extends BaseQueryBuilder
     public function between(DateTimeInterface $beg, DateTimeInterface $end): static
     {
         $this->join('orders', 'orders.id', '=', 'space_order_fields.order_id')
-            ->join('banquet_order', 'banquet_order.order_id', '=', 'orders.id')
-            ->join('banquets', 'banquets.id', '=', 'banquet_order.banquet_id')
+            ->join('banquets', 'banquets.id', '=', 'orders.banquet_id')
             ->whereNested(function (DatabaseBuilder $query) use ($beg, $end) {
                 $query->whereBetween('banquets.start_at', [$beg, $end])
                     ->orWhereBetween('banquets.end_at', [$beg, $end]);

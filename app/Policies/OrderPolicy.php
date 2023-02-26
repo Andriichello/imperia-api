@@ -73,7 +73,11 @@ class OrderPolicy extends CrudPolicy
      */
     public function update(User $user, Order $order): bool
     {
-        return $order->banquet->canBeEditedBy($user);
+        if ($order->banquet) {
+            return $order->banquet->canBeEditedBy($user);
+        }
+
+        return $order->canBeEditedBy($user);
     }
 
     /**
@@ -86,7 +90,7 @@ class OrderPolicy extends CrudPolicy
      */
     public function delete(User $user, Order $order): bool
     {
-        return $order->banquet->canBeEditedBy($user);
+        return $order->canBeEditedBy($user);
     }
 
     /**
@@ -99,7 +103,7 @@ class OrderPolicy extends CrudPolicy
      */
     public function restore(User $user, Order $order): bool
     {
-        return $order->banquet->canBeEditedBy($user);
+        return $order->canBeEditedBy($user);
     }
 
     /**
@@ -109,9 +113,10 @@ class OrderPolicy extends CrudPolicy
      * @param Order $order
      *
      * @return bool
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function forceDelete(User $user, Order $order): bool
     {
-        return $order->banquet->canBeEditedBy($user) && $user->isStaff();
+        return $user->isStaff();
     }
 }

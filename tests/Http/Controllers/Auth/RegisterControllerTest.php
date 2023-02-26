@@ -25,6 +25,7 @@ class RegisterControllerTest extends RegisteringTestCase
                 'surname' => $surname = 'Testers',
                 'email' => 'test@email.com',
                 'password' => 'pa$$w0rd',
+                'password_confirmation' => 'pa$$w0rd',
             ],
         );
 

@@ -90,7 +90,7 @@ class OrderControllerTest extends RegisteringTestCase
             ->withState(BanquetState::Draft)
             ->create();
 
-        $this->banquet->orders()->detach($this->banquet->order_id);
+        $this->banquet->order()->delete();
 
         $customer->user_id = $this->user->id;
         $customer->save();

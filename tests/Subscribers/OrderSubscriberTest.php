@@ -20,7 +20,10 @@ class OrderSubscriberTest extends TestCase
         parent::setUp();
 
         $this->banquet = Banquet::factory()
-            ->withOrder(Order::factory()->create())
+            ->create();
+
+        Order::factory()
+            ->withBanquet($this->banquet)
             ->create();
     }
 

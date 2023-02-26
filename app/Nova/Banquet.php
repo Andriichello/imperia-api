@@ -88,7 +88,7 @@ class Banquet extends Resource
 
             BelongsTo::make('Customer', 'customer', Customer::class),
 
-            BelongsToMany::make('Orders'),
+            HasOne::make('Order'),
 
             Text::make('Title')
                 ->updateRules('sometimes', 'min:1', 'max:50')

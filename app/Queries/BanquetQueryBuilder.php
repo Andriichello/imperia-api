@@ -3,7 +3,6 @@
 namespace App\Queries;
 
 use App\Models\Customer;
-use App\Models\Orders\Order;
 use App\Models\User;
 
 /**
@@ -75,20 +74,6 @@ class BanquetQueryBuilder extends BaseQueryBuilder
     public function forCustomers(Customer|int ...$customers): static
     {
         $this->whereIn('customer_id', $this->extract('id', ...$customers));
-
-        return $this;
-    }
-
-    /**
-     * @param Order|int ...$orders
-     *
-     * @return static
-     */
-    public function withOrder(Order|int ...$orders): static
-    {
-        $this->join('banquet_order.banquet_id', '=', 'banquets.id')
-            ->whereIn('banquet_order.order_id', $this->extract('id', $orders))
-            ->select('banquets.*');
 
         return $this;
     }

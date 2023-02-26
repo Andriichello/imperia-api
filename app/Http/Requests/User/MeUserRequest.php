@@ -2,13 +2,21 @@
 
 namespace App\Http\Requests\User;
 
-use App\Http\Requests\BaseRequest;
-
 /**
  * Class MeUserRequest.
  */
-class MeUserRequest extends BaseRequest
+class MeUserRequest extends ShowUserRequest
 {
+    public function getAllowedIncludes(): array
+    {
+        return array_merge(
+            parent::getAllowedIncludes(),
+            [
+                'customer',
+            ]
+        );
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -22,5 +30,27 @@ class MeUserRequest extends BaseRequest
                 //
             ]
         );
+    }
+
+    /**
+     * Get|set target id.
+     *
+     * @param mixed $id
+     *
+     * @return mixed
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     */
+    public function id(mixed $id = false): mixed
+    {
+        if ($id !== false) {
+            return $this->id = $id;
+        }
+
+        if (isset($this->id)) {
+            return $this->id;
+        }
+
+        /** @phpstan-ignore-next-line  */
+        return $this->id = $this->user()->id;
     }
 }

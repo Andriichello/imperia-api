@@ -3695,6 +3695,15 @@
                 ],
                 "summary": "Get currently logged user.",
                 "operationId": "me",
+                "parameters": [
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/MeIncludes"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Get me response object.",
@@ -5174,6 +5183,11 @@
                 "description": "Coma-separated list of inluded relations.\n    Available relations: `categories`",
                 "type": "string",
                 "example": "categories"
+            },
+            "MeIncludes": {
+                "description": "Coma-separated list of inluded relations.\n    Available relations: `customer`",
+                "type": "string",
+                "example": "customer"
             },
             "MeResponse": {
                 "description": "Get me response object.",
@@ -7684,6 +7698,9 @@
                         "nullable": "true",
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "customer": {
+                        "$ref": "#/components/schemas/Customer"
                     }
                 },
                 "type": "object"

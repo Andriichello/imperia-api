@@ -121,7 +121,7 @@ class StoreOrderRequest extends StoreRequest
                     'required',
                     'integer',
                     'exists:banquets,id',
-                    'unique:banquet_order,banquet_id',
+                    'unique:orders,banquet_id',
                 ],
             ]
         );
