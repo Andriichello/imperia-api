@@ -35,15 +35,22 @@ class PollNotificationsRequest extends IndexRequest
         );
     }
 
-    protected function prepareForValidation(): void
+    /**
+     * Get form request fields' default values.
+     *
+     * @return array
+     */
+    protected function defaults(): array
     {
-        $seen = $this->boolean('seen');
-        $this->merge(compact('seen'));
+        $defaults = [];
+
+        $defaults['seen'] = $this->boolean('seen');
 
         if ($this->get('system') !== null) {
-            $system = $this->boolean('system');
-            $this->merge(compact('system'));
+            $defaults['system'] = $this->boolean('system');
         }
+
+        return $defaults;
     }
 
     /**

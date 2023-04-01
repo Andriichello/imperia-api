@@ -26,14 +26,14 @@ class GetHolidaysRequest extends ShowRestaurantRequest
     }
 
     /**
-     * Prepare the data for validation.
+     * Get form request fields' default values.
      *
-     * @return void
+     * @return array
      */
-    protected function prepareForValidation()
+    protected function defaults(): array
     {
-        $this->mergeIfMissing([
+        return [
             'from' => now()->setTime(0, 0),
-        ]);
+        ];
     }
 }

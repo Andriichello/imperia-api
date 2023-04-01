@@ -80,14 +80,25 @@ class StoreBanquetRequest extends StoreRequest
         );
     }
 
-    protected function prepareForValidation(): void
+    /**
+     * Get form request fields' default values.
+     *
+     * @return array
+     */
+    protected function defaults(): array
     {
         $user = $this->user();
-        $this->mergeIfMissing(['creator_id' => $user->id]);
 
-        if ($user->isCustomer()) {
-            $this->merge(['customer_id' => $user->customer_id]);
+        $defaults = [];
+
+        if ($this->missing('creator_id')) {
+            $defaults['creator_id'] = $user->id;
         }
+        if ($user->isCustomer()) {
+            $defaults['customer_id'] = $user->customer_id;
+        }
+
+        return $defaults;
     }
 
     /**

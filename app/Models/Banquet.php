@@ -67,6 +67,7 @@ class Banquet extends BaseModel implements
      */
     protected $attributes = [
         'metadata' => '{}',
+        'advance_amount' => 0,
     ];
 
     /**
