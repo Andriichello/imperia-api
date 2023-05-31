@@ -143,12 +143,47 @@
                         }
                     },
                     {
+                        "name": "filter[search]",
+                        "in": "query",
+                        "description": "Allows to search by banquet's `title` and customer's `name`, `surname`,\n           `phone` and `email` at the same time",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "John"
+                    },
+                    {
                         "name": "filter[restaurant_id]",
                         "in": "query",
                         "schema": {
                             "type": "integer"
                         },
                         "example": 1
+                    },
+                    {
+                        "name": "filter[state]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "draft,new"
+                    },
+                    {
+                        "name": "filter[from]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        },
+                        "example": "2023-01-25"
+                    },
+                    {
+                        "name": "filter[until]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        },
+                        "example": "2023-12-25"
                     },
                     {
                         "name": "page[size]",
@@ -854,6 +889,47 @@
                         "schema": {
                             "$ref": "#/components/schemas/CustomerIncludes"
                         }
+                    },
+                    {
+                        "name": "filter[search]",
+                        "in": "query",
+                        "description": "Allows to search `name`, `surname`, `phone` and `email` fields at the same time.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "John"
+                    },
+                    {
+                        "name": "filter[name]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "John"
+                    },
+                    {
+                        "name": "filter[surname]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "Doe"
+                    },
+                    {
+                        "name": "filter[phone]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "+38050"
+                    },
+                    {
+                        "name": "filter[email]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "john.doe@email.com"
                     },
                     {
                         "name": "page[size]",
