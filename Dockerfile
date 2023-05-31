@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:jammy
 
 # Set up environment for installing packages
 RUN export LANG=C.UTF-8 TZ=Etc/UTC && apt-get update
@@ -10,10 +10,10 @@ RUN apt-get install --no-install-recommends --yes software-properties-common apt
     && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install --yes --allow-unauthenticated --no-install-recommends \
         wget git unzip curl nano dos2unix \
-        php8.0 php8.0-cli php8.0-fpm \
-        php8.0-intl php8.0-xml php8.0-zip php8.0-curl \
-        php8.0-http php8.0-raphf \
-        php8.0-mbstring php8.0-memcached php8.0-mysql \
+        php8.1 php8.1-cli php8.1-fpm \
+        php8.1-intl php8.1-xml php8.1-zip php8.1-curl \
+        php8.1-http php8.1-raphf \
+        php8.1-mbstring php8.1-memcached php8.1-mysql \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -47,7 +47,7 @@ RUN service apache2 start \
     && a2dissite 000-default.conf \
     && a2ensite imperia-api.conf \
     && a2enmod proxy_fcgi setenvif rewrite ssl \
-    && a2enconf php8.0-fpm \
+    && a2enconf php8.1-fpm \
     && service apache2 reload
 
 # Set up scripts
