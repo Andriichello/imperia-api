@@ -43,7 +43,7 @@ class RestaurantResource extends JsonResource
      *   description="Restaurant resource object",
      *   required = {"id", "type", "slug", "name", "country", "city", "place", "media"},
      *   @OA\Property(property="id", type="integer", example=1),
-     *   @OA\Property(property="type", type="string", example="customers"),
+     *   @OA\Property(property="type", type="string", example="restaurants"),
      *   @OA\Property(property="slug", type="string", example="first"),
      *   @OA\Property(property="name", type="string", example="First"),
      *   @OA\Property(property="country", type="string", example="Ukraine"),

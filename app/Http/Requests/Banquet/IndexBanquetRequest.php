@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Carbon;
 use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\QueryBuilder as SpatieBuilder;
 
 /**
@@ -44,6 +45,21 @@ class IndexBanquetRequest extends IndexRequest
     }
 
     /**
+     * Get sorts fields for spatie query builder.
+     *
+     * @return array
+     */
+    public function getAllowedSorts(): array
+    {
+        return array_merge(
+            parent::getAllowedSorts(),
+            [
+                AllowedSort::field('start_at'),
+            ]
+        );
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array
@@ -68,6 +84,7 @@ class IndexBanquetRequest extends IndexRequest
     public function spatieBuilder(SpatieBuilder|EloquentBuilder|Builder $builder): SpatieBuilder
     {
         $builder = parent::spatieBuilder($builder);
+        $builder->defaultSort('start_at');
 
         $filters = $this->get('filter', []);
 
