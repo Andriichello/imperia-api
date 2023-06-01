@@ -186,6 +186,15 @@
                         "example": "2023-12-25"
                     },
                     {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Available fields: `start_at`.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "-start_at"
+                    },
+                    {
                         "name": "page[size]",
                         "in": "query",
                         "schema": {
@@ -7409,7 +7418,7 @@
                     },
                     "type": {
                         "type": "string",
-                        "example": "customers"
+                        "example": "restaurants"
                     },
                     "slug": {
                         "type": "string",

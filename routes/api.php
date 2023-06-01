@@ -38,38 +38,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', RegisterController::class)->name('api.register');
 Route::post('/login', LoginController::class)->name('api.login');
 
-Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
-    Route::delete('/logout', LogoutController::class)->name('logout');
-
-    Route::get('/users/me', [UserController::class, 'me'])->name('users.me');
-    Route::post('/users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
-    Route::apiResource('users', UserController::class)
-        ->only('index', 'show', 'store', 'update', 'destroy')
-        ->parameters(['users' => 'id']);
-
-    Route::apiResource('restaurants', RestaurantController::class)
-        ->only('index', 'show')
-        ->parameters(['restaurants' => 'id']);
-
-    Route::get('/restaurants/{id}/schedules', [RestaurantController::class, 'getSchedules'])
-        ->name('restaurants.schedules');
-    Route::get('/restaurants/{id}/holidays', [RestaurantController::class, 'getHolidays'])
-        ->name('restaurants.holidays');
-
-    Route::get('/notifications/poll', [NotificationController::class, 'poll'])->name('notifications.poll');
-    Route::apiResource('notifications', NotificationController::class)
-        ->only('index', 'show', 'store', 'update', 'destroy')
-        ->parameters(['notifications' => 'id']);
-
-    Route::post('/customers/{id}/restore', [CustomerController::class, 'restore'])->name('customers.restore');
-    Route::apiResource('customers', CustomerController::class)
-        ->only('index', 'show', 'store', 'update', 'destroy')
-        ->parameters(['customers' => 'id']);
-
-    Route::apiResource('family-members', FamilyMemberController::class)
-        ->only('index', 'show', 'store', 'update', 'destroy')
-        ->parameters(['family-members' => 'id']);
-
+Route::group(['as' => 'api.'], function () {
     Route::apiResource('menus', MenuController::class)
         ->only('index', 'show')
         ->parameters(['menus' => 'id']);
@@ -86,6 +55,43 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
         ->only('index', 'show')
         ->parameters(['services' => 'id']);
 
+    Route::apiResource('categories', CategoryController::class)
+        ->only('index', 'show')
+        ->parameters(['categories' => 'id']);
+
+    Route::apiResource('restaurants', RestaurantController::class)
+        ->only('index', 'show')
+        ->parameters(['restaurants' => 'id']);
+
+    Route::get('/restaurants/{id}/schedules', [RestaurantController::class, 'getSchedules'])
+        ->name('restaurants.schedules');
+    Route::get('/restaurants/{id}/holidays', [RestaurantController::class, 'getHolidays'])
+        ->name('restaurants.holidays');
+});
+
+Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
+    Route::delete('/logout', LogoutController::class)->name('logout');
+
+    Route::get('/users/me', [UserController::class, 'me'])->name('users.me');
+    Route::post('/users/{id}/restore', [UserController::class, 'restore'])->name('users.restore');
+    Route::apiResource('users', UserController::class)
+        ->only('index', 'show', 'store', 'update', 'destroy')
+        ->parameters(['users' => 'id']);
+
+    Route::get('/notifications/poll', [NotificationController::class, 'poll'])->name('notifications.poll');
+    Route::apiResource('notifications', NotificationController::class)
+        ->only('index', 'show', 'store', 'update', 'destroy')
+        ->parameters(['notifications' => 'id']);
+
+    Route::post('/customers/{id}/restore', [CustomerController::class, 'restore'])->name('customers.restore');
+    Route::apiResource('customers', CustomerController::class)
+        ->only('index', 'show', 'store', 'update', 'destroy')
+        ->parameters(['customers' => 'id']);
+
+    Route::apiResource('family-members', FamilyMemberController::class)
+        ->only('index', 'show', 'store', 'update', 'destroy')
+        ->parameters(['family-members' => 'id']);
+
     Route::get('/spaces/reservations', [SpaceController::class, 'reservations'])->name('spaces.reservations');
     Route::apiResource('spaces', SpaceController::class)
         ->only('index', 'show')
@@ -101,10 +107,6 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
 
     Route::get('/model-media', [ModelMediaController::class, 'getModelMedia'])->name('media.get-model-media');
     Route::post('/model-media', [ModelMediaController::class, 'setModelMedia'])->name('media.set-model-media');
-
-    Route::apiResource('categories', CategoryController::class)
-        ->only('index', 'show')
-        ->parameters(['categories' => 'id']);
 
     Route::post('/orders/{id}/restore', [OrderController::class, 'restore'])->name('orders.restore');
     Route::apiResource('orders', OrderController::class)
