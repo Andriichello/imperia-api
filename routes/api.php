@@ -21,6 +21,7 @@ use App\Http\Controllers\Model\SpaceController;
 use App\Http\Controllers\Model\TicketController;
 use App\Http\Controllers\Model\UserController;
 use App\Http\Controllers\Other\InvoiceController;
+use App\Http\Controllers\Other\StatusController;
 use App\Http\Responses\ApiResponse;
 use Illuminate\Support\Facades\Route;
 
@@ -39,6 +40,9 @@ Route::post('/register', RegisterController::class)->name('api.register');
 Route::post('/login', LoginController::class)->name('api.login');
 
 Route::group(['as' => 'api.'], function () {
+    Route::get('status', [StatusController::class, 'check'])
+        ->name('status');
+
     Route::apiResource('menus', MenuController::class)
         ->only('index', 'show')
         ->parameters(['menus' => 'id']);
