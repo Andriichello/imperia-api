@@ -3,6 +3,12 @@ set -euo pipefail
 
 cd /var/www/imperia-api
 
+echo 'username: '
+echo ${NOVA_USERNAME}
+echo '   password: '
+echo ${NOVA_PASSWORD}
+
+composer config http-basic.nova.laravel.com ${NOVA_USERNAME} ${NOVA_PASSWORD}
 composer install -o -n
 
 php artisan key:generate

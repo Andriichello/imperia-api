@@ -43,9 +43,7 @@ RUN chmod -R u+x ./resources/scripts \
 
 # Install Composer dependencies.
 RUN curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php \
-    && php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer \
-    && composer config http-basic.nova.laravel.com ${NOVA_USERNAME} ${NOVA_LICENSE_KEY} \
-    && composer install -o -n --ignore-platform-reqs
+    && php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
 
 # Expose HTTP and HTTPS ports.
 EXPOSE 80 443
