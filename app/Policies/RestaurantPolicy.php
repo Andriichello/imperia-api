@@ -26,12 +26,12 @@ class RestaurantPolicy extends CrudPolicy
     /**
      * Perform pre-authorization checks.
      *
-     * @param User $user
+     * @param User|null $user
      * @param string $ability
      *
      * @return Response|bool|null
      */
-    public function before(User $user, string $ability): Response|bool|null
+    public function before(?User $user, string $ability): Response|bool|null
     {
         if (in_array($ability, ['viewAny', 'view'])) {
             return true;

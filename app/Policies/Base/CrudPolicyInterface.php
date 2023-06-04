@@ -42,12 +42,12 @@ interface CrudPolicyInterface
     /**
      * Perform pre-authorization checks.
      *
-     * @param User $user
+     * @param User|null $user
      * @param string $ability
      *
      * @return Response|bool|null
      */
-    public function before(User $user, string $ability): Response|bool|null;
+    public function before(?User $user, string $ability): Response|bool|null;
 
     /**
      * Determines if user us higher than the target one.

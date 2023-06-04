@@ -83,13 +83,13 @@ abstract class CrudPolicy implements CrudPolicyInterface
     /**
      * Perform pre-authorization checks.
      *
-     * @param User $user
+     * @param User|null $user
      * @param string $ability
      *
      * @return Response|bool|null
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function before(User $user, string $ability): Response|bool|null
+    public function before(?User $user, string $ability): Response|bool|null
     {
         return null;
     }
