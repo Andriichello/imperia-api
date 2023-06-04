@@ -3043,6 +3043,13 @@
                 "operationId": "indexRestaurants",
                 "parameters": [
                     {
+                        "name": "include",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/RestaurantIncludes"
+                        }
+                    },
+                    {
                         "name": "filter[slug]",
                         "in": "query",
                         "schema": {
@@ -3096,6 +3103,13 @@
                 "summary": "Show restaurant by id.",
                 "operationId": "showRestaurant",
                 "parameters": [
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/RestaurantIncludes"
+                        }
+                    },
                     {
                         "name": "id",
                         "in": "path",
@@ -5025,6 +5039,11 @@
                 "description": "Coma-separated list of inluded relations.\n    Available relations: `categories`",
                 "type": "string",
                 "example": "categories"
+            },
+            "RestaurantIncludes": {
+                "description": "Coma-separated list of inluded relations.\n            Available relations: `schedules`",
+                "type": "string",
+                "example": "schedules"
             },
             "IndexRestaurantResponse": {
                 "description": "Index restaurant response object.",
@@ -7444,6 +7463,12 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Media"
+                        }
+                    },
+                    "schedules": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Schedule"
                         }
                     }
                 },
