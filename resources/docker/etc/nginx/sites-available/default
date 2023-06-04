@@ -13,6 +13,31 @@ server {
         try_files $uri $uri/ /index.php?$query_string;
     }
 
+    # Allow api/docs to be accessed via http
+    location /api/docs {
+        try_files $uri $uri/ /index.php?$query_string;
+        fastcgi_pass unix:/run/php/php8.1-fpm.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_read_timeout 300;
+        include fastcgi_params;
+    }
+
+    # Allow openapi to be accessed via http
+    location ~ ^/openapi/* {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    # Allow media to be accessed via http
+    location ~ ^/media/* {
+        try_files $uri $uri/;
+        fastcgi_pass unix:/run/php/php8.1-fpm.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_read_timeout 300;
+        include fastcgi_params;
+    }
+
     location / {
         if ($request_method = 'OPTIONS') {
             add_header 'Access-Control-Allow-Origin' '*';
