@@ -33,6 +33,9 @@ COPY . /var/www/imperia-api
 # We begin by creating a workspace where the project will recide.
 WORKDIR /var/www/imperia-api
 
+# Set up permissions for the project.
+RUN chown -R www-data:www-data ./storage
+
 # Create default .env file.
 COPY ./.env.example ./.env
 
