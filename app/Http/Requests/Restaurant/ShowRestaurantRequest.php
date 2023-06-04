@@ -9,6 +9,16 @@ use App\Http\Requests\Crud\ShowRequest;
  */
 class ShowRestaurantRequest extends ShowRequest
 {
+    public function getAllowedIncludes(): array
+    {
+        return array_merge(
+            parent::getAllowedIncludes(),
+            [
+                'schedules',
+            ]
+        );
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *

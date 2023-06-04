@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Restaurant;
 
 use App\Http\Resources\Media\MediaCollection;
+use App\Http\Resources\Schedule\ScheduleCollection;
 use App\Models\Restaurant;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -34,6 +35,7 @@ class RestaurantResource extends JsonResource
             'city' => $this->city,
             'place' => $this->place,
             'media' => new MediaCollection($this->media),
+            'schedules' => new ScheduleCollection($this->whenLoaded('schedules')),
         ];
     }
 
@@ -50,6 +52,7 @@ class RestaurantResource extends JsonResource
      *   @OA\Property(property="city", type="string", example="Uzhhorod"),
      *   @OA\Property(property="place", type="string", example="Koryatovycha Square, 1а"),
      *   @OA\Property(property="media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
+     *   @OA\Property(property="schedules", type="array", @OA\Items(ref ="#/components/schemas/Schedule")),
      * )
      */
 }

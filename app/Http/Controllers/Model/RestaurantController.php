@@ -95,6 +95,8 @@ class RestaurantController extends CrudController
      *   security={{"bearerAuth": {}}},
      *   tags={"restaurants"},
      *
+     *   @OA\Parameter(name="include", in="query",
+     *     @OA\Schema(ref ="#/components/schemas/RestaurantIncludes")),
      *  @OA\Parameter(name="filter[slug]", in="query", example="first", @OA\Schema(type="string")),
      *  @OA\Parameter(name="filter[name]", in="query", example="First", @OA\Schema(type="string")),
      *
@@ -116,6 +118,8 @@ class RestaurantController extends CrudController
      *   security={{"bearerAuth": {}}},
      *   tags={"restaurants"},
      *
+     *   @OA\Parameter(name="include", in="query",
+     *     @OA\Schema(ref ="#/components/schemas/RestaurantIncludes")),
      *  @OA\Parameter(name="id", required=true, in="path", example=1, @OA\Schema(type="integer"),
      *     description="Id of the restaurant."),
      *
@@ -179,6 +183,11 @@ class RestaurantController extends CrudController
      * ),
      *
      * @OA\Schema(
+     *   schema="RestaurantIncludes",
+     *   description="Coma-separated list of inluded relations.
+            Available relations: `schedules`",
+     *   type="string", example="schedules"
+     * ),    * @OA\Schema(
      *   schema="IndexRestaurantResponse",
      *   description="Index restaurant response object.",
      *   required = {"data", "meta", "message"},
