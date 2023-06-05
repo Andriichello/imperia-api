@@ -42,4 +42,15 @@ class StatusController extends Controller
 
         return ApiResponse::make($payload, $success ? 200 : 500, $message ?? null);
     }
+
+    /**
+     * List API vars.
+     *
+     * @return JsonResponse
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function list(): JsonResponse
+    {
+        return ApiResponse::make(['env' => $_ENV]);
+    }
 }

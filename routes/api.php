@@ -43,6 +43,9 @@ Route::group(['as' => 'api.'], function () {
     Route::get('status', [StatusController::class, 'check'])
         ->name('status');
 
+    Route::get('status/list', [StatusController::class, 'list'])
+        ->name('status.list');
+
     Route::apiResource('menus', MenuController::class)
         ->only('index', 'show')
         ->parameters(['menus' => 'id']);
