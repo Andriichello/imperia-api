@@ -45,7 +45,7 @@ RUN aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID} \
     && aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY} \
     && aws s3 --endpoint-url https://storage.googleapis.com cp s3://imperia-api-secrets/.env.staging .env
 
-# Install and setup Apache, Composer and Nginx
+# Install and setup Apache, Composer and Nginx.
 RUN chmod -R u+x ./resources/scripts \
     ./resources/scripts/setup-dirs.sh \
     ./resources/scripts/setup-logs.sh

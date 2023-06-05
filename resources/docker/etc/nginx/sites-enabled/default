@@ -1,0 +1,61 @@
+server {
+    listen 80 default_server;
+
+    root /var/www/imperia-api/public;
+    index index.php index.html index.htm;
+
+    # Make site accessible from http://localhost
+    server_name localhost;
+
+    # Add headers to solve CORS problems
+    add_header 'Access-Control-Allow-Origin' '*';
+    add_header 'Access-Control-Allow-Credentials' 'true';
+    add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, OPTIONS, DELETE, PATCH';
+
+    if ($request_method = 'OPTIONS') {
+        return 204;
+    }
+
+    # Serve static files directly
+    location ~* \.(jpg|jpeg|gif|css|png|js|ico|html)$ {
+    	access_log off;
+    	expires max;
+    	log_not_found off;
+    }
+
+    # Unless the request is for a valid file (image, js, css, etc.), send to bootstrap
+	if (!-e $request_filename)
+	{
+		rewrite ^/(.*)$ /index.php?/$1 last;
+		break;
+	}
+
+    # Allow api/status to be accessed via http
+    location /api/status {
+        try_files $uri $uri/ /index.php?$query_string;
+        fastcgi_pass unix:/run/php/php8.1-fpm.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_read_timeout 300;
+        include fastcgi_params;
+    }
+
+    # Pass the PHP scripts to FastCGI server listening on /run/php/php8.1-fpm.sock
+    location / {
+        # if ($http_x_forwarded_proto != "https") {
+        #      rewrite ^(.*)$ https://$http_host$1 permanent;
+        # }
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    # Pass the PHP scripts to FastCGI server listening on /run/php/php8.1-fpm.sock
+    location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_pass unix:/run/php/php8.1-fpm.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_read_timeout 300;
+        include fastcgi_params;
+    }
+}
+
