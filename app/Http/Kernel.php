@@ -48,7 +48,7 @@ class Kernel extends HttpKernel
         TrimStrings::class,
         ConvertEmptyStringsToNull::class,
         /** Custom */
-        HttpsProtocol::class,
+        // HttpsProtocol::class,
         ForceJsonOnApi::class,
     ];
 
@@ -92,6 +92,6 @@ class Kernel extends HttpKernel
         'signed' => ValidateSignature::class,
         'throttle' => ThrottleRequests::class,
         'verified' => EnsureEmailIsVerified::class,
-        'https' => HttpsProtocol::class,
+        // 'https' => HttpsProtocol::class,
     ];
 }
