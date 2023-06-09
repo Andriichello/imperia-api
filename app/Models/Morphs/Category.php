@@ -4,11 +4,13 @@ namespace App\Models\Morphs;
 
 use App\Models\BaseModel;
 use App\Models\Interfaces\MediableInterface;
+use App\Models\Restaurant;
 use App\Models\Traits\MediableTrait;
 use App\Queries\CategoryQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\Morphs\CategoryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
@@ -54,6 +56,7 @@ class Category extends BaseModel implements MediableInterface
      */
     protected $relations = [
         'categorizables',
+        'restaurants',
     ];
 
     /**
@@ -64,6 +67,16 @@ class Category extends BaseModel implements MediableInterface
     public function categorizables(): HasMany
     {
         return $this->hasMany(Categorizable::class, 'category_id', 'id');
+    }
+
+    /**
+     * Restaurants associated with the model.
+     *
+     * @return BelongsToMany
+     */
+    public function restaurants(): BelongsToMany
+    {
+        return $this->belongsToMany(Restaurant::class, 'restaurant_category');
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Filters\RestaurantsFilter;
 use App\Models\Interfaces\ArchivableInterface;
 use App\Models\Interfaces\MediableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
@@ -18,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 /**
  * Class Menu.
@@ -124,14 +126,22 @@ class Menu extends BaseModel implements
     public function categories(): EloquentBuilder|Builder
     {
         $slug = slugClass(Product::class);
-        return Category::query()
+
+        $query = Category::query()
             ->where('target', $slug)
             ->join('categorizables', 'categorizables.category_id', '=', 'categories.id')
             ->where('categorizables.categorizable_type', $slug)
             ->join('products', 'products.id', '=', 'categorizables.categorizable_id')
             ->join('menu_product', 'menu_product.product_id', '=', 'products.id')
-            ->where('menu_product.menu_id', $this->id)
-            ->select('categories.*')
+            ->where('menu_product.menu_id', $this->id);
+
+        if (request('filter.restaurants')) {
+            $filter = new RestaurantsFilter('restaurant_category', 'category_id');
+            // @phpstan-ignore-next-line
+            $filter($query, request('filter.restaurants'), 'filter.restaurants');
+        }
+
+        return $query->select('categories.*')
             ->distinct();
     }
 

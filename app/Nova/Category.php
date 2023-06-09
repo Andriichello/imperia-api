@@ -7,6 +7,7 @@ use App\Nova\Options\MorphOptions;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Select;
@@ -72,6 +73,8 @@ class Category extends Resource
 
             Text::make('Description')
                 ->rules('nullable', 'min:1', 'max:255'),
+
+            BelongsToMany::make('Restaurants'),
 
             DateTime::make('Created At')
                 ->sortable()

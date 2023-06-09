@@ -530,6 +530,16 @@
                         }
                     },
                     {
+                        "name": "filter[restaurants]",
+                        "in": "query",
+                        "description": "Coma-separated array of restaurant ids. Limits menus to those\n         that are attached at least to one of those restaurants",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1"
+                    },
+                    {
                         "name": "filter[target]",
                         "in": "query",
                         "description": "Target class morph slug. Examples: `products`, `tickets`, `services`, `spaces`",

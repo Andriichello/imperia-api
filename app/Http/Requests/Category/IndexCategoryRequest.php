@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Category;
 
+use App\Http\Filters\RestaurantsFilter;
 use App\Http\Requests\Crud\IndexRequest;
 use Spatie\QueryBuilder\AllowedFilter;
 
@@ -16,6 +17,10 @@ class IndexCategoryRequest extends IndexRequest
             parent::getAllowedFilters(),
             [
                 AllowedFilter::exact('target'),
+                AllowedFilter::custom(
+                    'restaurants',
+                    new RestaurantsFilter('restaurant_category', 'category_id')
+                ),
             ]
         );
     }
