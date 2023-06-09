@@ -1,7 +1,6 @@
 FROM ubuntu:jammy
 
-ARG NOVA_USERNAME
-ARG NOVA_PASSWORD
+ARG ENV
 ARG AWS_ACCESS_KEY_ID
 ARG AWS_SECRET_ACCESS_KEY
 
@@ -43,7 +42,8 @@ RUN chown -R www-data:www-data ./storage
 
 RUN aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID} \
     && aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY} \
-    && aws s3 --endpoint-url https://storage.googleapis.com cp s3://imperia-api-secrets/.env.staging .env
+    && aws s3 --endpoint-url https://storage.googleapis.com cp s3://imperia-api-secrets/auth.json auth.json \
+    && aws s3 --endpoint-url https://storage.googleapis.com cp s3://imperia-api-secrets/.env.${ENV} .env
 
 # Install and setup Apache, Composer and Nginx.
 RUN chmod -R u+x ./resources/scripts \
@@ -53,7 +53,6 @@ RUN chmod -R u+x ./resources/scripts \
 # Install Composer dependencies.
 RUN curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php \
     && php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer \
-    && composer config --auth http-basic.nova.laravel.com ${NOVA_USERNAME} ${NOVA_PASSWORD} \
     && composer install -o -n
 
 # Expose HTTP and HTTPS ports.
