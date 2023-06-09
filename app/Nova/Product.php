@@ -102,6 +102,8 @@ class Product extends Resource
 
             MorphToMany::make('Categories'),
 
+            BelongsToMany::make('Restaurants'),
+
             MorphMany::make('Logs', 'logs', Log::class),
 
             DateTime::make('Created At')

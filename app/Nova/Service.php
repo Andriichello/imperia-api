@@ -6,6 +6,7 @@ use Andriichello\Media\MediaField;
 use App\Models\Scopes\ArchivedScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
@@ -98,6 +99,8 @@ class Service extends Resource
                 ->default(fn() => false),
 
             MorphToMany::make('Categories'),
+
+            BelongsToMany::make('Restaurants'),
 
             MorphMany::make('Logs', 'logs', Log::class),
 

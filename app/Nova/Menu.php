@@ -6,6 +6,7 @@ use Andriichello\Media\MediaField;
 use App\Models\Scopes\ArchivedScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
@@ -83,6 +84,8 @@ class Menu extends Resource
                 ->rules('nullable', 'min:1', 'max:255'),
 
             HasMany::make('Products'),
+
+            BelongsToMany::make('Restaurants'),
 
             Boolean::make('Archived')
                 ->default(fn() => false),
