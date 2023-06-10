@@ -19,7 +19,7 @@ return new class extends Migration
             $table->id();
             $table->string('slug')->unique();
             $table->string('target')->nullable();
-            $table->string('title', 50);
+            $table->string('title');
             $table->string('description')->nullable();
             $table->text('metadata')->nullable();
             $table->timestamps();

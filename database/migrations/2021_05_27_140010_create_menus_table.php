@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('menus', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 50)->unique('menus_unique_TITLE');
+            $table->string('title')->unique('menus_unique_TITLE');
             $table->string('description')->nullable();
             $table->boolean('archived')->default(false);
             $table->text('metadata')->nullable();

@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('spaces', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 50)->unique('spaces_unique_TITLE');
+            $table->string('title')->unique('spaces_unique_TITLE');
             $table->smallInteger('number');
             $table->smallInteger('floor');
             $table->string('description')->nullable();

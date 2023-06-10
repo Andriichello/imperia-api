@@ -125,7 +125,7 @@ class DummySeeder extends Seeder
         ];
 
         foreach ($dates as $date) {
-            $holiday = Holiday::factory()
+            Holiday::factory()
                 ->withDate($date)
                 ->create();
         }
@@ -458,7 +458,7 @@ class DummySeeder extends Seeder
             'price' => 125,
             'weight' => 480,
         ]);
-        $product->attachMedia($pizzaMedia);
+        // $product->attachMedia($pizzaMedia);
         $product->attachCategories($pizzaCategory);
         $product->menus()->attach($kitchen->id);
 
@@ -468,7 +468,7 @@ class DummySeeder extends Seeder
             'price' => 130,
             'weight' => 420,
         ]);
-        $product->attachMedia($pizzaMedia);
+        // $product->attachMedia($pizzaMedia);
         $product->attachCategories($pizzaCategory);
         $product->menus()->attach($kitchen->id);
 
@@ -479,7 +479,7 @@ class DummySeeder extends Seeder
             'price' => 160,
             'weight' => 450,
         ]);
-        $product->attachMedia($pizzaMedia);
+        // $product->attachMedia($pizzaMedia);
         $product->attachCategories($pizzaCategory);
         $product->menus()->attach($kitchen->id);
     }
@@ -511,7 +511,7 @@ class DummySeeder extends Seeder
             'price' => 80,
             'weight' => 300,
         ]);
-        $product->attachMedia($soupsMedia);
+        // $product->attachMedia($soupsMedia);
         $product->attachCategories($soupsCategory);
         $product->menus()->attach($kitchen->id);
 
@@ -520,7 +520,7 @@ class DummySeeder extends Seeder
             'price' => 95,
             'weight' => 350,
         ]);
-        $product->attachMedia($soupsMedia);
+        // $product->attachMedia($soupsMedia);
         $product->attachCategories($soupsCategory);
         $product->menus()->attach($kitchen->id);
     }
@@ -552,7 +552,7 @@ class DummySeeder extends Seeder
             'price' => 75,
             'weight' => 150,
         ]);
-        $product->attachMedia($dessertsMedia);
+        // $product->attachMedia($dessertsMedia);
         $product->attachCategories($dessertsCategory);
         $product->menus()->attach($kitchen->id);
 
@@ -561,7 +561,7 @@ class DummySeeder extends Seeder
             'price' => 60,
             'weight' => 120,
         ]);
-        $product->attachMedia($dessertsMedia);
+        // $product->attachMedia($dessertsMedia);
         $product->attachCategories($dessertsCategory);
         $product->menus()->attach($kitchen->id);
     }
@@ -593,7 +593,7 @@ class DummySeeder extends Seeder
             'price' => 85,
             'weight' => 120,
         ]);
-        $product->attachMedia($alcoholicMedia);
+        // $product->attachMedia($alcoholicMedia);
         $product->attachCategories($alcoholicCategory);
         $product->menus()->attach($bar->id);
 
@@ -603,7 +603,7 @@ class DummySeeder extends Seeder
             'price' => 72,
             'weight' => 170,
         ]);
-        $product->attachMedia($alcoholicMedia);
+        // $product->attachMedia($alcoholicMedia);
         $product->attachCategories($alcoholicCategory);
         $product->menus()->attach($bar->id);
 
@@ -626,7 +626,7 @@ class DummySeeder extends Seeder
             'price' => 45,
             'weight' => 250,
         ]);
-        $product->attachMedia($nonalcoholicMedia);
+        // $product->attachMedia($nonalcoholicMedia);
         $product->attachCategories($nonalcoholicCategory);
         $product->menus()->attach($bar->id);
 
@@ -636,7 +636,7 @@ class DummySeeder extends Seeder
             'price' => 30,
             'weight' => 200,
         ]);
-        $product->attachMedia($nonalcoholicMedia);
+        // $product->attachMedia($nonalcoholicMedia);
         $product->attachCategories($nonalcoholicCategory);
         $product->menus()->attach($bar->id);
     }
@@ -656,20 +656,23 @@ class DummySeeder extends Seeder
             ->withSlug($slug)
             ->firstOrFail();
 
-        Ticket::query()
-            ->each(fn(Ticket $item) => $restaurant->tickets()->attach($item->id));
-
         Menu::query()
             ->each(fn(Menu $item) => $restaurant->menus()->attach($item->id));
+
+        Category::query()
+            ->each(fn(Category $item) => $restaurant->categories()->attach($item->id));
 
         Product::query()
             ->each(fn(Product $item) => $restaurant->products()->attach($item->id));
 
-        Service::query()
-            ->each(fn(Service $item) => $restaurant->services()->attach($item->id));
-
         Space::query()
             ->each(fn(Space $item) => $restaurant->spaces()->attach($item->id));
+
+        Ticket::query()
+            ->each(fn(Ticket $item) => $restaurant->tickets()->attach($item->id));
+
+        Service::query()
+            ->each(fn(Service $item) => $restaurant->services()->attach($item->id));
 
         Holiday::query()
             ->each(fn(Holiday $item) => $restaurant->holidays()->attach($item->id));
