@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Interfaces\MediableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
+use App\Models\Morphs\Category;
 use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use App\Queries\HolidayQueryBuilder;
@@ -32,9 +33,16 @@ use Illuminate\Support\Collection;
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  *
+ * @property Banquet[]|Collection $banquets
+ * @property Menu[]|Collection $menus
+ * @property Space[]|Collection $spaces
+ * @property Service[]|Collection $services
+ * @property Ticket[]|Collection $tickets
+ * @property Product[]|Collection $products
+ * @property Category[]|Collection $categories
  * @property Schedule[]|Collection $schedules
- * @property Schedule[]|Collection $holidays
- * @property Schedule[]|Collection $relevantHolidays
+ * @property Holiday[]|Collection $holidays
+ * @property Holiday[]|Collection $relevantHolidays
  *
  * @method static RestaurantQueryBuilder query()
  * @method static RestaurantFactory factory(...$parameters)
@@ -81,6 +89,7 @@ class Restaurant extends BaseModel implements
         'spaces',
         'tickets',
         'services',
+        'categories',
         'schedules',
         'holidays',
         'relevantHolidays',
@@ -144,6 +153,17 @@ class Restaurant extends BaseModel implements
     public function services(): BelongsToMany
     {
         return $this->belongsToMany(Service::class, 'restaurant_service');
+    }
+
+    /**
+     * Categories associated with the model.
+     *
+     * @return BelongsToMany
+     */
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class, 'restaurant_category')
+            ->orderBy('date');
     }
 
     /**
