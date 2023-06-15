@@ -7283,6 +7283,9 @@
                     "description",
                     "price",
                     "weight",
+                    "weight_unit",
+                    "archived",
+                    "variants",
                     "category_ids",
                     "media",
                     "default_media"
@@ -7302,7 +7305,8 @@
                     },
                     "description": {
                         "type": "string",
-                        "example": "Some text..."
+                        "example": "Some text...",
+                        "nullable": "true"
                     },
                     "price": {
                         "type": "float",
@@ -7310,11 +7314,30 @@
                     },
                     "weight": {
                         "type": "float",
-                        "example": 120
+                        "example": 120,
+                        "nullable": "true"
+                    },
+                    "weight_unit": {
+                        "type": "string",
+                        "enum": [
+                            "g",
+                            "kg",
+                            "ml",
+                            "l",
+                            "cm"
+                        ],
+                        "example": "g",
+                        "nullable": "true"
                     },
                     "archived": {
                         "type": "boolean",
                         "example": "false"
+                    },
+                    "variants": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProductVariant"
+                        }
                     },
                     "categories": {
                         "type": "array",
@@ -7340,6 +7363,51 @@
                         "items": {
                             "$ref": "#/components/schemas/Media"
                         }
+                    }
+                },
+                "type": "object"
+            },
+            "ProductVariant": {
+                "description": "Product variant resource object",
+                "required": [
+                    "id",
+                    "type",
+                    "product_id",
+                    "price",
+                    "weight",
+                    "weight_unit"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "product_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "product-variants"
+                    },
+                    "price": {
+                        "type": "float",
+                        "example": 15.99
+                    },
+                    "weight": {
+                        "type": "float",
+                        "example": 120
+                    },
+                    "weight_unit": {
+                        "type": "string",
+                        "enum": [
+                            "g",
+                            "kg",
+                            "ml",
+                            "l",
+                            "cm"
+                        ],
+                        "example": "g"
                     }
                 },
                 "type": "object"
