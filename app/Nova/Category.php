@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -57,6 +58,11 @@ class Category extends Resource
 
             MediaField::make('Media'),
 
+            Number::make('Popularity')
+                ->step(1)
+                ->sortable()
+                ->nullable(),
+
             Text::make('Slug')
                 ->rules('required', 'min:1', 'max:50')
                 ->creationRules('unique:categories,slug')
@@ -73,6 +79,7 @@ class Category extends Resource
 
             Text::make('Description')
                 ->rules('nullable', 'min:1', 'max:255'),
+
 
             BelongsToMany::make('Restaurants'),
 
@@ -117,6 +124,7 @@ class Category extends Resource
         return [
             'id' => true,
             'media' => true,
+            'popularity' => true,
             'slug' => true,
             'target' => true,
             'title' => true,

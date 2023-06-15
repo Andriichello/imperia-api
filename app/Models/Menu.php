@@ -135,7 +135,8 @@ class Menu extends BaseModel implements
             ->where('categorizables.categorizable_type', $slug)
             ->join('products', 'products.id', '=', 'categorizables.categorizable_id')
             ->join('menu_product', 'menu_product.product_id', '=', 'products.id')
-            ->where('menu_product.menu_id', $this->id);
+            ->where('menu_product.menu_id', $this->id)
+            ->orderByDesc('popularity');
 
         if (request('filter.restaurants')) {
             $filter = new RestaurantsFilter('restaurant_category', 'category_id');

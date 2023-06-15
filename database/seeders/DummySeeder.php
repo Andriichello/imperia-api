@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Enums\FamilyRelation;
 use App\Enums\UserRole;
 use App\Enums\Weekday;
+use App\Enums\WeightUnit;
 use App\Models\Customer;
 use App\Models\FamilyMember;
 use App\Models\Holiday;
@@ -12,6 +13,7 @@ use App\Models\Menu;
 use App\Models\Morphs\Category;
 use App\Models\Morphs\Media;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\Restaurant;
 use App\Models\Schedule;
 use App\Models\Service;
@@ -459,17 +461,35 @@ class DummySeeder extends Seeder
             'description' => 'The simplest and probably most iconic Italian pizza.'
                 . ' Ingredients: dough, mozzarella, tomato paste, basil, oregano.',
             'price' => 125,
-            'weight' => 480,
+            'weight' => 28,
+            'weight_unit' => WeightUnit::Centimeter,
         ]);
         // $product->attachMedia($pizzaMedia);
         $product->attachCategories($pizzaCategory);
         $product->menus()->attach($kitchen->id);
+
+        ProductVariant::factory()
+            ->withProduct($product)
+            ->create([
+                'price' => 200,
+                'weight' => 36,
+                'weight_unit' => WeightUnit::Centimeter,
+            ]);
+
+        ProductVariant::factory()
+            ->withProduct($product)
+            ->create([
+                'price' => 295,
+                'weight' => 42,
+                'weight_unit' => WeightUnit::Centimeter,
+            ]);
 
         $product = Product::factory()->create([
             'title' => 'Romana',
             'description' => 'Ingredients: dough, mozzarella, ham, tomato paste, arugula.',
             'price' => 130,
             'weight' => 420,
+            'weight_unit' => WeightUnit::Gram,
         ]);
         // $product->attachMedia($pizzaMedia);
         $product->attachCategories($pizzaCategory);
@@ -480,11 +500,20 @@ class DummySeeder extends Seeder
             'description' => 'Ingredients: dough, tomato sauce, mozzarella, gorgonzola'
                 . ', Parmigiano Reggiano, goat cheese',
             'price' => 160,
-            'weight' => 450,
+            'weight' => 28,
+            'weight_unit' => WeightUnit::Centimeter,
         ]);
         // $product->attachMedia($pizzaMedia);
         $product->attachCategories($pizzaCategory);
         $product->menus()->attach($kitchen->id);
+
+        ProductVariant::factory()
+            ->withProduct($product)
+            ->create([
+                'price' => 300,
+                'weight' => 40,
+                'weight_unit' => WeightUnit::Centimeter,
+            ]);
     }
 
     /**
@@ -513,6 +542,7 @@ class DummySeeder extends Seeder
             'title' => 'Tomato Soup',
             'price' => 80,
             'weight' => 300,
+            'weight_unit' => WeightUnit::Gram,
         ]);
         // $product->attachMedia($soupsMedia);
         $product->attachCategories($soupsCategory);
@@ -522,6 +552,7 @@ class DummySeeder extends Seeder
             'title' => 'Celery Soup',
             'price' => 95,
             'weight' => 350,
+            'weight_unit' => WeightUnit::Gram,
         ]);
         // $product->attachMedia($soupsMedia);
         $product->attachCategories($soupsCategory);
@@ -554,6 +585,7 @@ class DummySeeder extends Seeder
             'title' => 'Tiramisu',
             'price' => 75,
             'weight' => 150,
+            'weight_unit' => WeightUnit::Gram,
         ]);
         // $product->attachMedia($dessertsMedia);
         $product->attachCategories($dessertsCategory);
@@ -563,6 +595,7 @@ class DummySeeder extends Seeder
             'title' => 'Panna Cotta',
             'price' => 60,
             'weight' => 120,
+            'weight_unit' => WeightUnit::Gram,
         ]);
         // $product->attachMedia($dessertsMedia);
         $product->attachCategories($dessertsCategory);
@@ -595,6 +628,7 @@ class DummySeeder extends Seeder
             'title' => 'Martini',
             'price' => 85,
             'weight' => 120,
+            'weight_unit' => WeightUnit::Milliliter,
         ]);
         // $product->attachMedia($alcoholicMedia);
         $product->attachCategories($alcoholicCategory);
@@ -605,6 +639,7 @@ class DummySeeder extends Seeder
             'description' => 'Champagne and pear nectar combine in a delicate drink.',
             'price' => 72,
             'weight' => 170,
+            'weight_unit' => WeightUnit::Milliliter,
         ]);
         // $product->attachMedia($alcoholicMedia);
         $product->attachCategories($alcoholicCategory);
@@ -628,16 +663,26 @@ class DummySeeder extends Seeder
             'description' => 'Iced Sprite with mint, lime and lemon.',
             'price' => 45,
             'weight' => 250,
+            'weight_unit' => WeightUnit::Milliliter,
         ]);
         // $product->attachMedia($nonalcoholicMedia);
         $product->attachCategories($nonalcoholicCategory);
         $product->menus()->attach($bar->id);
+
+        ProductVariant::factory()
+            ->withProduct($product)
+            ->create([
+                'price' => 70,
+                'weight' => 400,
+                'weight_unit' => WeightUnit::Milliliter,
+            ]);
 
         $product = Product::factory()->create([
             'title' => 'Iced Tea With Plums and Thyme',
             'description' => 'Served nonalcoholic fruit-and-herb blend sipper.',
             'price' => 30,
             'weight' => 200,
+            'weight_unit' => WeightUnit::Milliliter,
         ]);
         // $product->attachMedia($nonalcoholicMedia);
         $product->attachCategories($nonalcoholicCategory);

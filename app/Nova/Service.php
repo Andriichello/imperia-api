@@ -86,6 +86,11 @@ class Service extends Resource
 
             MediaField::make('Media'),
 
+            Number::make('Popularity')
+                ->step(1)
+                ->sortable()
+                ->nullable(),
+
             Text::make('Title')
                 ->updateRules('sometimes', 'min:1', 'max:255')
                 ->creationRules('required', 'min:1', 'max:255'),
@@ -133,6 +138,7 @@ class Service extends Resource
             'id' => true,
             'active' => true,
             'media' => true,
+            'popularity' => true,
             'title' => true,
             'description' => false,
             'once_paid_price' => true,
