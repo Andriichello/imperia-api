@@ -21,6 +21,7 @@ use App\Models\Orders\ServiceOrderField;
 use App\Models\Orders\SpaceOrderField;
 use App\Models\Orders\TicketOrderField;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\Schedule;
 use App\Models\Service;
 use App\Models\Space;
@@ -61,6 +62,8 @@ class MorphServiceProvider extends ServiceProvider
         Ticket::class,
         Service::class,
         Product::class,
+        /** Items (additional) */
+        ProductVariant::class,
         /** Banquet */
         Banquet::class,
         /** Orders */

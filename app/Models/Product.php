@@ -17,6 +17,7 @@ use Carbon\Carbon;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
 
@@ -27,6 +28,7 @@ use Illuminate\Support\Collection;
  * @property string|null $description
  * @property float|null $price
  * @property float|null $weight
+ * @property string|null $weight_unit
  * @property bool $archived
  * @property string|null $metadata
  * @property Carbon|null $created_at
@@ -34,6 +36,7 @@ use Illuminate\Support\Collection;
  * @property Carbon|null $deleted_at
  *
  * @property Menu[]|Collection $menus
+ * @property ProductVariant[]|Collection $variants
  * @property Restaurant[]|Collection $restaurants
  *
  * @method static ProductQueryBuilder query()
@@ -63,6 +66,7 @@ class Product extends BaseModel implements
         'description',
         'price',
         'weight',
+        'weight_unit',
         'archived',
         'metadata',
     ];
@@ -75,6 +79,7 @@ class Product extends BaseModel implements
     protected $relations = [
         'menus',
         'media',
+        'variants',
         'categories',
         'restaurants',
     ];
@@ -106,6 +111,17 @@ class Product extends BaseModel implements
     public function menus(): BelongsToMany
     {
         return $this->belongsToMany(Menu::class, 'menu_product');
+    }
+
+    /**
+     * Get the variants associated with the model.
+     *
+     * @return HasMany
+     */
+    public function variants(): HasMany
+    {
+        return $this->hasMany(ProductVariant::class, 'product_id')
+            ->orderBy('price');
     }
 
     /**
