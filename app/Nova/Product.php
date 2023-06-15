@@ -3,16 +3,20 @@
 namespace App\Nova;
 
 use Andriichello\Media\MediaField;
+use App\Enums\WeightUnit;
 use App\Models\Scopes\ArchivedScope;
+use App\Nova\Options\WeightUnitOptions;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\MorphMany;
 use Laravel\Nova\Fields\MorphToMany;
 use Laravel\Nova\Fields\Number;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -76,7 +80,17 @@ class Product extends Resource
         return [
             ID::make()->sortable(),
 
+            HasMany::make('Variants', 'variants', ProductVariant::class),
+
             BelongsToMany::make('Menus'),
+
+            Boolean::make('Active')
+                ->resolveUsing(fn() => !$this->archived)
+                ->exceptOnForms(),
+
+            Boolean::make('Archived')
+                ->onlyOnForms()
+                ->default(fn() => false),
 
             MediaField::make('Media'),
 
@@ -97,8 +111,11 @@ class Product extends Resource
                 ->updateRules('sometimes', 'min:0')
                 ->creationRules('required', 'min:0'),
 
-            Boolean::make('Archived')
-                ->default(fn() => false),
+            Select::make('Weight Unit')
+                ->options(WeightUnitOptions::all())
+                ->default(WeightUnit::Gram),
+
+            BelongsToMany::make('Restaurants'),
 
             MorphToMany::make('Categories'),
 
@@ -128,13 +145,13 @@ class Product extends Resource
     {
         return [
             'id' => true,
-            'menus' => false,
+            'active' => true,
             'media' => true,
             'title' => true,
             'description' => false,
             'price' => true,
             'weight' => true,
-            'archived' => true,
+            'weight_unit' => true,
             'created_at' => false,
             'updated_at' => false,
         ];

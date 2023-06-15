@@ -76,6 +76,14 @@ class Service extends Resource
         return [
             ID::make()->sortable(),
 
+            Boolean::make('Active')
+                ->resolveUsing(fn() => !$this->archived)
+                ->exceptOnForms(),
+
+            Boolean::make('Archived')
+                ->onlyOnForms()
+                ->default(fn() => false),
+
             MediaField::make('Media'),
 
             Text::make('Title')
@@ -94,9 +102,6 @@ class Service extends Resource
                 ->step(0.01)
                 ->updateRules('sometimes', 'min:0')
                 ->creationRules('required', 'min:0'),
-
-            Boolean::make('Archived')
-                ->default(fn() => false),
 
             MorphToMany::make('Categories'),
 
@@ -126,12 +131,12 @@ class Service extends Resource
     {
         return [
             'id' => true,
+            'active' => true,
             'media' => true,
             'title' => true,
             'description' => false,
             'once_paid_price' => true,
             'hourly_paid_price' => true,
-            'archived' => true,
             'created_at' => false,
             'updated_at' => false,
         ];

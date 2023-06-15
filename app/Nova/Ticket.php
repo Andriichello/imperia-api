@@ -76,6 +76,14 @@ class Ticket extends Resource
         return [
             ID::make()->sortable(),
 
+            Boolean::make('Active')
+                ->resolveUsing(fn() => !$this->archived)
+                ->exceptOnForms(),
+
+            Boolean::make('Archived')
+                ->onlyOnForms()
+                ->default(fn() => false),
+
             MediaField::make('Media'),
 
             Text::make('Title')
@@ -89,9 +97,6 @@ class Ticket extends Resource
                 ->step(0.01)
                 ->updateRules('sometimes', 'min:0')
                 ->creationRules('required', 'min:0'),
-
-            Boolean::make('Archived')
-                ->default(fn() => false),
 
             MorphToMany::make('Categories'),
 
@@ -121,11 +126,11 @@ class Ticket extends Resource
     {
         return [
             'id' => true,
+            'active' => true,
             'media' => true,
             'title' => true,
             'description' => false,
             'price' => true,
-            'archived' => true,
             'created_at' => false,
             'updated_at' => false,
         ];
