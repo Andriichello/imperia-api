@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('country');
             $table->string('city');
             $table->string('place');
+            $table->integer('popularity')->nullable();
             $table->text('metadata')->nullable();
             $table->timestamps();
             $table->softDeletes();

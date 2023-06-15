@@ -32,6 +32,7 @@ class TicketFactory extends Factory
             'title' => $this->faker->unique()->sentence(2),
             'description' => $this->faker->sentence,
             'price' => $this->faker->randomFloat(2, 20, 100),
+            'popularity' => rand(0, 100),
         ];
     }
 }

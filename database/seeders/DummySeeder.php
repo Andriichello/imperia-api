@@ -67,9 +67,10 @@ class DummySeeder extends Seeder
                 'name' => 'First',
                 'country' => 'Ukraine',
                 'city' => 'Mynai',
-                'place' => 'Vul. Kozatsʹka, 2'
+                'place' => 'Vul. Kozatsʹka, 2',
+                'popularity' => 3,
             ]);
-        $restaurant->attachMedia($restaurantMedia);
+//        $restaurant->attachMedia($restaurantMedia);
 
         $restaurant = Restaurant::factory()
             ->withSlug('second')
@@ -77,9 +78,10 @@ class DummySeeder extends Seeder
                 'name' => 'Second',
                 'country' => 'Ukraine',
                 'city' => 'Uzhhorod',
-                'place' => 'Sobranetsʹka St, 179А'
+                'place' => 'Sobranetsʹka St, 179А',
+                'popularity' => 2,
             ]);
-        $restaurant->attachMedia($restaurantMedia);
+//        $restaurant->attachMedia($restaurantMedia);
 
         $restaurant = Restaurant::factory()
             ->withSlug('third')
@@ -87,9 +89,10 @@ class DummySeeder extends Seeder
                 'name' => 'Third',
                 'country' => 'Ukraine',
                 'city' => 'Uzhhorod',
-                'place' => 'Koryatovycha Square, 1а'
+                'place' => 'Koryatovycha Square, 1а',
+                'popularity' => 1,
             ]);
-        $restaurant->attachMedia($restaurantMedia);
+//        $restaurant->attachMedia($restaurantMedia);
     }
 
     /**
@@ -244,7 +247,7 @@ class DummySeeder extends Seeder
             'title' => 'Work Day Tickets',
             'description' => 'Tickets that are available from Monday to Thursday.',
         ]);
-        $workdayCategory->attachMedia($workdayMedia);
+//        $workdayCategory->attachMedia($workdayMedia);
 
         $ticket = Ticket::factory()->create([
             'title' => 'Child workday ticket',
@@ -271,7 +274,7 @@ class DummySeeder extends Seeder
             'title' => 'Weekend Tickets',
             'description' => 'Tickets that are available from Friday to Sunday.',
         ]);
-        $weekendCategory->attachMedia($weekendMedia);
+//        $weekendCategory->attachMedia($weekendMedia);
 
         $ticket = Ticket::factory()->create([
             'title' => 'Child weekend ticket',
@@ -306,7 +309,7 @@ class DummySeeder extends Seeder
             'title' => 'Indoors',
             'description' => null,
         ]);
-        $indoorsCategory->attachMedia($indoorsMedia);
+//        $indoorsCategory->attachMedia($indoorsMedia);
 
         $service = Service::factory()->create([
             'title' => 'Clown Show',
@@ -332,7 +335,7 @@ class DummySeeder extends Seeder
             'title' => 'Outdoors',
             'description' => null,
         ]);
-        $outdoorsCategory->attachMedia($outdoorsMedia);
+//        $outdoorsCategory->attachMedia($outdoorsMedia);
 
         $service = Service::factory()->create([
             'title' => 'Fire Show',
@@ -367,7 +370,7 @@ class DummySeeder extends Seeder
             'title' => 'Rooms',
             'description' => null,
         ]);
-        $roomsCategory->attachMedia($roomsMedia);
+//        $roomsCategory->attachMedia($roomsMedia);
 
         /** @var Media $tablesMedia */
         $tablesMedia = Media::query()
@@ -380,7 +383,7 @@ class DummySeeder extends Seeder
             'title' => 'Tables',
             'description' => null,
         ]);
-        $tablesCategory->attachMedia($tablesMedia);
+//        $tablesCategory->attachMedia($tablesMedia);
 
         for ($i = 1; $i <= 2; $i++) {
             for ($j = 1; $j <= 5; $j++) {
@@ -449,7 +452,7 @@ class DummySeeder extends Seeder
             'title' => 'Pizza',
             'description' => null,
         ]);
-        $pizzaCategory->attachMedia($pizzaMedia);
+//        $pizzaCategory->attachMedia($pizzaMedia);
 
         $product = Product::factory()->create([
             'title' => 'Margarita',
@@ -504,7 +507,7 @@ class DummySeeder extends Seeder
             'title' => 'Soups',
             'description' => null,
         ]);
-        $soupsCategory->attachMedia($soupsMedia);
+//        $soupsCategory->attachMedia($soupsMedia);
 
         $product = Product::factory()->create([
             'title' => 'Tomato Soup',
@@ -545,7 +548,7 @@ class DummySeeder extends Seeder
             'title' => 'Desserts',
             'description' => null,
         ]);
-        $dessertsCategory->attachMedia($dessertsMedia);
+//        $dessertsCategory->attachMedia($dessertsMedia);
 
         $product = Product::factory()->create([
             'title' => 'Tiramisu',
@@ -586,7 +589,7 @@ class DummySeeder extends Seeder
             'title' => 'Alcoholic',
             'description' => null,
         ]);
-        $alcoholicCategory->attachMedia($alcoholicMedia);
+//        $alcoholicCategory->attachMedia($alcoholicMedia);
 
         $product = Product::factory()->create([
             'title' => 'Martini',
@@ -618,7 +621,7 @@ class DummySeeder extends Seeder
             'title' => 'Non-alcoholic',
             'description' => null,
         ]);
-        $nonalcoholicCategory->attachMedia($nonalcoholicMedia);
+//        $nonalcoholicCategory->attachMedia($nonalcoholicMedia);
 
         $product = Product::factory()->create([
             'title' => 'Mojito',

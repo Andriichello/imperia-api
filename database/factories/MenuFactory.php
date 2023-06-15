@@ -31,6 +31,7 @@ class MenuFactory extends Factory
         return [
             'title' => $this->faker->unique()->sentence(2),
             'description' => $this->faker->sentence(10),
+            'popularity' => rand(0, 100),
         ];
     }
 }

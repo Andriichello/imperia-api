@@ -33,6 +33,7 @@ class CategoryFactory extends Factory
             'title' => $this->faker->unique()->sentence(2),
             'target' => null,
             'description' => $this->faker->sentence,
+            'popularity' => rand(0, 100),
         ];
     }
 

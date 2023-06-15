@@ -35,6 +35,7 @@ class RestaurantFactory extends Factory
             'country' => $this->faker->country(),
             'city' => $this->faker->city(),
             'place' => $this->faker->streetAddress(),
+            'popularity' => rand(0, 100),
         ];
     }
 

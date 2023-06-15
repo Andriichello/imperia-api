@@ -21,6 +21,7 @@ use Illuminate\Support\Collection;
  * @property string $slug
  * @property string|null $target
  * @property string $title
+ * @property int|null $popularity
  * @property string|null $metadata
  * @property string|null $description
  * @property Carbon|null $created_at
@@ -46,6 +47,7 @@ class Category extends BaseModel implements MediableInterface
         'target',
         'title',
         'description',
+        'popularity',
         'metadata',
     ];
 

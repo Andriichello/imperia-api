@@ -34,6 +34,7 @@ class ServiceFactory extends Factory
             'description' => $this->faker->sentence(5),
             'once_paid_price' => $this->faker->randomElement($prices),
             'hourly_paid_price' => $this->faker->randomFloat(2, 10, 100),
+            'popularity' => rand(0, 100),
         ];
     }
 }

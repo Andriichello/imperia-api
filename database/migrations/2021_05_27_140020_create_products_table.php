@@ -20,6 +20,7 @@ return new class extends Migration
             $table->decimal('price')->unsigned();
             $table->decimal('weight')->unsigned()->nullable();
             $table->boolean('archived')->default(false);
+            $table->integer('popularity')->nullable();
             $table->text('metadata')->nullable();
             $table->timestamps();
             $table->softDeletes();

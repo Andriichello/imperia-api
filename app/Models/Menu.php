@@ -27,6 +27,7 @@ use Illuminate\Support\Str;
  * @property string $title
  * @property string|null $description
  * @property bool $archived
+ * @property int|null $popularity
  * @property string|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -65,6 +66,7 @@ class Menu extends BaseModel implements
         'title',
         'description',
         'archived',
+        'popularity',
         'metadata',
     ];
 

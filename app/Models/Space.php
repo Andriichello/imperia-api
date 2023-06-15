@@ -29,6 +29,7 @@ use Illuminate\Support\Collection;
  * @property int $floor
  * @property int $number
  * @property bool $archived
+ * @property int|null $popularity
  * @property string|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at

@@ -28,6 +28,7 @@ use Illuminate\Support\Collection;
  * @property float $once_paid_price
  * @property float $hourly_paid_price
  * @property bool $archived
+ * @property int|null $popularity
  * @property string|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -63,6 +64,7 @@ class Service extends BaseModel implements
         'once_paid_price',
         'hourly_paid_price',
         'archived',
+        'popularity',
         'metadata',
     ];
 

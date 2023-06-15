@@ -27,6 +27,7 @@ use Illuminate\Support\Collection;
  * @property string|null $description
  * @property float $price
  * @property bool $archived
+ * @property int|null $popularity
  * @property string|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -61,6 +62,7 @@ class Ticket extends BaseModel implements
         'description',
         'price',
         'archived',
+        'popularity',
         'metadata',
     ];
 

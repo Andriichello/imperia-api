@@ -36,11 +36,11 @@ class ProductResource extends JsonResource
             'weight' => $this->weight,
             'weight_unit' => $this->weight_unit,
             'archived' => $this->archived,
+            'popularity' => $this->popularity,
             'variants' => new ProductVariantCollection($this->variants),
             'categories' => new CategoryCollection($this->whenLoaded('categories')),
             'category_ids' => $categoryIds,
             'media' => new MediaCollection($this->media),
-            'default_media' => new MediaCollection($this->default_media),
         ];
     }
 
@@ -49,7 +49,7 @@ class ProductResource extends JsonResource
      *   schema="Product",
      *   description="Product resource object",
      *   required = {"id", "type", "title", "description", "price", "weight",
-     *      "weight_unit", "archived", "variants", "category_ids", "media", "default_media"},
+     *      "weight_unit", "archived", "popularity", "variants", "category_ids", "media"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="products"),
      *   @OA\Property(property="title", type="string", example="Margarita"),
@@ -59,11 +59,11 @@ class ProductResource extends JsonResource
      *   @OA\Property(property="weight_unit", type="string", nullable="true", example="g",
      *     enum={"g", "kg", "ml", "l", "cm"}),
      *   @OA\Property(property="archived", type="boolean", example="false"),
+     *   @OA\Property(property="popularity", type="integer", nullable="true", example="1"),
      *   @OA\Property(property="variants", type="array", @OA\Items(ref ="#/components/schemas/ProductVariant")),
      *   @OA\Property(property="categories", type="array", @OA\Items(ref ="#/components/schemas/Category")),
      *   @OA\Property(property="category_ids", type="array", @OA\Items(type="integer", example=1)),
      *   @OA\Property(property="media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
-     *   @OA\Property(property="default_media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
      * )
      */
 }

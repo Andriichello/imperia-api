@@ -34,6 +34,7 @@ class SpaceFactory extends Factory
             'number' => rand(1, 10),
             'floor' => rand(1, 3),
             'price' => $this->faker->randomFloat(2, 0, 100),
+            'popularity' => rand(0, 100),
         ];
     }
 }

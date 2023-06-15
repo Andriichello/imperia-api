@@ -20,6 +20,7 @@ return new class extends Migration
             $table->decimal('once_paid_price')->unsigned()->default(0.0);
             $table->decimal('hourly_paid_price')->unsigned()->default(0.0);
             $table->boolean('archived')->default(false);
+            $table->integer('popularity')->nullable();
             $table->text('metadata')->nullable();
             $table->timestamps();
             $table->softDeletes();

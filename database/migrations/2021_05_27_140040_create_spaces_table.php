@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->decimal('price')->unsigned();
             $table->boolean('archived')->default(false);
+            $table->integer('popularity')->nullable();
             $table->text('metadata')->nullable();
             $table->timestamps();
             $table->softDeletes();

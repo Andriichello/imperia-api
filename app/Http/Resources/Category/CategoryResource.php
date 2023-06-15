@@ -31,6 +31,7 @@ class CategoryResource extends JsonResource
             'slug' => $this->slug,
             'target' => $this->target,
             'title' => $this->title,
+            'popularity' => $this->popularity,
             'description' => $this->description,
             'media' => new MediaCollection($this->media),
         ];
