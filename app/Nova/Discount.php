@@ -60,7 +60,7 @@ class Discount extends Resource
                 ->options(MorphOptions::discountable()),
 
             Text::make('Title')
-                ->rules('required', 'min:1', 'max:50'),
+                ->rules('required', 'min:1', 'max:255'),
 
             Text::make('Description')
                 ->rules('nullable', 'min:1', 'max:255'),

@@ -79,8 +79,8 @@ class Ticket extends Resource
             MediaField::make('Media'),
 
             Text::make('Title')
-                ->updateRules('sometimes', 'min:1', 'max:50')
-                ->creationRules('required', 'min:1', 'max:50'),
+                ->updateRules('sometimes', 'min:1', 'max:255')
+                ->creationRules('required', 'min:1', 'max:255'),
 
             Text::make('Description')
                 ->rules('nullable', 'min:1', 'max:255'),

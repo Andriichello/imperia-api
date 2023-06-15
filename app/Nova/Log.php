@@ -58,7 +58,7 @@ class Log extends Resource
             ID::make()->sortable(),
 
             Text::make('Title')
-                ->rules('nullable', 'min:1', 'max:50'),
+                ->rules('nullable', 'min:1', 'max:25'),
 
             MorphTo::make('Loggable')
                 ->exceptOnForms(),
