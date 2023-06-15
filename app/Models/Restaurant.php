@@ -28,6 +28,7 @@ use Illuminate\Support\Collection;
  * @property string $country
  * @property string $city
  * @property string $place
+ * @property int|null $popularity
  * @property string|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -75,6 +76,7 @@ class Restaurant extends BaseModel implements
         'country',
         'city',
         'place',
+        'popularity',
     ];
 
     /**

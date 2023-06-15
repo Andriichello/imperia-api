@@ -31,7 +31,7 @@ trait CategorizableTrait
             Categorizable::class, // morph relation table
             'categorizable_id', // morph table pivot key to current model
             'category_id' // morph table pivot key to related model
-        );
+        )->orderByDesc('popularity');
     }
 
     /**

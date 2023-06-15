@@ -97,6 +97,8 @@ class RestaurantController extends CrudController
      *
      *   @OA\Parameter(name="include", in="query",
      *     @OA\Schema(ref ="#/components/schemas/RestaurantIncludes")),
+     *   @OA\Parameter(name="sort", in="query", example="-popularity", @OA\Schema(type="string"),
+            description="Available sorts: `popularity` (is default, but in descending order)"),
      *  @OA\Parameter(name="filter[slug]", in="query", example="first", @OA\Schema(type="string")),
      *  @OA\Parameter(name="filter[name]", in="query", example="First", @OA\Schema(type="string")),
      *

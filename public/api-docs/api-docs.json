@@ -530,6 +530,15 @@
                         }
                     },
                     {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Available sorts: `popularity` (is default, but in descending order)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "-popularity"
+                    },
+                    {
                         "name": "filter[restaurants]",
                         "in": "query",
                         "description": "Coma-separated array of restaurant ids. Limits menus to those\n         that are attached at least to one of those restaurants",
@@ -1977,6 +1986,15 @@
                         }
                     },
                     {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Available sorts: `popularity` (is default, but in descending order)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "-popularity"
+                    },
+                    {
                         "name": "filter[restaurants]",
                         "in": "query",
                         "description": "Coma-separated array of restaurant ids. Limits menus to those\n     * that are attached at least to one of those restaurants",
@@ -2913,6 +2931,15 @@
                         }
                     },
                     {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Available sorts: `popularity` (is default, but in descending order)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "-popularity"
+                    },
+                    {
                         "name": "filter[title]",
                         "in": "query",
                         "description": "Can be used for searches. Is partial.",
@@ -3058,6 +3085,15 @@
                         "schema": {
                             "$ref": "#/components/schemas/RestaurantIncludes"
                         }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Available sorts: `popularity` (is default, but in descending order)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "-popularity"
                     },
                     {
                         "name": "filter[slug]",
@@ -3305,6 +3341,15 @@
                         }
                     },
                     {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Available sorts: `popularity` (is default, but in descending order)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "-popularity"
+                    },
+                    {
                         "name": "filter[title]",
                         "in": "query",
                         "description": "Can be used for searches. Is partial.",
@@ -3454,6 +3499,15 @@
                         "schema": {
                             "$ref": "#/components/schemas/PageNumber"
                         }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Available sorts: `popularity` (is default, but in descending order)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "-popularity"
                     },
                     {
                         "name": "filter[title]",
@@ -3674,6 +3728,15 @@
                         "schema": {
                             "$ref": "#/components/schemas/PageNumber"
                         }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Available sorts: `popularity` (is default, but in descending order)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "-popularity"
                     },
                     {
                         "name": "filter[title]",
@@ -7044,8 +7107,9 @@
                     "title",
                     "description",
                     "categories",
-                    "media",
-                    "default_media"
+                    "archived",
+                    "popularity",
+                    "media"
                 ],
                 "properties": {
                     "id": {
@@ -7068,6 +7132,11 @@
                         "type": "boolean",
                         "example": "false"
                     },
+                    "popularity": {
+                        "type": "integer",
+                        "example": "1",
+                        "nullable": "true"
+                    },
                     "products": {
                         "type": "array",
                         "items": {
@@ -7081,12 +7150,6 @@
                         }
                     },
                     "media": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Media"
-                        }
-                    },
-                    "default_media": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Media"
@@ -7285,10 +7348,10 @@
                     "weight",
                     "weight_unit",
                     "archived",
+                    "popularity",
                     "variants",
                     "category_ids",
-                    "media",
-                    "default_media"
+                    "media"
                 ],
                 "properties": {
                     "id": {
@@ -7333,6 +7396,11 @@
                         "type": "boolean",
                         "example": "false"
                     },
+                    "popularity": {
+                        "type": "integer",
+                        "example": "1",
+                        "nullable": "true"
+                    },
                     "variants": {
                         "type": "array",
                         "items": {
@@ -7353,12 +7421,6 @@
                         }
                     },
                     "media": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Media"
-                        }
-                    },
-                    "default_media": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Media"
@@ -7506,6 +7568,7 @@
                     "country",
                     "city",
                     "place",
+                    "popularity",
                     "media"
                 ],
                 "properties": {
@@ -7536,6 +7599,11 @@
                     "place": {
                         "type": "string",
                         "example": "Koryatovycha Square, 1а"
+                    },
+                    "popularity": {
+                        "type": "integer",
+                        "example": "1",
+                        "nullable": "true"
                     },
                     "media": {
                         "type": "array",
@@ -7648,9 +7716,10 @@
                     "description",
                     "once_paid_price",
                     "hourly_paid_price",
+                    "archived",
+                    "popularity",
                     "category_ids",
-                    "media",
-                    "default_media"
+                    "media"
                 ],
                 "properties": {
                     "id": {
@@ -7667,7 +7736,8 @@
                     },
                     "description": {
                         "type": "string",
-                        "example": "Some text..."
+                        "example": "Some text...",
+                        "nullable": "true"
                     },
                     "once_paid_price": {
                         "type": "float",
@@ -7680,6 +7750,11 @@
                     "archived": {
                         "type": "boolean",
                         "example": "false"
+                    },
+                    "popularity": {
+                        "type": "integer",
+                        "example": "1",
+                        "nullable": "true"
                     },
                     "categories": {
                         "type": "array",
@@ -7699,12 +7774,6 @@
                         "items": {
                             "$ref": "#/components/schemas/Media"
                         }
-                    },
-                    "default_media": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Media"
-                        }
                     }
                 },
                 "type": "object"
@@ -7719,9 +7788,10 @@
                     "floor",
                     "number",
                     "price",
+                    "archived",
+                    "popularity",
                     "category_ids",
-                    "media",
-                    "default_media"
+                    "media"
                 ],
                 "properties": {
                     "id": {
@@ -7756,6 +7826,11 @@
                         "type": "boolean",
                         "example": "false"
                     },
+                    "popularity": {
+                        "type": "integer",
+                        "example": "1",
+                        "nullable": "true"
+                    },
                     "categories": {
                         "type": "array",
                         "items": {
@@ -7774,12 +7849,6 @@
                         "items": {
                             "$ref": "#/components/schemas/Media"
                         }
-                    },
-                    "default_media": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Media"
-                        }
                     }
                 },
                 "type": "object"
@@ -7792,9 +7861,10 @@
                     "title",
                     "description",
                     "price",
+                    "archived",
+                    "popularity",
                     "category_ids",
-                    "media",
-                    "default_media"
+                    "media"
                 ],
                 "properties": {
                     "id": {
@@ -7821,6 +7891,11 @@
                         "type": "boolean",
                         "example": "false"
                     },
+                    "popularity": {
+                        "type": "integer",
+                        "example": "1",
+                        "nullable": "true"
+                    },
                     "categories": {
                         "type": "array",
                         "items": {
@@ -7835,12 +7910,6 @@
                         }
                     },
                     "media": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Media"
-                        }
-                    },
-                    "default_media": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Media"

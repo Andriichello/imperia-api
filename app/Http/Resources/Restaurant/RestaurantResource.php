@@ -34,6 +34,7 @@ class RestaurantResource extends JsonResource
             'country' => $this->country,
             'city' => $this->city,
             'place' => $this->place,
+            'popularity' => $this->popularity,
             'media' => new MediaCollection($this->media),
             'schedules' => new ScheduleCollection($this->whenLoaded('schedules')),
         ];
@@ -43,7 +44,8 @@ class RestaurantResource extends JsonResource
      * @OA\Schema(
      *   schema="Restaurant",
      *   description="Restaurant resource object",
-     *   required = {"id", "type", "slug", "name", "country", "city", "place", "media"},
+     *   required = {"id", "type", "slug", "name", "country", "city", "place",
+     *      "popularity", "media"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="restaurants"),
      *   @OA\Property(property="slug", type="string", example="first"),
@@ -51,6 +53,7 @@ class RestaurantResource extends JsonResource
      *   @OA\Property(property="country", type="string", example="Ukraine"),
      *   @OA\Property(property="city", type="string", example="Uzhhorod"),
      *   @OA\Property(property="place", type="string", example="Koryatovycha Square, 1а"),
+     *   @OA\Property(property="popularity", type="integer", nullable="true", example="1"),
      *   @OA\Property(property="media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
      *   @OA\Property(property="schedules", type="array", @OA\Items(ref ="#/components/schemas/Schedule")),
      * )

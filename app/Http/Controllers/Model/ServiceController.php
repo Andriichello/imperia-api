@@ -58,6 +58,8 @@ class ServiceController extends CrudController
      *     @OA\Schema(ref ="#/components/schemas/ServiceIncludes")),
      *   @OA\Parameter(name="page[size]", in="query", @OA\Schema(ref ="#/components/schemas/PageSize")),
      *   @OA\Parameter(name="page[number]", in="query", @OA\Schema(ref ="#/components/schemas/PageNumber")),
+     *   @OA\Parameter(name="sort", in="query", example="-popularity", @OA\Schema(type="string"),
+            description="Available sorts: `popularity` (is default, but in descending order)"),
      *   @OA\Parameter(name="filter[title]", required=false, in="query", example="Clown",
      *     @OA\Schema(type="string"), description="Can be used for searches. Is partial."),
      *   @OA\Parameter(name="filter[categories]", required=false, in="query", example="2,3",

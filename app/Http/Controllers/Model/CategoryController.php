@@ -54,6 +54,8 @@ class CategoryController extends CrudController
      *
      *   @OA\Parameter(name="page[size]", in="query", @OA\Schema(ref ="#/components/schemas/PageSize")),
      *   @OA\Parameter(name="page[number]", in="query", @OA\Schema(ref ="#/components/schemas/PageNumber")),
+     *   @OA\Parameter(name="sort", in="query", example="-popularity", @OA\Schema(type="string"),
+            description="Available sorts: `popularity` (is default, but in descending order)"),
      *   @OA\Parameter(name="filter[restaurants]", required=false, in="query", example="1",
      *   @OA\Schema(type="string"), description="Coma-separated array of restaurant ids. Limits menus to those
          that are attached at least to one of those restaurants"),
