@@ -103,6 +103,10 @@ class Product extends Resource
                 ->updateRules('sometimes', 'min:1', 'max:255')
                 ->creationRules('required', 'min:1', 'max:255'),
 
+            Text::make('Badge')
+                ->updateRules('nullable', 'min:1', 'max:25')
+                ->creationRules('nullable', 'min:1', 'max:25'),
+
             Text::make('Description')
                 ->rules('nullable', 'min:1', 'max:255'),
 
@@ -154,6 +158,7 @@ class Product extends Resource
             'media' => true,
             'popularity' => true,
             'title' => true,
+            'badge' => false,
             'description' => false,
             'price' => true,
             'weight' => true,

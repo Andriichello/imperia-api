@@ -14,8 +14,8 @@
             "description": "Current server"
         },
         {
-            "url": "https://imperia-api.herokuapp.com",
-            "description": "Production server"
+            "url": "https://api.imperia.pp.ua",
+            "description": "Google Cloud server"
         }
     ],
     "paths": {
@@ -7347,6 +7347,7 @@
                     "price",
                     "weight",
                     "weight_unit",
+                    "badge",
                     "archived",
                     "popularity",
                     "variants",
@@ -7390,6 +7391,11 @@
                             "cm"
                         ],
                         "example": "g",
+                        "nullable": "true"
+                    },
+                    "badge": {
+                        "type": "string",
+                        "example": "New",
                         "nullable": "true"
                     },
                     "archived": {

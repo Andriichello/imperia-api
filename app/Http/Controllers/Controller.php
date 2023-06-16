@@ -40,8 +40,8 @@ abstract class Controller extends BaseController
      *     description="Current server"
      *   ),
      *   @OA\Server(
-     *     url="https://imperia-api.herokuapp.com",
-     *     description="Production server"
+     *     url="https://api.imperia.pp.ua",
+     *     description="Google Cloud server"
      *   )
      * ),
      * @OA\SecurityScheme(

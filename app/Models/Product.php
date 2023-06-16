@@ -29,6 +29,7 @@ use Illuminate\Support\Collection;
  * @property float|null $price
  * @property float|null $weight
  * @property string|null $weight_unit
+ * @property string|null $badge
  * @property bool $archived
  * @property int|null $popularity
  * @property string|null $metadata
@@ -68,6 +69,7 @@ class Product extends BaseModel implements
         'price',
         'weight',
         'weight_unit',
+        'badge',
         'archived',
         'popularity',
         'metadata',
