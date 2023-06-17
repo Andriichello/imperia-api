@@ -67,6 +67,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(\App\Nova\Restaurant::class),
                     MenuItem::resource(\App\Nova\Schedule::class),
                     MenuItem::resource(\App\Nova\Holiday::class),
+                    MenuItem::resource(\App\Nova\RestaurantReview::class),
                 ])->icon('library')->collapsable(),
             ];
 

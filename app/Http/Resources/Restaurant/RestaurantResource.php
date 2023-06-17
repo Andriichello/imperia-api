@@ -8,6 +8,7 @@ use App\Models\Restaurant;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use OpenApi\Annotations as OA;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class RestaurantResource.
@@ -26,6 +27,8 @@ class RestaurantResource extends JsonResource
      */
     public function toArray($request): array
     {
+        (new ConsoleOutput())->writeln('ip: ' . $request->ip());
+
         return [
             'id' => $this->id,
             'type' => $this->type,
