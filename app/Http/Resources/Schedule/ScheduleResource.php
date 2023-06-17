@@ -37,6 +37,7 @@ class ScheduleResource extends JsonResource
             'ends_in' => $this->ends_in,
             'is_cross_date' => $this->is_cross_date,
             'closest_date' => $this->closest_date,
+            'timezone_offset' => $this->restaurant?->timezone_offset,
         ];
     }
 
@@ -45,7 +46,8 @@ class ScheduleResource extends JsonResource
      *   schema="Schedule",
      *   description="Schedule resource object",
      *   required = {"id", "type", "weekday", "beg_hour", "end_hour", "beg_minute",
-     *     "end_minute", "restaurant_id", "begs_in", "ends_in", "is_cross_date"},
+     *     "end_minute", "restaurant_id", "begs_in", "ends_in", "is_cross_date",
+     *     "closest_date", "timezone_offset"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="schedules"),
      *   @OA\Property(property="weekday", type="string", example="monday",
@@ -68,6 +70,8 @@ class ScheduleResource extends JsonResource
      *   @OA\Property(property="is_cross_date", type="boolean", example=false),
      *   @OA\Property(property="closest_date", type="string", format="date-time",
      *     nullable="true", example="2022-01-12 10:00:00",),
+     *   @OA\Property(property="timezone_offset", type="integer", nullable="true", example=3,
+     *     description="Hours offset from UTC, which is already applied to `closest_date`"),
      * )
      */
 }

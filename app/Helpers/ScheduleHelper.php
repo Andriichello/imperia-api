@@ -23,6 +23,10 @@ class ScheduleHelper implements ScheduleHelperInterface
     {
         $date = ($date ?? now())->clone();
 
+        if ($schedule->restaurant && $schedule->restaurant->timezone_offset) {
+            $date->addHours($schedule->restaurant->timezone_offset);
+        }
+
         $beg = $date->clone()
             ->setHours($schedule->beg_hour)
             ->setMinutes($schedule->beg_minute);
@@ -57,6 +61,10 @@ class ScheduleHelper implements ScheduleHelperInterface
     {
         $date = ($from ?? now())->clone();
 
+        if ($schedule->restaurant && $schedule->restaurant->timezone_offset) {
+            $date->addHours($schedule->restaurant->timezone_offset);
+        }
+
         if ($date->is($schedule->weekday)) {
             $beg = $date->clone()
                 ->setTime($schedule->beg_hour, $schedule->end_hour);
@@ -80,7 +88,13 @@ class ScheduleHelper implements ScheduleHelperInterface
      */
     public function closest(Schedule $schedule, ?CarbonInterface $to = null): CarbonInterface
     {
-        return $this->relevantOn($schedule, $date = ($to ?? now())->clone())
+        $date = ($to ?? now())->clone();
+
+        if ($schedule->restaurant && $schedule->restaurant->timezone_offset) {
+            $date->addHours($schedule->restaurant->timezone_offset);
+        }
+
+        return $this->relevantOn($schedule, $date)
             ? $date : $this->next($schedule, $date);
     }
 
@@ -94,7 +108,13 @@ class ScheduleHelper implements ScheduleHelperInterface
      */
     public function prev(Schedule $schedule, ?CarbonInterface $from = null): CarbonInterface
     {
-        return ($from ?? now())->clone()
+        $date = ($from ?? now())->clone();
+
+        if ($schedule->restaurant && $schedule->restaurant->timezone_offset) {
+            $date->addHours($schedule->restaurant->timezone_offset);
+        }
+
+        return $date
             ->previous($schedule->weekday)
             ->setTime($schedule->beg_hour, $schedule->beg_minute);
     }

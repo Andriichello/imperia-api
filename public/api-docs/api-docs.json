@@ -7574,6 +7574,7 @@
                     "country",
                     "city",
                     "place",
+                    "timezone_offset",
                     "popularity",
                     "media"
                 ],
@@ -7606,9 +7607,13 @@
                         "type": "string",
                         "example": "Koryatovycha Square, 1а"
                     },
+                    "timezone_offset": {
+                        "type": "integer",
+                        "example": 3
+                    },
                     "popularity": {
                         "type": "integer",
-                        "example": "1",
+                        "example": 1,
                         "nullable": "true"
                     },
                     "media": {
@@ -7639,7 +7644,9 @@
                     "restaurant_id",
                     "begs_in",
                     "ends_in",
-                    "is_cross_date"
+                    "is_cross_date",
+                    "closest_date",
+                    "timezone_offset"
                 ],
                 "properties": {
                     "id": {
@@ -7708,6 +7715,12 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2022-01-12 10:00:00",
+                        "nullable": "true"
+                    },
+                    "timezone_offset": {
+                        "description": "Hours offset from UTC, which is already applied to `closest_date`",
+                        "type": "integer",
+                        "example": 3,
                         "nullable": "true"
                     }
                 },

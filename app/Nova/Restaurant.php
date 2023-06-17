@@ -9,6 +9,7 @@ use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Timezone;
 
 /**
  * Class Restaurant.
@@ -75,6 +76,10 @@ class Restaurant extends Resource
             Text::make('Place')
                 ->rules('required', 'min:1', 'max:255'),
 
+            Number::make('Timezone Offset')
+                ->step(1)
+                ->rules('required', 'integer'),
+
             HasMany::make('Banquets'),
 
             HasMany::make('Schedules'),
@@ -110,9 +115,7 @@ class Restaurant extends Resource
             'country' => false,
             'city' => false,
             'place' => false,
-            'banquets' => false,
-            'schedules' => false,
-            'holidays' => false,
+            'timezone_offset' => false,
             'created_at' => false,
             'updated_at' => false,
         ];
