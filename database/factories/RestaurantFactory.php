@@ -36,6 +36,7 @@ class RestaurantFactory extends Factory
             'city' => $this->faker->city(),
             'place' => $this->faker->streetAddress(),
             'popularity' => rand(0, 100),
+            'timezone_offset' => 3,
         ];
     }
 
