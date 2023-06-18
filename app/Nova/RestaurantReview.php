@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
@@ -62,7 +63,11 @@ class RestaurantReview extends Resource
             ID::make()->sortable(),
 
             Text::make('Ip')
-                ->rules('nullable', 'ip', 'unique:restaurant_reviews,ip,restaurant_id,' . $this->restaurant_id),
+                ->rules(
+                    'nullable',
+                    Rule::unique('restaurant_reviews', 'ip')
+                        ->where('restaurant_id', $this->restaurant_id),
+                ),
 
             Text::make('Reviewer')
                 ->rules('required', 'min:1', 'max:255'),

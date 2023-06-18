@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use Andriichello\Media\MediaField;
+use DateTimeZone;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
@@ -76,9 +77,8 @@ class Restaurant extends Resource
             Text::make('Place')
                 ->rules('required', 'min:1', 'max:255'),
 
-            Number::make('Timezone Offset')
-                ->step(1)
-                ->rules('required', 'integer'),
+            Timezone::make('Timezone')
+                ->default(DateTimeZone::EUROPE),
 
             HasMany::make('Banquets'),
 
@@ -115,7 +115,7 @@ class Restaurant extends Resource
             'country' => false,
             'city' => false,
             'place' => false,
-            'timezone_offset' => false,
+            'timezone' => false,
             'created_at' => false,
             'updated_at' => false,
         ];

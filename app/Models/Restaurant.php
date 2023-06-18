@@ -13,6 +13,8 @@ use App\Queries\ScheduleQueryBuilder;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Database\Factories\RestaurantFactory;
+use DateTimeZone;
+use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -28,6 +30,7 @@ use Illuminate\Support\Collection;
  * @property string $country
  * @property string $city
  * @property string $place
+ * @property string $timezone
  * @property int $timezone_offset
  * @property int|null $popularity
  * @property string|null $metadata
@@ -45,6 +48,7 @@ use Illuminate\Support\Collection;
  * @property Schedule[]|Collection $schedules
  * @property Holiday[]|Collection $holidays
  * @property Holiday[]|Collection $relevantHolidays
+ * @property RestaurantReview[]|Collection $reviews
  *
  * @method static RestaurantQueryBuilder query()
  * @method static RestaurantFactory factory(...$parameters)
@@ -77,7 +81,7 @@ class Restaurant extends BaseModel implements
         'country',
         'city',
         'place',
-        'timezone_offset',
+        'timezone',
         'popularity',
     ];
 
@@ -97,6 +101,7 @@ class Restaurant extends BaseModel implements
         'schedules',
         'holidays',
         'relevantHolidays',
+        'reviews',
     ];
 
     /**
@@ -200,6 +205,37 @@ class Restaurant extends BaseModel implements
     {
         return $this->holidays()
             ->where('date', '>=', now()->setTime(0, 0));
+    }
+
+    /**
+     * Reviews associated with the model.
+     *
+     * @return HasMany
+     */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(RestaurantReview::class, 'restaurant_id', 'id')
+            ->orderByDesc('created_at');
+    }
+
+    /**
+     * Get restaurant's timezone offset in minutes.
+     *
+     * @return int
+     * @throws Exception
+     */
+    public function getTimezoneOffsetAttribute(): int
+    {
+        if (!$this->timezone || empty($this->timezone)) {
+            return 0;
+        }
+
+        $timezone = new DateTimeZone($this->timezone);
+
+        $date = Carbon::now()
+            ->setTimezone($timezone);
+
+        return $timezone->getOffset($date) / 60;
     }
 
     /**

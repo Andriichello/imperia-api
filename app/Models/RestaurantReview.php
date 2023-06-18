@@ -37,6 +37,7 @@ class RestaurantReview extends BaseModel
      * @var string[]
      */
     protected $fillable = [
+        'restaurant_id',
         'ip',
         'reviewer',
         'score',

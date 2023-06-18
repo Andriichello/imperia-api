@@ -15,6 +15,7 @@ use App\Http\Controllers\Model\NotificationController;
 use App\Http\Controllers\Model\OrderController;
 use App\Http\Controllers\Model\ProductController;
 use App\Http\Controllers\Model\RestaurantController;
+use App\Http\Controllers\Model\RestaurantReviewController;
 use App\Http\Controllers\Model\ScheduleController;
 use App\Http\Controllers\Model\ServiceController;
 use App\Http\Controllers\Model\SpaceController;
@@ -74,6 +75,10 @@ Route::group(['as' => 'api.'], function () {
         ->name('restaurants.schedules');
     Route::get('/restaurants/{id}/holidays', [RestaurantController::class, 'getHolidays'])
         ->name('restaurants.holidays');
+
+    Route::apiResource('restaurant-reviews', RestaurantReviewController::class)
+        ->only('index', 'show', 'store')
+        ->parameters(['restaurant-reviews' => 'id']);
 });
 
 Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {

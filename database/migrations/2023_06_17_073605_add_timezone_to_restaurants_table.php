@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('restaurants', function (Blueprint $table) {
-            $table->smallInteger('timezone_offset')
+            $table->string('timezone')
                 ->after('place');
         });
     }
@@ -27,7 +27,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('restaurants', function (Blueprint $table) {
-            $table->dropColumn('timezone_offset');
+            $table->dropColumn('timezone');
         });
     }
 };

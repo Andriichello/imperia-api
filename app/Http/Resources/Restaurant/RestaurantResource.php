@@ -8,7 +8,6 @@ use App\Models\Restaurant;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use OpenApi\Annotations as OA;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class RestaurantResource.
@@ -27,8 +26,6 @@ class RestaurantResource extends JsonResource
      */
     public function toArray($request): array
     {
-        (new ConsoleOutput())->writeln('ip: ' . $request->ip());
-
         return [
             'id' => $this->id,
             'type' => $this->type,
@@ -37,6 +34,7 @@ class RestaurantResource extends JsonResource
             'country' => $this->country,
             'city' => $this->city,
             'place' => $this->place,
+            'timezone' => $this->timezone,
             'timezone_offset' => $this->timezone_offset,
             'popularity' => $this->popularity,
             'media' => new MediaCollection($this->media),
@@ -49,7 +47,7 @@ class RestaurantResource extends JsonResource
      *   schema="Restaurant",
      *   description="Restaurant resource object",
      *   required = {"id", "type", "slug", "name", "country", "city", "place",
-     *      "timezone_offset", "popularity", "media"},
+     *      "timezone", "timezone_offset", "popularity", "media"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="restaurants"),
      *   @OA\Property(property="slug", type="string", example="first"),
@@ -57,7 +55,9 @@ class RestaurantResource extends JsonResource
      *   @OA\Property(property="country", type="string", example="Ukraine"),
      *   @OA\Property(property="city", type="string", example="Uzhhorod"),
      *   @OA\Property(property="place", type="string", example="Koryatovycha Square, 1а"),
-     *   @OA\Property(property="timezone_offset", type="integer", example=3),
+     *   @OA\Property(property="timezone", type="string", example="Europe/Kyiv"),
+     *   @OA\Property(property="timezone_offset", type="integer", example=180,
+     *     description="Selected timezone offset in minutes."),
      *   @OA\Property(property="popularity", type="integer", nullable="true", example=1),
      *   @OA\Property(property="media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
      *   @OA\Property(property="schedules", type="array", @OA\Items(ref ="#/components/schemas/Schedule")),
