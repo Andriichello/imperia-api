@@ -4,10 +4,12 @@ namespace App\Providers;
 
 use Andriichello\Marketplace\Marketplace;
 use App\Models\Banquet;
+use App\Models\User;
 use App\Nova\Dashboards\Main;
 use App\Nova\Tools\BackupTool;
 use App\Nova\Tools\MediaTool;
 use App\Subscribers\NovaSubscriber;
+use Badinansoft\LanguageSwitch\LanguageSwitch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\Cards\Help;
@@ -71,9 +73,31 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                 ])->icon('library')->collapsable(),
             ];
 
+            $user = $request->user();
+
+            if ($user instanceof User) {
+                $metadata = json_decode($user->metadata, true);
+                $isPreviewOnly = data_get($metadata, 'isPreviewOnly', true);
+
+                if ($isPreviewOnly) {
+                    $sections = [
+                        MenuSection::make(__('Items'), [
+                            MenuItem::resource(\App\Nova\Menu::class),
+                            MenuItem::resource(\App\Nova\Product::class),
+                            MenuItem::resource(\App\Nova\Category::class),
+                        ])->icon('collection')->collapsable(),
+                        MenuSection::make(__('Restaurants'), [
+                            MenuItem::resource(\App\Nova\Restaurant::class),
+                            MenuItem::resource(\App\Nova\Schedule::class),
+                            MenuItem::resource(\App\Nova\RestaurantReview::class),
+                        ])->icon('library')->collapsable(),
+                    ];
+                }
+            }
+
             if ($request->user() && $request->user()->isAdmin()) {
                 $sections[] = MediaTool::section($request);
-                $sections[] = BackupTool::section($request);
+                // $sections[] = BackupTool::section($request);
             }
 
             return $sections;
@@ -102,10 +126,11 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      */
     protected function gate()
     {
-        Gate::define('viewNova', function ($user) {
-            return in_array($user->email, [
-                //
-            ]);
+        Gate::define('viewNova', function (User $user) {
+            return $user->isStaff() &&
+                in_array($user->email, [
+                    //
+                ]);
         });
     }
 
@@ -144,6 +169,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             new Marketplace(),
             new MediaTool(),
             new BackupTool(),
+            new LanguageSwitch(),
         ];
     }
 

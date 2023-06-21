@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "41ac34db2cbae5b73ddc7c5c83f07d9c",
+    "content-hash": "a726eb784294368730b3f4c0fa409ee9",
     "packages": [
         {
             "name": "andriichello/columns-card",
@@ -262,6 +262,65 @@
                 "source": "https://github.com/aws/aws-sdk-php/tree/3.263.1"
             },
             "time": "2023-03-31T18:21:25+00:00"
+        },
+        {
+            "name": "badinansoft/nova-language-switch",
+            "version": "1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/badinansoft/nova-language-switch.git",
+                "reference": "d65aea6ff3dce7875e9248e46b4db2d773d8c675"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/badinansoft/nova-language-switch/zipball/d65aea6ff3dce7875e9248e46b4db2d773d8c675",
+                "reference": "d65aea6ff3dce7875e9248e46b4db2d773d8c675",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/nova": "^4.0",
+                "php": "^7.3|^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Badinansoft\\LanguageSwitch\\ToolServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Badinansoft\\LanguageSwitch\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Shahab Zebari",
+                    "email": "me@shahabzebari.net",
+                    "homepage": "https://shahabzebari.net",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A Laravel Nova package to switch language in your application",
+            "homepage": "https://github.com/badinansoft/nova-language-switch",
+            "keywords": [
+                "i18n",
+                "language",
+                "laravel",
+                "nova",
+                "switch",
+                "translation"
+            ],
+            "support": {
+                "issues": "https://github.com/badinansoft/nova-language-switch/issues",
+                "source": "https://github.com/badinansoft/nova-language-switch/tree/1.2.0"
+            },
+            "time": "2023-02-28T13:35:20+00:00"
         },
         {
             "name": "barryvdh/laravel-dompdf",
@@ -536,6 +595,62 @@
                 }
             ],
             "time": "2023-01-15T23:59:01+00:00"
+        },
+        {
+            "name": "coderello/laravel-nova-lang",
+            "version": "2.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/coderello/laravel-nova-lang.git",
+                "reference": "ea0f94946090e5324fbf7e2ac7d3dcb9789ee400"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/coderello/laravel-nova-lang/zipball/ea0f94946090e5324fbf7e2ac7d3dcb9789ee400",
+                "reference": "ea0f94946090e5324fbf7e2ac7d3dcb9789ee400",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1|^8.0"
+            },
+            "require-dev": {
+                "ext-curl": "*",
+                "illuminate/console": "^8.0",
+                "illuminate/events": "^8.0",
+                "illuminate/filesystem": "^8.0",
+                "laravel/nova": "~4.0",
+                "php": "^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Coderello\\LaravelNovaLang\\Providers\\LaravelNovaLangServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Coderello\\LaravelNovaLang\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Language support for Laravel Nova.",
+            "keywords": [
+                "lang",
+                "language",
+                "laravel",
+                "nova",
+                "support"
+            ],
+            "support": {
+                "issues": "https://github.com/coderello/laravel-nova-lang/issues",
+                "source": "https://github.com/coderello/laravel-nova-lang/tree/2.0.2"
+            },
+            "time": "2023-04-20T13:42:00+00:00"
         },
         {
             "name": "composer/class-map-generator",
