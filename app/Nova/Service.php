@@ -74,7 +74,8 @@ class Service extends Resource
     public function fields(Request $request): array
     {
         return [
-            ID::make()->sortable(),
+            ID::make(__('columns.id'), 'id')
+                ->sortable(),
 
             Boolean::make('Active')
                 ->resolveUsing(fn() => !$this->archived)
@@ -84,18 +85,18 @@ class Service extends Resource
                 ->onlyOnForms()
                 ->default(fn() => false),
 
-            MediaField::make('Media'),
+            MediaField::make(__('columns.media'), 'media'),
 
             Number::make('Popularity')
                 ->step(1)
                 ->sortable()
                 ->nullable(),
 
-            Text::make('Title')
+            Text::make(__('columns.title'), 'title')
                 ->updateRules('sometimes', 'min:1', 'max:255')
                 ->creationRules('required', 'min:1', 'max:255'),
 
-            Text::make('Description')
+            Text::make(__('columns.description'), 'description')
                 ->rules('nullable', 'min:1', 'max:255'),
 
             Number::make('Once Paid Price')
@@ -114,11 +115,11 @@ class Service extends Resource
 
             MorphMany::make('Logs', 'logs', Log::class),
 
-            DateTime::make('Created At')
+            DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
                 ->exceptOnForms(),
 
-            DateTime::make('Updated At')
+            DateTime::make(__('columns.updated_at' ), 'updated_at')
                 ->sortable()
                 ->exceptOnForms(),
         ];
@@ -135,16 +136,46 @@ class Service extends Resource
     protected function columnsFilterFields(Request $request): array
     {
         return [
-            'id' => true,
-            'active' => true,
-            'media' => true,
-            'popularity' => true,
-            'title' => true,
-            'description' => false,
-            'once_paid_price' => true,
-            'hourly_paid_price' => true,
-            'created_at' => false,
-            'updated_at' => false,
+            'id' => [
+                'label' => __('columns.id'),
+                'checked' => true,
+            ],
+            'active' => [
+                'label' => __('columns.active'),
+                'checked' => true,
+            ],
+            'media' => [
+                'label' => __('columns.media'),
+                'checked' => true,
+            ],
+            'popularity' => [
+                'label' => __('columns.popularity'),
+                'checked' => true,
+            ],
+            'title' => [
+                'label' => __('columns.title'),
+                'checked' => false,
+            ],
+            'description' => [
+                'label' => __('columns.description'),
+                'checked' => false,
+            ],
+            'once_paid_price' => [
+                'label' => __('columns.once_paid_price'),
+                'checked' => true,
+            ],
+            'hourly_paid_price' => [
+                'label' => __('columns.hourly_paid_price'),
+                'checked' => true,
+            ],
+            'created_at' => [
+                'label' => __('columns.created_at'),
+                'checked' => false,
+            ],
+            'updated_at' => [
+                'label' => __('columns.updated_at'),
+                'checked' => false,
+            ],
         ];
     }
 }

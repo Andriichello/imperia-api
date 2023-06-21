@@ -384,6 +384,8 @@
     "New :resource": "Новий :resource",
     "Edit :resource": "Редагувати :resource",
     "Update :resource": "Оновити :resource",
+    "Update :resource: :title": "Оновити :resource: :title",
+    "Update attached :resource: :title": "Оновити прикріплений :resource: :title",
     "Choose :field": "Виберіть :field",
     "Download": "Завантажити",
     "Action": "Дія",
@@ -391,11 +393,13 @@
     "Original": "Оригінал",
     "This resource no longer exists": "Ресурсу більше не існує",
     ":resource Details": "Деталі ресурсу :resource",
+    ":resource Details: :title": "Деталі ресурсу :resource: :title",
     "There are no available options for this resource.": "Немає доступних варіантів для цього ресурсу",
     "All resources loaded.": "Всі ресурси завантажено.",
     "Load :perPage More": "Завантажити ще :perPage",
     ":amount Total": "Всього :amount",
     "Show All Fields": "Показати Всі Поля",
     "There was a problem submitting the form.": "Під час надсилання форми виникла проблема.",
-    "There was a problem executing the action.": "Під час виконання дії виникла проблема."
+    "There was a problem executing the action.": "Під час виконання дії виникла проблема.",
+    "Replicate": "Реплікувати"
 }

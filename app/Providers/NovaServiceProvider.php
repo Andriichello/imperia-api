@@ -81,12 +81,12 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
 
                 if ($isPreviewOnly) {
                     $sections = [
-                        MenuSection::make(__('Items'), [
+                        MenuSection::make(__('nova.dashboard.items'), [
                             MenuItem::resource(\App\Nova\Menu::class),
                             MenuItem::resource(\App\Nova\Product::class),
                             MenuItem::resource(\App\Nova\Category::class),
                         ])->icon('collection')->collapsable(),
-                        MenuSection::make(__('Restaurants'), [
+                        MenuSection::make(__('nova.dashboard.restaurants'), [
                             MenuItem::resource(\App\Nova\Restaurant::class),
                             MenuItem::resource(\App\Nova\Schedule::class),
                             MenuItem::resource(\App\Nova\RestaurantReview::class),

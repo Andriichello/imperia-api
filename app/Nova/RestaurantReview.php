@@ -61,42 +61,44 @@ class RestaurantReview extends Resource
     public function fields(Request $request): array
     {
         return [
-            ID::make()->sortable(),
+            ID::make(__('columns.id'), 'id')
+                ->sortable(),
 
-            Text::make('Ip')
+            Text::make(__('columns.ip'), 'ip')
                 ->nullable(),
 
-            Text::make('Reviewer')
+            Text::make(__('columns.reviewer'), 'reviewer')
                 ->rules('required', 'min:1', 'max:255'),
 
-            Number::make('Score')
+            Number::make(__('columns.review_score'), 'score')
                 ->sortable()
+                ->required()
                 ->min(0)
                 ->max(5)
                 ->step(1)
-                ->rules('nullable', 'min:0', 'max:5'),
+                ->rules('required', 'min:0', 'max:5'),
 
-            Text::make('Title')
+            Text::make(__('columns.review_title'), 'title')
                 ->rules('nullable', 'max:255'),
 
-            Text::make('Description')
+            Text::make(__('columns.review_description'), 'description')
                 ->rules('nullable', 'max:510'),
 
-            Boolean::make('Is Approved')
+            Boolean::make(__('columns.is_approved'), 'is_approved')
                 ->sortable()
                 ->default(false),
 
-            Boolean::make('Is Rejected')
+            Boolean::make(__('columns.is_rejected'), 'is_rejected')
                 ->sortable()
                 ->default(false),
 
-            BelongsTo::make('Restaurant'),
+            BelongsTo::make(__('columns.restaurant'), 'restaurant', Restaurant::class),
 
-            DateTime::make('Created At')
+            DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
                 ->exceptOnForms(),
 
-            DateTime::make('Updated At')
+            DateTime::make(__('columns.updated_at' ), 'updated_at')
                 ->sortable()
                 ->exceptOnForms(),
         ];
@@ -113,16 +115,46 @@ class RestaurantReview extends Resource
     protected function columnsFilterFields(Request $request): array
     {
         return [
-            'id' => true,
-            'ip' => true,
-            'reviewer' => true,
-            'score' => true,
-            'title' => true,
-            'description' => false,
-            'is_approved' => true,
-            'is_rejected' => true,
-            'created_at' => false,
-            'updated_at' => false,
+            'id' => [
+                'label' => __('columns.id'),
+                'checked' => true
+            ],
+            'ip' => [
+                'label' => __('columns.ip'),
+                'checked' => true,
+            ],
+            'reviewer' => [
+                'label' => __('columns.reviewer'),
+                'checked' => true,
+            ],
+            'score' => [
+                'label' => __('columns.review_score'),
+                'checked' => true,
+            ],
+            'title' => [
+                'label' => __('columns.review_title'),
+                'checked' => false
+            ],
+            'description' => [
+                'label' => __('columns.review_description'),
+                'checked' => false
+            ],
+            'is_approved' => [
+                'label' => __('columns.is_approved'),
+                'checked' => true,
+            ],
+            'is_rejected' => [
+                'label' => __('columns.is_rejected'),
+                'checked' => true,
+            ],
+            'created_at' => [
+                'label' => __('columns.created_at'),
+                'checked' => false
+            ],
+            'updated_at' => [
+                'label' => __('columns.updated_at'),
+                'checked' => false
+            ],
         ];
     }
 }

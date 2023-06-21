@@ -54,40 +54,41 @@ class Category extends Resource
     public function fields(Request $request): array
     {
         return [
-            ID::make()->sortable(),
+            ID::make(__('columns.id'), 'id')
+                ->sortable(),
 
-            MediaField::make('Media'),
+            MediaField::make(__('columns.media'), 'media'),
 
-            Number::make('Popularity')
+            Number::make(__('columns.popularity'), 'popularity')
                 ->step(1)
                 ->sortable()
                 ->nullable(),
 
-            Text::make('Slug')
+            Text::make(__('columns.slug'), 'slug')
                 ->rules('required', 'min:1', 'max:50')
                 ->creationRules('unique:categories,slug')
                 ->updateRules('unique:categories,slug,{{resourceId}}'),
 
-            Select::make('Target')
+            Select::make(__('columns.target'), 'target')
                 ->resolveUsing(fn () => Relation::getMorphedModel($this->target))
                 ->options(MorphOptions::categorizable())
                 ->nullable()
                 ->displayUsingLabels(),
 
-            Text::make('Title')
+            Text::make(__('columns.title'), 'title')
                 ->rules('required', 'min:1', 'max:255'),
 
-            Text::make('Description')
+            Text::make(__('columns.description'), 'description')
                 ->rules('nullable', 'min:1', 'max:255'),
 
 
-            BelongsToMany::make('Restaurants'),
+            BelongsToMany::make(__('columns.restaurants'), 'restaurants', Restaurant::class),
 
-            DateTime::make('Created At')
+            DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
                 ->exceptOnForms(),
 
-            DateTime::make('Updated At')
+            DateTime::make(__('columns.updated_at'), 'updated_at')
                 ->sortable()
                 ->exceptOnForms(),
         ];
@@ -122,15 +123,42 @@ class Category extends Resource
     protected function columnsFilterFields(Request $request): array
     {
         return [
-            'id' => true,
-            'media' => true,
-            'popularity' => true,
-            'slug' => true,
-            'target' => true,
-            'title' => true,
-            'description' => false,
-            'created_at' => false,
-            'updated_at' => false,
+            'id' => [
+                'label' => __('columns.id'),
+                'checked' => true,
+            ],
+            'media' => [
+                'label' => __('columns.media'),
+                'checked' => true,
+            ],
+            'popularity' => [
+                'label' => __('columns.popularity'),
+                'checked' => true,
+            ],
+            'slug' => [
+                'label' => 'slug',
+                'checked' => true,
+            ],
+            'target' => [
+                'label' => __('columns.target'),
+                'checked' => true,
+            ],
+            'title' => [
+                'label' => __('columns.title'),
+                'checked' => true,
+            ],
+            'description' => [
+                'label' => __('columns.description'),
+                'checked' => false,
+            ],
+            'created_at' => [
+                'label' => __('columns.created_at'),
+                'checked' => false,
+            ],
+            'updated_at' => [
+                'label' => __('columns.updated_at'),
+                'checked' => false,
+            ],
         ];
     }
 }

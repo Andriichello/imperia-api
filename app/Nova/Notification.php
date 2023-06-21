@@ -50,7 +50,8 @@ class Notification extends Resource
     public function fields(Request $request): array
     {
         return [
-            ID::make()->sortable(),
+            ID::make(__('columns.id'), 'id')
+                ->sortable(),
 
             Text::make('Subject')
                 ->required(),
@@ -100,15 +101,42 @@ class Notification extends Resource
     protected function columnsFilterFields(Request $request): array
     {
         return [
-            'id' => true,
-            'subject' => true,
-            'body' => true,
-            'channel' => true,
-            'sender' => false,
-            'receiver' => false,
-            'send_at' => true,
-            'sent_at' => true,
-            'seen_at' => false,
+            'id' => [
+                'label' => __('columns.id'),
+                'checked' => true
+            ],
+            'subject' => [
+                'label' => __('columns.subject'),
+                'checked' => true,
+            ],
+            'body' => [
+                'label' => __('columns.body'),
+                'checked' => true,
+            ],
+            'channel' => [
+                'label' => __('columns.channel'),
+                'checked' => true,
+            ],
+            'sender' => [
+                'label' => __('columns.sender'),
+                'checked' => false,
+            ],
+            'receiver' => [
+                'label' => __('columns.receiver'),
+                'checked' => false,
+            ],
+            'send_at' => [
+                'label' => __('columns.send_at'),
+                'checked' => true,
+            ],
+            'sent_at' => [
+                'label' => __('columns.sent_at'),
+                'checked' => true,
+            ],
+            'seen_at' => [
+                'label' => __('columns.seen_at'),
+                'checked' => false,
+            ],
         ];
     }
 }

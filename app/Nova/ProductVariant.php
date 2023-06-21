@@ -53,7 +53,8 @@ class ProductVariant extends Resource
     public function fields(Request $request): array
     {
         return [
-            ID::make()->sortable(),
+            ID::make(__('columns.id'), 'id')
+                ->sortable(),
 
             Number::make('Price')
                 ->step(0.01)
@@ -70,11 +71,11 @@ class ProductVariant extends Resource
 
             BelongsTo::make('Product'),
 
-            DateTime::make('Created At')
+            DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
                 ->exceptOnForms(),
 
-            DateTime::make('Updated At')
+            DateTime::make(__('columns.updated_at' ), 'updated_at')
                 ->sortable()
                 ->exceptOnForms(),
         ];
@@ -91,12 +92,30 @@ class ProductVariant extends Resource
     protected function columnsFilterFields(Request $request): array
     {
         return [
-            'id' => true,
-            'price' => true,
-            'weight' => true,
-            'weight_unit' => true,
-            'created_at' => false,
-            'updated_at' => false,
+            'id' => [
+                'label' => __('columns.id'),
+                'checked' => true,
+            ],
+            'price' => [
+                'label' => __('columns.price'),
+                'checked' => true,
+            ],
+            'weight' => [
+                'label' => __('columns.weight'),
+                'checked' => true,
+            ],
+            'weight_unit' => [
+                'label' => __('columns.weight_unit'),
+                'checked' => true,
+            ],
+            'created_at' => [
+                'label' => __('columns.created_at'),
+                'checked' => false
+            ],
+            'updated_at' => [
+                'label' => __('columns.updated_at'),
+                'checked' => false
+            ],
         ];
     }
 }

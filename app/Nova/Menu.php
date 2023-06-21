@@ -73,42 +73,43 @@ class Menu extends Resource
     public function fields(Request $request): array
     {
         return [
-            ID::make()->sortable(),
+            ID::make(__('columns.id'), 'id')
+                ->sortable(),
 
-            Boolean::make('Active')
+            Boolean::make(__('columns.active'))
                 ->resolveUsing(fn() => !$this->archived)
                 ->exceptOnForms(),
 
-            Boolean::make('Archived')
+            Boolean::make(__('columns.archived'), 'archived')
                 ->onlyOnForms()
                 ->default(fn() => true),
 
-            MediaField::make('Media'),
+            MediaField::make(__('columns.media'), 'media'),
 
-            Number::make('Popularity')
+            Number::make(__('columns.popularity'), 'popularity')
                 ->step(1)
                 ->sortable()
                 ->nullable(),
 
-            Text::make('Title')
+            Text::make(__('columns.title'), 'title')
                 ->updateRules('sometimes', 'min:1', 'max:255')
                 ->creationRules('required', 'min:1', 'max:255'),
 
-            Text::make('Description')
+            Text::make(__('columns.description'), 'description')
                 ->rules('nullable', 'min:1', 'max:255'),
 
-            HasMany::make('Products'),
+            HasMany::make(__('columns.products'), 'products', Product::class),
 
-            BelongsToMany::make('Restaurants'),
+            BelongsToMany::make(__('columns.restaurants'), 'restaurants', Restaurant::class),
 
-            HasMany::make('Categories')
+            HasMany::make(__('columns.categories'), 'categories', Category::class)
                 ->readonly(),
 
-            DateTime::make('Created At')
+            DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
                 ->exceptOnForms(),
 
-            DateTime::make('Updated At')
+            DateTime::make(__('columns.updated_at'))
                 ->sortable()
                 ->exceptOnForms(),
         ];
@@ -125,14 +126,38 @@ class Menu extends Resource
     protected function columnsFilterFields(Request $request): array
     {
         return [
-            'id' => true,
-            'active' => true,
-            'media' => true,
-            'popularity' => true,
-            'title' => true,
-            'description' => false,
-            'created_at' => false,
-            'updated_at' => false,
+            'id' => [
+                'label' => __('columns.id'),
+                'checked' => true,
+            ],
+            'active' => [
+                'label' => __('columns.active'),
+                'checked' => true,
+            ],
+            'media' => [
+                'label' => __('columns.media'),
+                'checked' => true,
+            ],
+            'popularity' => [
+                'label' => __('columns.popularity'),
+                'checked' => true,
+            ],
+            'title' => [
+                'label' => __('columns.title'),
+                'checked' => true,
+            ],
+            'description' => [
+                'label' => __('columns.description'),
+                'checked' => false
+            ],
+            'created_at' => [
+                'label' => __('columns.created_at'),
+                'checked' => false
+            ],
+            'updated_at' => [
+                'label' => __('columns.updated_at'),
+                'checked' => false
+            ],
         ];
     }
 }

@@ -4635,7 +4635,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   },
   mounted: function mounted() {
     this.applyFields();
-    console.log(this);
+    console.log('fields: ', this.fields);
   },
   computed: {
     columns: function columns() {
@@ -4645,18 +4645,26 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
   methods: {
     splitOnColumns: function splitOnColumns(items, numberOfColumns) {
       var columns = [];
-      var numberOfRows = items.length / numberOfColumns;
+      var numberOfRows = Math.ceil(items.length / numberOfColumns);
       for (var i = 0; i < numberOfColumns; i++) {
         var column = [];
         for (var j = 0; j < numberOfRows; j++) {
           var index = i * numberOfRows + j;
-          if (index > items.length) {
+          if (index >= items.length) {
             break;
+          }
+          if (!items[index]) {
+            continue;
           }
           column.push(items[index]);
         }
         columns.push(column);
       }
+      console.log({
+        numberOfColumns: numberOfColumns,
+        numberOfRows: numberOfRows,
+        columns: columns
+      });
       return columns;
     },
     getChecked: function getChecked(fields) {
@@ -4842,19 +4850,17 @@ var _hoisted_3 = /*#__PURE__*/_withScopeId(function () {
 });
 var _hoisted_4 = [_hoisted_3];
 var _hoisted_5 = {
-  "class": "text-md font-semibold"
-};
-var _hoisted_6 = {
   key: 0,
-  "class": "columns w-full flex flex-wrap justify-start items-center"
+  "class": "columns w-full flex flex-wrap justify-start items-start"
 };
-var _hoisted_7 = ["for"];
-var _hoisted_8 = ["checked", "onChange"];
-var _hoisted_9 = ["onClick"];
+var _hoisted_6 = ["for"];
+var _hoisted_7 = ["checked", "onChange"];
+var _hoisted_8 = ["onClick"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_card = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("card", true);
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_card, {
-    "class": "container h-auto w-full flex flex-col"
+    "class": "container h-auto w-full flex flex-col",
+    id: "columns-card-container"
   }, {
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       var _$data$settings$butto, _$data$settings, _$data$settings$butto2;
@@ -4865,13 +4871,18 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         onClick: _cache[0] || (_cache[0] = function ($event) {
           return $data.isCollapsed = !$data.isCollapsed;
         })
-      }, _hoisted_4, 2 /* CLASS */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", _hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.settings.title), 1 /* TEXT */)]), !$data.isCollapsed ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", {
+      }, _hoisted_4, 2 /* CLASS */), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", {
+        "class": "text-md font-semibold cursor-pointer",
+        onClick: _cache[1] || (_cache[1] = function ($event) {
+          return $data.isCollapsed = !$data.isCollapsed;
+        })
+      }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($data.settings.title), 1 /* TEXT */)]), !$data.isCollapsed ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("button", {
         key: 0,
         "class": "flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center font-bold px-4 h-9 text-sm flex-shrink-0",
-        onClick: _cache[1] || (_cache[1] = function () {
+        onClick: _cache[2] || (_cache[2] = function () {
           return $options.applyFields && $options.applyFields.apply($options, arguments);
         })
-      }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)((_$data$settings$butto = (_$data$settings = $data.settings) === null || _$data$settings === void 0 ? void 0 : (_$data$settings$butto2 = _$data$settings.button) === null || _$data$settings$butto2 === void 0 ? void 0 : _$data$settings$butto2.apply) !== null && _$data$settings$butto !== void 0 ? _$data$settings$butto : 'Apply'), 1 /* TEXT */)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), !$data.isCollapsed ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_6, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($options.columns, function (column, index) {
+      }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)((_$data$settings$butto = (_$data$settings = $data.settings) === null || _$data$settings === void 0 ? void 0 : (_$data$settings$butto2 = _$data$settings.button) === null || _$data$settings$butto2 === void 0 ? void 0 : _$data$settings$butto2.apply) !== null && _$data$settings$butto !== void 0 ? _$data$settings$butto : 'Apply'), 1 /* TEXT */)) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), !$data.isCollapsed ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_5, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($options.columns, function (column, index) {
         return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
           key: index,
           "class": "column"
@@ -4887,12 +4898,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
             onChange: function onChange($event) {
               return $options.toggleField(field);
             }
-          }, null, 40 /* PROPS, HYDRATE_EVENTS */, _hoisted_8), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
+          }, null, 40 /* PROPS, HYDRATE_EVENTS */, _hoisted_7), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", {
             "class": "column-label cursor-pointer font-semibold",
             onClick: function onClick($event) {
               return $options.toggleField(field);
             }
-          }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(field.label), 9 /* TEXT, PROPS */, _hoisted_9)], 8 /* PROPS */, _hoisted_7);
+          }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(field.label), 9 /* TEXT, PROPS */, _hoisted_8)], 8 /* PROPS */, _hoisted_6);
         }), 128 /* KEYED_FRAGMENT */))]);
       }), 128 /* KEYED_FRAGMENT */))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)];
     }),
@@ -5124,7 +5135,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.container[data-v-b9bc2c0a] {\n  padding: 12px;\n  gap: 8px;\n}\n.header[data-v-b9bc2c0a] {\n  gap: 8px;\n}\n.header-collapse[data-v-b9bc2c0a] {\n  gap: 8px;\n}\n.btn-collapse[data-v-b9bc2c0a] {\n  width: 36px;\n  height: 36px;\n  padding: 4px;\n}\n.btn-collapse[data-v-b9bc2c0a]:hover {\n  background-color: rgba(0, 0, 0, 20%);\n}\n.rotated[data-v-b9bc2c0a] {\n  transform: rotate(180deg);\n}\n.columns[data-v-b9bc2c0a] {\n  gap: 8px;\n}\n.column[data-v-b9bc2c0a] {\n  flex-grow: 1;\n  gap: 8px;\n}\n.column-label[data-v-b9bc2c0a] {\n  padding-left: 8px;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.container[data-v-b9bc2c0a] {\n  padding: 12px;\n  gap: 8px;\n}\n.header[data-v-b9bc2c0a] {\n  gap: 8px;\n}\n.header-collapse[data-v-b9bc2c0a] {\n  gap: 8px;\n}\n.btn-collapse[data-v-b9bc2c0a] {\n  width: 36px;\n  height: 36px;\n  padding: 4px;\n}\n.btn-collapse[data-v-b9bc2c0a]:hover {\n  background-color: rgba(0, 0, 0, 20%);\n}\n.rotated[data-v-b9bc2c0a] {\n  transform: rotate(180deg);\n}\n.columns[data-v-b9bc2c0a] {\n  gap: 8px;\n}\n.column[data-v-b9bc2c0a] {\n  justify-content: start;\n  align-items: start;\n  flex-grow: 1;\n  gap: 8px;\n}\n.column-label[data-v-b9bc2c0a] {\n  padding-left: 8px;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

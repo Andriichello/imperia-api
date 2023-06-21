@@ -49,7 +49,8 @@ class User extends Resource
     public function fields(Request $request): array
     {
         return [
-            ID::make()->sortable(),
+            ID::make(__('columns.id'), 'id')
+                ->sortable(),
 
             Gravatar::make()
                 ->maxWidth(50),
@@ -77,11 +78,11 @@ class User extends Resource
             DateTime::make('Email Verified At')
                 ->exceptOnForms(),
 
-            DateTime::make('Created At')
+            DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
                 ->exceptOnForms(),
 
-            DateTime::make('Updated At')
+            DateTime::make(__('columns.updated_at' ), 'updated_at')
                 ->sortable()
                 ->exceptOnForms(),
         ];
@@ -98,12 +99,30 @@ class User extends Resource
     protected function columnsFilterFields(Request $request): array
     {
         return [
-            'id' => true,
-            'name' => true,
-            'email' => true,
-            'email_verified_at' => false,
-            'created_at' => false,
-            'updated_at' => false,
+            'id' => [
+                'label' => __('columns.id'),
+                'checked' => true,
+            ],
+            'name' => [
+                'label' => __('columns.name'),
+                'checked' => true,
+            ],
+            'email' => [
+                'label' => __('columns.email'),
+                'checked' => true,
+            ],
+            'email_verified_at' => [
+                'label' => __('columns.email_verified_at'),
+                'checked' => false,
+            ],
+            'created_at' => [
+                'label' => __('columns.created_at'),
+                'checked' => false,
+            ],
+            'updated_at' => [
+                'label' => __('columns.updated_at'),
+                'checked' => false,
+            ],
         ];
     }
 }

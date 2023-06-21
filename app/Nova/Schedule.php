@@ -50,50 +50,51 @@ class Schedule extends Resource
     public function fields(Request $request): array
     {
         return [
-            ID::make()->sortable(),
+            ID::make(__('columns.id'), 'id')
+                ->sortable(),
 
-            Select::make('Weekday')
+            Select::make(__('columns.weekday'), 'weekday')
                 ->required()
                 ->options(WeekdayOptions::all()),
 
-            Number::make('Beg Hour')
+            Number::make(__('columns.beg_hour'), 'beg_hour')
                 ->required()
                 ->min(0)
                 ->max(23),
 
-            Number::make('Beg Minute')
+            Number::make(__('columns.beg_minute'), 'beg_minute')
                 ->default(0)
                 ->required()
                 ->min(0)
                 ->max(59),
 
-            Number::make('End Hour')
+            Number::make(__('columns.end_hour'), 'end_hour')
                 ->required()
                 ->min(0)
                 ->max(23),
 
-            Number::make('End Minute')
+            Number::make(__('columns.end_minute'), 'end_minute')
                 ->default(0)
                 ->required()
                 ->min(0)
                 ->max(59),
 
-            Boolean::make('Is Cross Date')
+            Boolean::make(__('columns.is_cross_date'), 'is_cross_date')
                 ->exceptOnForms()
                 ->readonly(),
 
-            DateTime::make('Closest Date')
+            DateTime::make(__('columns.closest_date'), 'closest_date')
                 ->exceptOnForms()
                 ->readonly(),
 
-            BelongsTo::make('Restaurant', 'restaurant', Restaurant::class)
+            BelongsTo::make(__('columns.restaurant'), 'restaurant', Restaurant::class)
                 ->nullable(),
 
-            DateTime::make('Created At')
+            DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
                 ->exceptOnForms(),
 
-            DateTime::make('Updated At')
+            DateTime::make(__('columns.updated_at' ), 'updated_at')
                 ->sortable()
                 ->exceptOnForms(),
         ];
@@ -110,17 +111,50 @@ class Schedule extends Resource
     protected function columnsFilterFields(Request $request): array
     {
         return [
-            'id' => true,
-            'weekday' => true,
-            'beg_hour' => true,
-            'beg_minute' => true,
-            'end_hour' => true,
-            'end_minute' => true,
-            'is_cross_date' => false,
-            'restaurant' => true,
-            'closest_date' => true,
-            'created_at' => false,
-            'updated_at' => false,
+            'id' => [
+                'label' => __('columns.id'),
+                'checked' => true
+            ],
+            'weekday' => [
+                'label' => __('columns.weekday'),
+                'checked' => true,
+            ],
+            'beg_hour' => [
+                'label' => __('columns.beg_hour'),
+                'checked' => true,
+            ],
+            'beg_minute' => [
+                'label' => __('columns.beg_minute'),
+                'checked' => true,
+            ],
+            'end_hour' => [
+                'label' => __('columns.end_hour'),
+                'checked' => true,
+            ],
+            'end_minute' => [
+                'label' => __('columns.end_minute'),
+                'checked' => true,
+            ],
+            'is_cross_date' => [
+                'label' => __('columns.is_cross_date'),
+                'checked' => false,
+            ],
+            'restaurant' => [
+                'label' => __('columns.restaurant'),
+                'checked' => true,
+            ],
+            'closest_date' => [
+                'label' => __('columns.closest_date'),
+                'checked' => true,
+            ],
+            'created_at' => [
+                'label' => __('columns.created_at'),
+                'checked' => false
+            ],
+            'updated_at' => [
+                'label' => __('columns.updated_at'),
+                'checked' => false
+            ],
         ];
     }
 }

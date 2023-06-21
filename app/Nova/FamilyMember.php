@@ -50,7 +50,8 @@ class FamilyMember extends Resource
     public function fields(Request $request): array
     {
         return [
-            ID::make()->sortable(),
+            ID::make(__('columns.id'), 'id')
+                ->sortable(),
 
             Text::make('Name')
                 ->rules('required', 'min:2', 'max:50'),
@@ -66,11 +67,11 @@ class FamilyMember extends Resource
 
             BelongsTo::make('Relative', 'relative', Customer::class),
 
-            DateTime::make('Created At')
+            DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
                 ->exceptOnForms(),
 
-            DateTime::make('Updated At')
+            DateTime::make(__('columns.updated_at' ), 'updated_at')
                 ->sortable()
                 ->exceptOnForms(),
         ];
@@ -87,13 +88,34 @@ class FamilyMember extends Resource
     protected function columnsFilterFields(Request $request): array
     {
         return [
-            'id' => true,
-            'name' => true,
-            'birthdate' => true,
-            'relation' => true,
-            'relative' => true,
-            'created_at' => false,
-            'updated_at' => false,
+            'id' => [
+                'label' => __('columns.id'),
+                'checked' => true
+            ],
+            'name' => [
+                'label' => __('columns.name'),
+                'checked' => true
+            ],
+            'birthdate' => [
+                'label' => __('columns.birthdate'),
+                'checked' => true,
+            ],
+            'relation' => [
+                'label' => __('columns.relation'),
+                'checked' => true,
+            ],
+            'relative' => [
+                'label' => __('columns.relative'),
+                'checked' => true,
+            ],
+            'created_at' => [
+                'label' => __('columns.created_at'),
+                'checked' => false
+            ],
+            'updated_at' => [
+                'label' => __('columns.updated_at'),
+                'checked' => false
+            ],
         ];
     }
 }

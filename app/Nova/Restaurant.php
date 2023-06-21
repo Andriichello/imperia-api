@@ -51,46 +51,47 @@ class Restaurant extends Resource
     public function fields(Request $request): array
     {
         return [
-            ID::make()->sortable(),
+            ID::make(__('columns.id'), 'id')
+                ->sortable(),
 
-            MediaField::make('Media'),
+            MediaField::make(__('columns.media'), 'media'),
 
-            Number::make('Popularity')
+            Number::make(__('columns.popularity'), 'popularity')
                 ->step(1)
                 ->sortable()
                 ->nullable(),
 
-            Text::make('Slug')
+            Text::make(__('columns.slug'), 'slug')
                 ->rules('required', 'min:1', 'max:255')
                 ->creationRules('unique:restaurants,slug')
                 ->updateRules('unique:restaurants,slug,{{resourceId}}'),
 
-            Text::make('Name')
+            Text::make(__('columns.title'), 'name')
                 ->rules('required', 'min:1', 'max:255'),
 
-            Text::make('Country')
+            Text::make(__('columns.country'), 'country')
                 ->rules('required', 'min:1', 'max:255'),
 
-            Text::make('City')
+            Text::make(__('columns.city'), 'city')
                 ->rules('required', 'min:1', 'max:255'),
 
-            Text::make('Place')
+            Text::make(__('columns.place'), 'place')
                 ->rules('required', 'min:1', 'max:255'),
 
-            Timezone::make('Timezone')
+            Timezone::make(__('columns.timezone'), 'timezone')
                 ->default(DateTimeZone::EUROPE),
 
-            HasMany::make('Banquets'),
+            HasMany::make(__('columns.banquets'), 'banquets', Banquet::class),
 
-            HasMany::make('Schedules'),
+            HasMany::make(__('columns.schedules'), 'schedules', Schedule::class),
 
-            HasMany::make('Holidays'),
+            HasMany::make(__('columns.holidays'), 'holidays', Holiday::class),
 
-            DateTime::make('Created At')
+            DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
                 ->exceptOnForms(),
 
-            DateTime::make('Updated At')
+            DateTime::make(__('columns.updated_at'), 'updated_at')
                 ->sortable()
                 ->exceptOnForms(),
         ];
@@ -107,17 +108,50 @@ class Restaurant extends Resource
     protected function columnsFilterFields(Request $request): array
     {
         return [
-            'id' => true,
-            'media' => true,
-            'popularity' => true,
-            'slug' => true,
-            'name' => true,
-            'country' => false,
-            'city' => false,
-            'place' => false,
-            'timezone' => false,
-            'created_at' => false,
-            'updated_at' => false,
+            'id' => [
+                'label' => __('columns.id'),
+                'checked' => true,
+            ],
+            'media' => [
+                'label' => __('columns.media'),
+                'checked' => true,
+            ],
+            'popularity' => [
+                'label' => __('columns.popularity'),
+                'checked' => true,
+            ],
+            'slug' => [
+                'label' => __('columns.slug'),
+                'checked' => true,
+            ],
+            'name' => [
+                'label' => __('columns.title'),
+                'checked' => true,
+            ],
+            'country' => [
+                'label' => __('columns.country'),
+                'checked' => false,
+            ],
+            'city' => [
+                'label' => __('columns.city'),
+                'checked' => false,
+            ],
+            'place' => [
+                'label' => __('columns.place'),
+                'checked' => false,
+            ],
+            'timezone' => [
+                'label' => __('columns.timezone'),
+                'checked' => false,
+            ],
+            'created_at' => [
+                'label' => __('columns.created_at'),
+                'checked' => false,
+            ],
+            'updated_at' => [
+                'label' => __('columns.updated_at'),
+                'checked' => false,
+            ],
         ];
     }
 }

@@ -72,7 +72,8 @@ class Banquet extends Resource
     public function fields(Request $request): array
     {
         return [
-            ID::make()->sortable(),
+            ID::make(__('columns.id'), 'id')
+                ->sortable(),
 
             Select::make('State')
                 ->rules('required')
@@ -89,11 +90,11 @@ class Banquet extends Resource
 
             HasOne::make('Order'),
 
-            Text::make('Title')
+            Text::make(__('columns.title'), 'title')
                 ->updateRules('sometimes', 'min:1', 'max:255')
                 ->creationRules('required', 'min:1', 'max:255'),
 
-            Text::make('Description')
+            Text::make(__('columns.description'), 'description')
                 ->rules('nullable', 'min:1', 'max:255'),
 
             Number::make('Advance Amount')
@@ -123,11 +124,11 @@ class Banquet extends Resource
 
             MorphMany::make('Logs', 'logs', Log::class),
 
-            DateTime::make('Created At')
+            DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
                 ->exceptOnForms(),
 
-            DateTime::make('Updated At')
+            DateTime::make(__('columns.updated_at' ), 'updated_at')
                 ->sortable()
                 ->exceptOnForms(),
         ];
@@ -144,20 +145,62 @@ class Banquet extends Resource
     protected function columnsFilterFields(Request $request): array
     {
         return [
-            'id' => true,
-            'state' => true,
-            'restaurant' => false,
-            'creator' => false,
-            'customer' => true,
-            'title' => true,
-            'description' => false,
-            'advance_amount' => true,
-            'total' => true,
-            'start_at' => true,
-            'end_at' => true,
-            'paid_at' => false,
-            'created_at' => false,
-            'updated_at' => false,
+            'id' => [
+                'label' => __('columns.id'),
+                'checked' => true
+            ],
+            'state' => [
+                'label' => __('columns.state'),
+                'checked' => true,
+            ],
+            'restaurant' => [
+                'label' => __('columns.restaurant'),
+                'checked' => false,
+            ],
+            'creator' => [
+                'label' => __('columns.creator'),
+                'checked' => false,
+            ],
+            'customer' => [
+                'label' => __('columns.customer'),
+                'checked' => true,
+            ],
+            'title' => [
+                'label' => __('columns.title'),
+                'checked' => false
+            ],
+            'description' => [
+                'label' => __('columns.description'),
+                'checked' => false
+            ],
+            'advance_amount' => [
+                'label' => __('columns.advance_amount'),
+                'checked' => true,
+            ],
+            'total' => [
+                'label' => __('columns.total'),
+                'checked' => true,
+            ],
+            'start_at' => [
+                'label' => __('columns.start_at'),
+                'checked' => true,
+            ],
+            'end_at' => [
+                'label' => __('columns.end_at'),
+                'checked' => true,
+            ],
+            'paid_at' => [
+                'label' => __('columns.paid_at'),
+                'checked' => false,
+            ],
+            'created_at' => [
+                'label' => __('columns.created_at'),
+                'checked' => false
+            ],
+            'updated_at' => [
+                'label' => __('columns.updated_at'),
+                'checked' => false
+            ],
         ];
     }
 }

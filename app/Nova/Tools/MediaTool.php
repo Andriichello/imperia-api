@@ -57,7 +57,7 @@ class MediaTool extends Media
      */
     public static function section(Request $request): mixed
     {
-        return MenuSection::make('Media')
+        return MenuSection::make(__('nova.dashboard.media'))
             ->path('/media')
             ->icon('photograph');
     }
