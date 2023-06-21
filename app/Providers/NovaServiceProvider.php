@@ -39,6 +39,13 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             Banquet::observe(NovaSubscriber::class);
         });
 
+        Nova::footer(function () {
+            return '<p class="mt-8 text-center text-xs text-80">'
+                . '&copy; 2023 Imperia - By Andrii Prykhodko.'
+                . '<br> <a class="link-default" href = "mailto: andriichello@gmail.com">andriichello@gmail.com</a>'
+                . '</p>';
+        });
+
         Nova::mainMenu(function (Request $request, Menu $menu) {
             $sections = [
                 Marketplace::section($request),
