@@ -21,9 +21,9 @@ return new class extends Migration
             $table->smallInteger('score')->nullable();
             $table->string('title')->nullable();
             $table->string('description', 510)->nullable();
+            $table->boolean('is_approved')->default(false);
+            $table->boolean('is_rejected')->default(false);
             $table->timestamps();
-
-            $table->unique(['ip', 'restaurant_id']);
 
             $table->foreign('restaurant_id')
                 ->references('id')

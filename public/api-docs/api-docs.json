@@ -3359,6 +3359,15 @@
                             "type": "string"
                         },
                         "example": "127.0.0.1"
+                    },
+                    {
+                        "name": "is_approved",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": "true"
+                        }
                     }
                 ],
                 "responses": {

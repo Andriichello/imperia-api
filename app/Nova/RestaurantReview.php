@@ -5,6 +5,7 @@ namespace App\Nova;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
@@ -63,11 +64,7 @@ class RestaurantReview extends Resource
             ID::make()->sortable(),
 
             Text::make('Ip')
-                ->rules(
-                    'nullable',
-                    Rule::unique('restaurant_reviews', 'ip')
-                        ->where('restaurant_id', $this->restaurant_id),
-                ),
+                ->nullable(),
 
             Text::make('Reviewer')
                 ->rules('required', 'min:1', 'max:255'),
@@ -84,6 +81,14 @@ class RestaurantReview extends Resource
 
             Text::make('Description')
                 ->rules('nullable', 'max:510'),
+
+            Boolean::make('Is Approved')
+                ->sortable()
+                ->default(false),
+
+            Boolean::make('Is Rejected')
+                ->sortable()
+                ->default(false),
 
             BelongsTo::make('Restaurant'),
 
@@ -114,6 +119,8 @@ class RestaurantReview extends Resource
             'score' => true,
             'title' => true,
             'description' => false,
+            'is_approved' => true,
+            'is_rejected' => true,
             'created_at' => false,
             'updated_at' => false,
         ];

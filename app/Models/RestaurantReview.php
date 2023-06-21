@@ -19,6 +19,7 @@ use Illuminate\Database\Query\Builder as DatabaseBuilder;
  * @property int $score
  * @property string|null $title
  * @property string|null $description
+ * @property bool|null $is_approved
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
@@ -43,6 +44,15 @@ class RestaurantReview extends BaseModel
         'score',
         'title',
         'description',
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'is_approved',
     ];
 
     /**
