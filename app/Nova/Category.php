@@ -2,7 +2,6 @@
 
 namespace App\Nova;
 
-use Andriichello\Media\MediaField;
 use App\Nova\Options\MorphOptions;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -120,6 +119,19 @@ class Category extends Resource
         // @phpstan-ignore-next-line
         return parent::relatableQuery($request, $query)
             ->whereIn('target', [$target, null]);
+    }
+
+    /**
+     * Determine if the current user can create new resources.
+     *
+     * @param Request $request
+     *
+     * @return bool
+     */
+    public static function authorizedToCreate(Request $request): bool
+    {
+        return parent::authorizedToCreate($request)
+            && $request->missing('viaResource');
     }
 
     /**

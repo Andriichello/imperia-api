@@ -113,12 +113,12 @@ class Menu extends Resource
             Textarea::make(__('columns.description'), 'description')
                 ->rules('nullable', 'min:1'),
 
+            HasMany::make(__('columns.categories'), 'categories', Category::class)
+                ->readonly(),
+
             HasMany::make(__('columns.products'), 'products', Product::class),
 
             BelongsToMany::make(__('columns.restaurants'), 'restaurants', Restaurant::class),
-
-            HasMany::make(__('columns.categories'), 'categories', Category::class)
-                ->readonly(),
 
             DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
