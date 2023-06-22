@@ -130,8 +130,11 @@ class Category extends Resource
      */
     public static function authorizedToCreate(Request $request): bool
     {
-        return parent::authorizedToCreate($request)
-            && $request->missing('viaResource');
+        if ($request->get('viaResource')) {
+            return false;
+        }
+
+        return parent::authorizedToCreate($request);
     }
 
     /**
