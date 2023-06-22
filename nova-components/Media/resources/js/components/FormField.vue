@@ -64,14 +64,14 @@
                         <span class="media-form-link cursor-pointer"
                               style="width: fit-content; padding: 8px"
                               @click="showList ? closeList() : openList()">
-                            {{ showList ? 'Close' : 'Open' }} Media
+                            {{ showList ? 'Закрити' : 'Відкрити' }}
                         </span>
 
             <span class="media-form-link text-red-500 cursor-pointer"
                   style="width: fit-content; padding: 8px; margin-left: 16px"
                   v-show="attached && attached.length"
                   @click="clearItems()">
-                            Clear
+                            Очистити
                         </span>
           </div>
         </div>
@@ -88,12 +88,10 @@
                         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
 
-                <input type="search" placeholder="Search by name"
+                <input type="search" placeholder="Пошук"
                        class="appearance-none rounded-full h-8 pl-10 w-full bg-gray-100 dark:bg-gray-900 dark:focus:bg-gray-800 focus:bg-white focus:outline-none focus:ring focus:ring-primary-200 dark:focus:ring-gray-600"
                        aria-label="Search" aria-expanded="false" spellcheck="false"
-                       v-model="filters.name" @keyup.enter="fetchItems()"
-                       @keyup.esc="filters.name = ''; fetchItems()"
-                       @keypress.enter.prevent>
+                       v-model="searchFilter" @keypress.enter.prevent>
               </div>
             </div>
           </div>
@@ -158,7 +156,7 @@
 
           <div class="media-form-no-results" v-if="items && (!items.data || !items.data.length)">
                 <span class="media-form-no-results-text">
-                    No results...
+                    Список порожній...
                 </span>
           </div>
         </div>
@@ -168,10 +166,9 @@
 </template>
 
 <script>
-import {FormField, HandlesValidationErrors} from 'laravel-nova'
+import {debounce} from "lodash";
 
 export default {
-  mixins: [FormField, HandlesValidationErrors],
   props: ['resourceName', 'resourceId', 'field'],
   data() {
     const attached = [];
@@ -188,10 +185,15 @@ export default {
         createdAt: null,
         updatedAt: '-',
       },
-      filters: {
-        name: '',
-      }
+      searchFilter:  '',
     };
+  },
+  watch: {
+    searchFilter: debounce(
+      function (val) {
+        this.fetchItems();
+      }, 350
+    ),
   },
   methods: {
     /**
@@ -283,8 +285,8 @@ export default {
         query += `&sort=` + sorts.join(',');
       }
 
-      if (this.filters.name) {
-        query += `&filter[name]=${this.filters.name}`
+      if (this.searchFilter) {
+        query += `&filter[search]=${this.searchFilter}`
       }
 
       return url + query;

@@ -9,6 +9,20 @@ use Laravel\Nova\Tool;
 
 class Media extends Tool
 {
+    protected string $name;
+
+    /**
+     * Media constructor.
+     *
+     * @param string $name
+     */
+    public function __construct(string $name = 'Media')
+    {
+        parent::__construct();
+
+        $this->name = $name;
+    }
+
     /**
      * Perform any tasks that need to happen when the tool is booted.
      *
@@ -28,7 +42,7 @@ class Media extends Tool
      */
     public function menu(Request $request)
     {
-        return MenuSection::make('Media')
+        return MenuSection::make($this->name)
             ->path('/media')
             ->icon('photograph');
     }
