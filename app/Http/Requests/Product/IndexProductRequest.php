@@ -4,6 +4,7 @@ namespace App\Http\Requests\Product;
 
 use App\Http\Filters\CategoriesFilter;
 use App\Http\Filters\MenusFilter;
+use App\Http\Filters\MockFilter;
 use App\Http\Filters\RestaurantsFilter;
 use App\Http\Requests\Crud\IndexRequest;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
@@ -47,7 +48,8 @@ class IndexProductRequest extends IndexRequest
                 AllowedFilter::custom('categories', new CategoriesFilter()),
                 AllowedFilter::custom(
                     'restaurants',
-                    new RestaurantsFilter('restaurant_product', 'product_id')
+                    new MockFilter()
+                    // new RestaurantsFilter('restaurant_product', 'product_id')
                 ),
             ]
         );

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Space;
 
 use App\Http\Filters\CategoriesFilter;
+use App\Http\Filters\MockFilter;
 use App\Http\Filters\RestaurantsFilter;
 use App\Http\Requests\Crud\IndexRequest;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
@@ -45,7 +46,8 @@ class IndexSpaceRequest extends IndexRequest
                 AllowedFilter::custom('categories', new CategoriesFilter()),
                 AllowedFilter::custom(
                     'restaurants',
-                    new RestaurantsFilter('restaurant_space', 'space_id')
+                    new MockFilter()
+                    // new RestaurantsFilter('restaurant_space', 'space_id')
                 ),
             ]
         );
