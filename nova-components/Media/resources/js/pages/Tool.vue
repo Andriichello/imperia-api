@@ -702,8 +702,8 @@ export default {
 .media-view-details-row {
   display: flex;
   flex-direction: row;
-  justify-content: start;
-  align-items: start;
+  justify-content: flex-start;
+  align-items: flex-start;
   flex-wrap: wrap;
 }
 
@@ -760,7 +760,7 @@ export default {
 .media-actions-group {
   display: flex;
   flex-direction: row;
-  justify-content: start;
+  justify-content: flex-start;
   align-items: center;
   gap: 4px;
 }
@@ -794,7 +794,7 @@ export default {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: stretch;
-  align-items: start;
+  align-items: flex-start;
   gap: 8px;
   padding: 16px 16px 16px 16px;
 }
@@ -802,7 +802,7 @@ export default {
 .media-list-item {
   display: flex;
   flex-direction: column;
-  justify-content: start;
+  justify-content: flex-start;
   align-items: center;
   gap: 2px;
 }

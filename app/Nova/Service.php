@@ -100,7 +100,7 @@ class Service extends Resource
                 ->onlyOnForms()
                 ->default(fn() => false),
 
-//            MediaField::make(__('columns.media'), 'media'),
+            MediaField::make(__('columns.media'), 'media'),
 
             Number::make('Popularity')
                 ->step(1)
@@ -163,10 +163,10 @@ class Service extends Resource
                 'label' => __('columns.active'),
                 'checked' => true,
             ],
-//            'media' => [
-//                'label' => __('columns.media'),
-//                'checked' => true,
-//            ],
+            'media' => [
+                'label' => __('columns.media'),
+                'checked' => true,
+            ],
             'popularity' => [
                 'label' => __('columns.popularity'),
                 'checked' => true,

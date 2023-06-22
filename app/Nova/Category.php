@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use Andriichello\Media\MediaField;
 use App\Nova\Options\MorphOptions;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -70,7 +71,7 @@ class Category extends Resource
                 ->creationRules('required', 'unique:categories,slug')
                 ->updateRules('required', 'unique:categories,slug,{{resourceId}}'),
 
-//            MediaField::make(__('columns.media'), 'media'),
+            MediaField::make(__('columns.media'), 'media'),
 
             Number::make(__('columns.popularity'), 'popularity')
                 ->step(1)
@@ -156,10 +157,10 @@ class Category extends Resource
                 'label' => __('columns.slug'),
                 'checked' => true,
             ],
-//            'media' => [
-//                'label' => __('columns.media'),
-//                'checked' => true,
-//            ],
+            'media' => [
+                'label' => __('columns.media'),
+                'checked' => true,
+            ],
             'popularity' => [
                 'label' => __('columns.popularity'),
                 'checked' => true,
