@@ -30,11 +30,20 @@ class Category extends Resource
     public static string $model = \App\Models\Morphs\Category::class;
 
     /**
-     * The single value that should be used to represent the resource when being displayed.
+     * Get the value that should be displayed to represent the resource.
      *
-     * @var string
+     * @return string
      */
-    public static $title = 'title';
+    public function title(): string
+    {
+        $title = '';
+
+        if ($this->slug && !empty($this->slug)) {
+            $title = "$this->slug - ";
+        }
+
+        return $title . $this->title;
+    }
 
     /**
      * The columns that should be searched.
@@ -57,6 +66,11 @@ class Category extends Resource
             ID::make(__('columns.id'), 'id')
                 ->sortable(),
 
+            Text::make(__('columns.slug'), 'slug')
+                ->rules('required', 'min:1', 'max:50')
+                ->creationRules('unique:categories,slug')
+                ->updateRules('unique:categories,slug,{{resourceId}}'),
+
             MediaField::make(__('columns.media'), 'media'),
 
             Number::make(__('columns.popularity'), 'popularity')
@@ -64,14 +78,10 @@ class Category extends Resource
                 ->sortable()
                 ->nullable(),
 
-            Text::make(__('columns.slug'), 'slug')
-                ->rules('required', 'min:1', 'max:50')
-                ->creationRules('unique:categories,slug')
-                ->updateRules('unique:categories,slug,{{resourceId}}'),
-
             Select::make(__('columns.target'), 'target')
                 ->resolveUsing(fn () => Relation::getMorphedModel($this->target))
                 ->options(MorphOptions::categorizable())
+                ->default(\App\Models\Product::class)
                 ->nullable()
                 ->displayUsingLabels(),
 
@@ -127,16 +137,16 @@ class Category extends Resource
                 'label' => __('columns.id'),
                 'checked' => true,
             ],
+            'slug' => [
+                'label' => __('columns.slug'),
+                'checked' => true,
+            ],
             'media' => [
                 'label' => __('columns.media'),
                 'checked' => true,
             ],
             'popularity' => [
                 'label' => __('columns.popularity'),
-                'checked' => true,
-            ],
-            'slug' => [
-                'label' => 'slug',
                 'checked' => true,
             ],
             'target' => [

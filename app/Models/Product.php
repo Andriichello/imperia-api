@@ -24,6 +24,7 @@ use Illuminate\Support\Collection;
 /**
  * Class Product.
  *
+ * @property string|null $slug
  * @property string $title
  * @property string|null $description
  * @property float|null $price
@@ -64,6 +65,7 @@ class Product extends BaseModel implements
      * @var string[]
      */
     protected $fillable = [
+        'slug',
         'title',
         'description',
         'price',

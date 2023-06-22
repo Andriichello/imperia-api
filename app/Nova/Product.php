@@ -18,6 +18,7 @@ use Laravel\Nova\Fields\MorphToMany;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 /**
@@ -35,11 +36,20 @@ class Product extends Resource
     public static string $model = \App\Models\Product::class;
 
     /**
-     * The single value that should be used to represent the resource when being displayed.
+     * Get the value that should be displayed to represent the resource.
      *
-     * @var string
+     * @return string
      */
-    public static $title = 'title';
+    public function title(): string
+    {
+        $title = '';
+
+        if ($this->slug && !empty($this->slug)) {
+            $title = "$this->slug - ";
+        }
+
+        return $title . $this->title;
+    }
 
     /**
      * The columns that should be searched.
@@ -47,7 +57,7 @@ class Product extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'title', 'description',
+        'id', 'slug', 'title', 'description',
     ];
 
     /**
@@ -81,9 +91,10 @@ class Product extends Resource
             ID::make(__('columns.id'), 'id')
                 ->sortable(),
 
-            HasMany::make(__('columns.variants'), 'variants', ProductVariant::class),
-
-            BelongsToMany::make(__('columns.menus'), 'menus', Menu::class),
+            Text::make(__('columns.slug'), 'slug')
+                ->rules('required', 'min:1', 'max:50')
+                ->creationRules('unique:products,slug')
+                ->updateRules('unique:products,slug,{{resourceId}}'),
 
             Boolean::make(__('columns.active'))
                 ->resolveUsing(fn() => !$this->archived)
@@ -108,8 +119,8 @@ class Product extends Resource
                 ->updateRules('nullable', 'min:1', 'max:25')
                 ->creationRules('nullable', 'min:1', 'max:25'),
 
-            Text::make(__('columns.description'), 'description')
-                ->rules('nullable', 'min:1', 'max:255'),
+            Textarea::make(__('columns.description'), 'description')
+                ->rules('nullable', 'min:1'),
 
             Number::make(__('columns.price'), 'price')
                 ->step(0.01)
@@ -125,17 +136,21 @@ class Product extends Resource
                 ->options(WeightUnitOptions::all())
                 ->default(WeightUnit::Gram),
 
-            BelongsToMany::make(__('columns.restaurants'), 'restaurants', Restaurant::class),
+            HasMany::make(__('columns.variants'), 'variants', ProductVariant::class),
+
+            BelongsToMany::make(__('columns.menus'), 'menus', Menu::class),
 
             MorphToMany::make(__('columns.categories'), 'categories', Category::class),
 
+            BelongsToMany::make(__('columns.restaurants'), 'restaurants', Restaurant::class),
+
             MorphMany::make(__('columns.logs'), 'logs', Log::class),
 
-            DateTime::make(__('columns.created_at'))
+            DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
                 ->exceptOnForms(),
 
-            DateTime::make(__('columns.updated_at'))
+            DateTime::make(__('columns.updated_at'), 'updated_at')
                 ->sortable()
                 ->exceptOnForms(),
         ];
@@ -155,6 +170,10 @@ class Product extends Resource
             'id' => [
                 'label' => __('columns.id'),
                 'checked' => true
+            ],
+            'slug' => [
+                'label' => __('columns.slug'),
+                'checked' => true,
             ],
             'active' => [
                 'label' => __('columns.active'),

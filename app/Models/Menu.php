@@ -24,6 +24,7 @@ use Illuminate\Support\Str;
 /**
  * Class Menu.
  *
+ * @property string|null $slug
  * @property string $title
  * @property string|null $description
  * @property bool $archived
@@ -63,6 +64,7 @@ class Menu extends BaseModel implements
      * @var string[]
      */
     protected $fillable = [
+        'slug',
         'title',
         'description',
         'archived',

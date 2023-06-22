@@ -44,20 +44,21 @@ class MediaTool extends Media
      */
     public function menu(Request $request): mixed
     {
-        return self::section($request);
+        return self::section($request, __('nova.dashboard.media'));
     }
 
     /**
      * Build the menu that renders the navigation links for the tool.
      *
      * @param Request $request
+     * @param string $name
      *
      * @return mixed
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public static function section(Request $request): mixed
+    public static function section(Request $request, string $name): mixed
     {
-        return MenuSection::make(__('nova.dashboard.media'))
+        return MenuSection::make($name)
             ->path('/media')
             ->icon('photograph');
     }

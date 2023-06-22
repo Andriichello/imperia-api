@@ -7,6 +7,7 @@ use DateTimeZone;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
+use Laravel\Nova\Fields\HasManyThrough;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
@@ -27,11 +28,20 @@ class Restaurant extends Resource
     public static string $model = \App\Models\Restaurant::class;
 
     /**
-     * The single value that should be used to represent the resource when being displayed.
+     * Get the value that should be displayed to represent the resource.
      *
-     * @var string
+     * @return string
      */
-    public static $title = 'name';
+    public function title(): string
+    {
+        $title = '';
+
+        if ($this->slug && !empty($this->slug)) {
+            $title = "$this->slug - ";
+        }
+
+        return $title . $this->name;
+    }
 
     /**
      * The columns that should be searched.
@@ -54,17 +64,17 @@ class Restaurant extends Resource
             ID::make(__('columns.id'), 'id')
                 ->sortable(),
 
+            Text::make(__('columns.slug'), 'slug')
+                ->rules('required', 'min:1', 'max:50')
+                ->creationRules('unique:restaurants,slug')
+                ->updateRules('unique:restaurants,slug,{{resourceId}}'),
+
             MediaField::make(__('columns.media'), 'media'),
 
             Number::make(__('columns.popularity'), 'popularity')
                 ->step(1)
                 ->sortable()
                 ->nullable(),
-
-            Text::make(__('columns.slug'), 'slug')
-                ->rules('required', 'min:1', 'max:255')
-                ->creationRules('unique:restaurants,slug')
-                ->updateRules('unique:restaurants,slug,{{resourceId}}'),
 
             Text::make(__('columns.title'), 'name')
                 ->rules('required', 'min:1', 'max:255'),
@@ -79,13 +89,19 @@ class Restaurant extends Resource
                 ->rules('required', 'min:1', 'max:255'),
 
             Timezone::make(__('columns.timezone'), 'timezone')
-                ->default(DateTimeZone::EUROPE),
+                ->default('Europe/Kyiv'),
 
-            HasMany::make(__('columns.banquets'), 'banquets', Banquet::class),
+//            HasMany::make(__('columns.banquets'), 'banquets', Banquet::class),
 
             HasMany::make(__('columns.schedules'), 'schedules', Schedule::class),
 
-            HasMany::make(__('columns.holidays'), 'holidays', Holiday::class),
+            HasMany::make(__('columns.menus'), 'menus', Menu::class),
+
+            HasMany::make(__('columns.products'), 'products', Product::class),
+
+            HasMany::make(__('columns.reviews'), 'reviews', RestaurantReview::class),
+
+//            HasMany::make(__('columns.holidays'), 'holidays', Holiday::class),
 
             DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
@@ -112,16 +128,16 @@ class Restaurant extends Resource
                 'label' => __('columns.id'),
                 'checked' => true,
             ],
+            'slug' => [
+                'label' => __('columns.slug'),
+                'checked' => true,
+            ],
             'media' => [
                 'label' => __('columns.media'),
                 'checked' => true,
             ],
             'popularity' => [
                 'label' => __('columns.popularity'),
-                'checked' => true,
-            ],
-            'slug' => [
-                'label' => __('columns.slug'),
                 'checked' => true,
             ],
             'name' => [

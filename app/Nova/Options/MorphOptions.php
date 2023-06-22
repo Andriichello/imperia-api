@@ -50,7 +50,11 @@ class MorphOptions extends Options
             static::getMorphClassToSlugMap(),
             fn(string $class) => Arr::has(class_implements($class), $interfaces),
         );
-        return array_flip(MorphServiceProvider::getMorphMap($implementing));
+
+        return array_map(
+            fn(string $option) => __('columns.' . $option) ?? $option,
+            array_flip(MorphServiceProvider::getMorphMap($implementing))
+        );
     }
 
     /**

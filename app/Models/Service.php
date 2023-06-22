@@ -23,6 +23,7 @@ use Illuminate\Support\Collection;
 /**
  * Class Service.
  *
+ * @property string|null $slug
  * @property string $title
  * @property string|null $description
  * @property float $once_paid_price
@@ -59,6 +60,7 @@ class Service extends BaseModel implements
      * @var string[]
      */
     protected $fillable = [
+        'slug',
         'title',
         'description',
         'once_paid_price',

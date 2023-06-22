@@ -88,22 +88,24 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
 
                 if ($isPreviewOnly) {
                     $sections = [
+                        MenuSection::make(__('nova.dashboard.restaurants'), [
+                            MenuItem::resource(\App\Nova\Restaurant::class),
+                            MenuItem::resource(\App\Nova\RestaurantReview::class),
+                        ])->icon('library')->collapsable(),
                         MenuSection::make(__('nova.dashboard.items'), [
                             MenuItem::resource(\App\Nova\Menu::class),
                             MenuItem::resource(\App\Nova\Product::class),
                             MenuItem::resource(\App\Nova\Category::class),
                         ])->icon('collection')->collapsable(),
-                        MenuSection::make(__('nova.dashboard.restaurants'), [
-                            MenuItem::resource(\App\Nova\Restaurant::class),
-                            MenuItem::resource(\App\Nova\Schedule::class),
-                            MenuItem::resource(\App\Nova\RestaurantReview::class),
-                        ])->icon('library')->collapsable(),
+                        MenuSection::make(__('nova.dashboard.users'), [
+                            MenuItem::resource(\App\Nova\User::class),
+                        ])->icon('user')->collapsable(),
                     ];
                 }
             }
 
             if ($request->user() && $request->user()->isAdmin()) {
-                $sections[] = MediaTool::section($request);
+                $sections[] = MediaTool::section($request, __('nova.dashboard.media'));
                 // $sections[] = BackupTool::section($request);
             }
 
@@ -174,7 +176,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     {
         return [
             new Marketplace(),
-            new MediaTool(),
+            new MediaTool(__('nova.dashboard.media')),
             new BackupTool(),
             new LanguageSwitch(),
         ];

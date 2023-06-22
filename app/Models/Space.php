@@ -23,6 +23,7 @@ use Illuminate\Support\Collection;
 /**
  * Class Space.
  *
+ * @property string|null $slug
  * @property string $title
  * @property string|null $description
  * @property float $price
@@ -60,6 +61,7 @@ class Space extends BaseModel implements
      * @var string[]
      */
     protected $fillable = [
+        'slug',
         'title',
         'description',
         'number',

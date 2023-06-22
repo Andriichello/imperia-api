@@ -52,20 +52,17 @@ class User extends Resource
             ID::make(__('columns.id'), 'id')
                 ->sortable(),
 
-            Gravatar::make()
-                ->maxWidth(50),
-
-            Text::make('Name')
+            Text::make(__('columns.name'), 'name')
                 ->sortable()
                 ->rules('required', 'min:2', 'max:255'),
 
-            Text::make('Email')
+            Text::make(__('columns.email'), 'email')
                 ->sortable()
                 ->rules('required', 'email', 'max:254')
                 ->creationRules('unique:users,email')
                 ->updateRules('unique:users,email,{{resourceId}}'),
 
-            Password::make('Password')
+            Password::make(__('columns.password'), 'password]')
                 ->onlyOnForms()
                 ->creationRules('required', 'string', 'min:8')
                 ->updateRules('nullable', 'string', 'min:8')
@@ -73,9 +70,9 @@ class User extends Resource
                     $model->password = ($request[$requestAttribute]);
                 }),
 
-            MorphToMany::make('Roles'),
+            MorphToMany::make(__('columns.roles'), 'roles', Role::class),
 
-            DateTime::make('Email Verified At')
+            DateTime::make(__('columns.email_verified_at'), 'email_verified_at')
                 ->exceptOnForms(),
 
             DateTime::make(__('columns.created_at'), 'created_at')

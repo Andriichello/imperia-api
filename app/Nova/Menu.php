@@ -13,6 +13,7 @@ use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 /**
@@ -30,11 +31,20 @@ class Menu extends Resource
     public static string $model = \App\Models\Menu::class;
 
     /**
-     * The single value that should be used to represent the resource when being displayed.
+     * Get the value that should be displayed to represent the resource.
      *
-     * @var string
+     * @return string
      */
-    public static $title = 'title';
+    public function title(): string
+    {
+        $title = '';
+
+        if ($this->slug && !empty($this->slug)) {
+            $title = "$this->slug - ";
+        }
+
+        return $title . $this->title;
+    }
 
     /**
      * The columns that should be searched.
@@ -42,7 +52,7 @@ class Menu extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'title', 'description',
+        'id', 'slug', 'title', 'description',
     ];
 
     /**
@@ -76,6 +86,11 @@ class Menu extends Resource
             ID::make(__('columns.id'), 'id')
                 ->sortable(),
 
+            Text::make(__('columns.slug'), 'slug')
+                ->rules('required', 'min:1', 'max:50')
+                ->creationRules('unique:menus,slug')
+                ->updateRules('unique:menus,slug,{{resourceId}}'),
+
             Boolean::make(__('columns.active'))
                 ->resolveUsing(fn() => !$this->archived)
                 ->exceptOnForms(),
@@ -95,8 +110,8 @@ class Menu extends Resource
                 ->updateRules('sometimes', 'min:1', 'max:255')
                 ->creationRules('required', 'min:1', 'max:255'),
 
-            Text::make(__('columns.description'), 'description')
-                ->rules('nullable', 'min:1', 'max:255'),
+            Textarea::make(__('columns.description'), 'description')
+                ->rules('nullable', 'min:1'),
 
             HasMany::make(__('columns.products'), 'products', Product::class),
 
@@ -128,6 +143,10 @@ class Menu extends Resource
         return [
             'id' => [
                 'label' => __('columns.id'),
+                'checked' => true,
+            ],
+            'slug' => [
+                'label' => __('columns.slug'),
                 'checked' => true,
             ],
             'active' => [

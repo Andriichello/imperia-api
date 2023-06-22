@@ -3,6 +3,8 @@
 return [
     /* Dashboard */
     'dashboard' => [
+        'user' => 'Користувач',
+        'users' => 'Користувачі',
         'item' => 'Позиція',
         'items' => 'Позиції',
         'restaurant' => 'Заклад',
@@ -44,7 +46,7 @@ return [
             'Category' => 'Категорії',
             'Product' => 'Страви',
             'ProductVariant' => 'Варіанти Страв',
-            'Ticket' => 'Квитоки',
+            'Ticket' => 'Квитки',
             'Service' => 'Послуги',
             'Space' => 'Приміщення',
             'Banquet' => 'Банкети',

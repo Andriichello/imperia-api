@@ -17,8 +17,8 @@ class WeekdayOptions extends Options
     public static function all(): array
     {
         $options = [];
-        foreach (Weekday::getValues() as $state) {
-            $options[$state] = $state;
+        foreach (Weekday::getValues() as $option) {
+            $options[$option] = $option;
         }
         return $options;
     }

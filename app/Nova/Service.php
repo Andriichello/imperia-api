@@ -14,6 +14,7 @@ use Laravel\Nova\Fields\MorphMany;
 use Laravel\Nova\Fields\MorphToMany;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 /**
@@ -31,11 +32,20 @@ class Service extends Resource
     public static string $model = \App\Models\Service::class;
 
     /**
-     * The single value that should be used to represent the resource when being displayed.
+     * Get the value that should be displayed to represent the resource.
      *
-     * @var string
+     * @return string
      */
-    public static $title = 'title';
+    public function title(): string
+    {
+        $title = '';
+
+        if ($this->slug && !empty($this->slug)) {
+            $title = "$this->slug - ";
+        }
+
+        return $title . $this->title;
+    }
 
     /**
      * The columns that should be searched.
@@ -43,7 +53,7 @@ class Service extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'title', 'description',
+        'id', 'slug', 'title', 'description',
     ];
 
     /**
@@ -77,6 +87,11 @@ class Service extends Resource
             ID::make(__('columns.id'), 'id')
                 ->sortable(),
 
+            Text::make(__('columns.slug'), 'slug')
+                ->rules('required', 'min:1', 'max:50')
+                ->creationRules('unique:services,slug')
+                ->updateRules('unique:services,slug,{{resourceId}}'),
+
             Boolean::make('Active')
                 ->resolveUsing(fn() => !$this->archived)
                 ->exceptOnForms(),
@@ -96,8 +111,8 @@ class Service extends Resource
                 ->updateRules('sometimes', 'min:1', 'max:255')
                 ->creationRules('required', 'min:1', 'max:255'),
 
-            Text::make(__('columns.description'), 'description')
-                ->rules('nullable', 'min:1', 'max:255'),
+            Textarea::make(__('columns.description'), 'description')
+                ->rules('nullable', 'min:1'),
 
             Number::make('Once Paid Price')
                 ->step(0.01)
@@ -138,6 +153,10 @@ class Service extends Resource
         return [
             'id' => [
                 'label' => __('columns.id'),
+                'checked' => true,
+            ],
+            'slug' => [
+                'label' => __('columns.slug'),
                 'checked' => true,
             ],
             'active' => [

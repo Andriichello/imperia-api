@@ -3,6 +3,8 @@
 return [
     /* Dashboard */
     'dashboard' => [
+        'user' => 'User',
+        'users' => 'Users',
         'item' => 'Item',
         'items' => 'Items',
         'restaurant' => 'Restaurant',
