@@ -88,8 +88,8 @@ class Menu extends Resource
 
             Text::make(__('columns.slug'), 'slug')
                 ->rules('required', 'min:1', 'max:50')
-                ->creationRules('unique:menus,slug')
-                ->updateRules('unique:menus,slug,{{resourceId}}'),
+                ->creationRules('required', 'unique:menus,slug')
+                ->updateRules('required', 'unique:menus,slug,{{resourceId}}'),
 
             Boolean::make(__('columns.active'))
                 ->resolveUsing(fn() => !$this->archived)
@@ -99,7 +99,7 @@ class Menu extends Resource
                 ->onlyOnForms()
                 ->default(fn() => true),
 
-            MediaField::make(__('columns.media'), 'media'),
+//            MediaField::make(__('columns.media'), 'media'),
 
             Number::make(__('columns.popularity'), 'popularity')
                 ->step(1)
@@ -153,10 +153,10 @@ class Menu extends Resource
                 'label' => __('columns.active'),
                 'checked' => true,
             ],
-            'media' => [
-                'label' => __('columns.media'),
-                'checked' => true,
-            ],
+//            'media' => [
+//                'label' => __('columns.media'),
+//                'checked' => true,
+//            ],
             'popularity' => [
                 'label' => __('columns.popularity'),
                 'checked' => true,

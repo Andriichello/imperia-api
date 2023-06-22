@@ -93,8 +93,8 @@ class Product extends Resource
 
             Text::make(__('columns.slug'), 'slug')
                 ->rules('required', 'min:1', 'max:50')
-                ->creationRules('unique:products,slug')
-                ->updateRules('unique:products,slug,{{resourceId}}'),
+                ->creationRules('required', 'unique:products,slug')
+                ->updateRules('required', 'unique:products,slug,{{resourceId}}'),
 
             Boolean::make(__('columns.active'))
                 ->resolveUsing(fn() => !$this->archived)
@@ -104,7 +104,7 @@ class Product extends Resource
                 ->onlyOnForms()
                 ->default(fn() => false),
 
-            MediaField::make(__('columns.media'), 'media'),
+//            MediaField::make(__('columns.media'), 'media'),
 
             Number::make(__('columns.popularity'), 'popularity')
                 ->step(1)
@@ -179,10 +179,10 @@ class Product extends Resource
                 'label' => __('columns.active'),
                 'checked' => true
             ],
-            'media' => [
-                'label' => __('columns.media'),
-                'checked' => true
-            ],
+//            'media' => [
+//                'label' => __('columns.media'),
+//                'checked' => true
+//            ],
             'popularity' => [
                 'label' => __('columns.popularity'),
                 'checked' => true

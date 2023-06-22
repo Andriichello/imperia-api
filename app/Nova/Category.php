@@ -68,10 +68,10 @@ class Category extends Resource
 
             Text::make(__('columns.slug'), 'slug')
                 ->rules('required', 'min:1', 'max:50')
-                ->creationRules('unique:categories,slug')
-                ->updateRules('unique:categories,slug,{{resourceId}}'),
+                ->creationRules('required', 'unique:categories,slug')
+                ->updateRules('required', 'unique:categories,slug,{{resourceId}}'),
 
-            MediaField::make(__('columns.media'), 'media'),
+//            MediaField::make(__('columns.media'), 'media'),
 
             Number::make(__('columns.popularity'), 'popularity')
                 ->step(1)
@@ -141,10 +141,10 @@ class Category extends Resource
                 'label' => __('columns.slug'),
                 'checked' => true,
             ],
-            'media' => [
-                'label' => __('columns.media'),
-                'checked' => true,
-            ],
+//            'media' => [
+//                'label' => __('columns.media'),
+//                'checked' => true,
+//            ],
             'popularity' => [
                 'label' => __('columns.popularity'),
                 'checked' => true,
