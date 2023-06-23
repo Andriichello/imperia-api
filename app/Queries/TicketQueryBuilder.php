@@ -25,9 +25,11 @@ class TicketQueryBuilder extends BaseQueryBuilder implements
      */
     public function withRestaurant(Restaurant|int ...$restaurants): static
     {
-        $this->join('restaurant_ticket as rt', 'rt.ticket_id', '=', 'tickets.id')
-            ->whereIn('rt.restaurant_id', $this->extract('id', ...$restaurants))
-            ->select('tickets.*');
+        $ids = $this->extract('id', ...$restaurants);
+
+        if (!empty($ids)) {
+            $this->whereIn('restaurant_id', $ids);
+        }
 
         return $this;
     }

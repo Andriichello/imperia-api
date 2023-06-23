@@ -20,8 +20,8 @@ class RestaurantReviewQueryBuilder extends BaseQueryBuilder
     {
         $query = parent::index($user);
 
-        if (!empty($user->restaurants)) {
-            $query->whereIn('id', $user->restaurants);
+        if ($user->restaurant_id) {
+            $query->where('restaurant_id', $user->restaurant_id);
         }
 
         return $query;

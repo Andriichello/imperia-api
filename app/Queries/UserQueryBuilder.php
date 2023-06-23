@@ -21,6 +21,10 @@ class UserQueryBuilder extends BaseQueryBuilder
      */
     public function index(User $user): static
     {
+        if ($user->restaurant_id) {
+            $this->withRestaurant($user->restaurant_id);
+        }
+
         if ($user->isAdmin()) {
             return $this;
         }
@@ -68,6 +72,24 @@ class UserQueryBuilder extends BaseQueryBuilder
             $this->whereDoesntHave('roles', function (Builder $builder) use ($roles) {
                 $builder->whereIn('roles.name', $roles);
             });
+        }
+
+        return $this;
+    }
+
+    /**
+     * Only users related to given restaurants.
+     *
+     * @param mixed ...$restaurants
+     *
+     * @return static
+     */
+    public function withRestaurant(mixed ...$restaurants): static
+    {
+        $ids = $this->extract('id', ...$restaurants);
+
+        if (!empty($ids)) {
+            $this->whereIn('restaurant_id', $ids);
         }
 
         return $this;

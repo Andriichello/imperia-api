@@ -2,7 +2,6 @@
 
 namespace App\Queries;
 
-use App\Enums\NotificationChannel;
 use App\Models\User;
 
 /**
@@ -21,8 +20,8 @@ class RestaurantQueryBuilder extends BaseQueryBuilder
     {
         $query = parent::index($user);
 
-        if (!empty($user->restaurants)) {
-            $query->whereIn('id', $user->restaurants);
+        if ($user->restaurant_id) {
+            $query->where('id', $user->restaurant_id);
         }
 
         return $query;

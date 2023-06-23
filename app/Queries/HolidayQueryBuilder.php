@@ -3,7 +3,6 @@
 namespace App\Queries;
 
 use Carbon\CarbonInterface;
-use Illuminate\Database\Query\Builder;
 
 /**
  * Class HolidayQueryBuilder.
@@ -75,14 +74,11 @@ class HolidayQueryBuilder extends BaseQueryBuilder
      */
     public function withRestaurant(mixed ...$restaurants): static
     {
-        $this->whereNested(function (Builder $query) use ($restaurants) {
-            $ids = $this->extract('id', ...$restaurants);
+        $ids = $this->extract('id', ...$restaurants);
 
-            $query->whereIn('restaurant_id', $ids);
-            if (in_array(null, $ids)) {
-                $query->orWhereNull('restaurant_id');
-            }
-        });
+        if (!empty($ids)) {
+            $this->whereIn('restaurant_id', $ids);
+        }
 
         return $this;
     }

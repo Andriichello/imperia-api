@@ -31,8 +31,8 @@ class ProductQueryBuilder extends BaseQueryBuilder implements
     {
         $query = parent::index($user);
 
-        if (!empty($user->restaurants)) {
-            $query->withRestaurant(...$user->restaurants);
+        if ($user->restaurant_id) {
+            $query->withRestaurant($user->restaurant_id);
         }
 
         return $query;
@@ -59,9 +59,11 @@ class ProductQueryBuilder extends BaseQueryBuilder implements
      */
     public function withRestaurant(Restaurant|int ...$restaurants): static
     {
-        $this->join('restaurant_product as rp', 'rp.product_id', '=', 'products.id')
-            ->whereIn('rp.restaurant_id', $this->extract('id', ...$restaurants))
-            ->select('products.*');
+        $ids = $this->extract('id', ...$restaurants);
+
+        if (!empty($ids)) {
+            $this->whereIn('restaurant_id', $ids);
+        }
 
         return $this;
     }

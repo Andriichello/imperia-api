@@ -4,12 +4,15 @@ namespace App\Queries;
 
 use App\Models\Restaurant;
 use App\Models\User;
+use App\Queries\Traits\Archivable;
 
 /**
  * Class CategoryQueryBuilder.
  */
 class CategoryQueryBuilder extends BaseQueryBuilder
 {
+    use Archivable;
+
     /**
      * Apply index query conditions.
      *
@@ -21,8 +24,8 @@ class CategoryQueryBuilder extends BaseQueryBuilder
     {
         $query = parent::index($user);
 
-        if (!empty($user->restaurants)) {
-            $query->withRestaurant(...$user->restaurants);
+        if ($user->restaurant_id) {
+            $query->withRestaurant($user->restaurant_id);
         }
 
         return $query;
@@ -49,9 +52,11 @@ class CategoryQueryBuilder extends BaseQueryBuilder
      */
     public function withRestaurant(Restaurant|int ...$restaurants): static
     {
-        $this->join('restaurant_category as rc', 'rc.category_id', '=', 'categories.id')
-            ->whereIn('rc.restaurant_id', $this->extract('id', ...$restaurants))
-            ->select('categories.*');
+        $ids = $this->extract('id', ...$restaurants);
+
+        if (!empty($ids)) {
+            $this->whereIn('restaurant_id', $ids);
+        }
 
         return $this;
     }
