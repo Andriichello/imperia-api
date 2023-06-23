@@ -47,7 +47,7 @@ class IndexProductRequest extends IndexRequest
                 AllowedFilter::custom('categories', new CategoriesFilter()),
                 AllowedFilter::custom(
                     'restaurants',
-                    new RestaurantsFilter('restaurant_product', 'product_id')
+                    new RestaurantsFilter()
                 ),
             ]
         );

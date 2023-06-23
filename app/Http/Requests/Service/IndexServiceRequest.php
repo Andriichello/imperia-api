@@ -46,7 +46,7 @@ class IndexServiceRequest extends IndexRequest
                 AllowedFilter::custom('categories', new CategoriesFilter()),
                 AllowedFilter::custom(
                     'restaurants',
-                    new RestaurantsFilter('restaurant_service', 'service_id')
+                    new RestaurantsFilter()
                 ),
             ]
         );

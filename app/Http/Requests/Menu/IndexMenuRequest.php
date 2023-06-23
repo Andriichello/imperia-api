@@ -42,7 +42,7 @@ class IndexMenuRequest extends IndexRequest
             [
                 AllowedFilter::custom(
                     'restaurants',
-                    new RestaurantsFilter('restaurant_menu', 'menu_id')
+                    new RestaurantsFilter()
                 ),
             ]
         );

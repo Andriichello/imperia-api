@@ -45,7 +45,7 @@ class IndexTicketRequest extends IndexRequest
                 AllowedFilter::custom('categories', new CategoriesFilter()),
                 AllowedFilter::custom(
                     'restaurants',
-                    new RestaurantsFilter('restaurant_ticket', 'ticket_id')
+                    new RestaurantsFilter()
                 ),
             ]
         );

@@ -33,7 +33,7 @@ class IndexCategoryRequest extends IndexRequest
                 AllowedFilter::exact('target'),
                 AllowedFilter::custom(
                     'restaurants',
-                    new RestaurantsFilter('restaurant_category', 'category_id')
+                    new RestaurantsFilter()
                 ),
             ]
         );

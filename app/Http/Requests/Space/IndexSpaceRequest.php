@@ -45,7 +45,7 @@ class IndexSpaceRequest extends IndexRequest
                 AllowedFilter::custom('categories', new CategoriesFilter()),
                 AllowedFilter::custom(
                     'restaurants',
-                    new RestaurantsFilter('restaurant_space', 'space_id')
+                    new RestaurantsFilter()
                 ),
             ]
         );
