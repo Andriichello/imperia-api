@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Holiday;
+use App\Models\Restaurant;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
@@ -48,6 +49,25 @@ class HolidayFactory extends Factory
         return $this->state(
             function (array $attributes) use ($date) {
                 $attributes['date'] = $date;
+                return $attributes;
+            }
+        );
+    }
+
+    /**
+     * Indicate holiday's restaurant.
+     *
+     * @param Restaurant|int|null $restaurant
+     *
+     * @return static
+     */
+    public function withRestaurant(Restaurant|int|null $restaurant): static
+    {
+        return $this->state(
+            function (array $attributes) use ($restaurant) {
+                $attributes['restaurant_id'] = is_int($restaurant)
+                    ? $restaurant : $restaurant?->id;
+
                 return $attributes;
             }
         );

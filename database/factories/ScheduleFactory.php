@@ -58,17 +58,19 @@ class ScheduleFactory extends Factory
     }
 
     /**
-     * Indicate restaurant.
+     * Indicate schedule's restaurant.
      *
-     * @param Restaurant|null $restaurant
+     * @param Restaurant|int|null $restaurant
      *
      * @return static
      */
-    public function withRestaurant(?Restaurant $restaurant): static
+    public function withRestaurant(Restaurant|int|null $restaurant): static
     {
         return $this->state(
             function (array $attributes) use ($restaurant) {
-                $attributes['restaurant_id'] = $restaurant?->id;
+                $attributes['restaurant_id'] = is_int($restaurant)
+                    ? $restaurant : $restaurant?->id;
+
                 return $attributes;
             }
         );
