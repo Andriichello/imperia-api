@@ -199,9 +199,9 @@ class Restaurant extends BaseModel implements
     /**
      * Holidays that are relevant for the restaurant (for one year).
      *
-     * @return BelongsToMany
+     * @return HasMany
      */
-    public function relevantHolidays(): BelongsToMany
+    public function relevantHolidays(): HasMany
     {
         return $this->holidays()
             ->where('date', '>=', now()->setTime(0, 0));

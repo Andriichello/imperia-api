@@ -46,10 +46,9 @@ class RestaurantTest extends TestCase
 
         foreach ($dates as $date) {
             $holiday = Holiday::factory()
+                ->withRestaurant($this->restaurant)
                 ->withDate($date)
                 ->create();
-
-            $this->restaurant->holidays()->attach($holiday->id);
         }
     }
 

@@ -54,15 +54,18 @@ class UserQueryBuilderTest extends TestCase
 
         $this->admins = User::factory()
             ->withRole(UserRole::Admin())
-            ->count(3)->create();
+            ->count(3)
+            ->create();
 
         $this->managers = User::factory()
             ->withRole(UserRole::Manager())
-            ->count(3)->create();
+            ->count(3)
+            ->create();
 
         $this->customers = User::factory()
             ->withRole(UserRole::Customer())
-            ->count(3)->create();
+            ->count(3)
+            ->create();
     }
 
     public function testOnlyRoles()

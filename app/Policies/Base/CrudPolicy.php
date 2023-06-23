@@ -67,7 +67,7 @@ abstract class CrudPolicy implements CrudPolicyInterface
         }
 
         $before = $this->before($request->user(), $ability);
-        if ($before !== null) {
+        if ($before !== null && $before !== true) {
             return $before;
         }
 

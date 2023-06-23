@@ -10,6 +10,7 @@ namespace App\Enums;
  * @method static WeightUnit Milliliter()
  * @method static WeightUnit Liter()
  * @method static WeightUnit Centimeter()
+ * @method static WeightUnit Piece()
  *
  * @SuppressWarnings(PHPMD)
  */
@@ -20,4 +21,5 @@ class WeightUnit extends Enum
     public const Milliliter = 'ml';
     public const Liter = 'l';
     public const Centimeter = 'cm';
+    public const Piece = 'pc';
 }

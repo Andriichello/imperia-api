@@ -52,24 +52,24 @@ class RestaurantControllerTest extends RegisteringTestCase
     public function seedHolidays()
     {
         $holiday = Holiday::factory()
+            ->withRestaurant($this->restaurant)
             ->withDate(now()->subWeek())
             ->create();
-        $this->restaurant->holidays()->attach($holiday->id);
 
         $holiday = Holiday::factory()
+            ->withRestaurant($this->restaurant)
             ->withDate(now())
             ->create();
-        $this->restaurant->holidays()->attach($holiday->id);
 
         $holiday = Holiday::factory()
+            ->withRestaurant($this->restaurant)
             ->withDate(now()->addWeek())
             ->create();
-        $this->restaurant->holidays()->attach($holiday->id);
 
         $holiday = Holiday::factory()
+            ->withRestaurant($this->restaurant)
             ->withDate(now()->addYear())
             ->create();
-        $this->restaurant->holidays()->attach($holiday->id);
     }
 
     /**

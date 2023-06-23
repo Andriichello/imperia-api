@@ -84,7 +84,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
 
             if ($user instanceof User) {
                 if ($user->isPreviewOnly()) {
-                    $sections = [
+                    return $sections = [
                         MenuSection::make(__('nova.dashboard.restaurants'), [
                             MenuItem::resource(\App\Nova\Restaurant::class),
                             MenuItem::resource(\App\Nova\RestaurantReview::class),

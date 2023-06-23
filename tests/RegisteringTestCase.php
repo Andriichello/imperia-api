@@ -50,6 +50,7 @@ abstract class RegisteringTestCase extends TestCase
         'surname' => 'Testers',
         'email' => 'test@email.com',
         'password' => 'pa$$w0rd',
+        'metadata' => '{"isPreviewOnly": false}',
     ];
 
     /**
@@ -66,6 +67,7 @@ abstract class RegisteringTestCase extends TestCase
             'surname' => 'Testers',
             'email' => 'test@email.com',
             'password' => 'pa$$w0rd',
+            'metadata' => '{"isPreviewOnly": false}',
         ];
 
         $this->userRepository = new UserRepository();
