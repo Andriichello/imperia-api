@@ -17,10 +17,10 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->string('slug')->unique();
             $table->string('target')->nullable();
             $table->string('title');
             $table->string('description')->nullable();
+            $table->boolean('archived')->default(false);
             $table->integer('popularity')->nullable();
             $table->text('metadata')->nullable();
             $table->timestamps();

@@ -13,6 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
+        Schema::table('categories', function (Blueprint $table) {
+            $table->string('slug')->unique()
+                ->nullable()
+                ->after('id');
+        });
+
         Schema::table('menus', function (Blueprint $table) {
             $table->string('slug')->unique()
                 ->nullable()
