@@ -8,39 +8,13 @@ use Spatie\QueryBuilder\Filters\Filter;
 /**
  * Class RestaurantsFilter.
  *
- * Filters items to those that have one of restaurant attached.
+ * Filters items to those that have one of restaurants attached.
  *
  * @package App\Http\Filters
  */
 class RestaurantsFilter implements Filter
 {
     use BaseFilterTrait;
-
-    /**
-     * Name of the pivot table.
-     *
-     * @var string
-     */
-    protected string $pivot;
-
-    /**
-     * Name of the foreign key.
-     *
-     * @var string
-     */
-    protected string $foreignKey;
-
-    /**
-     * RestaurantsFilter constructor.
-     *
-     * @param string $pivot
-     * @param string $foreignKey
-     */
-    public function __construct(string $pivot, string $foreignKey)
-    {
-        $this->pivot = $pivot;
-        $this->foreignKey = $foreignKey;
-    }
 
     /**
      * @param ElBuilder $query
@@ -54,10 +28,6 @@ class RestaurantsFilter implements Filter
     {
         $table = $query->getModel()->getTable();
 
-        $first = "{$this->pivot}.{$this->foreignKey}";
-        $second = "{$table}.id";
-
-        $query->join($this->pivot, $first, '=', $second)
-            ->whereIn("{$this->pivot}.restaurant_id", $this->extract($value));
+        $query->whereIn("$table.restaurant_id", $this->extract($value));
     }
 }
