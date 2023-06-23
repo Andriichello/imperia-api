@@ -1,4 +1,4 @@
-FROM ubuntu:jammy
+FROM ubuntu:focal
 
 ARG ENV
 ARG AWS_ACCESS_KEY_ID
