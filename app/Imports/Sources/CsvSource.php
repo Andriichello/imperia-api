@@ -4,6 +4,7 @@ namespace App\Imports\Sources;
 
 use App\Imports\Interfaces\SourceInterface;
 use Exception;
+use TypeError;
 
 /**
  * Class CsvSource.
@@ -101,8 +102,12 @@ class CsvSource implements SourceInterface
      */
     public function close(): static
     {
-        if ($this->handle) {
-            fclose($this->handle);
+        try {
+            if ($this->handle) {
+                fclose($this->handle);
+            }
+        } catch (TypeError) {
+            //
         }
 
         return $this;
