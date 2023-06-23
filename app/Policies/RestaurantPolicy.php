@@ -37,6 +37,28 @@ class RestaurantPolicy extends CrudPolicy
             return true;
         }
 
+        if (!$user || in_array($ability, ['create', 'delete', 'forceDelete', 'restore'])) {
+            return false;
+        }
+
         return $user->isAdmin();
+    }
+
+    /**
+     * Determine whether the user can update the model.
+     *
+     * @param User|null $user
+     * @param Restaurant $restaurant
+     *
+     * @return bool
+     */
+    public function update(?User $user, Restaurant $restaurant): bool
+    {
+        if (!$user) {
+            return false;
+        }
+
+        return empty($user->restaurants) ||
+            in_array($restaurant->id, $user->restaurants);
     }
 }

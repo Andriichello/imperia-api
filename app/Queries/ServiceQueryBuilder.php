@@ -25,8 +25,8 @@ class ServiceQueryBuilder extends BaseQueryBuilder implements
      */
     public function withRestaurant(Restaurant|int ...$restaurants): static
     {
-        $this->join('restaurant_service.service_id', '=', 'services.id')
-            ->whereIn('restaurant_service.restaurant_id', $this->extract('id', $restaurants))
+        $this->join('restaurant_service as rs', 'rs.service_id', '=', 'services.id')
+            ->whereIn('rs.restaurant_id', $this->extract('id', ...$restaurants))
             ->select('services.*');
 
         return $this;

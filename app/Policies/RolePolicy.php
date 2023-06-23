@@ -36,7 +36,7 @@ class RolePolicy extends CrudPolicy
     public function before(?User $user, string $ability): Response|bool|null
     {
         if (in_array($ability, ['view', 'viewAny'])) {
-            return $user->isAdmin();
+            return !$user->isPreviewOnly() && $user->isAdmin();
         }
 
         return false;

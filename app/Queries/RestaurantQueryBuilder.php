@@ -11,6 +11,24 @@ use App\Models\User;
 class RestaurantQueryBuilder extends BaseQueryBuilder
 {
     /**
+     * Apply index query conditions.
+     *
+     * @param User $user
+     *
+     * @return static
+     */
+    public function index(User $user): static
+    {
+        $query = parent::index($user);
+
+        if (!empty($user->restaurants)) {
+            $query->whereIn('id', $user->restaurants);
+        }
+
+        return $query;
+    }
+
+    /**
      * Only restaurants with given slugs.
      *
      * @param string ...$slugs

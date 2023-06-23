@@ -70,6 +70,8 @@ class Product extends Resource
      */
     public static function indexQuery(NovaRequest $request, $query): Builder
     {
+        parent::indexQuery($request, $query);
+
         /** @var User $user */
         $user = $request->user();
         if ($user->isAdmin()) {

@@ -3,8 +3,12 @@
 namespace App\Nova;
 
 use Andriichello\Media\MediaField;
+use App\Policies\RestaurantPolicy;
+use App\Queries\Interfaces\IndexableInterface;
 use DateTimeZone;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\HasManyThrough;
@@ -12,6 +16,7 @@ use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Timezone;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
 /**
  * Class Restaurant.

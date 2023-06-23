@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\UserRole;
 use App\Models\Interfaces\SoftDeletableInterface;
+use App\Models\Traits\JsonFieldTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use App\Queries\UserQueryBuilder;
 use App\Traits\StaticMethodsAccess;
@@ -36,6 +37,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  *
+ * @property array<int> $restaurants
+ *
  * @property Customer|null $customer
  * @property Banquet[]|Collection $banquets
  * @property Notification[]|Collection $inbounds
@@ -52,6 +55,7 @@ class User extends Authenticatable implements SoftDeletableInterface
     use Notifiable;
     use HasFactory;
     use HasRoles;
+    use JsonFieldTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -175,6 +179,27 @@ class User extends Authenticatable implements SoftDeletableInterface
     public function getCustomerIdAttribute(): ?int
     {
         return $this->customer()->pluck('id')->first();
+    }
+
+    /**
+     * If true then user should only be granted preview rights.
+     *
+     * @return bool
+     */
+    public function isPreviewOnly(): bool
+    {
+        return (bool) $this->getFromJson('metadata', 'isPreviewOnly', true);
+    }
+
+    /**
+     * Get array of ids for restaurants, which current access
+     * (applies only to staff members and admins).
+     *
+     * @return array<int>
+     */
+    public function getRestaurantsAttribute(): array
+    {
+        return $this->getFromJson('metadata', 'restaurants', []);
     }
 
     /**

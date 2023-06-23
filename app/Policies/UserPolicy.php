@@ -6,6 +6,7 @@ use App\Enums\UserRole;
 use App\Models\User;
 use App\Policies\Base\CrudPolicy;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Response;
 use Spatie\Permission\Models\Role;
 
 /**
@@ -24,6 +25,27 @@ class UserPolicy extends CrudPolicy
     }
 
     /**
+     * Perform pre-authorization checks.
+     *
+     * @param User|null $user
+     * @param string $ability
+     *
+     * @return Response|bool|null
+     */
+    public function before(?User $user, string $ability): Response|bool|null
+    {
+        if (!$user) {
+            return false;
+        }
+
+        if ($user->isPreviewOnly() && !in_array($ability, ['view', 'viewAny'])) {
+            return false;
+        }
+
+        return $user->isAdmin();
+    }
+
+    /**
      * Determine whether the user can view any models.
      *
      * @param User $user
@@ -33,7 +55,7 @@ class UserPolicy extends CrudPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->isAdmin();
     }
 
     /**

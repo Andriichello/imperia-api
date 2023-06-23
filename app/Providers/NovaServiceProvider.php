@@ -83,10 +83,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             $user = $request->user();
 
             if ($user instanceof User) {
-                $metadata = json_decode($user->metadata, true);
-                $isPreviewOnly = data_get($metadata, 'isPreviewOnly', true);
-
-                if ($isPreviewOnly) {
+                if ($user->isPreviewOnly()) {
                     $sections = [
                         MenuSection::make(__('nova.dashboard.restaurants'), [
                             MenuItem::resource(\App\Nova\Restaurant::class),
@@ -95,6 +92,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                         MenuSection::make(__('nova.dashboard.items'), [
                             MenuItem::resource(\App\Nova\Menu::class),
                             MenuItem::resource(\App\Nova\Product::class),
+                            MenuItem::resource(\App\Nova\ProductVariant::class),
                             MenuItem::resource(\App\Nova\Category::class),
                         ])->icon('collection')->collapsable(),
                         MenuSection::make(__('nova.dashboard.users'), [

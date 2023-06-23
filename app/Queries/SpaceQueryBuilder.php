@@ -25,8 +25,8 @@ class SpaceQueryBuilder extends BaseQueryBuilder implements
      */
     public function withRestaurant(Restaurant|int ...$restaurants): static
     {
-        $this->join('restaurant_space.space_id', '=', 'spaces.id')
-            ->whereIn('restaurant_space.restaurant_id', $this->extract('id', $restaurants))
+        $this->join('restaurant_space as rs', 'rs.space_id', '=', 'spaces.id')
+            ->whereIn('rs.restaurant_id', $this->extract('id', ...$restaurants))
             ->select('spaces.*');
 
         return $this;

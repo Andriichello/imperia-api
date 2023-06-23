@@ -4,6 +4,7 @@ namespace App\Queries;
 
 use App\Models\Menu;
 use App\Models\Restaurant;
+use App\Models\User;
 use App\Queries\Interfaces\ArchivableInterface;
 use App\Queries\Interfaces\CategorizableInterface;
 use App\Queries\Traits\Archivable;
@@ -20,14 +21,32 @@ class ProductQueryBuilder extends BaseQueryBuilder implements
     use Categorizable;
 
     /**
+     * Apply index query conditions.
+     *
+     * @param User $user
+     *
+     * @return static
+     */
+    public function index(User $user): static
+    {
+        $query = parent::index($user);
+
+        if (!empty($user->restaurants)) {
+            $query->withRestaurant(...$user->restaurants);
+        }
+
+        return $query;
+    }
+
+    /**
      * @param Menu|int ...$menus
      *
      * @return static
      */
     public function withMenu(Menu|int ...$menus): static
     {
-        $this->join('menu_product.product_id', '=', 'products.id')
-            ->whereIn('menu_product.menu_id', $this->extract('id', $menus))
+        $this->join('menu_product as mp', 'mp.product_id', '=', 'products.id')
+            ->whereIn('mp.menu_id', $this->extract('id', ...$menus))
             ->select('products.*');
 
         return $this;
@@ -40,8 +59,8 @@ class ProductQueryBuilder extends BaseQueryBuilder implements
      */
     public function withRestaurant(Restaurant|int ...$restaurants): static
     {
-        $this->join('restaurant_product.product_id', '=', 'products.id')
-            ->whereIn('restaurant_product.restaurant_id', $this->extract('id', $restaurants))
+        $this->join('restaurant_product as rp', 'rp.product_id', '=', 'products.id')
+            ->whereIn('rp.restaurant_id', $this->extract('id', ...$restaurants))
             ->select('products.*');
 
         return $this;

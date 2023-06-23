@@ -30,7 +30,7 @@ class ScheduleQueryBuilder extends BaseQueryBuilder
      */
     public function withRestaurant(mixed ...$restaurants): static
     {
-        $this->whereIn('restaurant_id', $this->extract('id', $restaurants));
+        $this->whereIn('restaurant_id', $this->extract('id', ...$restaurants));
 
         return $this;
     }

@@ -19,7 +19,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 
 /**
  * Class Menu.
@@ -140,11 +139,11 @@ class Menu extends BaseModel implements
             ->where('menu_product.menu_id', $this->id)
             ->orderByDesc('popularity');
 
-//        if (request('filter.restaurants')) {
-//            $filter = new RestaurantsFilter('restaurant_category', 'category_id');
-//            // @phpstan-ignore-next-line
-//            $filter($query, request('filter.restaurants'), 'filter.restaurants');
-//        }
+        if (request('filter.restaurants')) {
+            $filter = new RestaurantsFilter('restaurant_category', 'category_id');
+            // @phpstan-ignore-next-line
+            $filter($query, request('filter.restaurants'), 'filter.restaurants');
+        }
 
         return $query->select('categories.*')
             ->distinct();

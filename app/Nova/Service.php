@@ -66,7 +66,9 @@ class Service extends Resource
      */
     public static function indexQuery(NovaRequest $request, $query): Builder
     {
-        /** @var User $user */
+        parent::indexQuery($request, $query);
+
+       /** @var User $user */
         $user = $request->user();
         if ($user->isAdmin()) {
             $query->withoutGlobalScope(ArchivedScope::class);

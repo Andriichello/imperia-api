@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Category;
 
-use App\Http\Filters\MockFilter;
 use App\Http\Filters\RestaurantsFilter;
 use App\Http\Requests\Crud\IndexRequest;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
@@ -34,8 +33,7 @@ class IndexCategoryRequest extends IndexRequest
                 AllowedFilter::exact('target'),
                 AllowedFilter::custom(
                     'restaurants',
-                    new MockFilter()
-                    // new RestaurantsFilter('restaurant_category', 'category_id')
+                    new RestaurantsFilter('restaurant_category', 'category_id')
                 ),
             ]
         );
