@@ -63,6 +63,8 @@ return [
     'banquets' => 'Banquets',
     'holiday' => 'Holiday',
     'holidays' => 'Holidays',
+    'role' => 'Role',
+    'roles' => 'Roles',
     /* ColumnsCard component */
     'apply' => 'Apply',
     'columns' => 'Columns',

@@ -34,6 +34,10 @@ class FamilyMemberPolicy extends CrudPolicy
      */
     public function before(?User $user, string $ability): Response|bool|null
     {
+        if (in_array($ability, ['view', 'viewAny'])) {
+            return $user->isStaff() ?: null;
+        }
+
         return $user->isStaff();
     }
 

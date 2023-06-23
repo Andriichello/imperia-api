@@ -193,7 +193,7 @@ class User extends Authenticatable implements SoftDeletableInterface
      */
     public function getCustomerIdAttribute(): ?int
     {
-        return $this->customer()->pluck('id')->first();
+        return $this->customer?->id;
     }
 
     /**

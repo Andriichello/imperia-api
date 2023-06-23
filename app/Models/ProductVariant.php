@@ -13,6 +13,7 @@ use Illuminate\Database\Query\Builder as DatabaseBuilder;
  * Class ProductVariant.
  *
  * @property int $product_id
+ * @property int|null $restaurant_id
  * @property float $price
  * @property float $weight
  * @property string|null $weight_unit
@@ -67,6 +68,16 @@ class ProductVariant extends BaseModel
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    /**
+     * Accessor for the related customer id.
+     *
+     * @return int|null
+     */
+    public function getRestaurantIdAttribute(): ?int
+    {
+        return $this->product?->restaurant_id;
     }
 
     /**

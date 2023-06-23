@@ -8,6 +8,7 @@ use App\Policies\Base\CrudPolicy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
 use Spatie\Permission\Models\Role;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class UserPolicy.
@@ -38,11 +39,24 @@ class UserPolicy extends CrudPolicy
             return false;
         }
 
-        if ($user->isPreviewOnly() && !in_array($ability, ['view', 'viewAny', 'update'])) {
+        if (!$user->isStaff() && !in_array($ability, ['view', 'viewAny'])) {
             return false;
         }
 
-        return $user->isAdmin();
+        return null;
+    }
+
+    /**
+     * Determine whether the user can view Laravel Nova.
+     *
+     * @param User $user
+     *
+     * @return bool
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function viewNova(User $user): bool
+    {
+        return $user->isStaff();
     }
 
     /**
@@ -103,7 +117,7 @@ class UserPolicy extends CrudPolicy
             return false;
         }
 
-        return $this->checkRestaurant($user, $model) && $user->isAdmin();
+        return $this->restaurantCheck($user, $model) && $user->isAdmin();
     }
 
     /**
@@ -124,7 +138,7 @@ class UserPolicy extends CrudPolicy
             return false;
         }
 
-        return $this->checkRestaurant($user, $model) && $user->isAdmin();
+        return $this->restaurantCheck($user, $model) && $user->isAdmin();
     }
 
     /**

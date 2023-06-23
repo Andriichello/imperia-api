@@ -67,7 +67,7 @@ abstract class CrudPolicy implements CrudPolicyInterface
         }
 
         $before = $this->before($request->user(), $ability);
-        if ($before !== null && $before !== true) {
+        if ($before !== null) {
             return $before;
         }
 
@@ -113,24 +113,31 @@ abstract class CrudPolicy implements CrudPolicyInterface
     }
 
     /**
-     * Determines if user us higher than the target one.
+     * Determines if user has the rights to interact with
+     * target model in context of the user's restaurant.
      *
      * @param User $user
-     * @param User $target
+     * @param Model $target
      *
      * @return bool
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function checkRestaurant(User $user, User $target): bool
+    public function restaurantCheck(User $user, Model $target): bool
     {
-        if (!$target->restaurant_id) {
-            return false;
-        }
-
-        if (!$user->restaurant_id) {
+        if ($user->isAdmin() && !$user->restaurant_id) {
             return true;
         }
 
-        return $user->restaurant_id === $target->restaurant_id;
+        $attributes = $target->only('restaurant_id');
+
+        if (empty($attributes)) {
+            return true;
+        }
+
+        if (!$attributes['restaurant_id']) {
+            return false;
+        }
+
+        return $user->restaurant_id === $attributes['restaurant_id'];
     }
 }

@@ -71,7 +71,8 @@ class User extends Resource
                     $model->password = ($request[$requestAttribute]);
                 }),
 
-            BelongsTo::make(__('columns.restaurant'), 'restaurant', Restaurant::class),
+            BelongsTo::make(__('columns.restaurant'), 'restaurant', Restaurant::class)
+                ->default(fn() => $request->user()->restaurant_id),
 
             MorphToMany::make(__('columns.roles'), 'roles', Role::class),
 

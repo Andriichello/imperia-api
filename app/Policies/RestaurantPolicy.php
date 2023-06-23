@@ -37,11 +37,21 @@ class RestaurantPolicy extends CrudPolicy
             return true;
         }
 
-        if (!$user || in_array($ability, ['create', 'delete', 'forceDelete', 'restore'])) {
+        if (!$user) {
             return false;
         }
 
-        return $user->isAdmin();
+        if ($user->isAdmin()) {
+            if (!$user->restaurant_id) {
+                return true;
+            }
+
+            if ($ability === 'update') {
+                return null;
+            }
+        }
+
+        return false;
     }
 
     /**

@@ -66,6 +66,8 @@ return [
     'banquets' => 'Банкети',
     'holiday' => 'Вихідний',
     'holidays' => 'Вихідні',
+    'role' => 'Роль',
+    'roles' => 'Ролі',
     /* ColumnsCard component */
     'apply' => 'Застосувати',
     'columns' => 'Стовпці',

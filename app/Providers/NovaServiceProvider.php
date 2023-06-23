@@ -18,6 +18,7 @@ use Laravel\Nova\Menu\MenuItem;
 use Laravel\Nova\Menu\MenuSection;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class NovaServiceProvider.
@@ -127,16 +128,18 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     }
 
     /**
-     * Register the Nova gate.
-     *
-     * This gate determines who can access Nova in non-local environments.
+     * Configure the Nova authorization services.
      *
      * @return void
      */
-    protected function gate()
+    protected function authorization(): void
     {
-        Gate::define('viewNova', function (User $user) {
-            return $user->isStaff();
+        Nova::auth(function ($request) {
+            /** @var User $user */
+            $user = Nova::user($request);
+
+            return $user->isStaff() &&
+                Gate::check('viewNova', $user);
         });
     }
 

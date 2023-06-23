@@ -6,7 +6,6 @@ use App\Models\Product;
 use App\Models\Restaurant;
 use App\Models\User;
 use App\Queries\Traits\Archivable;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class MenuQueryBuilder.
@@ -27,7 +26,6 @@ class MenuQueryBuilder extends BaseQueryBuilder
         $query = parent::index($user);
 
         if ($user->restaurant_id) {
-            (new ConsoleOutput())->writeln('restaurant_id: ' . $user->restaurant_id);
             $query->withRestaurant($user->restaurant_id);
         }
 
@@ -58,7 +56,7 @@ class MenuQueryBuilder extends BaseQueryBuilder
         $ids = $this->extract('id', ...$restaurants);
 
         if (!empty($ids)) {
-            $this->whereIn('restaurant_id', $ids);
+            $this->whereIn($this->model->getTable() . '.restaurant_id', $ids);
         }
 
         return $this;

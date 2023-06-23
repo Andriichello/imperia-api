@@ -53,7 +53,7 @@ class ScheduleQueryBuilder extends BaseQueryBuilder
         $ids = $this->extract('id', ...$restaurants);
 
         if (!empty($ids)) {
-            $this->whereIn('restaurant_id', $ids);
+            $this->whereIn($this->model->getTable() . '.restaurant_id', $ids);
         }
 
         return $this;
