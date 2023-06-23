@@ -111,4 +111,26 @@ abstract class CrudPolicy implements CrudPolicyInterface
 
         return !$target->isStaff() && $user->isStaff();
     }
+
+    /**
+     * Determines if user us higher than the target one.
+     *
+     * @param User $user
+     * @param User $target
+     *
+     * @return bool
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function checkRestaurant(User $user, User $target): bool
+    {
+        if (!$target->restaurant_id) {
+            return false;
+        }
+
+        if (!$user->restaurant_id) {
+            return true;
+        }
+
+        return $user->restaurant_id === $target->restaurant_id;
+    }
 }

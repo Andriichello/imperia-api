@@ -38,7 +38,7 @@ class UserPolicy extends CrudPolicy
             return false;
         }
 
-        if ($user->isPreviewOnly() && !in_array($ability, ['view', 'viewAny'])) {
+        if ($user->isPreviewOnly() && !in_array($ability, ['view', 'viewAny', 'update'])) {
             return false;
         }
 
@@ -95,8 +95,15 @@ class UserPolicy extends CrudPolicy
      */
     public function update(User $user, User $model): bool
     {
-        return $user->is($model)
-            || ($this->isHigher($user, $model) && $user->isAdmin());
+        if ($user->is($model)) {
+            return true;
+        }
+
+        if (!$this->isHigher($user, $model)) {
+            return false;
+        }
+
+        return $this->checkRestaurant($user, $model) && $user->isAdmin();
     }
 
     /**
@@ -109,8 +116,15 @@ class UserPolicy extends CrudPolicy
      */
     public function delete(User $user, User $model): bool
     {
-        return !$user->is($model)
-            || ($this->isHigher($user, $model) && $user->isAdmin());
+        if ($user->is($model) && !$user->isPreviewOnly()) {
+            return true;
+        }
+
+        if (!$this->isHigher($user, $model)) {
+            return false;
+        }
+
+        return $this->checkRestaurant($user, $model) && $user->isAdmin();
     }
 
     /**

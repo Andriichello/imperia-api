@@ -2,16 +2,18 @@
 
 namespace App\Policies;
 
-use App\Models\Restaurant;
+use App\Models\Morphs\Category;
+use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\User;
 use App\Policies\Base\CrudPolicy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
 
 /**
- * Class RestaurantPolicy.
+ * Class ProductVariantPolicy.
  */
-class RestaurantPolicy extends CrudPolicy
+class ProductVariantPolicy extends CrudPolicy
 {
     /**
      * Get the model of the policy.
@@ -20,7 +22,7 @@ class RestaurantPolicy extends CrudPolicy
      */
     public function model(): Model|string
     {
-        return Restaurant::class;
+        return ProductVariant::class;
     }
 
     /**
@@ -37,28 +39,6 @@ class RestaurantPolicy extends CrudPolicy
             return true;
         }
 
-        if (!$user || in_array($ability, ['create', 'delete', 'forceDelete', 'restore'])) {
-            return false;
-        }
-
         return $user->isAdmin();
-    }
-
-    /**
-     * Determine whether the user can update the model.
-     *
-     * @param User|null $user
-     * @param Restaurant $restaurant
-     *
-     * @return bool
-     */
-    public function update(?User $user, Restaurant $restaurant): bool
-    {
-        if (!$user || !$user->isAdmin()) {
-            return false;
-        }
-
-        return !$user->restaurant_id ||
-            $user->restaurant_id === $restaurant->id;
     }
 }

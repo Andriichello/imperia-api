@@ -69,4 +69,33 @@ class ProductPolicy extends CrudPolicy
     {
         return $user->isAdmin();
     }
+
+    /**
+     * Determine if user can attach menus to model.
+     *
+     * @param User $user
+     * @param Product $product
+     *
+     * @return Response|bool|null
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function attachAnyMenu(User $user, Product $product): Response|bool|null
+    {
+        return $user->isAdmin();
+    }
+
+    /**
+     * Determine if user can detach menu from model.
+     *
+     * @param User $user
+     * @param Product $product
+     * @param Category $category
+     *
+     * @return Response|bool|null
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function detachMenu(User $user, Product $product, Category $category): Response|bool|null
+    {
+        return $user->isAdmin();
+    }
 }
