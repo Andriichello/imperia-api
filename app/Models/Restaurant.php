@@ -117,61 +117,61 @@ class Restaurant extends BaseModel implements
     /**
      * Menus associated with the model.
      *
-     * @return BelongsToMany
+     * @return HasMany
      */
-    public function menus(): BelongsToMany
+    public function menus(): HasMany
     {
-        return $this->belongsToMany(Menu::class, 'restaurant_menu');
+        return $this->hasMany(Menu::class);
     }
 
     /**
      * Products associated with the model.
      *
-     * @return BelongsToMany
+     * @return HasMany
      */
-    public function products(): BelongsToMany
+    public function products(): HasMany
     {
-        return $this->belongsToMany(Product::class, 'restaurant_product');
+        return $this->hasMany(Product::class);
     }
 
     /**
      * Spaces associated with the model.
      *
-     * @return BelongsToMany
+     * @return HasMany
      */
-    public function spaces(): BelongsToMany
+    public function spaces(): HasMany
     {
-        return $this->belongsToMany(Space::class, 'restaurant_space');
+        return $this->hasMany(Space::class);
     }
 
     /**
      * Tickets associated with the model.
      *
-     * @return BelongsToMany
+     * @return HasMany
      */
-    public function tickets(): BelongsToMany
+    public function tickets(): HasMany
     {
-        return $this->belongsToMany(Ticket::class, 'restaurant_ticket');
+        return $this->hasMany(Ticket::class);
     }
 
     /**
      * Services associated with the model.
      *
-     * @return BelongsToMany
+     * @return HasMany
      */
-    public function services(): BelongsToMany
+    public function services(): HasMany
     {
-        return $this->belongsToMany(Service::class, 'restaurant_service');
+        return $this->hasMany(Service::class);
     }
 
     /**
      * Categories associated with the model.
      *
-     * @return BelongsToMany
+     * @return HasMany
      */
-    public function categories(): BelongsToMany
+    public function categories(): HasMany
     {
-        return $this->belongsToMany(Category::class, 'restaurant_category')
+        return $this->hasMany(Category::class)
             ->orderBy('date');
     }
 
@@ -188,11 +188,11 @@ class Restaurant extends BaseModel implements
     /**
      * Holidays associated with the model.
      *
-     * @return BelongsToMany
+     * @return HasMany
      */
-    public function holidays(): BelongsToMany
+    public function holidays(): HasMany
     {
-        return $this->belongsToMany(Holiday::class, 'restaurant_holiday')
+        return $this->hasMany(Holiday::class)
             ->orderBy('date');
     }
 

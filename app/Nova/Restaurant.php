@@ -74,7 +74,8 @@ class Restaurant extends Resource
                 ->creationRules('unique:restaurants,slug')
                 ->updateRules('unique:restaurants,slug,{{resourceId}}'),
 
-            MediaField::make(__('columns.media'), 'media'),
+            MediaField::make(__('columns.media'), 'media')
+                ->canSee(fn() => !$request->user()->isPreviewOnly()),
 
             Number::make(__('columns.popularity'), 'popularity')
                 ->step(1)

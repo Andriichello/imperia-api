@@ -56,7 +56,6 @@ class MenuQueryBuilder extends BaseQueryBuilder
     public function withRestaurant(Restaurant|int ...$restaurants): static
     {
         $ids = $this->extract('id', ...$restaurants);
-        (new ConsoleOutput())->writeln('ids: ' . json_encode($restaurants));
 
         if (!empty($ids)) {
             $this->whereIn('restaurant_id', $ids);

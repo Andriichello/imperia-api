@@ -125,18 +125,6 @@ class DummySeeder extends Seeder
      */
     public function seedUsers(): void
     {
-        User::factory()
-            ->withRole(UserRole::Admin())
-            ->create([
-                'name' => 'Super',
-                'email' => 'super@email.com',
-                'password' => 'pa$$w0rd',
-                'remember_token' => 'super',
-                'metadata' => json_encode([
-                    'isPreviewOnly' => false,
-                ])
-            ]);
-
         Restaurant::query()
             ->each(function (Restaurant $restaurant) {
                 User::factory()

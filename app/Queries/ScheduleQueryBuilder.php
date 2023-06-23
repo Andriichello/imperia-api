@@ -2,11 +2,31 @@
 
 namespace App\Queries;
 
+use App\Models\User;
+
 /**
  * Class ScheduleQueryBuilder.
  */
 class ScheduleQueryBuilder extends BaseQueryBuilder
 {
+    /**
+     * Apply index query conditions.
+     *
+     * @param User $user
+     *
+     * @return static
+     */
+    public function index(User $user): static
+    {
+        $query = parent::index($user);
+
+        if ($user->restaurant_id) {
+            $query->withRestaurant($user->restaurant_id);
+        }
+
+        return $query;
+    }
+
     /**
      * Only schedules for given weekdays.
      *

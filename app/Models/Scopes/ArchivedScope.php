@@ -50,12 +50,13 @@ class ArchivedScope implements Scope
     public function apply(Builder $builder, Model $model): void
     {
         $archived = request('archived', $this->default);
+        ;
 
         if ($archived === 'only') {
-            $builder->where($this->key, true);
+            $builder->where($model->getTable() . '.' . $this->key, true);
         }
         if ($archived === 'without') {
-            $builder->where($this->key, false);
+            $builder->where($model->getTable() . '.' . $this->key, false);
         }
     }
 

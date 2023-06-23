@@ -102,7 +102,8 @@ class Service extends Resource
                 ->onlyOnForms()
                 ->default(fn() => false),
 
-            MediaField::make(__('columns.media'), 'media'),
+            MediaField::make(__('columns.media'), 'media')
+                ->canSee(fn() => !$request->user()->isPreviewOnly()),
 
             Number::make('Popularity')
                 ->step(1)

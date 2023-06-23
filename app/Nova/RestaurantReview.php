@@ -95,7 +95,8 @@ class RestaurantReview extends Resource
                 ->sortable()
                 ->default(false),
 
-            BelongsTo::make(__('columns.restaurant'), 'restaurant', Restaurant::class),
+            BelongsTo::make(__('columns.restaurant'), 'restaurant', Restaurant::class)
+                ->default(fn() => $request->user()->restaurant_id),
 
             DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
@@ -149,6 +150,10 @@ class RestaurantReview extends Resource
             'is_rejected' => [
                 'label' => __('columns.is_rejected'),
                 'checked' => true,
+            ],
+            'restaurant' => [
+                'label' => __('columns.restaurant'),
+                'checked' => false,
             ],
             'created_at' => [
                 'label' => __('columns.created_at'),

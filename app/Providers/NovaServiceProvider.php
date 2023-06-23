@@ -101,7 +101,10 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                 }
             }
 
-            if ($request->user() && $request->user()->isAdmin()) {
+            /** @var User|null $user */
+            $user = $request->user();
+
+            if ($user && $user->isAdmin() && !$user->isPreviewOnly()) {
                 $sections[] = MediaTool::section($request, __('nova.dashboard.media'));
                 // $sections[] = BackupTool::section($request);
             }

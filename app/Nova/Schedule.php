@@ -88,7 +88,7 @@ class Schedule extends Resource
                 ->readonly(),
 
             BelongsTo::make(__('columns.restaurant'), 'restaurant', Restaurant::class)
-                ->nullable(),
+                ->default(fn() => $request->user()->restaurant_id),
 
             DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()

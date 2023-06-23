@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Laravel\Nova\Fields\BelongsTo;
-use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
@@ -119,7 +118,8 @@ class Menu extends Resource
                 ->onlyOnForms()
                 ->default(fn() => true),
 
-            MediaField::make(__('columns.media'), 'media'),
+            MediaField::make(__('columns.media'), 'media')
+                ->canSee(fn() => !$request->user()->isPreviewOnly()),
 
             Number::make(__('columns.popularity'), 'popularity')
                 ->step(1)

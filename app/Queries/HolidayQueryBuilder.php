@@ -2,6 +2,7 @@
 
 namespace App\Queries;
 
+use App\Models\User;
 use Carbon\CarbonInterface;
 
 /**
@@ -9,6 +10,24 @@ use Carbon\CarbonInterface;
  */
 class HolidayQueryBuilder extends BaseQueryBuilder
 {
+    /**
+     * Apply index query conditions.
+     *
+     * @param User $user
+     *
+     * @return static
+     */
+    public function index(User $user): static
+    {
+        $query = parent::index($user);
+
+        if ($user->restaurant_id) {
+            $query->withRestaurant($user->restaurant_id);
+        }
+
+        return $query;
+    }
+
     /**
      * Only holidays for given date.
      *

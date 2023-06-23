@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call(RolesSeeder::class);
+        $this->call(UsersSeeder::class);
+
         if (!App::environment('testing')) {
             $this->call(MediaSeeder::class);
             $this->call(DummySeeder::class);

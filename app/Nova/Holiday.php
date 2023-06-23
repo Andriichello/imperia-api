@@ -78,8 +78,8 @@ class Holiday extends Resource
                 ->exceptOnForms()
                 ->readonly(),
 
-            HasMany::make('Restaurants', 'restaurants', Restaurant::class)
-                ->nullable(),
+            HasMany::make('Restaurant', 'restaurant', Restaurant::class)
+                ->default(fn() => $request->user()->restaurant_id),
 
             DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
@@ -128,6 +128,10 @@ class Holiday extends Resource
             ],
             'closest_date' => [
                 'label' => __('columns.closest_date'),
+                'checked' => true,
+            ],
+            'restaurant' => [
+                'label' => __('columns.restaurant'),
                 'checked' => true,
             ],
             'created_at' => [

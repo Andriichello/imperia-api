@@ -120,7 +120,8 @@ class Category extends Resource
                 ->onlyOnForms()
                 ->default(fn() => true),
 
-            MediaField::make(__('columns.media'), 'media'),
+            MediaField::make(__('columns.media'), 'media')
+                ->canSee(fn() => !$user->isPreviewOnly()),
 
             Number::make(__('columns.popularity'), 'popularity')
                 ->step(1)
