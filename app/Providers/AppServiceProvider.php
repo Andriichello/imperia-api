@@ -17,15 +17,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-//        if (in_array($this->app->environment(), ['production', 'staging'])) {
-//            $this->app->afterResolving(
-//                \Illuminate\Contracts\Routing\UrlGenerator::class,
-//                function ($urlGenerator) {
-//                    /** @var UrlGenerator $urlGenerator */
-//                    $urlGenerator->forceScheme('https');
-//                }
-//            );
-//        }
+        if (in_array($this->app->environment(), ['production', 'staging'])) {
+            $this->app->afterResolving(
+                \Illuminate\Contracts\Routing\UrlGenerator::class,
+                function ($urlGenerator) {
+                    /** @var UrlGenerator $urlGenerator */
+                    $urlGenerator->forceScheme('https');
+                }
+            );
+        }
     }
 
     /**
