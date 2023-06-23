@@ -3,11 +3,15 @@
 namespace App\Nova;
 
 use Andriichello\Media\MediaField;
+use App\Models\Scopes\ArchivedScope;
 use App\Nova\Options\MorphOptions;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
-use Laravel\Nova\Fields\BelongsToMany;
+use Illuminate\Validation\Rule;
+use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
@@ -55,6 +59,27 @@ class Category extends Resource
     ];
 
     /**
+     * Build an "index" query for the given resource.
+     *
+     * @param NovaRequest $request
+     * @param Builder $query
+     *
+     * @return Builder
+     */
+    public static function indexQuery(NovaRequest $request, $query): Builder
+    {
+        $query = parent::indexQuery($request, $query);
+
+        /** @var User $user */
+        $user = $request->user();
+        if ($user->isAdmin()) {
+            $query->withoutGlobalScope(ArchivedScope::class);
+        }
+
+        return $query;
+    }
+
+    /**
      * Get the fields displayed by the resource.
      *
      * @param Request $request
@@ -62,14 +87,38 @@ class Category extends Resource
      */
     public function fields(Request $request): array
     {
+        /** @var \App\Models\User $user */
+        $user = $request->user();
+        $resourceId = $request->route('resourceId');
+
+        $slugValidationRules = [
+            'required',
+            Rule::unique('categories', 'slug')
+                ->where(function ($query) use ($user, $resourceId) {
+                    if ($resourceId) {
+                        $query->where('id', '!=', $resourceId);
+                    }
+
+                    if ($user->restaurant_id) {
+                        $query->where('restaurant_id', $user->restaurant_id);
+                    }
+                }),
+        ];
+
         return [
             ID::make(__('columns.id'), 'id')
                 ->sortable(),
 
             Text::make(__('columns.slug'), 'slug')
-                ->rules('required', 'min:1', 'max:50')
-                ->creationRules('required', 'unique:categories,slug')
-                ->updateRules('required', 'unique:categories,slug,{{resourceId}}'),
+                ->rules($slugValidationRules),
+
+            Boolean::make(__('columns.active'))
+                ->exceptOnForms()
+                ->resolveUsing(fn() => !$this->archived),
+
+            Boolean::make(__('columns.archived'), 'archived')
+                ->onlyOnForms()
+                ->default(fn() => true),
 
             MediaField::make(__('columns.media'), 'media'),
 
@@ -91,8 +140,8 @@ class Category extends Resource
             Text::make(__('columns.description'), 'description')
                 ->rules('nullable', 'min:1', 'max:255'),
 
-
-            BelongsToMany::make(__('columns.restaurants'), 'restaurants', Restaurant::class),
+            BelongsTo::make(__('columns.restaurant'), 'restaurant', Restaurant::class)
+                ->default(fn() => $user->restaurant_id),
 
             DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
@@ -175,6 +224,10 @@ class Category extends Resource
             ],
             'description' => [
                 'label' => __('columns.description'),
+                'checked' => false,
+            ],
+            'restaurant' => [
+                'label' => __('columns.restaurant'),
                 'checked' => false,
             ],
             'created_at' => [

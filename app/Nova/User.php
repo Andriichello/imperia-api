@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\Gravatar;
 use Laravel\Nova\Fields\ID;
@@ -70,6 +71,8 @@ class User extends Resource
                     $model->password = ($request[$requestAttribute]);
                 }),
 
+            BelongsTo::make(__('columns.restaurant'), 'restaurant', Restaurant::class),
+
             MorphToMany::make(__('columns.roles'), 'roles', Role::class),
 
             DateTime::make(__('columns.email_verified_at'), 'email_verified_at')
@@ -110,6 +113,10 @@ class User extends Resource
             ],
             'email_verified_at' => [
                 'label' => __('columns.email_verified_at'),
+                'checked' => false,
+            ],
+            'restaurant' => [
+                'label' => __('columns.restaurant'),
                 'checked' => false,
             ],
             'created_at' => [

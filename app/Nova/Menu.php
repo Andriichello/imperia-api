@@ -6,6 +6,8 @@ use Andriichello\Media\MediaField;
 use App\Models\Scopes\ArchivedScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
@@ -84,14 +86,30 @@ class Menu extends Resource
      */
     public function fields(Request $request): array
     {
+        /** @var \App\Models\User $user */
+        $user = $request->user();
+        $resourceId = $request->route('resourceId');
+
+        $slugValidationRules = [
+            'required',
+            Rule::unique('menus', 'slug')
+                ->where(function ($query) use ($user, $resourceId) {
+                    if ($resourceId) {
+                        $query->where('id', '!=', $resourceId);
+                    }
+
+                    if ($user->restaurant_id) {
+                        $query->where('restaurant_id', $user->restaurant_id);
+                    }
+                }),
+        ];
+
         return [
             ID::make(__('columns.id'), 'id')
                 ->sortable(),
 
             Text::make(__('columns.slug'), 'slug')
-                ->rules('required', 'min:1', 'max:50')
-                ->creationRules('required', 'unique:menus,slug')
-                ->updateRules('required', 'unique:menus,slug,{{resourceId}}'),
+                ->rules($slugValidationRules),
 
             Boolean::make(__('columns.active'))
                 ->resolveUsing(fn() => !$this->archived)
@@ -120,7 +138,8 @@ class Menu extends Resource
 
             HasMany::make(__('columns.products'), 'products', Product::class),
 
-            BelongsToMany::make(__('columns.restaurants'), 'restaurants', Restaurant::class),
+            BelongsTo::make(__('columns.restaurant'), 'restaurant', Restaurant::class)
+                ->default(fn() => $user->restaurant_id),
 
             DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
@@ -151,10 +170,6 @@ class Menu extends Resource
                 'label' => __('columns.slug'),
                 'checked' => true,
             ],
-            'active' => [
-                'label' => __('columns.active'),
-                'checked' => true,
-            ],
             'media' => [
                 'label' => __('columns.media'),
                 'checked' => true,
@@ -170,6 +185,10 @@ class Menu extends Resource
             'description' => [
                 'label' => __('columns.description'),
                 'checked' => false
+            ],
+            'restaurant' => [
+                'label' => __('columns.restaurant'),
+                'checked' => false,
             ],
             'created_at' => [
                 'label' => __('columns.created_at'),
