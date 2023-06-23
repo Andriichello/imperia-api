@@ -8,14 +8,14 @@ use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Database\Factories\HolidayFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
-use Illuminate\Support\Collection;
 
 /**
  * Class Holiday.
  *
  * @property int $id
+ * @property int|null $restaurant_id
  * @property string $name
  * @property string|null $description
  * @property bool $repeating
@@ -24,7 +24,7 @@ use Illuminate\Support\Collection;
  * @property Carbon|null $updated_at
  * @property Carbon|null $closest_date
  *
- * @property Restaurant[]|Collection $restaurants
+ * @property Restaurant|null $restaurant
  *
  * @method static HolidayQueryBuilder query()
  * @method static HolidayFactory factory(...$parameters)
@@ -39,6 +39,7 @@ class Holiday extends BaseModel
      * @var string[]
      */
     protected $fillable = [
+        'restaurant_id',
         'name',
         'description',
         'date',
@@ -65,13 +66,22 @@ class Holiday extends BaseModel
     ];
 
     /**
-     * Restaurants associated with the model.
+     * The loadable relationships for the model.
      *
-     * @return BelongsToMany
+     * @var array
      */
-    public function restaurants(): BelongsToMany
+    protected $relations = [
+        'restaurant',
+    ];
+
+    /**
+     * Restaurant associated with the model.
+     *
+     * @return BelongsTo
+     */
+    public function restaurant(): BelongsTo
     {
-        return $this->belongsToMany(Restaurant::class, 'restaurant_holiday');
+        return $this->belongsTo(Restaurant::class);
     }
 
     /**

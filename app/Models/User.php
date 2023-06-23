@@ -11,6 +11,7 @@ use App\Traits\StaticMethodsAccess;
 use Carbon\Carbon;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
@@ -25,6 +26,7 @@ use Spatie\Permission\Traits\HasRoles;
  * Class User.
  *
  * @property int $id
+ * @property int|null $restaurant_id
  * @property int|null $customer_id
  * @property string $type
  * @property string $name
@@ -39,6 +41,7 @@ use Spatie\Permission\Traits\HasRoles;
  *
  * @property array<int> $restaurants
  *
+ * @property Restaurant|null $restaurant
  * @property Customer|null $customer
  * @property Banquet[]|Collection $banquets
  * @property Notification[]|Collection $inbounds
@@ -63,6 +66,7 @@ class User extends Authenticatable implements SoftDeletableInterface
      * @var string[]
      */
     protected $fillable = [
+        'restaurant_id',
         'name',
         'email',
         'password',
@@ -103,11 +107,22 @@ class User extends Authenticatable implements SoftDeletableInterface
      * @var array
      */
     protected $relations = [
+        'restaurant',
         'customer',
         'banquets',
         'inbounds',
         'outbounds',
     ];
+
+    /**
+     * Restaurant associated with the model.
+     *
+     * @return BelongsTo
+     */
+    public function restaurant(): BelongsTo
+    {
+        return $this->belongsTo(Restaurant::class);
+    }
 
     /**
      * Customer associated with the model.

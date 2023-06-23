@@ -16,13 +16,14 @@ use App\Queries\ServiceQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\ServiceFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
 
 /**
  * Class Service.
  *
+ * @property int|null $restaurant_id
  * @property string|null $slug
  * @property string $title
  * @property string|null $description
@@ -60,6 +61,7 @@ class Service extends BaseModel implements
      * @var string[]
      */
     protected $fillable = [
+        'restaurant_id',
         'slug',
         'title',
         'description',
@@ -98,17 +100,17 @@ class Service extends BaseModel implements
     protected $relations = [
         'media',
         'categories',
-        'restaurants',
+        'restaurant',
     ];
 
     /**
-     * Restaurants associated with the model.
+     * Restaurant associated with the model.
      *
-     * @return BelongsToMany
+     * @return BelongsTo
      */
-    public function restaurants(): BelongsToMany
+    public function restaurant(): BelongsTo
     {
-        return $this->belongsToMany(Restaurant::class, 'restaurant_service');
+        return $this->belongsTo(Restaurant::class);
     }
 
     /**

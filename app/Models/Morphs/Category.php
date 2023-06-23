@@ -5,12 +5,13 @@ namespace App\Models\Morphs;
 use App\Models\BaseModel;
 use App\Models\Interfaces\MediableInterface;
 use App\Models\Restaurant;
+use App\Models\Traits\ArchivableTrait;
 use App\Models\Traits\MediableTrait;
 use App\Queries\CategoryQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\Morphs\CategoryFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
@@ -18,9 +19,11 @@ use Illuminate\Support\Collection;
 /**
  * Class Category.
  *
+ * @property int|null $restaurant_id
  * @property string $slug
  * @property string|null $target
  * @property string $title
+ * @property bool|null $archived
  * @property int|null $popularity
  * @property string|null $metadata
  * @property string|null $description
@@ -28,12 +31,14 @@ use Illuminate\Support\Collection;
  * @property Carbon|null $updated_at
  *
  * @property Categorizable[]|Collection $categorizables
+ * @property Restaurant|null $restaurant
  *
  * @method static CategoryQueryBuilder query()
  * @method static CategoryFactory factory(...$parameters)
  */
 class Category extends BaseModel implements MediableInterface
 {
+    use ArchivableTrait;
     use HasFactory;
     use MediableTrait;
 
@@ -43,10 +48,12 @@ class Category extends BaseModel implements MediableInterface
      * @var string[]
      */
     protected $fillable = [
+        'restaurant_id',
         'slug',
         'target',
         'title',
         'description',
+        'archived',
         'popularity',
         'metadata',
     ];
@@ -58,7 +65,7 @@ class Category extends BaseModel implements MediableInterface
      */
     protected $relations = [
         'categorizables',
-        'restaurants',
+        'restaurant',
     ];
 
     /**
@@ -72,13 +79,13 @@ class Category extends BaseModel implements MediableInterface
     }
 
     /**
-     * Restaurants associated with the model.
+     * Restaurant associated with the model.
      *
-     * @return BelongsToMany
+     * @return BelongsTo
      */
-    public function restaurants(): BelongsToMany
+    public function restaurant(): BelongsTo
     {
-        return $this->belongsToMany(Restaurant::class, 'restaurant_category');
+        return $this->belongsTo(Restaurant::class);
     }
 
     /**

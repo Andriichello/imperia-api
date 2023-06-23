@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Database\Factories\MenuFactory;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
@@ -23,6 +24,7 @@ use Illuminate\Support\Collection;
 /**
  * Class Menu.
  *
+ * @property int|null $restaurant_id
  * @property string|null $slug
  * @property string $title
  * @property string|null $description
@@ -35,7 +37,7 @@ use Illuminate\Support\Collection;
  *
  * @property Product[]|Collection $products
  * @property Category[]|Collection $categories
- * @property Restaurant[]|Collection $restaurants
+ * @property Restaurant|null $restaurant
  *
  * @method static MenuQueryBuilder query()
  * @method static MenuFactory factory(...$parameters)
@@ -63,6 +65,7 @@ class Menu extends BaseModel implements
      * @var string[]
      */
     protected $fillable = [
+        'restaurant_id',
         'slug',
         'title',
         'description',
@@ -98,7 +101,7 @@ class Menu extends BaseModel implements
     protected $relations = [
         'media',
         'products',
-        'restaurants',
+        'restaurant',
     ];
 
     /**
@@ -112,13 +115,13 @@ class Menu extends BaseModel implements
     }
 
     /**
-     * Get the restaurants associated with the model.
+     * Get the restaurant associated with the model.
      *
-     * @return BelongsToMany
+     * @return BelongsTo
      */
-    public function restaurants(): BelongsToMany
+    public function restaurant(): BelongsTo
     {
-        return $this->belongsToMany(Restaurant::class, 'restaurant_menu');
+        return $this->belongsTo(Restaurant::class);
     }
 
     /**
@@ -140,7 +143,7 @@ class Menu extends BaseModel implements
             ->orderByDesc('popularity');
 
         if (request('filter.restaurants')) {
-            $filter = new RestaurantsFilter('restaurant_category', 'category_id');
+            $filter = new RestaurantsFilter();
             // @phpstan-ignore-next-line
             $filter($query, request('filter.restaurants'), 'filter.restaurants');
         }
