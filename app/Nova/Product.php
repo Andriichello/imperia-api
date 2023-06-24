@@ -124,8 +124,7 @@ class Product extends Resource
                 ->onlyOnForms()
                 ->default(fn() => false),
 
-            MediaField::make(__('columns.media'), 'media')
-                ->canSee(fn() => !$request->user()->isPreviewOnly()),
+            MediaField::make(__('columns.media'), 'media'),
 
             Number::make(__('columns.popularity'), 'popularity')
                 ->step(1)
@@ -148,14 +147,12 @@ class Product extends Resource
                 ->updateRules('sometimes', 'min:0')
                 ->creationRules('required', 'min:0'),
 
-            Number::make(__('columns.weight'), 'weight')
-                ->step(0.01)
-                ->updateRules('sometimes', 'min:0')
-                ->creationRules('required', 'min:0'),
+            Text::make(__('columns.weight'), 'weight')
+                ->nullable(),
 
             Select::make(__('columns.weight_unit'), 'weight_unit')
-                ->options(WeightUnitOptions::all())
-                ->default(WeightUnit::Gram),
+                ->nullable()
+                ->options(WeightUnitOptions::all()),
 
             HasMany::make(__('columns.variants'), 'variants', ProductVariant::class),
 

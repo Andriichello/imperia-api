@@ -21,8 +21,8 @@ class DatabaseSeeder extends Seeder
 
         if (!App::environment('testing')) {
             $this->call(UsersSeeder::class);
-            $this->call(MediaSeeder::class);
-            $this->call(DummySeeder::class);
+            // $this->call(MediaSeeder::class);
+            // $this->call(DummySeeder::class);
         }
     }
 }

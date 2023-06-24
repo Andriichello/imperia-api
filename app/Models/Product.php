@@ -30,7 +30,7 @@ use Illuminate\Support\Collection;
  * @property string $title
  * @property string|null $description
  * @property float|null $price
- * @property float|null $weight
+ * @property string|null $weight
  * @property string|null $weight_unit
  * @property string|null $badge
  * @property bool $archived
@@ -100,7 +100,6 @@ class Product extends BaseModel implements
      */
     protected $casts = [
         'price' => 'float',
-        'weight' => 'float',
     ];
 
     /**

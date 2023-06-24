@@ -6,7 +6,12 @@ use App\Helpers\MediaHelper;
 use App\Models\Morphs\Media;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\File;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
+use Illuminate\Support\Stringable;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class MediaRepository.
@@ -39,9 +44,36 @@ class MediaRepository extends CrudRepository
     public function create(array $attributes): Media
     {
         $disk = $attributes['disk'];
-
         $from = $attributes['file'];
-        $to = $attributes['folder'] . $attributes['name'];
+
+        if ($from instanceof File || $from instanceof UploadedFile) {
+            $attributes['extension'] = $from->getClientMimeType();
+
+            (new ConsoleOutput())->writeln('is instance of File or UploadedFile');
+            if (!isset($attributes['title'])) {
+                $attributes['title'] = $attributes['name'];
+            }
+
+            $attributes['name'] = Media::hash($from->path());
+            (new ConsoleOutput())->writeln('name: ' . $attributes['name']);
+            (new ConsoleOutput())->writeln('title: ' . $attributes['title']);
+        }
+
+        $restaurantId = $attributes['restaurant_id'] ?? null;
+        if ($restaurantId) {
+            $attributes['folder'] = Str::of($attributes['folder'])
+                ->finish('/')
+                ->append($restaurantId)
+                ->finish('/')
+                ->value();
+        }
+
+        $to = Str::of($attributes['folder'])
+            ->finish('/')
+            ->append($attributes['name'])
+            ->value();
+
+        (new ConsoleOutput())->writeln('to: ' . $to);
 
         $media = $this->helper->store($from, $to, $disk);
 
@@ -64,6 +96,19 @@ class MediaRepository extends CrudRepository
         $disk = data_get($attributes, 'disk', $model->disk);
 
         $from = data_get($attributes, 'file');
+        if ($from instanceof File || $from instanceof UploadedFile) {
+            $attributes['extension'] = $from->getClientMimeType();
+
+            (new ConsoleOutput())->writeln('is instance of File or UploadedFile');
+            if (!isset($attributes['title'])) {
+                $attributes['title'] = $attributes['name'];
+            }
+
+            $attributes['name'] = Media::hash($from->path());
+            (new ConsoleOutput())->writeln('name: ' . $attributes['name']);
+            (new ConsoleOutput())->writeln('title: ' . $attributes['title']);
+        }
+
         $to = data_get($attributes, 'folder', $model->folder)
             . data_get($attributes, 'name', $model->name);
 
@@ -94,11 +139,17 @@ class MediaRepository extends CrudRepository
      */
     protected function fillFromAttributes(Media $media, array $attributes): Media
     {
+        if (Arr::exists($attributes, 'restaurant_id') && $attributes['restaurant_id']) {
+            $media->restaurant_id = $attributes['restaurant_id'];
+        }
         if (Arr::exists($attributes, 'title')) {
             $media->title = $attributes['title'];
         }
         if (Arr::exists($attributes, 'description')) {
             $media->description = $attributes['description'];
+        }
+        if (Arr::exists($attributes, 'extension')) {
+            $media->extension = $attributes['extension'];
         }
         if (Arr::exists($attributes, 'metadata')) {
             $media->setJson('metadata', (array)$attributes['metadata']);

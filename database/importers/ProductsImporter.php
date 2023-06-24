@@ -4,11 +4,12 @@ namespace Database\Importers;
 
 use App\Imports\AbstractImporter;
 use App\Imports\Exceptions\SkipRecord;
-use App\Imports\Sources\CsvSource;
+use App\Imports\Sources\FolderOfCsvs;
 use App\Imports\Targets\DbTarget;
 use App\Models\Menu;
 use App\Models\Morphs\Category;
 use App\Models\Product;
+use App\Models\Restaurant;
 use Database\Transformers\ProductsTransformer;
 use Exception;
 
@@ -18,11 +19,33 @@ use Exception;
 class ProductsImporter extends AbstractImporter
 {
     /**
-     * Products constructor.
+     * Path to the folder with csvs of categories.
+     *
+     * @var string
      */
-    public function __construct()
-    {
-        $source = new CsvSource('storage/csvs/products.csv');
+    protected string $path;
+
+    /**
+     * Restaurant to use when storing products.
+     *
+     * @var Restaurant|null
+     */
+    protected ?Restaurant $restaurant;
+
+    /**
+     * Products constructor.
+     *
+     * @param Restaurant|null $restaurant
+     * @param string $path
+     */
+    public function __construct(
+        ?Restaurant $restaurant = null,
+        string $path = 'storage/csvs/products'
+    ) {
+        $this->path = $path;
+        $this->restaurant = $restaurant;
+
+        $source = new FolderOfCsvs($path);
         $target = new DbTarget('products', 'mysql');
         $transformer = new ProductsTransformer();
 
@@ -41,6 +64,10 @@ class ProductsImporter extends AbstractImporter
      */
     public function before(array &$record): void
     {
+        if (!isset($record['restaurant_id'])) {
+            $record['restaurant_id'] = $this->restaurant->id;
+        }
+
         // this is not a new product, but a different variant of the previous one
         if ($this->lastRecord && $this->lastRecord['slug'] === $record['slug']) {
             if (!isset($record['weight']) || !isset($record['weight_unit'])) {

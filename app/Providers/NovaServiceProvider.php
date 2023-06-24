@@ -85,7 +85,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
 
             if ($user instanceof User) {
                 if ($user->isPreviewOnly()) {
-                    return $sections = [
+                    $sections = [
                         MenuSection::make(__('nova.dashboard.restaurants'), [
                             MenuItem::resource(\App\Nova\Restaurant::class),
                             MenuItem::resource(\App\Nova\RestaurantReview::class),
@@ -105,7 +105,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             /** @var User|null $user */
             $user = $request->user();
 
-            if ($user && $user->isAdmin() && !$user->isPreviewOnly()) {
+            if ($user && $user->isAdmin()) {
                 $sections[] = MediaTool::section($request, __('nova.dashboard.media'));
                 // $sections[] = BackupTool::section($request);
             }

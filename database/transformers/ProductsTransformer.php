@@ -4,9 +4,10 @@ namespace Database\Transformers;
 
 use App\Enums\WeightUnit;
 use App\Imports\AbstractTransformer;
+use App\Models\Restaurant;
 
 /**
- * Class CategoriesTransformer.
+ * Class ProductsTransformer.
  */
 class ProductsTransformer extends AbstractTransformer
 {
@@ -53,11 +54,9 @@ class ProductsTransformer extends AbstractTransformer
     public function parseWeight(?string $str): array
     {
         $matches = [];
-        preg_match('/(?<val>[+-]?([0-9]*[.])?[0-9]+)\s*(?<unit>\S*)?/', $str, $matches);
+        preg_match('/(?<val>([+-]?([0-9]*[.])?[0-9]+\/?)*)\s*(?<unit>\S*)?/', $str, $matches);
 
-        $val = isset($matches['val']) && is_numeric($matches['val'])
-            ? (float) $matches['val'] : null;
-
+        $val = $matches['val'] ?? null;
         $unit = $matches['unit'] ?? null;
 
         if ($unit) {

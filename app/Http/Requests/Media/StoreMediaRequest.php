@@ -33,10 +33,6 @@ class StoreMediaRequest extends StoreRequest
                     'string',
                     'min:1',
                     'max:255',
-                    Rule::unique(Media::class)
-                        ->where('folder', $this->get('folder'))
-                        ->where('name', $this->get('name')),
-
                 ],
                 'title' => [
                     'nullable',
@@ -74,6 +70,11 @@ class StoreMediaRequest extends StoreRequest
                     'nullable',
                     'object',
                 ],
+                'restaurant_id' => [
+                    'integer',
+                    'nullable',
+                    'exists:restaurants,id',
+                ],
             ]
         );
     }
@@ -88,6 +89,7 @@ class StoreMediaRequest extends StoreRequest
         return [
             'disk' => config('media.disk'),
             'folder' => config('media.folder'),
+            'restaurant_id' => $this->user()?->restaurant_id,
         ];
     }
 

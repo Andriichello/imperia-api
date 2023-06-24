@@ -10,6 +10,7 @@ use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
+use Laravel\Nova\Fields\Text;
 
 /**
  * Class ProductVariant.
@@ -61,13 +62,12 @@ class ProductVariant extends Resource
                 ->updateRules('required', 'min:0')
                 ->creationRules('required', 'min:0'),
 
-            Number::make('Weight')
-                ->step(0.01)
-                ->rules('required', 'min:0'),
+            Text::make('Weight')
+                ->nullable(),
 
             Select::make('Weight Unit')
-                ->options(WeightUnitOptions::all())
-                ->default(WeightUnit::Gram),
+                ->nullable()
+                ->options(WeightUnitOptions::all()),
 
             BelongsTo::make('Product'),
 

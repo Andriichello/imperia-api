@@ -10,6 +10,7 @@ use Illuminate\Http\File;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class MediaHelper.

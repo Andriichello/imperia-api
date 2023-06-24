@@ -3,10 +3,12 @@
 namespace App\Models\Morphs;
 
 use App\Models\BaseModel;
+use App\Models\Restaurant;
 use App\Queries\MediaQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\Morphs\MediaFactory;
 use Exception;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
@@ -14,6 +16,7 @@ use Illuminate\Support\Collection;
 /**
  * Class Media.
  *
+ * @property int|null $restaurant_id
  * @property string $name
  * @property string $extension
  * @property string|null $title
@@ -21,11 +24,13 @@ use Illuminate\Support\Collection;
  * @property string $disk
  * @property string $folder
  * @property string|null $metadata
- * @property int|null $order
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
  * @property string $url
+ * @property int|null $order
+ *
+ * @property Restaurant|null $restaurant
  * @property Mediable[]|Collection $mediables
  *
  * @method static MediaQueryBuilder query()
@@ -39,6 +44,7 @@ class Media extends BaseModel
      * @var string[]
      */
     protected $fillable = [
+        'restaurant_id',
         'name',
         'extension',
         'title',
@@ -65,6 +71,7 @@ class Media extends BaseModel
      */
     protected $relations = [
         'mediables',
+        'restaurant',
     ];
 
     /**
@@ -76,6 +83,17 @@ class Media extends BaseModel
     {
         return $this->hasMany(Mediable::class, 'media_id', 'id');
     }
+
+    /**
+     * Related restaurant.
+     *
+     * @return BelongsTo
+     */
+    public function restaurant(): BelongsTo
+    {
+        return $this->belongsTo(Restaurant::class);
+    }
+
 
     /**
      * Accessor for Media url.
@@ -119,6 +137,18 @@ class Media extends BaseModel
         }
 
         throw new Exception("No baseUrl mapping for '$disk'.");
+    }
+
+    /**
+     * Get hash for file under given path.
+     *
+     * @param string $path
+     *
+     * @return string
+     */
+    public static function hash(string $path): string
+    {
+        return md5(md5_file($path) . microtime());
     }
 
     /**

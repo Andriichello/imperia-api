@@ -15,7 +15,7 @@ use Illuminate\Database\Query\Builder as DatabaseBuilder;
  * @property int $product_id
  * @property int|null $restaurant_id
  * @property float $price
- * @property float $weight
+ * @property string|null $weight
  * @property string|null $weight_unit
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -57,7 +57,6 @@ class ProductVariant extends BaseModel
      */
     protected $casts = [
         'price' => 'float',
-        'weight' => 'float',
     ];
 
     /**

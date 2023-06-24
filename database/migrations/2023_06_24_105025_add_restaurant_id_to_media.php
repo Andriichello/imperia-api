@@ -13,20 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('product_variants', function (Blueprint $table) {
-            $table->id();
+        Schema::table('media', function (Blueprint $table) {
+            $table->foreignId('restaurant_id')
+                ->after('id')
+                ->nullable();
 
-            $table->foreignId('product_id');
-
-            $table->decimal('price')->unsigned();
-            $table->string('weight')->nullable();
-            $table->string('weight_unit', 50)->nullable();
-
-            $table->timestamps();
-
-            $table->foreign('product_id')
+            $table->foreign('restaurant_id')
                 ->references('id')
-                ->on('products')
+                ->on('restaurants')
                 ->onDelete('cascade');
         });
     }
@@ -38,6 +32,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('product_variants');
+        Schema::table('media', function (Blueprint $table) {
+            $table->dropColumn('restaurant_id');
+        });
     }
 };

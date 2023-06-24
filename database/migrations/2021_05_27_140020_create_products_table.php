@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('title');
             $table->string('description')->nullable();
             $table->decimal('price')->unsigned();
-            $table->decimal('weight')->unsigned()->nullable();
+            $table->string('weight')->nullable();
+            $table->string('weight_unit', 50)->nullable();
             $table->boolean('archived')->default(false);
             $table->integer('popularity')->nullable();
             $table->text('metadata')->nullable();

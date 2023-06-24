@@ -12,9 +12,11 @@ use App\Http\Requests\Media\UpdateMediaRequest;
 use App\Http\Resources\Media\MediaCollection;
 use App\Http\Resources\Media\MediaResource;
 use App\Policies\MediaPolicy;
+use App\Queries\Interfaces\IndexableInterface;
 use App\Queries\MediaQueryBuilder;
 use App\Repositories\MediaRepository;
 use OpenApi\Annotations as OA;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class MediaController.
@@ -64,6 +66,10 @@ class MediaController extends CrudController
     {
         /** @var MediaQueryBuilder $builder */
         $builder = parent::builder($request);
+
+        if ($builder instanceof IndexableInterface) {
+            $builder->index($request->user());
+        }
 
         return $builder;
     }
