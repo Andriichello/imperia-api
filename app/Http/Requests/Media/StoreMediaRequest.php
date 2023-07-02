@@ -49,7 +49,7 @@ class StoreMediaRequest extends StoreRequest
                 'disk' => [
                     'sometimes',
                     'string',
-                    'in:public,google-cloud',
+                    'in:public,uploads',
                 ],
                 'folder' => [
                     'sometimes',
@@ -105,7 +105,7 @@ class StoreMediaRequest extends StoreRequest
      *   @OA\Property(property="title", type="string", nullable="true", example="Drinks"),
      *   @OA\Property(property="description", type="string", nullable="true"),
      *   @OA\Property(property="disk", type="string", example="public",
-     *      enum={"public", "google-cloud"}),
+     *      enum={"public", "uploads"}),
      *   @OA\Property(property="folder", type="string", example="/media/",
      *     description="Must start and end with the `/`."),
      *   @OA\Property(property="metadata", type="object", nullable="true", example="{}"),

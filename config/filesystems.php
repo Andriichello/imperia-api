@@ -1,5 +1,7 @@
 <?php
 
+use League\Flysystem\GoogleCloudStorage\UniformBucketLevelAccessVisibility;
+
 return [
 
     /*
@@ -60,15 +62,27 @@ return [
             'folderId' => env('GOOGLE_DRIVE_FOLDER_ID'),
         ],
 
-        'google-cloud' => [
-            'driver' => 's3',
-            'key' => env('GOOGLE_CLOUD_KEY'),
-            'secret' => env('GOOGLE_CLOUD_SECRET'),
+        'uploads' => [
+            'driver' => 'gcs',
+            'key_file_path' => base_path('/google-cloud.json'),
             'bucket' => env('GOOGLE_CLOUD_BUCKET'),
-            'region' => env('GOOGLE_CLOUD_REGION'),
-            'endpoint' => env('GOOGLE_CLOUD_URL'),
+            'path_prefix' => env('GOOGLE_CLOUD_STORAGE_PATH_PREFIX', ''),
+            'apiEndpoint' => env('GOOGLE_CLOUD_URL'),
+            'visibility' => 'public',
+            'visibility_handler' => UniformBucketLevelAccessVisibility::class,
+            'metadata' => ['cacheControl' => 'public,max-age=86400'],
         ],
 
+        'backups' => [
+            'driver' => 'gcs',
+            'key_file_path' => base_path('/google-cloud.json'),
+            'bucket' => 'imperia-api-backups',
+            'path_prefix' => env('GOOGLE_CLOUD_STORAGE_PATH_PREFIX', '/backups'),
+            'apiEndpoint' => env('GOOGLE_CLOUD_URL'),
+            'visibility' => 'private',
+            'visibility_handler' => UniformBucketLevelAccessVisibility::class,
+            'metadata' => ['cacheControl' => 'public,max-age=86400'],
+        ],
     ],
 
     /*

@@ -1666,6 +1666,16 @@
                         }
                     },
                     {
+                        "name": "filter[search]",
+                        "in": "query",
+                        "description": "Can be used for searches.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "Cafe"
+                    },
+                    {
                         "name": "filter[name]",
                         "in": "query",
                         "description": "Can be used for searches. Is partial.",
@@ -6160,7 +6170,7 @@
                         "type": "string",
                         "enum": [
                             "public",
-                            "google-cloud"
+                            "uploads"
                         ],
                         "example": "public"
                     },

@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 /**
  * Class Media.
@@ -132,8 +133,13 @@ class Media extends BaseModel
         if ($disk === 'public') {
             return $url . '/storage';
         }
-        if ($disk === 'google-cloud') {
-            return rtrim(env('GOOGLE_CLOUD_BUCKET_URL'), '/');
+        if ($disk === 'uploads') {
+            return Str::of(env('GOOGLE_CLOUD_URL'))
+                ->trim()
+                ->finish('/')
+                ->append(env('GOOGLE_CLOUD_BUCKET'))
+                ->rtrim('/')
+                ->value();
         }
 
         throw new Exception("No baseUrl mapping for '$disk'.");
