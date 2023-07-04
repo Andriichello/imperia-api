@@ -21,6 +21,7 @@ RUN export LANG=C.UTF-8 \
         php8.1-intl php8.1-xml php8.1-zip php8.1-curl \
         php8.1-http php8.1-raphf \
         php8.1-mbstring php8.1-memcached php8.1-mysql \
+        mysql-client \
         openssh-client \
         python3-pip \
     && pip3 install -U setuptools \
