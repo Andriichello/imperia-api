@@ -91,11 +91,23 @@
       <div class="media-list">
         <div class="media-list-item" v-for="item in items ? items.data : []"
              @click="selections.mode === 'view' ? viewItem(item) : toggleSelect(item)">
-          <img class="media-list-item-img" :class="{'media-list-selection': selections.items.includes(item)}"
-               :alt="item.title ?? item.name" :src="item.url"/>
+
+          <template v-if="item.extension.includes('svg')">
+            <img class="media-list-item-img"
+                 :class="{'media-list-selection': selections.items.includes(item)}"
+                 :src="item.url" :alt="item.title ?? item.name"/>
+          </template>
+
+          <template v-else>
+            <img class="media-list-item-img" ng-class="media-view-img"
+                 :class="{'media-list-selection': selections.items.includes(item)}"
+                 :alt="item.title ?? item.name" :src="item.url"/>
+          </template>
+
           <span class="media-list-item-name">
-                            {{ item.title ?? item.name }}
-                    </span>
+            {{ item.title ?? item.name }}
+          </span>
+
         </div>
       </div>
 
@@ -168,7 +180,7 @@
             class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center font-bold px-4 h-9 text-sm flex-shrink-0">
             <input id="replace-file-input" type="file" accept="image/*"
                    hidden @change="replaceFiles"/>
-            Замінити на іншим
+            Замінити іншим
           </label>
         </div>
       </div>
