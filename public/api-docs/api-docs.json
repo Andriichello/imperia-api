@@ -6474,10 +6474,15 @@
                 "description": "Store order request product field",
                 "required": [
                     "product_id",
+                    "variant_id",
                     "amount"
                 ],
                 "properties": {
                     "product_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "variant_id": {
                         "type": "integer",
                         "example": 1
                     },
@@ -6975,6 +6980,7 @@
                     "type",
                     "order_id",
                     "product_id",
+                    "variant_id",
                     "amount",
                     "total",
                     "discounts_amount",
@@ -6995,6 +7001,10 @@
                         "example": 1
                     },
                     "product_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "variant_id": {
                         "type": "integer",
                         "example": 1
                     },
@@ -8307,6 +8317,7 @@
                 "required": [
                     "id",
                     "type",
+                    "restaurant_id",
                     "customer_id",
                     "name",
                     "email",
@@ -8320,6 +8331,11 @@
                     "type": {
                         "type": "string",
                         "example": "users"
+                    },
+                    "restaurant_id": {
+                        "type": "integer",
+                        "example": "null",
+                        "nullable": "true"
                     },
                     "customer_id": {
                         "type": "integer",
