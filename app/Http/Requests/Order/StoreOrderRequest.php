@@ -85,6 +85,13 @@ class StoreOrderRequest extends StoreRequest
                 'distinct',
                 'exists:products,id',
             ],
+            'products.*.variant_id' => [
+                'sometimes',
+                'nullable',
+                'integer',
+                'distinct',
+                'exists:variants,id',
+            ],
             'products.*.amount' => [
                 'required',
                 'integer',
@@ -190,8 +197,9 @@ class StoreOrderRequest extends StoreRequest
      * @OA\Schema(
      *   schema="StoreOrderRequestProductField",
      *   description="Store order request product field",
-     *   required={"product_id", "amount"},
+     *   required={"product_id", "variant_id", "amount"},
      *   @OA\Property(property="product_id", type="integer", example=1),
+     *   @OA\Property(property="variant_id", type="integer", example=1),
      *   @OA\Property(property="amount", type="integer", example=3),
      *   @OA\Property(property="comments", type="array",
      *     @OA\Items(ref ="#/components/schemas/AttachingComment")),

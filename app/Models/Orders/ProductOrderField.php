@@ -7,6 +7,7 @@ use App\Models\Interfaces\CommentableInterface;
 use App\Models\Interfaces\DiscountableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\Traits\CommentableTrait;
 use App\Models\Traits\DiscountableTrait;
 use App\Models\Traits\SoftDeletableTrait;
@@ -20,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @property int $order_id
  * @property int $product_id
+ * @property int|null $variant_id
  * @property int $amount
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -28,6 +30,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property float $total
  * @property Order $order
  * @property Product $product
+ * @property ProductVariant|null $variant
  *
  * @method static ProductOrderFieldFactory factory(...$parameters)
  */
@@ -49,6 +52,7 @@ class ProductOrderField extends BaseModel implements
     protected $fillable = [
         'order_id',
         'product_id',
+        'variant_id',
         'amount',
     ];
 
@@ -73,6 +77,16 @@ class ProductOrderField extends BaseModel implements
     }
 
     /**
+     * Product variant associated with the model.
+     *
+     * @return BelongsTo
+     */
+    public function variant(): BelongsTo
+    {
+        return $this->belongsTo(ProductVariant::class, 'variant_id', 'id');
+    }
+
+    /**
      * Order associated with the model.
      *
      * @return BelongsTo
@@ -89,6 +103,14 @@ class ProductOrderField extends BaseModel implements
      */
     public function getTotalAttribute(): float
     {
-        return round($this->product->price * $this->amount, 2);
+        if ($this->variant_id && $this->variant) {
+            $price = $this->variant->price;
+        }
+
+        if (!isset($price)) {
+            $price = $this->product->price;
+        }
+
+        return round($price * $this->amount, 2);
     }
 }
