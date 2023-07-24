@@ -44,10 +44,7 @@ class IndexServiceRequest extends IndexRequest
             [
                 AllowedFilter::partial('title'),
                 AllowedFilter::custom('categories', new CategoriesFilter()),
-                AllowedFilter::custom(
-                    'restaurants',
-                    new RestaurantsFilter()
-                ),
+                AllowedFilter::custom('restaurants', new RestaurantsFilter()),
             ]
         );
     }

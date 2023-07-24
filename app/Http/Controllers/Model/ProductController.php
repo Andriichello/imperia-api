@@ -3,13 +3,11 @@
 namespace App\Http\Controllers\Model;
 
 use App\Http\Controllers\CrudController;
-use App\Http\Requests\CrudRequest;
 use App\Http\Requests\Product\IndexProductRequest;
 use App\Http\Requests\Product\ShowProductRequest;
 use App\Http\Resources\Product\ProductCollection;
 use App\Http\Resources\Product\ProductResource;
 use App\Policies\ProductPolicy;
-use App\Queries\ProductQueryBuilder;
 use App\Repositories\ProductRepository;
 use OpenApi\Annotations as OA;
 
@@ -60,6 +58,8 @@ class ProductController extends CrudController
      *   @OA\Parameter(name="page[number]", in="query", @OA\Schema(ref ="#/components/schemas/PageNumber")),
      *   @OA\Parameter(name="sort", in="query", example="-popularity", @OA\Schema(type="string"),
             description="Available sorts: `popularity` (is default, but in descending order)"),
+     *   @OA\Parameter(name="filter[ids]", required=false, in="query", example="1,2,3",
+     *     @OA\Schema(type="string"), description="Coma-separated list of product ids."),
      *   @OA\Parameter(name="filter[title]", required=false, in="query", example="Mojito",
      *     @OA\Schema(type="string"), description="Can be used for searches. Is partial."),
      *   @OA\Parameter(name="filter[menus]", required=false, in="query", example="1,2",

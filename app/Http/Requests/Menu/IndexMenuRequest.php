@@ -40,10 +40,7 @@ class IndexMenuRequest extends IndexRequest
         return array_merge(
             parent::getAllowedFilters(),
             [
-                AllowedFilter::custom(
-                    'restaurants',
-                    new RestaurantsFilter()
-                ),
+                AllowedFilter::custom('restaurants', new RestaurantsFilter()),
             ]
         );
     }

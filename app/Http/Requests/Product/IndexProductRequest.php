@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Product;
 
 use App\Http\Filters\CategoriesFilter;
+use App\Http\Filters\InFilter;
 use App\Http\Filters\MenusFilter;
 use App\Http\Filters\RestaurantsFilter;
 use App\Http\Requests\Crud\IndexRequest;
@@ -43,12 +44,10 @@ class IndexProductRequest extends IndexRequest
             parent::getAllowedFilters(),
             [
                 AllowedFilter::partial('title'),
+                AllowedFilter::custom('ids', new InFilter('id')),
                 AllowedFilter::custom('menus', new MenusFilter()),
                 AllowedFilter::custom('categories', new CategoriesFilter()),
-                AllowedFilter::custom(
-                    'restaurants',
-                    new RestaurantsFilter()
-                ),
+                AllowedFilter::custom('restaurants', new RestaurantsFilter()),
             ]
         );
     }

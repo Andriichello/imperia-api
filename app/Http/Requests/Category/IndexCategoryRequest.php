@@ -31,10 +31,8 @@ class IndexCategoryRequest extends IndexRequest
             parent::getAllowedFilters(),
             [
                 AllowedFilter::exact('target'),
-                AllowedFilter::custom(
-                    'restaurants',
-                    new RestaurantsFilter()
-                ),
+                AllowedFilter::custom('restaurants', new RestaurantsFilter()),
+                AllowedFilter::custom('restaurants', new RestaurantsFilter()),
             ]
         );
     }
