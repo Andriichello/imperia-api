@@ -91,12 +91,17 @@ class StoreBanquetRequest extends StoreRequest
 
         $defaults = [];
 
+        if ($this->missing('restaurant_id')) {
+            $defaults['restaurant_id'] = $user->restaurant_id;
+        }
+
         if ($this->missing('creator_id')) {
             $defaults['creator_id'] = $user->id;
         }
         if ($user->isCustomer()) {
             $defaults['customer_id'] = $user->customer_id;
         }
+
 
         return $defaults;
     }

@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Banquet;
+use App\Models\Orders\Order;
 use App\Repositories\Traits\CommentableRepositoryTrait;
 use Illuminate\Database\Eloquent\Model;
 
@@ -25,6 +26,8 @@ class BanquetRepository extends CrudRepository
         /** @var Banquet $model */
         $model = parent::create($attributes);
         $this->createComments($model, $attributes);
+
+        $model->order()->firstOrCreate();
 
         return $model;
     }

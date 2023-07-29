@@ -84,7 +84,7 @@ class OrderController extends CrudController
 
         if ($banquet->order_id) {
             $request->id($banquet->order_id);
-            return $this->show($request);
+            return $this->handleShow($request);
         }
 
         throw new ModelNotFoundException("There is no order for selected banquet (id: $banquet->id)");
