@@ -140,6 +140,9 @@ Route::group(['middleware' => ['auth:signature,sanctum'], 'as' => 'api.'], funct
         ->name('banquets.invoice');
     Route::get('/banquets/{id}/invoice/pdf', [InvoiceController::class, 'pdfThroughBanquet'])
         ->name('banquets.invoice-pdf');
+
+    Route::post('/orders/{id}/invoice/url', [InvoiceController::class, 'generateUrl'])->name('orders.invoice-url');
+    Route::post('/banquets/{id}/invoice/url', [InvoiceController::class, 'generateUrl'])->name('banquets.invoice-url');
 });
 
 Route::fallback(function () {
