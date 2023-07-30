@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\BanquetState;
+use App\Helpers\Objects\Signature;
+use App\Helpers\SignatureHelper;
 use App\Models\Interfaces\CommentableInterface;
 use App\Models\Interfaces\LoggableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
@@ -19,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 /**
  * Class Banquet.
@@ -224,6 +227,17 @@ class Banquet extends BaseModel implements
     public function setTotalsAttribute(?array $totals): void
     {
         $this->setToJson('metadata', 'totals', $totals);
+    }
+
+    /**
+     * Accessor for the banquet's order invoice url.
+     *
+     * @param User $asUser
+     * @return string|null
+     */
+    public function getInvoiceUrl(User $asUser): ?string
+    {
+        return $this->order?->getInvoiceUrl($asUser);
     }
 
     /**

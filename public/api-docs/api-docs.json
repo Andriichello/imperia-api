@@ -6818,6 +6818,7 @@
                     "paid_at",
                     "advance_amount",
                     "totals",
+                    "invoice_url",
                     "order_id",
                     "creator_id",
                     "customer_id",
@@ -6874,7 +6875,8 @@
                     },
                     "description": {
                         "type": "string",
-                        "example": "Banquet description..."
+                        "example": "Banquet description...",
+                        "nullable": "true"
                     },
                     "start_at": {
                         "type": "string",
@@ -6895,6 +6897,11 @@
                     },
                     "totals": {
                         "$ref": "#/components/schemas/OrderTotals"
+                    },
+                    "invoice_url": {
+                        "type": "string",
+                        "example": "host/path?signature=long-string",
+                        "nullable": "true"
                     },
                     "order_id": {
                         "type": "integer",
@@ -7738,7 +7745,8 @@
                     "spaces",
                     "tickets",
                     "services",
-                    "products"
+                    "products",
+                    "invoice_url"
                 ],
                 "properties": {
                     "all": {
@@ -7787,6 +7795,11 @@
                     "banquet_id": {
                         "type": "integer",
                         "example": 1
+                    },
+                    "invoice_url": {
+                        "type": "string",
+                        "example": "host/path?signature=long-string",
+                        "nullable": "true"
                     },
                     "spaces": {
                         "type": "array",

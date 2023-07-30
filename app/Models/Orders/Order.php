@@ -2,6 +2,8 @@
 
 namespace App\Models\Orders;
 
+use App\Helpers\Objects\Signature;
+use App\Helpers\SignatureHelper;
 use App\Models\Banquet;
 use App\Models\BaseModel;
 use App\Models\Interfaces\CommentableInterface;
@@ -20,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 /**
  * Class Order.
@@ -227,6 +230,33 @@ class Order extends BaseModel implements
     public function setTotalsAttribute(?array $totals): void
     {
         $this->setToJson('metadata', 'totals', $totals);
+    }
+
+    /**
+     * Accessor for the banquet's invoice url.
+     *
+     * @param User $asUser
+     * @return string|null
+     */
+    public function getInvoiceUrl(User $asUser): ?string
+    {
+        $path = "api/orders/{$this->id}/invoice/pdf";
+
+        $signature = (new Signature())
+            ->setUserId($asUser->id)
+            ->setExpiration(now()->addWeek())
+            ->setPath($path);
+
+        $signature = (new SignatureHelper())
+            ->encrypt($signature);
+
+        $query = http_build_query(compact('signature'));
+
+        return Str::of(env('APP_URL'))
+            ->finish('/')
+            ->finish($path)
+            ->finish('?' . $query)
+            ->value();
     }
 
     /**
