@@ -82,7 +82,6 @@ class StoreOrderRequest extends StoreRequest
             'products.*.product_id' => [
                 'required',
                 'integer',
-                'distinct',
                 'exists:products,id',
             ],
             'products.*.variant_id' => [
@@ -90,7 +89,7 @@ class StoreOrderRequest extends StoreRequest
                 'nullable',
                 'integer',
                 'distinct',
-                'exists:variants,id',
+                'exists:product_variants,id',
             ],
             'products.*.amount' => [
                 'required',

@@ -8,7 +8,6 @@ use App\Policies\Base\CrudPolicy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
 use Spatie\Permission\Models\Role;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class UserPolicy.

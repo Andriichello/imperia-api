@@ -10,8 +10,6 @@ use Illuminate\Http\File;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Illuminate\Support\Stringable;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class MediaRepository.
@@ -49,14 +47,11 @@ class MediaRepository extends CrudRepository
         if ($from instanceof File || $from instanceof UploadedFile) {
             $attributes['extension'] = $from->getClientMimeType();
 
-            (new ConsoleOutput())->writeln('is instance of File or UploadedFile');
             if (!isset($attributes['title'])) {
                 $attributes['title'] = $attributes['name'];
             }
 
             $attributes['name'] = Media::hash($from->path());
-            (new ConsoleOutput())->writeln('name: ' . $attributes['name']);
-            (new ConsoleOutput())->writeln('title: ' . $attributes['title']);
         }
 
         $restaurantId = $attributes['restaurant_id'] ?? null;
@@ -72,8 +67,6 @@ class MediaRepository extends CrudRepository
             ->finish('/')
             ->append($attributes['name'])
             ->value();
-
-        (new ConsoleOutput())->writeln('to: ' . $to);
 
         $media = $this->helper->store($from, $to, $disk);
 
@@ -99,14 +92,11 @@ class MediaRepository extends CrudRepository
         if ($from instanceof File || $from instanceof UploadedFile) {
             $attributes['extension'] = $from->getClientMimeType();
 
-            (new ConsoleOutput())->writeln('is instance of File or UploadedFile');
             if (!isset($attributes['title'])) {
                 $attributes['title'] = $attributes['name'];
             }
 
             $attributes['name'] = Media::hash($from->path());
-            (new ConsoleOutput())->writeln('name: ' . $attributes['name']);
-            (new ConsoleOutput())->writeln('title: ' . $attributes['title']);
         }
 
         $to = data_get($attributes, 'folder', $model->folder)

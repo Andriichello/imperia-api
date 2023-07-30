@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Jobs\Order\CalculateTotals;
-use App\Models\Banquet;
 use App\Models\Orders\Order;
 use App\Models\Orders\ProductOrderField;
 use App\Models\Orders\ServiceOrderField;
@@ -11,7 +10,6 @@ use App\Models\Orders\SpaceOrderField;
 use App\Models\Orders\TicketOrderField;
 use App\Repositories\Traits\CommentableRepositoryTrait;
 use App\Repositories\Traits\DiscountableRepositoryTrait;
-use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -107,7 +105,8 @@ class OrderRepository extends CrudRepository
 
         if (Arr::has($attributes, 'products')) {
             foreach ($attributes['products'] as $values) {
-                $identifiers = Arr::only($values, 'product_id');
+                $identifiers = Arr::only($values, ['product_id', 'variant_id']);
+
                 /** @var ProductOrderField $field */
                 $field = $order->products()
                     ->updateOrCreate($identifiers, Arr::except($values, 'product_id'));

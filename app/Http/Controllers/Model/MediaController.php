@@ -16,7 +16,6 @@ use App\Queries\Interfaces\IndexableInterface;
 use App\Queries\MediaQueryBuilder;
 use App\Repositories\MediaRepository;
 use OpenApi\Annotations as OA;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class MediaController.
