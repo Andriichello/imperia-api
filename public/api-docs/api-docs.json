@@ -4264,6 +4264,124 @@
                     }
                 ]
             }
+        },
+        "/api/orders/{id}/invoice/url": {
+            "post": {
+                "tags": [
+                    "invoices"
+                ],
+                "summary": "Generate url for accessing order's invoice.",
+                "operationId": "orderInvoiceUrl",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the order.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "description": "Generate url for accessing order's invoice response.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OrderInvoiceUrlRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Generate url for accessing order's invoice response.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderInvoiceUrlResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/banquets/{id}/invoice/url": {
+            "post": {
+                "tags": [
+                    "invoices"
+                ],
+                "summary": "Generate url for accessing banquet's invoice.",
+                "operationId": "banquetInvoiceUrl",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the banquet.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "description": "Generate url for accessing banquet's invoice response.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BanquetInvoiceUrlRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Generate url for accessing banquet's invoice response.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BanquetInvoiceUrlResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -5700,6 +5818,42 @@
                 },
                 "type": "object"
             },
+            "OrderInvoiceUrlResponse": {
+                "description": "Generate url for accessing order's invoice response.",
+                "required": [
+                    "url",
+                    "message"
+                ],
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "example": "http://host/path?signature=long-string"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "BanquetInvoiceUrlResponse": {
+                "description": "Generate url for accessing banquet's invoice response.",
+                "required": [
+                    "url",
+                    "message"
+                ],
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "example": "http://host/path?signature=long-string"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
             "PageSize": {
                 "description": "Max number of results on page.",
                 "type": "integer",
@@ -6148,6 +6302,34 @@
                         "description": "The id of the customer, who is related to this family member.",
                         "type": "integer",
                         "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "OrderInvoiceUrlRequest": {
+                "description": "Generate url for accessing order's invoice request",
+                "properties": {
+                    "endpoint": {
+                        "type": "string",
+                        "enum": [
+                            "pdf",
+                            "view"
+                        ],
+                        "example": "pdf"
+                    }
+                },
+                "type": "object"
+            },
+            "BanquetInvoiceUrlRequest": {
+                "description": "Generate url for accessing banquet's invoice request",
+                "properties": {
+                    "endpoint": {
+                        "type": "string",
+                        "enum": [
+                            "pdfThroughBanquet",
+                            "viewThroughBanquet"
+                        ],
+                        "example": "pdfThroughBanquet"
                     }
                 },
                 "type": "object"

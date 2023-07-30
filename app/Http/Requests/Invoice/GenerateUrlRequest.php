@@ -6,6 +6,7 @@ use App\Http\Requests\Crud\ShowRequest;
 use App\Models\Banquet;
 use App\Models\Orders\Order;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use OpenApi\Annotations as OA;
 
 /**
  * Class GenerateUrlRequest.
@@ -19,7 +20,7 @@ class GenerateUrlRequest extends ShowRequest
      */
     public function rules(): array
     {
-        $inRule = str_contains(request()->path(), '/api/orders/')
+        $inRule = str_contains(request()->fullUrl(), '/api/orders/')
             ? 'in:pdf,view' : 'in:pdfThroughBanquet,viewThroughBanquet';
 
         return array_merge(
@@ -65,4 +66,19 @@ class GenerateUrlRequest extends ShowRequest
         return $banquet->creator_id === $user->id
             || $banquet->customer_id === $user->customer_id;
     }
+
+    /**
+     * @OA\Schema(
+     *   schema="OrderInvoiceUrlRequest",
+     *   description="Generate url for accessing order's invoice request",
+     *   @OA\Property(property="endpoint", type="string", example="pdf",
+     *     enum={"pdf", "view"}),
+     *  ),
+     * @OA\Schema(
+     *   schema="BanquetInvoiceUrlRequest",
+     *   description="Generate url for accessing banquet's invoice request",
+     *   @OA\Property(property="endpoint", type="string", example="pdfThroughBanquet",
+     *     enum={"pdfThroughBanquet", "viewThroughBanquet"}),
+     *  )
+     */
 }

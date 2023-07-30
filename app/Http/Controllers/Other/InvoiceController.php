@@ -16,6 +16,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
+use OpenApi\Annotations as OA;
 
 /**
  * Class InvoiceController.
@@ -144,4 +145,76 @@ class InvoiceController extends Controller
 
         return ApiResponse::make(compact('url'));
     }
+
+    /**
+     * @OA\Post(
+     *   path="/api/orders/{id}/invoice/url",
+     *   summary="Generate url for accessing order's invoice.",
+     *   operationId="orderInvoiceUrl",
+     *   security={{"bearerAuth": {}}},
+     *   tags={"invoices"},
+     *
+     *  @OA\Parameter(name="id", required=true, in="path", example=1, @OA\Schema(type="integer"),
+     *     description="Id of the order."),
+     *
+     *  @OA\RequestBody(
+     *     required=true,
+     *     description="Generate url for accessing order's invoice response.",
+     *     @OA\JsonContent(ref ="#/components/schemas/OrderInvoiceUrlRequest")
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="Generate url for accessing order's invoice response.",
+     *     @OA\JsonContent(ref ="#/components/schemas/OrderInvoiceUrlResponse")
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     description="Unauthenticated.",
+     *     @OA\JsonContent(ref ="#/components/schemas/UnauthenticatedResponse")
+     *   )
+     * ),
+     * @OA\Post(
+     *   path="/api/banquets/{id}/invoice/url",
+     *   summary="Generate url for accessing banquet's invoice.",
+     *   operationId="banquetInvoiceUrl",
+     *   security={{"bearerAuth": {}}},
+     *   tags={"invoices"},
+     *
+     *  @OA\Parameter(name="id", required=true, in="path", example=1, @OA\Schema(type="integer"),
+     *     description="Id of the banquet."),
+     *
+     *  @OA\RequestBody(
+     *     required=true,
+     *     description="Generate url for accessing banquet's invoice response.",
+     *     @OA\JsonContent(ref ="#/components/schemas/BanquetInvoiceUrlRequest")
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="Generate url for accessing banquet's invoice response.",
+     *     @OA\JsonContent(ref ="#/components/schemas/BanquetInvoiceUrlResponse")
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     description="Unauthenticated.",
+     *     @OA\JsonContent(ref ="#/components/schemas/UnauthenticatedResponse")
+     *   )
+     * ),
+     *
+     * @OA\Schema(
+     *   schema="OrderInvoiceUrlResponse",
+     *   description="Generate url for accessing order's invoice response.",
+     *   required = {"url", "message"},
+     *   @OA\Property(property="url", type="string",
+     *     example="http://host/path?signature=long-string"),
+     *   @OA\Property(property="message", type="string", example="Success"),
+     * ),
+     * @OA\Schema(
+     *   schema="BanquetInvoiceUrlResponse",
+     *   description="Generate url for accessing banquet's invoice response.",
+     *   required = {"url", "message"},
+     *   @OA\Property(property="url", type="string",
+     *     example="http://host/path?signature=long-string"),
+     *   @OA\Property(property="message", type="string", example="Success"),
+     * ),
+     */
 }
