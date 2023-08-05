@@ -32,7 +32,7 @@ abstract class Controller extends BaseController
      * @OA\Info(title="imperia-api", version="0.1"),
      * @OA\Servers(
      *   @OA\Server(
-     *     url="https://imperia-dev-4bhtlr3bbq-ew.a.run.app",
+     *     url="https://dev.imperia.pp.ua",
      *     description="Google Cloud development server"
      *   )
      *   @OA\Server(
