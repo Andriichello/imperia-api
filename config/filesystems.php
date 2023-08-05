@@ -76,7 +76,7 @@ return [
         'backups' => [
             'driver' => 'gcs',
             'key_file_path' => base_path('/google-cloud.json'),
-            'bucket' => 'imperia-api-backups',
+            'bucket' => env('GOOGLE_CLOUD_BACKUP_BUCKET'),
             'path_prefix' => env('GOOGLE_CLOUD_STORAGE_PATH_PREFIX', '/backups'),
             'apiEndpoint' => env('GOOGLE_CLOUD_URL'),
             'visibility' => 'private',
