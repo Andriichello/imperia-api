@@ -17,7 +17,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        if (in_array($this->app->environment(), ['production', 'staging'])) {
+        if (in_array($this->app->environment(), ['production', 'staging', 'dev'])) {
             $this->app->afterResolving(
                 \Illuminate\Contracts\Routing\UrlGenerator::class,
                 function ($urlGenerator) {

@@ -21,7 +21,7 @@ class HttpsProtocol
      */
     public function handle(Request $request, Closure $next): mixed
     {
-        if (!$request->secure() && in_array(App::environment(), ['production', 'staging'])) {
+        if (!$request->secure() && in_array(App::environment(), ['production', 'staging', 'dev'])) {
             return redirect()->secure($request->getRequestUri());
         }
 

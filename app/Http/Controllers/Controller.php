@@ -32,16 +32,12 @@ abstract class Controller extends BaseController
      * @OA\Info(title="imperia-api", version="0.1"),
      * @OA\Servers(
      *   @OA\Server(
-     *     url="http://localhost:8080",
-     *     description="Mapped server"
-     *   ),
-     *   @OA\Server(
-     *     url=L5_SWAGGER_CONST_HOST,
-     *     description="Current server"
-     *   ),
+     *     url="https://imperia-dev-4bhtlr3bbq-ew.a.run.app",
+     *     description="Google Cloud development server"
+     *   )
      *   @OA\Server(
      *     url="https://api.imperia.pp.ua",
-     *     description="Google Cloud server"
+     *     description="Google Cloud staging server"
      *   )
      * ),
      * @OA\SecurityScheme(

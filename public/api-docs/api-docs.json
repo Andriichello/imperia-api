@@ -6,16 +6,12 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8080",
-            "description": "Mapped server"
-        },
-        {
-            "url": "http://localhost:8080",
-            "description": "Current server"
+            "url": "https://imperia-dev-4bhtlr3bbq-ew.a.run.app",
+            "description": "Google Cloud development server"
         },
         {
             "url": "https://api.imperia.pp.ua",
-            "description": "Google Cloud server"
+            "description": "Google Cloud staging server"
         }
     ],
     "paths": {
