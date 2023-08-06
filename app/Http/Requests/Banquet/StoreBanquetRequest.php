@@ -13,6 +13,20 @@ use OpenApi\Annotations as OA;
  */
 class StoreBanquetRequest extends StoreRequest
 {
+    public function getAllowedIncludes(): array
+    {
+        return array_merge(
+            parent::getAllowedIncludes(),
+            [
+                'order',
+                'creator',
+                'customer',
+                'comments',
+                'discounts',
+            ]
+        );
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *

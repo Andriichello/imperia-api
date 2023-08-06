@@ -128,11 +128,13 @@ class BanquetController extends CrudController
      * ),
      * @OA\Post(
      *   path="/api/banquets",
-     *   summary="Store banquet.",
+     *   summary="Store banquet. Order record will automatically be created.",
      *   operationId="storeBanquet",
      *   security={{"bearerAuth": {}}},
      *   tags={"banquets"},
      *
+     *  @OA\Parameter(name="include", in="query",
+     *     @OA\Schema(ref ="#/components/schemas/BanquetIncludes")),
      *  @OA\RequestBody(
      *     required=true,
      *     description="Store banquet request object.",
@@ -156,6 +158,8 @@ class BanquetController extends CrudController
      *   security={{"bearerAuth": {}}},
      *   tags={"banquets"},
      *
+     *  @OA\Parameter(name="include", in="query",
+     *     @OA\Schema(ref ="#/components/schemas/BanquetIncludes")),
      *  @OA\Parameter(name="id", required=true, in="path", example=1, @OA\Schema(type="integer"),
      *     description="Id of the banquet."),
      *  @OA\RequestBody(
@@ -225,7 +229,7 @@ class BanquetController extends CrudController
      * @OA\Schema(
      *   schema="BanquetIncludes",
      *   description="Coma-separated list of inluded relations.
-    Available relations: `creator`, `customer`, `comments`",
+    Available relations: `order`, `creator`, `customer`, `comments`",
      *   type="string", example="creator,customer,comments"
      * ),
      * @OA\Schema(

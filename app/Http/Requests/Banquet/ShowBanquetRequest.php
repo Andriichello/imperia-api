@@ -14,6 +14,7 @@ class ShowBanquetRequest extends ShowRequest
         return array_merge(
             parent::getAllowedIncludes(),
             [
+                'order',
                 'creator',
                 'customer',
                 'comments',

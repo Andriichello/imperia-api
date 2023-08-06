@@ -6,6 +6,7 @@ use App\Helpers\BanquetHelper;
 use App\Http\Resources\Comment\CommentCollection;
 use App\Http\Resources\Customer\CustomerResource;
 use App\Http\Resources\Discount\DiscountCollection;
+use App\Http\Resources\Order\OrderResource;
 use App\Http\Resources\User\UserResource;
 use App\Models\Banquet;
 use Illuminate\Http\Request;
@@ -50,6 +51,7 @@ class BanquetResource extends JsonResource
             'advance_amount' => $this->advance_amount,
             'totals' => $this->totals,
             'invoice_url' => $this->getInvoiceUrl($request->user()),
+            'order' => new OrderResource($this->whenLoaded('order')),
             'creator' => new UserResource($this->whenLoaded('creator')),
             'customer' => new CustomerResource($this->whenLoaded('customer')),
             'comments' => new CommentCollection($this->whenLoaded('comments')),
@@ -89,6 +91,7 @@ class BanquetResource extends JsonResource
      *   @OA\Property(property="creator_id", type="integer", example=1),
      *   @OA\Property(property="customer_id", type="integer", example=1),
      *   @OA\Property(property="restaurant_id", type="integer", nullable="true", example=1),
+     *   @OA\Property(property="order", ref ="#/components/schemas/Order"),
      *   @OA\Property(property="creator", ref ="#/components/schemas/User"),
      *   @OA\Property(property="customer", ref ="#/components/schemas/Customer"),
      *   @OA\Property(property="comments", type="array",

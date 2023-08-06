@@ -12,6 +12,10 @@
         {
             "url": "https://api.imperia.pp.ua",
             "description": "Google Cloud staging server"
+        },
+        {
+            "url": "http://localhost:8080",
+            "description": "Local server"
         }
     ],
     "paths": {
@@ -244,8 +248,17 @@
                 "tags": [
                     "banquets"
                 ],
-                "summary": "Store banquet.",
+                "summary": "Store banquet. Order record will automatically be created.",
                 "operationId": "storeBanquet",
+                "parameters": [
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/BanquetIncludes"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "description": "Store banquet request object.",
                     "required": true,
@@ -404,6 +417,13 @@
                 "summary": "Update banquet.",
                 "operationId": "updateBanquet",
                 "parameters": [
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/BanquetIncludes"
+                        }
+                    },
                     {
                         "name": "id",
                         "in": "path",
@@ -4493,7 +4513,7 @@
                 "type": "object"
             },
             "BanquetIncludes": {
-                "description": "Coma-separated list of inluded relations.\n    Available relations: `creator`, `customer`, `comments`",
+                "description": "Coma-separated list of inluded relations.\n    Available relations: `order`, `creator`, `customer`, `comments`",
                 "type": "string",
                 "example": "creator,customer,comments"
             },
@@ -6916,6 +6936,9 @@
                         "type": "integer",
                         "example": 1,
                         "nullable": "true"
+                    },
+                    "order": {
+                        "$ref": "#/components/schemas/Order"
                     },
                     "creator": {
                         "$ref": "#/components/schemas/User"

@@ -34,11 +34,15 @@ abstract class Controller extends BaseController
      *   @OA\Server(
      *     url="https://dev.imperia.pp.ua",
      *     description="Google Cloud development server"
-     *   )
+     *   ),
      *   @OA\Server(
      *     url="https://api.imperia.pp.ua",
      *     description="Google Cloud staging server"
-     *   )
+     *   ),
+     *   @OA\Server(
+     *     url="http://localhost:8080",
+     *     description="Local server"
+     *   ),
      * ),
      * @OA\SecurityScheme(
      *   securityScheme="bearerAuth",
