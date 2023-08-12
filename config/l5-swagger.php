@@ -46,6 +46,12 @@ return [
         ],
     ],
     'defaults' => [
+        'ui' => [
+            'display' => [
+                'doc_expansion' => 'list',
+            ],
+        ],
+
         'routes' => [
             /*
              * Route for accessing parsed swagger annotations.

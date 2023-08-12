@@ -121,9 +121,29 @@ class InvoiceItemFactory
     {
         $item = new InvoiceItem();
 
-        $item->title($field->product->title);
-        $item->pricePerUnit($field->product->price);
+        $title = $field->product->title;
+        if (!$field->variant && $field->product->weight) {
+            $weight = $field->product->weight
+                . ($field->product->weight_unit ?? '');
+
+            $title .= " ($weight)";
+        }
+
+
+        if ($field->variant) {
+            $weight = $field->variant->weight
+                . ($field->variant->weight_unit ?? '');
+
+            $title .= " ($weight)";
+        }
+
+        $item->title($title);
         $item->quantity($field->amount);
+
+        $price = $field->variant
+            ? $field->variant->price : $field->product->price;
+
+        $item->pricePerUnit($price);
         $item->subTotalPrice($field->total);
 
         return $item;
