@@ -60,7 +60,7 @@ trait CommentableRepositoryTrait
             $updatedIds = [];
             foreach ($texts as $index => $text) {
                 if ($previousCount < ($index + 1)) {
-                    $remainingTexts = array_slice($attributes['comments'], $index + 1);
+                    $remainingTexts = array_slice($texts, $index);
                     $commentable->attachComments(...$remainingTexts);
                     break;
                 }
