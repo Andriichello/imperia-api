@@ -34,16 +34,19 @@ class RegisterRequest extends BaseRequest
                 "regex:/^[\p{L} ,.'-]+$/u"
             ],
             'email' => [
-                'required',
+                'required_without:phone',
                 'email',
                 'unique:users',
                 Rule::unique('customers', 'email')
                     ->whereNotNull('user_id'),
             ],
             'phone' => [
+                'required_without:email',
                 'nullable',
                 'regex:/(\+?[0-9]{1,2})?[0-9]{10,12}/',
-                'unique:customers,phone'
+                'unique:customers,phone',
+                Rule::unique('customers', 'phone')
+                    ->whereNotNull('user_id'),
             ],
             'password' => [
                 'required',

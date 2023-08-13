@@ -6168,7 +6168,7 @@
                 "example": "without"
             },
             "StoreCustomerRequest": {
-                "description": "Store customer request",
+                "description": "Store customer request. `email` or `phone`\n           must be specified.",
                 "required": [
                     "name",
                     "surname",
@@ -6187,7 +6187,8 @@
                     },
                     "email": {
                         "type": "string",
-                        "example": "ben.forrester@email.com"
+                        "example": "ben.forrester@email.com",
+                        "nullable": "true"
                     },
                     "phone": {
                         "description": "Phone number may start with a plus and must contain only digits 0-9.",

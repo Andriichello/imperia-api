@@ -24,8 +24,8 @@ use Illuminate\Support\Collection;
  * @property string $name
  * @property string $surname
  * @property string $fullName
- * @property string $phone
- * @property string $email
+ * @property string|null $phone
+ * @property string|null $email
  * @property Carbon|null $birthdate
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
