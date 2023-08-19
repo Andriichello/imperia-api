@@ -3,11 +3,8 @@
 namespace App\Policies;
 
 use App\Models\Menu;
-use App\Models\User;
-use App\Policies\Base\CrudPolicy;
 use App\Policies\Base\RestaurantItemCrudPolicy;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Response;
 
 /**
  * Class MenuPolicy.

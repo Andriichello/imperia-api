@@ -118,7 +118,7 @@ class Category extends Resource
 
             Boolean::make(__('columns.archived'), 'archived')
                 ->onlyOnForms()
-                ->default(fn() => true),
+                ->default(fn() => false),
 
             MediaField::make(__('columns.media'), 'media')
                 ->canSee(fn() => !$user->isPreviewOnly()),
