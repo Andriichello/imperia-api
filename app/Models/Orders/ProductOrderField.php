@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  *
+ * @property float $price
  * @property float $total
  * @property Order $order
  * @property Product $product
@@ -97,20 +98,24 @@ class ProductOrderField extends BaseModel implements
     }
 
     /**
-     * Accessor for total price of all fields within the model.
+     * Accessor for price of the field.
+     *
+     * @return float
+     */
+    public function getPriceAttribute(): float
+    {
+        return $this->variant_id && $this->variant
+            ? $this->variant->price
+            : $this->product->price;
+    }
+
+    /**
+     * Accessor for total price of the field.
      *
      * @return float
      */
     public function getTotalAttribute(): float
     {
-        if ($this->variant_id && $this->variant) {
-            $price = $this->variant->price;
-        }
-
-        if (!isset($price)) {
-            $price = $this->product->price;
-        }
-
-        return round($price * $this->amount, 2);
+        return round($this->price * $this->amount, 2);
     }
 }

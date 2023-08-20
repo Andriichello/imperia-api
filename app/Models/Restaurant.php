@@ -32,6 +32,7 @@ use Illuminate\Support\Collection;
  * @property string $place
  * @property string $timezone
  * @property int $timezone_offset
+ * @property string|null $full_address
  * @property int|null $popularity
  * @property string|null $metadata
  * @property Carbon|null $created_at
@@ -236,6 +237,25 @@ class Restaurant extends BaseModel implements
             ->setTimezone($timezone);
 
         return $timezone->getOffset($date) / 60;
+    }
+
+    /**
+     * Get restaurant's full address.
+     *
+     * @return string|null
+     * @throws Exception
+     */
+    public function getFullAddressAttribute(): ?string
+    {
+        if (!$this->place && !$this->city && !$this->country) {
+            return null;
+        }
+
+        return implode(', ', [
+            $this->place ?? '',
+            $this->city ?? '',
+            $this->country ?? '',
+        ]);
     }
 
     /**

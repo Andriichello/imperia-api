@@ -5,9 +5,11 @@ namespace App\Invoices;
 use App\Models\BaseModel;
 use App\Models\Customer;
 use App\Models\Orders\Order;
+use App\Models\Restaurant;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Collection;
 use LaravelDaily\Invoices\Classes\Buyer;
+use LaravelDaily\Invoices\Classes\Seller;
 
 /**
  * Class InvoiceFactory.
@@ -26,11 +28,30 @@ class InvoiceFactory
      */
     public static function fromOrder(Order $order): Invoice
     {
-        return Invoice::make('receipt-' . $order->id)
-            ->template('custom')
+        return Invoice::make('receipt-' . $order->id, $order)
+            ->template('banquet')
             ->buyer(self::buyer($order->banquet->customer))
-            ->addItems(self::items($order))
-            ->comments($order->comments->pluck('text'));
+            ->seller(self::seller($order->banquet->restaurant))
+            ->addItems(self::items($order));
+    }
+
+    /**
+     * Create a seller from given restaurant.
+     *
+     * @param Restaurant $restaurant
+     *
+     *
+     * @return Seller
+     */
+    public static function seller(Restaurant $restaurant): Seller
+    {
+        $seller = new Seller();
+
+        $seller->name = $restaurant->name;
+        $seller->address = $restaurant->full_address;
+        $seller->phone = null;
+
+        return $seller;
     }
 
     /**

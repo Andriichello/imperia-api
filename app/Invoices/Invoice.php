@@ -2,8 +2,12 @@
 
 namespace App\Invoices;
 
+use App\Invoices\Items\ProductItem;
+use App\Invoices\Items\ServiceItem;
+use App\Invoices\Items\SpaceItem;
+use App\Invoices\Items\TicketItem;
+use App\Models\Orders\Order;
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Support\Collection;
 use LaravelDaily\Invoices\Invoice as BaseInvoice;
 
 /**
@@ -14,20 +18,71 @@ use LaravelDaily\Invoices\Invoice as BaseInvoice;
 class Invoice extends BaseInvoice
 {
     /**
-     * @var Collection
+     * Invoice order.
+     *
+     * @var Order
      */
-    public Collection $comments;
+    protected Order $order;
 
     /**
-     * @param Collection $comments
+     * Create a new instance of invoice.
      *
-     * @return $this
+     * @param string $name
+     * @param Order|null $order
+     *
+     * @return Invoice
+     * @throws BindingResolutionException
      */
-    public function comments(Collection $comments): static
+    public static function make($name = '', ?Order $order = null): Invoice
     {
-        $this->comments = $comments;
+        $name = strlen($name) || $order === null
+            ? $name : "receipt-{$order->id}";
 
-        return $this;
+        /** @var Invoice $invoice */
+        $invoice = parent::make($name);
+        $invoice->order = $order;
+
+        return $invoice;
+    }
+
+    /**
+     * Get comments.
+     *
+     * @return array
+     */
+    public function getComments(): array
+    {
+        return $this->order->comments?->toArray() ?? [];
+    }
+
+    /**
+     * Get date.
+     *
+     * @return string
+     */
+    public function getDate(): string
+    {
+        return $this->order->banquet->start_at->format('d/m/Y');
+    }
+
+    /**
+     * Get start time.
+     *
+     * @return string
+     */
+    public function getStartTime(): string
+    {
+        return $this->order->banquet->start_at->format('H:i');
+    }
+
+    /**
+     * Get end time.
+     *
+     * @return string
+     */
+    public function getEndTime(): string
+    {
+        return $this->order->banquet->end_at->format('H:i');
     }
 
     /**
@@ -39,8 +94,8 @@ class Invoice extends BaseInvoice
     {
         $formatted = $this->formatCurrency($item->price_per_unit);
 
-        if ($item->oncePaidPrice) {
-            $hourly = $this->formatCurrency($item->oncePaidPrice);
+        if ($item->getOncePaidPrice()) {
+            $hourly = $this->formatCurrency($item->getOncePaidPrice());
             return "$formatted + $hourly * hours";
         }
 
@@ -48,16 +103,85 @@ class Invoice extends BaseInvoice
     }
 
     /**
-     * @param string $name
-     *
-     * @return Invoice
-     * @throws BindingResolutionException
+     * @return ProductItem[]
      */
-    public static function make($name = ''): Invoice
+    public function getProducts(): array
     {
-        /** @var Invoice $invoice */
-        $invoice = parent::make($name);
+        $items = [];
 
-        return $invoice;
+        foreach ($this->items as $item) {
+            if ($item instanceof ProductItem) {
+                $items[] = $item;
+            }
+        }
+
+        return $items;
+    }
+
+    /**
+     * @return SpaceItem[]
+     */
+    public function getSpaces(): array
+    {
+        $items = [];
+
+        foreach ($this->items as $item) {
+            if ($item instanceof SpaceItem) {
+                $items[] = $item;
+            }
+        }
+
+        return $items;
+    }
+
+    /**
+     * @return ServiceItem[]
+     */
+    public function getServices(): array
+    {
+        $items = [];
+
+        foreach ($this->items as $item) {
+            if ($item instanceof SpaceItem) {
+                $items[] = $item;
+            }
+        }
+
+        return $items;
+    }
+
+    /**
+     * @return TicketItem[]
+     */
+    public function getTickets(): array
+    {
+        $items = [];
+
+        foreach ($this->items as $item) {
+            if ($item instanceof TicketItem) {
+                $items[] = $item;
+            }
+        }
+
+        return $items;
+    }
+
+    /**
+     * Get total price of given items.
+     *
+     * @param array $items
+     *
+     * @return float
+     */
+    public function getTotal(array $items): float
+    {
+        $total = 0.0;
+
+        foreach ($items as $item) {
+            /** @var InvoiceItem $item */
+            $total += $item->getTotal() ?? 0.0;
+        }
+
+        return $total;
     }
 }

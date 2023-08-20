@@ -2,7 +2,10 @@
 
 namespace App\Invoices;
 
-use Illuminate\Support\Collection;
+use App\Models\BaseModel;
+use App\Models\Orders\ProductOrderField;
+use App\Models\Orders\ServiceOrderField;
+use App\Models\Orders\SpaceOrderField;
 use LaravelDaily\Invoices\Classes\InvoiceItem as BaseItem;
 
 /**
@@ -13,36 +16,77 @@ use LaravelDaily\Invoices\Classes\InvoiceItem as BaseItem;
 class InvoiceItem extends BaseItem
 {
     /**
-     * @var Collection
-     */
-    public Collection $comments;
-
-    /**
-     * @var float|null
-     */
-    public ?float $oncePaidPrice = null;
-
-    /**
-     * @param Collection $comments
+     * Get field.
      *
-     * @return $this
+     * @return BaseModel
      */
-    public function comments(Collection $comments): static
+    public function getField(): BaseModel
     {
-        $this->comments = $comments;
-
-        return $this;
+        // @phpstan-ignore-next-line
+        return $this->field;
     }
 
     /**
-     * @param ?float $price
+     * Get ordered field price.
      *
-     * @return $this
+     * @return float|null
      */
-    public function oncePaidPrice(?float $price): static
+    public function getPrice(): ?float
     {
-        $this->oncePaidPrice = $price;
+        // @phpstan-ignore-next-line
+        return $this->field?->price;
+    }
 
-        return $this;
+    /**
+     * Get ordered field variant.
+     *
+     * @return string|null
+     */
+    public function getVariant(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * Get ordered field once price.
+     *
+     * @return float|null
+     */
+    public function getOncePaidPrice(): ?float
+    {
+        return $this->field?->once_paid_price;
+    }
+
+    /**
+     * Get ordered field amount.
+     *
+     * @return int|null
+     */
+    public function getAmount(): ?int
+    {
+        // @phpstan-ignore-next-line
+        return $this->field?->amount;
+    }
+
+    /**
+     * Get ordered total price.
+     *
+     * @return float|null
+     */
+    public function getTotal(): ?float
+    {
+        // @phpstan-ignore-next-line
+        return $this->field?->total;
+    }
+
+    /**
+     * Get ordered field comments.
+     *
+     * @return array
+     */
+    public function getComments(): array
+    {
+        // @phpstan-ignore-next-line
+        return $this->field?->comments?->toArray() ?? [];
     }
 }
