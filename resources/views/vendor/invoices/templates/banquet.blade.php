@@ -248,10 +248,10 @@
 </table>
 
 @php
+    $menus = $invoice->getMenus() ?? [];
     $spaces = $invoice->getSpaces() ?? [];
     $tickets = $invoice->getTickets() ?? [];
     $services = $invoice->getServices() ?? [];
-    $products = $invoice->getProducts() ?? [];
 @endphp
 {{-- Table --}}
 
@@ -295,6 +295,36 @@
                     {{ $invoice->formatCurrency($invoice->getTotal($tickets)) }}
                 </td>
             </tr>
+        </tbody>
+    </table>
+@else
+    <table class="table table-items">
+        <thead>
+        <tr>
+            <th scope="col" class="border-0 p-0 items-title">Tickets</th>
+            <th scope="col" class="text-right border-0 p-0">Price</th>
+            <th scope="col" class="text-right border-0 p-0">Sum</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        {{-- Items --}}
+        <tr>
+            <td class="p-0">Adult</td>
+            <td class="text-right"></td>
+            <td class="text-right p-0"></td>
+        </tr>
+        <tr>
+            <td class="p-0">Child</td>
+            <td class="text-right"></td>
+            <td class="text-right p-0"></td>
+        </tr>
+        {{-- Summary --}}
+        <tr>
+            <td colspan="1" class="border-0"></td>
+            <td class="text-right p-0">Total</td>
+            <td class="text-right p-0 total-amount"></td>
+        </tr>
         </tbody>
     </table>
 @endif
@@ -395,57 +425,58 @@
     </table>
 @endif
 
-@if(!empty($products))
-    <table class="table table-items">
-        <thead>
-        <tr>
-            <th scope="col" class="border-0 p-0 items-title">Products</th>
-            <th scope="col" class="border-0 p-0">Variant</th>
-            <th scope="col" class="border-0 p-0">Quantity</th>
-            <th scope="col" class="text-right border-0 p-0">Price</th>
-            <th scope="col" class="text-right border-0 p-0">Sum</th>
-        </tr>
-        </thead>
-        <tbody>
-
-        {{-- Items --}}
-        @foreach($products as $item)
+@if(!empty($menus))
+    @foreach($menus as $menu)
+        <table class="table table-items">
+            <thead>
             <tr>
-                <td class="p-0">
-                    {{ $item->title}}
-
-                    @if($item->description)
-                        <br><span class="cool-gray">{{ $item->description }}</span>
-                    @endif
-                    @foreach($item->getComments() as $comment)
-                        <br><span class="cool-gray">{{ $comment['text'] }}</span>
-                    @endforeach
-                </td>
-
-                <td class="text-center">{{ $item->getVariant() }}</td>
-
-                <td class="text-center">{{ $item->quantity }}</td>
-
-                <td class="text-right">
-                    {{ $invoice->itemFormattedPrice($item) }}
-                </td>
-
-                @if($invoice->hasItemDiscount)
-                    <td class="text-right">
-                        {{ $invoice->formatCurrency($item->discount) }}
-                    </td>
-                @endif
-                @if($invoice->hasItemTax)
-                    <td class="text-right">
-                        {{ $invoice->formatCurrency($item->tax) }}
-                    </td>
-                @endif
-
-                <td class="text-right p-0">
-                    {{ $invoice->formatCurrency($item->sub_total_price) }}
-                </td>
+                <th scope="col" class="border-0 p-0 items-title">{{ data_get($menu, 'title') }}</th>
+                <th scope="col" class="text-center border-0 p-0">Variant</th>
+                <th scope="col" class="text-center border-0 p-0">Quantity</th>
+                <th scope="col" class="text-right border-0 p-0">Price</th>
+                <th scope="col" class="text-right border-0 p-0">Sum</th>
             </tr>
-        @endforeach
+            </thead>
+            <tbody>
+
+            {{-- Items --}}
+            @foreach($products = $invoice->getProducts(data_get($menu, 'id')) as $item)
+                <tr>
+                    <td class="p-0">
+                        {{ $item->title}}
+
+                        @if($item->description)
+                            <br><span class="cool-gray">{{ $item->description }}</span>
+                        @endif
+                        @foreach($item->getComments() as $comment)
+                            <br><span class="cool-gray">{{ $comment['text'] }}</span>
+                        @endforeach
+                    </td>
+
+                    <td class="text-center">{{ $item->getVariant() }}</td>
+
+                    <td class="text-center">{{ $item->quantity }}</td>
+
+                    <td class="text-right">
+                        {{ $invoice->itemFormattedPrice($item) }}
+                    </td>
+
+                    @if($invoice->hasItemDiscount)
+                        <td class="text-right">
+                            {{ $invoice->formatCurrency($item->discount) }}
+                        </td>
+                    @endif
+                    @if($invoice->hasItemTax)
+                        <td class="text-right">
+                            {{ $invoice->formatCurrency($item->tax) }}
+                        </td>
+                    @endif
+
+                    <td class="text-right p-0">
+                        {{ $invoice->formatCurrency($item->sub_total_price) }}
+                    </td>
+                </tr>
+            @endforeach
 
             {{-- Summary --}}
             <tr>
@@ -455,8 +486,9 @@
                     {{ $invoice->formatCurrency($invoice->getTotal($products)) }}
                 </td>
             </tr>
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    @endforeach
 @endif
 
 @if($invoice->notes)
