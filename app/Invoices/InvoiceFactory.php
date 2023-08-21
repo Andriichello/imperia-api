@@ -28,7 +28,7 @@ class InvoiceFactory
      */
     public static function fromOrder(Order $order): Invoice
     {
-        return Invoice::make('receipt-' . $order->id, $order)
+        return Invoice::make('banquet-' . $order->id, $order)
             ->template('banquet')
             ->buyer(self::buyer($order->banquet->customer))
             ->seller(self::seller($order->banquet->restaurant))
@@ -49,7 +49,8 @@ class InvoiceFactory
 
         $seller->name = $restaurant->name;
         $seller->address = $restaurant->full_address;
-        $seller->phone = null;
+        $seller->phone = $restaurant->phone;
+        $seller->custom_fields['email'] = $restaurant->email;
 
         return $seller;
     }
@@ -83,7 +84,7 @@ class InvoiceFactory
     {
         $items = new Collection();
 
-        $relations = ['tickets','spaces', 'services', 'products'];
+        $relations = ['tickets', 'spaces', 'services', 'products'];
         foreach ($relations as $relation) {
             /** @var BaseModel[]|Collection $fields */
             $fields = $order->$relation;

@@ -6,6 +6,7 @@ use App\Invoices\Items\ProductItem;
 use App\Invoices\Items\ServiceItem;
 use App\Invoices\Items\SpaceItem;
 use App\Invoices\Items\TicketItem;
+use App\Models\Menu;
 use App\Models\Orders\Order;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use LaravelDaily\Invoices\Invoice as BaseInvoice;
@@ -103,19 +104,57 @@ class Invoice extends BaseInvoice
     }
 
     /**
+     * @param int|null $menuId
+     *
      * @return ProductItem[]
      */
-    public function getProducts(): array
+    public function getProducts(?int $menuId = null): array
     {
         $items = [];
 
         foreach ($this->items as $item) {
             if ($item instanceof ProductItem) {
+                if ($menuId) {
+                    $skip = true;
+
+                    foreach ($item->getMenus() ?? [] as $menu) {
+                        /** @var Menu $menu */
+                        if (data_get($menu, 'id') === $menuId) {
+                            $skip = false;
+                        }
+                    }
+
+                    if ($skip) {
+                        continue;
+                    }
+                }
+
                 $items[] = $item;
             }
         }
 
         return $items;
+    }
+
+    /**
+     * @return array<int, Menu>
+     */
+    public function getMenus(): array
+    {
+        $menus = [];
+
+        foreach ($this->getProducts() as $item) {
+            foreach ($item->getMenus()?->toArray() ?? [] as $menu) {
+                $menuId = data_get($menu, 'id');
+                if (key_exists($menuId, $menus)) {
+                    continue;
+                }
+
+                $menus[$menuId] = $menu;
+            }
+        }
+
+        return $menus;
     }
 
     /**

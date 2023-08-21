@@ -4,6 +4,7 @@ namespace App\Invoices\Items;
 
 use App\Invoices\InvoiceItem;
 use App\Models\Orders\ProductOrderField;
+use Illuminate\Support\Collection;
 
 /**
  * Class ProductItem.
@@ -45,5 +46,10 @@ class ProductItem extends InvoiceItem
             $this->field->product->weight ?? '',
             $this->field->product->weight_unit ?? '',
         ]);
+    }
+
+    public function getMenus(): ?Collection
+    {
+        return $this->field?->product?->menus;
     }
 }

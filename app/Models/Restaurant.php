@@ -15,11 +15,13 @@ use Carbon\CarbonInterface;
 use Database\Factories\RestaurantFactory;
 use DateTimeZone;
 use Exception;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class Restaurant.
@@ -30,9 +32,13 @@ use Illuminate\Support\Collection;
  * @property string $country
  * @property string $city
  * @property string $place
+ * @property string|null $full_address
+ * @property string|null $phone
+ * @property string|null $email
+ * @property string|null $location
+ * @property string|null $website
  * @property string $timezone
  * @property int $timezone_offset
- * @property string|null $full_address
  * @property int|null $popularity
  * @property string|null $metadata
  * @property Carbon|null $created_at
@@ -220,42 +226,128 @@ class Restaurant extends BaseModel implements
     }
 
     /**
-     * Get restaurant's timezone offset in minutes.
+     * Accessor for the restaurant's timezone offset in minutes.
      *
-     * @return int
-     * @throws Exception
+     * @return Attribute
      */
-    public function getTimezoneOffsetAttribute(): int
+    public function timezoneOffset(): Attribute
     {
-        if (!$this->timezone || empty($this->timezone)) {
-            return 0;
-        }
+        return Attribute::get(
+            function () {
+                if (!$this->timezone || empty($this->timezone)) {
+                    return 0;
+                }
 
-        $timezone = new DateTimeZone($this->timezone);
+                $timezone = new DateTimeZone($this->timezone);
 
-        $date = Carbon::now()
-            ->setTimezone($timezone);
+                $date = Carbon::now()
+                    ->setTimezone($timezone);
 
-        return $timezone->getOffset($date) / 60;
+                return $timezone->getOffset($date) / 60;
+            }
+        );
     }
 
     /**
-     * Get restaurant's full address.
+     * Accessor for the restaurant's full address.
+     *
+     * @return Attribute
+     */
+    public function fullAddress(): Attribute
+    {
+        return Attribute::get(
+            function () {
+                if (!$this->place && !$this->city && !$this->country) {
+                    return null;
+                }
+
+                return implode(', ', [
+                    $this->place ?? '',
+                    $this->city ?? '',
+                    $this->country ?? '',
+                ]);
+            }
+        );
+    }
+
+    /**
+     * Accessor for the restaurant's phone.
      *
      * @return string|null
-     * @throws Exception
      */
-    public function getFullAddressAttribute(): ?string
+    public function getPhoneAttribute(): ?string
     {
-        if (!$this->place && !$this->city && !$this->country) {
-            return null;
-        }
+        return $this->getFromJson('metadata', 'phone');
+    }
 
-        return implode(', ', [
-            $this->place ?? '',
-            $this->city ?? '',
-            $this->country ?? '',
-        ]);
+    /**
+     * Mutator for the restaurant's phone.
+     *
+     * @param $phone string|null
+     */
+    public function setPhoneAttribute(?string $phone): void
+    {
+        $this->setToJson('metadata', 'phone', $phone);
+    }
+
+    /**
+     * Accessor for the restaurant's email.
+     *
+     * @return string|null
+     */
+    public function getEmailAttribute(): ?string
+    {
+        return $this->getFromJson('metadata', 'email');
+    }
+
+    /**
+     * Mutator for the restaurant's email.
+     *
+     * @param $email string|null
+     */
+    public function setEmailAttribute(?string $email): void
+    {
+        $this->setToJson('metadata', 'email', $email);
+    }
+
+    /**
+     * Accessor for the restaurant's location link.
+     *
+     * @return string|null
+     */
+    public function getLocationAttribute(): ?string
+    {
+        return $this->getFromJson('metadata', 'location');
+    }
+
+    /**
+     * Mutator for the restaurant's location link.
+     *
+     * @param $location string|null
+     */
+    public function setLocationAttribute(?string $location): void
+    {
+        $this->setToJson('metadata', 'location', $location);
+    }
+
+    /**
+     * Accessor for the restaurant's website link.
+     *
+     * @return string|null
+     */
+    public function getWebsiteAttribute(): ?string
+    {
+        return $this->getFromJson('metadata', 'website');
+    }
+
+    /**
+     * Mutator for the restaurant's website link.
+     *
+     * @param $website string|null
+     */
+    public function setWebsiteAttribute(?string $website): void
+    {
+        $this->setToJson('metadata', 'website', $website);
     }
 
     /**

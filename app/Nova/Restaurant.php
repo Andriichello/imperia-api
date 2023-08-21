@@ -93,6 +93,18 @@ class Restaurant extends Resource
             Text::make(__('columns.place'), 'place')
                 ->rules('required', 'min:1', 'max:255'),
 
+            Text::make(__('columns.phone'), 'phone')
+                ->rules('sometimes', 'nullable', 'regex:/(\+?[0-9]{1,2})?[0-9]{10,12}/'),
+
+            Text::make(__('columns.email'), 'email')
+                ->rules('sometimes', 'nullable', 'email'),
+
+            Text::make(__('columns.location'), 'location')
+                ->rules('sometimes', 'nullable', 'url:http,https'),
+
+            Text::make(__('columns.website'), 'website')
+                ->rules('sometimes', 'nullable', 'url:http,https'),
+
             Timezone::make(__('columns.timezone'), 'timezone')
                 ->default('Europe/Kyiv'),
 
