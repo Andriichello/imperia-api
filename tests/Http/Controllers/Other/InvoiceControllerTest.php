@@ -8,6 +8,7 @@ use App\Models\Banquet;
 use App\Models\Customer;
 use App\Models\Orders\Order;
 use App\Models\Orders\SpaceOrderField;
+use App\Models\Restaurant;
 use App\Models\Space;
 use Carbon\Carbon;
 use Tests\RegisteringTestCase;
@@ -46,6 +47,7 @@ class InvoiceControllerTest extends RegisteringTestCase
         parent::setUp();
 
         $this->banquet = Banquet::factory()
+            ->withRestaurant(Restaurant::factory()->create())
             ->withCustomer(Customer::factory()->create())
             ->withCreator($this->user)
             ->create();
