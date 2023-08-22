@@ -7,6 +7,7 @@ use App\Enums\UserRole;
 use App\Models\Banquet;
 use App\Models\Customer;
 use App\Models\Orders\Order;
+use App\Models\Restaurant;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -75,6 +76,23 @@ class BanquetFactory extends Factory
         return $this->state(
             function (array $attributes) use ($customer) {
                 $attributes['customer_id'] = $customer->id;
+                return $attributes;
+            }
+        );
+    }
+
+    /**
+     * Indicate restaurant.
+     *
+     * @param Restaurant $restaurant
+     *
+     * @return static
+     */
+    public function withRestaurant(Restaurant $restaurant): static
+    {
+        return $this->state(
+            function (array $attributes) use ($restaurant) {
+                $attributes['restaurant_id'] = $restaurant->id;
                 return $attributes;
             }
         );
