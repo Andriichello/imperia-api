@@ -23,6 +23,7 @@ class SpaceItem extends InvoiceItem
 
     public static function make(SpaceOrderField $field): static
     {
+        // @phpstan-ignore-next-line
         $item = new static();
         $item->field = $field;
 
@@ -32,5 +33,10 @@ class SpaceItem extends InvoiceItem
         $item->subTotalPrice($field->total);
 
         return $item;
+    }
+
+    public function getDuration(): int
+    {
+        return $this->field->duration;
     }
 }
