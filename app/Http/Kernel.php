@@ -2,6 +2,7 @@
 
 namespace App\Http;
 
+use App\Http\Middleware\AcceptLanguage;
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\ForceJsonOnApi;
@@ -50,6 +51,7 @@ class Kernel extends HttpKernel
         ConvertEmptyStringsToNull::class,
         /** Custom */
         // HttpsProtocol::class,
+        AcceptLanguage::class,
         ForceJsonOnApi::class,
     ];
 
