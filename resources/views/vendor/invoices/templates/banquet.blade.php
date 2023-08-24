@@ -146,7 +146,7 @@
             font-size: 14px;
         }
         .items-title {
-            font-size: 14px;
+            font-size: 16px;
         }
 
         .seller-name {
@@ -175,12 +175,12 @@
         <td class="border-0 p-0">
             <div>
                 <span class="date">
-                    Date: <strong>{{ $invoice->getDate() }}</strong>
+                    {{ __('invoices::invoice.date') }}: <strong>{{ $invoice->getDate() }}</strong>
                 </span>
             </div>
             <div>
                 <span class="time">
-                    Time: <strong>{{ $invoice->getStartTime() }}</strong> - <strong>{{ $invoice->getEndTime() }}</strong>
+                    {{ __('invoices::invoice.time') }}: <strong>{{ $invoice->getStartTime() }}</strong> - <strong>{{ $invoice->getEndTime() }}</strong>
                 </span>
             </div>
         </td>
@@ -201,20 +201,22 @@
 
             @if($invoice->seller->address)
                 <p class="seller-address">
-                    Address: <span class="font-bold">{{ $invoice->seller->address }}</span>
+                    {{ __('invoices::invoice.address') }}: <span class="font-bold">{{ $invoice->seller->address }}</span>
                 </p>
             @endif
 
             @if($invoice->seller->phone)
                 <p class="seller-phone">
-                    Phone: <span class="font-bold">{{ $invoice->seller->phone }}</span>
+                    {{ __('invoices::invoice.phone') }}: <span class="font-bold">{{ $invoice->seller->phone }}</span>
                 </p>
             @endif
 
             @foreach($invoice->seller->custom_fields as $key => $value)
-                <p class="seller-custom-field">
-                    {{ ucfirst($key) }}: <span class="font-bold">{{ $value }}</span>
-                </p>
+                @if(!empty($value))
+                    <p class="seller-custom-field">
+                        {{ translate("invoices::invoice.$key", [], ucfirst($key)) }}: <span class="font-bold">{{ $value }}</span>
+                    </p>
+                @endif
             @endforeach
         </td>
         <td class="border-0"></td>
@@ -227,21 +229,23 @@
 
             @if($invoice->buyer->address)
                 <p class="buyer-address">
-                    Address: <span class="font-bold">{{ $invoice->buyer->address }}</span>
+                    {{ __('invoices::invoice.address') }}: <span class="font-bold">{{ $invoice->buyer->address }}</span>
                 </p>
             @endif
 
             @if($invoice->buyer->phone)
                 <p class="buyer-phone">
-                    Phone: <span class="font-bold">{{ $invoice->buyer->phone }}</span>
+                    {{ __('invoices::invoice.phone') }}: <span class="font-bold">{{ $invoice->buyer->phone }}</span>
                 </p>
             @endif
 
             @foreach($invoice->buyer->custom_fields as $key => $value)
-                <p class="buyer-custom-field">
-                    {{ ucfirst($key) }}: <span class="font-bold">{{ $value }}</span>
-                </p>
-                @endforeach
+                @if(!empty($value))
+                    <p class="buyer-custom-field">
+                        {{ translate("invoices::invoice.$key", [], ucfirst($key)) }}: <span class="font-bold">{{ $value }}</span>
+                    </p>
+                @endif
+            @endforeach
         </td>
     </tr>
     </tbody>
@@ -252,16 +256,40 @@
     $spaces = $invoice->getSpaces() ?? [];
     $tickets = $invoice->getTickets() ?? [];
     $services = $invoice->getServices() ?? [];
+
+    $comments = $invoice->getComments() ?? [];
+    $productsByMenus = $invoice->getProductsByMenus() ?? [];
 @endphp
 {{-- Table --}}
+
+@if(!empty($comments))
+    <table class="table table-items">
+        <thead>
+        <tr>
+            <th scope="col" class="border-0 p-0 items-title">{{ __('invoices::invoice.comments') }}</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        {{-- Items --}}
+        @foreach($comments as $comment)
+            <tr>
+                <td class="p-0">
+                    {{ $comment['text'] }}
+                </td>
+            </tr>
+        @endforeach
+        </tbody>
+    </table>
+@endif
 
 @if(!empty($tickets))
     <table class="table table-items">
         <thead>
         <tr>
-            <th scope="col" class="border-0 p-0 items-title">Tickets</th>
-            <th scope="col" class="text-right border-0 p-0">Price</th>
-            <th scope="col" class="text-right border-0 p-0">Sum</th>
+            <th scope="col" class="border-0 p-0 items-title">{{ __('invoices::invoice.tickets') }}</th>
+            <th scope="col" class="text-right border-0 p-0">{{ __('invoices::invoice.price') }}</th>
+            <th scope="col" class="text-right border-0 p-0">{{ __('invoices::invoice.sum') }}</th>
         </tr>
         </thead>
         <tbody>
@@ -301,28 +329,31 @@
     <table class="table table-items">
         <thead>
         <tr>
-            <th scope="col" class="border-0 p-0 items-title">Tickets</th>
-            <th scope="col" class="text-right border-0 p-0">Price</th>
-            <th scope="col" class="text-right border-0 p-0">Sum</th>
+            <th scope="col" class="border-0 p-0 items-title">{{ __('invoices::invoice.tickets') }}</th>
+            <th scope="col" class="text-right border-0 p-0">{{ __('invoices::invoice.quantity') }}</th>
+            <th scope="col" class="text-right border-0 p-0">{{ __('invoices::invoice.price') }}</th>
+            <th scope="col" class="text-right border-0 p-0">{{ __('invoices::invoice.sum') }}</th>
         </tr>
         </thead>
         <tbody>
 
         {{-- Items --}}
         <tr>
-            <td class="p-0">Adult</td>
+            <td class="p-0">{{ __('invoices::invoice.adults') }}</td>
+            <td class="text-right"></td>
             <td class="text-right"></td>
             <td class="text-right p-0"></td>
         </tr>
         <tr>
-            <td class="p-0">Child</td>
+            <td class="p-0">{{ __('invoices::invoice.children') }}</td>
+            <td class="text-right"></td>
             <td class="text-right"></td>
             <td class="text-right p-0"></td>
         </tr>
         {{-- Summary --}}
         <tr>
-            <td colspan="1" class="border-0"></td>
-            <td class="text-right p-0">Total</td>
+            <td colspan="2" class="border-0"></td>
+            <td class="text-right p-0">{{ __('invoices::invoice.total') }}</td>
             <td class="text-right p-0 total-amount"></td>
         </tr>
         </tbody>
@@ -333,10 +364,10 @@
     <table class="table table-items">
         <thead>
         <tr>
-            <th scope="col" class="border-0 p-0 items-title">Spaces</th>
-            <th scope="col" class="border-0 p-0">Duration</th>
-            <th scope="col" class="text-right border-0 p-0">Price</th>
-            <th scope="col" class="text-right border-0 p-0">Sum</th>
+            <th scope="col" class="border-0 p-0 items-title">{{ __('invoices::invoice.spaces') }}</th>
+            <th scope="col" class="border-0 p-0">{{ __('invoices::invoice.duration') }}</th>
+            <th scope="col" class="text-right border-0 p-0">{{ __('invoices::invoice.price') }}</th>
+            <th scope="col" class="text-right border-0 p-0">{{ __('invoices::invoice.sub_total') }}</th>
         </tr>
         </thead>
         <tbody>
@@ -381,10 +412,10 @@
     <table class="table table-items">
         <thead>
         <tr>
-            <th scope="col" class="border-0 p-0 items-title">Services</th>
-            <th scope="col" class="border-0 p-0">Duration</th>
-            <th scope="col" class="text-right border-0 p-0">Price</th>
-            <th scope="col" class="text-right border-0 p-0">Sum</th>
+            <th scope="col" class="border-0 p-0 items-title">{{ __('invoices::invoice.services') }}</th>
+            <th scope="col" class="border-0 p-0">{{ __('invoices::invoice.duration') }}</th>
+            <th scope="col" class="text-right border-0 p-0">{{ __('invoices::invoice.price') }}</th>
+            <th scope="col" class="text-right border-0 p-0">{{ __('invoices::invoice.sum') }}</th>
         </tr>
         </thead>
         <tbody>
@@ -431,16 +462,16 @@
             <thead>
             <tr>
                 <th scope="col" class="border-0 p-0 items-title">{{ data_get($menu, 'title') }}</th>
-                <th scope="col" class="text-center border-0 p-0">Variant</th>
-                <th scope="col" class="text-center border-0 p-0">Quantity</th>
-                <th scope="col" class="text-right border-0 p-0">Price</th>
-                <th scope="col" class="text-right border-0 p-0">Sum</th>
+                <th scope="col" class="text-center border-0 p-0">{{ __('invoices::invoice.variant') }}</th>
+                <th scope="col" class="text-center border-0 p-0">{{ __('invoices::invoice.quantity') }}</th>
+                <th scope="col" class="text-right border-0 p-0">{{ __('invoices::invoice.price') }}</th>
+                <th scope="col" class="text-right border-0 p-0">{{ __('invoices::invoice.sum') }}</th>
             </tr>
             </thead>
             <tbody>
 
             {{-- Items --}}
-            @foreach($products = $invoice->getProducts(data_get($menu, 'id')) as $item)
+            @foreach($products = $productsByMenus[data_get($menu, 'id')] as $item)
                 <tr>
                     <td class="p-0">
                         {{ $item->title}}
@@ -481,7 +512,7 @@
             {{-- Summary --}}
             <tr>
                 <td colspan="3" class="border-0"></td>
-                <td class="text-right p-0">Total</td>
+                <td class="text-right p-0">{{ __('invoices::invoice.total') }}</td>
                 <td class="text-right p-0 total-amount">
                     {{ $invoice->formatCurrency($invoice->getTotal($products)) }}
                 </td>
@@ -499,7 +530,7 @@
 
 <script type="text/php">
     if (isset($pdf) && $PAGE_COUNT > 1) {
-        $text = "Page {PAGE_NUM} / {PAGE_COUNT}";
+        $text = __('invoices::invoice.page') . " {PAGE_NUM} / {PAGE_COUNT}";
         $size = 10;
         $font = $fontMetrics->getFont("Verdana");
         $width = $fontMetrics->get_text_width($text, $font, $size) / 2;

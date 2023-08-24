@@ -53,7 +53,7 @@ class Invoice extends BaseInvoice
      */
     public function getComments(): array
     {
-        return $this->order->comments?->toArray() ?? [];
+        return $this->order->comments->toArray();
     }
 
     /**
@@ -158,6 +158,44 @@ class Invoice extends BaseInvoice
     }
 
     /**
+     * @return array<int, ProductItem[]>
+     */
+    public function getProductsByMenus(): array
+    {
+        $result = [];
+
+        foreach ($this->getMenus() as $menu) {
+            foreach ($this->getProducts(data_get($menu, 'id')) as $item) {
+                $alreadyAdded = false;
+
+                foreach ($result as $addedItems) {
+                    if (empty($addedItems)) {
+                        continue;
+                    }
+
+
+                    foreach ($addedItems as $addedItem) {
+                        if ($addedItem === $item) {
+                            $alreadyAdded = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!$alreadyAdded) {
+                    $items = data_get($result, data_get($menu, 'id'), []);
+                    $items[] = $item;
+
+                    $result[data_get($menu, 'id')] = $items;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+
+    /**
      * @return SpaceItem[]
      */
     public function getSpaces(): array
@@ -181,7 +219,7 @@ class Invoice extends BaseInvoice
         $items = [];
 
         foreach ($this->items as $item) {
-            if ($item instanceof SpaceItem) {
+            if ($item instanceof ServiceItem) {
                 $items[] = $item;
             }
         }

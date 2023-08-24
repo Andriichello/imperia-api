@@ -28,7 +28,10 @@ class InvoiceFactory
      */
     public static function fromOrder(Order $order): Invoice
     {
-        return Invoice::make('banquet-' . $order->id, $order)
+        $name = translate('invoices::invoice.banquet', [], 'banquet')
+            . '-' . $order->id;
+
+        return Invoice::make($name, $order)
             ->template('banquet')
             ->buyer(self::buyer($order->banquet->customer))
             ->seller(self::seller($order->banquet->restaurant))
@@ -68,7 +71,7 @@ class InvoiceFactory
             'name' => $customer->fullName,
             'custom_fields' => [
                 'phone' => $customer->phone,
-                'email' => $customer->email ?? 'unknown',
+                'email' => $customer->email,
             ],
         ]);
     }
