@@ -6351,6 +6351,21 @@
                 },
                 "type": "object"
             },
+            "ShowInvoiceRequest": {
+                "description": "Show invoice request",
+                "properties": {
+                    "menus": {
+                        "type": "string",
+                        "example": "1,2,3"
+                    },
+                    "sections": {
+                        "description": "Coma-separated list of invoice sections.\n     *     Available sections: `info`, `comments`, `tickets`, `menus`,\n     *     `spaces`, `services`",
+                        "type": "string",
+                        "example": "info,comments,tickets"
+                    }
+                },
+                "type": "object"
+            },
             "StoreMediaRequest": {
                 "description": "Store media request",
                 "required": [
@@ -8097,6 +8112,10 @@
                     "country",
                     "city",
                     "place",
+                    "phone",
+                    "email",
+                    "website",
+                    "location",
                     "timezone",
                     "timezone_offset",
                     "popularity",
@@ -8130,6 +8149,30 @@
                     "place": {
                         "type": "string",
                         "example": "Koryatovycha Square, 1а"
+                    },
+                    "full_address": {
+                        "type": "string",
+                        "example": "Koryatovycha Square, 1а, Uzhhorod, Ukraine"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "+380501234567",
+                        "nullable": "true"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "imperia@email.com",
+                        "nullable": "true"
+                    },
+                    "location": {
+                        "type": "string",
+                        "example": "https://goo.gl/maps/g7XZq9H712osMLZW9",
+                        "nullable": "true"
+                    },
+                    "website": {
+                        "type": "string",
+                        "example": "https://app.imperia.pp.ua",
+                        "nullable": "true"
                     },
                     "timezone": {
                         "type": "string",

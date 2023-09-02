@@ -26,6 +26,22 @@ class Invoice extends BaseInvoice
     protected Order $order;
 
     /**
+     * Menus, which should be on invoice.
+     * All menus will be displayed if it's null.
+     *
+     * @var array|null
+     */
+    protected ?array $menus = null;
+
+    /**
+     * Sections, which should be on invoice.
+     * All sections will be displayed if it's null.
+     *
+     * @var array|null
+     */
+    protected ?array $sections = null;
+
+    /**
      * Create a new instance of invoice.
      *
      * @param string $name
@@ -44,6 +60,54 @@ class Invoice extends BaseInvoice
         $invoice->order = $order;
 
         return $invoice;
+    }
+
+    /**
+     * Specify menus, which should be on invoice.
+     *
+     * @param array|null $menus
+     *
+     * @return $this
+     */
+    public function withMenus(?array $menus): static
+    {
+        $this->menus = $menus;
+
+        return $this;
+    }
+
+    /**
+     * Get menus, which should be on invoice.
+     *
+     * @return array|null
+     */
+    public function onlyMenus(): ?array
+    {
+        return $this->menus;
+    }
+
+    /**
+     * Specify sections, which should be on invoice.
+     *
+     * @param array|null $sections
+     *
+     * @return $this
+     */
+    public function withSections(?array $sections): static
+    {
+        $this->sections = $sections;
+
+        return $this;
+    }
+
+    /**
+     * Get sections, which should be on invoice.
+     *
+     * @return array|null
+     */
+    public function onlySections(): ?array
+    {
+        return $this->sections;
     }
 
     /**

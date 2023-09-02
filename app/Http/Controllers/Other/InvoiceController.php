@@ -37,7 +37,11 @@ class InvoiceController extends Controller
         /** @var Order $target */
         $target = $request->targetOrFail(Order::class);
 
-        return InvoiceFactory::fromOrder($target)->render()->toHtml();
+        return InvoiceFactory::fromOrder($target)
+            ->withSections($request->sections())
+            ->withMenus($request->menus())
+            ->render()
+            ->toHtml();
     }
 
     /**
@@ -76,7 +80,10 @@ class InvoiceController extends Controller
         /** @var Order $target */
         $target = $request->targetOrFail(Order::class);
 
-        return InvoiceFactory::fromOrder($target)->stream();
+        return InvoiceFactory::fromOrder($target)
+            ->withSections($request->sections())
+            ->withMenus($request->menus())
+            ->stream();
     }
 
     /**
