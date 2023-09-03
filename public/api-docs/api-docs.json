@@ -6356,12 +6356,14 @@
                 "properties": {
                     "menus": {
                         "type": "string",
-                        "example": "1,2,3"
+                        "example": "1,2,3",
+                        "nullable": "true"
                     },
                     "sections": {
                         "description": "Coma-separated list of invoice sections.\n     *     Available sections: `info`, `comments`, `tickets`, `menus`,\n     *     `spaces`, `services`",
                         "type": "string",
-                        "example": "info,comments,tickets"
+                        "example": "info,comments,tickets",
+                        "nullable": "true"
                     }
                 },
                 "type": "object"

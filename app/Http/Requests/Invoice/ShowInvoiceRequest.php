@@ -25,10 +25,12 @@ class ShowInvoiceRequest extends ShowRequest
             [
                 'menus' => [
                     'sometimes',
+                    'nullable',
                     'string',
                 ],
                 'sections' => [
                     'sometimes',
+                    'nullable',
                     'string',
                 ],
             ]
@@ -106,8 +108,9 @@ class ShowInvoiceRequest extends ShowRequest
      * @OA\Schema(
      *   schema="ShowInvoiceRequest",
      *   description="Show invoice request",
-     *   @OA\Property(property="menus", type="string", example="1,2,3"),
-     *   @OA\Property(property="sections", type="string",
+     *   @OA\Property(property="menus", type="string", nullable="true",
+     *     example="1,2,3"),
+     *   @OA\Property(property="sections", type="string", nullable="true",
      *     example="info,comments,tickets",
      *     description="Coma-separated list of invoice sections.
      *     Available sections: `info`, `comments`, `tickets`, `menus`,

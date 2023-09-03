@@ -331,7 +331,7 @@
             </tr>
         </tbody>
     </table>
-@else
+@elseif(($onlySections === null || in_array('tickets', $onlySections ?? [])))
     <table class="table table-items">
         <thead>
         <tr>

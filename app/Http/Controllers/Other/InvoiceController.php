@@ -17,6 +17,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
 use OpenApi\Annotations as OA;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class InvoiceController.
