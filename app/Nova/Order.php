@@ -73,31 +73,31 @@ class Order extends Resource
             ID::make(__('columns.id'), 'id')
                 ->sortable(),
 
-            BelongsTo::make('Banquet'),
+            BelongsTo::make(__('columns.banquet'), 'banquet', Banquet::class),
 
-            Code::make('Metadata')
+            Code::make(__('columns.metadata'), 'metadata')
                 ->resolveUsing(fn() => json_encode(json_decode($this->metadata), JSON_PRETTY_PRINT))
                 ->autoHeight()
                 ->json()
                 ->onlyOnDetail()
                 ->readonly(),
 
-            Number::make('Total')
+            Number::make(__('columns.total'), 'total')
                 ->resolveUsing(fn() => data_get($this->totals, 'all'))
                 ->exceptOnForms()
                 ->readonly(),
 
-            HasMany::make('Spaces', 'spaces', SpaceOrderField::class),
+            HasMany::make(__('columns.spaces'), 'spaces', SpaceOrderField::class),
 
-            HasMany::make('Tickets', 'tickets', TicketOrderField::class),
+            HasMany::make(__('columns.tickets'), 'tickets', TicketOrderField::class),
 
-            HasMany::make('Products', 'products', ProductOrderField::class),
+            HasMany::make(__('columns.products'), 'products', ProductOrderField::class),
 
-            HasMany::make('Services', 'services', ServiceOrderField::class),
+            HasMany::make(__('columns.services'), 'services', ServiceOrderField::class),
 
-            MorphToMany::make('Discounts', 'discounts', Discount::class),
+            MorphToMany::make(__('columns.discounts'), 'discounts', Discount::class),
 
-            MorphMany::make('Comments', 'comments', Comment::class),
+            MorphMany::make(__('columns.comments'), 'comments', Comment::class),
 
             DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()

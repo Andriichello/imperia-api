@@ -5,6 +5,8 @@ return [
     'dashboard' => [
         'user' => 'User',
         'users' => 'Users',
+        'order' => 'Order',
+        'orders' => 'Orders',
         'item' => 'Item',
         'items' => 'Items',
         'restaurant' => 'Restaurant',

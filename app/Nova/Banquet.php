@@ -75,20 +75,20 @@ class Banquet extends Resource
             ID::make(__('columns.id'), 'id')
                 ->sortable(),
 
-            Select::make('State')
+            Select::make(__('columns.state'), 'state')
                 ->rules('required')
                 ->default(BanquetState::Draft)
                 ->options(BanquetStateOptions::available($request, $this->resource)),
 
-            BelongsTo::make('Restaurant', 'restaurant', Restaurant::class)
+            BelongsTo::make(__('columns.restaurant'), 'restaurant', Restaurant::class)
                 ->nullable(),
 
-            BelongsTo::make('Creator', 'creator', User::class)
+            BelongsTo::make(__('columns.creator'), 'creator', User::class)
                 ->withMeta(['belongsToId' => data_get($this->creator ?? $request->user(), 'id')]),
 
-            BelongsTo::make('Customer', 'customer', Customer::class),
+            BelongsTo::make(__('columns.customer'), 'customer', Customer::class),
 
-            HasOne::make('Order'),
+            HasOne::make(__('columns.order'), 'order', Order::class),
 
             Text::make(__('columns.title'), 'title')
                 ->updateRules('sometimes', 'min:1', 'max:255')
@@ -97,32 +97,32 @@ class Banquet extends Resource
             Text::make(__('columns.description'), 'description')
                 ->rules('nullable', 'min:1', 'max:255'),
 
-            Number::make('Advance Amount')
+            Number::make(__('columns.advance_amount'), 'advance_amount')
                 ->default(0.0)
                 ->step(0.01)
                 ->updateRules('sometimes', 'min:0')
                 ->creationRules('required', 'min:0'),
 
-            Text::make('Total')
+            Text::make(__('columns.total'), 'total')
                 ->resolveUsing(fn() => data_get($this->totals, 'all'))
                 ->exceptOnForms()
                 ->readonly(),
 
-            DateTime::make('Start At')
+            DateTime::make(__('columns.start_at'), 'start_at')
                 ->sortable()
                 ->rules('required', 'date'),
 
-            DateTime::make('End At')
+            DateTime::make(__('columns.end_at'), 'end_at')
                 ->sortable()
                 ->rules('required', 'date', 'after:start_at'),
 
-            DateTime::make('Paid At')
+            DateTime::make(__('columns.paid_at'), 'paid_at')
                 ->sortable()
                 ->rules('nullable', 'date', 'after:start_at'),
 
-            MorphMany::make('Comments', 'comments', Comment::class),
+            MorphMany::make(__('columns.comments'), 'comments', Comment::class),
 
-            MorphMany::make('Logs', 'logs', Log::class),
+            MorphMany::make(__('columns.logs'), 'logs', Log::class),
 
             DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()

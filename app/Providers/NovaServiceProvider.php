@@ -94,6 +94,10 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                             MenuItem::resource(\App\Nova\Product::class),
                             MenuItem::resource(\App\Nova\Category::class),
                         ])->icon('collection')->collapsable(),
+                        MenuSection::make(__('nova.dashboard.orders'), [
+                            MenuItem::resource(\App\Nova\Banquet::class),
+                            MenuItem::resource(\App\Nova\Order::class),
+                        ])->icon('briefcase')->collapsable(),
                         MenuSection::make(__('nova.dashboard.users'), [
                             MenuItem::resource(\App\Nova\User::class),
                         ])->icon('user')->collapsable(),
