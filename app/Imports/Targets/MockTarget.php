@@ -11,6 +11,18 @@ use Exception;
 class MockTarget implements TargetInterface
 {
     /**
+     * Find a record by given identifiers.
+     *
+     * @param array $ids
+     *
+     * @return mixed
+     */
+    public function find(array $ids): mixed
+    {
+        return null;
+    }
+
+    /**
      * Inserts a new record.
      *
      * @param array $record

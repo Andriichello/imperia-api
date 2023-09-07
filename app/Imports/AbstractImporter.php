@@ -103,14 +103,13 @@ abstract class AbstractImporter implements ImporterInterface
 
                 $this->before($data);
 
-                if ($this->target->insert($data)) {
+                if ($this->perform($data, $record)) {
                     $this->after($data);
                     $imported++;
                 }
 
                 $this->lastRecord = $data;
             } catch (SkipRecord) {
-                // @phpstan-ignore-next-line
                 $this->skippedRecords[] = $data ?? $record;
             } catch (Exception $exception) {
                 $this->exceptions[] = $exception;
@@ -134,6 +133,21 @@ abstract class AbstractImporter implements ImporterInterface
     public function before(array &$record): void
     {
         //
+    }
+
+    /**
+     * Perform import.
+     *
+     * @param array $transformed
+     * @param array $record
+     *
+     * @return bool
+     * @throws Exception
+     * @SuppressWarnings(PHPMD)
+     */
+    protected function perform(array $transformed, array $record): bool
+    {
+        return $this->target->insert($transformed);
     }
 
     /**

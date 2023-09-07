@@ -70,6 +70,19 @@ class DbTarget implements TargetInterface
     }
 
     /**
+     * Find a record by given identifiers.
+     *
+     * @param array $ids
+     *
+     * @return mixed
+     * @throws Exception
+     */
+    public function find(array $ids): mixed
+    {
+        return $this->whereIds($this->builder(), $ids)->first();
+    }
+
+    /**
      * Inserts a new record.
      *
      * @param array $record

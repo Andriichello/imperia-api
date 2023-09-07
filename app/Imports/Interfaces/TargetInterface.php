@@ -25,6 +25,15 @@ interface TargetInterface
     public function close(): static;
 
     /**
+     * Find a record by given identifiers.
+     *
+     * @param array $ids
+     *
+     * @return mixed
+     */
+    public function find(array $ids): mixed;
+
+    /**
      * Insert a new record.
      *
      * @param array $record
