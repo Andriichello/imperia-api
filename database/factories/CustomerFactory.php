@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Customer;
+use App\Models\Restaurant;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
@@ -64,6 +65,24 @@ class CustomerFactory extends Factory
                         'user_id' => $user->id,
                     ]
                 );
+            }
+        );
+    }
+
+    /**
+     * Indicate restaurant.
+     *
+     * @param Restaurant $restaurant
+     *
+     * @return static
+     */
+    public function withRestaurant(Restaurant $restaurant): static
+    {
+        return $this->state(
+            function (array $attributes) use ($restaurant) {
+                $attributes['restaurant_id'] = $restaurant->id;
+
+                return $attributes;
             }
         );
     }
