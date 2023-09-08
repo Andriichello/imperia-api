@@ -100,6 +100,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                         ])->icon('briefcase')->collapsable(),
                         MenuSection::make(__('nova.dashboard.users'), [
                             MenuItem::resource(\App\Nova\User::class),
+                            MenuItem::resource(\App\Nova\Customer::class),
                         ])->icon('user')->collapsable(),
                     ];
                 }

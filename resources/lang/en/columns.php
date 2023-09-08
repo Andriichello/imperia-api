@@ -23,6 +23,8 @@ return [
     'website' => 'Website link',
     'password' => 'Password',
     'name' => 'Name',
+    'surname' => 'Surname',
+    'birthdate' => 'Birthdate',
     'email_verified_at' => 'Email Verified At',
     'city' => 'City',
     'place' => 'Place',
@@ -81,6 +83,8 @@ return [
     'holidays' => 'Holidays',
     'role' => 'Role',
     'roles' => 'Roles',
+    'family_member' => 'Family Member',
+    'family_members' => 'Family Members',
     /* ColumnsCard component */
     'apply' => 'Apply',
     'columns' => 'Columns',

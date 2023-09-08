@@ -23,6 +23,8 @@ return [
     'website' => 'Посилання на сторінку закладу',
     'password' => 'Пароль',
     'name' => 'Ім\'я',
+    'surname' => 'Прізвище',
+    'birthdate' => 'День Народження',
     'email_verified_at' => 'Дата Підтвердження Пошти',
     'country' => 'Країна',
     'city' => 'Місто',
@@ -84,6 +86,8 @@ return [
     'holidays' => 'Вихідні',
     'role' => 'Роль',
     'roles' => 'Ролі',
+    'family_member' => 'Член Сім\'ї',
+    'family_members' => 'Члени Сім\'ї',
     /* ColumnsCard component */
     'apply' => 'Застосувати',
     'columns' => 'Стовпці',
