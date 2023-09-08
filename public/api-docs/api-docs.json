@@ -6169,6 +6169,7 @@
             "StoreCustomerRequest": {
                 "description": "Store customer request. `email` or `phone`\n           must be specified.",
                 "required": [
+                    "restaurant_id",
                     "name",
                     "surname",
                     "email",
@@ -6176,6 +6177,11 @@
                     "birthdate"
                 ],
                 "properties": {
+                    "restaurant_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": "true"
+                    },
                     "name": {
                         "type": "string",
                         "example": "John"
@@ -6207,6 +6213,11 @@
             "UpdateCustomerRequest": {
                 "description": "Update customer request",
                 "properties": {
+                    "restaurant_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": "true"
+                    },
                     "name": {
                         "type": "string",
                         "example": "John"
@@ -7061,6 +7072,7 @@
                 "description": "Customer resource object",
                 "required": [
                     "id",
+                    "restaurant_id",
                     "type",
                     "name",
                     "surname",
@@ -7072,6 +7084,11 @@
                     "id": {
                         "type": "integer",
                         "example": 1
+                    },
+                    "restaurant_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": "true"
                     },
                     "type": {
                         "type": "string",
@@ -7099,6 +7116,9 @@
                         "format": "date",
                         "example": "1986-01-26",
                         "nullable": "true"
+                    },
+                    "restaurant": {
+                        "$ref": "#/components/schemas/Restaurant"
                     },
                     "family_members": {
                         "type": "array",
