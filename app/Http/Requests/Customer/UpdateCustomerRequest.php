@@ -126,6 +126,25 @@ class UpdateCustomerRequest extends UpdateRequest
     }
 
     /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize(): bool
+    {
+        if ($this->isByStaff()) {
+            return true;
+        }
+
+        $user = $this->user();
+        /** @var Customer $customer */
+        $customer = $this->target(Customer::class);
+
+        return $user->restaurant_id === null
+            || $user->restaurant_id === $customer->restaurant_id;
+    }
+
+    /**
      * @OA\Schema(
      *   schema="UpdateCustomerRequest",
      *   description="Update customer request",
