@@ -77,7 +77,7 @@ class Banquet extends Resource
 
             Select::make(__('columns.state'), 'state')
                 ->rules('required')
-                ->default(BanquetState::Draft)
+                ->default(BanquetState::New)
                 ->options(BanquetStateOptions::available($request, $this->resource)),
 
             BelongsTo::make(__('columns.restaurant'), 'restaurant', Restaurant::class)

@@ -54,7 +54,7 @@ class StoreBanquetRequest extends StoreRequest
                 'state' => [
                     'required',
                     'string',
-                    'in:' . BanquetState::Draft . ',' . BanquetState::New,
+                    'in:' . BanquetState::New,
                 ],
                 'start_at' => [
                     'required',
@@ -127,7 +127,7 @@ class StoreBanquetRequest extends StoreRequest
      *   required = {"title", "description", "state", "start_at", "end_at", "customer_id"},
      *   @OA\Property(property="title", type="string", example="Banquet title."),
      *   @OA\Property(property="description", type="string", example="Banquet description..."),
-     *   @OA\Property(property="state", type="string", example="draft", enum={"draft", "new"}),
+     *   @OA\Property(property="state", type="string", example="new", enum={"new"}),
      *   @OA\Property(property="creator_id", type="integer", example=1,
      *     description="Id of the user, who created banquet."),
      *   @OA\Property(property="customer_id", type="integer", example=1),

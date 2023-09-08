@@ -94,8 +94,7 @@ class UpdateBanquetRequest extends UpdateRequest
     {
         /** @var Banquet $banquet */
         $banquet = Banquet::query()->findOrFail($this->id());
-        // non-staff can only change banquet state between draft and new
-        $states = [BanquetState::Draft, BanquetState::New];
+        $states = [BanquetState::New];
 
         if ($this->isByStaff()) {
             $helper = new BanquetHelper();
@@ -124,7 +123,7 @@ class UpdateBanquetRequest extends UpdateRequest
      *   @OA\Property(property="description", type="string", example="Banquet description..."),
      *   @OA\Property(property="state", type="string", example="draft",
      *     description="Banquet state available changes depends on current state.
-    All states: `draft`, `new`, `processing`, `completed`, `cancelled`."),
+           All states: `new`, `confirmed`, `postponed`, `cancelled`, `completed`."),
      *   @OA\Property(property="creator_id", type="integer", example=1),
      *   @OA\Property(property="customer_id", type="integer", example=1),
      *   @OA\Property(property="restaurant_id", type="integer", nullable="true", example=1),

@@ -5960,10 +5960,9 @@
                     "state": {
                         "type": "string",
                         "enum": [
-                            "draft",
                             "new"
                         ],
-                        "example": "draft"
+                        "example": "new"
                     },
                     "creator_id": {
                         "description": "Id of the user, who created banquet.",
@@ -6029,7 +6028,7 @@
                         "example": "Banquet description..."
                     },
                     "state": {
-                        "description": "Banquet state available changes depends on current state.\n    All states: `draft`, `new`, `processing`, `completed`, `cancelled`.",
+                        "description": "Banquet state available changes depends on current state.\n           All states: `new`, `confirmed`, `postponed`, `cancelled`, `completed`.",
                         "type": "string",
                         "example": "draft"
                     },
@@ -6870,13 +6869,13 @@
                     "state": {
                         "type": "string",
                         "enum": [
-                            "draft",
                             "new",
-                            "processing",
-                            "completed",
-                            "cancelled"
+                            "confirmed",
+                            "postponed",
+                            "cancelled",
+                            "completed"
                         ],
-                        "example": "draft"
+                        "example": "new"
                     },
                     "available_states": {
                         "description": "List of states, to which banquet may be transferred.",

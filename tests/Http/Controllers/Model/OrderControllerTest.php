@@ -87,7 +87,7 @@ class OrderControllerTest extends RegisteringTestCase
         $this->banquet = Banquet::factory()
             ->withCustomer($customer = Customer::factory()->create())
             ->withCreator($this->user)
-            ->withState(BanquetState::Draft)
+            ->withState(BanquetState::New)
             ->create();
 
         $this->banquet->order()->delete();

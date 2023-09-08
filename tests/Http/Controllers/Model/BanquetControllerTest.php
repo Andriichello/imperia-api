@@ -103,7 +103,7 @@ class BanquetControllerTest extends RegisteringTestCase
             'advance_amount' => 0,
             'start_at' => Carbon::tomorrow()->setHour(8)->toDateTimeString(),
             'end_at' => Carbon::tomorrow()->setHour(23)->toDateTimeString(),
-            'state' => BanquetState::Draft,
+            'state' => BanquetState::New,
             'creator_id' => $this->user->id,
             'customer_id' => $this->customers->first()->id,
             'comments' => [
@@ -136,7 +136,7 @@ class BanquetControllerTest extends RegisteringTestCase
         $banquet = Banquet::factory()
             ->withCustomer($this->customers->first())
             ->withCreator($this->user)
-            ->withState(BanquetState::Draft)
+            ->withState(BanquetState::New)
             ->create();
 
         $banquet->attachComments('Comment one...', 'Comment two...');
@@ -152,14 +152,6 @@ class BanquetControllerTest extends RegisteringTestCase
         );
         $response->assertOk();
         $this->assertCount(1, $banquet->fresh()->comments);
-
-        $response = $this->patchJson(
-            route('api.banquets.update', ['id' => $banquet->id]),
-            [
-                'state' => BanquetState::Completed,
-            ]
-        );
-        $response->assertUnprocessable();
 
         $banquet->update(['state' => BanquetState::Completed]);
         $response = $this->patchJson(
@@ -182,7 +174,7 @@ class BanquetControllerTest extends RegisteringTestCase
         $banquet = Banquet::factory()
             ->withCustomer($this->customers->first())
             ->withCreator($this->user)
-            ->withState(BanquetState::Draft)
+            ->withState(BanquetState::New)
             ->create();
 
         $response = $this->deleteJson(
@@ -217,7 +209,7 @@ class BanquetControllerTest extends RegisteringTestCase
         $banquet = Banquet::factory()
             ->withCustomer($this->customers->first())
             ->withCreator($this->user)
-            ->withState(BanquetState::Draft)
+            ->withState(BanquetState::New)
             ->create();
 
         $banquet->delete();

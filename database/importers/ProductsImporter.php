@@ -14,7 +14,7 @@ use Database\Transformers\ProductsTransformer;
 use Exception;
 
 /**
- * Class CategoriesImporter.
+ * Class ProductsImporter.
  */
 class ProductsImporter extends AbstractImporter
 {
@@ -65,7 +65,7 @@ class ProductsImporter extends AbstractImporter
     public function before(array &$record): void
     {
         if (!isset($record['restaurant_id'])) {
-            $record['restaurant_id'] = $this->restaurant->id;
+            $record['restaurant_id'] = $this->restaurant?->id;
         }
 
         // this is not a new product, but a different variant of the previous one

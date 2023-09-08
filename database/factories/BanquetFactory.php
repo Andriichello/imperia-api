@@ -41,7 +41,7 @@ class BanquetFactory extends Factory
             'advance_amount' => 0,
             'start_at' => Carbon::tomorrow()->setHour(8),
             'end_at' => Carbon::tomorrow()->setHour(23),
-            'state' => BanquetState::Draft,
+            'state' => BanquetState::New,
             'creator_id' => User::factory()->withRole(UserRole::Admin()),
             'customer_id' => Customer::factory(),
         ];
