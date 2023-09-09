@@ -2,7 +2,6 @@
 
 namespace App\Nova;
 
-use App\Enums\WeightUnit;
 use App\Nova\Options\WeightUnitOptions;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
@@ -53,23 +52,30 @@ class ProductVariant extends Resource
      */
     public function fields(Request $request): array
     {
+        $units = [];
+
+        foreach (WeightUnitOptions::all() as $unit) {
+            $units[$unit] = __('enum.weight_unit.' . $unit);
+        }
+
         return [
             ID::make(__('columns.id'), 'id')
                 ->sortable(),
 
-            Number::make('Price')
+            Number::make(__('columns.price'), 'price')
                 ->step(0.01)
                 ->updateRules('required', 'min:0')
                 ->creationRules('required', 'min:0'),
 
-            Text::make('Weight')
+            Text::make(__('columns.weight'), 'weight')
                 ->nullable(),
 
-            Select::make('Weight Unit')
+            Select::make(__('columns.weight_unit'), 'weight_unit')
                 ->nullable()
-                ->options(WeightUnitOptions::all()),
+                ->options($units)
+                ->displayUsing(fn($val) => data_get($units, $val ?? 'non-existing')),
 
-            BelongsTo::make('Product'),
+            BelongsTo::make(__('columns.product'), 'product', Product::class),
 
             DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()

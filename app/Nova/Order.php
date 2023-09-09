@@ -83,7 +83,7 @@ class Order extends Resource
                 ->readonly(),
 
             Number::make(__('columns.total'), 'total')
-                ->resolveUsing(fn() => data_get($this->totals, 'all'))
+                ->displayUsing(fn() => data_get($this->totals, 'all'))
                 ->exceptOnForms()
                 ->readonly(),
 

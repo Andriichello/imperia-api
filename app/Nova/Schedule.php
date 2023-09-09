@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use App\Nova\Options\BanquetStateOptions;
 use App\Nova\Options\WeekdayOptions;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
@@ -49,13 +50,20 @@ class Schedule extends Resource
      */
     public function fields(Request $request): array
     {
+        $weekdays = [];
+
+        foreach (WeekdayOptions::all() as $weekday) {
+            $weekdays[$weekday] = __('enum.weekday.' . $weekday);
+        }
+
         return [
             ID::make(__('columns.id'), 'id')
                 ->sortable(),
 
             Select::make(__('columns.weekday'), 'weekday')
                 ->required()
-                ->options(WeekdayOptions::all()),
+                ->options($weekdays)
+                ->displayUsing(fn($val) => data_get($weekdays, $val ?? 'non-existing')),
 
             Number::make(__('columns.beg_hour'), 'beg_hour')
                 ->required()

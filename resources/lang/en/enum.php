@@ -17,5 +17,16 @@ return [
         'ml' => 'ml',
         'cm' => 'cm',
         'pc' => 'pc',
+    ],
+    'state' => [
+        'new' => 'New',
+        'confirmed' => 'Confirmed',
+        'postponed' => 'Postponed',
+        'cancelled' => 'Cancelled',
+        'completed' => 'Completed',
+    ],
+    'payment_method' => [
+        'card' => 'Card',
+        'cash' => 'Cash',
     ]
 ];

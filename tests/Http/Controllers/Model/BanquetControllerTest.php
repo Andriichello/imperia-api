@@ -3,7 +3,7 @@
 namespace Tests\Http\Controllers\Model;
 
 use App\Enums\BanquetState;
-use App\Enums\PaymentType;
+use App\Enums\PaymentMethod;
 use App\Models\Banquet;
 use App\Models\Customer;
 use App\Models\Product;
@@ -102,7 +102,7 @@ class BanquetControllerTest extends RegisteringTestCase
             'title' => 'Simple title',
             'description' => 'Simple description...',
             'advance_amount' => 0,
-            'advance_amount_payment_type' => PaymentType::Card,
+            'advance_amount_payment_method' => PaymentMethod::Card,
             'actual_total' => 100,
             'is_birthday_club' => true,
             'start_at' => Carbon::tomorrow()->setHour(8)->toDateTimeString(),
@@ -129,7 +129,7 @@ class BanquetControllerTest extends RegisteringTestCase
 
         $this->assertCount(3, $banquet->comments);
         $this->assertEquals(100.0, $banquet->actual_total);
-        $this->assertEquals(PaymentType::Card, $banquet->advance_amount_payment_type);
+        $this->assertEquals(PaymentMethod::Card, $banquet->advance_amount_payment_method);
         $this->assertTrue($banquet->is_birthday_club);
     }
 
@@ -153,7 +153,7 @@ class BanquetControllerTest extends RegisteringTestCase
         $response = $this->patchJson(
             route('api.banquets.update', ['id' => $banquet->id]),
             [
-                'advance_amount_payment_type' => PaymentType::Card,
+                'advance_amount_payment_method' => PaymentMethod::Card,
                 'actual_total' => 100,
                 'is_birthday_club' => true,
                 'comments' => [
@@ -167,7 +167,7 @@ class BanquetControllerTest extends RegisteringTestCase
 
         $this->assertCount(1, $banquet->comments);
         $this->assertEquals(100.0, $banquet->actual_total);
-        $this->assertEquals(PaymentType::Card, $banquet->advance_amount_payment_type);
+        $this->assertEquals(PaymentMethod::Card, $banquet->advance_amount_payment_method);
         $this->assertTrue($banquet->is_birthday_club);
 
         // $banquet->update(['state' => BanquetState::Completed]);

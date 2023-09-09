@@ -109,6 +109,12 @@ class Product extends Resource
                 }),
         ];
 
+        $units = [];
+
+        foreach (WeightUnitOptions::all() as $unit) {
+            $units[$unit] = __('enum.weight_unit.' . $unit);
+        }
+
         return [
             ID::make(__('columns.id'), 'id')
                 ->sortable(),
@@ -152,7 +158,8 @@ class Product extends Resource
 
             Select::make(__('columns.weight_unit'), 'weight_unit')
                 ->nullable()
-                ->options(WeightUnitOptions::all()),
+                ->options($units)
+                ->displayUsing(fn($val) => data_get($units, $val ?? 'non-existing')),
 
             HasMany::make(__('columns.variants'), 'variants', ProductVariant::class),
 

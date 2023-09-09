@@ -41,7 +41,7 @@ use Illuminate\Support\Collection;
  *
  * @property array|null $totals
  * @property float|null $actual_total
- * @property string|null $advance_amount_payment_type
+ * @property string|null $advance_amount_payment_method
  * @property bool|null $is_birthday_club
  *
  * @property Order|null $order
@@ -92,7 +92,7 @@ class Banquet extends BaseModel implements
         /** Dynamic */
         'actual_total',
         'is_birthday_club',
-        'advance_amount_payment_type',
+        'advance_amount_payment_method',
     ];
 
     /**
@@ -258,25 +258,25 @@ class Banquet extends BaseModel implements
     }
 
     /**
-     * Accessor for the advance amount payment type.
+     * Accessor for the advance amount payment method.
      *
      * @return ?string
      */
-    public function getAdvanceAmountPaymentTypeAttribute(): ?string
+    public function getAdvanceAmountPaymentMethodAttribute(): ?string
     {
-        return $this->getFromJson('metadata', 'advance_amount_payment_type');
+        return $this->getFromJson('metadata', 'advance_amount_payment_method');
     }
 
     /**
-     * Mutator for the advance amount payment type.
+     * Mutator for the advance amount payment method.
      *
      * @param string|null $paymentType
      *
      * @return void
      */
-    public function setAdvanceAmountPaymentTypeAttribute(?string $paymentType): void
+    public function setAdvanceAmountPaymentMethodAttribute(?string $paymentType): void
     {
-        $this->setToJson('metadata', 'advance_amount_payment_type', $paymentType);
+        $this->setToJson('metadata', 'advance_amount_payment_method', $paymentType);
     }
 
     /**

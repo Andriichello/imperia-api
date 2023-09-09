@@ -6,8 +6,10 @@ use App\Enums\BanquetState;
 use App\Nova\Actions\CalculateTotals;
 use App\Nova\Actions\GenerateInvoice;
 use App\Nova\Options\BanquetStateOptions;
+use App\Nova\Options\PaymentMethodOptions;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
@@ -71,6 +73,18 @@ class Banquet extends Resource
      */
     public function fields(Request $request): array
     {
+        $states = [];
+
+        foreach (BanquetStateOptions::available($request, $this->resource) as $state) {
+            $states[$state] = __('enum.state.' . $state);
+        }
+
+        $paymentMethods = [];
+
+        foreach (PaymentMethodOptions::all() as $method) {
+            $paymentMethods[$method] = __('enum.payment_method.' . $method);
+        }
+
         return [
             ID::make(__('columns.id'), 'id')
                 ->sortable(),
@@ -78,7 +92,8 @@ class Banquet extends Resource
             Select::make(__('columns.state'), 'state')
                 ->rules('required')
                 ->default(BanquetState::New)
-                ->options(BanquetStateOptions::available($request, $this->resource)),
+                ->options($states)
+                ->displayUsing(fn($value) => data_get($states, $value)),
 
             BelongsTo::make(__('columns.restaurant'), 'restaurant', Restaurant::class)
                 ->nullable(),
@@ -103,10 +118,24 @@ class Banquet extends Resource
                 ->updateRules('sometimes', 'min:0')
                 ->creationRules('required', 'min:0'),
 
+            Select::make(__('columns.advance_amount_payment_method'), 'advance_amount_payment_method')
+                ->options($paymentMethods)
+                ->nullable()
+                ->displayUsing(fn($value) => data_get($paymentMethods, $value ?? 'non-existing')),
+
             Text::make(__('columns.total'), 'total')
-                ->resolveUsing(fn() => data_get($this->totals, 'all'))
+                ->displayUsing(fn() => data_get($this->totals, 'all'))
                 ->exceptOnForms()
                 ->readonly(),
+
+            Number::make(__('columns.actual_total'), 'actual_total')
+                ->nullable()
+                ->step(0.01)
+                ->updateRules('sometimes', 'nullable', 'min:0')
+                ->creationRules('sometimes', 'nullable', 'min:0'),
+
+            Boolean::make(__('columns.is_birthday_club'), 'is_birthday_club')
+                ->nullable(),
 
             DateTime::make(__('columns.start_at'), 'start_at')
                 ->sortable()

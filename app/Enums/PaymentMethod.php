@@ -3,13 +3,14 @@
 namespace App\Enums;
 
 /**
- * Enum PaymentType.
+ * Enum PaymentMethod.
  *
- * @method static PaymentType Partner()
+ * @method static PaymentMethod Card()
+ * @method static PaymentMethod Cash()
  *
  * @SuppressWarnings(PHPMD)
  */
-class PaymentType extends Enum
+class PaymentMethod extends Enum
 {
     public const Card = 'card';
     public const Cash = 'cash';

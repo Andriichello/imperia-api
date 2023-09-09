@@ -5987,7 +5987,7 @@
                         "example": 692.25,
                         "nullable": "true"
                     },
-                    "advance_amount_payment_type": {
+                    "advance_amount_payment_method": {
                         "type": "string",
                         "enum": [
                             "card",
@@ -6073,7 +6073,7 @@
                         "example": 692.25,
                         "nullable": "true"
                     },
-                    "advance_amount_payment_type": {
+                    "advance_amount_payment_method": {
                         "type": "string",
                         "enum": [
                             "card",
@@ -6900,7 +6900,7 @@
                     "paid_at",
                     "advance_amount",
                     "actual_total",
-                    "advance_amount_payment_type",
+                    "advance_amount_payment_method",
                     "is_birthday_club",
                     "totals",
                     "invoice_url",
@@ -6980,7 +6980,7 @@
                         "type": "integer",
                         "example": 125.55
                     },
-                    "advance_amount_payment_type": {
+                    "advance_amount_payment_method": {
                         "type": "string",
                         "example": "card",
                         "nullable": "true"

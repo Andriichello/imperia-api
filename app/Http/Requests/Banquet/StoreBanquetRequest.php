@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Banquet;
 
 use App\Enums\BanquetState;
-use App\Enums\PaymentType;
+use App\Enums\PaymentMethod;
 use App\Http\Requests\Crud\StoreRequest;
 use App\Models\Morphs\Comment;
 use App\Models\Morphs\Discount;
@@ -92,11 +92,11 @@ class StoreBanquetRequest extends StoreRequest
                     'numeric',
                     'min:0',
                 ],
-                'advance_amount_payment_type' => [
+                'advance_amount_payment_method' => [
                     'sometimes',
                     'nullable',
                     'string',
-                    PaymentType::getValidationRule(),
+                    PaymentMethod::getValidationRule(),
                 ],
                 'actual_total' => [
                     'sometimes',
@@ -153,7 +153,7 @@ class StoreBanquetRequest extends StoreRequest
      *   @OA\Property(property="restaurant_id", type="integer", nullable="true", example=1),
      *   @OA\Property(property="advance_amount", type="float", example=535.25),
      *   @OA\Property(property="actual_total", type="float", nullable="true", example=692.25),
-     *   @OA\Property(property="advance_amount_payment_type", type="string",
+     *   @OA\Property(property="advance_amount_payment_method", type="string",
      *     nullable="true", example="card", enum={"card", "cash"}),
      *   @OA\Property(property="is_birthday_club", type="boolean", nullable="true", example="true"),
      *   @OA\Property(property="start_at", type="string", format="date-time", example="2022-01-12 10:00:00",
