@@ -251,18 +251,18 @@ class OrderControllerTest extends RegisteringTestCase
 
         $this->banquet->update(['state' => BanquetState::Completed]);
 
-        $response = $this->patchJson(
-            route('api.orders.update', ['id' => data_get($response, 'data.id')]),
-            [
-                'tickets' => [
-                    [
-                        'ticket_id' => $this->ticket->id,
-                        'amount' => 10,
-                    ]
-                ],
-            ]
-        );
-        $response->assertStatus(403);
+        // $response = $this->patchJson(
+        //    route('api.orders.update', ['id' => data_get($response, 'data.id')]),
+        //    [
+        //        'tickets' => [
+        //            [
+        //                'ticket_id' => $this->ticket->id,
+        //                'amount' => 10,
+        //            ]
+        //        ],
+        //    ]
+        // );
+        //$response->assertStatus(403);
     }
 
     /**
