@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Banquet;
 
 use App\Enums\BanquetState;
+use App\Enums\PaymentType;
 use App\Http\Requests\Crud\StoreRequest;
 use App\Models\Morphs\Comment;
 use App\Models\Morphs\Discount;
@@ -87,8 +88,26 @@ class StoreBanquetRequest extends StoreRequest
                 ],
                 'advance_amount' => [
                     'sometimes',
+                    'nullable',
                     'numeric',
                     'min:0',
+                ],
+                'advance_amount_payment_type' => [
+                    'sometimes',
+                    'nullable',
+                    'string',
+                    PaymentType::getValidationRule(),
+                ],
+                'actual_total' => [
+                    'sometimes',
+                    'nullable',
+                    'numeric',
+                    'min:0',
+                ],
+                'is_birthday_club' => [
+                    'sometimes',
+                    'nullable',
+                    'boolean',
                 ],
             ]
         );
@@ -133,6 +152,10 @@ class StoreBanquetRequest extends StoreRequest
      *   @OA\Property(property="customer_id", type="integer", example=1),
      *   @OA\Property(property="restaurant_id", type="integer", nullable="true", example=1),
      *   @OA\Property(property="advance_amount", type="float", example=535.25),
+     *   @OA\Property(property="actual_total", type="float", nullable="true", example=692.25),
+     *   @OA\Property(property="advance_amount_payment_type", type="string",
+     *     nullable="true", example="card", enum={"card", "cash"}),
+     *   @OA\Property(property="is_birthday_club", type="boolean", nullable="true", example="true"),
      *   @OA\Property(property="start_at", type="string", format="date-time", example="2022-01-12 10:00:00",
      *     description="Date and time of when banquet should start."),
      *   @OA\Property(property="end_at", type="string", format="date-time", example="2022-01-12 23:00:00",

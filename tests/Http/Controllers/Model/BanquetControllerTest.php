@@ -3,6 +3,7 @@
 namespace Tests\Http\Controllers\Model;
 
 use App\Enums\BanquetState;
+use App\Enums\PaymentType;
 use App\Models\Banquet;
 use App\Models\Customer;
 use App\Models\Product;
@@ -101,6 +102,9 @@ class BanquetControllerTest extends RegisteringTestCase
             'title' => 'Simple title',
             'description' => 'Simple description...',
             'advance_amount' => 0,
+            'advance_amount_payment_type' => PaymentType::Card,
+            'actual_total' => 100,
+            'is_birthday_club' => true,
             'start_at' => Carbon::tomorrow()->setHour(8)->toDateTimeString(),
             'end_at' => Carbon::tomorrow()->setHour(23)->toDateTimeString(),
             'state' => BanquetState::New,
@@ -122,7 +126,11 @@ class BanquetControllerTest extends RegisteringTestCase
 
         /** @var Banquet $banquet */
         $banquet = Banquet::query()->findOrFail(data_get($response, 'data.id'));
+
         $this->assertCount(3, $banquet->comments);
+        $this->assertEquals(100.0, $banquet->actual_total);
+        $this->assertEquals(PaymentType::Card, $banquet->advance_amount_payment_type);
+        $this->assertTrue($banquet->is_birthday_club);
     }
 
     /**
@@ -145,13 +153,22 @@ class BanquetControllerTest extends RegisteringTestCase
         $response = $this->patchJson(
             route('api.banquets.update', ['id' => $banquet->id]),
             [
+                'advance_amount_payment_type' => PaymentType::Card,
+                'actual_total' => 100,
+                'is_birthday_club' => true,
                 'comments' => [
                     ['text' => 'Updated comment...'],
                 ],
             ]
         );
         $response->assertOk();
-        $this->assertCount(1, $banquet->fresh()->comments);
+
+        $banquet = $banquet->fresh();
+
+        $this->assertCount(1, $banquet->comments);
+        $this->assertEquals(100.0, $banquet->actual_total);
+        $this->assertEquals(PaymentType::Card, $banquet->advance_amount_payment_type);
+        $this->assertTrue($banquet->is_birthday_club);
 
         $banquet->update(['state' => BanquetState::Completed]);
         $response = $this->patchJson(

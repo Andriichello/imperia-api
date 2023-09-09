@@ -6,6 +6,7 @@ use App\Models\Banquet;
 use App\Models\Orders\Order;
 use App\Repositories\Traits\CommentableRepositoryTrait;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 /**
  * Class BanquetRepository.

@@ -40,6 +40,9 @@ use Illuminate\Support\Collection;
  * @property Carbon|null $deleted_at
  *
  * @property array|null $totals
+ * @property float|null $actual_total
+ * @property string|null $advance_amount_payment_type
+ * @property bool|null $is_birthday_club
  *
  * @property Order|null $order
  * @property User|null $creator
@@ -86,6 +89,10 @@ class Banquet extends BaseModel implements
         'creator_id',
         'customer_id',
         'restaurant_id',
+        /** Dynamic */
+        'actual_total',
+        'is_birthday_club',
+        'advance_amount_payment_type',
     ];
 
     /**
@@ -227,6 +234,76 @@ class Banquet extends BaseModel implements
     }
 
     /**
+     * Accessor for the actual total amount.
+     *
+     * @return ?float
+     */
+    public function getActualTotalAttribute(): ?float
+    {
+        $value = $this->getFromJson('metadata', 'actual_total');
+
+        return $value === null ? null : (float) $value;
+    }
+
+    /**
+     * Mutator for the actual total amount.
+     *
+     * @param float|null $actualTotal
+     *
+     * @return void
+     */
+    public function setActualTotalAttribute(?float $actualTotal): void
+    {
+        $this->setToJson('metadata', 'actual_total', $actualTotal);
+    }
+
+    /**
+     * Accessor for the advance amount payment type.
+     *
+     * @return ?string
+     */
+    public function getAdvanceAmountPaymentTypeAttribute(): ?string
+    {
+        return $this->getFromJson('metadata', 'advance_amount_payment_type');
+    }
+
+    /**
+     * Mutator for the advance amount payment type.
+     *
+     * @param string|null $paymentType
+     *
+     * @return void
+     */
+    public function setAdvanceAmountPaymentTypeAttribute(?string $paymentType): void
+    {
+        $this->setToJson('metadata', 'advance_amount_payment_type', $paymentType);
+    }
+
+    /**
+     * Accessor for the is birthday club attribute.
+     *
+     * @return ?bool
+     */
+    public function getIsBirthdayClubAttribute(): ?bool
+    {
+        $value = $this->getFromJson('metadata', 'is_birthday_club');
+
+        return $value === null ? null : (bool) $value;
+    }
+
+    /**
+     * Mutator for the is birthday club attribute.
+     *
+     * @param bool|null $isBirthdayClub
+     *
+     * @return void
+     */
+    public function setIsBirthdayClubAttribute(?bool $isBirthdayClub): void
+    {
+        $this->setToJson('metadata', 'is_birthday_club', $isBirthdayClub);
+    }
+
+    /**
      * Accessor for the banquet's order invoice url.
      *
      * @param User $asUser
@@ -256,7 +333,8 @@ class Banquet extends BaseModel implements
      */
     public function isEditable(): bool
     {
-        return $this->state !== BanquetState::Completed;
+        // return $this->state !== BanquetState::Completed;
+        return true;
     }
 
     /**

@@ -5982,6 +5982,25 @@
                         "type": "float",
                         "example": 535.25
                     },
+                    "actual_total": {
+                        "type": "float",
+                        "example": 692.25,
+                        "nullable": "true"
+                    },
+                    "advance_amount_payment_type": {
+                        "type": "string",
+                        "enum": [
+                            "card",
+                            "cash"
+                        ],
+                        "example": "card",
+                        "nullable": "true"
+                    },
+                    "is_birthday_club": {
+                        "type": "boolean",
+                        "example": "true",
+                        "nullable": "true"
+                    },
                     "start_at": {
                         "description": "Date and time of when banquet should start.",
                         "type": "string",
@@ -6048,6 +6067,25 @@
                     "advance_amount": {
                         "type": "float",
                         "example": 535.25
+                    },
+                    "actual_total": {
+                        "type": "float",
+                        "example": 692.25,
+                        "nullable": "true"
+                    },
+                    "advance_amount_payment_type": {
+                        "type": "string",
+                        "enum": [
+                            "card",
+                            "cash"
+                        ],
+                        "example": "card",
+                        "nullable": "true"
+                    },
+                    "is_birthday_club": {
+                        "type": "boolean",
+                        "example": "true",
+                        "nullable": "true"
                     },
                     "start_at": {
                         "description": "Date and time of when banquet should start.",
@@ -6861,6 +6899,9 @@
                     "end_at",
                     "paid_at",
                     "advance_amount",
+                    "actual_total",
+                    "advance_amount_payment_type",
+                    "is_birthday_club",
                     "totals",
                     "invoice_url",
                     "order_id",
@@ -6938,6 +6979,21 @@
                     "advance_amount": {
                         "type": "integer",
                         "example": 125.55
+                    },
+                    "advance_amount_payment_type": {
+                        "type": "string",
+                        "example": "card",
+                        "nullable": "true"
+                    },
+                    "actual_total": {
+                        "type": "float",
+                        "example": 2502.55,
+                        "nullable": "true"
+                    },
+                    "is_birthday_club": {
+                        "type": "boolean",
+                        "example": "true",
+                        "nullable": "true"
                     },
                     "totals": {
                         "$ref": "#/components/schemas/OrderTotals"
