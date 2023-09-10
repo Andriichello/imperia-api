@@ -345,22 +345,22 @@
 
         {{-- Items --}}
         <tr>
-            <td class="p-0">{{ __('invoices::invoice.adults') }}</td>
-            <td class="text-right"></td>
-            <td class="text-right"></td>
-            <td class="text-right p-0"></td>
+            <td class="p-0">{{ __('invoices::invoice.children') }}</td>
+            <td class="text-right">{{ ($amount = $invoice->getChildrenAmount()) ?? '' }}</td>
+            <td class="text-right">{{ ($price = $invoice->getChildTicketPrice()) ? $invoice->formatCurrency($price) : '' }}</td>
+            <td class="text-right p-0">{{ $price && $amount ? ($childTicketsTotal = $invoice->formatCurrency($price * $amount)) : '' }}</td>
         </tr>
         <tr>
-            <td class="p-0">{{ __('invoices::invoice.children') }}</td>
-            <td class="text-right"></td>
-            <td class="text-right"></td>
-            <td class="text-right p-0"></td>
+            <td class="p-0">{{ __('invoices::invoice.adults') }}</td>
+            <td class="text-right">{{ ($amount = $invoice->getAdultsAmount()) ?? '' }}</td>
+            <td class="text-right">{{ ($price = $invoice->getAdultTicketPrice()) ? $invoice->formatCurrency($price) : '' }}</td>
+            <td class="text-right p-0">{{ $price && $amount ? ($adultTicketsTotal = $invoice->formatCurrency($price * $amount)) : '' }}</td>
         </tr>
         {{-- Summary --}}
         <tr>
             <td colspan="2" class="border-0"></td>
             <td class="text-right p-0">{{ __('invoices::invoice.total') }}</td>
-            <td class="text-right p-0 total-amount"></td>
+            <td class="text-right p-0 total-amount">{{ ($childTicketsTotal || $adultTicketsTotal) ? $invoice->formatCurrency((float)$childTicketsTotal + (float)$adultTicketsTotal) : '' }}</td>
         </tr>
         </tbody>
     </table>

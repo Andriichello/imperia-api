@@ -9,6 +9,7 @@ use App\Models\Restaurant;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Collection;
 use LaravelDaily\Invoices\Classes\Buyer;
+use LaravelDaily\Invoices\Classes\InvoiceItem as BasicInvoiceItem;
 use LaravelDaily\Invoices\Classes\Seller;
 
 /**
@@ -96,6 +97,17 @@ class InvoiceFactory
             );
 
             $items->push(...$mapped->all());
+        }
+
+        if ($items->isEmpty()) {
+            // adding a placeholder item, so the check generation doesn't break
+            $item = new BasicInvoiceItem();
+
+            $item->title('Placeholder item...');
+            $item->quantity(1);
+            $item->pricePerUnit(0);
+
+            $items->add($item);
         }
 
         return $items;

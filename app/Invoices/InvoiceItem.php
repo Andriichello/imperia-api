@@ -3,9 +3,6 @@
 namespace App\Invoices;
 
 use App\Models\BaseModel;
-use App\Models\Orders\ProductOrderField;
-use App\Models\Orders\ServiceOrderField;
-use App\Models\Orders\SpaceOrderField;
 use LaravelDaily\Invoices\Classes\InvoiceItem as BaseItem;
 
 /**

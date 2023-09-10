@@ -151,6 +151,46 @@ class Invoice extends BaseInvoice
     }
 
     /**
+     * Get adults amount.
+     *
+     * @return int|null
+     */
+    public function getAdultsAmount(): ?int
+    {
+        return $this->order->banquet->adults_amount;
+    }
+
+    /**
+     * Get adult ticket price.
+     *
+     * @return float|null
+     */
+    public function getAdultTicketPrice(): ?float
+    {
+        return $this->order->banquet->adult_ticket_price;
+    }
+
+    /**
+     * Get children amount.
+     *
+     * @return int|null
+     */
+    public function getChildrenAmount(): ?int
+    {
+        return $this->order->banquet->children_amount;
+    }
+
+    /**
+     * Get child ticket price.
+     *
+     * @return float|null
+     */
+    public function getChildTicketPrice(): ?float
+    {
+        return $this->order->banquet->child_ticket_price;
+    }
+
+    /**
      * @param InvoiceItem $item
      *
      * @return string
