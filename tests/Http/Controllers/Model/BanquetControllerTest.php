@@ -105,6 +105,10 @@ class BanquetControllerTest extends RegisteringTestCase
             'advance_amount_payment_method' => PaymentMethod::Card,
             'actual_total' => 100,
             'is_birthday_club' => true,
+            'adults_amount' => 1,
+            'adult_ticket_price' => 30.5,
+            'children_amount' => 3,
+            'child_ticket_price' => 20.5,
             'start_at' => Carbon::tomorrow()->setHour(8)->toDateTimeString(),
             'end_at' => Carbon::tomorrow()->setHour(23)->toDateTimeString(),
             'state' => BanquetState::New,
@@ -131,6 +135,10 @@ class BanquetControllerTest extends RegisteringTestCase
         $this->assertEquals(100.0, $banquet->actual_total);
         $this->assertEquals(PaymentMethod::Card, $banquet->advance_amount_payment_method);
         $this->assertTrue($banquet->is_birthday_club);
+        $this->assertEquals(1, $banquet->adults_amount);
+        $this->assertEquals(30.5, $banquet->adult_ticket_price);
+        $this->assertEquals(3, $banquet->children_amount);
+        $this->assertEquals(20.5, $banquet->child_ticket_price);
     }
 
     /**
@@ -156,6 +164,10 @@ class BanquetControllerTest extends RegisteringTestCase
                 'advance_amount_payment_method' => PaymentMethod::Card,
                 'actual_total' => 100,
                 'is_birthday_club' => true,
+                'adults_amount' => 1,
+                'adult_ticket_price' => 30.5,
+                'children_amount' => 3,
+                'child_ticket_price' => 20.5,
                 'comments' => [
                     ['text' => 'Updated comment...'],
                 ],
@@ -169,6 +181,10 @@ class BanquetControllerTest extends RegisteringTestCase
         $this->assertEquals(100.0, $banquet->actual_total);
         $this->assertEquals(PaymentMethod::Card, $banquet->advance_amount_payment_method);
         $this->assertTrue($banquet->is_birthday_club);
+        $this->assertEquals(1, $banquet->adults_amount);
+        $this->assertEquals(30.5, $banquet->adult_ticket_price);
+        $this->assertEquals(3, $banquet->children_amount);
+        $this->assertEquals(20.5, $banquet->child_ticket_price);
 
         // $banquet->update(['state' => BanquetState::Completed]);
         // $response = $this->patchJson(
