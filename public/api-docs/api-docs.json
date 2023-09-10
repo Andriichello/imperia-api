@@ -6003,6 +6003,26 @@
                         "example": "true",
                         "nullable": "true"
                     },
+                    "children_amount": {
+                        "type": "integer",
+                        "example": 5,
+                        "nullable": "true"
+                    },
+                    "child_ticket_price": {
+                        "type": "float",
+                        "example": 25.5,
+                        "nullable": "true"
+                    },
+                    "adults_amount": {
+                        "type": "integer",
+                        "example": 2,
+                        "nullable": "true"
+                    },
+                    "adult_ticket_price": {
+                        "type": "float",
+                        "example": 35.5,
+                        "nullable": "true"
+                    },
                     "start_at": {
                         "description": "Date and time of when banquet should start.",
                         "type": "string",
@@ -6089,6 +6109,26 @@
                     "is_birthday_club": {
                         "type": "boolean",
                         "example": "true",
+                        "nullable": "true"
+                    },
+                    "children_amount": {
+                        "type": "integer",
+                        "example": 5,
+                        "nullable": "true"
+                    },
+                    "child_ticket_price": {
+                        "type": "float",
+                        "example": 25.5,
+                        "nullable": "true"
+                    },
+                    "adults_amount": {
+                        "type": "integer",
+                        "example": 2,
+                        "nullable": "true"
+                    },
+                    "adult_ticket_price": {
+                        "type": "float",
+                        "example": 35.5,
                         "nullable": "true"
                     },
                     "start_at": {
@@ -6906,6 +6946,10 @@
                     "actual_total",
                     "advance_amount_payment_method",
                     "is_birthday_club",
+                    "adults_amount",
+                    "adult_ticket_price",
+                    "children_amount",
+                    "child_ticket_price",
                     "totals",
                     "invoice_url",
                     "order_id",
@@ -6997,6 +7041,26 @@
                     "is_birthday_club": {
                         "type": "boolean",
                         "example": "true",
+                        "nullable": "true"
+                    },
+                    "children_amount": {
+                        "type": "integer",
+                        "example": 5,
+                        "nullable": "true"
+                    },
+                    "child_ticket_price": {
+                        "type": "float",
+                        "example": 25.5,
+                        "nullable": "true"
+                    },
+                    "adults_amount": {
+                        "type": "integer",
+                        "example": 2,
+                        "nullable": "true"
+                    },
+                    "adult_ticket_price": {
+                        "type": "float",
+                        "example": 35.5,
                         "nullable": "true"
                     },
                     "totals": {

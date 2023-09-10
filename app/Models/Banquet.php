@@ -43,6 +43,10 @@ use Illuminate\Support\Collection;
  * @property float|null $actual_total
  * @property string|null $advance_amount_payment_method
  * @property bool|null $is_birthday_club
+ * @property int|null $adults_amount
+ * @property float|null $adult_ticket_price
+ * @property int|null $children_amount
+ * @property float|null $child_ticket_price
  *
  * @property Order|null $order
  * @property User|null $creator
@@ -93,6 +97,10 @@ class Banquet extends BaseModel implements
         'actual_total',
         'is_birthday_club',
         'advance_amount_payment_method',
+        'adults_amount',
+        'adult_ticket_price',
+        'children_amount',
+        'child_ticket_price',
     ];
 
     /**
@@ -301,6 +309,102 @@ class Banquet extends BaseModel implements
     public function setIsBirthdayClubAttribute(?bool $isBirthdayClub): void
     {
         $this->setToJson('metadata', 'is_birthday_club', $isBirthdayClub);
+    }
+
+    /**
+     * Accessor for the adults amount attribute.
+     *
+     * @return ?int
+     */
+    public function getAdultsAmountAttribute(): ?int
+    {
+        $value = $this->getFromJson('metadata', 'adults_amount');
+
+        return $value === null ? null : (int) $value;
+    }
+
+    /**
+     * Mutator for the adults amount attribute.
+     *
+     * @param int|null $adultsAmount
+     *
+     * @return void
+     */
+    public function setAdultsAmountAttribute(?int $adultsAmount): void
+    {
+        $this->setToJson('metadata', 'adults_amount', $adultsAmount);
+    }
+
+    /**
+     * Accessor for the adult ticket price attribute.
+     *
+     * @return ?float
+     */
+    public function getAdultTicketPriceAttribute(): ?float
+    {
+        $value = $this->getFromJson('metadata', 'adult_ticket_price');
+
+        return $value === null ? null : (float) $value;
+    }
+
+    /**
+     * Mutator for the adult ticket price attribute.
+     *
+     * @param float|null $adultTicketPrice
+     *
+     * @return void
+     */
+    public function setAdultTicketPriceAttribute(?float $adultTicketPrice): void
+    {
+        $this->setToJson('metadata', 'adult_ticket_price', $adultTicketPrice);
+    }
+
+    /**
+     * Accessor for the children amount attribute.
+     *
+     * @return ?int
+     */
+    public function getChildrenAmountAttribute(): ?int
+    {
+        $value = $this->getFromJson('metadata', 'children_amount');
+
+        return $value === null ? null : (int) $value;
+    }
+
+    /**
+     * Mutator for the children amount attribute.
+     *
+     * @param int|null $childrenAmount
+     *
+     * @return void
+     */
+    public function setChildrenAmountAttribute(?int $childrenAmount): void
+    {
+        $this->setToJson('metadata', 'children_amount', $childrenAmount);
+    }
+
+    /**
+     * Accessor for the child ticket price attribute.
+     *
+     * @return ?float
+     */
+    public function getChildTicketPriceAttribute(): ?float
+    {
+        $value = $this->getFromJson('metadata', 'child_ticket_price');
+
+        return $value === null ? null : (float) $value;
+    }
+
+    /**
+     * Mutator for the child ticket price attribute.
+     *
+     * @param float|null $childTicketPrice
+     *
+     * @return void
+     */
+    public function setChildTicketPriceAttribute(?float $childTicketPrice): void
+    {
+        $this->setToJson('metadata', 'child_ticket_price', $childTicketPrice);
     }
 
     /**

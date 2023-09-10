@@ -106,6 +106,30 @@ class UpdateBanquetRequest extends UpdateRequest
                     'nullable',
                     'boolean',
                 ],
+                'adults_amount' => [
+                    'sometimes',
+                    'nullable',
+                    'integer',
+                    'min:0',
+                ],
+                'adult_ticket_price' => [
+                    'sometimes',
+                    'nullable',
+                    'numeric',
+                    'min:0',
+                ],
+                'children_amount' => [
+                    'sometimes',
+                    'nullable',
+                    'integer',
+                    'min:0',
+                ],
+                'child_ticket_price' => [
+                    'sometimes',
+                    'nullable',
+                    'numeric',
+                    'min:0',
+                ],
             ]
         );
     }
@@ -153,6 +177,10 @@ class UpdateBanquetRequest extends UpdateRequest
      *   @OA\Property(property="advance_amount_payment_method", type="string",
      *     nullable="true", example="card", enum={"card", "cash"}),
      *   @OA\Property(property="is_birthday_club", type="boolean", nullable="true", example="true"),
+     *   @OA\Property(property="children_amount", type="integer", nullable="true", example=5),
+     *   @OA\Property(property="child_ticket_price", type="float", nullable="true", example=25.50),
+     *   @OA\Property(property="adults_amount", type="integer", nullable="true", example=2),
+     *   @OA\Property(property="adult_ticket_price", type="float", nullable="true", example=35.50),
      *   @OA\Property(property="start_at", type="string", format="date-time", example="2022-01-12 10:00:00",
      *     description="Date and time of when banquet should start."),
      *   @OA\Property(property="end_at", type="string", format="date-time", example="2022-01-12 23:00:00",
