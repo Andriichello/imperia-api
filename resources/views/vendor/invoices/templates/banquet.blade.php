@@ -360,7 +360,7 @@
         <tr>
             <td colspan="2" class="border-0"></td>
             <td class="text-right p-0">{{ __('invoices::invoice.total') }}</td>
-            <td class="text-right p-0 total-amount">{{ ($childTicketsTotal || $adultTicketsTotal) ? $invoice->formatCurrency((float)$childTicketsTotal + (float)$adultTicketsTotal) : '' }}</td>
+            <td class="text-right p-0 total-amount">{{ (isset($childTicketsTotal) || isset($adultTicketsTotal)) ? $invoice->formatCurrency((float)($childTicketsTotal ?? 0) + (float)($adultTicketsTotal ?? 0)) : '' }}</td>
         </tr>
         </tbody>
     </table>
