@@ -5,6 +5,10 @@ namespace App\Nova;
 use App\Enums\BanquetState;
 use App\Nova\Actions\CalculateTotals;
 use App\Nova\Actions\GenerateInvoice;
+use App\Nova\Metrics\BanquetActualTotalsPerDay;
+use App\Nova\Metrics\BanquetsPerDay;
+use App\Nova\Metrics\BanquetsPerState;
+use App\Nova\Metrics\BanquetTotalsPerDay;
 use App\Nova\Options\BanquetStateOptions;
 use App\Nova\Options\PaymentMethodOptions;
 use Illuminate\Http\Request;
@@ -63,6 +67,30 @@ class Banquet extends Resource
             new CalculateTotals(),
             new GenerateInvoice(),
         ];
+    }
+
+    /**
+     * Get the cards available for the request.
+     *
+     * @param Request $request
+     *
+     * @return array
+     */
+    public function cards(Request $request): array
+    {
+        return array_merge(
+            [
+                BanquetsPerDay::make()
+                    ->width('1/2'),
+                BanquetsPerState::make()
+                    ->width('1/2'),
+                BanquetTotalsPerDay::make()
+                    ->width('1/2'),
+                BanquetActualTotalsPerDay::make()
+                    ->width('1/2'),
+            ],
+            parent::cards($request)
+        );
     }
 
     /**
