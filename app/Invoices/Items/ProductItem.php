@@ -36,15 +36,27 @@ class ProductItem extends InvoiceItem
     public function getVariant(): ?string
     {
         if ($this->field->variant) {
-            return implode('', [
+            $unit = $this->field->variant->weight_unit;
+
+            if ($unit) {
+                $unit = translate("enum.weight_unit.$unit", [], $unit);
+            }
+
+            return implode(' ', [
                 $this->field->variant->weight ?? '',
-                $this->field->variant->weight_unit ?? '',
+                $unit ?? '',
             ]);
         }
 
-        return implode('', [
+        $unit = $this->field->product->weight_unit;
+
+        if ($unit) {
+            $unit = translate("enum.weight_unit.$unit", [], $unit);
+        }
+
+        return implode(' ', [
             $this->field->product->weight ?? '',
-            $this->field->product->weight_unit ?? '',
+            $unit ?? '',
         ]);
     }
 

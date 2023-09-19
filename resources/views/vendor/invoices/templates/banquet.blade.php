@@ -155,6 +155,10 @@
         .buyer-name {
             font-size: 16px;
         }
+
+        .min-w-20 {
+            min-width: 80px;
+        }
     </style>
 </head>
 
@@ -294,8 +298,8 @@
         <thead>
         <tr>
             <th scope="col" class="border-0 p-0 items-title">{{ __('invoices::invoice.tickets') }}</th>
-            <th scope="col" class="text-right border-0 p-0">{{ __('invoices::invoice.price') }}</th>
-            <th scope="col" class="text-right border-0 p-0">{{ __('invoices::invoice.sum') }}</th>
+            <th scope="col" class="text-right border-0 p-0 min-w-20">{{ __('invoices::invoice.price') }}</th>
+            <th scope="col" class="text-right border-0 p-0 min-w-20">{{ __('invoices::invoice.sum') }}</th>
         </tr>
         </thead>
         <tbody>
@@ -337,8 +341,8 @@
         <tr>
             <th scope="col" class="border-0 p-0 items-title">{{ __('invoices::invoice.tickets') }}</th>
             <th scope="col" class="text-right border-0 p-0">{{ __('invoices::invoice.quantity') }}</th>
-            <th scope="col" class="text-right border-0 p-0">{{ __('invoices::invoice.price') }}</th>
-            <th scope="col" class="text-right border-0 p-0">{{ __('invoices::invoice.sum') }}</th>
+            <th scope="col" class="text-right border-0 p-0 min-w-20">{{ __('invoices::invoice.price') }}</th>
+            <th scope="col" class="text-right border-0 p-0 min-w-20">{{ __('invoices::invoice.sum') }}</th>
         </tr>
         </thead>
         <tbody>
@@ -358,9 +362,10 @@
         </tr>
         {{-- Summary --}}
         <tr>
-            <td colspan="2" class="border-0"></td>
+            <td colspan="1" class="border-0"></td>
+            <td class="text-right p-0"></td>
             <td class="text-right p-0">{{ __('invoices::invoice.total') }}</td>
-            <td class="text-right p-0 total-amount">{{ (isset($childTicketsTotal) || isset($adultTicketsTotal)) ? $invoice->formatCurrency((float)($childTicketsTotal ?? 0) + (float)($adultTicketsTotal ?? 0)) : '' }}</td>
+            <td colspan="1" class="text-right p-0 total-amount min-w-20">{{ (isset($childTicketsTotal) || isset($adultTicketsTotal)) ? $invoice->formatCurrency((float)($childTicketsTotal ?? 0) + (float)($adultTicketsTotal ?? 0)) : '' }}</td>
         </tr>
         </tbody>
     </table>
@@ -372,8 +377,8 @@
         <tr>
             <th scope="col" class="border-0 p-0 items-title">{{ __('invoices::invoice.spaces') }}</th>
             <th scope="col" class="border-0 p-0">{{ __('invoices::invoice.duration') }}</th>
-            <th scope="col" class="text-right border-0 p-0">{{ __('invoices::invoice.price') }}</th>
-            <th scope="col" class="text-right border-0 p-0">{{ __('invoices::invoice.sub_total') }}</th>
+            <th scope="col" class="text-right border-0 p-0 min-w-20">{{ __('invoices::invoice.price') }}</th>
+            <th scope="col" class="text-right border-0 p-0 min-w-20">{{ __('invoices::invoice.sub_total') }}</th>
         </tr>
         </thead>
         <tbody>
@@ -420,8 +425,8 @@
         <tr>
             <th scope="col" class="border-0 p-0 items-title">{{ __('invoices::invoice.services') }}</th>
             <th scope="col" class="border-0 p-0">{{ __('invoices::invoice.duration') }}</th>
-            <th scope="col" class="text-right border-0 p-0">{{ __('invoices::invoice.price') }}</th>
-            <th scope="col" class="text-right border-0 p-0">{{ __('invoices::invoice.sum') }}</th>
+            <th scope="col" class="text-right border-0 p-0 min-w-20">{{ __('invoices::invoice.price') }}</th>
+            <th scope="col" class="text-right border-0 p-0 min-w-20">{{ __('invoices::invoice.sum') }}</th>
         </tr>
         </thead>
         <tbody>
@@ -471,8 +476,8 @@
                     <th scope="col" class="border-0 p-0 items-title">{{ data_get($menu, 'title') }}</th>
                     <th scope="col" class="text-center border-0 p-0">{{ __('invoices::invoice.variant') }}</th>
                     <th scope="col" class="text-center border-0 p-0">{{ __('invoices::invoice.quantity') }}</th>
-                    <th scope="col" class="text-right border-0 p-0">{{ __('invoices::invoice.price') }}</th>
-                    <th scope="col" class="text-right border-0 p-0">{{ __('invoices::invoice.sum') }}</th>
+                    <th scope="col" class="text-right border-0 p-0 min-w-20">{{ __('invoices::invoice.price') }}</th>
+                    <th scope="col" class="text-right border-0 p-0 min-w-20">{{ __('invoices::invoice.sum') }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -518,9 +523,10 @@
 
                 {{-- Summary --}}
                 <tr>
-                    <td colspan="3" class="border-0"></td>
+                    <td colspan="1" class="border-0"></td>
+                    <td class="text-right p-0"></td>
                     <td class="text-right p-0">{{ __('invoices::invoice.total') }}</td>
-                    <td class="text-right p-0 total-amount">
+                    <td colspan="2" class="text-right p-0 total-amount min-w-20">
                         {{ $invoice->formatCurrency($invoice->getTotal($products)) }}
                     </td>
                 </tr>
