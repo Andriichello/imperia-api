@@ -56,6 +56,8 @@ class IndexBanquetRequest extends IndexRequest
             parent::getAllowedSorts(),
             [
                 AllowedSort::field('start_at'),
+                AllowedSort::field('created_at'),
+                AllowedSort::field('updated_at'),
             ]
         );
     }
@@ -85,7 +87,7 @@ class IndexBanquetRequest extends IndexRequest
     public function spatieBuilder(SpatieBuilder|EloquentBuilder|Builder $builder): SpatieBuilder
     {
         $builder = parent::spatieBuilder($builder);
-        $builder->defaultSort('start_at');
+        $builder->defaultSort('-created_at');
 
         $filters = $this->get('filter', []);
 

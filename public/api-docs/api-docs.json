@@ -188,11 +188,11 @@
                     {
                         "name": "sort",
                         "in": "query",
-                        "description": "Available fields: `start_at`.",
+                        "description": "Available fields: `start_at`, `created_at`, `updated_at`.",
                         "schema": {
                             "type": "string"
                         },
-                        "example": "-start_at"
+                        "example": "-created_at"
                     },
                     {
                         "name": "page[size]",
