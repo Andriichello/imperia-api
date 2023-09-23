@@ -64,4 +64,26 @@ class ProductItem extends InvoiceItem
     {
         return $this->field?->product?->menus;
     }
+
+    /**
+     * Returns true if item can be merged with current one.
+     *
+     * @param InvoiceItem $item
+     *
+     * @return bool
+     */
+    public function canBeMerged(InvoiceItem $item): bool
+    {
+        if (parent::canBeMerged($item)) {
+            /** @var ProductOrderField $base */
+            $base = $this->getField();
+            /** @var ProductOrderField $given */
+            $given = $item->getField();
+
+            return $base->product_id === $given->product_id
+                && $base->variant_id === $given->variant_id;
+        }
+
+        return false;
+    }
 }

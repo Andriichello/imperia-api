@@ -2,17 +2,13 @@
 
 namespace App\Http\Requests\Invoice;
 
-use App\Http\Requests\Crud\ShowRequest;
-use App\Http\Requests\CrudRequest;
-use App\Models\Banquet;
 use App\Models\Orders\Order;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use OpenApi\Annotations as OA;
 
 /**
- * Class GenerateUrlRequest.
+ * Class ShowMultipleInvoiceRequest.
  */
-class GenerateUrlRequest extends CrudRequest
+class ShowMultipleInvoiceRequest extends ShowInvoiceRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -21,22 +17,14 @@ class GenerateUrlRequest extends CrudRequest
      */
     public function rules(): array
     {
-        $inRule = str_contains(request()->fullUrl(), '/api/orders/')
-            ? 'in:pdf,view' : 'in:pdfThroughBanquet,viewThroughBanquet';
-
         return array_merge(
             parent::rules(),
             [
-                'id' => [
+                'ids' => [
                     'required',
                     'string',
-                    'regex:/^[0-9]+(,[0-9]+)*$/',
+                    'regex:/^[0-9]+(,[0-9]+)*$/'
                 ],
-                'endpoint' => [
-                    'required',
-                    'string',
-                    $inRule,
-                ]
             ]
         );
     }
@@ -48,10 +36,9 @@ class GenerateUrlRequest extends CrudRequest
      */
     public function authorize(): bool
     {
-        $ids = $this->ids();
         $user = $this->user();
 
-        if (count($ids) > 1 && !$user->isStaff()) {
+        if (!$user->isStaff()) {
             return false;
         }
 
@@ -82,7 +69,7 @@ class GenerateUrlRequest extends CrudRequest
     {
         $ids = array_map(
             fn($id) => (int) $id,
-            explode(',', $this->get('id'))
+            explode(',', $this->get('ids'))
         );
 
         return array_unique($ids);
@@ -126,17 +113,53 @@ class GenerateUrlRequest extends CrudRequest
     }
 
     /**
+     * Get menus, which should be on the invoice.
+     *
+     * @return array|null
+     */
+    public function menus(): ?array
+    {
+        $menus = $this->get('menus');
+
+        if (is_string($menus)) {
+            $result = [];
+
+            foreach (explode(',', $menus) as $key => $menu) {
+                $result[$key] = (int) $menu;
+            }
+
+            return $result;
+        }
+
+        return $menus;
+    }
+
+    /**
+     * Get sections, which should be on the invoice.
+     *
+     * @return array|null
+     */
+    public function sections(): ?array
+    {
+        $sections = $this->get('sections');
+
+        return is_string($sections)
+            ? explode(',', $sections) : $sections;
+    }
+
+    /**
      * @OA\Schema(
-     *   schema="OrderInvoiceUrlRequest",
-     *   description="Generate url for accessing order's invoice request",
-     *   @OA\Property(property="endpoint", type="string", example="pdf",
-     *     enum={"pdf", "view"}),
-     *  ),
-     * @OA\Schema(
-     *   schema="BanquetInvoiceUrlRequest",
-     *   description="Generate url for accessing banquet's invoice request",
-     *   @OA\Property(property="endpoint", type="string", example="pdfThroughBanquet",
-     *     enum={"pdfThroughBanquet", "viewThroughBanquet"}),
+     *   schema="ShowMultipleInvoiceRequest",
+     *   description="Show invoice for multiple orders request",
+     *   @OA\Property(property="ids", type="string", example="1,2,3"),
+     *   @OA\Property(property="menus", type="string", nullable="true",
+     *     example="1,2,3"),
+     *   @OA\Property(property="sections", type="string", nullable="true",
+     *     example="info,comments,tickets",
+     *     description="Coma-separated list of invoice sections.
+     *     Available sections: `info`, `comments`, `tickets`, `menus`,
+     *     `spaces`, `services`"
+     *   ),
      *  )
      */
 }

@@ -8,6 +8,7 @@ return [
     */
 
     'invoice'                => 'Рахунок',
+    'invoices'               => 'Рахунки',
     'serial'                 => 'Номер',
     'date'                   => 'Дата',
     'time'                   => 'Час',
@@ -51,5 +52,6 @@ return [
     'services'               => 'Послуги',
     'products'               => 'Позиції меню',
     'banquet'                => 'Банкет',
+    'banquets'               => 'Банкети',
     'page'                   => 'Сторінка',
 ];

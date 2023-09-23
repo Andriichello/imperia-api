@@ -189,23 +189,25 @@
                 <strong>{{ $invoice->name }}</strong>
             </h4>
         </td>
-        <td class="border-0 p-0">
-            <div>
+        @if(!empty($invoice->getDate()) && !empty($invoice->getStartTime()))
+            <td class="border-0 p-0">
+                <div>
                 <span class="date">
                     {{ __('invoices::invoice.date') }}: <strong>{{ $invoice->getDate() }}</strong>
                 </span>
-            </div>
-            <div>
+                </div>
+                <div>
                 <span class="time">
                     {{ __('invoices::invoice.time') }}: <strong>{{ $invoice->getStartTime() }}</strong> - <strong>{{ $invoice->getEndTime() }}</strong>
                 </span>
-            </div>
-        </td>
+                </div>
+            </td>
+        @endif
     </tr>
     </tbody>
 </table>
 
-@if($onlySections === null || in_array('info', $onlySections ?? []))
+@if(($onlySections === null || in_array('info', $onlySections ?? [])))
     {{-- Seller - Buyer --}}
     <table class="table">
         <tbody>

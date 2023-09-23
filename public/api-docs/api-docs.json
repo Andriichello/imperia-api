@@ -4340,6 +4340,53 @@
                 ]
             }
         },
+        "/api/orders/invoice/url": {
+            "post": {
+                "tags": [
+                    "invoices"
+                ],
+                "summary": "Generate url for accessing invoice for multiple orders.",
+                "operationId": "orderMultipleInvoiceUrl",
+                "requestBody": {
+                    "description": "Generate url for accessing invoice for multiple orders response.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MultipleInvoiceUrlRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Generate url for accessing invoice for multiple orders response.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderMultipleInvoiceUrlResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/banquets/{id}/invoice/url": {
             "post": {
                 "tags": [
@@ -4347,18 +4394,6 @@
                 ],
                 "summary": "Generate url for accessing banquet's invoice.",
                 "operationId": "banquetInvoiceUrl",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Id of the banquet.",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "example": 1
-                    }
-                ],
                 "requestBody": {
                     "description": "Generate url for accessing banquet's invoice response.",
                     "required": true,
@@ -4377,6 +4412,65 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/BanquetInvoiceUrlResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/banquets/invoice/url": {
+            "post": {
+                "tags": [
+                    "invoices"
+                ],
+                "summary": "Generate url for accessing invoice for multiple banquets.",
+                "operationId": "banquetMultipleInvoiceUrl",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Ids of the banquets.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1,2,3"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Generate url for accessing invoice for multiple banquets response.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MultipleInvoiceUrlRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Generate url for accessing invoice for multiple banquets response.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BanquetMultipleInvoiceUrlResponse"
                                 }
                             }
                         }
@@ -5852,6 +5946,24 @@
                 },
                 "type": "object"
             },
+            "OrderMultipleInvoiceUrlResponse": {
+                "description": "Generate url for accessing invoice for multiple orders response.",
+                "required": [
+                    "url",
+                    "message"
+                ],
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "example": "http://host/path?signature=long-string&ids=1,2,3"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
             "BanquetInvoiceUrlResponse": {
                 "description": "Generate url for accessing banquet's invoice response.",
                 "required": [
@@ -5862,6 +5974,24 @@
                     "url": {
                         "type": "string",
                         "example": "http://host/path?signature=long-string"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "BanquetMultipleInvoiceUrlResponse": {
+                "description": "Generate url for accessing invoice for multiple banquets response.",
+                "required": [
+                    "url",
+                    "message"
+                ],
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "example": "http://host/path?signature=long-string&ids=1,2,3"
                     },
                     "message": {
                         "type": "string",
@@ -6415,6 +6545,24 @@
                 },
                 "type": "object"
             },
+            "MultipleInvoiceUrlRequest": {
+                "description": "Generate url for accessing invoice for multiple orders request",
+                "properties": {
+                    "ids": {
+                        "type": "string",
+                        "example": "1,2,3"
+                    },
+                    "endpoint": {
+                        "type": "string",
+                        "enum": [
+                            "pdfMultiple",
+                            "viewMultiple"
+                        ],
+                        "example": "pdfMultiple"
+                    }
+                },
+                "type": "object"
+            },
             "OrderInvoiceUrlRequest": {
                 "description": "Generate url for accessing order's invoice request",
                 "properties": {
@@ -6446,6 +6594,27 @@
             "ShowInvoiceRequest": {
                 "description": "Show invoice request",
                 "properties": {
+                    "menus": {
+                        "type": "string",
+                        "example": "1,2,3",
+                        "nullable": "true"
+                    },
+                    "sections": {
+                        "description": "Coma-separated list of invoice sections.\n     *     Available sections: `info`, `comments`, `tickets`, `menus`,\n     *     `spaces`, `services`",
+                        "type": "string",
+                        "example": "info,comments,tickets",
+                        "nullable": "true"
+                    }
+                },
+                "type": "object"
+            },
+            "ShowMultipleInvoiceRequest": {
+                "description": "Show invoice for multiple orders request",
+                "properties": {
+                    "ids": {
+                        "type": "string",
+                        "example": "1,2,3"
+                    },
                     "menus": {
                         "type": "string",
                         "example": "1,2,3",

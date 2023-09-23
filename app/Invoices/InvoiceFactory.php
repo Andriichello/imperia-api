@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Models\Orders\Order;
 use App\Models\Restaurant;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use LaravelDaily\Invoices\Classes\Buyer;
 use LaravelDaily\Invoices\Classes\InvoiceItem as BasicInvoiceItem;
@@ -37,6 +38,98 @@ class InvoiceFactory
             ->buyer(self::buyer($order->banquet->customer))
             ->seller(self::seller($order->banquet->restaurant))
             ->addItems(self::items($order));
+    }
+
+    /**
+     * Make invoice from multiple orders.
+     *
+     * @param Order ...$orders
+     *
+     * @return Invoice
+     * @throws BindingResolutionException
+     */
+    public static function fromOrders(Order ...$orders): Invoice
+    {
+        $name = translate('invoices::invoice.banquets', [], 'banquets')
+            . '-' . implode(',', Arr::pluck($orders, 'id'));
+
+        $items = [];
+        $ticketEntries = [];
+
+        foreach ($orders as $order) {
+            $ticketEntries[] = [
+                'adult' => [
+                    'amount' => $order->banquet->adults_amount,
+                    'price' => $order->banquet->adult_ticket_price,
+                ],
+                'child' => [
+                    'amount' => $order->banquet->children_amount,
+                    'price' => $order->banquet->child_ticket_price,
+                ],
+            ];
+
+            if (empty($items)) {
+                $items = self::items($order)->all();
+                continue;
+            }
+
+            $added = [];
+
+            foreach (self::items($order) as $new) {
+                if (($new instanceof InvoiceItem) === false) {
+                    continue;
+                }
+
+                $matching = array_filter(
+                    $items,
+                    function ($item) use ($new) {
+                        return $item instanceof InvoiceItem
+                            && $item->canBeMerged($new);
+                    }
+                );
+
+                if (empty($matching)) {
+                    $added[] = $new;
+                    continue;
+                }
+
+                foreach ($matching as $item) {
+                    /** @var InvoiceItem $item */
+                    $item->mergeWith($new);
+                }
+            }
+
+            $items = [...$items, ...$added];
+        }
+
+        usort(
+            $items,
+            function ($one, $two) {
+                return strcmp($one->title, $two->title);
+            }
+        );
+
+        $invoice = Invoice::make($name)
+            ->seller(new Seller())
+            ->buyer(new Buyer([]))
+            ->template('banquet')
+            ->addTicketEntries(...$ticketEntries)
+            ->addItems($items);
+
+        $totals = [
+            'child' => [
+                'amount' => $invoice->getChildrenAmount(),
+                'price' => $invoice->getChildTicketPrice(),
+                'total' => $invoice->getChildTicketsTotal(),
+            ],
+            'adult' => [
+                'amount' => $invoice->getAdultsAmount(),
+                'price' => $invoice->getAdultTicketPrice(),
+                'total' => $invoice->getAdultTicketsTotal(),
+            ],
+        ];
+
+        return $invoice;
     }
 
     /**

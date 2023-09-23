@@ -3,10 +3,7 @@
 namespace App\Invoices\Items;
 
 use App\Invoices\InvoiceItem;
-use App\Models\Orders\ProductOrderField;
 use App\Models\Orders\ServiceOrderField;
-use App\Models\Orders\SpaceOrderField;
-use App\Models\Orders\TicketOrderField;
 
 /**
  * Class ServiceItem.
@@ -33,5 +30,26 @@ class ServiceItem extends InvoiceItem
         $item->subTotalPrice($field->total);
 
         return $item;
+    }
+
+    /**
+     * Returns true if item can be merged with current one.
+     *
+     * @param InvoiceItem $item
+     *
+     * @return bool
+     */
+    public function canBeMerged(InvoiceItem $item): bool
+    {
+        if (parent::canBeMerged($item)) {
+            /** @var ServiceOrderField $base */
+            $base = $this->getField();
+            /** @var ServiceOrderField $given */
+            $given = $item->getField();
+
+            return $base->service_id === $given->service_id;
+        }
+
+        return false;
     }
 }

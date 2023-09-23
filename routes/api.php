@@ -16,7 +16,6 @@ use App\Http\Controllers\Model\OrderController;
 use App\Http\Controllers\Model\ProductController;
 use App\Http\Controllers\Model\RestaurantController;
 use App\Http\Controllers\Model\RestaurantReviewController;
-use App\Http\Controllers\Model\ScheduleController;
 use App\Http\Controllers\Model\ServiceController;
 use App\Http\Controllers\Model\SpaceController;
 use App\Http\Controllers\Model\TicketController;
@@ -81,6 +80,38 @@ Route::group(['as' => 'api.'], function () {
         ->parameters(['restaurant-reviews' => 'id']);
 });
 
+Route::group(['middleware' => ['auth:signature,sanctum'], 'as' => 'api.'], function () {
+    Route::get('/orders/{id}/invoice', [InvoiceController::class, 'view'])
+        ->name('orders.invoice');
+    Route::get('/orders/{id}/invoice/pdf', [InvoiceController::class, 'pdf'])
+        ->name('orders.invoice-pdf');
+
+    Route::get('/orders/invoice', [InvoiceController::class, 'viewMultiple'])
+        ->name('orders.invoice.multiple');
+    Route::get('/orders/invoice/pdf', [InvoiceController::class, 'pdfMultiple'])
+        ->name('orders.invoice-pdf.multiple');
+
+    Route::get('/banquets/{id}/invoice', [InvoiceController::class, 'viewThroughBanquet'])
+        ->name('banquets.invoice');
+    Route::get('/banquets/{id}/invoice/pdf', [InvoiceController::class, 'pdfThroughBanquet'])
+        ->name('banquets.invoice-pdf');
+
+    Route::get('/banquets/invoice', [InvoiceController::class, 'viewMultiple'])
+        ->name('banquets.invoice.multiple');
+    Route::get('/banquets/invoice/pdf', [InvoiceController::class, 'pdfMultiple'])
+        ->name('banquets.invoice-pdf.multiple');
+
+    Route::post('/orders/{id}/invoice/url', [InvoiceController::class, 'generateUrl'])
+        ->name('orders.invoice-url');
+    Route::post('/banquets/{id}/invoice/url', [InvoiceController::class, 'generateUrl'])
+        ->name('banquets.invoice-url');
+
+    Route::post('/orders/invoice/url', [InvoiceController::class, 'generateMultipleUrl'])
+        ->name('orders.invoice-url.multiple');
+    Route::post('/banquets/invoice/url', [InvoiceController::class, 'generateMultipleUrl'])
+        ->name('banquets.invoice-url.multiple');
+});
+
 Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
     Route::delete('/logout', LogoutController::class)->name('logout');
 
@@ -130,19 +161,6 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
     Route::apiResource('banquets', BanquetController::class)
         ->only('index', 'show', 'store', 'update', 'destroy')
         ->parameters(['banquets' => 'id']);
-});
-
-Route::group(['middleware' => ['auth:signature,sanctum'], 'as' => 'api.'], function () {
-    Route::get('/orders/{id}/invoice', [InvoiceController::class, 'view'])->name('orders.invoice');
-    Route::get('/orders/{id}/invoice/pdf', [InvoiceController::class, 'pdf'])->name('orders.invoice-pdf');
-
-    Route::get('/banquets/{id}/invoice', [InvoiceController::class, 'viewThroughBanquet'])
-        ->name('banquets.invoice');
-    Route::get('/banquets/{id}/invoice/pdf', [InvoiceController::class, 'pdfThroughBanquet'])
-        ->name('banquets.invoice-pdf');
-
-    Route::post('/orders/{id}/invoice/url', [InvoiceController::class, 'generateUrl'])->name('orders.invoice-url');
-    Route::post('/banquets/{id}/invoice/url', [InvoiceController::class, 'generateUrl'])->name('banquets.invoice-url');
 });
 
 Route::fallback(function () {

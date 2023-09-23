@@ -8,11 +8,12 @@ use App\Models\Banquet;
 use App\Models\Orders\Order;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use OpenApi\Annotations as OA;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
- * Class GenerateUrlRequest.
+ * Class GenerateMultipleUrlRequest.
  */
-class GenerateUrlRequest extends CrudRequest
+class GenerateMultipleUrlRequest extends CrudRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -21,13 +22,10 @@ class GenerateUrlRequest extends CrudRequest
      */
     public function rules(): array
     {
-        $inRule = str_contains(request()->fullUrl(), '/api/orders/')
-            ? 'in:pdf,view' : 'in:pdfThroughBanquet,viewThroughBanquet';
-
         return array_merge(
             parent::rules(),
             [
-                'id' => [
+                'ids' => [
                     'required',
                     'string',
                     'regex:/^[0-9]+(,[0-9]+)*$/',
@@ -35,7 +33,7 @@ class GenerateUrlRequest extends CrudRequest
                 'endpoint' => [
                     'required',
                     'string',
-                    $inRule,
+                    'in:pdfMultiple,viewMultiple',
                 ]
             ]
         );
@@ -48,24 +46,16 @@ class GenerateUrlRequest extends CrudRequest
      */
     public function authorize(): bool
     {
-        $ids = $this->ids();
         $user = $this->user();
 
-        if (count($ids) > 1 && !$user->isStaff()) {
+        if (!$user->isStaff()) {
             return false;
         }
 
         foreach ($this->orders() as $order) {
             $banquet = $order->banquet;
 
-            $hasPermissions = $banquet->creator_id === $user->id
-                || $banquet->customer_id === $user->customer_id;
-
-            if (!$hasPermissions) {
-                return false;
-            }
-
-            if ($user->restaurant_id && $user->restaurant_id !== $banquet->restaurant_id) {
+            if ($user->restaurant_id && $user->restaurant_id !== $banquet?->restaurant_id) {
                 return false;
             }
         }
@@ -82,7 +72,7 @@ class GenerateUrlRequest extends CrudRequest
     {
         $ids = array_map(
             fn($id) => (int) $id,
-            explode(',', $this->get('id'))
+            explode(',', $this->get('ids'))
         );
 
         return array_unique($ids);
@@ -127,16 +117,11 @@ class GenerateUrlRequest extends CrudRequest
 
     /**
      * @OA\Schema(
-     *   schema="OrderInvoiceUrlRequest",
-     *   description="Generate url for accessing order's invoice request",
-     *   @OA\Property(property="endpoint", type="string", example="pdf",
-     *     enum={"pdf", "view"}),
+     *   schema="MultipleInvoiceUrlRequest",
+     *   description="Generate url for accessing invoice for multiple orders request",
+     *   @OA\Property(property="ids", type="string", example="1,2,3"),
+     *   @OA\Property(property="endpoint", type="string", example="pdfMultiple",
+     *     enum={"pdfMultiple", "viewMultiple"}),
      *  ),
-     * @OA\Schema(
-     *   schema="BanquetInvoiceUrlRequest",
-     *   description="Generate url for accessing banquet's invoice request",
-     *   @OA\Property(property="endpoint", type="string", example="pdfThroughBanquet",
-     *     enum={"pdfThroughBanquet", "viewThroughBanquet"}),
-     *  )
      */
 }

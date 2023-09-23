@@ -8,6 +8,7 @@ return [
     */
 
     'invoice'                => 'Invoice',
+    'invoices'               => 'Invoices',
     'serial'                 => 'Serial No.',
     'date'                   => 'Date',
     'time'                   => 'Time',
@@ -50,5 +51,6 @@ return [
     'services'               => 'Services',
     'products'               => 'Products',
     'banquet'                => 'Banquet',
+    'banquets'               => 'Banquets',
     'page'                   => 'Page',
 ];

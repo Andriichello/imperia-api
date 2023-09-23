@@ -103,4 +103,24 @@ class Signature
 
         return $this;
     }
+
+    /**
+     * @return string|null
+     */
+    public function getAbility(): ?string
+    {
+        return data_get($this->payload, 'ability');
+    }
+
+    /**
+     * @param string|null $ability
+     *
+     * @return static
+     */
+    public function setAbility(?string $ability): static
+    {
+        data_set($this->payload, 'ability', $ability);
+
+        return $this;
+    }
 }

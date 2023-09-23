@@ -14,6 +14,13 @@ use OpenApi\Annotations as OA;
 class ShowInvoiceRequest extends ShowRequest
 {
     /**
+     * Ability, which should be checked for the request.
+     *
+     * @var string|null
+     */
+    protected ?string $ability = 'showInvoice';
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array

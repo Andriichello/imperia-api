@@ -21,9 +21,14 @@ class Invoice extends BaseInvoice
     /**
      * Invoice order.
      *
-     * @var Order
+     * @var Order|null
      */
-    protected Order $order;
+    protected ?Order $order;
+
+    /**
+     * @var array|null
+     */
+    protected ?array $ticketEntries;
 
     /**
      * Menus, which should be on invoice.
@@ -117,7 +122,7 @@ class Invoice extends BaseInvoice
      */
     public function getComments(): array
     {
-        return $this->order->comments->toArray();
+        return $this->order?->comments?->all() ?? [];
     }
 
     /**
@@ -127,7 +132,7 @@ class Invoice extends BaseInvoice
      */
     public function getDate(): string
     {
-        return $this->order->banquet->start_at->format('d/m/Y');
+        return $this->order?->banquet->start_at->format('d/m/Y') ?? '';
     }
 
     /**
@@ -137,7 +142,7 @@ class Invoice extends BaseInvoice
      */
     public function getStartTime(): string
     {
-        return $this->order->banquet->start_at->format('H:i');
+        return $this->order?->banquet->start_at->format('H:i') ?? '';
     }
 
     /**
@@ -147,7 +152,94 @@ class Invoice extends BaseInvoice
      */
     public function getEndTime(): string
     {
-        return $this->order->banquet->end_at->format('H:i');
+        return $this->order?->banquet->end_at->format('H:i') ?? '';
+    }
+
+    /**
+     * Add to ticket entries.
+     *
+     * @param array ...$entries
+     *
+     * @return $this
+     */
+    public function addTicketEntries(array ...$entries): static
+    {
+        $this->ticketEntries = [...($this->ticketEntries ?? []), ...$entries];
+
+        return $this;
+    }
+
+    /**
+     * Set ticket entries.
+     *
+     * @param array|null $ticketEntries
+     *
+     * @return static
+     */
+    public function setTicketEntries(?array $ticketEntries): static
+    {
+        $this->ticketEntries = $ticketEntries;
+
+        return $this;
+    }
+
+    /**
+     * Get ticket entries.
+     *
+     * @return ?array
+     */
+    public function getTicketsEntries(): ?array
+    {
+        return $this->ticketEntries ?? null;
+    }
+
+
+    /**
+     * Get adult tickets total.
+     *
+     * @return float
+     */
+    public function getAdultTicketsTotal(): float
+    {
+        if (!isset($this->ticketEntries)) {
+            return ($this->getAdultsAmount() ?? 0)
+                * ($this->getAdultTicketPrice() ?? 0);
+        }
+
+        $total = 0;
+
+        foreach ($this->ticketEntries as $entry) {
+            $price = data_get($entry, 'adult.price', 0);
+            $amount = data_get($entry, 'adult.amount', 0);
+
+            $total += $price * $amount;
+        }
+
+        return $total;
+    }
+
+    /**
+     * Get child tickets total.
+     *
+     * @return float
+     */
+    public function getChildTicketsTotal(): float
+    {
+        if (!isset($this->ticketEntries)) {
+            return ($this->getChildrenAmount() ?? 0)
+                * ($this->getChildTicketPrice() ?? 0);
+        }
+
+        $total = 0;
+
+        foreach ($this->ticketEntries as $entry) {
+            $price = data_get($entry, 'child.price', 0);
+            $amount = data_get($entry, 'child.amount', 0);
+
+            $total += $price * $amount;
+        }
+
+        return $total;
     }
 
     /**
@@ -157,7 +249,19 @@ class Invoice extends BaseInvoice
      */
     public function getAdultsAmount(): ?int
     {
-        return $this->order->banquet->adults_amount;
+        $entries = $this->getTicketsEntries();
+
+        if ($entries) {
+            $amount = 0;
+
+            foreach ($entries as $entry) {
+                $amount += data_get($entry, 'adult.amount', 0);
+            }
+
+            return $amount;
+        }
+
+        return $this->order?->banquet->adults_amount;
     }
 
     /**
@@ -167,7 +271,22 @@ class Invoice extends BaseInvoice
      */
     public function getAdultTicketPrice(): ?float
     {
-        return $this->order->banquet->adult_ticket_price;
+        if (!isset($this->ticketEntries)) {
+            return $this->order?->banquet->adult_ticket_price;
+        }
+
+        $totalPrice = 0;
+        $totalAmount = 0;
+
+        foreach ($this->ticketEntries as $entry) {
+            $price = data_get($entry, 'adult.price', 0);
+            $amount = data_get($entry, 'adult.amount', 0);
+
+            $totalPrice += $price * $amount;
+            $totalAmount += $amount;
+        }
+
+        return $totalPrice / ($totalAmount > 0 ? $totalAmount : 1);
     }
 
     /**
@@ -177,7 +296,19 @@ class Invoice extends BaseInvoice
      */
     public function getChildrenAmount(): ?int
     {
-        return $this->order->banquet->children_amount;
+        $entries = $this->getTicketsEntries();
+
+        if ($entries) {
+            $amount = 0;
+
+            foreach ($entries as $entry) {
+                $amount += data_get($entry, 'child.amount', 0);
+            }
+
+            return $amount;
+        }
+
+        return $this->order?->banquet->children_amount;
     }
 
     /**
@@ -187,7 +318,22 @@ class Invoice extends BaseInvoice
      */
     public function getChildTicketPrice(): ?float
     {
-        return $this->order->banquet->child_ticket_price;
+        if (!isset($this->ticketEntries)) {
+            return $this->order?->banquet->child_ticket_price;
+        }
+
+        $totalPrice = 0;
+        $totalAmount = 0;
+
+        foreach ($this->ticketEntries as $entry) {
+            $price = data_get($entry, 'child.price', 0);
+            $amount = data_get($entry, 'child.amount', 0);
+
+            $totalPrice += $price * $amount;
+            $totalAmount += $amount;
+        }
+
+        return $totalPrice / ($totalAmount > 0 ? $totalAmount : 1);
     }
 
     /**
@@ -248,7 +394,7 @@ class Invoice extends BaseInvoice
         $menus = [];
 
         foreach ($this->getProducts() as $item) {
-            foreach ($item->getMenus()?->toArray() ?? [] as $menu) {
+            foreach ($item->getMenus()?->all() ?? [] as $menu) {
                 $menuId = data_get($menu, 'id');
                 if (key_exists($menuId, $menus)) {
                     continue;

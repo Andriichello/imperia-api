@@ -32,4 +32,25 @@ class TicketItem extends InvoiceItem
 
         return $item;
     }
+
+    /**
+     * Returns true if item can be merged with current one.
+     *
+     * @param InvoiceItem $item
+     *
+     * @return bool
+     */
+    public function canBeMerged(InvoiceItem $item): bool
+    {
+        if (parent::canBeMerged($item)) {
+            /** @var TicketOrderField $base */
+            $base = $this->getField();
+            /** @var TicketOrderField $given */
+            $given = $item->getField();
+
+            return $base->ticket_id === $given->ticket_id;
+        }
+
+        return false;
+    }
 }

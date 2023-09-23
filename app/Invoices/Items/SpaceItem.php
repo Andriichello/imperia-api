@@ -39,4 +39,25 @@ class SpaceItem extends InvoiceItem
     {
         return $this->field->duration;
     }
+
+    /**
+     * Returns true if item can be merged with current one.
+     *
+     * @param InvoiceItem $item
+     *
+     * @return bool
+     */
+    public function canBeMerged(InvoiceItem $item): bool
+    {
+        if (parent::canBeMerged($item)) {
+            /** @var SpaceOrderField $base */
+            $base = $this->getField();
+            /** @var SpaceOrderField $given */
+            $given = $item->getField();
+
+            return $base->space_id === $given->space_id;
+        }
+
+        return false;
+    }
 }
