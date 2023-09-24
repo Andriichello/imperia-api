@@ -4394,6 +4394,18 @@
                 ],
                 "summary": "Generate url for accessing banquet's invoice.",
                 "operationId": "banquetInvoiceUrl",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the banquet.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
                 "requestBody": {
                     "description": "Generate url for accessing banquet's invoice response.",
                     "required": true,
@@ -4441,18 +4453,6 @@
                 ],
                 "summary": "Generate url for accessing invoice for multiple banquets.",
                 "operationId": "banquetMultipleInvoiceUrl",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Ids of the banquets.",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "example": "1,2,3"
-                    }
-                ],
                 "requestBody": {
                     "description": "Generate url for accessing invoice for multiple banquets response.",
                     "required": true,

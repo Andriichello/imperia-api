@@ -290,6 +290,9 @@ class InvoiceController extends Controller
      *   security={{"bearerAuth": {}}},
      *   tags={"invoices"},
      *
+     *  @OA\Parameter(name="id", required=true, in="path", example=1, @OA\Schema(type="integer"),
+     *     description="Id of the banquet."),
+     *
      *  @OA\RequestBody(
      *     required=true,
      *     description="Generate url for accessing banquet's invoice response.",
@@ -312,9 +315,6 @@ class InvoiceController extends Controller
      *   operationId="banquetMultipleInvoiceUrl",
      *   security={{"bearerAuth": {}}},
      *   tags={"invoices"},
-     *
-     *   @OA\Parameter(name="id", required=true, in="path", example="1,2,3", @OA\Schema(type="string"),
-     *     description="Ids of the banquets."),
      *
      *   @OA\RequestBody(
      *     required=true,
