@@ -183,7 +183,7 @@ class InvoiceController extends Controller
         $query = http_build_query(compact('signature'));
 
         $url = Str::of($request->fullUrl())
-            ->before('/api')
+            ->before('/api/')
             ->finish('/' . $path)
             ->finish('?' . $query)
             ->value();
@@ -225,7 +225,7 @@ class InvoiceController extends Controller
         $query = http_build_query(compact('signature', 'ids'));
 
         $url = Str::of($request->fullUrl())
-            ->before('/api')
+            ->before('/api/')
             ->finish('/' . $path)
             ->finish('?' . $query)
             ->value();
