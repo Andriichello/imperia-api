@@ -67,7 +67,7 @@
 
         .table th,
         .table td {
-            padding: 0.75rem;
+            padding: 0.25rem;
             vertical-align: top;
         }
 
