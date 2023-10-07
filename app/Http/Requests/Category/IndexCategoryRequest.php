@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Category;
 
 use App\Http\Filters\RestaurantsFilter;
+use App\Http\Filters\TagsFilter;
 use App\Http\Requests\Crud\IndexRequest;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
@@ -31,7 +32,7 @@ class IndexCategoryRequest extends IndexRequest
             parent::getAllowedFilters(),
             [
                 AllowedFilter::exact('target'),
-                AllowedFilter::custom('restaurants', new RestaurantsFilter()),
+                AllowedFilter::custom('tags', new TagsFilter()),
                 AllowedFilter::custom('restaurants', new RestaurantsFilter()),
             ]
         );
