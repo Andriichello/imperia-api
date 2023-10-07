@@ -7,16 +7,20 @@ use App\Models\Restaurant;
 use App\Models\User;
 use App\Queries\Interfaces\ArchivableInterface;
 use App\Queries\Interfaces\CategorizableInterface;
+use App\Queries\Interfaces\TaggableInterface;
 use App\Queries\Traits\Archivable;
 use App\Queries\Traits\Categorizable;
+use App\Queries\Traits\Taggable;
 
 /**
  * Class ProductQueryBuilder.
  */
 class ProductQueryBuilder extends BaseQueryBuilder implements
+    TaggableInterface,
     ArchivableInterface,
     CategorizableInterface
 {
+    use Taggable;
     use Archivable;
     use Categorizable;
 

@@ -36,6 +36,7 @@ return [
             'Discount' => 'Знижка',
             'Log' => 'Лог',
             'Notification' => 'Сповіщення',
+            'Tag' => 'Тег',
         ],
         'plural' => [
             'User' => 'Користувачі',
@@ -59,6 +60,7 @@ return [
             'Discount' => 'Знижки',
             'Log' => 'Логи',
             'Notification' => 'Сповіщення',
+            'Tag' => 'Теги',
         ],
     ],
     'metrics' => [

@@ -56,6 +56,8 @@ return [
     /* Relation columns */
     'menu' => 'Menu',
     'menus' => 'Menus',
+    'tag' => 'Tag',
+    'tags' => 'Tags',
     'category' => 'Category',
     'categories' => 'Categories',
     'variant' => 'Variant',

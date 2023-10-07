@@ -4,13 +4,19 @@ namespace App\Queries;
 
 use App\Models\Restaurant;
 use App\Models\User;
+use App\Queries\Interfaces\ArchivableInterface;
+use App\Queries\Interfaces\TaggableInterface;
 use App\Queries\Traits\Archivable;
+use App\Queries\Traits\Taggable;
 
 /**
  * Class CategoryQueryBuilder.
  */
-class CategoryQueryBuilder extends BaseQueryBuilder
+class CategoryQueryBuilder extends BaseQueryBuilder implements
+    TaggableInterface,
+    ArchivableInterface
 {
+    use Taggable;
     use Archivable;
 
     /**

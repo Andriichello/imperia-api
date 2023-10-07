@@ -36,6 +36,7 @@ return [
             'Discount' => 'Discount',
             'Log' => 'Log',
             'Notification' => 'Notification',
+            'Tag' => 'Tag',
         ],
         'plural' => [
             'User' => 'Users',
@@ -59,6 +60,7 @@ return [
             'Discount' => 'Discounts',
             'Log' => 'Logs',
             'Notification' => 'Notifications',
+            'Tag' => 'Tags',
         ],
     ],
     'metrics' => [

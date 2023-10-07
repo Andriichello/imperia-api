@@ -59,6 +59,8 @@ return [
     /* Relation columns */
     'menu' => 'Меню',
     'menus' => 'Меню',
+    'tag' => 'Тег',
+    'tags' => 'Теги',
     'category' => 'Категорія',
     'categories' => 'Категорії',
     'variant' => 'Варіант',
