@@ -3,13 +3,10 @@
 namespace App\Models\Morphs;
 
 use App\Models\BaseModel;
-use App\Models\Interfaces\MediableInterface;
 use App\Models\Restaurant;
-use App\Models\Traits\ArchivableTrait;
-use App\Models\Traits\MediableTrait;
-use App\Queries\CategoryQueryBuilder;
+use App\Queries\TagQueryBuilder;
 use Carbon\Carbon;
-use Database\Factories\Morphs\CategoryFactory;
+use Database\Factories\Morphs\TagFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -17,30 +14,25 @@ use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
 
 /**
- * Class Category.
+ * Class Tag.
  *
  * @property int|null $restaurant_id
- * @property string $slug
  * @property string|null $target
  * @property string $title
  * @property string|null $description
- * @property bool|null $archived
- * @property int|null $popularity
  * @property string|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
- * @property Categorizable[]|Collection $categorizables
+ * @property Taggable[]|Collection $taggables
  * @property Restaurant|null $restaurant
  *
- * @method static CategoryQueryBuilder query()
- * @method static CategoryFactory factory(...$parameters)
+ * @method static TagQueryBuilder query()
+ * @method static TagFactory factory(...$parameters)
  */
-class Category extends BaseModel implements MediableInterface
+class Tag extends BaseModel
 {
-    use ArchivableTrait;
     use HasFactory;
-    use MediableTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -49,12 +41,9 @@ class Category extends BaseModel implements MediableInterface
      */
     protected $fillable = [
         'restaurant_id',
-        'slug',
         'target',
         'title',
         'description',
-        'archived',
-        'popularity',
         'metadata',
     ];
 
@@ -64,18 +53,18 @@ class Category extends BaseModel implements MediableInterface
      * @var array
      */
     protected $relations = [
-        'categorizables',
+        'taggables',
         'restaurant',
     ];
 
     /**
-     * Related categorizables.
+     * Related taggables.
      *
      * @return HasMany
      */
-    public function categorizables(): HasMany
+    public function taggables(): HasMany
     {
-        return $this->hasMany(Categorizable::class, 'category_id', 'id');
+        return $this->hasMany(Taggable::class, 'tag_id', 'id');
     }
 
     /**
@@ -103,10 +92,10 @@ class Category extends BaseModel implements MediableInterface
     /**
      * @param DatabaseBuilder $query
      *
-     * @return CategoryQueryBuilder
+     * @return TagQueryBuilder
      */
-    public function newEloquentBuilder($query): CategoryQueryBuilder
+    public function newEloquentBuilder($query): TagQueryBuilder
     {
-        return new CategoryQueryBuilder($query);
+        return new TagQueryBuilder($query);
     }
 }
