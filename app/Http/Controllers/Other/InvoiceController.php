@@ -40,8 +40,9 @@ class InvoiceController extends Controller
         $target = $request->targetOrFail(Order::class);
 
         return InvoiceFactory::fromOrder($target)
-            ->withSections($request->sections())
+            ->withTags($request->tags())
             ->withMenus($request->menus())
+            ->withSections($request->sections())
             ->render()
             ->toHtml();
     }
@@ -83,8 +84,9 @@ class InvoiceController extends Controller
         $target = $request->targetOrFail(Order::class);
 
         return InvoiceFactory::fromOrder($target)
-            ->withSections($request->sections())
+            ->withTags($request->tags())
             ->withMenus($request->menus())
+            ->withSections($request->sections())
             ->stream();
     }
 
@@ -122,8 +124,9 @@ class InvoiceController extends Controller
     public function viewMultiple(ShowMultipleInvoiceRequest $request): View
     {
         return InvoiceFactory::fromOrders(...$request->orders())
-            ->withSections($request->sections())
+            ->withTags($request->tags())
             ->withMenus($request->menus())
+            ->withSections($request->sections())
             ->render()
             ->toHtml();
     }
@@ -140,8 +143,9 @@ class InvoiceController extends Controller
     public function pdfMultiple(ShowMultipleInvoiceRequest $request): Response
     {
         return InvoiceFactory::fromOrders(...$request->orders())
-            ->withSections($request->sections())
+            ->withTags($request->tags())
             ->withMenus($request->menus())
+            ->withSections($request->sections())
             ->stream();
     }
 

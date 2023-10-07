@@ -109,27 +109,12 @@ class InvoiceFactory
             }
         );
 
-        $invoice = Invoice::make($name)
+        return Invoice::make($name)
             ->seller(new Seller())
             ->buyer(new Buyer([]))
             ->template('banquet')
             ->addTicketEntries(...$ticketEntries)
             ->addItems($items);
-
-        $totals = [
-            'child' => [
-                'amount' => $invoice->getChildrenAmount(),
-                'price' => $invoice->getChildTicketPrice(),
-                'total' => $invoice->getChildTicketsTotal(),
-            ],
-            'adult' => [
-                'amount' => $invoice->getAdultsAmount(),
-                'price' => $invoice->getAdultTicketPrice(),
-                'total' => $invoice->getAdultTicketsTotal(),
-            ],
-        ];
-
-        return $invoice;
     }
 
     /**

@@ -113,45 +113,12 @@ class ShowMultipleInvoiceRequest extends ShowInvoiceRequest
     }
 
     /**
-     * Get menus, which should be on the invoice.
-     *
-     * @return array|null
-     */
-    public function menus(): ?array
-    {
-        $menus = $this->get('menus');
-
-        if (is_string($menus)) {
-            $result = [];
-
-            foreach (explode(',', $menus) as $key => $menu) {
-                $result[$key] = (int) $menu;
-            }
-
-            return $result;
-        }
-
-        return $menus;
-    }
-
-    /**
-     * Get sections, which should be on the invoice.
-     *
-     * @return array|null
-     */
-    public function sections(): ?array
-    {
-        $sections = $this->get('sections');
-
-        return is_string($sections)
-            ? explode(',', $sections) : $sections;
-    }
-
-    /**
      * @OA\Schema(
      *   schema="ShowMultipleInvoiceRequest",
      *   description="Show invoice for multiple orders request",
      *   @OA\Property(property="ids", type="string", example="1,2,3"),
+     *   @OA\Property(property="tags", type="string", nullable="true",
+     *     example="1,2"),
      *   @OA\Property(property="menus", type="string", nullable="true",
      *     example="1,2,3"),
      *   @OA\Property(property="sections", type="string", nullable="true",

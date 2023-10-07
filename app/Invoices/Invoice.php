@@ -31,6 +31,14 @@ class Invoice extends BaseInvoice
     protected ?array $ticketEntries;
 
     /**
+     * Tags, which should be on invoice.
+     * All tags will be displayed if it's null.
+     *
+     * @var array|null
+     */
+    protected ?array $tags = null;
+
+    /**
      * Menus, which should be on invoice.
      * All menus will be displayed if it's null.
      *
@@ -65,6 +73,30 @@ class Invoice extends BaseInvoice
         $invoice->order = $order;
 
         return $invoice;
+    }
+
+    /**
+     * Specify tags, which should be on invoice.
+     *
+     * @param array|null $tags
+     *
+     * @return $this
+     */
+    public function withTags(?array $tags): static
+    {
+        $this->tags = $tags;
+
+        return $this;
+    }
+
+    /**
+     * Get tags, which should be on invoice.
+     *
+     * @return array|null
+     */
+    public function onlyTags(): ?array
+    {
+        return $this->tags;
     }
 
     /**

@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+@php use App\Invoices\Items\ProductItem;use App\Invoices\Items\ServiceItem;use App\Invoices\Items\SpaceItem;use App\Invoices\Items\TicketItem;use App\Models\Menu;use App\Models\Orders\ProductOrderField; @endphp
+    <!DOCTYPE html>
 <html lang="en">
 <head>
     <title>{{ $invoice->name }}</title>
@@ -105,23 +106,29 @@
         .text-uppercase {
             text-transform: uppercase !important;
         }
+
         * {
             font-family: "DejaVu Sans";
         }
+
         body, h1, h2, h3, h4, h5, h6, table, th, tr, td, p, div {
             line-height: 1.1;
         }
+
         .party-header {
             font-size: 1.5rem;
             font-weight: 400;
         }
+
         .total-amount {
             font-size: 16px;
             font-weight: 700;
         }
+
         .border-0 {
             border: none !important;
         }
+
         .cool-gray {
             color: #6B7280;
         }
@@ -129,12 +136,15 @@
         .font-light {
             font-weight: lighter;
         }
+
         .font-regular {
             font-weight: normal;
         }
+
         .font-medium {
             font-weight: bolder;
         }
+
         .font-bold {
             font-weight: bold;
         }
@@ -142,9 +152,11 @@
         .date {
             font-size: 14px;
         }
+
         .time {
             font-size: 14px;
         }
+
         .items-title {
             font-size: 16px;
         }
@@ -152,6 +164,7 @@
         .seller-name {
             font-size: 16px;
         }
+
         .buyer-name {
             font-size: 16px;
         }
@@ -166,14 +179,43 @@
 @php
     $onlyMenus = $invoice->onlyMenus();
     $onlySections = $invoice->onlySections();
+    $onlyTags = $invoice->onlyTags();
 
+    /** @var <int, Menu> $menus */
     $menus = $invoice->getMenus() ?? [];
+    /** @var SpaceItem[] $spaces */
     $spaces = $invoice->getSpaces() ?? [];
+    /** @var TicketItem[] $tickets */
     $tickets = $invoice->getTickets() ?? [];
+    /** @var ServiceItem[] $services */
     $services = $invoice->getServices() ?? [];
 
     $comments = $invoice->getComments() ?? [];
+    /** @var array<int, ProductItem[]> $productsByMenus */
     $productsByMenus = $invoice->getProductsByMenus() ?? [];
+
+    if (!empty($onlyTags)) {
+        $filtered = [];
+
+        foreach ($productsByMenus as $menuId => $products) {
+            foreach ($products as $product) {
+                /** @var ProductOrderField $field */
+                $field = $product->getField();
+                if (!$field?->product){
+                    continue;
+                }
+
+                if ($field->product->isAssociatedWithAnyOfTags(...$onlyTags)) {
+                    $filtered[$menuId] = [
+                        ...data_get($filtered, $menuId, []),
+                        $product
+                    ];
+                }
+            }
+        }
+
+        $productsByMenus = $filtered;
+    }
 @endphp
 
 {{-- Header --}}
@@ -221,20 +263,23 @@
 
                 @if($invoice->seller->address)
                     <p class="seller-address">
-                        {{ __('invoices::invoice.address') }}: <span class="font-bold">{{ $invoice->seller->address }}</span>
+                        {{ __('invoices::invoice.address') }}: <span
+                            class="font-bold">{{ $invoice->seller->address }}</span>
                     </p>
                 @endif
 
                 @if($invoice->seller->phone)
                     <p class="seller-phone">
-                        {{ __('invoices::invoice.phone') }}: <span class="font-bold">{{ $invoice->seller->phone }}</span>
+                        {{ __('invoices::invoice.phone') }}: <span
+                            class="font-bold">{{ $invoice->seller->phone }}</span>
                     </p>
                 @endif
 
                 @foreach($invoice->seller->custom_fields as $key => $value)
                     @if(!empty($value))
                         <p class="seller-custom-field">
-                            {{ translate("invoices::invoice.$key", [], ucfirst($key)) }}: <span class="font-bold">{{ $value }}</span>
+                            {{ translate("invoices::invoice.$key", [], ucfirst($key)) }}: <span
+                                class="font-bold">{{ $value }}</span>
                         </p>
                     @endif
                 @endforeach
@@ -249,7 +294,8 @@
 
                 @if($invoice->buyer->address)
                     <p class="buyer-address">
-                        {{ __('invoices::invoice.address') }}: <span class="font-bold">{{ $invoice->buyer->address }}</span>
+                        {{ __('invoices::invoice.address') }}: <span
+                            class="font-bold">{{ $invoice->buyer->address }}</span>
                     </p>
                 @endif
 
@@ -262,7 +308,8 @@
                 @foreach($invoice->buyer->custom_fields as $key => $value)
                     @if(!empty($value))
                         <p class="buyer-custom-field">
-                            {{ translate("invoices::invoice.$key", [], ucfirst($key)) }}: <span class="font-bold">{{ $value }}</span>
+                            {{ translate("invoices::invoice.$key", [], ucfirst($key)) }}: <span
+                                class="font-bold">{{ $value }}</span>
                         </p>
                     @endif
                 @endforeach
@@ -327,14 +374,14 @@
                 </td>
             </tr>
         @endforeach
-            {{-- Summary --}}
-            <tr>
-                <td colspan="1" class="border-0"></td>
-                <td class="text-right p-0">Total</td>
-                <td class="text-right p-0 total-amount">
-                    {{ $invoice->formatCurrency($invoice->getTotal($tickets)) }}
-                </td>
-            </tr>
+        {{-- Summary --}}
+        <tr>
+            <td colspan="1" class="border-0"></td>
+            <td class="text-right p-0">Total</td>
+            <td class="text-right p-0 total-amount">
+                {{ $invoice->formatCurrency($invoice->getTotal($tickets)) }}
+            </td>
+        </tr>
         </tbody>
     </table>
 @elseif(($onlySections === null || in_array('tickets', $onlySections ?? [])))
@@ -367,7 +414,8 @@
             <td colspan="1" class="border-0"></td>
             <td class="text-right p-0"></td>
             <td class="text-right p-0">{{ __('invoices::invoice.total') }}</td>
-            <td colspan="1" class="text-right p-0 total-amount min-w-20">{{ (isset($childTicketsTotal) || isset($adultTicketsTotal)) ? $invoice->formatCurrency((float)($childTicketsTotal ?? 0) + (float)($adultTicketsTotal ?? 0)) : '' }}</td>
+            <td colspan="1"
+                class="text-right p-0 total-amount min-w-20">{{ (isset($childTicketsTotal) || isset($adultTicketsTotal)) ? $invoice->formatCurrency((float)($childTicketsTotal ?? 0) + (float)($adultTicketsTotal ?? 0)) : '' }}</td>
         </tr>
         </tbody>
     </table>
@@ -409,14 +457,14 @@
                 </td>
             </tr>
         @endforeach
-            {{-- Summary --}}
-            <tr>
-                <td colspan="2" class="border-0"></td>
-                <td class="text-right p-0">Total</td>
-                <td class="text-right p-0 total-amount">
-                    {{ $invoice->formatCurrency($invoice->getTotal($spaces)) }}
-                </td>
-            </tr>
+        {{-- Summary --}}
+        <tr>
+            <td colspan="2" class="border-0"></td>
+            <td class="text-right p-0">Total</td>
+            <td class="text-right p-0 total-amount">
+                {{ $invoice->formatCurrency($invoice->getTotal($spaces)) }}
+            </td>
+        </tr>
         </tbody>
     </table>
 @endif
@@ -457,14 +505,14 @@
                 </td>
             </tr>
         @endforeach
-            {{-- Summary --}}
-            <tr>
-                <td colspan="2" class="border-0"></td>
-                <td class="text-right p-0">Total</td>
-                <td class="text-right p-0 total-amount">
-                    {{ $invoice->formatCurrency($invoice->getTotal($services)) }}
-                </td>
-            </tr>
+        {{-- Summary --}}
+        <tr>
+            <td colspan="2" class="border-0"></td>
+            <td class="text-right p-0">Total</td>
+            <td class="text-right p-0 total-amount">
+                {{ $invoice->formatCurrency($invoice->getTotal($services)) }}
+            </td>
+        </tr>
         </tbody>
     </table>
 @endif
@@ -485,7 +533,7 @@
                 <tbody>
 
                 {{-- Items --}}
-                @foreach($products = $productsByMenus[data_get($menu, 'id')] as $item)
+                @foreach($products = $productsByMenus[data_get($menu, 'id')] ?? [] as $item)
                     <tr>
                         <td class="p-0">
                             {{ $item->title}}

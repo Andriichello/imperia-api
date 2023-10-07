@@ -30,6 +30,11 @@ class ShowInvoiceRequest extends ShowRequest
         return array_merge(
             parent::rules(),
             [
+                'tags' => [
+                    'sometimes',
+                    'nullable',
+                    'string',
+                ],
                 'menus' => [
                     'sometimes',
                     'nullable',
@@ -77,6 +82,28 @@ class ShowInvoiceRequest extends ShowRequest
     }
 
     /**
+     * Get tags, which should be on the invoice.
+     *
+     * @return array|null
+     */
+    public function tags(): ?array
+    {
+        $tags = $this->get('tags');
+
+        if (is_string($tags)) {
+            $result = [];
+
+            foreach (explode(',', $tags) as $key => $menu) {
+                $result[$key] = (int) $menu;
+            }
+
+            return $result;
+        }
+
+        return $tags;
+    }
+
+    /**
      * Get menus, which should be on the invoice.
      *
      * @return array|null
@@ -115,6 +142,8 @@ class ShowInvoiceRequest extends ShowRequest
      * @OA\Schema(
      *   schema="ShowInvoiceRequest",
      *   description="Show invoice request",
+     *   @OA\Property(property="tags", type="string", nullable="true",
+     *     example="1,2"),
      *   @OA\Property(property="menus", type="string", nullable="true",
      *     example="1,2,3"),
      *   @OA\Property(property="sections", type="string", nullable="true",
