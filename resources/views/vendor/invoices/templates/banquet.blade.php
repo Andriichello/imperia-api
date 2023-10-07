@@ -519,7 +519,7 @@
 
 @if(!empty($menus) && ($onlySections === null || in_array('menus', $onlySections ?? [])))
     @foreach($menus as $menu)
-        @if($onlyMenus === null || in_array(data_get($menu, 'id'), $onlyMenus ?? []))
+        @if(!empty($productsByMenus[data_get($menu, 'id')] ?? []) && ($onlyMenus === null || in_array(data_get($menu, 'id'), $onlyMenus ?? [])))
             <table class="table table-items">
                 <thead>
                 <tr>
