@@ -15,17 +15,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categorizables', function (Blueprint $table) {
-            $table->unsignedBigInteger('category_id');
-            $table->unsignedBigInteger('categorizable_id');
-            $table->string('categorizable_type');
+        Schema::create('taggables', function (Blueprint $table) {
+            $table->unsignedBigInteger('tag_id');
+            $table->unsignedBigInteger('taggable_id');
+            $table->string('taggable_type');
             $table->timestamps();
 
-            $table->unique(['category_id', 'categorizable_id', 'categorizable_type'], 'categorizables_ids_type_unique');
+            $table->unique(['tag_id', 'taggable_id', 'taggable_type'], 'taggable_ids_type_unique');
 
-            $table->foreign('category_id')
+            $table->foreign('tag_id')
                 ->references('id')
-                ->on('categories')
+                ->on('tags')
                 ->onDelete('cascade');
         });
     }
@@ -37,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categorizables');
+        Schema::dropIfExists('taggables');
     }
 };
