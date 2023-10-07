@@ -532,6 +532,13 @@
                 "operationId": "indexCategories",
                 "parameters": [
                     {
+                        "name": "include",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/CategoryIncludes"
+                        }
+                    },
+                    {
                         "name": "page[size]",
                         "in": "query",
                         "schema": {
@@ -630,6 +637,13 @@
                             "type": "integer"
                         },
                         "example": 1
+                    },
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/CategoryIncludes"
+                        }
                     }
                 ],
                 "responses": {
@@ -3937,6 +3951,125 @@
                 ]
             }
         },
+        "/api/tags": {
+            "get": {
+                "tags": [
+                    "tags"
+                ],
+                "summary": "Index tags.",
+                "operationId": "indexTags",
+                "parameters": [
+                    {
+                        "name": "page[size]",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/PageSize"
+                        }
+                    },
+                    {
+                        "name": "page[number]",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/PageNumber"
+                        }
+                    },
+                    {
+                        "name": "filter[restaurants]",
+                        "in": "query",
+                        "description": "Coma-separated array of restaurant ids. Limits tags to those\n         that are attached at least to one of those restaurants",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1"
+                    },
+                    {
+                        "name": "filter[target]",
+                        "in": "query",
+                        "description": "Target class morph slug. Examples: `products`",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "products"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Index tags response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IndexTagResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/tags/{id}": {
+            "get": {
+                "tags": [
+                    "tags"
+                ],
+                "summary": "Show tag by id.",
+                "operationId": "showTag",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the tag.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Show tag response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ShowTagResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/tickets": {
             "get": {
                 "tags": [
@@ -4777,6 +4910,11 @@
                 },
                 "type": "object"
             },
+            "CategoryIncludes": {
+                "description": "Coma-separated list of inluded relations.\n         Available relations: `tags`",
+                "type": "string",
+                "example": "tags"
+            },
             "IndexCommentResponse": {
                 "description": "Index comments response object.",
                 "required": [
@@ -5558,9 +5696,9 @@
                 "type": "object"
             },
             "ProductIncludes": {
-                "description": "Coma-separated list of inluded relations.\n    Available relations: `categories`",
+                "description": "Coma-separated list of inluded relations.\n         Available relations: `categories`, `tags`",
                 "type": "string",
-                "example": "categories"
+                "example": "categories,tags"
             },
             "RestaurantIncludes": {
                 "description": "Coma-separated list of inluded relations.\n            Available relations: `schedules`",
@@ -5821,6 +5959,47 @@
                 "description": "Coma-separated list of inluded relations.\n    Available relations: `categories`",
                 "type": "string",
                 "example": "categories"
+            },
+            "IndexTagResponse": {
+                "description": "Index tags response object.",
+                "required": [
+                    "data",
+                    "meta",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Tag"
+                        }
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/PaginationMeta"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "ShowTagResponse": {
+                "description": "Show tag response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Tag"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
             },
             "IndexTicketResponse": {
                 "description": "Index tickets response object.",
@@ -6614,6 +6793,11 @@
             "ShowInvoiceRequest": {
                 "description": "Show invoice request",
                 "properties": {
+                    "tags": {
+                        "type": "string",
+                        "example": "1,2",
+                        "nullable": "true"
+                    },
                     "menus": {
                         "type": "string",
                         "example": "1,2,3",
@@ -6634,6 +6818,11 @@
                     "ids": {
                         "type": "string",
                         "example": "1,2,3"
+                    },
+                    "tags": {
+                        "type": "string",
+                        "example": "1,2",
+                        "nullable": "true"
                     },
                     "menus": {
                         "type": "string",

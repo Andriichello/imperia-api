@@ -18,6 +18,7 @@ use App\Http\Controllers\Model\RestaurantController;
 use App\Http\Controllers\Model\RestaurantReviewController;
 use App\Http\Controllers\Model\ServiceController;
 use App\Http\Controllers\Model\SpaceController;
+use App\Http\Controllers\Model\TagController;
 use App\Http\Controllers\Model\TicketController;
 use App\Http\Controllers\Model\UserController;
 use App\Http\Controllers\Other\InvoiceController;
@@ -61,6 +62,10 @@ Route::group(['as' => 'api.'], function () {
     Route::apiResource('services', ServiceController::class)
         ->only('index', 'show')
         ->parameters(['services' => 'id']);
+
+    Route::apiResource('tags', TagController::class)
+        ->only('index', 'show')
+        ->parameters(['tags' => 'id']);
 
     Route::apiResource('categories', CategoryController::class)
         ->only('index', 'show')
