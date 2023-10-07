@@ -9,7 +9,6 @@ use App\Models\Restaurant;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\Rule;
 use OpenApi\Annotations as OA;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class StoreCustomerRequest.

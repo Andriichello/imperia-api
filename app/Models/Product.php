@@ -8,6 +8,7 @@ use App\Models\Interfaces\LoggableInterface;
 use App\Models\Interfaces\MediableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Interfaces\TaggableInterface;
+use App\Models\Morphs\Category;
 use App\Models\Morphs\Tag;
 use App\Models\Morphs\Taggable;
 use App\Models\Traits\ArchivableTrait;
@@ -147,24 +148,6 @@ class Product extends BaseModel implements
     public function restaurant(): BelongsTo
     {
         return $this->belongsTo(Restaurant::class);
-    }
-
-    /**
-     * Determines if model is associated with
-     * at least one of given tags or tag ids.
-     *
-     * @param Tag|int ...$tags
-     *
-     * @return bool
-     */
-    public function isAssociatedWithAnyOfTags(Tag|int ...$tags): bool
-    {
-        $ids = extractValues('id', ...$tags);
-
-        // todo: check if related category has a given tag
-        return $this->tags()
-            ->whereIn('id', $ids)
-            ->exists();
     }
 
     /**

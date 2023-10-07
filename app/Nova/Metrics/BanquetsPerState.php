@@ -9,10 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Metrics\Partition;
 use Laravel\Nova\Metrics\PartitionResult;
-use Laravel\Nova\Metrics\Trend;
-use Laravel\Nova\Metrics\TrendResult;
-use Laravel\Nova\Util;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * BanquetsPerState class

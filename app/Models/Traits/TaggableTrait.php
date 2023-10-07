@@ -3,6 +3,8 @@
 namespace App\Models\Traits;
 
 use App\Models\BaseModel;
+use App\Models\Interfaces\CategorizableInterface;
+use App\Models\Morphs\Category;
 use App\Models\Morphs\Tag;
 use App\Models\Morphs\Taggable;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -92,5 +94,36 @@ trait TaggableTrait
     {
         $ids = array_map(fn(Tag $tag) => $tag->id, $tags);
         return empty($ids) || $this->tags()->whereIn('id', $ids)->exists();
+    }
+
+    /**
+     * Determines if model is associated with
+     * at least one of given tags or tag ids.
+     *
+     * @param Tag|int ...$tags
+     *
+     * @return bool
+     */
+    public function isAssociatedWithAnyOfTags(Tag|int ...$tags): bool
+    {
+        $ids = extractValues('id', ...$tags);
+
+        // @phpstan-ignore-next-line
+        $direct = $this->tags()
+            ->whereIn('id', $ids);
+
+        if ($direct->exists()) {
+            return true;
+        }
+
+        if ($this instanceof CategorizableInterface && get_class($this) !== Category::class) {
+            return Taggable::query()
+                ->where('taggable_type', slugClass(Category::class))
+                ->whereIn('tag_id', $ids)
+                ->whereIn('taggable_id', $this->categories->pluck('id')->toArray())
+                ->exists();
+        }
+
+        return false;
     }
 }

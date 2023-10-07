@@ -6,7 +6,6 @@ use App\Nova\Options\MorphOptions;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\DateTime;
@@ -14,7 +13,6 @@ use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class Tag.
@@ -122,9 +120,21 @@ class Tag extends Resource
     public static function relatableQuery(NovaRequest $request, $query): Builder
     {
         $target = slugClass($request->resource());
+        $targets = [$target, null];
+
+        if ($target === slugClass(Category::class)) {
+            /** @var \App\Models\Morphs\Category $category */
+            $category = \App\Models\Morphs\Category::query()
+                ->find($request->resourceId);
+            // @phpstan-ignore-next-line
+            if ($category) {
+                $targets[] = $category->target;
+            }
+        }
+
         // @phpstan-ignore-next-line
         return parent::relatableQuery($request, $query)
-            ->whereIn('target', [$target, null]);
+            ->whereIn('target', $targets);
     }
 
     /**

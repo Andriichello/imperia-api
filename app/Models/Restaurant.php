@@ -7,21 +7,15 @@ use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Morphs\Category;
 use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
-use App\Queries\HolidayQueryBuilder;
 use App\Queries\RestaurantQueryBuilder;
-use App\Queries\ScheduleQueryBuilder;
 use Carbon\Carbon;
-use Carbon\CarbonInterface;
 use Database\Factories\RestaurantFactory;
 use DateTimeZone;
-use Exception;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class Restaurant.

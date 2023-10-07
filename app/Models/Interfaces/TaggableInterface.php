@@ -2,7 +2,9 @@
 
 namespace App\Models\Interfaces;
 
+use App\Models\Morphs\Category;
 use App\Models\Morphs\Tag;
+use App\Models\Morphs\Taggable;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Collection;
 
@@ -62,4 +64,14 @@ interface TaggableInterface
      * @return bool
      */
     public function hasAnyOfTags(Tag ...$tags): bool;
+
+    /**
+     * Determines if model is associated with
+     * at least one of given tags or tag ids.
+     *
+     * @param Tag|int ...$tags
+     *
+     * @return bool
+     */
+    public function isAssociatedWithAnyOfTags(Tag|int ...$tags): bool;
 }
