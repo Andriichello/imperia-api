@@ -67,6 +67,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                 ])->icon('collection')->collapsable(),
                 MenuSection::make(__('Attachments'), [
                     MenuItem::resource(\App\Nova\Category::class),
+                    MenuItem::resource(\App\Nova\Tag::class),
                     MenuItem::resource(\App\Nova\Discount::class),
                     MenuItem::resource(\App\Nova\Comment::class),
                     MenuItem::resource(\App\Nova\Log::class),
@@ -93,6 +94,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                             MenuItem::resource(\App\Nova\Menu::class),
                             MenuItem::resource(\App\Nova\Product::class),
                             MenuItem::resource(\App\Nova\Category::class),
+                            MenuItem::resource(\App\Nova\Tag::class),
                         ])->icon('collection')->collapsable(),
                         MenuSection::make(__('nova.dashboard.orders'), [
                             MenuItem::resource(\App\Nova\Banquet::class),

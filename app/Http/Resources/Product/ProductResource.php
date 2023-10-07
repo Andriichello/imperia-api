@@ -4,6 +4,7 @@ namespace App\Http\Resources\Product;
 
 use App\Http\Resources\Category\CategoryCollection;
 use App\Http\Resources\Media\MediaCollection;
+use App\Http\Resources\Tag\TagCollection;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -41,6 +42,7 @@ class ProductResource extends JsonResource
             'variants' => new ProductVariantCollection($this->variants),
             'categories' => new CategoryCollection($this->whenLoaded('categories')),
             'category_ids' => $categoryIds,
+            'tags' => new TagCollection($this->whenLoaded('tags')),
             'media' => new MediaCollection($this->media),
         ];
     }
@@ -65,6 +67,7 @@ class ProductResource extends JsonResource
      *   @OA\Property(property="variants", type="array", @OA\Items(ref ="#/components/schemas/ProductVariant")),
      *   @OA\Property(property="categories", type="array", @OA\Items(ref ="#/components/schemas/Category")),
      *   @OA\Property(property="category_ids", type="array", @OA\Items(type="integer", example=1)),
+     *   @OA\Property(property="tags", type="array", @OA\Items(ref ="#/components/schemas/Tag")),
      *   @OA\Property(property="media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
      * )
      */

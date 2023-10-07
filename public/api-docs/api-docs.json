@@ -557,7 +557,17 @@
                     {
                         "name": "filter[restaurants]",
                         "in": "query",
-                        "description": "Coma-separated array of restaurant ids. Limits menus to those\n         that are attached at least to one of those restaurants",
+                        "description": "Coma-separated array of restaurant ids. Limits categories to those\n         that are attached at least to one of those restaurants",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1"
+                    },
+                    {
+                        "name": "filter[tags]",
+                        "in": "query",
+                        "description": "Coma-separated array of tag ids. Limits categories to those\n         that have at least one of given tags attached to them",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -2988,7 +2998,7 @@
                     {
                         "name": "filter[menus]",
                         "in": "query",
-                        "description": "Coma-separated array of menu ids. Limits products to those\n     * that are attached at least to one of given menus",
+                        "description": "Coma-separated array of menu ids. Limits products to those\n         that are attached at least to one of given menus",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -2998,7 +3008,7 @@
                     {
                         "name": "filter[categories]",
                         "in": "query",
-                        "description": "Coma-separated array of category ids. Limits products to those\n     * that have at least one of given categories attached to them",
+                        "description": "Coma-separated array of category ids. Limits products to those\n         that have at least one of given categories attached to them",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -3006,9 +3016,19 @@
                         "example": "2"
                     },
                     {
+                        "name": "filter[tags]",
+                        "in": "query",
+                        "description": "Coma-separated array of tag ids. Limits products to those\n         that have at least one of given tags attached to them",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1"
+                    },
+                    {
                         "name": "filter[restaurants]",
                         "in": "query",
-                        "description": "Coma-separated array of restaurant ids. Limits products to those\n     * that are attached at least to one of those restaurants",
+                        "description": "Coma-separated array of restaurant ids. Limits products to those\n         that are attached at least to one of those restaurants",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -7319,6 +7339,12 @@
                         "example": "Some text...",
                         "nullable": "true"
                     },
+                    "tags": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Tag"
+                        }
+                    },
                     "media": {
                         "type": "array",
                         "items": {
@@ -8278,6 +8304,12 @@
                             "example": 1
                         }
                     },
+                    "tags": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Tag"
+                        }
+                    },
                     "media": {
                         "type": "array",
                         "items": {
@@ -8825,6 +8857,40 @@
                         "items": {
                             "$ref": "#/components/schemas/Media"
                         }
+                    }
+                },
+                "type": "object"
+            },
+            "Tag": {
+                "description": "Tag resource object",
+                "required": [
+                    "id",
+                    "type",
+                    "target",
+                    "title",
+                    "description"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "categories"
+                    },
+                    "target": {
+                        "type": "string",
+                        "example": "products",
+                        "nullable": "true"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Pizza"
+                    },
+                    "description": {
+                        "example": "Some text...",
+                        "nullable": "true"
                     }
                 },
                 "type": "object"

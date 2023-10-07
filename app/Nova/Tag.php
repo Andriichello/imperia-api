@@ -2,37 +2,33 @@
 
 namespace App\Nova;
 
-use Andriichello\Media\MediaField;
-use App\Models\Scopes\ArchivedScope;
 use App\Nova\Options\MorphOptions;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Laravel\Nova\Fields\BelongsTo;
-use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\MorphToMany;
-use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
- * Class Category.
+ * Class Tag.
  *
- * @mixin \App\Models\Morphs\Category
+ * @mixin \App\Models\Morphs\Tag
  */
-class Category extends Resource
+class Tag extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static string $model = \App\Models\Morphs\Category::class;
+    public static string $model = \App\Models\Morphs\Tag::class;
 
     /**
      * Get the value that should be displayed to represent the resource.
@@ -41,13 +37,7 @@ class Category extends Resource
      */
     public function title(): string
     {
-        $title = '';
-
-        if ($this->slug && !empty($this->slug)) {
-            $title = "$this->slug - ";
-        }
-
-        return $title . $this->title;
+        return $this->title;
     }
 
     /**
@@ -56,29 +46,8 @@ class Category extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'slug', 'target', 'title',
+        'id', 'target', 'title',
     ];
-
-    /**
-     * Build an "index" query for the given resource.
-     *
-     * @param NovaRequest $request
-     * @param Builder $query
-     *
-     * @return Builder
-     */
-    public static function indexQuery(NovaRequest $request, $query): Builder
-    {
-        $query = parent::indexQuery($request, $query);
-
-        /** @var User $user */
-        $user = $request->user();
-        if ($user->isAdmin()) {
-            $query->withoutGlobalScope(ArchivedScope::class);
-        }
-
-        return $query;
-    }
 
     /**
      * Get the fields displayed by the resource.
@@ -92,9 +61,11 @@ class Category extends Resource
         $user = $request->user();
         $resourceId = $request->route('resourceId');
 
-        $slugValidationRules = [
+        $titleValidationRules = [
             'required',
-            Rule::unique('categories', 'slug')
+            'min:1',
+            'max:255',
+            Rule::unique('tags', 'title')
                 ->where(function ($query) use ($user, $resourceId) {
                     if ($resourceId) {
                         $query->where('id', '!=', $resourceId);
@@ -106,48 +77,27 @@ class Category extends Resource
                 }),
         ];
 
-        $categorizables = MorphOptions::categorizable();
+        $taggables = MorphOptions::taggable();
 
         return [
             ID::make(__('columns.id'), 'id')
                 ->sortable(),
 
-            Text::make(__('columns.slug'), 'slug')
-                ->rules($slugValidationRules),
-
-            Boolean::make(__('columns.active'))
-                ->exceptOnForms()
-                ->resolveUsing(fn() => !$this->archived),
-
-            Boolean::make(__('columns.archived'), 'archived')
-                ->onlyOnForms()
-                ->default(fn() => false),
-
-            MediaField::make(__('columns.media'), 'media')
-                ->canSee(fn() => !$user->isPreviewOnly()),
-
-            Number::make(__('columns.popularity'), 'popularity')
-                ->step(1)
-                ->sortable()
-                ->nullable(),
-
             Select::make(__('columns.target'), 'target')
                 ->resolveUsing(fn () => Relation::getMorphedModel($this->target))
-                ->options($categorizables)
+                ->options($taggables)
                 ->default(\App\Models\Product::class)
                 ->nullable()
-                ->displayUsing(fn($val) => data_get($categorizables, Relation::getMorphedModel($val))),
+                ->displayUsing(fn($val) => data_get($taggables, Relation::getMorphedModel($val))),
 
             Text::make(__('columns.title'), 'title')
-                ->rules('required', 'min:1', 'max:255'),
+                ->rules($titleValidationRules),
 
             Text::make(__('columns.description'), 'description')
                 ->rules('nullable', 'min:1', 'max:255'),
 
             BelongsTo::make(__('columns.restaurant'), 'restaurant', Restaurant::class)
                 ->default(fn() => $user->restaurant_id),
-
-            MorphToMany::make(__('columns.tags'), 'tags', Tag::class),
 
             DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
@@ -165,11 +115,11 @@ class Category extends Resource
      * This query determines which instances of the model may be attached to other resources.
      *
      * @param NovaRequest $request
-     * @param EloquentBuilder $query
+     * @param Builder $query
      *
-     * @return EloquentBuilder
+     * @return Builder
      */
-    public static function relatableQuery(NovaRequest $request, $query): EloquentBuilder
+    public static function relatableQuery(NovaRequest $request, $query): Builder
     {
         $target = slugClass($request->resource());
         // @phpstan-ignore-next-line
@@ -206,18 +156,6 @@ class Category extends Resource
         return [
             'id' => [
                 'label' => __('columns.id'),
-                'checked' => true,
-            ],
-            'slug' => [
-                'label' => __('columns.slug'),
-                'checked' => true,
-            ],
-            'media' => [
-                'label' => __('columns.media'),
-                'checked' => true,
-            ],
-            'popularity' => [
-                'label' => __('columns.popularity'),
                 'checked' => true,
             ],
             'target' => [

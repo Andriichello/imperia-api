@@ -167,6 +167,8 @@ class Product extends Resource
 
             MorphToMany::make(__('columns.categories'), 'categories', Category::class),
 
+            MorphToMany::make(__('columns.tags'), 'tags', Tag::class),
+
             BelongsTo::make(__('columns.restaurant'), 'restaurant', Restaurant::class)
                 ->default(fn() => $user->restaurant_id),
 

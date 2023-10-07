@@ -1,20 +1,18 @@
 <?php
 
-namespace App\Http\Resources\Category;
+namespace App\Http\Resources\Tag;
 
-use App\Http\Resources\Media\MediaCollection;
-use App\Http\Resources\Tag\TagCollection;
-use App\Models\Morphs\Category;
+use App\Models\Morphs\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use OpenApi\Annotations as OA;
 
 /**
- * Class CategoryResource.
+ * Class TagResource.
  *
- * @mixin Category
+ * @mixin Tag
  */
-class CategoryResource extends JsonResource
+class TagResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -29,29 +27,22 @@ class CategoryResource extends JsonResource
         return [
             'id' => $this->id,
             'type' => $this->type,
-            'slug' => $this->slug,
             'target' => $this->target,
             'title' => $this->title,
-            'popularity' => $this->popularity,
             'description' => $this->description,
-            'tags' => new TagCollection($this->whenLoaded('tags')),
-            'media' => new MediaCollection($this->media),
         ];
     }
 
     /**
      * @OA\Schema(
-     *   schema="Category",
-     *   description="Category resource object",
-     *   required = {"id", "type", "slug", "target", "title", "description", "media"},
+     *   schema="Tag",
+     *   description="Tag resource object",
+     *   required = {"id", "type", "target", "title", "description"},
      *   @OA\Property(property="id", type="integer", example=1),
-     *   @OA\Property(property="slug", type="string", example="pizza"),
      *   @OA\Property(property="type", type="string", example="categories"),
      *   @OA\Property(property="target", type="string", example="products", nullable="true"),
      *   @OA\Property(property="title", type="string", example="Pizza"),
      *   @OA\Property(property="description", example="Some text...", nullable="true"),
-     *   @OA\Property(property="tags", type="array", @OA\Items(ref ="#/components/schemas/Tag")),
-     *   @OA\Property(property="media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
      * )
      */
 }

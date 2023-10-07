@@ -57,8 +57,11 @@ class CategoryController extends CrudController
      *   @OA\Parameter(name="sort", in="query", example="-popularity", @OA\Schema(type="string"),
             description="Available sorts: `popularity` (is default, but in descending order)"),
      *   @OA\Parameter(name="filter[restaurants]", required=false, in="query", example="1",
-     *   @OA\Schema(type="string"), description="Coma-separated array of restaurant ids. Limits menus to those
+     *   @OA\Schema(type="string"), description="Coma-separated array of restaurant ids. Limits categories to those
          that are attached at least to one of those restaurants"),
+     *   @OA\Parameter(name="filter[tags]", required=false, in="query", example="1",
+     *      @OA\Schema(type="string"), description="Coma-separated array of tag ids. Limits categories to those
+         that have at least one of given tags attached to them"),
      *   @OA\Parameter(name="filter[target]", in="query", example="products", @OA\Schema(type="string"),
      *     description="Target class morph slug. Examples: `products`, `tickets`, `services`, `spaces`"),
      *

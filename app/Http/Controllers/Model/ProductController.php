@@ -64,13 +64,16 @@ class ProductController extends CrudController
      *     @OA\Schema(type="string"), description="Can be used for searches. Is partial."),
      *   @OA\Parameter(name="filter[menus]", required=false, in="query", example="1,2",
      *     @OA\Schema(type="string"), description="Coma-separated array of menu ids. Limits products to those
-     * that are attached at least to one of given menus"),
+         that are attached at least to one of given menus"),
      *   @OA\Parameter(name="filter[categories]", required=false, in="query", example="2",
      *     @OA\Schema(type="string"), description="Coma-separated array of category ids. Limits products to those
-     * that have at least one of given categories attached to them"),
+         that have at least one of given categories attached to them"),
+     *   @OA\Parameter(name="filter[tags]", required=false, in="query", example="1",
+     *     @OA\Schema(type="string"), description="Coma-separated array of tag ids. Limits products to those
+         that have at least one of given tags attached to them"),
      *   @OA\Parameter(name="filter[restaurants]", required=false, in="query", example="1",
      *   @OA\Schema(type="string"), description="Coma-separated array of restaurant ids. Limits products to those
-     * that are attached at least to one of those restaurants"),
+         that are attached at least to one of those restaurants"),
      *   @OA\Parameter(name="archived", in="query", @OA\Schema(ref ="#/components/schemas/ArchivedParameter")),
      *
      *   @OA\Response(

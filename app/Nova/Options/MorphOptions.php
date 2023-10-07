@@ -6,6 +6,7 @@ use App\Models\Interfaces\CategorizableInterface;
 use App\Models\Interfaces\CommentableInterface;
 use App\Models\Interfaces\DiscountableInterface;
 use App\Models\Interfaces\LoggableInterface;
+use App\Models\Interfaces\TaggableInterface;
 use App\Providers\MorphServiceProvider;
 use Illuminate\Support\Arr;
 
@@ -55,6 +56,16 @@ class MorphOptions extends Options
             fn(string $option) => __('columns.' . $option) ?? $option,
             array_flip(MorphServiceProvider::getMorphMap($implementing))
         );
+    }
+
+    /**
+     * Get options for taggable classes.
+     *
+     * @return array
+     */
+    public static function taggable(): array
+    {
+        return static::thatImplement(TaggableInterface::class);
     }
 
     /**
