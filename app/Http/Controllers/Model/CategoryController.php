@@ -52,6 +52,8 @@ class CategoryController extends CrudController
      *   security={{"bearerAuth": {}}},
      *   tags={"categories"},
      *
+     *   @OA\Parameter(name="include", in="query",
+     *     @OA\Schema(ref ="#/components/schemas/CategoryIncludes")),
      *   @OA\Parameter(name="page[size]", in="query", @OA\Schema(ref ="#/components/schemas/PageSize")),
      *   @OA\Parameter(name="page[number]", in="query", @OA\Schema(ref ="#/components/schemas/PageNumber")),
      *   @OA\Parameter(name="sort", in="query", example="-popularity", @OA\Schema(type="string"),
@@ -85,6 +87,8 @@ class CategoryController extends CrudController
      *
      *  @OA\Parameter(name="id", required=true, in="path", example=1, @OA\Schema(type="integer"),
      *     description="Id of the category."),
+     *  @OA\Parameter(name="include", in="query",
+     *    @OA\Schema(ref ="#/components/schemas/CategoryIncludes")),
      *
      *   @OA\Response(
      *     response=200,
@@ -113,5 +117,12 @@ class CategoryController extends CrudController
      *   @OA\Property(property="data", ref ="#/components/schemas/Category"),
      *   @OA\Property(property="message", type="string", example="Success"),
      * ),
+     *
+     * @OA\Schema(
+     *   schema="CategoryIncludes",
+     *   description="Coma-separated list of inluded relations.
+         Available relations: `tags`",
+     *   type="string", example="tags"
+     * )
      */
 }

@@ -43,7 +43,7 @@ class IndexCategoryRequest extends IndexRequest
         return array_merge(
             parent::getAllowedIncludes(),
             [
-                //
+                'tags',
             ]
         );
     }

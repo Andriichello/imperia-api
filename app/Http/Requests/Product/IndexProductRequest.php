@@ -34,6 +34,7 @@ class IndexProductRequest extends IndexRequest
         return array_merge(
             parent::getAllowedIncludes(),
             [
+                'tags',
                 'categories',
             ]
         );
