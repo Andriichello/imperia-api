@@ -28,6 +28,12 @@ use Illuminate\Support\Str;
  * Class Order.
  *
  * @property int|null $banquet_id
+ * @property int|null $creator_id
+ * @property int|null $customer_id
+ * @property int|null $restaurant_id
+ * @property string|null $state
+ * @property float|null $paid_amount
+ * @property Carbon|null $paid_at
  * @property string|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -69,6 +75,12 @@ class Order extends BaseModel implements
      */
     protected $fillable = [
         'banquet_id',
+        'creator_id',
+        'customer_id',
+        'restaurant_id',
+        'state',
+        'paid_amount',
+        'paid_at',
         'metadata',
     ];
 

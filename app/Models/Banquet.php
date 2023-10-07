@@ -26,6 +26,7 @@ use Illuminate\Support\Collection;
  * @property string $title
  * @property string|null $description
  * @property float $advance_amount
+ * @property float|null $paid_amount
  * @property Carbon $start_at
  * @property Carbon $end_at
  * @property Carbon|null $paid_at
@@ -86,6 +87,7 @@ class Banquet extends BaseModel implements
         'title',
         'description',
         'advance_amount',
+        'paid_amount',
         'start_at',
         'end_at',
         'paid_at',

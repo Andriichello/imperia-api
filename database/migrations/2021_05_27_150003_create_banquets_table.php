@@ -29,9 +29,12 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->foreign('creator_id')
-                ->references('id')->on('users');
+                ->references('id')
+                ->on('users');
+
             $table->foreign('customer_id')
-                ->references('id')->on('customers');
+                ->references('id')
+                ->on('customers');
         });
     }
 
