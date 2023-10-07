@@ -4,9 +4,11 @@ namespace App\Models\Morphs;
 
 use App\Models\BaseModel;
 use App\Models\Interfaces\MediableInterface;
+use App\Models\Interfaces\TaggableInterface;
 use App\Models\Restaurant;
 use App\Models\Traits\ArchivableTrait;
 use App\Models\Traits\MediableTrait;
+use App\Models\Traits\TaggableTrait;
 use App\Queries\CategoryQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\Morphs\CategoryFactory;
@@ -36,11 +38,14 @@ use Illuminate\Support\Collection;
  * @method static CategoryQueryBuilder query()
  * @method static CategoryFactory factory(...$parameters)
  */
-class Category extends BaseModel implements MediableInterface
+class Category extends BaseModel implements
+    MediableInterface,
+    TaggableInterface
 {
     use ArchivableTrait;
     use HasFactory;
     use MediableTrait;
+    use TaggableTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -66,6 +71,7 @@ class Category extends BaseModel implements MediableInterface
     protected $relations = [
         'categorizables',
         'restaurant',
+        'tags',
     ];
 
     /**

@@ -7,11 +7,13 @@ use App\Models\Interfaces\CategorizableInterface;
 use App\Models\Interfaces\LoggableInterface;
 use App\Models\Interfaces\MediableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
+use App\Models\Interfaces\TaggableInterface;
 use App\Models\Traits\ArchivableTrait;
 use App\Models\Traits\CategorizableTrait;
 use App\Models\Traits\LoggableTrait;
 use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
+use App\Models\Traits\TaggableTrait;
 use App\Queries\ProductQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\ProductFactory;
@@ -49,6 +51,7 @@ use Illuminate\Support\Collection;
  */
 class Product extends BaseModel implements
     SoftDeletableInterface,
+    TaggableInterface,
     CategorizableInterface,
     ArchivableInterface,
     LoggableInterface,
@@ -56,6 +59,7 @@ class Product extends BaseModel implements
 {
     use HasFactory;
     use SoftDeletableTrait;
+    use TaggableTrait;
     use CategorizableTrait;
     use ArchivableTrait;
     use LoggableTrait;
@@ -91,6 +95,7 @@ class Product extends BaseModel implements
         'variants',
         'categories',
         'restaurant',
+        'tags',
     ];
 
     /**

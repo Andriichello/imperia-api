@@ -37,6 +37,7 @@ use Tests\Models\Stubs\CommentableStub;
 use Tests\Models\Stubs\DiscountableStub;
 use Tests\Models\Stubs\LoggableStub;
 use Tests\Models\Stubs\PeriodicalStub;
+use Tests\Models\Stubs\TaggableStub;
 
 /**
  * Class MorphServiceProvider.
@@ -90,6 +91,7 @@ class MorphServiceProvider extends ServiceProvider
         DiscountableStub::class,
         LoggableStub::class,
         PeriodicalStub::class,
+        TaggableStub::class,
     ];
 
     /**
