@@ -4,6 +4,7 @@ namespace App\Queries;
 
 use App\Models\User;
 use App\Providers\MorphServiceProvider;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Class AlterationQueryBuilder.
@@ -69,6 +70,38 @@ class AlterationQueryBuilder extends BaseQueryBuilder
     public function whereAlterableId(array $values): static
     {
         $this->whereIn('alterable_id', $values);
+
+        return $this;
+    }
+
+    /**
+     * Include only alterations, which have not been performed
+     * based on the `performed_at` column value.
+     *
+     * @return static
+     */
+    public function thatHaveNotBeenPerformed(): static
+    {
+        $this->whereNull('performed_at');
+
+        return $this;
+    }
+
+    /**
+     * Include only alterations, which should be performed
+     * based on the `perform_at` column value.
+     *
+     * @return static
+     */
+    public function thatShouldBePerformed(): static
+    {
+        $shouldBePerformed = function (Builder $query) {
+            $query->whereNull('perform_at')
+                ->orWhere('perform_at', '<=', now());
+        };
+
+        $this->thatHaveNotBeenPerformed()
+            ->where($shouldBePerformed);
 
         return $this;
     }

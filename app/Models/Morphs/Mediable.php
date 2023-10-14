@@ -3,8 +3,11 @@
 namespace App\Models\Morphs;
 
 use App\Models\BaseModel;
+use App\Models\Scopes\ArchivedScope;
+use App\Models\Scopes\SoftDeletableScope;
 use Carbon\Carbon;
 use Database\Factories\Morphs\MediableFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -66,6 +69,10 @@ class Mediable extends BaseModel
      */
     public function mediable(): MorphTo
     {
-        return $this->morphTo('mediable', 'mediable_type', 'mediable_id', 'id');
+        /** @var Builder|MorphTo $morphTo */
+        $morphTo = $this->morphTo('mediable', 'mediable_type', 'mediable_id', 'id');
+        $morphTo->withoutGlobalScopes([ArchivedScope::class, SoftDeletableScope::class]);
+
+        return $morphTo;
     }
 }

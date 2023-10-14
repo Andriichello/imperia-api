@@ -3,8 +3,11 @@
 namespace App\Models\Morphs;
 
 use App\Models\BaseModel;
+use App\Models\Scopes\ArchivedScope;
+use App\Models\Scopes\SoftDeletableScope;
 use Carbon\Carbon;
 use Database\Factories\Morphs\CategorizableFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -65,6 +68,10 @@ class Categorizable extends BaseModel
      */
     public function categorized(): MorphTo
     {
-        return $this->morphTo('categorized', 'categorizable_type', 'categorizable_id', 'id');
+        /** @var Builder|MorphTo $morphTo */
+        $morphTo = $this->morphTo('categorized', 'categorizable_type', 'categorizable_id', 'id');
+        $morphTo->withoutGlobalScopes([ArchivedScope::class, SoftDeletableScope::class]);
+
+        return $morphTo;
     }
 }

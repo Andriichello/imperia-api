@@ -3,6 +3,8 @@
 namespace App\Nova;
 
 use App\Models\Morphs\Alteration as AlterationModel;
+use App\Models\Scopes\ArchivedScope;
+use App\Models\Scopes\SoftDeletableScope;
 use App\Nova\Options\WeightUnitOptions;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\Boolean;
@@ -100,6 +102,7 @@ class Alteration extends Resource
             if ($viaResource === slugClass(\App\Models\Product::class)) {
                 /** @var \App\Models\Product $target */
                 $target = \App\Models\Product::query()
+                    ->withoutGlobalScopes([ArchivedScope::class, SoftDeletableScope::class])
                     ->index($request->user())
                     ->findOrFail($viaResourceId);
 
@@ -165,6 +168,7 @@ class Alteration extends Resource
             if ($viaResource === slugClass(\App\Models\ProductVariant::class)) {
                 /** @var \App\Models\ProductVariant $target */
                 $target = \App\Models\ProductVariant::query()
+                    ->withoutGlobalScopes([ArchivedScope::class, SoftDeletableScope::class])
                     ->index($request->user())
                     ->findOrFail($viaResourceId);
 

@@ -22,6 +22,7 @@ use App\Http\Controllers\Model\TagController;
 use App\Http\Controllers\Model\TicketController;
 use App\Http\Controllers\Model\UserController;
 use App\Http\Controllers\Other\InvoiceController;
+use App\Http\Controllers\Other\QueueController;
 use App\Http\Controllers\Other\StatusController;
 use App\Http\Responses\ApiResponse;
 use Illuminate\Support\Facades\Route;
@@ -43,6 +44,12 @@ Route::post('/login', LoginController::class)->name('api.login');
 Route::group(['as' => 'api.'], function () {
     Route::get('status', [StatusController::class, 'check'])
         ->name('status');
+
+    Route::post('queue/backup', [QueueController::class, 'backup'])
+        ->name('queue.backup');
+
+    Route::post('queue/alternations/perform', [QueueController::class, 'performAlternations'])
+        ->name('queue.alternations.perform');
 
     Route::get('status/list', [StatusController::class, 'list'])
         ->name('status.list');

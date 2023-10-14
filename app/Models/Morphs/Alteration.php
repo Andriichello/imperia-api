@@ -3,9 +3,12 @@
 namespace App\Models\Morphs;
 
 use App\Models\BaseModel;
+use App\Models\Scopes\ArchivedScope;
+use App\Models\Scopes\SoftDeletableScope;
 use App\Queries\AlterationQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\Morphs\AlterationFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
@@ -78,7 +81,11 @@ class Alteration extends BaseModel
      */
     public function alterable(): MorphTo
     {
-        return $this->morphTo('alterable', 'alterable_type', 'alterable_id', 'id');
+        /** @var Builder|MorphTo $morphTo */
+        $morphTo = $this->morphTo('alterable', 'alterable_type', 'alterable_id', 'id');
+        $morphTo->withoutGlobalScopes([ArchivedScope::class, SoftDeletableScope::class]);
+
+        return $morphTo;
     }
 
     /**
