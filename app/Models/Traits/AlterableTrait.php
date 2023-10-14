@@ -4,6 +4,7 @@ namespace App\Models\Traits;
 
 use App\Models\BaseModel;
 use App\Models\Morphs\Alteration;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
@@ -79,9 +80,15 @@ trait AlterableTrait
      */
     public function hasPendingAlterations(): bool
     {
+        $shouldBePerformed = function (Builder $query) {
+            $query->whereNull('perform_at')
+                ->orWhere('perform_at', '<=', now());
+        };
+
         // @phpstan-ignore-next-line
         return $this->alterations()
-            ->where('perform_at', '<=', now())
+            ->whereNull('performed_at')
+            ->where($shouldBePerformed)
             ->exists();
     }
 

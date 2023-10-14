@@ -2,6 +2,7 @@
 
 namespace App\Nova\Options;
 
+use App\Models\Interfaces\AlterableInterface;
 use App\Models\Interfaces\CategorizableInterface;
 use App\Models\Interfaces\CommentableInterface;
 use App\Models\Interfaces\DiscountableInterface;
@@ -56,6 +57,16 @@ class MorphOptions extends Options
             fn(string $option) => __('columns.' . $option) ?? $option,
             array_flip(MorphServiceProvider::getMorphMap($implementing))
         );
+    }
+
+    /**
+     * Get options for alterable classes.
+     *
+     * @return array
+     */
+    public static function alterable(): array
+    {
+        return static::thatImplement(AlterableInterface::class);
     }
 
     /**

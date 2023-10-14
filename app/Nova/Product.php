@@ -172,6 +172,8 @@ class Product extends Resource
             BelongsTo::make(__('columns.restaurant'), 'restaurant', Restaurant::class)
                 ->default(fn() => $user->restaurant_id),
 
+            MorphMany::make(__('columns.alterations'), 'alterations', Alteration::class),
+
             MorphMany::make(__('columns.logs'), 'logs', Log::class),
 
             DateTime::make(__('columns.created_at'), 'created_at')

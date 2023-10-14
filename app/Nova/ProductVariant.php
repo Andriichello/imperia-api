@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\MorphMany;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
@@ -76,6 +77,8 @@ class ProductVariant extends Resource
                 ->displayUsing(fn($val) => data_get($units, $val ?? 'non-existing')),
 
             BelongsTo::make(__('columns.product'), 'product', Product::class),
+
+            MorphMany::make(__('columns.alterations'), 'alterations', Alteration::class),
 
             DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()

@@ -37,6 +37,7 @@ return [
             'Log' => 'Лог',
             'Notification' => 'Сповіщення',
             'Tag' => 'Тег',
+            'Alteration' => 'Запланована Зміна',
         ],
         'plural' => [
             'User' => 'Користувачі',
@@ -61,6 +62,7 @@ return [
             'Log' => 'Логи',
             'Notification' => 'Сповіщення',
             'Tag' => 'Теги',
+            'Alteration' => 'Заплановані Зміни',
         ],
     ],
     'metrics' => [

@@ -12,6 +12,19 @@ use App\Models\BaseModel;
 trait JsonFieldTrait
 {
     /**
+     * Determines if JSON field has an attribute with given key.
+     *
+     * @param string $field
+     * @param string|int $key
+     *
+     * @return bool
+     */
+    public function hasInJson(string $field, string|int $key): bool
+    {
+        return key_exists($key, $this->getJson($field));
+    }
+
+    /**
      * Get JSON field decoded as associate array.
      *
      * @param string $field
@@ -68,6 +81,6 @@ trait JsonFieldTrait
     {
         $array = $this->getJson($field);
         data_set($array, $key, $value);
-        $this->$field = json_encode($array);
+        $this->setJson($field, $array);
     }
 }

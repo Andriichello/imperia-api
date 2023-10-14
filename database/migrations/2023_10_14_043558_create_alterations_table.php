@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('alterable_id');
             $table->string('alterable_type');
-            $table->json('values');
+            $table->json('metadata');
             $table->dateTime('perform_at')->nullable();
             $table->dateTime('performed_at')->nullable();
             $table->timestamps();

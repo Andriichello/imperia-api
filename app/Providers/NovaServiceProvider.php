@@ -70,6 +70,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(\App\Nova\Tag::class),
                     MenuItem::resource(\App\Nova\Discount::class),
                     MenuItem::resource(\App\Nova\Comment::class),
+                    MenuItem::resource(\App\Nova\Alteration::class),
                     MenuItem::resource(\App\Nova\Log::class),
                     MenuItem::resource(\App\Nova\Notification::class),
                 ])->icon('paper-clip')->collapsable(),
@@ -95,6 +96,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                             MenuItem::resource(\App\Nova\Product::class),
                             MenuItem::resource(\App\Nova\Category::class),
                             MenuItem::resource(\App\Nova\Tag::class),
+                            MenuItem::resource(\App\Nova\Alteration::class),
                         ])->icon('collection')->collapsable(),
                         MenuSection::make(__('nova.dashboard.orders'), [
                             MenuItem::resource(\App\Nova\Banquet::class),

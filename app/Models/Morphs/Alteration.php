@@ -13,7 +13,7 @@ use Illuminate\Database\Query\Builder as DatabaseBuilder;
 /**
  * Class Alteration.
  *
- * @property object $values
+ * @property string|null $metadata
  * @property int $alterable_id
  * @property string $alterable_type
  * @property Carbon|null $perform_at
@@ -31,14 +31,25 @@ class Alteration extends BaseModel
     use HasFactory;
 
     /**
+     * The model's attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'metadata' => '{}',
+    ];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var string[]
      */
     protected $fillable = [
-        'values',
+        'metadata',
         'alterable_id',
         'alterable_type',
+        'perform_at',
+        'performed_at',
     ];
 
     /**
@@ -47,7 +58,6 @@ class Alteration extends BaseModel
      * @var array
      */
     protected $casts = [
-        'values' => 'object',
         'perform_at' => 'datetime',
         'performed_at' => 'datetime',
     ];
@@ -97,7 +107,7 @@ class Alteration extends BaseModel
                 'sometimes',
                 'string',
             ],
-            $prefix . 'alterations.*.values' => [
+            $prefix . 'alterations.*.metadata' => [
                 'required',
                 'array',
                 'min:1',

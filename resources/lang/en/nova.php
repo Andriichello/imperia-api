@@ -37,6 +37,7 @@ return [
             'Log' => 'Log',
             'Notification' => 'Notification',
             'Tag' => 'Tag',
+            'Alteration' => 'Alteration',
         ],
         'plural' => [
             'User' => 'Users',
@@ -61,6 +62,7 @@ return [
             'Log' => 'Logs',
             'Notification' => 'Notifications',
             'Tag' => 'Tags',
+            'Alteration' => 'Alterations',
         ],
     ],
     'metrics' => [
