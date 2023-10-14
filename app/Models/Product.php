@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Interfaces\ArchivableInterface;
 use App\Models\Interfaces\CategorizableInterface;
+use App\Models\Interfaces\AlterableInterface;
 use App\Models\Interfaces\LoggableInterface;
 use App\Models\Interfaces\MediableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
@@ -13,6 +14,7 @@ use App\Models\Morphs\Tag;
 use App\Models\Morphs\Taggable;
 use App\Models\Traits\ArchivableTrait;
 use App\Models\Traits\CategorizableTrait;
+use App\Models\Traits\AlterableTrait;
 use App\Models\Traits\LoggableTrait;
 use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
@@ -56,6 +58,7 @@ class Product extends BaseModel implements
     SoftDeletableInterface,
     TaggableInterface,
     CategorizableInterface,
+    AlterableInterface,
     ArchivableInterface,
     LoggableInterface,
     MediableInterface
@@ -64,6 +67,7 @@ class Product extends BaseModel implements
     use SoftDeletableTrait;
     use TaggableTrait;
     use CategorizableTrait;
+    use AlterableTrait;
     use ArchivableTrait;
     use LoggableTrait;
     use MediableTrait;
@@ -99,6 +103,7 @@ class Product extends BaseModel implements
         'categories',
         'restaurant',
         'tags',
+        'alterations',
     ];
 
     /**
@@ -136,6 +141,7 @@ class Product extends BaseModel implements
      */
     public function variants(): HasMany
     {
+        // @phpstan-ignore-next-line
         return $this->hasMany(ProductVariant::class, 'product_id')
             ->orderBy('price');
     }

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\AlterableInterface;
+use App\Models\Traits\AlterableTrait;
 use App\Queries\ProductVariantQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\ProductVariantFactory;
@@ -25,9 +27,11 @@ use Illuminate\Database\Query\Builder as DatabaseBuilder;
  * @method static ProductVariantQueryBuilder query()
  * @method static ProductVariantFactory factory(...$parameters)
  */
-class ProductVariant extends BaseModel
+class ProductVariant extends BaseModel implements
+    AlterableInterface
 {
     use HasFactory;
+    use AlterableTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -48,6 +52,7 @@ class ProductVariant extends BaseModel
      */
     protected $relations = [
         'product',
+        'alterations',
     ];
 
     /**
@@ -76,7 +81,7 @@ class ProductVariant extends BaseModel
      */
     public function getRestaurantIdAttribute(): ?int
     {
-        return $this->product?->restaurant_id;
+        return $this->product->restaurant_id;
     }
 
     /**
