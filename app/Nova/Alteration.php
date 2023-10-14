@@ -104,7 +104,7 @@ class Alteration extends Resource
                 $target = \App\Models\Product::query()
                     ->withoutGlobalScopes([ArchivedScope::class, SoftDeletableScope::class])
                     ->index($request->user())
-                    ->findOrFail($viaResourceId);
+                    ->find($viaResourceId);
 
                 $units = [];
 
@@ -170,7 +170,7 @@ class Alteration extends Resource
                 $target = \App\Models\ProductVariant::query()
                     ->withoutGlobalScopes([ArchivedScope::class, SoftDeletableScope::class])
                     ->index($request->user())
-                    ->findOrFail($viaResourceId);
+                    ->find($viaResourceId);
 
                 $units = [];
 
