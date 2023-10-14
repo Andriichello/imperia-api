@@ -89,6 +89,10 @@ class Alteration extends Resource
             }
         };
 
+        $resolveFromMetadataUsing = function ($value, AlterationModel $resource, $attribute) use (&$target) {
+            return $resource->getFromJson('metadata', $attribute, data_get($target, $attribute));
+        };
+
         if ($request instanceof NovaRequest) {
             $viaResource = $request->viaResource ?? $this->alterable_type;
             $viaResourceId = $request->viaResourceId ?? $this->alterable_id;
@@ -107,59 +111,54 @@ class Alteration extends Resource
 
                 $columns = [
                     Boolean::make(__('columns.archived'), 'archived')
-                        ->resolveUsing(fn() => $target->archived)
-                        ->fillUsing($fillMetadataUsing)
-                        ->onlyOnForms(),
+                        ->resolveUsing($resolveFromMetadataUsing)
+                        ->fillUsing($fillMetadataUsing),
 
                     Number::make(__('columns.popularity'), 'popularity')
-                        ->resolveUsing(fn() => $target->popularity)
-                        ->fillUsing($fillMetadataUsing)
                         ->step(1)
                         ->sortable()
-                        ->nullable(),
+                        ->nullable()
+                        ->displayUsing($resolveFromMetadataUsing)
+                        ->resolveUsing($resolveFromMetadataUsing)
+                        ->fillUsing($fillMetadataUsing),
 
                     Text::make(__('columns.title'), 'title')
-                        ->resolveUsing(fn() => $target->title)
-                        ->fillUsing($fillMetadataUsing)
                         ->updateRules('sometimes', 'min:1', 'max:255')
-                        ->creationRules('required', 'min:1', 'max:255'),
+                        ->creationRules('required', 'min:1', 'max:255')
+                        ->resolveUsing($resolveFromMetadataUsing)
+                        ->fillUsing($fillMetadataUsing),
 
                     Text::make(__('columns.badge'), 'badge')
-                        ->resolveUsing(fn() => $target->badge)
-                        ->fillUsing($fillMetadataUsing)
                         ->updateRules('nullable', 'min:1', 'max:25')
-                        ->creationRules('nullable', 'min:1', 'max:25'),
+                        ->creationRules('nullable', 'min:1', 'max:25')
+                        ->resolveUsing($resolveFromMetadataUsing)
+                        ->fillUsing($fillMetadataUsing),
 
                     Textarea::make(__('columns.description'), 'description')
-                        ->resolveUsing(fn() => $target->description)
-                        ->fillUsing($fillMetadataUsing)
-                        ->rules('nullable', 'min:1'),
+                        ->rules('nullable', 'min:1')
+                        ->resolveUsing($resolveFromMetadataUsing)
+                        ->fillUsing($fillMetadataUsing),
 
                     Number::make(__('columns.price'), 'price')
-                        ->resolveUsing(fn() => $target->price)
-                        ->fillUsing($fillMetadataUsing)
                         ->step(0.01)
                         ->updateRules('sometimes', 'min:0')
-                        ->creationRules('required', 'min:0'),
+                        ->creationRules('required', 'min:0')
+                        ->displayUsing($resolveFromMetadataUsing)
+                        ->resolveUsing($resolveFromMetadataUsing)
+                        ->fillUsing($fillMetadataUsing),
 
                     Text::make(__('columns.weight'), 'weight')
-                        ->resolveUsing(fn() => $target->weight)
-                        ->fillUsing(function (NovaRequest $request, AlterationModel $model, $attribute, $requestAttribute) use ($target) {
-                            $old = $target->$attribute;
-                            $new = $request->get($requestAttribute);
-
-                            if ($old !== $new) {
-                                $model->setToJson('metadata', $attribute, $new);
-                            }
-                        })
-                        ->nullable(),
+                        ->nullable()
+                        ->displayUsing($resolveFromMetadataUsing)
+                        ->resolveUsing($resolveFromMetadataUsing)
+                        ->fillUsing($fillMetadataUsing),
 
                     Select::make(__('columns.weight_unit'), 'weight_unit')
-                        ->resolveUsing(fn() => $target->weight_unit)
-                        ->fillUsing($fillMetadataUsing)
                         ->nullable()
                         ->options($units)
-                        ->displayUsing(fn($val) => data_get($units, $val ?? 'non-existing')),
+                        ->displayUsing(fn(...$args) => data_get($units, $resolveFromMetadataUsing(...$args) ?? 'non-existing'))
+                        ->resolveUsing($resolveFromMetadataUsing)
+                        ->fillUsing($fillMetadataUsing),
                 ];
             }
 
@@ -177,30 +176,24 @@ class Alteration extends Resource
 
                 $columns = [
                     Number::make(__('columns.price'), 'price')
-                        ->resolveUsing(fn() => $target->price)
-                        ->fillUsing($fillMetadataUsing)
                         ->step(0.01)
                         ->updateRules('sometimes', 'min:0')
-                        ->creationRules('required', 'min:0'),
+                        ->creationRules('required', 'min:0')
+                        ->fillUsing($fillMetadataUsing)
+                        ->resolveUsing($resolveFromMetadataUsing)
+                        ->displayUsing($resolveFromMetadataUsing),
 
                     Text::make(__('columns.weight'), 'weight')
-                        ->resolveUsing(fn() => $target->weight)
-                        ->fillUsing(function (NovaRequest $request, AlterationModel $model, $attribute, $requestAttribute) use ($target) {
-                            $old = $target->$attribute;
-                            $new = $request->get($requestAttribute);
-
-                            if ($old !== $new) {
-                                $model->setToJson('metadata', $attribute, $new);
-                            }
-                        })
-                        ->nullable(),
+                        ->nullable()
+                        ->resolveUsing($resolveFromMetadataUsing)
+                        ->fillUsing($fillMetadataUsing),
 
                     Select::make(__('columns.weight_unit'), 'weight_unit')
-                        ->resolveUsing(fn() => $target->weight_unit)
-                        ->fillUsing($fillMetadataUsing)
                         ->nullable()
                         ->options($units)
-                        ->displayUsing(fn($val) => data_get($units, $val ?? 'non-existing')),
+                        ->resolveUsing($resolveFromMetadataUsing)
+                        ->displayUsing(fn(...$args) => data_get($units, $resolveFromMetadataUsing(...$args) ?? 'non-existing'))
+                        ->fillUsing($fillMetadataUsing),
                 ];
             }
         }
