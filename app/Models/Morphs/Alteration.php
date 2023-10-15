@@ -3,6 +3,7 @@
 namespace App\Models\Morphs;
 
 use App\Models\BaseModel;
+use App\Models\Restaurant;
 use App\Models\Scopes\ArchivedScope;
 use App\Models\Scopes\SoftDeletableScope;
 use App\Queries\AlterationQueryBuilder;
@@ -10,6 +11,7 @@ use Carbon\Carbon;
 use Database\Factories\Morphs\AlterationFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 
@@ -21,10 +23,13 @@ use Illuminate\Database\Query\Builder as DatabaseBuilder;
  * @property string $alterable_type
  * @property Carbon|null $perform_at
  * @property Carbon|null $performed_at
+ * @property string|null $exception
+ * @property Carbon|null $failed_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
- * @property BaseModel $alterable
+ * @property Restaurant|null $restaurant
+ * @property BaseModel|null $alterable
  *
  * @method static AlterationQueryBuilder query()
  * @method static AlterationFactory factory(...$parameters)
@@ -53,6 +58,8 @@ class Alteration extends BaseModel
         'alterable_type',
         'perform_at',
         'performed_at',
+        'exception',
+        'failed_at',
     ];
 
     /**
@@ -63,6 +70,7 @@ class Alteration extends BaseModel
     protected $casts = [
         'perform_at' => 'datetime',
         'performed_at' => 'datetime',
+        'failed_at' => 'datetime',
     ];
 
     /**
@@ -71,8 +79,19 @@ class Alteration extends BaseModel
      * @var array
      */
     protected $relations = [
+        'restaurant',
         'alterable',
     ];
+
+    /**
+     * Restaurant associated with the model.
+     *
+     * @return BelongsTo
+     */
+    public function restaurant(): BelongsTo
+    {
+        return $this->belongsTo(Restaurant::class);
+    }
 
     /**
      * Model, which was or should be changed.

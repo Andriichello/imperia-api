@@ -7,6 +7,7 @@ use App\Models\Scopes\ArchivedScope;
 use App\Models\Scopes\SoftDeletableScope;
 use App\Nova\Options\WeightUnitOptions;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Code;
 use Laravel\Nova\Fields\DateTime;
@@ -63,6 +64,9 @@ class Alteration extends Resource
      */
     public function fields(Request $request): array
     {
+        /** @var \App\Models\User $user */
+        $user = $request->user();
+
         $columns = [];
 
         $target = null;
@@ -207,6 +211,10 @@ class Alteration extends Resource
             ID::make(__('columns.id'), 'id')
                 ->sortable(),
 
+            BelongsTo::make(__('columns.restaurant'), 'restaurant', Restaurant::class)
+                ->default(fn() => $user->restaurant_id)
+                ->nullable(),
+
             Code::make(__('columns.metadata'), 'metadata')
                 ->resolveUsing(fn() => json_encode(json_decode($this->metadata), JSON_PRETTY_PRINT))
                 ->autoHeight()
@@ -228,6 +236,15 @@ class Alteration extends Resource
                 ->rules('sometimes', 'nullable', 'date'),
 
             ...$columns,
+
+            Textarea::make(__('columns.exception'), 'exception')
+                ->nullable()
+                ->exceptOnForms(),
+
+            DateTime::make(__('columns.failed_at'), 'failed_at')
+                ->sortable()
+                ->nullable()
+                ->exceptOnForms(),
 
             DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
@@ -268,6 +285,10 @@ class Alteration extends Resource
             ],
             'performed_at' => [
                 'label' => __('columns.performed_at'),
+                'checked' => true
+            ],
+            'failed_at' => [
+                'label' => __('columns.failed_at'),
                 'checked' => true
             ],
             'created_at' => [

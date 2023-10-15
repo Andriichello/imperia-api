@@ -9,6 +9,7 @@ return [
     'title' => 'Title',
     'description' => 'Description',
     'text' => 'Text',
+    'exception' => 'Exception',
     'created_at' => 'Created At',
     'updated_at' => 'Updated At',
     'media' => 'Media',
@@ -55,6 +56,7 @@ return [
     'paid_at' => 'Paid At',
     'perform_at' => 'Perform At',
     'performed_at' => 'Performed At',
+    'failed_at' => 'Failed At',
     'values' => 'Values',
     'metadata' => 'Metadata',
     /* Relation columns */

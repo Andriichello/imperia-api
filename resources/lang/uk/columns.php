@@ -9,6 +9,7 @@ return [
     'title' => 'Назва',
     'description' => 'Опис',
     'text' => 'Текст',
+    'exception' => 'Помилка',
     'created_at' => 'Дата Створення',
     'updated_at' => 'Дата Оновлення',
     'media' => 'Зображення',
@@ -58,6 +59,7 @@ return [
     'paid_at' => 'Дата Оплати',
     'perform_at' => 'Потрібно виконати о',
     'performed_at' => 'Було виконано о',
+    'failed_at' => 'Було отримано помилку о',
     'values' => 'Значення',
     'metadata' => 'Метадані',
     /* Relation columns */

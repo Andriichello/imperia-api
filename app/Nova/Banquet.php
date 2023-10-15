@@ -101,6 +101,9 @@ class Banquet extends Resource
      */
     public function fields(Request $request): array
     {
+        /** @var \App\Models\User $user */
+        $user = $request->user();
+
         $states = [];
 
         foreach (BanquetStateOptions::available($request, $this->resource) as $state) {
@@ -124,6 +127,7 @@ class Banquet extends Resource
                 ->displayUsing(fn($value) => data_get($states, $value)),
 
             BelongsTo::make(__('columns.restaurant'), 'restaurant', Restaurant::class)
+                ->default(fn() => $user->restaurant_id)
                 ->nullable(),
 
             BelongsTo::make(__('columns.creator'), 'creator', User::class)
