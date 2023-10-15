@@ -31,7 +31,7 @@ class QueueController extends Controller
     }
 
     /**
-     * Queue job for performing alternations.
+     * Queue job for performing alterations.
      *
      * @param QueuePerformAlternationsRequest $request
      *

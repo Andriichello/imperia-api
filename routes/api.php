@@ -48,8 +48,8 @@ Route::group(['as' => 'api.'], function () {
     Route::post('queue/backup', [QueueController::class, 'backup'])
         ->name('queue.backup');
 
-    Route::post('queue/alternations/perform', [QueueController::class, 'performAlternations'])
-        ->name('queue.alternations.perform');
+    Route::post('queue/alterations/perform', [QueueController::class, 'performAlternations'])
+        ->name('queue.alterations.perform');
 
     Route::get('status/list', [StatusController::class, 'list'])
         ->name('status.list');

@@ -53,6 +53,8 @@ class ProductVariant extends BaseModel implements
     protected $relations = [
         'product',
         'alterations',
+        'pendingAlterations',
+        'performedAlterations',
     ];
 
     /**

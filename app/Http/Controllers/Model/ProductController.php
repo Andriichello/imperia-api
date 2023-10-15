@@ -129,7 +129,10 @@ class ProductController extends CrudController
      * @OA\Schema(
      *   schema="ProductIncludes",
      *   description="Coma-separated list of inluded relations.
-         Available relations: `categories`, `tags`",
+         Available relations: `categories`, `tags`,
+            `alterations`, `variants.alterations`,
+            `pendingAlterations`, `variants.pendingAlterations`,
+            `performedAlterations`, `variants.performedAlterations`",
      *   type="string", example="categories,tags"
      * )
      */

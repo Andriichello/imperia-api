@@ -105,7 +105,7 @@ class UpdateMediaRequest extends UpdateRequest
      *   @OA\Property(property="description", type="string", nullable="true"),
      *   @OA\Property(property="folder", type="string", example="/media/",
      *     description="Must start and end with the `/`."),
-     *   @OA\Property(property="metadata", type="object", nullable="true", example="{}"),
+     *   @OA\Property(property="metadata", type="object", nullable="true"),
      *  )
      */
 }

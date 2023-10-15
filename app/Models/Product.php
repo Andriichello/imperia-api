@@ -104,6 +104,8 @@ class Product extends BaseModel implements
         'restaurant',
         'tags',
         'alterations',
+        'pendingAlterations',
+        'performedAlterations',
     ];
 
     /**

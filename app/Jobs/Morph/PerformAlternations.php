@@ -46,7 +46,7 @@ class PerformAlternations extends AsyncJob
 
         if ($failed) {
             throw new Exception(
-                'There were errors with alternations: '
+                'There were errors with alterations: '
                 . implode(',', $failed)
             );
         }

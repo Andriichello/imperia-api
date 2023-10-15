@@ -4,6 +4,7 @@ namespace App\Models\Traits;
 
 use App\Models\BaseModel;
 use App\Models\Morphs\Alteration;
+use App\Queries\AlterationQueryBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -15,6 +16,8 @@ use Illuminate\Support\Collection;
  * @mixin BaseModel
  *
  * @property Alteration[]|Collection $alterations
+ * @property Alteration[]|Collection $pendingAlterations
+ * @property Alteration[]|Collection $performedAlterations
  */
 trait AlterableTrait
 {
@@ -26,6 +29,34 @@ trait AlterableTrait
     public function alterations(): MorphMany
     {
         return $this->morphMany(Alteration::class, 'alterable');
+    }
+
+    /**
+     * Alterations related to the model, but which haven't been performed yet.
+     *
+     * @return MorphMany
+     */
+    public function pendingAlterations(): MorphMany
+    {
+        /** @var MorphMany|AlterationQueryBuilder $morphMany */
+        $morphMany = $this->alterations();
+        $morphMany->thatHaveNotBeenPerformed();
+
+        return $morphMany;
+    }
+
+    /**
+     * Alterations related to the model, but which have been already performed.
+     *
+     * @return MorphMany
+     */
+    public function performedAlterations(): MorphMany
+    {
+        /** @var MorphMany|AlterationQueryBuilder $morphMany */
+        $morphMany = $this->alterations();
+        $morphMany->thatHaveBeenPerformed();
+
+        return $morphMany;
     }
 
     /**

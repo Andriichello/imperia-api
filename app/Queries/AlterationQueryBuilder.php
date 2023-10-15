@@ -75,6 +75,19 @@ class AlterationQueryBuilder extends BaseQueryBuilder
     }
 
     /**
+     * Include only alterations, which have been performed
+     * based on the `performed_at` column value.
+     *
+     * @return static
+     */
+    public function thatHaveBeenPerformed(): static
+    {
+        $this->whereNotNull('performed_at');
+
+        return $this;
+    }
+
+    /**
      * Include only alterations, which have not been performed
      * based on the `performed_at` column value.
      *

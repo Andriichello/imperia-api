@@ -5696,7 +5696,7 @@
                 "type": "object"
             },
             "ProductIncludes": {
-                "description": "Coma-separated list of inluded relations.\n         Available relations: `categories`, `tags`",
+                "description": "Coma-separated list of inluded relations.\n         Available relations: `categories`, `tags`,\n            `alterations`, `variants.alterations`,\n            `pendingAlterations`, `variants.pendingAlterations`,\n            `performedAlterations`, `variants.performedAlterations`",
                 "type": "string",
                 "example": "categories,tags"
             },
@@ -6877,7 +6877,6 @@
                     },
                     "metadata": {
                         "type": "object",
-                        "example": "{}",
                         "nullable": "true"
                     }
                 },
@@ -6909,7 +6908,6 @@
                     },
                     "metadata": {
                         "type": "object",
-                        "example": "{}",
                         "nullable": "true"
                     }
                 },
@@ -7302,6 +7300,63 @@
                         "description": "This is a current password. It is needed in order to perform\n     authorization. Required with `password`.",
                         "type": "string",
                         "example": "pa$$w0rd"
+                    }
+                },
+                "type": "object"
+            },
+            "Alternation": {
+                "description": "Alternation resource object",
+                "required": [
+                    "id",
+                    "type",
+                    "metadata",
+                    "alterable_id",
+                    "alterable_type",
+                    "perform_at",
+                    "performed_at"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "categories"
+                    },
+                    "metadata": {
+                        "type": "object",
+                        "nullable": "true"
+                    },
+                    "alterable_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "alterable_type": {
+                        "type": "string",
+                        "example": "products"
+                    },
+                    "perform_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2022-01-12 10:00:00",
+                        "nullable": "true"
+                    },
+                    "performed_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": null,
+                        "nullable": "true"
+                    },
+                    "alterable": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Product"
+                            },
+                            {
+                                "$ref": "#/components/schemas/ProductVariant"
+                            }
+                        ]
                     }
                 },
                 "type": "object"
@@ -8504,6 +8559,24 @@
                         "items": {
                             "$ref": "#/components/schemas/Media"
                         }
+                    },
+                    "alterations": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Alternation"
+                        }
+                    },
+                    "pendingAlterations": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Alternation"
+                        }
+                    },
+                    "performedAlterations": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Alternation"
+                        }
                     }
                 },
                 "type": "object"
@@ -8549,6 +8622,24 @@
                             "cm"
                         ],
                         "example": "g"
+                    },
+                    "alterations": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Alternation"
+                        }
+                    },
+                    "pendingAlterations": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Alternation"
+                        }
+                    },
+                    "performedAlterations": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Alternation"
+                        }
                     }
                 },
                 "type": "object"

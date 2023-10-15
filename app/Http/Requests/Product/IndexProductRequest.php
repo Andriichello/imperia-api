@@ -36,6 +36,12 @@ class IndexProductRequest extends IndexRequest
             [
                 'tags',
                 'categories',
+                'alterations',
+                'pendingAlterations',
+                'performedAlterations',
+                'variants.alterations',
+                'variants.pendingAlterations',
+                'variants.performedAlterations',
             ]
         );
     }

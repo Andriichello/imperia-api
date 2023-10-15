@@ -2,9 +2,7 @@
 
 namespace App\Http\Resources\Product;
 
-use App\Http\Resources\Category\CategoryCollection;
-use App\Http\Resources\Media\MediaCollection;
-use App\Models\Product;
+use App\Http\Resources\Alternation\AlternationCollection;
 use App\Models\ProductVariant;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -34,6 +32,9 @@ class ProductVariantResource extends JsonResource
             'price' => $this->price,
             'weight' => $this->weight,
             'weight_unit' => $this->weight_unit,
+            'alterations' => new AlternationCollection($this->whenLoaded('alterations')),
+            'pendingAlterations' => new AlternationCollection($this->whenLoaded('pendingAlterations')),
+            'performedAlterations' => new AlternationCollection($this->whenLoaded('performedAlterations')),
         ];
     }
 
@@ -48,6 +49,12 @@ class ProductVariantResource extends JsonResource
      *   @OA\Property(property="price", type="float", example=15.99),
      *   @OA\Property(property="weight", type="float", example=120),
      *   @OA\Property(property="weight_unit", type="string", example="g", enum={"g", "kg", "ml", "l", "cm"}),
+     *   @OA\Property(property="alterations", type="array",
+     *     @OA\Items(ref ="#/components/schemas/Alternation")),
+     *   @OA\Property(property="pendingAlterations", type="array",
+     *     @OA\Items(ref ="#/components/schemas/Alternation")),
+     *   @OA\Property(property="performedAlterations", type="array",
+     *     @OA\Items(ref ="#/components/schemas/Alternation")),
      * )
      */
 }

@@ -16,6 +16,12 @@ class ShowProductRequest extends ShowRequest
             [
                 'tags',
                 'categories',
+                'alterations',
+                'pendingAlterations',
+                'performedAlterations',
+                'variants.alterations',
+                'variants.pendingAlterations',
+                'variants.performedAlterations',
             ]
         );
     }
