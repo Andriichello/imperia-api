@@ -35,15 +35,22 @@ class MediaResource extends JsonResource
             'folder' => $this->folder,
             'order' => $this->order,
             'url' => $this->url,
+            'metadata' => $this->metadata,
         ];
     }
 
     /**
      * @OA\Schema(
+     *    schema="MediaMetadata",
+     *    description="Media metadata resource object",
+     *    type="object"
+     * ),
+     *
+     * @OA\Schema(
      *   schema="Media",
      *   description="Media resource object",
      *   required = {"id", "type", "name", "extension", "title",
-     *     "description", "disk", "folder", "order", "url"},
+     *     "description", "disk", "folder", "order", "url", "metadata"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="media"),
      *   @OA\Property(property="name", type="string", example="drinks.svg"),
@@ -55,6 +62,8 @@ class MediaResource extends JsonResource
      *     description="Must start and end with `/`."),
      *   @OA\Property(property="order", type="integer", nullable="true", example=1),
      *   @OA\Property(property="url", type="string", example="http://localhost/storage/drinks.svg"),
+     *   @OA\Property(property="metadata", nullable="true",
+     *     ref ="#/components/schemas/MediaMetadata"),
      * )
      */
 }

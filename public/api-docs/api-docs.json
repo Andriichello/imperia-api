@@ -6876,8 +6876,7 @@
                         "example": "/media/"
                     },
                     "metadata": {
-                        "type": "object",
-                        "nullable": "true"
+                        "$ref": "#/components/schemas/MediaMetadata"
                     }
                 },
                 "type": "object"
@@ -6907,8 +6906,7 @@
                         "example": "/media/"
                     },
                     "metadata": {
-                        "type": "object",
-                        "nullable": "true"
+                        "$ref": "#/components/schemas/MediaMetadata"
                     }
                 },
                 "type": "object"
@@ -8153,6 +8151,10 @@
                 },
                 "type": "object"
             },
+            "MediaMetadata": {
+                "description": "Media metadata resource object",
+                "type": "object"
+            },
             "Media": {
                 "description": "Media resource object",
                 "required": [
@@ -8165,7 +8167,8 @@
                     "disk",
                     "folder",
                     "order",
-                    "url"
+                    "url",
+                    "metadata"
                 ],
                 "properties": {
                     "id": {
@@ -8211,6 +8214,9 @@
                     "url": {
                         "type": "string",
                         "example": "http://localhost/storage/drinks.svg"
+                    },
+                    "metadata": {
+                        "$ref": "#/components/schemas/MediaMetadata"
                     }
                 },
                 "type": "object"
