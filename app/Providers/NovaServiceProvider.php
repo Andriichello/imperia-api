@@ -39,6 +39,16 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
             Banquet::observe(NovaSubscriber::class);
         });
 
+        Nova::userTimezone(function (Request $request) {
+            $user = $request->user();
+
+            if ($user instanceof User) {
+                return $user->restaurant?->timezone;
+            }
+
+            return null;
+        });
+
         Nova::footer(function () {
             return '<p class="mt-8 text-center text-xs text-80">'
                 . '&copy; 2023 Imperia - By Andrii Prykhodko.'
