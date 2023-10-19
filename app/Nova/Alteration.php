@@ -226,6 +226,9 @@ class Alteration extends Resource
                 ->exceptOnForms(),
 
             DateTime::make(__('columns.perform_at'), 'perform_at')
+                ->default(fn() => now()->next('Monday')
+                    ->setTimezone($user->restaurant?->timezone ?? 'UTC')
+                    ->setTime(0, 0, 1))
                 ->sortable()
                 ->nullable()
                 ->rules('sometimes', 'nullable', 'date'),
