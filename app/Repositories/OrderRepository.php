@@ -104,6 +104,8 @@ class OrderRepository extends CrudRepository
         }
 
         if (Arr::has($attributes, 'products')) {
+            $updated = [];
+
             foreach ($attributes['products'] as $values) {
                 $identifiers = Arr::only($values, ['product_id', 'variant_id']);
 
@@ -113,10 +115,12 @@ class OrderRepository extends CrudRepository
 
                 $this->updateComments($field, $values);
                 $this->updateDiscounts($field, $values);
+
+                $updated[] = $field->id;
             }
 
             $order->products()
-                ->whereNotIn('product_id', Arr::pluck($attributes['products'], 'product_id'))
+                ->whereNotIn('id', $updated)
                 ->delete();
         }
 
