@@ -84,7 +84,7 @@ class OrderRepository extends CrudRepository
 
             $order->spaces()
                 ->whereNotIn('space_id', Arr::pluck($attributes['spaces'], 'space_id'))
-                ->delete();
+                ->forceDelete();
         }
 
         if (Arr::has($attributes, 'tickets')) {
@@ -100,7 +100,7 @@ class OrderRepository extends CrudRepository
 
             $order->tickets()
                 ->whereNotIn('ticket_id', Arr::pluck($attributes['tickets'], 'ticket_id'))
-                ->delete();
+                ->forceDelete();
         }
 
         if (Arr::has($attributes, 'products')) {
@@ -121,7 +121,7 @@ class OrderRepository extends CrudRepository
 
             $order->products()
                 ->whereNotIn('id', $updated)
-                ->delete();
+                ->forceDelete();
         }
 
         if (Arr::has($attributes, 'services')) {
@@ -137,7 +137,7 @@ class OrderRepository extends CrudRepository
 
             $order->services()
                 ->whereNotIn('service_id', Arr::pluck($attributes['services'], 'service_id'))
-                ->delete();
+                ->forceDelete();
         }
 
         return true;
