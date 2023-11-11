@@ -27,7 +27,7 @@ use Spatie\Permission\Traits\HasRoles;
  *
  * @property int $id
  * @property int|null $restaurant_id
- * @property int|null $customer_id
+ * @property int[] $customer_ids
  * @property string $type
  * @property string $name
  * @property string $email
@@ -42,7 +42,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property array<int> $restaurants
  *
  * @property Restaurant|null $restaurant
- * @property Customer|null $customer
+ * @property Customer[]|Collection $customers
  * @property Banquet[]|Collection $banquets
  * @property Notification[]|Collection $inbounds
  * @property Notification[]|Collection $outbounds
@@ -76,7 +76,7 @@ class User extends Authenticatable implements SoftDeletableInterface
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var array
+     * @var string[]
      */
     protected $hidden = [
         'password',
@@ -108,7 +108,7 @@ class User extends Authenticatable implements SoftDeletableInterface
      */
     protected $relations = [
         'restaurant',
-        'customer',
+        'customers',
         'banquets',
         'inbounds',
         'outbounds',
@@ -127,11 +127,11 @@ class User extends Authenticatable implements SoftDeletableInterface
     /**
      * Customer associated with the model.
      *
-     * @return HasOne
+     * @return HasMany
      */
-    public function customer(): HasOne
+    public function customers(): HasMany
     {
-        return $this->hasOne(Customer::class, 'user_id', 'id');
+        return $this->hasMany(Customer::class, 'user_id', 'id');
     }
 
     /**
@@ -187,13 +187,13 @@ class User extends Authenticatable implements SoftDeletableInterface
     }
 
     /**
-     * Accessor for the related customer id.
+     * Accessor for the related customer ids.
      *
-     * @return int|null
+     * @return int[]
      */
-    public function getCustomerIdAttribute(): ?int
+    public function getCustomerIdsAttribute(): array
     {
-        return $this->customer?->id;
+        return $this->customers->pluck('id')->values()->all();
     }
 
     /**
@@ -267,7 +267,8 @@ class User extends Authenticatable implements SoftDeletableInterface
     public function isCustomer(): bool
     {
         return $this->hasRole(UserRole::Customer)
-            && $this->customer()->exists();
+            // @phpstan-ignore-next-line
+            && $this->customers()->exists();
     }
 
     /**
