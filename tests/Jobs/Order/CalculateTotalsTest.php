@@ -4,11 +4,8 @@ namespace Tests\Jobs\Order;
 
 use App\Jobs\Order\CalculateTotals;
 use App\Models\Banquet;
+use App\Models\Orders\BanquetOrder;
 use App\Models\Orders\Order;
-use App\Models\Orders\SpaceOrderField;
-use App\Models\Space;
-use Carbon\Carbon;
-use Illuminate\Support\Collection;
 use Tests\TestCase;
 
 /**
@@ -22,11 +19,6 @@ class CalculateTotalsTest extends TestCase
     protected Banquet $banquet;
 
     /**
-     * @var Order
-     */
-    protected Order $order;
-
-    /**
      * Setup the test environment.
      *
      * @return void
@@ -35,9 +27,12 @@ class CalculateTotalsTest extends TestCase
     {
         parent::setUp();
 
+        BanquetOrder::unsetEventDispatcher();
+
         $this->banquet = Banquet::factory()
             ->create();
-        $this->order = Order::factory()
+
+        Order::factory()
             ->withBanquet($this->banquet)
             ->create();
     }
@@ -48,12 +43,12 @@ class CalculateTotalsTest extends TestCase
     public function testHandle()
     {
         $this->assertEmpty($this->banquet->totals);
-        $this->assertEmpty($this->order->totals);
+        $this->assertEmpty($this->banquet->order->totals);
 
-        $job = new CalculateTotals($this->order);
+        $job = new CalculateTotals($this->banquet->order);
         $job->handle();
 
         $this->assertNotEmpty($this->banquet->fresh()->totals);
-        $this->assertNotEmpty($this->order->fresh()->totals);
+        $this->assertNotEmpty($this->banquet->order->fresh()->totals);
     }
 }

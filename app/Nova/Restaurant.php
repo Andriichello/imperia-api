@@ -1,0 +1,190 @@
+<?php
+
+namespace App\Nova;
+
+use Andriichello\Media\MediaField;
+use App\Policies\RestaurantPolicy;
+use App\Queries\Interfaces\IndexableInterface;
+use DateTimeZone;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Laravel\Nova\Fields\DateTime;
+use Laravel\Nova\Fields\HasMany;
+use Laravel\Nova\Fields\HasManyThrough;
+use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Number;
+use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Timezone;
+use Laravel\Nova\Http\Requests\NovaRequest;
+
+/**
+ * Class Restaurant.
+ *
+ * @mixin \App\Models\Restaurant
+ */
+class Restaurant extends Resource
+{
+    /**
+     * The model the resource corresponds to.
+     *
+     * @var string
+     */
+    public static string $model = \App\Models\Restaurant::class;
+
+    /**
+     * Get the value that should be displayed to represent the resource.
+     *
+     * @return string
+     */
+    public function title(): string
+    {
+        $title = '';
+
+        if ($this->slug && !empty($this->slug)) {
+            $title = "$this->slug - ";
+        }
+
+        return $title . $this->name;
+    }
+
+    /**
+     * The columns that should be searched.
+     *
+     * @var array
+     */
+    public static $search = [
+        'id', 'slug', 'name',
+    ];
+
+    /**
+     * Get the fields displayed by the resource.
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function fields(Request $request): array
+    {
+        return [
+            ID::make(__('columns.id'), 'id')
+                ->sortable(),
+
+            Text::make(__('columns.slug'), 'slug')
+                ->rules('required', 'min:1', 'max:50')
+                ->creationRules('unique:restaurants,slug')
+                ->updateRules('unique:restaurants,slug,{{resourceId}}'),
+
+            MediaField::make(__('columns.media'), 'media'),
+
+            Number::make(__('columns.popularity'), 'popularity')
+                ->step(1)
+                ->sortable()
+                ->nullable(),
+
+            Text::make(__('columns.title'), 'name')
+                ->rules('required', 'min:1', 'max:255'),
+
+            Text::make(__('columns.country'), 'country')
+                ->rules('required', 'min:1', 'max:255'),
+
+            Text::make(__('columns.city'), 'city')
+                ->rules('required', 'min:1', 'max:255'),
+
+            Text::make(__('columns.place'), 'place')
+                ->rules('required', 'min:1', 'max:255'),
+
+            Text::make(__('columns.phone'), 'phone')
+                ->rules('sometimes', 'nullable', 'regex:/(\+?[0-9]{1,2})?[0-9]{10,12}/'),
+
+            Text::make(__('columns.email'), 'email')
+                ->rules('sometimes', 'nullable', 'email'),
+
+            Text::make(__('columns.location'), 'location')
+                ->rules('sometimes', 'nullable', 'url:http,https'),
+
+            Text::make(__('columns.website'), 'website')
+                ->rules('sometimes', 'nullable', 'url:http,https'),
+
+            Timezone::make(__('columns.timezone'), 'timezone')
+                ->default('Europe/Kyiv'),
+
+//            HasMany::make(__('columns.banquets'), 'banquets', Banquet::class),
+
+            HasMany::make(__('columns.schedules'), 'schedules', Schedule::class),
+
+            HasMany::make(__('columns.menus'), 'menus', Menu::class),
+
+            HasMany::make(__('columns.products'), 'products', Product::class),
+
+            HasMany::make(__('columns.reviews'), 'reviews', RestaurantReview::class),
+
+//            HasMany::make(__('columns.holidays'), 'holidays', Holiday::class),
+
+            DateTime::make(__('columns.created_at'), 'created_at')
+                ->sortable()
+                ->exceptOnForms(),
+
+            DateTime::make(__('columns.updated_at'), 'updated_at')
+                ->sortable()
+                ->exceptOnForms(),
+        ];
+    }
+
+    /**
+     * Get columns filter fields.
+     *
+     * @param Request $request
+     *
+     * @return array
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    protected function columnsFilterFields(Request $request): array
+    {
+        return [
+            'id' => [
+                'label' => __('columns.id'),
+                'checked' => true,
+            ],
+            'slug' => [
+                'label' => __('columns.slug'),
+                'checked' => true,
+            ],
+            'media' => [
+                'label' => __('columns.media'),
+                'checked' => true,
+            ],
+            'popularity' => [
+                'label' => __('columns.popularity'),
+                'checked' => true,
+            ],
+            'name' => [
+                'label' => __('columns.title'),
+                'checked' => true,
+            ],
+            'country' => [
+                'label' => __('columns.country'),
+                'checked' => false,
+            ],
+            'city' => [
+                'label' => __('columns.city'),
+                'checked' => false,
+            ],
+            'place' => [
+                'label' => __('columns.place'),
+                'checked' => false,
+            ],
+            'timezone' => [
+                'label' => __('columns.timezone'),
+                'checked' => false,
+            ],
+            'created_at' => [
+                'label' => __('columns.created_at'),
+                'checked' => false,
+            ],
+            'updated_at' => [
+                'label' => __('columns.updated_at'),
+                'checked' => false,
+            ],
+        ];
+    }
+}

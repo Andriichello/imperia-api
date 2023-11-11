@@ -55,10 +55,11 @@ class Log extends Resource
     public function fields(Request $request): array
     {
         return [
-            ID::make()->sortable(),
+            ID::make(__('columns.id'), 'id')
+                ->sortable(),
 
-            Text::make('Title')
-                ->rules('nullable', 'min:1', 'max:50'),
+            Text::make(__('columns.title'), 'title')
+                ->rules('nullable', 'min:1', 'max:25'),
 
             MorphTo::make('Loggable')
                 ->exceptOnForms(),
@@ -70,11 +71,11 @@ class Log extends Resource
                 ->readonly()
                 ->showOnIndex(),
 
-            DateTime::make('Created At')
+            DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
                 ->exceptOnForms(),
 
-            DateTime::make('Updated At')
+            DateTime::make(__('columns.updated_at' ), 'updated_at')
                 ->sortable()
                 ->exceptOnForms(),
         ];
@@ -126,12 +127,26 @@ class Log extends Resource
     protected function columnsFilterFields(Request $request): array
     {
         return [
-            'id' => true,
-            'title' => true,
-            'metadata' => false,
-            'loggable' => true,
-            'created_at' => false,
-            'updated_at' => false,
+            'id' => [
+                'label' => __('columns.id'),
+                'checked' => true
+            ],
+            'title' => [
+                'label' => __('columns.title'),
+                'checked' => false
+            ],
+            'loggable' => [
+                'label' => __('columns.loggable'),
+                'checked' => true,
+            ],
+            'created_at' => [
+                'label' => __('columns.created_at'),
+                'checked' => false
+            ],
+            'updated_at' => [
+                'label' => __('columns.updated_at'),
+                'checked' => false
+            ],
         ];
     }
 }

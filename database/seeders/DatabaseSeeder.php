@@ -18,9 +18,11 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call(RolesSeeder::class);
+
         if (!App::environment('testing')) {
-            $this->call(MediaSeeder::class);
-            $this->call(DummySeeder::class);
+            $this->call(UsersSeeder::class);
+            // $this->call(MediaSeeder::class);
+            // $this->call(DummySeeder::class);
         }
     }
 }

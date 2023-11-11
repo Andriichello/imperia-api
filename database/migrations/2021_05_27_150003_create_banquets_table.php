@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      *
@@ -16,7 +17,7 @@ return new class extends Migration {
             $table->id();
             $table->unsignedBigInteger('creator_id');
             $table->unsignedBigInteger('customer_id');
-            $table->string('title', 50);
+            $table->string('title');
             $table->string('description')->nullable();
             $table->decimal('advance_amount')->unsigned();
             $table->string('state', 20);
@@ -28,9 +29,12 @@ return new class extends Migration {
             $table->softDeletes();
 
             $table->foreign('creator_id')
-                ->references('id')->on('users');
+                ->references('id')
+                ->on('users');
+
             $table->foreign('customer_id')
-                ->references('id')->on('customers');
+                ->references('id')
+                ->on('customers');
         });
     }
 

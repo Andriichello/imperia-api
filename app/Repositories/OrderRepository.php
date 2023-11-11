@@ -34,6 +34,7 @@ class OrderRepository extends CrudRepository
         return DB::transaction(function () use ($attributes) {
             /** @var Order $order */
             $order = parent::create($attributes);
+
             $this->createOrUpdateRelations($order, $attributes);
             $this->createComments($order, $attributes);
             $this->createDiscounts($order, $attributes);
@@ -72,9 +73,10 @@ class OrderRepository extends CrudRepository
     {
         if (Arr::has($attributes, 'spaces')) {
             foreach ($attributes['spaces'] as $values) {
+                $identifiers = Arr::only($values, 'space_id');
                 /** @var SpaceOrderField $field */
                 $field = $order->spaces()
-                    ->updateOrCreate(Arr::only($values, 'space_id'), $values);
+                    ->updateOrCreate($identifiers, Arr::except($values, 'space_id'));
 
                 $this->updateComments($field, $values);
                 $this->updateDiscounts($field, $values);
@@ -82,14 +84,15 @@ class OrderRepository extends CrudRepository
 
             $order->spaces()
                 ->whereNotIn('space_id', Arr::pluck($attributes['spaces'], 'space_id'))
-                ->delete();
+                ->forceDelete();
         }
 
         if (Arr::has($attributes, 'tickets')) {
             foreach ($attributes['tickets'] as $values) {
                 $identifiers = Arr::only($values, 'ticket_id');
                 /** @var TicketOrderField $field */
-                $field = $order->tickets()->updateOrCreate($identifiers, $values);
+                $field = $order->tickets()
+                    ->updateOrCreate($identifiers, Arr::except($values, 'ticket_id'));
 
                 $this->updateComments($field, $values);
                 $this->updateDiscounts($field, $values);
@@ -97,29 +100,36 @@ class OrderRepository extends CrudRepository
 
             $order->tickets()
                 ->whereNotIn('ticket_id', Arr::pluck($attributes['tickets'], 'ticket_id'))
-                ->delete();
+                ->forceDelete();
         }
 
         if (Arr::has($attributes, 'products')) {
+            $updated = [];
+
             foreach ($attributes['products'] as $values) {
-                $identifiers = Arr::only($values, 'product_id');
+                $identifiers = Arr::only($values, ['product_id', 'variant_id']);
+
                 /** @var ProductOrderField $field */
-                $field = $order->products()->updateOrCreate($identifiers, $values);
+                $field = $order->products()
+                    ->updateOrCreate($identifiers, Arr::except($values, 'product_id'));
 
                 $this->updateComments($field, $values);
                 $this->updateDiscounts($field, $values);
+
+                $updated[] = $field->id;
             }
 
             $order->products()
-                ->whereNotIn('product_id', Arr::pluck($attributes['products'], 'product_id'))
-                ->delete();
+                ->whereNotIn('id', $updated)
+                ->forceDelete();
         }
 
         if (Arr::has($attributes, 'services')) {
             foreach ($attributes['services'] as $values) {
                 $identifiers = Arr::only($values, 'service_id');
                 /** @var ServiceOrderField $field */
-                $field = $order->services()->updateOrCreate($identifiers, $values);
+                $field = $order->services()
+                    ->updateOrCreate($identifiers, Arr::except($values, 'service_id'));
 
                 $this->updateComments($field, $values);
                 $this->updateDiscounts($field, $values);
@@ -127,7 +137,7 @@ class OrderRepository extends CrudRepository
 
             $order->services()
                 ->whereNotIn('service_id', Arr::pluck($attributes['services'], 'service_id'))
-                ->delete();
+                ->forceDelete();
         }
 
         return true;

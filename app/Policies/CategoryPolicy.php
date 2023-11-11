@@ -3,15 +3,13 @@
 namespace App\Policies;
 
 use App\Models\Morphs\Category;
-use App\Models\User;
-use App\Policies\Base\CrudPolicy;
+use App\Policies\Base\RestaurantItemCrudPolicy;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Response;
 
 /**
  * Class CategoryPolicy.
  */
-class CategoryPolicy extends CrudPolicy
+class CategoryPolicy extends RestaurantItemCrudPolicy
 {
     /**
      * Get the model of the policy.
@@ -21,22 +19,5 @@ class CategoryPolicy extends CrudPolicy
     public function model(): Model|string
     {
         return Category::class;
-    }
-
-    /**
-     * Perform pre-authorization checks.
-     *
-     * @param User $user
-     * @param string $ability
-     *
-     * @return Response|bool|null
-     */
-    public function before(User $user, string $ability): Response|bool|null
-    {
-        if (in_array($ability, ['viewAny', 'view'])) {
-            return true;
-        }
-
-        return $user->isAdmin();
     }
 }

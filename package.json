@@ -13,7 +13,9 @@
         "build-columns-card": "cd nova-components/ColumnsCard && npm run dev",
         "build-columns-card-prod": "cd nova-components/ColumnsCard && npm run prod",
         "build-media": "cd nova-components/Media && npm run dev",
-        "build-media-prod": "cd nova-components/Media && npm run prod"
+        "build-media-prod": "cd nova-components/Media && npm run prod",
+        "build-MediaTool": "cd nova-components/MediaTool && npm run dev",
+        "build-MediaTool-prod": "cd nova-components/MediaTool && npm run prod"
     },
     "devDependencies": {
         "axios": "^0.21",

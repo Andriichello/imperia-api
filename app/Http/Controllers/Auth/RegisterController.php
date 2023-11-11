@@ -9,6 +9,7 @@ use App\Http\Responses\ApiResponse;
 use App\Repositories\UserRepository;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\JsonResponse;
+use OpenApi\Annotations as OA;
 
 /**
  * Class RegisterController.
@@ -66,8 +67,7 @@ class RegisterController extends Controller
     {
         $user = $this->userRepository->register($request->validated());
 
-        $data = ['user' => new UserResource($user)];
-        return ApiResponse::make(['data' => $data], 201, 'Registered');
+        return ApiResponse::make(['data' => new UserResource($user)], 201, 'Registered');
     }
 
     /**

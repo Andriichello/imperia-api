@@ -2,6 +2,8 @@
 
 namespace App\Models\Orders;
 
+use App\Helpers\Objects\Signature;
+use App\Helpers\SignatureHelper;
 use App\Models\Banquet;
 use App\Models\BaseModel;
 use App\Models\Interfaces\CommentableInterface;
@@ -10,6 +12,7 @@ use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Traits\CommentableTrait;
 use App\Models\Traits\DiscountableTrait;
 use App\Models\Traits\SoftDeletableTrait;
+use App\Models\User;
 use App\Queries\OrderQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\Orders\OrderFactory;
@@ -19,18 +22,25 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 /**
  * Class Order.
  *
- * @property int $banquet_id
+ * @property int|null $banquet_id
+ * @property int|null $creator_id
+ * @property int|null $customer_id
+ * @property int|null $restaurant_id
+ * @property string|null $state
+ * @property float|null $paid_amount
+ * @property Carbon|null $paid_at
  * @property string|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  *
  * @property array|null $totals
- * @property Banquet $banquet
+ * @property Banquet|null $banquet
  * @property SpaceOrderField[]|Collection $spaces
  * @property TicketOrderField[]|Collection $tickets
  * @property ServiceOrderField[]|Collection $services
@@ -65,6 +75,13 @@ class Order extends BaseModel implements
      */
     protected $fillable = [
         'banquet_id',
+        'creator_id',
+        'customer_id',
+        'restaurant_id',
+        'state',
+        'paid_amount',
+        'paid_at',
+        'metadata',
     ];
 
     /**
@@ -98,17 +115,18 @@ class Order extends BaseModel implements
      * @var string[]
      */
     protected $appends = [
+        'type',
         'totals',
     ];
 
     /**
-     * Banquet associated with the model.
+     * Banquets associated with the model.
      *
      * @return BelongsTo
      */
     public function banquet(): BelongsTo
     {
-        return $this->belongsTo(Banquet::class, 'banquet_id', 'id');
+        return $this->belongsTo(Banquet::class);
     }
 
     /**
@@ -227,13 +245,52 @@ class Order extends BaseModel implements
     }
 
     /**
+     * Accessor for the banquet's invoice url.
+     *
+     * @param User $asUser
+     * @return string|null
+     */
+    public function getInvoiceUrl(User $asUser): ?string
+    {
+        $path = "api/orders/{$this->id}/invoice/pdf";
+
+        $signature = (new Signature())
+            ->setUserId($asUser->id)
+            ->setExpiration(now()->addWeek())
+            ->setPath($path);
+
+        $signature = (new SignatureHelper())
+            ->encrypt($signature);
+
+        $query = http_build_query(compact('signature'));
+
+        return Str::of(env('APP_URL'))
+            ->finish('/')
+            ->finish($path)
+            ->finish('?' . $query)
+            ->value();
+    }
+
+    /**
      * Determine if order can be edited.
      *
      * @return bool
      */
-    public function canBeEdited(): bool
+    public function isEditable(): bool
     {
-        return $this->banquet->canBeEdited();
+        return $this->banquet->isEditable();
+    }
+
+    /**
+     * Determine if order can be edited by the given user.
+     *
+     * @param User|null $user
+     *
+     * @return bool
+     */
+    public function canBeEditedBy(?User $user): bool
+    {
+        return $user->isStaff() || $this->banquet->canBeEditedBy($user);
     }
 
     /**

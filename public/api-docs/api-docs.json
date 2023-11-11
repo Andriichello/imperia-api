@@ -6,16 +6,16 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8080",
-            "description": "Mapped server"
+            "url": "https://dev.imperia.pp.ua",
+            "description": "Google Cloud development server"
+        },
+        {
+            "url": "https://api.imperia.pp.ua",
+            "description": "Google Cloud staging server"
         },
         {
             "url": "http://localhost:8080",
-            "description": "Current server"
-        },
-        {
-            "url": "https://imperia-api.herokuapp.com",
-            "description": "Production server"
+            "description": "Local server"
         }
     ],
     "paths": {
@@ -63,7 +63,7 @@
             }
         },
         "/api/logout": {
-            "post": {
+            "delete": {
                 "tags": [
                     "auth"
                 ],
@@ -143,6 +143,58 @@
                         }
                     },
                     {
+                        "name": "filter[search]",
+                        "in": "query",
+                        "description": "Allows to search by banquet's `title` and customer's `name`, `surname`,\n           `phone` and `email` at the same time",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "John"
+                    },
+                    {
+                        "name": "filter[restaurant_id]",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "filter[state]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "draft,new"
+                    },
+                    {
+                        "name": "filter[from]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        },
+                        "example": "2023-01-25"
+                    },
+                    {
+                        "name": "filter[until]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        },
+                        "example": "2023-12-25"
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Available fields: `start_at`, `created_at`, `updated_at`.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "-created_at"
+                    },
+                    {
                         "name": "page[size]",
                         "in": "query",
                         "schema": {
@@ -196,8 +248,17 @@
                 "tags": [
                     "banquets"
                 ],
-                "summary": "Store banquet.",
+                "summary": "Store banquet. Order record will automatically be created.",
                 "operationId": "storeBanquet",
+                "parameters": [
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/BanquetIncludes"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "description": "Store banquet request object.",
                     "required": true,
@@ -357,6 +418,13 @@
                 "operationId": "updateBanquet",
                 "parameters": [
                     {
+                        "name": "include",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/BanquetIncludes"
+                        }
+                    },
+                    {
                         "name": "id",
                         "in": "path",
                         "description": "Id of the banquet.",
@@ -464,6 +532,13 @@
                 "operationId": "indexCategories",
                 "parameters": [
                     {
+                        "name": "include",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/CategoryIncludes"
+                        }
+                    },
+                    {
                         "name": "page[size]",
                         "in": "query",
                         "schema": {
@@ -476,6 +551,35 @@
                         "schema": {
                             "$ref": "#/components/schemas/PageNumber"
                         }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Available sorts: `popularity` (is default, but in descending order)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "-popularity"
+                    },
+                    {
+                        "name": "filter[restaurants]",
+                        "in": "query",
+                        "description": "Coma-separated array of restaurant ids. Limits categories to those\n         that are attached at least to one of those restaurants",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1"
+                    },
+                    {
+                        "name": "filter[tags]",
+                        "in": "query",
+                        "description": "Coma-separated array of tag ids. Limits categories to those\n         that have at least one of given tags attached to them",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1"
                     },
                     {
                         "name": "filter[target]",
@@ -533,6 +637,13 @@
                             "type": "integer"
                         },
                         "example": 1
+                    },
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/CategoryIncludes"
+                        }
                     }
                 ],
                 "responses": {
@@ -846,6 +957,47 @@
                         "schema": {
                             "$ref": "#/components/schemas/CustomerIncludes"
                         }
+                    },
+                    {
+                        "name": "filter[search]",
+                        "in": "query",
+                        "description": "Allows to search `name`, `surname`, `phone` and `email` fields at the same time.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "John"
+                    },
+                    {
+                        "name": "filter[name]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "John"
+                    },
+                    {
+                        "name": "filter[surname]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "Doe"
+                    },
+                    {
+                        "name": "filter[phone]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "+38050"
+                    },
+                    {
+                        "name": "filter[email]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "john.doe@email.com"
                     },
                     {
                         "name": "page[size]",
@@ -1554,6 +1706,16 @@
                         }
                     },
                     {
+                        "name": "filter[search]",
+                        "in": "query",
+                        "description": "Can be used for searches.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "Cafe"
+                    },
+                    {
                         "name": "filter[name]",
                         "in": "query",
                         "description": "Can be used for searches. Is partial.",
@@ -1872,6 +2034,25 @@
                         "schema": {
                             "$ref": "#/components/schemas/PageNumber"
                         }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Available sorts: `popularity` (is default, but in descending order)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "-popularity"
+                    },
+                    {
+                        "name": "filter[restaurants]",
+                        "in": "query",
+                        "description": "Coma-separated array of restaurant ids. Limits menus to those\n     * that are attached at least to one of those restaurants",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1"
                     },
                     {
                         "name": "archived",
@@ -2670,7 +2851,6 @@
         "/api/banquets/{id}/order": {
             "get": {
                 "tags": [
-                    "orders",
                     "banquets"
                 ],
                 "summary": "Show order by banquet id.",
@@ -2801,6 +2981,25 @@
                         }
                     },
                     {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Available sorts: `popularity` (is default, but in descending order)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "-popularity"
+                    },
+                    {
+                        "name": "filter[ids]",
+                        "in": "query",
+                        "description": "Coma-separated list of product ids.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1,2,3"
+                    },
+                    {
                         "name": "filter[title]",
                         "in": "query",
                         "description": "Can be used for searches. Is partial.",
@@ -2811,24 +3010,44 @@
                         "example": "Mojito"
                     },
                     {
-                        "name": "filter[menu_id]",
+                        "name": "filter[menus]",
                         "in": "query",
-                        "description": "Limits products to those that belong to menu with given id",
-                        "required": false,
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "example": 1
-                    },
-                    {
-                        "name": "filter[categories]",
-                        "in": "query",
-                        "description": "Coma-separated array of category ids. Limits products to those\n     * that have at least one of given categories attached to them",
+                        "description": "Coma-separated array of menu ids. Limits products to those\n         that are attached at least to one of given menus",
                         "required": false,
                         "schema": {
                             "type": "string"
                         },
-                        "example": "2,3"
+                        "example": "1,2"
+                    },
+                    {
+                        "name": "filter[categories]",
+                        "in": "query",
+                        "description": "Coma-separated array of category ids. Limits products to those\n         that have at least one of given categories attached to them",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "2"
+                    },
+                    {
+                        "name": "filter[tags]",
+                        "in": "query",
+                        "description": "Coma-separated array of tag ids. Limits products to those\n         that have at least one of given tags attached to them",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1"
+                    },
+                    {
+                        "name": "filter[restaurants]",
+                        "in": "query",
+                        "description": "Coma-separated array of restaurant ids. Limits products to those\n         that are attached at least to one of those restaurants",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1"
                     },
                     {
                         "name": "archived",
@@ -2922,6 +3141,427 @@
                 ]
             }
         },
+        "/api/restaurants": {
+            "get": {
+                "tags": [
+                    "restaurants"
+                ],
+                "summary": "Index restaurants.",
+                "operationId": "indexRestaurants",
+                "parameters": [
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/RestaurantIncludes"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Available sorts: `popularity` (is default, but in descending order)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "-popularity"
+                    },
+                    {
+                        "name": "filter[slug]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "first"
+                    },
+                    {
+                        "name": "filter[name]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "First"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Index restaurants response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IndexRestaurantResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/restaurants/{id}": {
+            "get": {
+                "tags": [
+                    "restaurants"
+                ],
+                "summary": "Show restaurant by id.",
+                "operationId": "showRestaurant",
+                "parameters": [
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/RestaurantIncludes"
+                        }
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the restaurant.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Show restaurant response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ShowRestaurantResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/restaurants/{id}/schedules": {
+            "get": {
+                "tags": [
+                    "restaurants"
+                ],
+                "summary": "Get restaurant's schedules.",
+                "operationId": "getSchedules",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the restaurant.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get restaurant's schedules response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetSchedulesResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/restaurants/{id}/holidays": {
+            "get": {
+                "tags": [
+                    "restaurants"
+                ],
+                "summary": "Get restaurant's holidays.",
+                "operationId": "getHolidays",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the restaurant.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "days",
+                        "in": "query",
+                        "description": "Number of days, for which holidays should be returned.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "from",
+                        "in": "query",
+                        "description": "Date starting from which holidays should be returned.",
+                        "schema": {
+                            "type": "string",
+                            "format": "date"
+                        },
+                        "example": "2022-12-25"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Show restaurant's holidays response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GetHolidaysResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/restaurant-reviews": {
+            "get": {
+                "tags": [
+                    "restaurant-reviews"
+                ],
+                "summary": "Index restaurant reviews.",
+                "operationId": "indexRestaurantReviews",
+                "parameters": [
+                    {
+                        "name": "page[size]",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/PageSize"
+                        }
+                    },
+                    {
+                        "name": "page[number]",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/PageNumber"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Available sorts: `created_at` (is default, but in descending order)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "-created_at"
+                    },
+                    {
+                        "name": "filter[restaurant_id]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1"
+                    },
+                    {
+                        "name": "filter[ip]",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "127.0.0.1"
+                    },
+                    {
+                        "name": "is_approved",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": "true"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Index restaurant review response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IndexRestaurantReviewResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "restaurant-reviews"
+                ],
+                "summary": "Store banquet.",
+                "operationId": "storeRestaurantReview",
+                "requestBody": {
+                    "description": "Store restaurant review request object.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreRestaurantReviewRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Create restaurant review response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StoreRestaurantReviewResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/restaurant-reviews/{id}": {
+            "get": {
+                "tags": [
+                    "restaurant-reviews"
+                ],
+                "summary": "Show restaurant reviews by id.",
+                "operationId": "showRestaurantReview",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the restaurant review.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Show restaurant review response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ShowRestaurantReviewResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/services": {
             "get": {
                 "tags": [
@@ -2952,6 +3592,15 @@
                         }
                     },
                     {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Available sorts: `popularity` (is default, but in descending order)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "-popularity"
+                    },
+                    {
                         "name": "filter[title]",
                         "in": "query",
                         "description": "Can be used for searches. Is partial.",
@@ -2970,6 +3619,16 @@
                             "type": "string"
                         },
                         "example": "2,3"
+                    },
+                    {
+                        "name": "filter[restaurants]",
+                        "in": "query",
+                        "description": "Coma-separated array of restaurant ids. Limits services to those\n     * that are attached at least to one of those restaurants",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1"
                     },
                     {
                         "name": "archived",
@@ -3093,6 +3752,15 @@
                         }
                     },
                     {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Available sorts: `popularity` (is default, but in descending order)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "-popularity"
+                    },
+                    {
                         "name": "filter[title]",
                         "in": "query",
                         "description": "Can be used for searches. Is partial.",
@@ -3111,6 +3779,16 @@
                             "type": "string"
                         },
                         "example": "2,3"
+                    },
+                    {
+                        "name": "filter[restaurants]",
+                        "in": "query",
+                        "description": "Coma-separated array of restaurant ids. Limits spaces to those\n     * that are attached at least to one of those restaurants",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1"
                     },
                     {
                         "name": "archived",
@@ -3273,6 +3951,125 @@
                 ]
             }
         },
+        "/api/tags": {
+            "get": {
+                "tags": [
+                    "tags"
+                ],
+                "summary": "Index tags.",
+                "operationId": "indexTags",
+                "parameters": [
+                    {
+                        "name": "page[size]",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/PageSize"
+                        }
+                    },
+                    {
+                        "name": "page[number]",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/PageNumber"
+                        }
+                    },
+                    {
+                        "name": "filter[restaurants]",
+                        "in": "query",
+                        "description": "Coma-separated array of restaurant ids. Limits tags to those\n         that are attached at least to one of those restaurants",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1"
+                    },
+                    {
+                        "name": "filter[target]",
+                        "in": "query",
+                        "description": "Target class morph slug. Examples: `products`",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "products"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Index tags response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IndexTagResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/tags/{id}": {
+            "get": {
+                "tags": [
+                    "tags"
+                ],
+                "summary": "Show tag by id.",
+                "operationId": "showTag",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the tag.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Show tag response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ShowTagResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/tickets": {
             "get": {
                 "tags": [
@@ -3303,6 +4100,15 @@
                         }
                     },
                     {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Available sorts: `popularity` (is default, but in descending order)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "-popularity"
+                    },
+                    {
                         "name": "filter[title]",
                         "in": "query",
                         "description": "Can be used for searches. Is partial.",
@@ -3321,6 +4127,16 @@
                             "type": "string"
                         },
                         "example": "2,3"
+                    },
+                    {
+                        "name": "filter[restaurants]",
+                        "in": "query",
+                        "description": "Coma-separated array of restaurant ids. Limits tickets to those\n     * that are attached at least to one of those restaurants",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1"
                     },
                     {
                         "name": "archived",
@@ -3421,6 +4237,15 @@
                 ],
                 "summary": "Get currently logged user.",
                 "operationId": "me",
+                "parameters": [
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/MeIncludes"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Get me response object.",
@@ -3608,6 +4433,218 @@
                     }
                 ]
             }
+        },
+        "/api/orders/{id}/invoice/url": {
+            "post": {
+                "tags": [
+                    "invoices"
+                ],
+                "summary": "Generate url for accessing order's invoice.",
+                "operationId": "orderInvoiceUrl",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the order.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "description": "Generate url for accessing order's invoice response.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/OrderInvoiceUrlRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Generate url for accessing order's invoice response.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderInvoiceUrlResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/orders/invoice/url": {
+            "post": {
+                "tags": [
+                    "invoices"
+                ],
+                "summary": "Generate url for accessing invoice for multiple orders.",
+                "operationId": "orderMultipleInvoiceUrl",
+                "requestBody": {
+                    "description": "Generate url for accessing invoice for multiple orders response.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MultipleInvoiceUrlRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Generate url for accessing invoice for multiple orders response.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/OrderMultipleInvoiceUrlResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/banquets/{id}/invoice/url": {
+            "post": {
+                "tags": [
+                    "invoices"
+                ],
+                "summary": "Generate url for accessing banquet's invoice.",
+                "operationId": "banquetInvoiceUrl",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the banquet.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "description": "Generate url for accessing banquet's invoice response.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BanquetInvoiceUrlRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Generate url for accessing banquet's invoice response.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BanquetInvoiceUrlResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/banquets/invoice/url": {
+            "post": {
+                "tags": [
+                    "invoices"
+                ],
+                "summary": "Generate url for accessing invoice for multiple banquets.",
+                "operationId": "banquetMultipleInvoiceUrl",
+                "requestBody": {
+                    "description": "Generate url for accessing invoice for multiple banquets response.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MultipleInvoiceUrlRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Generate url for accessing invoice for multiple banquets response.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/BanquetMultipleInvoiceUrlResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -3723,7 +4760,7 @@
                 "type": "object"
             },
             "BanquetIncludes": {
-                "description": "Coma-separated list of inluded relations.\n    Available relations: `creator`, `customer`, `comments`",
+                "description": "Coma-separated list of inluded relations.\n    Available relations: `order`, `creator`, `customer`, `comments`",
                 "type": "string",
                 "example": "creator,customer,comments"
             },
@@ -3872,6 +4909,11 @@
                     }
                 },
                 "type": "object"
+            },
+            "CategoryIncludes": {
+                "description": "Coma-separated list of inluded relations.\n         Available relations: `tags`",
+                "type": "string",
+                "example": "tags"
             },
             "IndexCommentResponse": {
                 "description": "Index comments response object.",
@@ -4654,9 +5696,153 @@
                 "type": "object"
             },
             "ProductIncludes": {
-                "description": "Coma-separated list of inluded relations.\n    Available relations: `categories`",
+                "description": "Coma-separated list of inluded relations.\n         Available relations: `categories`, `tags`,\n            `alterations`, `variants.alterations`,\n            `pendingAlterations`, `variants.pendingAlterations`,\n            `performedAlterations`, `variants.performedAlterations`",
                 "type": "string",
-                "example": "categories"
+                "example": "categories,tags"
+            },
+            "RestaurantIncludes": {
+                "description": "Coma-separated list of inluded relations.\n            Available relations: `schedules`",
+                "type": "string",
+                "example": "schedules"
+            },
+            "IndexRestaurantResponse": {
+                "description": "Index restaurant response object.",
+                "required": [
+                    "data",
+                    "meta",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Restaurant"
+                        }
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/PaginationMeta"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "ShowRestaurantResponse": {
+                "description": "Show restaurant response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Restaurant"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "GetSchedulesResponse": {
+                "description": "Get restaurant's schedules response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Schedule"
+                        }
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "GetHolidaysResponse": {
+                "description": "Get restaurant's holidays response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Holiday"
+                        }
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "IndexRestaurantReviewResponse": {
+                "description": "Index restaurant reviews response object.",
+                "required": [
+                    "data",
+                    "meta",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RestaurantReview"
+                        }
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/PaginationMeta"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "ShowRestaurantReviewResponse": {
+                "description": "Show restaurant review response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/RestaurantReview"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "StoreRestaurantReviewResponse": {
+                "description": "Store restaurant review response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/RestaurantReview"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Created"
+                    }
+                },
+                "type": "object"
             },
             "IndexServiceResponse": {
                 "description": "Index services response object.",
@@ -4774,6 +5960,47 @@
                 "type": "string",
                 "example": "categories"
             },
+            "IndexTagResponse": {
+                "description": "Index tags response object.",
+                "required": [
+                    "data",
+                    "meta",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Tag"
+                        }
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/PaginationMeta"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "ShowTagResponse": {
+                "description": "Show tag response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Tag"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
             "IndexTicketResponse": {
                 "description": "Index tickets response object.",
                 "required": [
@@ -4819,6 +6046,11 @@
                 "description": "Coma-separated list of inluded relations.\n    Available relations: `categories`",
                 "type": "string",
                 "example": "categories"
+            },
+            "MeIncludes": {
+                "description": "Coma-separated list of inluded relations.\n    Available relations: `customer`",
+                "type": "string",
+                "example": "customer"
             },
             "MeResponse": {
                 "description": "Get me response object.",
@@ -4895,6 +6127,78 @@
                 },
                 "type": "object"
             },
+            "OrderInvoiceUrlResponse": {
+                "description": "Generate url for accessing order's invoice response.",
+                "required": [
+                    "url",
+                    "message"
+                ],
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "example": "http://host/path?signature=long-string"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "OrderMultipleInvoiceUrlResponse": {
+                "description": "Generate url for accessing invoice for multiple orders response.",
+                "required": [
+                    "url",
+                    "message"
+                ],
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "example": "http://host/path?signature=long-string&ids=1,2,3"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "BanquetInvoiceUrlResponse": {
+                "description": "Generate url for accessing banquet's invoice response.",
+                "required": [
+                    "url",
+                    "message"
+                ],
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "example": "http://host/path?signature=long-string"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "BanquetMultipleInvoiceUrlResponse": {
+                "description": "Generate url for accessing invoice for multiple banquets response.",
+                "required": [
+                    "url",
+                    "message"
+                ],
+                "properties": {
+                    "url": {
+                        "type": "string",
+                        "example": "http://host/path?signature=long-string&ids=1,2,3"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
             "PageSize": {
                 "description": "Max number of results on page.",
                 "type": "integer",
@@ -4931,7 +6235,8 @@
                     "name",
                     "surnane",
                     "email",
-                    "password"
+                    "password",
+                    "password_confirmation"
                 ],
                 "properties": {
                     "name": {
@@ -4947,9 +6252,9 @@
                         "example": "john.doe@email.com"
                     },
                     "phone": {
-                        "nullable": "true",
                         "type": "string",
-                        "example": "null"
+                        "example": "null",
+                        "nullable": "true"
                     },
                     "password": {
                         "type": "string",
@@ -4974,8 +6279,10 @@
                 ],
                 "properties": {
                     "title": {
+                        "description": "If null, then title will be autogenerated as Banquet-ID.",
                         "type": "string",
-                        "example": "Banquet title."
+                        "example": "Banquet title.",
+                        "nullable": "true"
                     },
                     "description": {
                         "type": "string",
@@ -4984,10 +6291,9 @@
                     "state": {
                         "type": "string",
                         "enum": [
-                            "draft",
                             "new"
                         ],
-                        "example": "draft"
+                        "example": "new"
                     },
                     "creator_id": {
                         "description": "Id of the user, who created banquet.",
@@ -4998,9 +6304,53 @@
                         "type": "integer",
                         "example": 1
                     },
+                    "restaurant_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": "true"
+                    },
                     "advance_amount": {
                         "type": "float",
                         "example": 535.25
+                    },
+                    "actual_total": {
+                        "type": "float",
+                        "example": 692.25,
+                        "nullable": "true"
+                    },
+                    "advance_amount_payment_method": {
+                        "type": "string",
+                        "enum": [
+                            "card",
+                            "cash"
+                        ],
+                        "example": "card",
+                        "nullable": "true"
+                    },
+                    "is_birthday_club": {
+                        "type": "boolean",
+                        "example": "true",
+                        "nullable": "true"
+                    },
+                    "children_amount": {
+                        "type": "integer",
+                        "example": 5,
+                        "nullable": "true"
+                    },
+                    "child_ticket_price": {
+                        "type": "float",
+                        "example": 25.5,
+                        "nullable": "true"
+                    },
+                    "adults_amount": {
+                        "type": "integer",
+                        "example": 2,
+                        "nullable": "true"
+                    },
+                    "adult_ticket_price": {
+                        "type": "float",
+                        "example": 35.5,
+                        "nullable": "true"
                     },
                     "start_at": {
                         "description": "Date and time of when banquet should start.",
@@ -5015,11 +6365,11 @@
                         "example": "2022-01-12 23:00:00"
                     },
                     "paid_at": {
-                        "nullable": "true",
                         "description": "Date and time of when banquet was fully paid for.",
                         "type": "string",
                         "format": "date-time",
-                        "example": null
+                        "example": null,
+                        "nullable": "true"
                     },
                     "comments": {
                         "type": "array",
@@ -5040,15 +6390,17 @@
                 "description": "Update banquet request",
                 "properties": {
                     "title": {
+                        "description": "If null, then title will be autogenerated as Banquet-ID.",
                         "type": "string",
-                        "example": "Banquet title."
+                        "example": "Banquet title.",
+                        "nullable": "true"
                     },
                     "description": {
                         "type": "string",
                         "example": "Banquet description..."
                     },
                     "state": {
-                        "description": "Banquet state available changes depends on current state.\n    All states: `draft`, `new`, `processing`, `completed`, `cancelled`.",
+                        "description": "Banquet state available changes depends on current state.\n           All states: `new`, `confirmed`, `postponed`, `cancelled`, `completed`.",
                         "type": "string",
                         "example": "draft"
                     },
@@ -5060,9 +6412,53 @@
                         "type": "integer",
                         "example": 1
                     },
+                    "restaurant_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": "true"
+                    },
                     "advance_amount": {
                         "type": "float",
                         "example": 535.25
+                    },
+                    "actual_total": {
+                        "type": "float",
+                        "example": 692.25,
+                        "nullable": "true"
+                    },
+                    "advance_amount_payment_method": {
+                        "type": "string",
+                        "enum": [
+                            "card",
+                            "cash"
+                        ],
+                        "example": "card",
+                        "nullable": "true"
+                    },
+                    "is_birthday_club": {
+                        "type": "boolean",
+                        "example": "true",
+                        "nullable": "true"
+                    },
+                    "children_amount": {
+                        "type": "integer",
+                        "example": 5,
+                        "nullable": "true"
+                    },
+                    "child_ticket_price": {
+                        "type": "float",
+                        "example": 25.5,
+                        "nullable": "true"
+                    },
+                    "adults_amount": {
+                        "type": "integer",
+                        "example": 2,
+                        "nullable": "true"
+                    },
+                    "adult_ticket_price": {
+                        "type": "float",
+                        "example": 35.5,
+                        "nullable": "true"
                     },
                     "start_at": {
                         "description": "Date and time of when banquet should start.",
@@ -5077,11 +6473,11 @@
                         "example": "2022-01-12 23:00:00"
                     },
                     "paid_at": {
-                        "nullable": "true",
                         "description": "Date and time of when banquet was fully paid for.",
                         "type": "string",
                         "format": "date-time",
-                        "example": null
+                        "example": null,
+                        "nullable": "true"
                     },
                     "comments": {
                         "type": "array",
@@ -5182,8 +6578,9 @@
                 "example": "without"
             },
             "StoreCustomerRequest": {
-                "description": "Store customer request",
+                "description": "Store customer request. `email` or `phone`\n           must be specified.",
                 "required": [
+                    "restaurant_id",
                     "name",
                     "surname",
                     "email",
@@ -5191,6 +6588,11 @@
                     "birthdate"
                 ],
                 "properties": {
+                    "restaurant_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": "true"
+                    },
                     "name": {
                         "type": "string",
                         "example": "John"
@@ -5201,19 +6603,20 @@
                     },
                     "email": {
                         "type": "string",
-                        "example": "ben.forrester@email.com"
+                        "example": "ben.forrester@email.com",
+                        "nullable": "true"
                     },
                     "phone": {
-                        "nullable": "true",
                         "description": "Phone number may start with a plus and must contain only digits 0-9.",
                         "type": "string",
-                        "example": "+380507777777"
+                        "example": "+380507777777",
+                        "nullable": "true"
                     },
                     "birthdate": {
-                        "nullable": "true",
                         "type": "string",
                         "format": "date",
-                        "example": "1992-10-16"
+                        "example": "1992-10-16",
+                        "nullable": "true"
                     }
                 },
                 "type": "object"
@@ -5221,6 +6624,11 @@
             "UpdateCustomerRequest": {
                 "description": "Update customer request",
                 "properties": {
+                    "restaurant_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": "true"
+                    },
                     "name": {
                         "type": "string",
                         "example": "John"
@@ -5285,14 +6693,14 @@
                         "example": "Kate"
                     },
                     "relation": {
-                        "nullable": "true",
                         "type": "string",
                         "enum": [
                             "child",
                             "parent",
                             "grandparent",
                             "partner"
-                        ]
+                        ],
+                        "nullable": "true"
                     },
                     "birthdate": {
                         "type": "string",
@@ -5336,6 +6744,100 @@
                 },
                 "type": "object"
             },
+            "MultipleInvoiceUrlRequest": {
+                "description": "Generate url for accessing invoice for multiple orders request",
+                "properties": {
+                    "ids": {
+                        "type": "string",
+                        "example": "1,2,3"
+                    },
+                    "endpoint": {
+                        "type": "string",
+                        "enum": [
+                            "pdfMultiple",
+                            "viewMultiple"
+                        ],
+                        "example": "pdfMultiple"
+                    }
+                },
+                "type": "object"
+            },
+            "OrderInvoiceUrlRequest": {
+                "description": "Generate url for accessing order's invoice request",
+                "properties": {
+                    "endpoint": {
+                        "type": "string",
+                        "enum": [
+                            "pdf",
+                            "view"
+                        ],
+                        "example": "pdf"
+                    }
+                },
+                "type": "object"
+            },
+            "BanquetInvoiceUrlRequest": {
+                "description": "Generate url for accessing banquet's invoice request",
+                "properties": {
+                    "endpoint": {
+                        "type": "string",
+                        "enum": [
+                            "pdfThroughBanquet",
+                            "viewThroughBanquet"
+                        ],
+                        "example": "pdfThroughBanquet"
+                    }
+                },
+                "type": "object"
+            },
+            "ShowInvoiceRequest": {
+                "description": "Show invoice request",
+                "properties": {
+                    "tags": {
+                        "type": "string",
+                        "example": "1,2",
+                        "nullable": "true"
+                    },
+                    "menus": {
+                        "type": "string",
+                        "example": "1,2,3",
+                        "nullable": "true"
+                    },
+                    "sections": {
+                        "description": "Coma-separated list of invoice sections.\n     *     Available sections: `info`, `comments`, `tickets`, `menus`,\n     *     `spaces`, `services`",
+                        "type": "string",
+                        "example": "info,comments,tickets",
+                        "nullable": "true"
+                    }
+                },
+                "type": "object"
+            },
+            "ShowMultipleInvoiceRequest": {
+                "description": "Show invoice for multiple orders request",
+                "properties": {
+                    "ids": {
+                        "type": "string",
+                        "example": "1,2,3"
+                    },
+                    "tags": {
+                        "type": "string",
+                        "example": "1,2",
+                        "nullable": "true"
+                    },
+                    "menus": {
+                        "type": "string",
+                        "example": "1,2,3",
+                        "nullable": "true"
+                    },
+                    "sections": {
+                        "description": "Coma-separated list of invoice sections.\n     *     Available sections: `info`, `comments`, `tickets`, `menus`,\n     *     `spaces`, `services`",
+                        "type": "string",
+                        "example": "info,comments,tickets",
+                        "nullable": "true"
+                    }
+                },
+                "type": "object"
+            },
             "StoreMediaRequest": {
                 "description": "Store media request",
                 "required": [
@@ -5352,19 +6854,19 @@
                         "example": "drinks.svg"
                     },
                     "title": {
-                        "nullable": "true",
                         "type": "string",
-                        "example": "Drinks"
+                        "example": "Drinks",
+                        "nullable": "true"
                     },
                     "description": {
-                        "nullable": "true",
-                        "type": "string"
+                        "type": "string",
+                        "nullable": "true"
                     },
                     "disk": {
                         "type": "string",
                         "enum": [
                             "public",
-                            "google-cloud"
+                            "uploads"
                         ],
                         "example": "public"
                     },
@@ -5374,9 +6876,7 @@
                         "example": "/media/"
                     },
                     "metadata": {
-                        "nullable": "true",
-                        "type": "object",
-                        "example": "{}"
+                        "$ref": "#/components/schemas/MediaMetadata"
                     }
                 },
                 "type": "object"
@@ -5392,13 +6892,13 @@
                         "example": "drinks.svg"
                     },
                     "title": {
-                        "nullable": "true",
                         "type": "string",
-                        "example": "Drinks"
+                        "example": "Drinks",
+                        "nullable": "true"
                     },
                     "description": {
-                        "nullable": "true",
-                        "type": "string"
+                        "type": "string",
+                        "nullable": "true"
                     },
                     "folder": {
                         "description": "Must start and end with the `/`.",
@@ -5406,9 +6906,7 @@
                         "example": "/media/"
                     },
                     "metadata": {
-                        "nullable": "true",
-                        "type": "object",
-                        "example": "{}"
+                        "$ref": "#/components/schemas/MediaMetadata"
                     }
                 },
                 "type": "object"
@@ -5465,9 +6963,9 @@
                         "example": "Notification body..."
                     },
                     "payload": {
-                        "nullable": "true",
                         "type": "object",
-                        "example": "{}"
+                        "example": "{}",
+                        "nullable": "true"
                     },
                     "receiver_id": {
                         "type": "integer",
@@ -5501,9 +6999,9 @@
                         "example": "Notification body..."
                     },
                     "payload": {
-                        "nullable": "true",
                         "type": "object",
-                        "example": "{}"
+                        "example": "{}",
+                        "nullable": "true"
                     },
                     "send_at": {
                         "description": "Date and time when notification should be sent. Only future values are acceptable.",
@@ -5668,10 +7166,15 @@
                 "description": "Store order request product field",
                 "required": [
                     "product_id",
+                    "variant_id",
                     "amount"
                 ],
                 "properties": {
                     "product_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "variant_id": {
                         "type": "integer",
                         "example": 1
                     },
@@ -5736,6 +7239,45 @@
                 },
                 "type": "object"
             },
+            "StoreRestaurantReviewRequest": {
+                "description": "Store restaurant review request",
+                "required": [
+                    "restaurant_id",
+                    "ip",
+                    "reviewer",
+                    "score"
+                ],
+                "properties": {
+                    "restaurant_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "ip": {
+                        "type": "string",
+                        "example": "127.0.0.1"
+                    },
+                    "reviewer": {
+                        "type": "string",
+                        "example": "Steve"
+                    },
+                    "score": {
+                        "description": "Min value: `0`, max value: `5`.",
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Great",
+                        "nullable": "null"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "This is a great establishment, nice personnel.",
+                        "nullable": "null"
+                    }
+                },
+                "type": "object"
+            },
             "UpdateUserRequest": {
                 "description": "Update user request",
                 "properties": {
@@ -5760,6 +7302,63 @@
                 },
                 "type": "object"
             },
+            "Alternation": {
+                "description": "Alternation resource object",
+                "required": [
+                    "id",
+                    "type",
+                    "metadata",
+                    "alterable_id",
+                    "alterable_type",
+                    "perform_at",
+                    "performed_at"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "categories"
+                    },
+                    "metadata": {
+                        "type": "object",
+                        "nullable": "true"
+                    },
+                    "alterable_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "alterable_type": {
+                        "type": "string",
+                        "example": "products"
+                    },
+                    "perform_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2022-01-12 10:00:00",
+                        "nullable": "true"
+                    },
+                    "performed_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": null,
+                        "nullable": "true"
+                    },
+                    "alterable": {
+                        "oneOf": [
+                            {
+                                "$ref": "#/components/schemas/Product"
+                            },
+                            {
+                                "$ref": "#/components/schemas/ProductVariant"
+                            }
+                        ]
+                    }
+                },
+                "type": "object"
+            },
             "Banquet": {
                 "description": "Banquet resource object",
                 "required": [
@@ -5768,16 +7367,26 @@
                     "state",
                     "available_states",
                     "is_editable",
+                    "can_edit",
                     "title",
                     "description",
                     "start_at",
                     "end_at",
                     "paid_at",
                     "advance_amount",
+                    "actual_total",
+                    "advance_amount_payment_method",
+                    "is_birthday_club",
+                    "adults_amount",
+                    "adult_ticket_price",
+                    "children_amount",
+                    "child_ticket_price",
                     "totals",
+                    "invoice_url",
                     "order_id",
                     "creator_id",
-                    "customer_id"
+                    "customer_id",
+                    "restaurant_id"
                 ],
                 "properties": {
                     "id": {
@@ -5791,13 +7400,13 @@
                     "state": {
                         "type": "string",
                         "enum": [
-                            "draft",
                             "new",
-                            "processing",
-                            "completed",
-                            "cancelled"
+                            "confirmed",
+                            "postponed",
+                            "cancelled",
+                            "completed"
                         ],
-                        "example": "draft"
+                        "example": "new"
                     },
                     "available_states": {
                         "description": "List of states, to which banquet may be transferred.",
@@ -5819,13 +7428,19 @@
                         "type": "boolean",
                         "example": "true"
                     },
+                    "can_edit": {
+                        "description": "Determines if logged in user can edit this banquet.",
+                        "type": "boolean",
+                        "example": "true"
+                    },
                     "title": {
                         "type": "string",
                         "example": "Banquet title."
                     },
                     "description": {
                         "type": "string",
-                        "example": "Banquet description..."
+                        "example": "Banquet description...",
+                        "nullable": "true"
                     },
                     "start_at": {
                         "type": "string",
@@ -5836,21 +7451,61 @@
                         "format": "date-time"
                     },
                     "paid_at": {
-                        "nullable": "true",
                         "type": "string",
-                        "format": "date-time"
+                        "format": "date-time",
+                        "nullable": "true"
                     },
                     "advance_amount": {
                         "type": "integer",
                         "example": 125.55
                     },
+                    "advance_amount_payment_method": {
+                        "type": "string",
+                        "example": "card",
+                        "nullable": "true"
+                    },
+                    "actual_total": {
+                        "type": "float",
+                        "example": 2502.55,
+                        "nullable": "true"
+                    },
+                    "is_birthday_club": {
+                        "type": "boolean",
+                        "example": "true",
+                        "nullable": "true"
+                    },
+                    "children_amount": {
+                        "type": "integer",
+                        "example": 5,
+                        "nullable": "true"
+                    },
+                    "child_ticket_price": {
+                        "type": "float",
+                        "example": 25.5,
+                        "nullable": "true"
+                    },
+                    "adults_amount": {
+                        "type": "integer",
+                        "example": 2,
+                        "nullable": "true"
+                    },
+                    "adult_ticket_price": {
+                        "type": "float",
+                        "example": 35.5,
+                        "nullable": "true"
+                    },
                     "totals": {
                         "$ref": "#/components/schemas/OrderTotals"
                     },
+                    "invoice_url": {
+                        "type": "string",
+                        "example": "host/path?signature=long-string",
+                        "nullable": "true"
+                    },
                     "order_id": {
-                        "nullable": "true",
                         "type": "integer",
-                        "example": 1
+                        "example": 1,
+                        "nullable": "true"
                     },
                     "creator_id": {
                         "type": "integer",
@@ -5859,6 +7514,14 @@
                     "customer_id": {
                         "type": "integer",
                         "example": 1
+                    },
+                    "restaurant_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": "true"
+                    },
+                    "order": {
+                        "$ref": "#/components/schemas/Order"
                     },
                     "creator": {
                         "$ref": "#/components/schemas/User"
@@ -5906,17 +7569,23 @@
                         "example": "categories"
                     },
                     "target": {
-                        "nullable": "true",
                         "type": "string",
-                        "example": "products"
+                        "example": "products",
+                        "nullable": "true"
                     },
                     "title": {
                         "type": "string",
                         "example": "Pizza"
                     },
                     "description": {
-                        "nullable": "true",
-                        "example": "Some text..."
+                        "example": "Some text...",
+                        "nullable": "true"
+                    },
+                    "tags": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Tag"
+                        }
                     },
                     "media": {
                         "type": "array",
@@ -5964,6 +7633,7 @@
                 "description": "Customer resource object",
                 "required": [
                     "id",
+                    "restaurant_id",
                     "type",
                     "name",
                     "surname",
@@ -5975,6 +7645,11 @@
                     "id": {
                         "type": "integer",
                         "example": 1
+                    },
+                    "restaurant_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": "true"
                     },
                     "type": {
                         "type": "string",
@@ -5993,15 +7668,18 @@
                         "example": "+380507777777"
                     },
                     "email": {
-                        "nullable": "true",
                         "type": "string",
-                        "example": "john.doe@email.com"
+                        "example": "john.doe@email.com",
+                        "nullable": "true"
                     },
                     "birthdate": {
-                        "nullable": "true",
                         "type": "string",
                         "format": "date",
-                        "example": "1986-01-26"
+                        "example": "1986-01-26",
+                        "nullable": "true"
+                    },
+                    "restaurant": {
+                        "$ref": "#/components/schemas/Restaurant"
                     },
                     "family_members": {
                         "type": "array",
@@ -6039,28 +7717,28 @@
                         "example": "discounts"
                     },
                     "target": {
-                        "nullable": "true",
                         "type": "string",
-                        "example": "orders"
+                        "example": "orders",
+                        "nullable": "true"
                     },
                     "title": {
                         "type": "string",
                         "example": "Discount title."
                     },
                     "description": {
-                        "nullable": "true",
                         "type": "string",
-                        "example": "Discount description..."
+                        "example": "Discount description...",
+                        "nullable": "true"
                     },
                     "amount": {
-                        "nullable": "true",
                         "type": "float",
-                        "example": 125.55
+                        "example": 125.55,
+                        "nullable": "true"
                     },
                     "percent": {
-                        "nullable": "true",
                         "type": "float",
-                        "example": 25.5
+                        "example": 25.5,
+                        "nullable": "true"
                     }
                 },
                 "type": "object"
@@ -6118,6 +7796,7 @@
                     "type",
                     "order_id",
                     "product_id",
+                    "variant_id",
                     "amount",
                     "total",
                     "discounts_amount",
@@ -6138,6 +7817,10 @@
                         "example": 1
                     },
                     "product_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "variant_id": {
                         "type": "integer",
                         "example": 1
                     },
@@ -6427,6 +8110,51 @@
                 },
                 "type": "object"
             },
+            "Holiday": {
+                "description": "Holiday resource object",
+                "required": [
+                    "id",
+                    "type",
+                    "name",
+                    "description",
+                    "date"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "holidays"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Random holiday"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "null",
+                        "nullable": "true"
+                    },
+                    "date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2022-01-12"
+                    },
+                    "closest_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2022-01-12 10:00:00",
+                        "nullable": "true"
+                    }
+                },
+                "type": "object"
+            },
+            "MediaMetadata": {
+                "description": "Media metadata resource object",
+                "type": "object"
+            },
             "Media": {
                 "description": "Media resource object",
                 "required": [
@@ -6439,7 +8167,8 @@
                     "disk",
                     "folder",
                     "order",
-                    "url"
+                    "url",
+                    "metadata"
                 ],
                 "properties": {
                     "id": {
@@ -6459,18 +8188,18 @@
                         "example": "svg"
                     },
                     "title": {
-                        "nullable": "true",
                         "type": "string",
-                        "example": "Drinks"
+                        "example": "Drinks",
+                        "nullable": "true"
                     },
                     "description": {
-                        "nullable": "true",
-                        "type": "string"
+                        "type": "string",
+                        "nullable": "true"
                     },
                     "disk": {
-                        "nullable": "true",
                         "type": "string",
-                        "example": "public"
+                        "example": "public",
+                        "nullable": "true"
                     },
                     "folder": {
                         "description": "Must start and end with `/`.",
@@ -6478,13 +8207,16 @@
                         "example": "/"
                     },
                     "order": {
-                        "nullable": "true",
                         "type": "integer",
-                        "example": 1
+                        "example": 1,
+                        "nullable": "true"
                     },
                     "url": {
                         "type": "string",
                         "example": "http://localhost/storage/drinks.svg"
+                    },
+                    "metadata": {
+                        "$ref": "#/components/schemas/MediaMetadata"
                     }
                 },
                 "type": "object"
@@ -6497,8 +8229,9 @@
                     "title",
                     "description",
                     "categories",
-                    "media",
-                    "default_media"
+                    "archived",
+                    "popularity",
+                    "media"
                 ],
                 "properties": {
                     "id": {
@@ -6521,6 +8254,11 @@
                         "type": "boolean",
                         "example": "false"
                     },
+                    "popularity": {
+                        "type": "integer",
+                        "example": "1",
+                        "nullable": "true"
+                    },
                     "products": {
                         "type": "array",
                         "items": {
@@ -6534,12 +8272,6 @@
                         }
                     },
                     "media": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Media"
-                        }
-                    },
-                    "default_media": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Media"
@@ -6570,6 +8302,8 @@
                     "receiver_id",
                     "channel",
                     "subject",
+                    "body",
+                    "payload",
                     "send_at",
                     "sent_at",
                     "seen_at"
@@ -6592,18 +8326,18 @@
                         "example": "Order status change"
                     },
                     "body": {
-                        "nullable": "true",
                         "type": "string",
-                        "example": "Your order was accepted"
+                        "example": "Your order was accepted",
+                        "nullable": "true"
                     },
                     "payload": {
-                        "nullable": "true",
-                        "type": "object"
+                        "type": "object",
+                        "nullable": "true"
                     },
                     "sender_id": {
-                        "nullable": "true",
                         "type": "integer",
-                        "example": 1
+                        "example": 1,
+                        "nullable": "true"
                     },
                     "receiver_id": {
                         "type": "integer",
@@ -6615,16 +8349,16 @@
                         "example": "2022-01-12 23:00:00"
                     },
                     "sent_at": {
-                        "nullable": "true",
                         "type": "string",
                         "format": "date-time",
-                        "example": "2022-01-12 23:00:00"
+                        "example": "2022-01-12 23:00:00",
+                        "nullable": "true"
                     },
                     "seen_at": {
-                        "nullable": "true",
                         "type": "string",
                         "format": "date-time",
-                        "example": "null"
+                        "example": "null",
+                        "nullable": "true"
                     }
                 },
                 "type": "object"
@@ -6636,7 +8370,8 @@
                     "spaces",
                     "tickets",
                     "services",
-                    "products"
+                    "products",
+                    "invoice_url"
                 ],
                 "properties": {
                     "all": {
@@ -6686,6 +8421,11 @@
                         "type": "integer",
                         "example": 1
                     },
+                    "invoice_url": {
+                        "type": "string",
+                        "example": "host/path?signature=long-string",
+                        "nullable": "true"
+                    },
                     "spaces": {
                         "type": "array",
                         "items": {
@@ -6734,10 +8474,13 @@
                     "description",
                     "price",
                     "weight",
-                    "menu_id",
+                    "weight_unit",
+                    "badge",
+                    "archived",
+                    "popularity",
+                    "variants",
                     "category_ids",
-                    "media",
-                    "default_media"
+                    "media"
                 ],
                 "properties": {
                     "id": {
@@ -6754,7 +8497,8 @@
                     },
                     "description": {
                         "type": "string",
-                        "example": "Some text..."
+                        "example": "Some text...",
+                        "nullable": "true"
                     },
                     "price": {
                         "type": "float",
@@ -6762,15 +8506,40 @@
                     },
                     "weight": {
                         "type": "float",
-                        "example": 120
+                        "example": 120,
+                        "nullable": "true"
                     },
-                    "menu_id": {
-                        "type": "integer",
-                        "example": 1
+                    "weight_unit": {
+                        "type": "string",
+                        "enum": [
+                            "g",
+                            "kg",
+                            "ml",
+                            "l",
+                            "cm"
+                        ],
+                        "example": "g",
+                        "nullable": "true"
+                    },
+                    "badge": {
+                        "type": "string",
+                        "example": "New",
+                        "nullable": "true"
                     },
                     "archived": {
                         "type": "boolean",
                         "example": "false"
+                    },
+                    "popularity": {
+                        "type": "integer",
+                        "example": "1",
+                        "nullable": "true"
+                    },
+                    "variants": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProductVariant"
+                        }
                     },
                     "categories": {
                         "type": "array",
@@ -6785,16 +8554,97 @@
                             "example": 1
                         }
                     },
+                    "tags": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Tag"
+                        }
+                    },
                     "media": {
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Media"
                         }
                     },
-                    "default_media": {
+                    "alterations": {
                         "type": "array",
                         "items": {
-                            "$ref": "#/components/schemas/Media"
+                            "$ref": "#/components/schemas/Alternation"
+                        }
+                    },
+                    "pendingAlterations": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Alternation"
+                        }
+                    },
+                    "performedAlterations": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Alternation"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "ProductVariant": {
+                "description": "Product variant resource object",
+                "required": [
+                    "id",
+                    "type",
+                    "product_id",
+                    "price",
+                    "weight",
+                    "weight_unit"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "product_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "product-variants"
+                    },
+                    "price": {
+                        "type": "float",
+                        "example": 15.99
+                    },
+                    "weight": {
+                        "type": "float",
+                        "example": 120
+                    },
+                    "weight_unit": {
+                        "type": "string",
+                        "enum": [
+                            "g",
+                            "kg",
+                            "ml",
+                            "l",
+                            "cm"
+                        ],
+                        "example": "g"
+                    },
+                    "alterations": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Alternation"
+                        }
+                    },
+                    "pendingAlterations": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Alternation"
+                        }
+                    },
+                    "performedAlterations": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Alternation"
                         }
                     }
                 },
@@ -6814,22 +8664,22 @@
                         "type": "string"
                     },
                     "prev": {
-                        "nullable": "true",
                         "type": "string",
-                        "example": null
+                        "example": null,
+                        "nullable": "true"
                     },
                     "self": {
                         "type": "string"
                     },
                     "next": {
-                        "nullable": "true",
                         "type": "string",
-                        "example": null
+                        "example": null,
+                        "nullable": "true"
                     },
                     "last": {
-                        "nullable": "true",
                         "type": "string",
-                        "example": null
+                        "example": null,
+                        "nullable": "true"
                     }
                 },
                 "type": "object"
@@ -6848,23 +8698,23 @@
                 ],
                 "properties": {
                     "from": {
-                        "nullable": "true",
                         "type": "integer",
-                        "example": 1
+                        "example": 1,
+                        "nullable": "true"
                     },
                     "to": {
-                        "nullable": "true",
                         "type": "integer",
-                        "example": 1
+                        "example": 1,
+                        "nullable": "true"
                     },
                     "total": {
                         "type": "integer",
                         "example": 30
                     },
                     "path": {
-                        "nullable": "true",
                         "type": "integer",
-                        "example": null
+                        "example": null,
+                        "nullable": "true"
                     },
                     "per_page": {
                         "type": "integer",
@@ -6884,6 +8734,273 @@
                 },
                 "type": "object"
             },
+            "Restaurant": {
+                "description": "Restaurant resource object",
+                "required": [
+                    "id",
+                    "type",
+                    "slug",
+                    "name",
+                    "country",
+                    "city",
+                    "place",
+                    "phone",
+                    "email",
+                    "website",
+                    "location",
+                    "timezone",
+                    "timezone_offset",
+                    "popularity",
+                    "media"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "restaurants"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "first"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "First"
+                    },
+                    "country": {
+                        "type": "string",
+                        "example": "Ukraine"
+                    },
+                    "city": {
+                        "type": "string",
+                        "example": "Uzhhorod"
+                    },
+                    "place": {
+                        "type": "string",
+                        "example": "Koryatovycha Square, 1а"
+                    },
+                    "full_address": {
+                        "type": "string",
+                        "example": "Koryatovycha Square, 1а, Uzhhorod, Ukraine"
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "+380501234567",
+                        "nullable": "true"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "imperia@email.com",
+                        "nullable": "true"
+                    },
+                    "location": {
+                        "type": "string",
+                        "example": "https://goo.gl/maps/g7XZq9H712osMLZW9",
+                        "nullable": "true"
+                    },
+                    "website": {
+                        "type": "string",
+                        "example": "https://app.imperia.pp.ua",
+                        "nullable": "true"
+                    },
+                    "timezone": {
+                        "type": "string",
+                        "example": "Europe/Kyiv"
+                    },
+                    "timezone_offset": {
+                        "description": "Selected timezone offset in minutes.",
+                        "type": "integer",
+                        "example": 180
+                    },
+                    "popularity": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": "true"
+                    },
+                    "media": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Media"
+                        }
+                    },
+                    "schedules": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Schedule"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "RestaurantReview": {
+                "description": "Restaurant review resource object",
+                "required": [
+                    "id",
+                    "type",
+                    "restaurant_id",
+                    "ip",
+                    "reviewer",
+                    "score",
+                    "title",
+                    "description",
+                    "created_at",
+                    "updated_at"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "restaurant-reviews"
+                    },
+                    "restaurant_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "ip": {
+                        "type": "string",
+                        "example": "127.0.0.1"
+                    },
+                    "reviewer": {
+                        "type": "string",
+                        "example": "Steve"
+                    },
+                    "score": {
+                        "description": "Min value: `0`, max value: `5`.",
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Great",
+                        "nullable": "true"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "The restaurant is great and the personnel is nice.",
+                        "nullable": "true"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2022-01-12 10:00:00",
+                        "nullable": "true"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2022-01-12 10:00:00",
+                        "nullable": "true"
+                    }
+                },
+                "type": "object"
+            },
+            "Schedule": {
+                "description": "Schedule resource object",
+                "required": [
+                    "id",
+                    "type",
+                    "weekday",
+                    "beg_hour",
+                    "end_hour",
+                    "beg_minute",
+                    "end_minute",
+                    "restaurant_id",
+                    "begs_in",
+                    "ends_in",
+                    "is_cross_date",
+                    "closest_date",
+                    "timezone",
+                    "timezone_offset"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "schedules"
+                    },
+                    "weekday": {
+                        "type": "string",
+                        "enum": [
+                            "monday",
+                            "tuesday",
+                            "wednesday",
+                            "thursday",
+                            "friday",
+                            "saturday",
+                            "sunday"
+                        ],
+                        "example": "monday"
+                    },
+                    "beg_hour": {
+                        "description": "Start hour of the day [0 ; 23].",
+                        "type": "integer",
+                        "example": 9
+                    },
+                    "end_hour": {
+                        "description": "End hour of the day [0 ; 23]. If less then beg_hour it,\n     *   then it meens that it's a cross day schedule",
+                        "type": "integer",
+                        "example": 23
+                    },
+                    "beg_minute": {
+                        "description": "Start minute of the day [0 ; 59].",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "end_minute": {
+                        "description": "End minute of the day [0 ; 59].",
+                        "type": "integer",
+                        "example": 30
+                    },
+                    "restaurant_id": {
+                        "type": "integer",
+                        "example": null,
+                        "nullable": "true"
+                    },
+                    "begs_in": {
+                        "description": "Number of minutes untill the restaurant starts operating.\n     If null then restaurant is already operating on this schedule.",
+                        "type": "integer",
+                        "example": 30,
+                        "nullable": "true"
+                    },
+                    "ends_in": {
+                        "description": "Number of minutes untill the restaurant ends operating.",
+                        "type": "integer",
+                        "example": 780,
+                        "nullable": "true"
+                    },
+                    "is_cross_date": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "closest_date": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2022-01-12 10:00:00",
+                        "nullable": "true"
+                    },
+                    "timezone": {
+                        "type": "string",
+                        "example": "Europe/Kyiv",
+                        "nullable": "true"
+                    },
+                    "timezone_offset": {
+                        "description": "Minutes offset from UTC, which is already applied to `closest_date`",
+                        "type": "integer",
+                        "example": 3,
+                        "nullable": "true"
+                    }
+                },
+                "type": "object"
+            },
             "Service": {
                 "description": "Service resource object",
                 "required": [
@@ -6893,9 +9010,10 @@
                     "description",
                     "once_paid_price",
                     "hourly_paid_price",
+                    "archived",
+                    "popularity",
                     "category_ids",
-                    "media",
-                    "default_media"
+                    "media"
                 ],
                 "properties": {
                     "id": {
@@ -6912,7 +9030,8 @@
                     },
                     "description": {
                         "type": "string",
-                        "example": "Some text..."
+                        "example": "Some text...",
+                        "nullable": "true"
                     },
                     "once_paid_price": {
                         "type": "float",
@@ -6925,6 +9044,11 @@
                     "archived": {
                         "type": "boolean",
                         "example": "false"
+                    },
+                    "popularity": {
+                        "type": "integer",
+                        "example": "1",
+                        "nullable": "true"
                     },
                     "categories": {
                         "type": "array",
@@ -6944,12 +9068,6 @@
                         "items": {
                             "$ref": "#/components/schemas/Media"
                         }
-                    },
-                    "default_media": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Media"
-                        }
                     }
                 },
                 "type": "object"
@@ -6964,9 +9082,10 @@
                     "floor",
                     "number",
                     "price",
+                    "archived",
+                    "popularity",
                     "category_ids",
-                    "media",
-                    "default_media"
+                    "media"
                 ],
                 "properties": {
                     "id": {
@@ -7001,6 +9120,11 @@
                         "type": "boolean",
                         "example": "false"
                     },
+                    "popularity": {
+                        "type": "integer",
+                        "example": "1",
+                        "nullable": "true"
+                    },
                     "categories": {
                         "type": "array",
                         "items": {
@@ -7019,12 +9143,40 @@
                         "items": {
                             "$ref": "#/components/schemas/Media"
                         }
+                    }
+                },
+                "type": "object"
+            },
+            "Tag": {
+                "description": "Tag resource object",
+                "required": [
+                    "id",
+                    "type",
+                    "target",
+                    "title",
+                    "description"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
                     },
-                    "default_media": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Media"
-                        }
+                    "type": {
+                        "type": "string",
+                        "example": "categories"
+                    },
+                    "target": {
+                        "type": "string",
+                        "example": "products",
+                        "nullable": "true"
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Pizza"
+                    },
+                    "description": {
+                        "example": "Some text...",
+                        "nullable": "true"
                     }
                 },
                 "type": "object"
@@ -7037,9 +9189,10 @@
                     "title",
                     "description",
                     "price",
+                    "archived",
+                    "popularity",
                     "category_ids",
-                    "media",
-                    "default_media"
+                    "media"
                 ],
                 "properties": {
                     "id": {
@@ -7066,6 +9219,11 @@
                         "type": "boolean",
                         "example": "false"
                     },
+                    "popularity": {
+                        "type": "integer",
+                        "example": "1",
+                        "nullable": "true"
+                    },
                     "categories": {
                         "type": "array",
                         "items": {
@@ -7084,12 +9242,6 @@
                         "items": {
                             "$ref": "#/components/schemas/Media"
                         }
-                    },
-                    "default_media": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Media"
-                        }
                     }
                 },
                 "type": "object"
@@ -7099,6 +9251,7 @@
                 "required": [
                     "id",
                     "type",
+                    "restaurant_id",
                     "customer_id",
                     "name",
                     "email",
@@ -7113,24 +9266,32 @@
                         "type": "string",
                         "example": "users"
                     },
-                    "customer_id": {
-                        "nullable": "true",
+                    "restaurant_id": {
                         "type": "integer",
-                        "example": "null"
+                        "example": "null",
+                        "nullable": "true"
+                    },
+                    "customer_id": {
+                        "type": "integer",
+                        "example": "null",
+                        "nullable": "true"
                     },
                     "name": {
                         "type": "string",
                         "example": "Admin Admins"
                     },
                     "email": {
-                        "nullable": "true",
                         "type": "string",
-                        "example": "admin@email.com"
+                        "example": "admin@email.com",
+                        "nullable": "true"
                     },
                     "email_verified_at": {
-                        "nullable": "true",
                         "type": "string",
-                        "format": "date-time"
+                        "format": "date-time",
+                        "nullable": "true"
+                    },
+                    "customer": {
+                        "$ref": "#/components/schemas/Customer"
                     }
                 },
                 "type": "object"

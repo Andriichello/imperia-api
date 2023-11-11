@@ -3,6 +3,7 @@
 namespace App\Guards;
 
 use App\Helpers\Interfaces\SignatureHelperInterface;
+use App\Helpers\Objects\Signature;
 use Illuminate\Auth\GuardHelpers;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
@@ -28,23 +29,23 @@ class SignatureGuard implements Guard
      *
      * @var SignatureHelperInterface
      */
-    protected SignatureHelperInterface $signer;
+    protected SignatureHelperInterface $helper;
 
     /**
      * Create a new authentication guard.
      *
      * @param UserProvider $provider
      * @param Request $request
-     * @param SignatureHelperInterface $signer
+     * @param SignatureHelperInterface $helper
      */
     public function __construct(
         UserProvider $provider,
         Request $request,
-        SignatureHelperInterface $signer,
+        SignatureHelperInterface $helper,
     ) {
         $this->provider = $provider;
         $this->request = $request;
-        $this->signer = $signer;
+        $this->helper = $helper;
     }
 
     /**
@@ -59,26 +60,23 @@ class SignatureGuard implements Guard
         }
 
         $signature = $this->getSignatureForRequest();
-        if (empty($signature)) {
+        if (!$signature || !$this->helper->verify($signature, $this->request)) {
             return null;
         }
 
-        $id = $this->signer->userId($signature);
-        if (!$id || !$this->signer->verify($signature)) {
-            return null;
-        }
-
-        return $this->user = $this->provider->retrieveById($id);
+        return $this->user = $this->provider->retrieveById($signature->getUserId());
     }
 
     /**
      * Get the signature for the current request.
      *
-     * @return string|null
+     * @return Signature|null
      */
-    public function getSignatureForRequest(): ?string
+    public function getSignatureForRequest(): ?Signature
     {
-        return $this->request->get('signature');
+        $encrypted = $this->request->get('signature');
+
+        return $encrypted ? $this->helper->decrypt($encrypted) : null;
     }
 
     /**
@@ -90,17 +88,14 @@ class SignatureGuard implements Guard
      */
     public function validate(array $credentials = [])
     {
-        $signature = data_get($credentials, 'signature');
-        if (empty($signature)) {
+        $encrypted = data_get($credentials, 'signature');
+        if (empty($encrypted)) {
             return false;
         }
 
-        $id = $this->signer->userId($signature);
-        if (!$id || !$this->signer->verify($signature)) {
-            return false;
-        }
+        $signature = $this->helper->decrypt($encrypted);
 
-        return $this->provider->retrieveById($id) !== null;
+        return $this->helper->verify($signature, $this->request);
     }
 
     /**

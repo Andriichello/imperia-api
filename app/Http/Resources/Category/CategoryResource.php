@@ -3,9 +3,11 @@
 namespace App\Http\Resources\Category;
 
 use App\Http\Resources\Media\MediaCollection;
+use App\Http\Resources\Tag\TagCollection;
 use App\Models\Morphs\Category;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use OpenApi\Annotations as OA;
 
 /**
  * Class CategoryResource.
@@ -30,7 +32,9 @@ class CategoryResource extends JsonResource
             'slug' => $this->slug,
             'target' => $this->target,
             'title' => $this->title,
+            'popularity' => $this->popularity,
             'description' => $this->description,
+            'tags' => new TagCollection($this->whenLoaded('tags')),
             'media' => new MediaCollection($this->media),
         ];
     }
@@ -46,6 +50,7 @@ class CategoryResource extends JsonResource
      *   @OA\Property(property="target", type="string", example="products", nullable="true"),
      *   @OA\Property(property="title", type="string", example="Pizza"),
      *   @OA\Property(property="description", example="Some text...", nullable="true"),
+     *   @OA\Property(property="tags", type="array", @OA\Items(ref ="#/components/schemas/Tag")),
      *   @OA\Property(property="media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
      * )
      */

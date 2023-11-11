@@ -16,6 +16,7 @@ use App\Policies\OrderPolicy;
 use App\Queries\OrderQueryBuilder;
 use App\Repositories\OrderRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use OpenApi\Annotations as OA;
 
 /**
  * Class OrderController.
@@ -83,7 +84,7 @@ class OrderController extends CrudController
 
         if ($banquet->order_id) {
             $request->id($banquet->order_id);
-            return $this->show($request);
+            return $this->handleShow($request);
         }
 
         throw new ModelNotFoundException("There is no order for selected banquet (id: $banquet->id)");
@@ -141,7 +142,7 @@ class OrderController extends CrudController
      *   summary="Show order by banquet id.",
      *   operationId="showOrderByBanquetId",
      *   security={{"bearerAuth": {}}},
-     *   tags={"orders", "banquets"},
+     *   tags={"banquets"},
      *
      *  @OA\Parameter(name="include", in="query",
      *     @OA\Schema(ref ="#/components/schemas/OrderIncludes")),

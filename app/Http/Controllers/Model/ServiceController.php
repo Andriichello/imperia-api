@@ -11,6 +11,7 @@ use App\Http\Resources\Service\ServiceResource;
 use App\Policies\ServicePolicy;
 use App\Queries\ServiceQueryBuilder;
 use App\Repositories\ServiceRepository;
+use OpenApi\Annotations as OA;
 
 /**
  * Class ServiceController.
@@ -57,11 +58,16 @@ class ServiceController extends CrudController
      *     @OA\Schema(ref ="#/components/schemas/ServiceIncludes")),
      *   @OA\Parameter(name="page[size]", in="query", @OA\Schema(ref ="#/components/schemas/PageSize")),
      *   @OA\Parameter(name="page[number]", in="query", @OA\Schema(ref ="#/components/schemas/PageNumber")),
+     *   @OA\Parameter(name="sort", in="query", example="-popularity", @OA\Schema(type="string"),
+            description="Available sorts: `popularity` (is default, but in descending order)"),
      *   @OA\Parameter(name="filter[title]", required=false, in="query", example="Clown",
      *     @OA\Schema(type="string"), description="Can be used for searches. Is partial."),
      *   @OA\Parameter(name="filter[categories]", required=false, in="query", example="2,3",
      *     @OA\Schema(type="string"), description="Coma-separated array of category ids. Limits services to those
      * that have at least one of given categories attached to them"),
+     *   @OA\Parameter(name="filter[restaurants]", required=false, in="query", example="1",
+     *   @OA\Schema(type="string"), description="Coma-separated array of restaurant ids. Limits services to those
+     * that are attached at least to one of those restaurants"),
      *   @OA\Parameter(name="archived", in="query", @OA\Schema(ref ="#/components/schemas/ArchivedParameter")),
      *
      *   @OA\Response(

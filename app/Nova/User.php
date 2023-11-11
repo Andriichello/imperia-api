@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\Gravatar;
 use Laravel\Nova\Fields\ID;
@@ -49,22 +50,20 @@ class User extends Resource
     public function fields(Request $request): array
     {
         return [
-            ID::make()->sortable(),
+            ID::make(__('columns.id'), 'id')
+                ->sortable(),
 
-            Gravatar::make()
-                ->maxWidth(50),
-
-            Text::make('Name')
+            Text::make(__('columns.name'), 'name')
                 ->sortable()
                 ->rules('required', 'min:2', 'max:255'),
 
-            Text::make('Email')
+            Text::make(__('columns.email'), 'email')
                 ->sortable()
                 ->rules('required', 'email', 'max:254')
                 ->creationRules('unique:users,email')
                 ->updateRules('unique:users,email,{{resourceId}}'),
 
-            Password::make('Password')
+            Password::make(__('columns.password'), 'password]')
                 ->onlyOnForms()
                 ->creationRules('required', 'string', 'min:8')
                 ->updateRules('nullable', 'string', 'min:8')
@@ -72,16 +71,19 @@ class User extends Resource
                     $model->password = ($request[$requestAttribute]);
                 }),
 
-            MorphToMany::make('Roles'),
+            BelongsTo::make(__('columns.restaurant'), 'restaurant', Restaurant::class)
+                ->default(fn() => $request->user()->restaurant_id),
 
-            DateTime::make('Email Verified At')
+            MorphToMany::make(__('columns.roles'), 'roles', Role::class),
+
+            DateTime::make(__('columns.email_verified_at'), 'email_verified_at')
                 ->exceptOnForms(),
 
-            DateTime::make('Created At')
+            DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
                 ->exceptOnForms(),
 
-            DateTime::make('Updated At')
+            DateTime::make(__('columns.updated_at' ), 'updated_at')
                 ->sortable()
                 ->exceptOnForms(),
         ];
@@ -98,12 +100,34 @@ class User extends Resource
     protected function columnsFilterFields(Request $request): array
     {
         return [
-            'id' => true,
-            'name' => true,
-            'email' => true,
-            'email_verified_at' => false,
-            'created_at' => false,
-            'updated_at' => false,
+            'id' => [
+                'label' => __('columns.id'),
+                'checked' => true,
+            ],
+            'name' => [
+                'label' => __('columns.name'),
+                'checked' => true,
+            ],
+            'email' => [
+                'label' => __('columns.email'),
+                'checked' => true,
+            ],
+            'email_verified_at' => [
+                'label' => __('columns.email_verified_at'),
+                'checked' => false,
+            ],
+            'restaurant' => [
+                'label' => __('columns.restaurant'),
+                'checked' => false,
+            ],
+            'created_at' => [
+                'label' => __('columns.created_at'),
+                'checked' => false,
+            ],
+            'updated_at' => [
+                'label' => __('columns.updated_at'),
+                'checked' => false,
+            ],
         ];
     }
 }

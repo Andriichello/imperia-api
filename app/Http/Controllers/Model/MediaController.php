@@ -12,8 +12,10 @@ use App\Http\Requests\Media\UpdateMediaRequest;
 use App\Http\Resources\Media\MediaCollection;
 use App\Http\Resources\Media\MediaResource;
 use App\Policies\MediaPolicy;
+use App\Queries\Interfaces\IndexableInterface;
 use App\Queries\MediaQueryBuilder;
 use App\Repositories\MediaRepository;
+use OpenApi\Annotations as OA;
 
 /**
  * Class MediaController.
@@ -64,6 +66,10 @@ class MediaController extends CrudController
         /** @var MediaQueryBuilder $builder */
         $builder = parent::builder($request);
 
+        if ($builder instanceof IndexableInterface) {
+            $builder->index($request->user());
+        }
+
         return $builder;
     }
 
@@ -77,6 +83,8 @@ class MediaController extends CrudController
      *
      *   @OA\Parameter(name="page[size]", in="query", @OA\Schema(ref ="#/components/schemas/PageSize")),
      *   @OA\Parameter(name="page[number]", in="query", @OA\Schema(ref ="#/components/schemas/PageNumber")),
+     *   @OA\Parameter(name="filter[search]", required=false, in="query", example="Cafe",
+     *     @OA\Schema(type="string"), description="Can be used for searches."),
      *   @OA\Parameter(name="filter[name]", required=false, in="query", example="Cafe",
      *     @OA\Schema(type="string"), description="Can be used for searches. Is partial."),
      *   @OA\Parameter(name="filter[extension]", required=false, in="query", example="svg",

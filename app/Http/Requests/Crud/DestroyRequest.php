@@ -5,8 +5,7 @@ namespace App\Http\Requests\Crud;
 use App\Http\Requests\CrudRequest;
 use App\Http\Requests\Interfaces\WithTargetInterface;
 use App\Http\Requests\Traits\WithTarget;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use OpenApi\Annotations as OA;
 
 /**
  * Class DestroyRequest.

@@ -7,6 +7,7 @@ use App\Http\Requests\BaseRequest;
 use App\Http\Responses\ApiResponse;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use OpenApi\Annotations as OA;
 
 /**
  * Class LogoutController.
@@ -16,7 +17,7 @@ class LogoutController extends Controller
     /**
      * Logout user.
      *
-     * @OA\Post  (
+     * @OA\Delete  (
      *   path="/api/logout",
      *   summary="Logout user.",
      *   operationId="logout",

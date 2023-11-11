@@ -3,17 +3,24 @@
 namespace App\Nova;
 
 use Andriichello\Media\MediaField;
+use App\Enums\WeightUnit;
 use App\Models\Scopes\ArchivedScope;
+use App\Nova\Options\WeightUnitOptions;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\MorphMany;
 use Laravel\Nova\Fields\MorphToMany;
 use Laravel\Nova\Fields\Number;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 /**
@@ -31,11 +38,20 @@ class Product extends Resource
     public static string $model = \App\Models\Product::class;
 
     /**
-     * The single value that should be used to represent the resource when being displayed.
+     * Get the value that should be displayed to represent the resource.
      *
-     * @var string
+     * @return string
      */
-    public static $title = 'title';
+    public function title(): string
+    {
+        $title = '';
+
+        if ($this->slug && !empty($this->slug)) {
+            $title = "$this->slug - ";
+        }
+
+        return $title . $this->title;
+    }
 
     /**
      * The columns that should be searched.
@@ -43,7 +59,7 @@ class Product extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'title', 'description',
+        'id', 'slug', 'title', 'description',
     ];
 
     /**
@@ -56,6 +72,8 @@ class Product extends Resource
      */
     public static function indexQuery(NovaRequest $request, $query): Builder
     {
+        parent::indexQuery($request, $query);
+
         /** @var User $user */
         $user = $request->user();
         if ($user->isAdmin()) {
@@ -73,42 +91,96 @@ class Product extends Resource
      */
     public function fields(Request $request): array
     {
+        /** @var \App\Models\User $user */
+        $user = $request->user();
+        $resourceId = $request->route('resourceId');
+
+        $slugValidationRules = [
+            'required',
+            Rule::unique('menus', 'slug')
+                ->where(function ($query) use ($user, $resourceId) {
+                    if ($resourceId) {
+                        $query->where('id', '!=', $resourceId);
+                    }
+
+                    if ($user->restaurant_id) {
+                        $query->where('restaurant_id', $user->restaurant_id);
+                    }
+                }),
+        ];
+
+        $units = [];
+
+        foreach (WeightUnitOptions::all() as $unit) {
+            $units[$unit] = __('enum.weight_unit.' . $unit);
+        }
+
         return [
-            ID::make()->sortable(),
+            ID::make(__('columns.id'), 'id')
+                ->sortable(),
 
-            BelongsTo::make('Menu'),
+            Text::make(__('columns.slug'), 'slug')
+                ->rules($slugValidationRules),
 
-            MediaField::make('Media'),
+            Boolean::make(__('columns.active'))
+                ->resolveUsing(fn() => !$this->archived)
+                ->exceptOnForms(),
 
-            Text::make('Title')
-                ->updateRules('sometimes', 'min:1', 'max:50')
-                ->creationRules('required', 'min:1', 'max:50'),
-
-            Text::make('Description')
-                ->rules('nullable', 'min:1', 'max:255'),
-
-            Number::make('Price')
-                ->step(0.01)
-                ->updateRules('sometimes', 'min:0')
-                ->creationRules('required', 'min:0'),
-
-            Number::make('Weight')
-                ->step(0.01)
-                ->updateRules('sometimes', 'min:0')
-                ->creationRules('required', 'min:0'),
-
-            Boolean::make('Archived')
+            Boolean::make(__('columns.archived'), 'archived')
+                ->onlyOnForms()
                 ->default(fn() => false),
 
-            MorphToMany::make('Categories'),
+            MediaField::make(__('columns.media'), 'media'),
 
-            MorphMany::make('Logs', 'logs', Log::class),
+            Number::make(__('columns.popularity'), 'popularity')
+                ->step(1)
+                ->sortable()
+                ->nullable(),
 
-            DateTime::make('Created At')
+            Text::make(__('columns.title'), 'title')
+                ->updateRules('sometimes', 'min:1', 'max:255')
+                ->creationRules('required', 'min:1', 'max:255'),
+
+            Text::make(__('columns.badge'), 'badge')
+                ->updateRules('nullable', 'min:1', 'max:25')
+                ->creationRules('nullable', 'min:1', 'max:25'),
+
+            Textarea::make(__('columns.description'), 'description')
+                ->rules('nullable', 'min:1'),
+
+            Number::make(__('columns.price'), 'price')
+                ->step(0.01)
+                ->updateRules('sometimes', 'min:0')
+                ->creationRules('required', 'min:0'),
+
+            Text::make(__('columns.weight'), 'weight')
+                ->nullable(),
+
+            Select::make(__('columns.weight_unit'), 'weight_unit')
+                ->nullable()
+                ->options($units)
+                ->displayUsing(fn($val) => data_get($units, $val ?? 'non-existing')),
+
+            HasMany::make(__('columns.variants'), 'variants', ProductVariant::class),
+
+            BelongsToMany::make(__('columns.menus'), 'menus', Menu::class),
+
+            MorphToMany::make(__('columns.categories'), 'categories', Category::class),
+
+            MorphToMany::make(__('columns.tags'), 'tags', Tag::class),
+
+            BelongsTo::make(__('columns.restaurant'), 'restaurant', Restaurant::class)
+                ->default(fn() => $user->restaurant_id),
+
+            MorphMany::make(__('columns.alterations'), 'alterations', Alteration::class),
+
+            MorphMany::make(__('columns.logs'), 'logs', Log::class),
+
+            DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
                 ->exceptOnForms(),
 
-            DateTime::make('Updated At')
+            DateTime::make(__('columns.updated_at'), 'updated_at')
                 ->sortable()
                 ->exceptOnForms(),
         ];
@@ -125,16 +197,58 @@ class Product extends Resource
     protected function columnsFilterFields(Request $request): array
     {
         return [
-            'id' => true,
-            'menu' => true,
-            'media' => true,
-            'title' => true,
-            'description' => false,
-            'price' => true,
-            'weight' => true,
-            'archived' => true,
-            'created_at' => false,
-            'updated_at' => false,
+            'id' => [
+                'label' => __('columns.id'),
+                'checked' => true
+            ],
+            'slug' => [
+                'label' => __('columns.slug'),
+                'checked' => true,
+            ],
+            'media' => [
+                'label' => __('columns.media'),
+                'checked' => true
+            ],
+            'popularity' => [
+                'label' => __('columns.popularity'),
+                'checked' => true
+            ],
+            'title' => [
+                'label' => __('columns.title'),
+                'checked' => true
+            ],
+            'badge' => [
+                'label' => __('columns.badge'),
+                'checked' => false
+            ],
+            'description' => [
+                'label' => __('columns.description'),
+                'checked' => false
+            ],
+            'price' => [
+                'label' => __('columns.price'),
+                'checked' => true
+            ],
+            'weight' => [
+                'label' => __('columns.weight'),
+                'checked' => true
+            ],
+            'weight_unit' => [
+                'label' => __('columns.weight_unit'),
+                'checked' => true
+            ],
+            'restaurant' => [
+                'label' => __('columns.restaurant'),
+                'checked' => false
+            ],
+            'created_at' => [
+                'label' => __('columns.created_at'),
+                'checked' => false
+            ],
+            'updated_at' => [
+                'label' => __('columns.updated_at'),
+                'checked' => false
+            ],
         ];
     }
 }

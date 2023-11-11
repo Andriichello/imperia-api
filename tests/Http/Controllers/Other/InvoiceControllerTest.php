@@ -2,17 +2,19 @@
 
 namespace Tests\Http\Controllers\Other;
 
+use App\Helpers\Objects\Signature;
 use App\Helpers\SignatureHelper;
 use App\Models\Banquet;
 use App\Models\Customer;
 use App\Models\Orders\Order;
 use App\Models\Orders\SpaceOrderField;
+use App\Models\Restaurant;
 use App\Models\Space;
 use Carbon\Carbon;
 use Tests\RegisteringTestCase;
 
 /**
- * Class BanquetControllerTest.
+ * Class InvoiceControllerTest.
  */
 class InvoiceControllerTest extends RegisteringTestCase
 {
@@ -45,16 +47,17 @@ class InvoiceControllerTest extends RegisteringTestCase
         parent::setUp();
 
         $this->banquet = Banquet::factory()
+            ->withRestaurant(Restaurant::factory()->create())
             ->withCustomer(Customer::factory()->create())
             ->withCreator($this->user)
             ->create();
 
-        $order = Order::factory()
+        Order::factory()
             ->withBanquet($this->banquet)
             ->create();
 
         SpaceOrderField::factory()
-            ->withOrder($order)
+            ->withOrder($this->banquet->order)
             ->withSpace(Space::factory()->create())
             ->create();
     }
@@ -83,10 +86,14 @@ class InvoiceControllerTest extends RegisteringTestCase
         $id = $this->banquet->id;
         $url = route('api.banquets.invoice', compact('id'));
 
-        /** @var SignatureHelper $signer */
-        $signer = app(SignatureHelper::class);
+        /** @var SignatureHelper $helper */
+        $helper = app(SignatureHelper::class);
 
-        $signature = $signer->make($this->user, Carbon::now()->addHour());
+        $signature = (new Signature())
+            ->setExpiration(Carbon::now()->addHour())
+            ->setUserId($this->user->id);
+
+        $signature = $helper->encrypt($signature);
         $this->get($url . '?' . http_build_query(compact('signature')))
             ->assertOk();
     }

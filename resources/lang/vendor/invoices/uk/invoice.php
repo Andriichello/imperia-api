@@ -1,0 +1,57 @@
+<?php
+
+return [
+    /*
+    |--------------------------------------------------------------------------
+    | Invoice Language Lines
+    |--------------------------------------------------------------------------
+    */
+
+    'invoice'                => 'Рахунок',
+    'invoices'               => 'Рахунки',
+    'serial'                 => 'Номер',
+    'date'                   => 'Дата',
+    'time'                   => 'Час',
+    'seller'                 => 'Продавець',
+    'buyer'                  => 'Покупець',
+    'address'                => 'Адреса',
+    'code'                   => 'Код',
+    'vat'                    => 'Податок на додану вартість',
+    'phone'                  => 'Телефон',
+    'email'                  => 'Пошта',
+    'description'            => 'Опис',
+    'comments'               => 'Коментарі',
+    'variant'                => 'Варіант',
+    'weight'                 => 'Вага',
+    'units'                  => 'Одиниця вимірювання',
+    'quantity'               => 'Кількість',
+    'once_paid_price'        => 'Передплата',
+    'price'                  => 'Ціна',
+    'discount'               => 'Знижка',
+    'tax'                    => 'Податок',
+    'sum'                    => 'Сума',
+    'total'                  => 'Разом',
+    'sub_total'              => 'Сума',
+    'total_discount'         => 'Сума знижок',
+    'taxable_amount'         => 'Taxable amount',
+    'total_taxes'            => 'Сума подакту',
+    'tax_rate'               => 'Tax rate',
+    'total_amount'           => 'Загальна сума',
+    'pay_until'              => 'Оплатити до',
+    'amount_in_words'        => 'Amount in words',
+    'amount_in_words_format' => '%s %s and %s %s',
+    'notes'                  => 'Коментарі',
+    'shipping'               => 'Доставка',
+    'paid'                   => 'Оплачено',
+    'due'                    => 'Due',
+    'duration'               => 'Тривалість',
+    'adults'                 => 'Дорослих',
+    'children'               => 'Дітей',
+    'spaces'                 => 'Приміщення',
+    'tickets'                => 'Квитки',
+    'services'               => 'Послуги',
+    'products'               => 'Позиції меню',
+    'banquet'                => 'Банкет',
+    'banquets'               => 'Банкети',
+    'page'                   => 'Сторінка',
+];

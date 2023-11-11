@@ -5,9 +5,13 @@ namespace App\Invoices;
 use App\Models\BaseModel;
 use App\Models\Customer;
 use App\Models\Orders\Order;
+use App\Models\Restaurant;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use LaravelDaily\Invoices\Classes\Buyer;
+use LaravelDaily\Invoices\Classes\InvoiceItem as BasicInvoiceItem;
+use LaravelDaily\Invoices\Classes\Seller;
 
 /**
  * Class InvoiceFactory.
@@ -26,11 +30,111 @@ class InvoiceFactory
      */
     public static function fromOrder(Order $order): Invoice
     {
-        return Invoice::make('receipt-' . $order->id)
-            ->template('custom')
+        $name = translate('invoices::invoice.banquet', [], 'banquet')
+            . '-' . $order->id;
+
+        return Invoice::make($name, $order)
+            ->template('banquet')
             ->buyer(self::buyer($order->banquet->customer))
-            ->addItems(self::items($order))
-            ->comments($order->comments->pluck('text'));
+            ->seller(self::seller($order->banquet->restaurant))
+            ->addItems(self::items($order));
+    }
+
+    /**
+     * Make invoice from multiple orders.
+     *
+     * @param Order ...$orders
+     *
+     * @return Invoice
+     * @throws BindingResolutionException
+     */
+    public static function fromOrders(Order ...$orders): Invoice
+    {
+        $name = translate('invoices::invoice.banquets', [], 'banquets')
+            . '-' . implode(',', Arr::pluck($orders, 'id'));
+
+        $items = [];
+        $ticketEntries = [];
+
+        foreach ($orders as $order) {
+            $ticketEntries[] = [
+                'adult' => [
+                    'amount' => $order->banquet->adults_amount,
+                    'price' => $order->banquet->adult_ticket_price,
+                ],
+                'child' => [
+                    'amount' => $order->banquet->children_amount,
+                    'price' => $order->banquet->child_ticket_price,
+                ],
+            ];
+
+            if (empty($items)) {
+                $items = self::items($order)->all();
+                continue;
+            }
+
+            $added = [];
+
+            foreach (self::items($order) as $new) {
+                if (($new instanceof InvoiceItem) === false) {
+                    continue;
+                }
+
+                $matching = array_filter(
+                    $items,
+                    function ($item) use ($new) {
+                        return $item instanceof InvoiceItem
+                            && $item->canBeMerged($new);
+                    }
+                );
+
+                if (empty($matching)) {
+                    $added[] = $new;
+                    continue;
+                }
+
+                foreach ($matching as $item) {
+                    /** @var InvoiceItem $item */
+                    $item->mergeWith($new);
+                }
+            }
+
+            $items = [...$items, ...$added];
+        }
+
+        usort(
+            $items,
+            function ($one, $two) {
+                return strcmp($one->title, $two->title);
+            }
+        );
+
+        return Invoice::make($name)
+            ->seller(new Seller())
+            ->buyer(new Buyer([]))
+            ->template('banquet')
+            ->addTicketEntries(...$ticketEntries)
+            ->addItems($items);
+    }
+
+    /**
+     * Create a seller from given restaurant.
+     *
+     * @param Restaurant $restaurant
+     *
+     *
+     * @return Seller
+     */
+    public static function seller(Restaurant $restaurant): Seller
+    {
+        $seller = new Seller();
+
+        $seller->name = $restaurant->name;
+        $seller->address = $restaurant->full_address;
+        $seller->phone = $restaurant->phone;
+        $seller->custom_fields['email'] = $restaurant->email;
+
+        return $seller;
     }
 
     /**
@@ -46,7 +150,7 @@ class InvoiceFactory
             'name' => $customer->fullName,
             'custom_fields' => [
                 'phone' => $customer->phone,
-                'email' => $customer->email ?? 'unknown',
+                'email' => $customer->email,
             ],
         ]);
     }
@@ -62,7 +166,7 @@ class InvoiceFactory
     {
         $items = new Collection();
 
-        $relations = ['tickets','spaces', 'services', 'products'];
+        $relations = ['tickets', 'spaces', 'services', 'products'];
         foreach ($relations as $relation) {
             /** @var BaseModel[]|Collection $fields */
             $fields = $order->$relation;
@@ -71,6 +175,17 @@ class InvoiceFactory
             );
 
             $items->push(...$mapped->all());
+        }
+
+        if ($items->isEmpty()) {
+            // adding a placeholder item, so the check generation doesn't break
+            $item = new BasicInvoiceItem();
+
+            $item->title('Placeholder item...');
+            $item->quantity(1);
+            $item->pricePerUnit(0);
+
+            $items->add($item);
         }
 
         return $items;

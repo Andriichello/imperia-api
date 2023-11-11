@@ -2,8 +2,11 @@
 
 namespace App\Invoices;
 
+use App\Invoices\Items\ProductItem;
+use App\Invoices\Items\ServiceItem;
+use App\Invoices\Items\SpaceItem;
+use App\Invoices\Items\TicketItem;
 use App\Models\BaseModel;
-use App\Models\Interfaces\CommentableInterface;
 use App\Models\Orders\ProductOrderField;
 use App\Models\Orders\ServiceOrderField;
 use App\Models\Orders\SpaceOrderField;
@@ -26,16 +29,16 @@ class InvoiceItemFactory
     public static function fromField(BaseModel $field): InvoiceItem
     {
         if ($field instanceof SpaceOrderField) {
-            $item = self::fromSpace($field);
+            $item = SpaceItem::make($field);
         }
         if ($field instanceof TicketOrderField) {
-            $item = self::fromTicket($field);
+            $item = TicketItem::make($field);
         }
         if ($field instanceof ServiceOrderField) {
-            $item = self::fromService($field);
+            $item = ServiceItem::make($field);
         }
         if ($field instanceof ProductOrderField) {
-            $item = self::fromProduct($field);
+            $item = ProductItem::make($field);
         }
 
         if (!isset($item)) {
@@ -43,10 +46,6 @@ class InvoiceItemFactory
                 . ' is not implemented.';
 
             throw new Exception($message);
-        }
-
-        if ($field instanceof CommentableInterface) {
-            $item->comments($field->comments->pluck('text'));
         }
 
         return $item;
@@ -82,7 +81,7 @@ class InvoiceItemFactory
         $item = new InvoiceItem();
 
         $item->title($field->service->title);
-        $item->oncePaidPrice($field->service->once_paid_price);
+        // $item->oncePaidPrice($field->service->once_paid_price);
         $item->pricePerUnit($field->service->hourly_paid_price);
         $item->quantity($field->duration / 60.0);
         $item->units('hours');
@@ -104,25 +103,6 @@ class InvoiceItemFactory
 
         $item->title($field->ticket->title);
         $item->pricePerUnit($field->ticket->price);
-        $item->quantity($field->amount);
-        $item->subTotalPrice($field->total);
-
-        return $item;
-    }
-
-    /**
-     * Make invoice item from product order field.
-     *
-     * @param ProductOrderField $field
-     *
-     * @return InvoiceItem
-     */
-    protected static function fromProduct(ProductOrderField $field): InvoiceItem
-    {
-        $item = new InvoiceItem();
-
-        $item->title($field->product->title);
-        $item->pricePerUnit($field->product->price);
         $item->quantity($field->amount);
         $item->subTotalPrice($field->total);
 

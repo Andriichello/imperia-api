@@ -3,6 +3,7 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
@@ -52,40 +53,43 @@ class Customer extends Resource
     public function fields(Request $request): array
     {
         return [
-            ID::make()->sortable(),
+            ID::make(__('columns.id'), 'id')
+                ->sortable(),
 
-            Text::make('Name')
+            Text::make(__('columns.name'), 'name')
                 ->rules('required', 'min:2', 'max:50'),
 
-            Text::make('Surname')
+            Text::make(__('columns.surname'), 'surname')
                 ->rules('required', 'min:2', 'max:50'),
 
-            Text::make('Phone')
+            Text::make(__('columns.phone'), 'phone')
                 ->rules('required', 'regex:/(\+?[0-9]{1,2})?[0-9]{10,12}/')
                 ->creationRules('unique:customers,phone')
                 ->updateRules('unique:customers,phone,{{resourceId}}'),
 
-            Text::make('Email')
+            Text::make(__('columns.email'), 'email')
                 ->sortable()
                 ->rules('required', 'email', 'max:254')
                 ->creationRules('unique:customers,email')
                 ->updateRules('unique:customers,email,{{resourceId}}'),
 
-            Date::make('Birthdate')
+            Date::make(__('columns.birthdate'), 'birthdate')
                 ->sortable()
                 ->rules('required', 'date', 'before:today'),
 
-            HasMany::make('Family Members', 'familyMembers'),
+            BelongsTo::make(__('columns.restaurant'), 'restaurant', Restaurant::class),
 
-            MorphMany::make('Comments', 'comments', Comment::class),
+            HasMany::make(__('columns.family_members'), 'familyMembers', FamilyMember::class),
 
-            MorphMany::make('Logs', 'logs', Log::class),
+            MorphMany::make(__('columns.comments'), 'comments', Comment::class),
 
-            DateTime::make('Created At')
+            MorphMany::make(__('columns.logs'), 'logs', Log::class),
+
+            DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
                 ->exceptOnForms(),
 
-            DateTime::make('Updated At')
+            DateTime::make(__('columns.updated_at' ), 'updated_at')
                 ->sortable()
                 ->exceptOnForms(),
         ];
@@ -102,14 +106,42 @@ class Customer extends Resource
     protected function columnsFilterFields(Request $request): array
     {
         return [
-            'id' => true,
-            'name' => true,
-            'surname' => true,
-            'phone' => true,
-            'email' => true,
-            'birthdate' => true,
-            'created_at' => false,
-            'updated_at' => false,
+            'id' => [
+                'label' => __('columns.id'),
+                'checked' => true
+            ],
+            'name' => [
+                'label' => __('columns.name'),
+                'checked' => true
+            ],
+            'surname' => [
+                'label' => __('columns.surname'),
+                'checked' => true
+            ],
+            'phone' => [
+                'label' => __('columns.phone'),
+                'checked' => true,
+            ],
+            'email' => [
+                'label' => __('columns.email'),
+                'checked' => true,
+            ],
+            'birthdate' => [
+                'label' => __('columns.birthdate'),
+                'checked' => true,
+            ],
+            'restaurant' => [
+                'label' => __('columns.restaurant'),
+                'checked' => false
+            ],
+            'created_at' => [
+                'label' => __('columns.created_at'),
+                'checked' => false
+            ],
+            'updated_at' => [
+                'label' => __('columns.updated_at'),
+                'checked' => false
+            ],
         ];
     }
 }

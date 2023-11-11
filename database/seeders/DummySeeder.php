@@ -4,22 +4,27 @@ namespace Database\Seeders;
 
 use App\Enums\FamilyRelation;
 use App\Enums\UserRole;
+use App\Enums\Weekday;
+use App\Enums\WeightUnit;
 use App\Models\Customer;
 use App\Models\FamilyMember;
+use App\Models\Holiday;
 use App\Models\Menu;
 use App\Models\Morphs\Category;
-use App\Models\Morphs\Media;
 use App\Models\Product;
+use App\Models\ProductVariant;
+use App\Models\Restaurant;
+use App\Models\Schedule;
 use App\Models\Service;
 use App\Models\Space;
 use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
-use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 
 /**
  * Class DummySeeder.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class DummySeeder extends Seeder
 {
@@ -27,10 +32,12 @@ class DummySeeder extends Seeder
      * Seed the database for testing.
      *
      * @return void
-     * @throws FileDoesNotExist|FileIsTooBig
      */
     public function run(): void
     {
+        $this->seedRestaurants();
+        $this->seedSchedules();
+        $this->seedHolidays();
         $this->seedUsers();
         $this->seedCustomers();
         $this->seedTickets();
@@ -40,28 +47,111 @@ class DummySeeder extends Seeder
     }
 
     /**
+     * Seed restaurants.
+     *
+     * @return void
+     */
+    public function seedRestaurants(): void
+    {
+        Restaurant::factory()
+            ->withSlug('first')
+            ->create([
+                'name' => 'First',
+                'country' => 'Ukraine',
+                'city' => 'Mynai',
+                'place' => 'Vul. Kozatsʹka, 2',
+                'popularity' => 3,
+            ]);
+
+        Restaurant::factory()
+            ->withSlug('second')
+            ->create([
+                'name' => 'Second',
+                'country' => 'Ukraine',
+                'city' => 'Uzhhorod',
+                'place' => 'Sobranetsʹka St, 179А',
+                'popularity' => 2,
+            ]);
+    }
+
+    /**
+     * Seed schedules.
+     *
+     * @return void
+     */
+    public function seedSchedules(): void
+    {
+        Restaurant::query()
+            ->each(function (Restaurant $restaurant) {
+                foreach (Weekday::getValues() as $weekday) {
+                    Schedule::factory()
+                        ->withRestaurant($restaurant)
+                        ->withWeekday($weekday)
+                        ->withRestaurant($restaurant)
+                        ->create(['beg_hour' => 6, 'end_hour' => 22]);
+                }
+            });
+    }
+
+    /**
+     * Seed schedules.
+     *
+     * @return void
+     */
+    public function seedHolidays(): void
+    {
+        $dates = [
+            now()->setMonths(1)->setDay(1),
+            now()->setMonths(3)->setDay(8),
+            now()->setMonths(8)->setDay(24),
+            now()->setMonths(12)->setDay(31),
+        ];
+
+        Restaurant::query()
+            ->each(function (Restaurant $restaurant) use ($dates) {
+                foreach ($dates as $date) {
+                    Holiday::factory()
+                        ->withRestaurant($restaurant)
+                        ->withDate($date)
+                        ->create();
+                }
+            });
+    }
+
+    /**
      * Seed users.
      *
      * @return void
      */
     public function seedUsers(): void
     {
-        User::factory()
-            ->withRole(UserRole::Admin())
-            ->create([
-                'name' => 'Admin Admins',
-                'email' => 'admin@email.com',
-                'password' => 'pa$$w0rd',
-                'remember_token' => 'admin-remember-token',
-            ]);
-        User::factory()
-            ->withRole(UserRole::Manager())
-            ->create([
-                'name' => 'Manager Managers',
-                'email' => 'manager@email.com',
-                'password' => 'pa$$w0rd',
-                'remember_token' => 'manager-remember-token',
-            ]);
+        Restaurant::query()
+            ->each(function (Restaurant $restaurant) {
+                User::factory()
+                    ->withRole(UserRole::Admin())
+                    ->withRestaurant($restaurant)
+                    ->create([
+                        'name' => $restaurant->name . ' Admin',
+                        'email' => $restaurant->slug . '-admin@email.com',
+                        'password' => 'pa$$w0rd',
+                        'remember_token' => 'admin',
+                        'metadata' => json_encode([
+                            'isPreviewOnly' => true,
+                        ])
+                    ]);
+                User::factory()
+                    ->withRole(UserRole::Manager())
+                    ->withRestaurant($restaurant)
+                    ->create([
+                        'name' => $restaurant->name . ' Manager',
+                        'email' => $restaurant->slug . '-manager@email.com',
+                        'password' => 'pa$$w0rd',
+                        'remember_token' => 'manager',
+                        'metadata' => json_encode([
+                            'isPreviewOnly' => true,
+                        ])
+                    ]);
+            });
     }
 
     /**
@@ -141,18 +231,12 @@ class DummySeeder extends Seeder
      */
     public function seedTickets(): void
     {
-        /** @var Media $workdayMedia */
-        $workdayMedia = Media::query()
-            ->folder('/media/categories/')
-            ->name('workday.svg')
-            ->first();
         $workdayCategory = Category::factory()->create([
             'slug' => 'work-day-tickets',
             'target' => slugClass(Ticket::class),
             'title' => 'Work Day Tickets',
             'description' => 'Tickets that are available from Monday to Thursday.',
         ]);
-        $workdayCategory->attachMedia($workdayMedia);
 
         $ticket = Ticket::factory()->create([
             'title' => 'Child workday ticket',
@@ -168,18 +252,12 @@ class DummySeeder extends Seeder
         ]);
         $ticket->attachCategories($workdayCategory);
 
-        /** @var Media $weekendMedia */
-        $weekendMedia = Media::query()
-            ->folder('/media/categories/')
-            ->name('weekend.svg')
-            ->first();
         $weekendCategory = Category::factory()->create([
             'slug' => 'weekend-tickets',
             'target' => slugClass(Ticket::class),
             'title' => 'Weekend Tickets',
             'description' => 'Tickets that are available from Friday to Sunday.',
         ]);
-        $weekendCategory->attachMedia($weekendMedia);
 
         $ticket = Ticket::factory()->create([
             'title' => 'Child weekend ticket',
@@ -203,18 +281,12 @@ class DummySeeder extends Seeder
      */
     public function seedServices(): void
     {
-        /** @var Media $indoorsMedia */
-        $indoorsMedia = Media::query()
-            ->folder('/media/categories/')
-            ->name('indoor.svg')
-            ->first();
         $indoorsCategory = Category::factory()->create([
             'slug' => 'indoors',
             'target' => slugClass(Service::class),
             'title' => 'Indoors',
             'description' => null,
         ]);
-        $indoorsCategory->attachMedia($indoorsMedia);
 
         $service = Service::factory()->create([
             'title' => 'Clown Show',
@@ -229,18 +301,12 @@ class DummySeeder extends Seeder
         ]);
         $service->attachCategories($indoorsCategory);
 
-        /** @var Media $outdoorsMedia */
-        $outdoorsMedia = Media::query()
-            ->folder('/media/categories/')
-            ->name('outdoor.svg')
-            ->first();
         $outdoorsCategory = Category::factory()->create([
             'slug' => 'outdoors',
             'target' => slugClass(Service::class),
             'title' => 'Outdoors',
             'description' => null,
         ]);
-        $outdoorsCategory->attachMedia($outdoorsMedia);
 
         $service = Service::factory()->create([
             'title' => 'Fire Show',
@@ -264,31 +330,19 @@ class DummySeeder extends Seeder
      */
     public function seedSpaces(): void
     {
-        /** @var Media $roomsMedia */
-        $roomsMedia = Media::query()
-            ->folder('/media/defaults/')
-            ->name('door.svg')
-            ->first();
         $roomsCategory = Category::factory()->create([
             'slug' => 'rooms',
             'target' => slugClass(Space::class),
             'title' => 'Rooms',
             'description' => null,
         ]);
-        $roomsCategory->attachMedia($roomsMedia);
 
-        /** @var Media $tablesMedia */
-        $tablesMedia = Media::query()
-            ->folder('/media/defaults/')
-            ->name('table.svg')
-            ->first();
         $tablesCategory = Category::factory()->create([
             'slug' => 'tables',
             'target' => slugClass(Space::class),
             'title' => 'Tables',
             'description' => null,
         ]);
-        $tablesCategory->attachMedia($tablesMedia);
 
         for ($i = 1; $i <= 2; $i++) {
             for ($j = 1; $j <= 5; $j++) {
@@ -298,7 +352,6 @@ class DummySeeder extends Seeder
                     'number' => $j,
                     'price' => 0.0,
                 ]);
-                $table->attachMedia($tablesMedia);
                 $table->attachCategories($tablesCategory);
 
                 if ($j <= 3) {
@@ -308,7 +361,6 @@ class DummySeeder extends Seeder
                         'number' => $j,
                         'price' => rand(1, 10) * 10,
                     ]);
-                    $room->attachMedia($roomsMedia);
                     $room->attachCategories($roomsCategory);
                 }
             }
@@ -322,18 +374,28 @@ class DummySeeder extends Seeder
      */
     public function seedProducts(): void
     {
-        $kitchen = Menu::factory()->create([
-            'title' => 'Kitchen',
-            'description' => null,
-        ]);
+        $restaurant = Restaurant::query()
+            ->where('slug', 'first')
+            ->firstOrFail();
+
+        $kitchen = Menu::factory()
+            ->withRestaurant($restaurant)
+            ->create([
+                'title' => 'Kitchen',
+                'description' => null,
+            ]);
+
         $this->seedPizza($kitchen);
         $this->seedSoups($kitchen);
         $this->seedDesserts($kitchen);
 
-        $bar = Menu::factory()->create([
-            'title' => 'Bar',
-            'description' => null,
-        ]);
+        $bar = Menu::factory()
+            ->withRestaurant($restaurant)
+            ->create([
+                'title' => 'Bar',
+                'description' => null,
+            ]);
+
         $this->seedCocktails($bar);
     }
 
@@ -346,47 +408,72 @@ class DummySeeder extends Seeder
      */
     public function seedPizza(Menu $kitchen): void
     {
-        /** @var Media $pizzaMedia */
-        $pizzaMedia = Media::query()
-            ->folder('/media/categories/')
-            ->name('pizza.svg')
-            ->first();
         $pizzaCategory = Category::factory()->create([
             'slug' => 'pizza',
             'target' => slugClass(Product::class),
             'title' => 'Pizza',
             'description' => null,
+            'restaurant_id' => $kitchen->restaurant_id,
         ]);
-        $pizzaCategory->attachMedia($pizzaMedia);
 
-        $product = Product::factory()->withMenu($kitchen)->create([
+        $product = Product::factory()->create([
             'title' => 'Margarita',
             'description' => 'The simplest and probably most iconic Italian pizza.'
                 . ' Ingredients: dough, mozzarella, tomato paste, basil, oregano.',
             'price' => 125,
-            'weight' => 480,
+            'weight' => 28,
+            'weight_unit' => WeightUnit::Centimeter,
+            'restaurant_id' => $kitchen->restaurant_id,
         ]);
-        $product->attachMedia($pizzaMedia);
         $product->attachCategories($pizzaCategory);
+        $product->menus()->attach($kitchen->id);
 
-        $product = Product::factory()->withMenu($kitchen)->create([
+        ProductVariant::factory()
+            ->withProduct($product)
+            ->create([
+                'price' => 200,
+                'weight' => 36,
+                'weight_unit' => WeightUnit::Centimeter,
+            ]);
+
+        ProductVariant::factory()
+            ->withProduct($product)
+            ->create([
+                'price' => 295,
+                'weight' => 42,
+                'weight_unit' => WeightUnit::Centimeter,
+            ]);
+
+        $product = Product::factory()->create([
             'title' => 'Romana',
             'description' => 'Ingredients: dough, mozzarella, ham, tomato paste, arugula.',
             'price' => 130,
             'weight' => 420,
+            'weight_unit' => WeightUnit::Gram,
+            'restaurant_id' => $kitchen->restaurant_id,
         ]);
-        $product->attachMedia($pizzaMedia);
         $product->attachCategories($pizzaCategory);
+        $product->menus()->attach($kitchen->id);
 
-        $product = Product::factory()->withMenu($kitchen)->create([
+        $product = Product::factory()->create([
             'title' => 'Four Cheese',
             'description' => 'Ingredients: dough, tomato sauce, mozzarella, gorgonzola'
                 . ', Parmigiano Reggiano, goat cheese',
             'price' => 160,
-            'weight' => 450,
+            'weight' => 28,
+            'weight_unit' => WeightUnit::Centimeter,
+            'restaurant_id' => $kitchen->restaurant_id,
         ]);
-        $product->attachMedia($pizzaMedia);
         $product->attachCategories($pizzaCategory);
+        $product->menus()->attach($kitchen->id);
+
+        ProductVariant::factory()
+            ->withProduct($product)
+            ->create([
+                'price' => 300,
+                'weight' => 40,
+                'weight_unit' => WeightUnit::Centimeter,
+            ]);
     }
 
     /**
@@ -398,34 +485,33 @@ class DummySeeder extends Seeder
      */
     public function seedSoups(Menu $kitchen): void
     {
-        /** @var Media $soupsMedia */
-        $soupsMedia = Media::query()
-            ->folder('/media/categories/')
-            ->name('soup.svg')
-            ->first();
         $soupsCategory = Category::factory()->create([
             'slug' => 'soups',
             'target' => slugClass(Product::class),
             'title' => 'Soups',
             'description' => null,
+            'restaurant_id' => $kitchen->restaurant_id,
         ]);
-        $soupsCategory->attachMedia($soupsMedia);
 
-        $product = Product::factory()->withMenu($kitchen)->create([
+        $product = Product::factory()->create([
             'title' => 'Tomato Soup',
             'price' => 80,
             'weight' => 300,
+            'weight_unit' => WeightUnit::Gram,
+            'restaurant_id' => $kitchen->restaurant_id,
         ]);
-        $product->attachMedia($soupsMedia);
         $product->attachCategories($soupsCategory);
+        $product->menus()->attach($kitchen->id);
 
-        $product = Product::factory()->withMenu($kitchen)->create([
+        $product = Product::factory()->create([
             'title' => 'Celery Soup',
             'price' => 95,
             'weight' => 350,
+            'weight_unit' => WeightUnit::Gram,
+            'restaurant_id' => $kitchen->restaurant_id,
         ]);
-        $product->attachMedia($soupsMedia);
         $product->attachCategories($soupsCategory);
+        $product->menus()->attach($kitchen->id);
     }
 
     /**
@@ -437,34 +523,33 @@ class DummySeeder extends Seeder
      */
     public function seedDesserts(Menu $kitchen): void
     {
-        /** @var Media $dessertsMedia */
-        $dessertsMedia = Media::query()
-            ->folder('/media/categories/')
-            ->name('croissant.svg')
-            ->first();
         $dessertsCategory = Category::factory()->create([
             'slug' => 'desserts',
             'target' => slugClass(Product::class),
             'title' => 'Desserts',
             'description' => null,
+            'restaurant_id' => $kitchen->restaurant_id,
         ]);
-        $dessertsCategory->attachMedia($dessertsMedia);
 
-        $product = Product::factory()->withMenu($kitchen)->create([
+        $product = Product::factory()->create([
             'title' => 'Tiramisu',
             'price' => 75,
             'weight' => 150,
+            'weight_unit' => WeightUnit::Gram,
+            'restaurant_id' => $kitchen->restaurant_id,
         ]);
-        $product->attachMedia($dessertsMedia);
         $product->attachCategories($dessertsCategory);
+        $product->menus()->attach($kitchen->id);
 
-        $product = Product::factory()->withMenu($kitchen)->create([
+        $product = Product::factory()->create([
             'title' => 'Panna Cotta',
             'price' => 60,
             'weight' => 120,
+            'weight_unit' => WeightUnit::Gram,
+            'restaurant_id' => $kitchen->restaurant_id,
         ]);
-        $product->attachMedia($dessertsMedia);
         $product->attachCategories($dessertsCategory);
+        $product->menus()->attach($kitchen->id);
     }
 
     /**
@@ -476,65 +561,71 @@ class DummySeeder extends Seeder
      */
     public function seedCocktails(Menu $bar): void
     {
-        /** @var Media $alcoholicMedia */
-        $alcoholicMedia = Media::query()
-            ->folder('/media/categories/')
-            ->name('alcoholic.svg')
-            ->first();
         $alcoholicCategory = Category::factory()->create([
             'slug' => 'alcoholic',
             'target' => slugClass(Product::class),
             'title' => 'Alcoholic',
             'description' => null,
+            'restaurant_id' => $bar->restaurant_id,
         ]);
-        $alcoholicCategory->attachMedia($alcoholicMedia);
 
-        $product = Product::factory()->withMenu($bar)->create([
+        $product = Product::factory()->create([
             'title' => 'Martini',
             'price' => 85,
             'weight' => 120,
+            'weight_unit' => WeightUnit::Milliliter,
+            'restaurant_id' => $bar->restaurant_id,
         ]);
-        $product->attachMedia($alcoholicMedia);
         $product->attachCategories($alcoholicCategory);
+        $product->menus()->attach($bar->id);
 
-        $product = Product::factory()->withMenu($bar)->create([
+        $product = Product::factory()->create([
             'title' => 'Pear Mimosa',
             'description' => 'Champagne and pear nectar combine in a delicate drink.',
             'price' => 72,
             'weight' => 170,
+            'weight_unit' => WeightUnit::Milliliter,
+            'restaurant_id' => $bar->restaurant_id,
         ]);
-        $product->attachMedia($alcoholicMedia);
         $product->attachCategories($alcoholicCategory);
+        $product->menus()->attach($bar->id);
 
-        /** @var Media $nonalcoholicMedia */
-        $nonalcoholicMedia = Media::query()
-            ->folder('/media/categories/')
-            ->name('non-alcoholic.svg')
-            ->first();
         $nonalcoholicCategory = Category::factory()->create([
             'slug' => 'non-alcoholic',
             'target' => slugClass(Product::class),
             'title' => 'Non-alcoholic',
             'description' => null,
+            'restaurant_id' => $bar->restaurant_id,
         ]);
-        $nonalcoholicCategory->attachMedia($nonalcoholicMedia);
 
-        $product = Product::factory()->withMenu($bar)->create([
+        $product = Product::factory()->create([
             'title' => 'Mojito',
             'description' => 'Iced Sprite with mint, lime and lemon.',
             'price' => 45,
             'weight' => 250,
+            'weight_unit' => WeightUnit::Milliliter,
+            'restaurant_id' => $bar->restaurant_id,
         ]);
-        $product->attachMedia($nonalcoholicMedia);
         $product->attachCategories($nonalcoholicCategory);
+        $product->menus()->attach($bar->id);
 
-        $product = Product::factory()->withMenu($bar)->create([
+        ProductVariant::factory()
+            ->withProduct($product)
+            ->create([
+                'price' => 70,
+                'weight' => 400,
+                'weight_unit' => WeightUnit::Milliliter,
+            ]);
+
+        $product = Product::factory()->create([
             'title' => 'Iced Tea With Plums and Thyme',
             'description' => 'Served nonalcoholic fruit-and-herb blend sipper.',
             'price' => 30,
             'weight' => 200,
+            'weight_unit' => WeightUnit::Milliliter,
+            'restaurant_id' => $bar->restaurant_id,
         ]);
-        $product->attachMedia($nonalcoholicMedia);
         $product->attachCategories($nonalcoholicCategory);
+        $product->menus()->attach($bar->id);
     }
 }

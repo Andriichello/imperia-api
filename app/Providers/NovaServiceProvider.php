@@ -3,21 +3,21 @@
 namespace App\Providers;
 
 use Andriichello\Marketplace\Marketplace;
-use Andriichello\Media\Media;
+use App\Models\Banquet;
+use App\Models\User;
 use App\Nova\Dashboards\Main;
 use App\Nova\Tools\BackupTool;
 use App\Nova\Tools\MediaTool;
+use App\Subscribers\NovaSubscriber;
+use Badinansoft\LanguageSwitch\LanguageSwitch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Nova\Cards\Help;
 use Laravel\Nova\Menu\Menu;
-use Laravel\Nova\Menu\MenuGroup;
 use Laravel\Nova\Menu\MenuItem;
 use Laravel\Nova\Menu\MenuSection;
-use Laravel\Nova\Menu\MenuSeparator;
 use Laravel\Nova\Nova;
 use Laravel\Nova\NovaApplicationServiceProvider;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class NovaServiceProvider.
@@ -35,38 +35,100 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     {
         parent::boot();
 
-        $tools = $this->tools();
+        Nova::serving(function () {
+            Banquet::observe(NovaSubscriber::class);
+        });
 
-        Nova::mainMenu(function (Request $request, Menu $menu) use ($tools) {
+        Nova::userTimezone(function (Request $request) {
+            $user = $request->user();
+
+            if ($user instanceof User) {
+                return $user->restaurant?->timezone;
+            }
+
+            return null;
+        });
+
+        Nova::footer(function () {
+            return '<p class="mt-8 text-center text-xs text-80">'
+                . '&copy; 2023 Imperia - By Andrii Prykhodko.'
+                . '<br> <a class="link-default" href = "mailto: andriichello@gmail.com">andriichello@gmail.com</a>'
+                . '</p>';
+        });
+
+        Nova::mainMenu(function (Request $request, Menu $menu) {
             $sections = [
                 Marketplace::section($request),
-                MenuSection::make('Offers', [
+                MenuSection::make(__('Offers'), [
                     MenuItem::resource(\App\Nova\Banquet::class),
                     MenuItem::resource(\App\Nova\Order::class),
                 ])->icon('briefcase')->collapsable(),
-                MenuSection::make('People', [
+                MenuSection::make(__('People'), [
+                    MenuItem::resource(\App\Nova\User::class),
                     MenuItem::resource(\App\Nova\Customer::class),
                     MenuItem::resource(\App\Nova\FamilyMember::class),
                 ])->icon('user')->collapsable(),
-                MenuSection::make('Items', [
+                MenuSection::make(__('Items'), [
                     MenuItem::resource(\App\Nova\Menu::class),
                     MenuItem::resource(\App\Nova\Product::class),
                     MenuItem::resource(\App\Nova\Ticket::class),
                     MenuItem::resource(\App\Nova\Space::class),
                     MenuItem::resource(\App\Nova\Service::class),
                 ])->icon('collection')->collapsable(),
-                MenuSection::make('Attachments', [
+                MenuSection::make(__('Attachments'), [
                     MenuItem::resource(\App\Nova\Category::class),
+                    MenuItem::resource(\App\Nova\Tag::class),
                     MenuItem::resource(\App\Nova\Discount::class),
                     MenuItem::resource(\App\Nova\Comment::class),
+                    MenuItem::resource(\App\Nova\Alteration::class),
                     MenuItem::resource(\App\Nova\Log::class),
                     MenuItem::resource(\App\Nova\Notification::class),
                 ])->icon('paper-clip')->collapsable(),
+                MenuSection::make(__('Restaurants'), [
+                    MenuItem::resource(\App\Nova\Restaurant::class),
+                    MenuItem::resource(\App\Nova\Schedule::class),
+                    MenuItem::resource(\App\Nova\Holiday::class),
+                    MenuItem::resource(\App\Nova\RestaurantReview::class),
+                ])->icon('library')->collapsable(),
             ];
 
-            if ($request->user() && $request->user()->isAdmin()) {
-                $sections[] = MediaTool::section($request);
-                $sections[] = BackupTool::section($request);
+            $user = $request->user();
+
+            if ($user instanceof User) {
+                if ($user->isPreviewOnly()) {
+                    $sections = [
+                        MenuSection::make(__('nova.dashboard.restaurants'), [
+                            MenuItem::resource(\App\Nova\Restaurant::class),
+                            MenuItem::resource(\App\Nova\RestaurantReview::class),
+                        ])->icon('library')->collapsable(),
+                        MenuSection::make(__('nova.dashboard.items'), [
+                            MenuItem::resource(\App\Nova\Menu::class),
+                            MenuItem::resource(\App\Nova\Product::class),
+                            MenuItem::resource(\App\Nova\Category::class),
+                            MenuItem::resource(\App\Nova\Tag::class),
+                            MenuItem::resource(\App\Nova\Alteration::class),
+                        ])->icon('collection')->collapsable(),
+                        MenuSection::make(__('nova.dashboard.orders'), [
+                            MenuItem::resource(\App\Nova\Banquet::class),
+                            MenuItem::resource(\App\Nova\Order::class),
+                        ])->icon('briefcase')->collapsable(),
+                        MenuSection::make(__('nova.dashboard.users'), [
+                            MenuItem::resource(\App\Nova\User::class),
+                            MenuItem::resource(\App\Nova\Customer::class),
+                        ])->icon('user')->collapsable(),
+                    ];
+                }
+            }
+
+            /** @var User|null $user */
+            $user = $request->user();
+
+            if ($user && $user->isAdmin()) {
+                $sections[] = MediaTool::section($request, __('nova.dashboard.media'));
+
+                if (!$user->isPreviewOnly()) {
+                    $sections[] = BackupTool::section($request);
+                }
             }
 
             return $sections;
@@ -87,18 +149,18 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     }
 
     /**
-     * Register the Nova gate.
-     *
-     * This gate determines who can access Nova in non-local environments.
+     * Configure the Nova authorization services.
      *
      * @return void
      */
-    protected function gate()
+    protected function authorization(): void
     {
-        Gate::define('viewNova', function ($user) {
-            return in_array($user->email, [
-                //
-            ]);
+        Nova::auth(function ($request) {
+            /** @var User $user */
+            $user = Nova::user($request);
+
+            return $user->isStaff() &&
+                Gate::check('viewNova', $user);
         });
     }
 
@@ -135,8 +197,9 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     {
         return [
             new Marketplace(),
-            new MediaTool(),
+            new MediaTool(__('nova.dashboard.media')),
             new BackupTool(),
+            new LanguageSwitch(),
         ];
     }
 

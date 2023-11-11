@@ -5,6 +5,7 @@ namespace App\Http\Requests\User;
 use App\Http\Requests\Crud\UpdateRequest;
 use App\Models\User;
 use Illuminate\Contracts\Validation\Validator;
+use OpenApi\Annotations as OA;
 
 /**
  * Class UpdateUserRequest.

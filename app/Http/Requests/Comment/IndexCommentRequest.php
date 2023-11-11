@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Comment;
 
 use App\Http\Requests\Crud\IndexRequest;
+use OpenApi\Annotations as OA;
 use Spatie\QueryBuilder\AllowedFilter;
 
 /**

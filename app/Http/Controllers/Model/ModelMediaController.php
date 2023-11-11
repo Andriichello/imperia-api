@@ -11,6 +11,7 @@ use App\Models\BaseModel;
 use App\Models\Interfaces\MediableInterface;
 use Exception;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use OpenApi\Annotations as OA;
 
 /**
  * Class ModelMediaController.

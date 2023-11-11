@@ -86,7 +86,7 @@ trait WithSpatie
      */
     public function getAllowedFilters(): array
     {
-        return $this->allowedAppends;
+        return $this->allowedFilters;
     }
 
     /**
@@ -111,9 +111,9 @@ trait WithSpatie
         $builder = $builder instanceof SpatieBuilder ? $builder : SpatieBuilder::for($builder);
 
         return $builder->allowedFields($this->getAllowedFields())
+            // todo: handle allowed appends
             ->allowedSorts($this->getAllowedSorts())
             ->allowedFilters($this->getAllowedFilters())
-            ->allowedAppends($this->getAllowedAppends())
             ->allowedIncludes($this->getAllowedIncludes());
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Order;
 
 use App\Http\Requests\Crud\UpdateRequest;
+use OpenApi\Annotations as OA;
 
 /**
  * Class UpdateOrderRequest.

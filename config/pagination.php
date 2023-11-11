@@ -6,13 +6,13 @@ return [
      * The maximum number of results that will be returned
      * when using the paginator.
      */
-    'max_results' => 50,
+    'max_results' => 500,
 
     /*
      * The default number of results that will be returned
      * when using the paginator.
      */
-    'default_size' => 10,
+    'default_size' => 100,
 
     /*
      * The key of the page[x] query string parameter for page number.

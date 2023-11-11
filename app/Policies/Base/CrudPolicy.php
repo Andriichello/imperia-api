@@ -83,13 +83,13 @@ abstract class CrudPolicy implements CrudPolicyInterface
     /**
      * Perform pre-authorization checks.
      *
-     * @param User $user
+     * @param User|null $user
      * @param string $ability
      *
      * @return Response|bool|null
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function before(User $user, string $ability): Response|bool|null
+    public function before(?User $user, string $ability): Response|bool|null
     {
         return null;
     }
@@ -110,5 +110,34 @@ abstract class CrudPolicy implements CrudPolicyInterface
         }
 
         return !$target->isStaff() && $user->isStaff();
+    }
+
+    /**
+     * Determines if user has the rights to interact with
+     * target model in context of the user's restaurant.
+     *
+     * @param User $user
+     * @param Model $target
+     *
+     * @return bool
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function restaurantCheck(User $user, Model $target): bool
+    {
+        if ($user->isAdmin() && !$user->restaurant_id) {
+            return true;
+        }
+
+        $attributes = $target->only('restaurant_id');
+
+        if (empty($attributes)) {
+            return true;
+        }
+
+        if (!$attributes['restaurant_id']) {
+            return false;
+        }
+
+        return $user->restaurant_id === $attributes['restaurant_id'];
     }
 }

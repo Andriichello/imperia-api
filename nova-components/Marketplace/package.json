@@ -17,6 +17,6 @@
         "vue-loader": "^16.8.3"
     },
     "dependencies": {
-        "vue-horizontal": "^0.8.12"
+        "vuex": "^4.0.2"
     }
 }

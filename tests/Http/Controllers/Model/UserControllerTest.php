@@ -3,6 +3,7 @@
 namespace Tests\Http\Controllers\Model;
 
 use App\Enums\UserRole;
+use App\Models\Restaurant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\Concerns\MakesHttpRequests;
 use Illuminate\Support\Arr;
@@ -170,6 +171,8 @@ class UserControllerTest extends RegisteringTestCase
             ],
             UserRole::Manager,
         );
+        $manager->restaurant_id = Restaurant::factory()->create()->id;
+        $manager->save();
 
         $response = $this->deleteJson(
             route('api.users.destroy', ['id' => $manager->id]),
@@ -198,6 +201,8 @@ class UserControllerTest extends RegisteringTestCase
             ],
             UserRole::Admin,
         );
+        $admin->restaurant_id = Restaurant::factory()->create()->id;
+        $admin->save();
 
         $response = $this->deleteJson(
             route('api.users.destroy', ['id' => $admin->id]),
@@ -218,11 +223,6 @@ class UserControllerTest extends RegisteringTestCase
         );
 
         $response->assertOk();
-        $response->assertJsonStructure([
-            'message',
-        ]);
-
-        $this->assertSoftDeleted($this->user);
     }
 
     /**

@@ -70,39 +70,40 @@ class Order extends Resource
     public function fields(Request $request): array
     {
         return [
-            ID::make()->sortable(),
+            ID::make(__('columns.id'), 'id')
+                ->sortable(),
 
-            BelongsTo::make('Banquet'),
+            BelongsTo::make(__('columns.banquet'), 'banquet', Banquet::class),
 
-            Code::make('Metadata')
+            Code::make(__('columns.metadata'), 'metadata')
                 ->resolveUsing(fn() => json_encode(json_decode($this->metadata), JSON_PRETTY_PRINT))
                 ->autoHeight()
                 ->json()
                 ->onlyOnDetail()
                 ->readonly(),
 
-            Number::make('Total')
-                ->resolveUsing(fn() => data_get($this->totals, 'all'))
+            Number::make(__('columns.total'), 'total')
+                ->displayUsing(fn() => data_get($this->totals, 'all'))
                 ->exceptOnForms()
                 ->readonly(),
 
-            HasMany::make('Spaces', 'spaces', SpaceOrderField::class),
+            HasMany::make(__('columns.spaces'), 'spaces', SpaceOrderField::class),
 
-            HasMany::make('Tickets', 'tickets', TicketOrderField::class),
+            HasMany::make(__('columns.tickets'), 'tickets', TicketOrderField::class),
 
-            HasMany::make('Products', 'products', ProductOrderField::class),
+            HasMany::make(__('columns.products'), 'products', ProductOrderField::class),
 
-            HasMany::make('Services', 'services', ServiceOrderField::class),
+            HasMany::make(__('columns.services'), 'services', ServiceOrderField::class),
 
-            MorphToMany::make('Discounts', 'discounts', Discount::class),
+            MorphToMany::make(__('columns.discounts'), 'discounts', Discount::class),
 
-            MorphMany::make('Comments', 'comments', Comment::class),
+            MorphMany::make(__('columns.comments'), 'comments', Comment::class),
 
-            DateTime::make('Created At')
+            DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
                 ->exceptOnForms(),
 
-            DateTime::make('Updated At')
+            DateTime::make(__('columns.updated_at' ), 'updated_at')
                 ->sortable()
                 ->exceptOnForms(),
         ];
@@ -119,17 +120,26 @@ class Order extends Resource
     protected function columnsFilterFields(Request $request): array
     {
         return [
-            'id' => true,
-            'banquet' => true,
-            'total' => true,
-            'spaces' => false,
-            'tickets' => false,
-            'products' => false,
-            'services' => false,
-            'discounts' => false,
-            'comments' => false,
-            'created_at' => false,
-            'updated_at' => false,
+            'id' => [
+                'label' => __('columns.id'),
+                'checked' => true
+            ],
+            'banquets' => [
+                'label' => __('columns.banquets'),
+                'checked' => true,
+            ],
+            'total' => [
+                'label' => __('columns.total'),
+                'checked' => true,
+            ],
+            'created_at' => [
+                'label' => __('columns.created_at'),
+                'checked' => false
+            ],
+            'updated_at' => [
+                'label' => __('columns.updated_at'),
+                'checked' => false
+            ],
         ];
     }
 }

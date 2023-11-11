@@ -6,6 +6,7 @@ use App\Http\Requests\Crud\UpdateRequest;
 use App\Models\Morphs\Media;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\Rule;
+use OpenApi\Annotations as OA;
 
 /**
  * Class UpdateMediaRequest.
@@ -104,7 +105,8 @@ class UpdateMediaRequest extends UpdateRequest
      *   @OA\Property(property="description", type="string", nullable="true"),
      *   @OA\Property(property="folder", type="string", example="/media/",
      *     description="Must start and end with the `/`."),
-     *   @OA\Property(property="metadata", type="object", nullable="true", example="{}"),
+     *   @OA\Property(property="metadata", nullable="true",
+     *     ref ="#/components/schemas/MediaMetadata"),
      *  )
      */
 }

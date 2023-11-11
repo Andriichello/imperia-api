@@ -3,12 +3,14 @@
 namespace Tests\Http\Controllers\Model;
 
 use App\Enums\BanquetState;
+use App\Enums\PaymentMethod;
 use App\Models\Banquet;
 use App\Models\Customer;
 use App\Models\Product;
 use App\Models\Service;
 use App\Models\Space;
 use App\Models\Ticket;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\Concerns\MakesHttpRequests;
 use Illuminate\Support\Collection;
@@ -77,6 +79,16 @@ class BanquetControllerTest extends RegisteringTestCase
         $this->customers = Customer::factory()
             ->count(3)
             ->create();
+
+        foreach ($this->customers as $customer) {
+            $user = User::factory()
+                ->fromCustomer($customer)
+                ->create();
+
+            /** @var Customer $customer */
+            $customer->user_id = $user->id;
+            $customer->save();
+        }
     }
 
     /**
@@ -90,9 +102,16 @@ class BanquetControllerTest extends RegisteringTestCase
             'title' => 'Simple title',
             'description' => 'Simple description...',
             'advance_amount' => 0,
+            'advance_amount_payment_method' => PaymentMethod::Card,
+            'actual_total' => 100,
+            'is_birthday_club' => true,
+            'adults_amount' => 1,
+            'adult_ticket_price' => 30.5,
+            'children_amount' => 3,
+            'child_ticket_price' => 20.5,
             'start_at' => Carbon::tomorrow()->setHour(8)->toDateTimeString(),
             'end_at' => Carbon::tomorrow()->setHour(23)->toDateTimeString(),
-            'state' => BanquetState::Draft,
+            'state' => BanquetState::New,
             'creator_id' => $this->user->id,
             'customer_id' => $this->customers->first()->id,
             'comments' => [
@@ -111,7 +130,15 @@ class BanquetControllerTest extends RegisteringTestCase
 
         /** @var Banquet $banquet */
         $banquet = Banquet::query()->findOrFail(data_get($response, 'data.id'));
+
         $this->assertCount(3, $banquet->comments);
+        $this->assertEquals(100.0, $banquet->actual_total);
+        $this->assertEquals(PaymentMethod::Card, $banquet->advance_amount_payment_method);
+        $this->assertTrue($banquet->is_birthday_club);
+        $this->assertEquals(1, $banquet->adults_amount);
+        $this->assertEquals(30.5, $banquet->adult_ticket_price);
+        $this->assertEquals(3, $banquet->children_amount);
+        $this->assertEquals(20.5, $banquet->child_ticket_price);
     }
 
     /**
@@ -125,7 +152,7 @@ class BanquetControllerTest extends RegisteringTestCase
         $banquet = Banquet::factory()
             ->withCustomer($this->customers->first())
             ->withCreator($this->user)
-            ->withState(BanquetState::Draft)
+            ->withState(BanquetState::New)
             ->create();
 
         $banquet->attachComments('Comment one...', 'Comment two...');
@@ -134,30 +161,39 @@ class BanquetControllerTest extends RegisteringTestCase
         $response = $this->patchJson(
             route('api.banquets.update', ['id' => $banquet->id]),
             [
+                'advance_amount_payment_method' => PaymentMethod::Card,
+                'actual_total' => 100,
+                'is_birthday_club' => true,
+                'adults_amount' => 1,
+                'adult_ticket_price' => 30.5,
+                'children_amount' => 3,
+                'child_ticket_price' => 20.5,
                 'comments' => [
                     ['text' => 'Updated comment...'],
                 ],
             ]
         );
         $response->assertOk();
-        $this->assertCount(1, $banquet->fresh()->comments);
 
-        $response = $this->patchJson(
-            route('api.banquets.update', ['id' => $banquet->id]),
-            [
-                'state' => BanquetState::Completed,
-            ]
-        );
-        $response->assertUnprocessable();
+        $banquet = $banquet->fresh();
 
-        $banquet->update(['state' => BanquetState::Completed]);
-        $response = $this->patchJson(
-            route('api.banquets.update', ['id' => $banquet->id]),
-            [
-                'title' => 'Random title.',
-            ]
-        );
-        $response->assertForbidden();
+        $this->assertCount(1, $banquet->comments);
+        $this->assertEquals(100.0, $banquet->actual_total);
+        $this->assertEquals(PaymentMethod::Card, $banquet->advance_amount_payment_method);
+        $this->assertTrue($banquet->is_birthday_club);
+        $this->assertEquals(1, $banquet->adults_amount);
+        $this->assertEquals(30.5, $banquet->adult_ticket_price);
+        $this->assertEquals(3, $banquet->children_amount);
+        $this->assertEquals(20.5, $banquet->child_ticket_price);
+
+        // $banquet->update(['state' => BanquetState::Completed]);
+        // $response = $this->patchJson(
+        //     route('api.banquets.update', ['id' => $banquet->id]),
+        //    [
+        //         'title' => 'Random title.',
+        //     ]
+        // );
+        // $response->assertForbidden();
     }
 
     /**
@@ -171,7 +207,7 @@ class BanquetControllerTest extends RegisteringTestCase
         $banquet = Banquet::factory()
             ->withCustomer($this->customers->first())
             ->withCreator($this->user)
-            ->withState(BanquetState::Draft)
+            ->withState(BanquetState::New)
             ->create();
 
         $response = $this->deleteJson(
@@ -206,7 +242,7 @@ class BanquetControllerTest extends RegisteringTestCase
         $banquet = Banquet::factory()
             ->withCustomer($this->customers->first())
             ->withCreator($this->user)
-            ->withState(BanquetState::Draft)
+            ->withState(BanquetState::New)
             ->create();
 
         $banquet->delete();

@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Enums\UserRole;
 use App\Models\Customer;
+use App\Models\Restaurant;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
@@ -41,6 +42,7 @@ class UserFactory extends Factory
             'password' => 'pa$$w0rd',
             'remember_token' => Str::random(10),
             'email_verified_at' => now(),
+            'metadata' => '{"isPreviewOnly": false}',
         ];
     }
 
@@ -95,6 +97,25 @@ class UserFactory extends Factory
                         'email' => $customer->email,
                     ]
                 );
+            }
+        );
+    }
+
+    /**
+     * Indicate user's restaurant.
+     *
+     * @param Restaurant|int|null $restaurant
+     *
+     * @return static
+     */
+    public function withRestaurant(Restaurant|int|null $restaurant): static
+    {
+        return $this->state(
+            function (array $attributes) use ($restaurant) {
+                $attributes['restaurant_id'] = is_int($restaurant)
+                    ? $restaurant : $restaurant?->id;
+
+                return $attributes;
             }
         );
     }

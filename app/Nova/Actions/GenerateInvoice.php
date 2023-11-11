@@ -2,6 +2,7 @@
 
 namespace App\Nova\Actions;
 
+use App\Helpers\Objects\Signature;
 use App\Helpers\SignatureHelper;
 use App\Models\Banquet;
 use App\Models\Orders\Order;
@@ -10,6 +11,7 @@ use Exception;
 use Illuminate\Support\Collection;
 use Laravel\Nova\Actions\Action;
 use Laravel\Nova\Fields\ActionFields;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 /**
@@ -46,10 +48,28 @@ class GenerateInvoice extends Action
         }
 
         if (isset($id)) {
-            $signature = (new SignatureHelper())
-                ->make(request()->user(), Carbon::now()->addDay());
+            $path = "api/orders/{$model->id}/invoice/pdf";
 
-            $path = "/api/orders/{$model->id}/invoice/pdf";
+            $signature = (new Signature())
+                ->setUserId(request()->user()->id)
+                ->setPath($path);
+
+            $availability = $fields->get('availability', 0);
+            switch ($availability) {
+                case 1:
+                    $signature->setExpiration(Carbon::now()->addDay());
+                    break;
+                case 2:
+                    $signature->setExpiration(Carbon::now()->addWeek());
+                    break;
+                case 3:
+                    $signature->setExpiration(Carbon::now()->addMonth());
+                    break;
+            }
+
+            $helper = new SignatureHelper();
+            $signature = $helper->encrypt($signature);
+
             $query = http_build_query(compact('signature'));
 
             $url = url("$path?$query");
@@ -70,6 +90,15 @@ class GenerateInvoice extends Action
      */
     public function fields(NovaRequest $request): array
     {
-        return [];
+        return [
+            Select::make('Availability', 'availability')
+                ->default(0)
+                ->options([
+                    0 => __('Forever'),
+                    1 => __('Day'),
+                    2 => __('Week'),
+                    3 => __('Month'),
+                ]),
+        ];
     }
 }

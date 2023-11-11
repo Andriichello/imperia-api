@@ -19,7 +19,12 @@ class OrderSubscriberTest extends TestCase
     {
         parent::setUp();
 
-        $this->banquet = Banquet::factory()->create();
+        $this->banquet = Banquet::factory()
+            ->create();
+
+        Order::factory()
+            ->withBanquet($this->banquet)
+            ->create();
     }
 
     /**
@@ -34,8 +39,7 @@ class OrderSubscriberTest extends TestCase
 
         $this->assertNotEmpty($this->banquet->fresh()->totals);
 
-        $order = Order::factory()->withBanquet($this->banquet)->create();
-        $order->forceDelete();
+        $this->banquet->order->delete();
 
         $this->assertEmpty($this->banquet->fresh()->totals);
 
@@ -45,10 +49,10 @@ class OrderSubscriberTest extends TestCase
 
         $this->app->instance(OrderSubscriber::class, $subscriber);
 
-        $order = Order::factory()->withBanquet($this->banquet)->create();
+        $order = Order::factory()->create();
         $order->forceDelete();
 
-        $order = Order::factory()->withBanquet($this->banquet)->create();
+        $order = Order::factory()->create();
         $order->delete();
     }
 }

@@ -21,17 +21,19 @@ use Illuminate\Support\Collection;
  * Class Customer.
  *
  * @property int|null $user_id
+ * @property int|null $restaurant_id
  * @property string $name
  * @property string $surname
  * @property string $fullName
- * @property string $phone
- * @property string $email
+ * @property string|null $phone
+ * @property string|null $email
  * @property Carbon|null $birthdate
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  *
  * @property User|null $user
+ * @property Restaurant|null $restaurant
  * @property Banquet[]|Collection $banquets
  * @property FamilyMember[]|Collection $familyMembers
  *
@@ -54,6 +56,7 @@ class Customer extends BaseModel implements
      * @var string[]
      */
     protected $fillable = [
+        'restaurant_id',
         'name',
         'surname',
         'phone',
@@ -77,6 +80,7 @@ class Customer extends BaseModel implements
      */
     protected $relations = [
         'user',
+        'restaurant',
         'banquets',
         'familyMembers',
     ];
@@ -99,6 +103,16 @@ class Customer extends BaseModel implements
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    /**
+     * Related restaurant.
+     *
+     * @return BelongsTo
+     */
+    public function restaurant(): BelongsTo
+    {
+        return $this->belongsTo(Restaurant::class, 'restaurant_id', 'id');
     }
 
     /**

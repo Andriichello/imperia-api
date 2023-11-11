@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\App;
 class HttpsProtocol
 {
     /**
-     * Enforce HTTPS in production environment.
+     * Enforce HTTPS in production and staging environments.
      *
      * @param Request $request
      * @param Closure $next
@@ -21,7 +21,7 @@ class HttpsProtocol
      */
     public function handle(Request $request, Closure $next): mixed
     {
-        if (!$request->secure() && App::environment() === 'production') {
+        if (!$request->secure() && in_array(App::environment(), ['production', 'staging', 'dev'])) {
             return redirect()->secure($request->getRequestUri());
         }
 

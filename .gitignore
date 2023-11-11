@@ -4,6 +4,7 @@
 /storage/*.key
 /vendor
 auth.json
+google-cloud.json
 .env
 .env.backup
 .phpunit.result.cache

@@ -16,19 +16,25 @@ use App\Queries\TicketQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\TicketFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 
 /**
- * Class Space.
+ * Class Ticket.
  *
+ * @property int|null $restaurant_id
+ * @property string|null $slug
  * @property string $title
  * @property string|null $description
  * @property float $price
  * @property bool $archived
+ * @property int|null $popularity
  * @property string|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
+ *
+ * @property Restaurant|null $restaurant
  *
  * @method static TicketQueryBuilder query()
  * @method static TicketFactory factory(...$parameters)
@@ -53,10 +59,13 @@ class Ticket extends BaseModel implements
      * @var string[]
      */
     protected $fillable = [
+        'restaurant_id',
+        'slug',
         'title',
         'description',
         'price',
         'archived',
+        'popularity',
         'metadata',
     ];
 
@@ -86,7 +95,18 @@ class Ticket extends BaseModel implements
     protected $relations = [
         'media',
         'categories',
+        'restaurant',
     ];
+
+    /**
+     * Restaurant associated with the model.
+     *
+     * @return BelongsTo
+     */
+    public function restaurant(): BelongsTo
+    {
+        return $this->belongsTo(Restaurant::class);
+    }
 
     /**
      * @param DatabaseBuilder $query

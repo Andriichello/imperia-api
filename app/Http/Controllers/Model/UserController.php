@@ -18,6 +18,7 @@ use App\Policies\UserPolicy;
 use App\Queries\UserQueryBuilder;
 use App\Repositories\UserRepository;
 use Illuminate\Http\JsonResponse;
+use OpenApi\Annotations as OA;
 
 /**
  * Class UserController.
@@ -83,7 +84,7 @@ class UserController extends CrudController
      */
     public function me(MeUserRequest $request): JsonResponse
     {
-        return $this->asResourceResponse($request->user());
+        return $this->handleShow($request);
     }
 
     /**
@@ -93,6 +94,9 @@ class UserController extends CrudController
      *   operationId="me",
      *   security={{"bearerAuth": {}}},
      *   tags={"users"},
+     *
+     *   @OA\Parameter(name="include", in="query",
+     *     @OA\Schema(ref ="#/components/schemas/MeIncludes")),
      *
      *   @OA\Response(
      *     response=200,
@@ -174,6 +178,12 @@ class UserController extends CrudController
      *   )
      * ),
      *
+     *  @OA\Schema(
+     *   schema="MeIncludes",
+     *   description="Coma-separated list of inluded relations.
+    Available relations: `customer`",
+     *   type="string", example="customer"
+     * ),
      * @OA\Schema(
      *   schema="MeResponse",
      *   description="Get me response object.",

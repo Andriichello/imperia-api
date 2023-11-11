@@ -2,10 +2,12 @@
 
 namespace App\Nova\Options;
 
+use App\Models\Interfaces\AlterableInterface;
 use App\Models\Interfaces\CategorizableInterface;
 use App\Models\Interfaces\CommentableInterface;
 use App\Models\Interfaces\DiscountableInterface;
 use App\Models\Interfaces\LoggableInterface;
+use App\Models\Interfaces\TaggableInterface;
 use App\Providers\MorphServiceProvider;
 use Illuminate\Support\Arr;
 
@@ -50,7 +52,31 @@ class MorphOptions extends Options
             static::getMorphClassToSlugMap(),
             fn(string $class) => Arr::has(class_implements($class), $interfaces),
         );
-        return array_flip(MorphServiceProvider::getMorphMap($implementing));
+
+        return array_map(
+            fn(string $option) => __('columns.' . $option) ?? $option,
+            array_flip(MorphServiceProvider::getMorphMap($implementing))
+        );
+    }
+
+    /**
+     * Get options for alterable classes.
+     *
+     * @return array
+     */
+    public static function alterable(): array
+    {
+        return static::thatImplement(AlterableInterface::class);
+    }
+
+    /**
+     * Get options for taggable classes.
+     *
+     * @return array
+     */
+    public static function taggable(): array
+    {
+        return static::thatImplement(TaggableInterface::class);
     }
 
     /**

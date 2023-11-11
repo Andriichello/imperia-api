@@ -54,7 +54,8 @@ class Comment extends Resource
     public function fields(Request $request): array
     {
         return [
-            ID::make()->sortable(),
+            ID::make(__('columns.id'), 'id')
+                ->sortable(),
 
             Text::make('Text')
                 ->rules('required', 'min:1', 'max:255'),
@@ -62,11 +63,11 @@ class Comment extends Resource
             MorphTo::make('Commentable')
                 ->exceptOnForms(),
 
-            DateTime::make('Created At')
+            DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
                 ->exceptOnForms(),
 
-            DateTime::make('Updated At')
+            DateTime::make(__('columns.updated_at' ), 'updated_at')
                 ->sortable()
                 ->exceptOnForms(),
         ];
@@ -83,11 +84,26 @@ class Comment extends Resource
     protected function columnsFilterFields(Request $request): array
     {
         return [
-            'id' => true,
-            'text' => true,
-            'commentable' => true,
-            'created_at' => false,
-            'updated_at' => false,
+            'id' => [
+                'label' => __('columns.id'),
+                'checked' => true
+            ],
+            'text' => [
+                'label' => __('columns.text'),
+                'checked' => true,
+            ],
+            'commentable' => [
+                'label' => __('columns.commentable'),
+                'checked' => true,
+            ],
+            'created_at' => [
+                'label' => __('columns.created_at'),
+                'checked' => false
+            ],
+            'updated_at' => [
+                'label' => __('columns.updated_at'),
+                'checked' => false
+            ],
         ];
     }
 }

@@ -1,8 +1,8 @@
 <template>
   <div>
-    <Head title="Media"/>
+    <Head title="Зображення"/>
 
-    <Heading class="mb-6">Media</Heading>
+    <Heading class="mb-6">Зображення</Heading>
 
     <Card class="media-card" v-if="!view.item">
       <div class="media-actions">
@@ -10,19 +10,19 @@
           <button
             class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center font-bold px-4 h-9 text-sm flex-shrink-0"
             @click="toggleMode()">
-            {{ selections.mode === 'select' ? 'Selecting' : 'Viewing' }}
+            {{ selections.mode === 'select' ? 'Режим вибору' : 'Режим перегляду' }}
           </button>
-          <button
-            class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center font-bold px-4 h-9 text-sm flex-shrink-0"
-            v-show="selections.mode === 'select'"
-            @click="toggleSelectAll()">
-            All
-          </button>
+<!--          <button-->
+<!--            class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center font-bold px-4 h-9 text-sm flex-shrink-0"-->
+<!--            v-show="selections.mode === 'select'"-->
+<!--            @click="toggleSelectAll()">-->
+<!--            Обрати всі-->
+<!--          </button>-->
           <button
             class="shadow relative bg-red-500 hover:bg-red-400 text-white cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 shadow relative bg-red-500 hover:bg-red-400 text-white"
             v-show="selections.items.length"
             @click="deleteFiles()">
-            Delete {{ '(' + selections.items.length + ')' }}
+            Видалити {{ '(' + selections.items.length + ')' }}
           </button>
         </div>
 
@@ -30,7 +30,7 @@
           class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center font-bold px-4 h-9 text-sm flex-shrink-0">
           <input id="upload-file-input" type="file" accept="image/*"
                  hidden multiple @change="uploadFiles"/>
-          Upload
+          Нове зображення
         </label>
 
         <!--                <button-->
@@ -47,11 +47,10 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
             </svg>
-            <input type="search" placeholder="Search by name"
+            <input type="search" placeholder="Пошук"
                    class="appearance-none rounded-full h-8 pl-10 w-full bg-gray-100 dark:bg-gray-900 dark:focus:bg-gray-800 focus:bg-white focus:outline-none focus:ring focus:ring-primary-200 dark:focus:ring-gray-600"
                    aria-label="Search" aria-expanded="false" spellcheck="false"
-                   v-model="filters.name" @keyup.enter="fetchItems()"
-                   @keyup.esc="filters.name = ''; fetchItems()">
+                   v-model="searchFilter" @keypress.enter.prevent>
           </div>
 
           <!--                    <div class="relative media-filters-input">-->
@@ -92,11 +91,23 @@
       <div class="media-list">
         <div class="media-list-item" v-for="item in items ? items.data : []"
              @click="selections.mode === 'view' ? viewItem(item) : toggleSelect(item)">
-          <img class="media-list-item-img" :class="{'media-list-selection': selections.items.includes(item)}"
-               :alt="item.title ?? item.name" :src="item.url"/>
+
+          <template v-if="item.extension.includes('svg')">
+            <img class="media-list-item-img"
+                 :class="{'media-list-selection': selections.items.includes(item)}"
+                 :src="item.url" :alt="item.title ?? item.name"/>
+          </template>
+
+          <template v-else>
+            <img class="media-list-item-img" ng-class="media-view-img"
+                 :class="{'media-list-selection': selections.items.includes(item)}"
+                 :alt="item.title ?? item.name" :src="item.url"/>
+          </template>
+
           <span class="media-list-item-name">
-                            {{ item.title ?? item.name }}
-                    </span>
+            {{ item.title ?? item.name }}
+          </span>
+
         </div>
       </div>
 
@@ -142,14 +153,14 @@
 
         <div style="display: flex; justify-content: end; flex-grow: 1; flex-basis: 150px;">
                     <span v-if="items.data.length" class="text-sm text-80 px-4 ml-auto">
-                        {{ items.meta.from }}-{{ items.meta.to }} of {{ items.meta.total }}
+                        {{ items.meta.from }}-{{ items.meta.to }} з {{ items.meta.total }}
                     </span>
         </div>
       </nav>
 
       <div class="media-no-results" v-if="items && (!items.data || !items.data.length)">
                 <span class="media-no-results-text">
-                    No results...
+                    Список порожній...
                 </span>
       </div>
     </Card>
@@ -160,7 +171,7 @@
           <button
             class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center font-bold px-4 h-9 text-sm flex-shrink-0"
             @click="closeItem()">
-            Back
+            Назад
           </button>
         </div>
 
@@ -169,7 +180,7 @@
             class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center font-bold px-4 h-9 text-sm flex-shrink-0">
             <input id="replace-file-input" type="file" accept="image/*"
                    hidden @change="replaceFiles"/>
-            Replace
+            Замінити іншим
           </label>
         </div>
       </div>
@@ -198,7 +209,7 @@
           <div class="field-wrapper flex flex-col border-b border-gray-100 dark:border-gray-700 md:flex-row">
             <div class="px-6 md:px-8 mt-2 md:mt-0 w-full md:w-1/5 md:py-5">
               <label class="inline-block pt-2 leading-tight" for="item-name">
-                Name
+                Назва файлу
               </label>
             </div>
             <div class="mt-1 md:mt-0 pb-5 px-6 md:px-8 w-full md:w-3/5 md:py-5">
@@ -210,7 +221,7 @@
           <div class="field-wrapper flex flex-col border-b border-gray-100 dark:border-gray-700 md:flex-row">
             <div class="px-6 md:px-8 mt-2 md:mt-0 w-full md:w-1/5 md:py-5">
               <label class="inline-block pt-2 leading-tight" for="item-title">
-                Title
+                Назва зображення
               </label>
             </div>
             <div class="mt-1 md:mt-0 pb-5 px-6 md:px-8 w-full md:w-3/5 md:py-5">
@@ -222,7 +233,7 @@
           <div class="field-wrapper flex flex-col border-b border-gray-100 dark:border-gray-700 md:flex-row">
             <div class="px-6 md:px-8 mt-2 md:mt-0 w-full md:w-1/5 md:py-5">
               <label class="inline-block pt-2 leading-tight" for="item-description">
-                Description
+                Опис
               </label>
             </div>
             <div class="mt-1 md:mt-0 pb-5 px-6 md:px-8 w-full md:w-3/5 md:py-5">
@@ -234,7 +245,7 @@
           <div class="field-wrapper flex flex-col border-b border-gray-100 dark:border-gray-700 md:flex-row">
             <div class="px-6 md:px-8 mt-2 md:mt-0 w-full md:w-1/5 md:py-5">
               <label class="inline-block pt-2 leading-tight" for="item-extension">
-                Extension
+                Розширення файлу
               </label>
             </div>
             <div class="mt-1 md:mt-0 pb-5 px-6 md:px-8 w-full md:w-3/5 md:py-5">
@@ -246,7 +257,7 @@
           <div class="field-wrapper flex flex-col border-b border-gray-100 dark:border-gray-700 md:flex-row">
             <div class="px-6 md:px-8 mt-2 md:mt-0 w-full md:w-1/5 md:py-5">
               <label class="inline-block pt-2 leading-tight" for="item-disk">
-                Disk
+                Диск
               </label>
             </div>
             <div class="mt-1 md:mt-0 pb-5 px-6 md:px-8 w-full md:w-3/5 md:py-5">
@@ -258,7 +269,7 @@
           <div class="field-wrapper flex flex-col border-b border-gray-100 dark:border-gray-700 md:flex-row">
             <div class="px-6 md:px-8 mt-2 md:mt-0 w-full md:w-1/5 md:py-5">
               <label class="inline-block pt-2 leading-tight" for="item-disk">
-                Folder
+                Папка
               </label>
             </div>
             <div class="mt-1 md:mt-0 pb-5 px-6 md:px-8 w-full md:w-3/5 md:py-5">
@@ -271,7 +282,7 @@
             <div class="px-6 md:px-8 mt-2 md:mt-0 w-full md:w-1/5 md:py-5">
               <label class="media-view-link inline-block pt-2 leading-tight" for="item-url">
                 <a id="item-url" :href="view.item.url" target="_blank">
-                  Url
+                  Посилання
                 </a>
               </label>
             </div>
@@ -291,12 +302,12 @@
           <button
             class="shadow relative bg-red-500 hover:bg-red-400 text-white cursor-pointer rounded text-sm font-bold focus:outline-none focus:ring ring-primary-200 dark:ring-gray-600 inline-flex items-center justify-center h-9 px-3 shadow relative bg-red-500 hover:bg-red-400 text-white"
             @click="deleteItem()">
-            Delete
+            Видалити
           </button>
           <button
             class="flex-shrink-0 shadow rounded focus:outline-none ring-primary-200 dark:ring-gray-600 focus:ring bg-primary-500 hover:bg-primary-400 active:bg-primary-600 text-white dark:text-gray-800 inline-flex items-center font-bold px-4 h-9 text-sm flex-shrink-0"
             @click="updateItem()">
-            Update
+            Оновити
           </button>
         </div>
       </div>
@@ -306,7 +317,13 @@
 </template>
 
 <script>
+import Card from '../../../../../vendor/laravel/nova/resources/js/components/Card'
+import {debounce} from "lodash";
+
 export default {
+  components: {
+    Card,
+  },
   data() {
     return {
       items: null,
@@ -336,6 +353,7 @@ export default {
         createdAt: null,
         updatedAt: '-',
       },
+      searchFilter: '',
       filters: {
         name: '',
         extension: '',
@@ -355,6 +373,13 @@ export default {
   mounted() {
     this.fetchItems();
   },
+  watch: {
+    searchFilter: debounce(
+      function (newVal) {
+        this.fetchItems();
+      }, 350
+    ),
+  },
   methods: {
     fetchItemsQuery(page, size) {
       const url = `/nova-vendor/media/items`;
@@ -371,6 +396,9 @@ export default {
         query += `&sort=` + sorts.join(',');
       }
 
+      if (this.searchFilter && this.searchFilter.length) {
+        query += `&filter[search]=${this.searchFilter}`
+      }
       if (this.filters.name) {
         query += `&filter[name]=${this.filters.name}`
       }
@@ -447,6 +475,10 @@ export default {
       this.view.item = null;
     },
     deleteItem() {
+      if (!confirm('Видалити зобреження?')) {
+        return;
+      }
+
       this.delete.done = 0;
       this.delete.total = 1;
       this.delete.items = [this.view.item];
@@ -476,7 +508,7 @@ export default {
 
     replaceFinish() {
       this.replace.loading = false;
-      Nova.$toasted.success(`Replaced: ${this.replace.done}/${this.replace.total}`);
+      Nova.$toasted.success(`Замінено: ${this.replace.done}/${this.replace.total}`);
 
       this.fetchItems();
     },
@@ -533,7 +565,7 @@ export default {
 
     uploadFinish() {
       this.upload.loading = false;
-      Nova.$toasted.success(`Uploaded: ${this.upload.done}/${this.upload.total}`);
+      Nova.$toasted.success(`Завантажено: ${this.upload.done}/${this.upload.total}`);
 
       this.fetchItems();
     },
@@ -590,7 +622,7 @@ export default {
 
     deleteFinish() {
       this.delete.loading = false;
-      Nova.$toasted.success(`Deleted: ${this.delete.done}/${this.delete.total}`);
+      Nova.$toasted.success(`Видалено: ${this.delete.done}/${this.delete.total}`);
 
       this.fetchItems();
 
@@ -622,6 +654,10 @@ export default {
         });
     },
     deleteFiles() {
+      if (!confirm('Видалити вибрані зобреження?')) {
+        return;
+      }
+
       this.delete.done = 0;
       this.delete.items = this.selections.items;
       this.delete.total = this.delete.items.length;
@@ -678,8 +714,8 @@ export default {
 .media-view-details-row {
   display: flex;
   flex-direction: row;
-  justify-content: start;
-  align-items: start;
+  justify-content: flex-start;
+  align-items: flex-start;
   flex-wrap: wrap;
 }
 
@@ -736,7 +772,7 @@ export default {
 .media-actions-group {
   display: flex;
   flex-direction: row;
-  justify-content: start;
+  justify-content: flex-start;
   align-items: center;
   gap: 4px;
 }
@@ -770,7 +806,7 @@ export default {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: stretch;
-  align-items: start;
+  align-items: flex-start;
   gap: 8px;
   padding: 16px 16px 16px 16px;
 }
@@ -778,7 +814,7 @@ export default {
 .media-list-item {
   display: flex;
   flex-direction: column;
-  justify-content: start;
+  justify-content: flex-start;
   align-items: center;
   gap: 2px;
 }

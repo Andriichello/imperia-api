@@ -68,7 +68,7 @@ class CommentQueryBuilder extends BaseQueryBuilder
      */
     public function fromBanquets(Banquet|int ...$banquets): static
     {
-        $ids = $this->extract('id', $banquets);
+        $ids = $this->extract('id', ...$banquets);
 
         $this->whereWrapped(function (CommentQueryBuilder $query) use ($ids) {
             $query->forClasses(Banquet::class)
@@ -110,7 +110,7 @@ class CommentQueryBuilder extends BaseQueryBuilder
      */
     public function fromOrders(Order|int ...$orders): static
     {
-        $ids = $this->extract('id', $orders);
+        $ids = $this->extract('id', ...$orders);
 
         $this->whereWrapped(function (CommentQueryBuilder $query) use ($ids) {
             $query->forClasses(Order::class)
@@ -174,7 +174,7 @@ class CommentQueryBuilder extends BaseQueryBuilder
      */
     public function fromOrderFields(string $class, Model|int ...$fields): static
     {
-        $ids = $this->extract('id', $fields);
+        $ids = $this->extract('id', ...$fields);
 
         $this->whereWrapped(function (CommentQueryBuilder $query) use ($class, $ids) {
             $query->forClasses($class)->whereCommentableId($ids);

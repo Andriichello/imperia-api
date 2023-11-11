@@ -51,7 +51,8 @@ class TicketOrderField extends Resource
     public function fields(Request $request): array
     {
         return [
-            ID::make()->sortable(),
+            ID::make(__('columns.id'), 'id')
+                ->sortable(),
 
             BelongsTo::make('Order'),
 
@@ -69,11 +70,11 @@ class TicketOrderField extends Resource
 
             MorphMany::make('Comments', 'comments', Comment::class),
 
-            DateTime::make('Created At')
+            DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
                 ->exceptOnForms(),
 
-            DateTime::make('Updated At')
+            DateTime::make(__('columns.updated_at' ), 'updated_at')
                 ->sortable()
                 ->exceptOnForms(),
         ];
@@ -90,14 +91,30 @@ class TicketOrderField extends Resource
     protected function columnsFilterFields(Request $request): array
     {
         return [
-            'id' => true,
-            'order' => true,
-            'ticket' => true,
-            'amount' => true,
-            'discounts' => false,
-            'comments' => false,
-            'created_at' => false,
-            'updated_at' => false,
+            'id' => [
+                'label' => __('columns.id'),
+                'checked' => true,
+            ],
+            'order' => [
+                'label' => __('columns.order'),
+                'checked' => true,
+            ],
+            'ticket' => [
+                'label' => __('columns.ticket'),
+                'checked' => true,
+            ],
+            'amount' => [
+                'label' => __('columns.amount'),
+                'checked' => true,
+            ],
+            'created_at' => [
+                'label' => __('columns.created_at'),
+                'checked' => false,
+            ],
+            'updated_at' => [
+                'label' => __('columns.updated_at'),
+                'checked' => false,
+            ],
         ];
     }
 }

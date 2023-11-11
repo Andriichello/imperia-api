@@ -2,11 +2,14 @@
 
 namespace App\Http\Resources\Product;
 
+use App\Http\Resources\Alternation\AlternationCollection;
 use App\Http\Resources\Category\CategoryCollection;
 use App\Http\Resources\Media\MediaCollection;
+use App\Http\Resources\Tag\TagCollection;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use OpenApi\Annotations as OA;
 
 /**
  * Class ProductResource.
@@ -33,12 +36,18 @@ class ProductResource extends JsonResource
             'description' => $this->description,
             'price' => $this->price,
             'weight' => $this->weight,
-            'menu_id' => $this->menu_id,
+            'weight_unit' => $this->weight_unit,
+            'badge' => $this->badge,
             'archived' => $this->archived,
+            'popularity' => $this->popularity,
+            'variants' => new ProductVariantCollection($this->variants),
             'categories' => new CategoryCollection($this->whenLoaded('categories')),
             'category_ids' => $categoryIds,
+            'tags' => new TagCollection($this->whenLoaded('tags')),
             'media' => new MediaCollection($this->media),
-            'default_media' => new MediaCollection($this->default_media),
+            'alterations' => new AlternationCollection($this->whenLoaded('alterations')),
+            'pendingAlterations' => new AlternationCollection($this->whenLoaded('pendingAlterations')),
+            'performedAlterations' => new AlternationCollection($this->whenLoaded('performedAlterations')),
         ];
     }
 
@@ -46,20 +55,30 @@ class ProductResource extends JsonResource
      * @OA\Schema(
      *   schema="Product",
      *   description="Product resource object",
-     *   required = {"id", "type", "title", "description", "price", "weight", "menu_id",
-     *      "category_ids", "media", "default_media"},
+     *   required = {"id", "type", "title", "description", "price", "weight", "weight_unit",
+     *      "badge", "archived", "popularity", "variants", "category_ids", "media"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="products"),
      *   @OA\Property(property="title", type="string", example="Margarita"),
-     *   @OA\Property(property="description", type="string", example="Some text..."),
+     *   @OA\Property(property="description", type="string", nullable="true", example="Some text..."),
      *   @OA\Property(property="price", type="float", example=15.99),
-     *   @OA\Property(property="weight", type="float", example=120),
-     *   @OA\Property(property="menu_id", type="integer", example=1),
+     *   @OA\Property(property="weight", type="float", nullable="true", example=120),
+     *   @OA\Property(property="weight_unit", type="string", nullable="true", example="g",
+     *     enum={"g", "kg", "ml", "l", "cm"}),
+     *   @OA\Property(property="badge", type="string", nullable="true", example="New"),
      *   @OA\Property(property="archived", type="boolean", example="false"),
+     *   @OA\Property(property="popularity", type="integer", nullable="true", example="1"),
+     *   @OA\Property(property="variants", type="array", @OA\Items(ref ="#/components/schemas/ProductVariant")),
      *   @OA\Property(property="categories", type="array", @OA\Items(ref ="#/components/schemas/Category")),
      *   @OA\Property(property="category_ids", type="array", @OA\Items(type="integer", example=1)),
+     *   @OA\Property(property="tags", type="array", @OA\Items(ref ="#/components/schemas/Tag")),
      *   @OA\Property(property="media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
-     *   @OA\Property(property="default_media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
+     *   @OA\Property(property="alterations", type="array",
+     *     @OA\Items(ref ="#/components/schemas/Alternation")),
+     *   @OA\Property(property="pendingAlterations", type="array",
+     *     @OA\Items(ref ="#/components/schemas/Alternation")),
+     *   @OA\Property(property="performedAlterations", type="array",
+     *     @OA\Items(ref ="#/components/schemas/Alternation")),
      * )
      */
 }

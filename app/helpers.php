@@ -99,3 +99,23 @@ if (!function_exists('extractValues')) {
         return array_map($closure, $items);
     }
 }
+
+if (!function_exists('translate')) {
+
+    /**
+     * Get translation with a default value.
+     *
+     * @param string $key
+     * @param array $params
+     * @param string|null $default
+     *
+     * @return string|null
+     */
+    function translate(string $key, array $params = [], ?string $default = null): ?string
+    {
+        $translation = trans($key, $params);
+
+        return $key === $translation
+            ? $default : $translation;
+    }
+}

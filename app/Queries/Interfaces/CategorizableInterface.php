@@ -3,7 +3,6 @@
 namespace App\Queries\Interfaces;
 
 use App\Models\Morphs\Category;
-use App\Queries\BaseQueryBuilder;
 
 /**
  * Interface CategorizableInterface.

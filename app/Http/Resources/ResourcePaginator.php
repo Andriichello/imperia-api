@@ -9,6 +9,7 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use OpenApi\Annotations as OA;
 
 /**
  * Class ResourcePaginator.
@@ -126,32 +127,35 @@ class ResourcePaginator extends Paginator
     }
 
     /**
-     * Get pagination size parameter name.
+     * Get pagination parameter name.
      *
      * @return string
      */
-    public function pageSizeParam(): string
+    public function pageParam(): string
     {
-        return sprintf(
-            '%s[%s]',
-            config('pagination.pagination_parameter'),
-            config('pagination.size_parameter'),
-        );
+        return config('pagination.pagination_parameter');
     }
 
     /**
-     * Get pagination number parameter name.
+     * Get pagination page size parameter name.
      *
      * @return string
      */
-    public function pageNumberParam(): string
+    public function sizeParam(): string
     {
-        return sprintf(
-            '%s[%s]',
-            config('pagination.pagination_parameter'),
-            config('pagination.number_parameter'),
-        );
+        return config('pagination.size_parameter');
     }
+
+    /**
+     * Get pagination page number parameter name.
+     *
+     * @return string
+     */
+    public function numberParam(): string
+    {
+        return config('pagination.number_parameter');
+    }
+
 
     /**
      * Get the URL for a given page number.
@@ -163,8 +167,9 @@ class ResourcePaginator extends Paginator
     public function url($page): string
     {
         $params = request()->query->all();
-        $params[$this->pageNumberParam()] = $page;
-        $params[$this->pageSizeParam()] = $this->perPage;
+
+        $params[$this->pageParam()][$this->numberParam()] = $page;
+        $params[$this->pageParam()][$this->sizeParam()] = $this->perPage;
 
         $path = Str::of($this->path())
             ->rtrim('/');

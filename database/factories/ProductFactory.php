@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\Menu;
 use App\Models\Product;
+use App\Models\Restaurant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -34,22 +35,24 @@ class ProductFactory extends Factory
             'description' => $this->faker->sentence(5),
             'price' => $this->faker->randomFloat(2, 10, 100),
             'weight' => $this->faker->randomFloat(2, 100, 1000),
-            'menu_id' => Menu::factory(),
+            'popularity' => rand(0, 100),
         ];
     }
 
     /**
-     * Indicate related menu.
+     * Indicate product's restaurant.
      *
-     * @param Menu $menu
+     * @param Restaurant|int|null $restaurant
      *
      * @return static
      */
-    public function withMenu(Menu $menu): static
+    public function withRestaurant(Restaurant|int|null $restaurant): static
     {
         return $this->state(
-            function (array $attributes) use ($menu) {
-                $attributes['menu_id'] = $menu->id;
+            function (array $attributes) use ($restaurant) {
+                $attributes['restaurant_id'] = is_int($restaurant)
+                    ? $restaurant : $restaurant?->id;
+
                 return $attributes;
             }
         );

@@ -2,20 +2,38 @@
 
 namespace App\Http\Requests\Category;
 
+use App\Http\Filters\RestaurantsFilter;
+use App\Http\Filters\TagsFilter;
 use App\Http\Requests\Crud\IndexRequest;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Query\Builder;
 use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedSort;
+use Spatie\QueryBuilder\QueryBuilder as SpatieBuilder;
 
 /**
  * Class IndexCategoryRequest.
  */
 class IndexCategoryRequest extends IndexRequest
 {
+    public function getAllowedSorts(): array
+    {
+        return array_merge(
+            parent::getAllowedSorts(),
+            [
+                AllowedSort::field('popularity'),
+            ]
+        );
+    }
+
     public function getAllowedFilters(): array
     {
         return array_merge(
             parent::getAllowedFilters(),
             [
                 AllowedFilter::exact('target'),
+                AllowedFilter::custom('tags', new TagsFilter()),
+                AllowedFilter::custom('restaurants', new RestaurantsFilter()),
             ]
         );
     }
@@ -25,7 +43,7 @@ class IndexCategoryRequest extends IndexRequest
         return array_merge(
             parent::getAllowedIncludes(),
             [
-                //
+                'tags',
             ]
         );
     }
@@ -43,5 +61,18 @@ class IndexCategoryRequest extends IndexRequest
                 //
             ]
         );
+    }
+
+    /**
+     * Apply allowed options to spatie builder.
+     *
+     * @param Builder|EloquentBuilder|SpatieBuilder $builder
+     *
+     * @return SpatieBuilder
+     */
+    public function spatieBuilder(SpatieBuilder|EloquentBuilder|Builder $builder): SpatieBuilder
+    {
+        return parent::spatieBuilder($builder)
+            ->defaultSort('-popularity');
     }
 }

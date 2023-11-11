@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Menu;
+use App\Models\Restaurant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -31,6 +32,26 @@ class MenuFactory extends Factory
         return [
             'title' => $this->faker->unique()->sentence(2),
             'description' => $this->faker->sentence(10),
+            'popularity' => rand(0, 100),
         ];
+    }
+
+    /**
+     * Indicate menu's restaurant.
+     *
+     * @param Restaurant|int|null $restaurant
+     *
+     * @return static
+     */
+    public function withRestaurant(Restaurant|int|null $restaurant): static
+    {
+        return $this->state(
+            function (array $attributes) use ($restaurant) {
+                $attributes['restaurant_id'] = is_int($restaurant)
+                    ? $restaurant : $restaurant?->id;
+
+                return $attributes;
+            }
+        );
     }
 }

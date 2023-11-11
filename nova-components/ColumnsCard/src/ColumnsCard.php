@@ -30,6 +30,9 @@ class ColumnsCard extends Card
      */
     public array $settings = [
         'title' => 'Columns',
+        'button' => [
+            'apply' => 'Apply',
+        ],
 
         'cache' => [
             'key' => 'columns-card-fields'
@@ -51,6 +54,7 @@ class ColumnsCard extends Card
     public function __construct(array $settings = [])
     {
         parent::__construct();
+        $this->height = 'auto';
         $this->setSettings($settings);
     }
 
@@ -115,7 +119,10 @@ class ColumnsCard extends Card
             data_set($this->settings, $key, $settings);
         }
         if (is_array($settings)) {
-            $this->settings = $settings;
+            $this->settings = array_merge(
+                $this->settings ?? [],
+                $settings
+            );
         }
         return $this;
     }

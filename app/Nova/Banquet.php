@@ -3,16 +3,17 @@
 namespace App\Nova;
 
 use App\Enums\BanquetState;
-use App\Models\Scopes\ArchivedScope;
 use App\Nova\Actions\CalculateTotals;
 use App\Nova\Actions\GenerateInvoice;
+use App\Nova\Metrics\BanquetActualTotalsPerDay;
+use App\Nova\Metrics\BanquetsPerDay;
+use App\Nova\Metrics\BanquetsPerState;
+use App\Nova\Metrics\BanquetTotalsPerDay;
 use App\Nova\Options\BanquetStateOptions;
-use App\Queries\OrderQueryBuilder;
-use Illuminate\Database\Eloquent\Builder;
+use App\Nova\Options\PaymentMethodOptions;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
-use Jagdeepbanga\NovaDateTime\NovaDateTime;
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasOne;
 use Laravel\Nova\Fields\ID;
@@ -69,6 +70,30 @@ class Banquet extends Resource
     }
 
     /**
+     * Get the cards available for the request.
+     *
+     * @param Request $request
+     *
+     * @return array
+     */
+    public function cards(Request $request): array
+    {
+        return array_merge(
+            [
+                BanquetsPerDay::make()
+                    ->width('1/2'),
+                BanquetsPerState::make()
+                    ->width('1/2'),
+                BanquetTotalsPerDay::make()
+                    ->width('1/2'),
+                BanquetActualTotalsPerDay::make()
+                    ->width('1/2'),
+            ],
+            parent::cards($request)
+        );
+    }
+
+    /**
      * Get the fields displayed by the resource.
      *
      * @param Request $request
@@ -76,64 +101,95 @@ class Banquet extends Resource
      */
     public function fields(Request $request): array
     {
+        /** @var \App\Models\User $user */
+        $user = $request->user();
+
+        $states = [];
+
+        foreach (BanquetStateOptions::available($request, $this->resource) as $state) {
+            $states[$state] = __('enum.state.' . $state);
+        }
+
+        $paymentMethods = [];
+
+        foreach (PaymentMethodOptions::all() as $method) {
+            $paymentMethods[$method] = __('enum.payment_method.' . $method);
+        }
+
         return [
-            ID::make()->sortable(),
+            ID::make(__('columns.id'), 'id')
+                ->sortable(),
 
-            Select::make('State')
+            Select::make(__('columns.state'), 'state')
                 ->rules('required')
-                ->default(BanquetState::Draft)
-                ->options(BanquetStateOptions::available($request, $this->resource)),
+                ->default(BanquetState::New)
+                ->options($states)
+                ->displayUsing(fn($value) => data_get($states, $value)),
 
-            BelongsTo::make('Creator', 'creator', User::class)
+            BelongsTo::make(__('columns.restaurant'), 'restaurant', Restaurant::class)
+                ->default(fn() => $user->restaurant_id)
+                ->nullable(),
+
+            BelongsTo::make(__('columns.creator'), 'creator', User::class)
                 ->withMeta(['belongsToId' => data_get($this->creator ?? $request->user(), 'id')]),
 
-            BelongsTo::make('Customer', 'customer', Customer::class),
+            BelongsTo::make(__('columns.customer'), 'customer', Customer::class),
 
-            HasOne::make('Order'),
+            HasOne::make(__('columns.order'), 'order', Order::class),
 
-            Text::make('Title')
-                ->updateRules('sometimes', 'min:1', 'max:50')
-                ->creationRules('required', 'min:1', 'max:50'),
+            Text::make(__('columns.title'), 'title')
+                ->updateRules('sometimes', 'min:1', 'max:255')
+                ->creationRules('required', 'min:1', 'max:255'),
 
-            Text::make('Description')
+            Text::make(__('columns.description'), 'description')
                 ->rules('nullable', 'min:1', 'max:255'),
 
-            Number::make('Advance Amount')
+            Number::make(__('columns.advance_amount'), 'advance_amount')
                 ->default(0.0)
                 ->step(0.01)
                 ->updateRules('sometimes', 'min:0')
                 ->creationRules('required', 'min:0'),
 
-            Number::make('Total')
-                ->resolveUsing(fn() => data_get($this->totals, 'all'))
+            Select::make(__('columns.advance_amount_payment_method'), 'advance_amount_payment_method')
+                ->options($paymentMethods)
+                ->nullable()
+                ->displayUsing(fn($value) => data_get($paymentMethods, $value ?? 'non-existing')),
+
+            Text::make(__('columns.total'), 'total')
+                ->displayUsing(fn() => data_get($this->totals, 'all'))
                 ->exceptOnForms()
                 ->readonly(),
 
-            NovaDateTime::make('Start At')
-                ->pickerDefaultHour(9)
-                ->pickerDefaultMinute(0)
+            Number::make(__('columns.actual_total'), 'actual_total')
+                ->nullable()
+                ->step(0.01)
+                ->updateRules('sometimes', 'nullable', 'min:0')
+                ->creationRules('sometimes', 'nullable', 'min:0'),
+
+            Boolean::make(__('columns.is_birthday_club'), 'is_birthday_club')
+                ->nullable(),
+
+            DateTime::make(__('columns.start_at'), 'start_at')
                 ->sortable()
                 ->rules('required', 'date'),
 
-            NovaDateTime::make('End At')
-                ->pickerDefaultHour(23)
-                ->pickerDefaultMinute(0)
+            DateTime::make(__('columns.end_at'), 'end_at')
                 ->sortable()
                 ->rules('required', 'date', 'after:start_at'),
 
-            DateTime::make('Paid At')
+            DateTime::make(__('columns.paid_at'), 'paid_at')
                 ->sortable()
                 ->rules('nullable', 'date', 'after:start_at'),
 
-            MorphMany::make('Comments', 'comments', Comment::class),
+            MorphMany::make(__('columns.comments'), 'comments', Comment::class),
 
-            MorphMany::make('Logs', 'logs', Log::class),
+            MorphMany::make(__('columns.logs'), 'logs', Log::class),
 
-            DateTime::make('Created At')
+            DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
                 ->exceptOnForms(),
 
-            DateTime::make('Updated At')
+            DateTime::make(__('columns.updated_at' ), 'updated_at')
                 ->sortable()
                 ->exceptOnForms(),
         ];
@@ -150,21 +206,62 @@ class Banquet extends Resource
     protected function columnsFilterFields(Request $request): array
     {
         return [
-            'id' => true,
-            'state' => true,
-            'creator' => false,
-            'customer' => true,
-            'title' => true,
-            'description' => false,
-            'advance_amount' => true,
-            'total' => true,
-            'start_at' => true,
-            'end_at' => true,
-            'comments' => false,
-            'logs' => false,
-            'paid_at' => false,
-            'created_at' => false,
-            'updated_at' => false,
+            'id' => [
+                'label' => __('columns.id'),
+                'checked' => true
+            ],
+            'state' => [
+                'label' => __('columns.state'),
+                'checked' => true,
+            ],
+            'restaurant' => [
+                'label' => __('columns.restaurant'),
+                'checked' => false,
+            ],
+            'creator' => [
+                'label' => __('columns.creator'),
+                'checked' => false,
+            ],
+            'customer' => [
+                'label' => __('columns.customer'),
+                'checked' => true,
+            ],
+            'title' => [
+                'label' => __('columns.title'),
+                'checked' => false
+            ],
+            'description' => [
+                'label' => __('columns.description'),
+                'checked' => false
+            ],
+            'advance_amount' => [
+                'label' => __('columns.advance_amount'),
+                'checked' => true,
+            ],
+            'total' => [
+                'label' => __('columns.total'),
+                'checked' => true,
+            ],
+            'start_at' => [
+                'label' => __('columns.start_at'),
+                'checked' => true,
+            ],
+            'end_at' => [
+                'label' => __('columns.end_at'),
+                'checked' => true,
+            ],
+            'paid_at' => [
+                'label' => __('columns.paid_at'),
+                'checked' => false,
+            ],
+            'created_at' => [
+                'label' => __('columns.created_at'),
+                'checked' => false
+            ],
+            'updated_at' => [
+                'label' => __('columns.updated_at'),
+                'checked' => false
+            ],
         ];
     }
 }

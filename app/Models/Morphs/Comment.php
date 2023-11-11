@@ -3,9 +3,12 @@
 namespace App\Models\Morphs;
 
 use App\Models\BaseModel;
+use App\Models\Scopes\ArchivedScope;
+use App\Models\Scopes\SoftDeletableScope;
 use App\Queries\CommentQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\Morphs\CommentFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
@@ -55,7 +58,11 @@ class Comment extends BaseModel
      */
     public function commentable(): MorphTo
     {
-        return $this->morphTo('commentable', 'commentable_type', 'commentable_id', 'id');
+        /** @var Builder|MorphTo $morphTo */
+        $morphTo = $this->morphTo('commentable', 'commentable_type', 'commentable_id', 'id');
+        $morphTo->withoutGlobalScopes([ArchivedScope::class, SoftDeletableScope::class]);
+
+        return $morphTo;
     }
 
     /**

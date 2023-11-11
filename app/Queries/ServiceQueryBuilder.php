@@ -2,7 +2,8 @@
 
 namespace App\Queries;
 
-use App\Models\Orders\Order;
+use App\Models\Restaurant;
+use App\Models\User;
 use App\Queries\Interfaces\ArchivableInterface;
 use App\Queries\Interfaces\CategorizableInterface;
 use App\Queries\Traits\Archivable;
@@ -19,14 +20,35 @@ class ServiceQueryBuilder extends BaseQueryBuilder implements
     use Categorizable;
 
     /**
-     * @param Order|int $order
+     * Apply index query conditions.
+     *
+     * @param User $user
      *
      * @return static
      */
-    public function withOrder(Order|int $order): static
+    public function index(User $user): static
     {
-        $orderId = is_int($order) ? $order : $order->id;
-        $this->where('order_id', $orderId);
+        $query = parent::index($user);
+
+        if ($user->restaurant_id) {
+            $query->withRestaurant($user->restaurant_id);
+        }
+
+        return $query;
+    }
+
+    /**
+     * @param Restaurant|int ...$restaurants
+     *
+     * @return static
+     */
+    public function withRestaurant(Restaurant|int ...$restaurants): static
+    {
+        $ids = $this->extract('id', ...$restaurants);
+
+        if (!empty($ids)) {
+            $this->whereIn($this->model->getTable() . '.restaurant_id', $ids);
+        }
 
         return $this;
     }

@@ -26,29 +26,17 @@ class LogPolicy extends CrudPolicy
     /**
      * Perform pre-authorization checks.
      *
-     * @param User $user
+     * @param User|null $user
      * @param string $ability
      *
      * @return Response|bool|null
      */
-    public function before(User $user, string $ability): Response|bool|null
+    public function before(?User $user, string $ability): Response|bool|null
     {
         if (in_array($ability, ['view', 'viewAny'])) {
             return $user->isStaff();
         }
 
         return false;
-    }
-
-    /**
-     * Determine whether the user can view any models.
-     *
-     * @param User $user
-     *
-     * @return bool
-     */
-    public function viewAny(User $user): bool
-    {
-        return $user->isStaff();
     }
 }

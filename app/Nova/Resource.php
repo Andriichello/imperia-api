@@ -6,6 +6,7 @@ use Andriichello\ColumnsCard\HasColumnsFilter;
 use App\Queries\Interfaces\IndexableInterface;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Resource as NovaResource;
 use Laravel\Scout\Builder as ScoutBuilder;
@@ -15,7 +16,33 @@ use Laravel\Scout\Builder as ScoutBuilder;
  */
 abstract class Resource extends NovaResource
 {
-    use HasColumnsFilter;
+    use HasColumnsFilter {
+        HasColumnsFilter::columnsCardSettings as baseCardSetting;
+    }
+
+    /**
+     * Get the displayable label of the resource.
+     *
+     * @return string
+     */
+    public static function label(): string
+    {
+        $label = __('nova.labels.plural.' . Str::afterLast(static::class, '\\'));
+
+        return $label ?? parent::label();
+    }
+
+    /**
+     * Get the displayable singular label of the resource.
+     *
+     * @return string
+     */
+    public static function singularLabel(): string
+    {
+        $label = __('nova.labels.singular.' . Str::afterLast(static::class, '\\'));
+
+        return $label ?? parent::singularLabel();
+    }
 
     /**
      * Build an "index" query for the given resource.
@@ -135,9 +162,36 @@ abstract class Resource extends NovaResource
     protected function columnsFilterFields(Request $request): array
     {
         return [
-            'id' => true,
-            'created_at' => false,
-            'updated_at' => false,
+            'id' => [
+                'label' => __('columns.id'),
+                'checked' => true
+            ],
+            'created_at' => [
+                'label' => __('columns.created_at'),
+                'checked' => false
+            ],
+            'updated_at' => [
+                'label' => __('columns.updated_at'),
+                'checked' => false
+            ],
         ];
+    }
+
+    /**
+     * Get ColumnsCard settings.
+     *
+     * @param Request $request
+     *
+     * @return array
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    protected function columnsCardSettings(Request $request): array
+    {
+        $settings = $this->baseCardSetting($request);
+
+        $settings['title'] = __('columns.columns');
+        $settings['button']['apply'] = __('columns.apply');
+
+        return $settings;
     }
 }

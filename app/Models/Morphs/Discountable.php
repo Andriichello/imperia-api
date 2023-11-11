@@ -3,8 +3,11 @@
 namespace App\Models\Morphs;
 
 use App\Models\BaseModel;
+use App\Models\Scopes\ArchivedScope;
+use App\Models\Scopes\SoftDeletableScope;
 use Carbon\Carbon;
 use Database\Factories\Morphs\DiscountableFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -66,6 +69,10 @@ class Discountable extends BaseModel
      */
     public function discounted(): MorphTo
     {
-        return $this->morphTo('discounted', 'discountable_type', 'discountable_id', 'id');
+        /** @var Builder|MorphTo $morphTo */
+        $morphTo = $this->morphTo('discounted', 'discountable_type', 'discountable_id', 'id');
+        $morphTo->withoutGlobalScopes([ArchivedScope::class, SoftDeletableScope::class]);
+
+        return $morphTo;
     }
 }

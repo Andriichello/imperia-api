@@ -7,6 +7,7 @@ use App\Models\Interfaces\CommentableInterface;
 use App\Models\Interfaces\DiscountableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\Traits\CommentableTrait;
 use App\Models\Traits\DiscountableTrait;
 use App\Models\Traits\SoftDeletableTrait;
@@ -20,14 +21,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @property int $order_id
  * @property int $product_id
+ * @property int|null $variant_id
  * @property int $amount
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  *
+ * @property float $price
  * @property float $total
  * @property Order $order
  * @property Product $product
+ * @property ProductVariant|null $variant
  *
  * @method static ProductOrderFieldFactory factory(...$parameters)
  */
@@ -49,6 +53,7 @@ class ProductOrderField extends BaseModel implements
     protected $fillable = [
         'order_id',
         'product_id',
+        'variant_id',
         'amount',
     ];
 
@@ -58,6 +63,7 @@ class ProductOrderField extends BaseModel implements
      * @var string[]
      */
     protected $appends = [
+        'type',
         'total',
     ];
 
@@ -72,6 +78,16 @@ class ProductOrderField extends BaseModel implements
     }
 
     /**
+     * Product variant associated with the model.
+     *
+     * @return BelongsTo
+     */
+    public function variant(): BelongsTo
+    {
+        return $this->belongsTo(ProductVariant::class, 'variant_id', 'id');
+    }
+
+    /**
      * Order associated with the model.
      *
      * @return BelongsTo
@@ -82,12 +98,24 @@ class ProductOrderField extends BaseModel implements
     }
 
     /**
-     * Accessor for total price of all fields within the model.
+     * Accessor for price of the field.
+     *
+     * @return float
+     */
+    public function getPriceAttribute(): float
+    {
+        return $this->variant_id && $this->variant
+            ? $this->variant->price
+            : $this->product->price;
+    }
+
+    /**
+     * Accessor for total price of the field.
      *
      * @return float
      */
     public function getTotalAttribute(): float
     {
-        return round($this->product->price * $this->amount, 2);
+        return round($this->price * $this->amount, 2);
     }
 }

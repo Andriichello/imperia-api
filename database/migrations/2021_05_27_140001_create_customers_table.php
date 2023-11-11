@@ -17,11 +17,11 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable()
                 ->unique('customers_unique_USER_ID');
-            $table->string('name', 50);
-            $table->string('surname', 50);
+            $table->string('name');
+            $table->string('surname');
             $table->string('phone', 25)->nullable()
                 ->unique('customers_unique_PHONE');
-            $table->string('email', 75)->unique('customers_unique_EMAIL');
+            $table->string('email')->unique('customers_unique_EMAIL');
             $table->date('birthdate')->nullable();
             $table->timestamps();
             $table->softDeletes();

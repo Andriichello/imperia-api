@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -16,7 +17,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        if (in_array($this->app->environment(), ['production', 'staging', 'dev'])) {
+            $this->app->afterResolving(
+                \Illuminate\Contracts\Routing\UrlGenerator::class,
+                function ($urlGenerator) {
+                    /** @var UrlGenerator $urlGenerator */
+                    $urlGenerator->forceScheme('https');
+                }
+            );
+        }
     }
 
     /**

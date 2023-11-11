@@ -5,9 +5,9 @@ namespace App\Enums;
 /**
  * Enum BanquetState.
  *
- * @method static BanquetState Draft()
  * @method static BanquetState New()
- * @method static BanquetState Processing()
+ * @method static BanquetState Confirmed()
+ * @method static BanquetState Postponed()
  * @method static BanquetState Cancelled()
  * @method static BanquetState Completed()
  *
@@ -15,9 +15,9 @@ namespace App\Enums;
  */
 class BanquetState extends Enum
 {
-    public const Draft = 'draft';
     public const New = 'new';
+    public const Confirmed = 'confirmed';
+    public const Postponed = 'postponed';
     public const Cancelled = 'cancelled';
     public const Completed = 'completed';
-    public const Processing = 'processing';
 }

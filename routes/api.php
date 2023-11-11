@@ -8,17 +8,22 @@ use App\Http\Controllers\Model\CategoryController;
 use App\Http\Controllers\Model\CommentController;
 use App\Http\Controllers\Model\CustomerController;
 use App\Http\Controllers\Model\FamilyMemberController;
-use App\Http\Controllers\Model\ModelMediaController;
 use App\Http\Controllers\Model\MediaController;
 use App\Http\Controllers\Model\MenuController;
+use App\Http\Controllers\Model\ModelMediaController;
 use App\Http\Controllers\Model\NotificationController;
 use App\Http\Controllers\Model\OrderController;
 use App\Http\Controllers\Model\ProductController;
+use App\Http\Controllers\Model\RestaurantController;
+use App\Http\Controllers\Model\RestaurantReviewController;
 use App\Http\Controllers\Model\ServiceController;
 use App\Http\Controllers\Model\SpaceController;
+use App\Http\Controllers\Model\TagController;
 use App\Http\Controllers\Model\TicketController;
 use App\Http\Controllers\Model\UserController;
 use App\Http\Controllers\Other\InvoiceController;
+use App\Http\Controllers\Other\QueueController;
+use App\Http\Controllers\Other\StatusController;
 use App\Http\Responses\ApiResponse;
 use Illuminate\Support\Facades\Route;
 
@@ -35,6 +40,89 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/register', RegisterController::class)->name('api.register');
 Route::post('/login', LoginController::class)->name('api.login');
+
+Route::group(['as' => 'api.'], function () {
+    Route::get('status', [StatusController::class, 'check'])
+        ->name('status');
+
+    Route::post('queue/backup', [QueueController::class, 'backup'])
+        ->name('queue.backup');
+
+    Route::post('queue/alterations/perform', [QueueController::class, 'performAlternations'])
+        ->name('queue.alterations.perform');
+
+    Route::get('status/list', [StatusController::class, 'list'])
+        ->name('status.list');
+
+    Route::apiResource('menus', MenuController::class)
+        ->only('index', 'show')
+        ->parameters(['menus' => 'id']);
+
+    Route::apiResource('products', ProductController::class)
+        ->only('index', 'show')
+        ->parameters(['products' => 'id']);
+
+    Route::apiResource('tickets', TicketController::class)
+        ->only('index', 'show')
+        ->parameters(['tickets' => 'id']);
+
+    Route::apiResource('services', ServiceController::class)
+        ->only('index', 'show')
+        ->parameters(['services' => 'id']);
+
+    Route::apiResource('tags', TagController::class)
+        ->only('index', 'show')
+        ->parameters(['tags' => 'id']);
+
+    Route::apiResource('categories', CategoryController::class)
+        ->only('index', 'show')
+        ->parameters(['categories' => 'id']);
+
+    Route::apiResource('restaurants', RestaurantController::class)
+        ->only('index', 'show')
+        ->parameters(['restaurants' => 'id']);
+
+    Route::get('/restaurants/{id}/schedules', [RestaurantController::class, 'getSchedules'])
+        ->name('restaurants.schedules');
+    Route::get('/restaurants/{id}/holidays', [RestaurantController::class, 'getHolidays'])
+        ->name('restaurants.holidays');
+
+    Route::apiResource('restaurant-reviews', RestaurantReviewController::class)
+        ->only('index', 'show', 'store')
+        ->parameters(['restaurant-reviews' => 'id']);
+});
+
+Route::group(['middleware' => ['auth:signature,sanctum'], 'as' => 'api.'], function () {
+    Route::get('/orders/{id}/invoice', [InvoiceController::class, 'view'])
+        ->name('orders.invoice');
+    Route::get('/orders/{id}/invoice/pdf', [InvoiceController::class, 'pdf'])
+        ->name('orders.invoice-pdf');
+
+    Route::get('/orders/invoice', [InvoiceController::class, 'viewMultiple'])
+        ->name('orders.invoice.multiple');
+    Route::get('/orders/invoice/pdf', [InvoiceController::class, 'pdfMultiple'])
+        ->name('orders.invoice-pdf.multiple');
+
+    Route::get('/banquets/{id}/invoice', [InvoiceController::class, 'viewThroughBanquet'])
+        ->name('banquets.invoice');
+    Route::get('/banquets/{id}/invoice/pdf', [InvoiceController::class, 'pdfThroughBanquet'])
+        ->name('banquets.invoice-pdf');
+
+    Route::get('/banquets/invoice', [InvoiceController::class, 'viewMultiple'])
+        ->name('banquets.invoice.multiple');
+    Route::get('/banquets/invoice/pdf', [InvoiceController::class, 'pdfMultiple'])
+        ->name('banquets.invoice-pdf.multiple');
+
+    Route::post('/orders/{id}/invoice/url', [InvoiceController::class, 'generateUrl'])
+        ->name('orders.invoice-url');
+    Route::post('/banquets/{id}/invoice/url', [InvoiceController::class, 'generateUrl'])
+        ->name('banquets.invoice-url');
+
+    Route::post('/orders/invoice/url', [InvoiceController::class, 'generateMultipleUrl'])
+        ->name('orders.invoice-url.multiple');
+    Route::post('/banquets/invoice/url', [InvoiceController::class, 'generateMultipleUrl'])
+        ->name('banquets.invoice-url.multiple');
+});
 
 Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
     Route::delete('/logout', LogoutController::class)->name('logout');
@@ -59,22 +147,6 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
         ->only('index', 'show', 'store', 'update', 'destroy')
         ->parameters(['family-members' => 'id']);
 
-    Route::apiResource('menus', MenuController::class)
-        ->only('index', 'show')
-        ->parameters(['menus' => 'id']);
-
-    Route::apiResource('products', ProductController::class)
-        ->only('index', 'show')
-        ->parameters(['products' => 'id']);
-
-    Route::apiResource('tickets', TicketController::class)
-        ->only('index', 'show')
-        ->parameters(['tickets' => 'id']);
-
-    Route::apiResource('services', ServiceController::class)
-        ->only('index', 'show')
-        ->parameters(['services' => 'id']);
-
     Route::get('/spaces/reservations', [SpaceController::class, 'reservations'])->name('spaces.reservations');
     Route::apiResource('spaces', SpaceController::class)
         ->only('index', 'show')
@@ -91,10 +163,6 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
     Route::get('/model-media', [ModelMediaController::class, 'getModelMedia'])->name('media.get-model-media');
     Route::post('/model-media', [ModelMediaController::class, 'setModelMedia'])->name('media.set-model-media');
 
-    Route::apiResource('categories', CategoryController::class)
-        ->only('index', 'show')
-        ->parameters(['categories' => 'id']);
-
     Route::post('/orders/{id}/restore', [OrderController::class, 'restore'])->name('orders.restore');
     Route::apiResource('orders', OrderController::class)
         ->only('index', 'show', 'store', 'update', 'destroy')
@@ -105,16 +173,6 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
     Route::apiResource('banquets', BanquetController::class)
         ->only('index', 'show', 'store', 'update', 'destroy')
         ->parameters(['banquets' => 'id']);
-});
-
-Route::group(['middleware' => ['auth:signature,sanctum'], 'as' => 'api.'], function () {
-    Route::get('/orders/{id}/invoice', [InvoiceController::class, 'view'])->name('orders.invoice');
-    Route::get('/orders/{id}/invoice/pdf', [InvoiceController::class, 'pdf'])->name('orders.invoice-pdf');
-
-    Route::get('/banquets/{id}/invoice', [InvoiceController::class, 'viewThroughBanquet'])
-        ->name('banquets.invoice');
-    Route::get('/banquets/{id}/invoice/pdf', [InvoiceController::class, 'pdfThroughBanquet'])
-        ->name('banquets.invoice-pdf');
 });
 
 Route::fallback(function () {

@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Auth;
 
 use App\Http\Requests\BaseRequest;
+use Illuminate\Validation\Rule;
+use OpenApi\Annotations as OA;
 
 /**
  * Class RegisterRequest.
@@ -32,14 +34,19 @@ class RegisterRequest extends BaseRequest
                 "regex:/^[\p{L} ,.'-]+$/u"
             ],
             'email' => [
-                'required',
+                'required_without:phone',
                 'email',
                 'unique:users',
+                Rule::unique('customers', 'email')
+                    ->whereNotNull('user_id'),
             ],
             'phone' => [
+                'required_without:email',
                 'nullable',
                 'regex:/(\+?[0-9]{1,2})?[0-9]{10,12}/',
-                'unique:customers,phone'
+                'unique:customers,phone',
+                Rule::unique('customers', 'phone')
+                    ->whereNotNull('user_id'),
             ],
             'password' => [
                 'required',
@@ -48,7 +55,7 @@ class RegisterRequest extends BaseRequest
                 'max:255',
             ],
             'password_confirmation' => [
-                'sometimes',
+                'required',
                 'same:password',
             ],
         ];
@@ -58,7 +65,7 @@ class RegisterRequest extends BaseRequest
      * @OA\Schema(
      *   schema="RegisterRequest",
      *   description="Register user request",
-     *   required={"name", "surnane", "email", "password"},
+     *   required={"name", "surnane", "email", "password", "password_confirmation"},
      *   @OA\Property(property="name", type="string", example="John"),
      *   @OA\Property(property="surname", type="string", example="Doe"),
      *   @OA\Property(property="email", type="string", example="john.doe@email.com"),

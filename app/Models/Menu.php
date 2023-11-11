@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Filters\RestaurantsFilter;
 use App\Models\Interfaces\ArchivableInterface;
 use App\Models\Interfaces\MediableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
@@ -14,7 +15,8 @@ use Carbon\Carbon;
 use Database\Factories\MenuFactory;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
@@ -22,9 +24,12 @@ use Illuminate\Support\Collection;
 /**
  * Class Menu.
  *
+ * @property int|null $restaurant_id
+ * @property string|null $slug
  * @property string $title
  * @property string|null $description
  * @property bool $archived
+ * @property int|null $popularity
  * @property string|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
@@ -32,6 +37,7 @@ use Illuminate\Support\Collection;
  *
  * @property Product[]|Collection $products
  * @property Category[]|Collection $categories
+ * @property Restaurant|null $restaurant
  *
  * @method static MenuQueryBuilder query()
  * @method static MenuFactory factory(...$parameters)
@@ -59,9 +65,12 @@ class Menu extends BaseModel implements
      * @var string[]
      */
     protected $fillable = [
+        'restaurant_id',
+        'slug',
         'title',
         'description',
         'archived',
+        'popularity',
         'metadata',
     ];
 
@@ -80,6 +89,7 @@ class Menu extends BaseModel implements
      * @var string[]
      */
     protected $appends = [
+        'type',
         'categories',
     ];
 
@@ -91,16 +101,27 @@ class Menu extends BaseModel implements
     protected $relations = [
         'media',
         'products',
+        'restaurant',
     ];
 
     /**
      * Get the products associated with the model.
      *
-     * @return HasMany
+     * @return BelongsToMany
      */
-    public function products(): HasMany
+    public function products(): BelongsToMany
     {
-        return $this->hasMany(Product::class, 'menu_id', 'id');
+        return $this->belongsToMany(Product::class, 'menu_product');
+    }
+
+    /**
+     * Get the restaurant associated with the model.
+     *
+     * @return BelongsTo
+     */
+    public function restaurant(): BelongsTo
+    {
+        return $this->belongsTo(Restaurant::class);
     }
 
     /**
@@ -111,13 +132,23 @@ class Menu extends BaseModel implements
     public function categories(): EloquentBuilder|Builder
     {
         $slug = slugClass(Product::class);
-        return Category::query()
+
+        $query = Category::query()
             ->where('target', $slug)
             ->join('categorizables', 'categorizables.category_id', '=', 'categories.id')
             ->where('categorizables.categorizable_type', $slug)
             ->join('products', 'products.id', '=', 'categorizables.categorizable_id')
-            ->where('products.menu_id', $this->id)
-            ->select('categories.*')
+            ->join('menu_product', 'menu_product.product_id', '=', 'products.id')
+            ->where('menu_product.menu_id', $this->id)
+            ->orderByDesc('popularity');
+
+        if (request('filter.restaurants')) {
+            $filter = new RestaurantsFilter();
+            // @phpstan-ignore-next-line
+            $filter($query, request('filter.restaurants'), 'filter.restaurants');
+        }
+
+        return $query->select('categories.*')
             ->distinct();
     }
 

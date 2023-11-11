@@ -3,8 +3,11 @@
 namespace App\Models\Morphs;
 
 use App\Models\BaseModel;
+use App\Models\Scopes\ArchivedScope;
+use App\Models\Scopes\SoftDeletableScope;
 use Carbon\Carbon;
 use Database\Factories\Morphs\LogFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
@@ -54,6 +57,10 @@ class Log extends BaseModel
      */
     public function loggable(): MorphTo
     {
-        return $this->morphTo('loggable');
+        /** @var Builder|MorphTo $morphTo */
+        $morphTo = $this->morphTo('loggable');
+        $morphTo->withoutGlobalScopes([ArchivedScope::class, SoftDeletableScope::class]);
+
+        return $morphTo;
     }
 }

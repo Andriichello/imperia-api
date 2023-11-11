@@ -31,6 +31,7 @@ class AuthServiceProvider extends ServiceProvider
         /** Items */
         Models\Menu::class => Policies\MenuPolicy::class,
         Models\Product::class => Policies\ProductPolicy::class,
+        Models\ProductVariant::class => Policies\ProductVariantPolicy::class,
         Models\Service::class => Policies\ServicePolicy::class,
         Models\Space::class => Policies\SpacePolicy::class,
         Models\Ticket::class => Policies\TicketPolicy::class,

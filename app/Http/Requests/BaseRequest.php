@@ -92,9 +92,9 @@ class BaseRequest extends FormRequest
      *
      * @param mixed $guard
      *
-     * @return User
+     * @return User|null
      */
-    public function user(mixed $guard = null): User
+    public function user(mixed $guard = null): ?User
     {
         return parent::user($guard);
     }

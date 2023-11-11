@@ -54,7 +54,8 @@ class Role extends Resource
     public function fields(Request $request): array
     {
         return [
-            ID::make()->sortable(),
+            ID::make(__('columns.id'), 'id')
+                ->sortable(),
 
             Text::make('Name')
                 ->sortable()
@@ -67,11 +68,11 @@ class Role extends Resource
 
             MorphToMany::make('Users'),
 
-            DateTime::make('Created At')
+            DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
                 ->exceptOnForms(),
 
-            DateTime::make('Updated At')
+            DateTime::make(__('columns.updated_at' ), 'updated_at')
                 ->sortable()
                 ->exceptOnForms(),
         ];
@@ -88,12 +89,26 @@ class Role extends Resource
     protected function columnsFilterFields(Request $request): array
     {
         return [
-            'id' => true,
-            'name' => true,
-            'guard_name' => false,
-            'users' => false,
-            'created_at' => false,
-            'updated_at' => false,
+            'id' => [
+                'label' => __('columns.id'),
+                'checked' => true,
+            ],
+            'name' => [
+                'label' => __('columns.name'),
+                'checked' => true,
+            ],
+            'guard_name' => [
+                'label' => __('columns.guard_name'),
+                'checked' => false,
+            ],
+            'created_at' => [
+                'label' => __('columns.created_at'),
+                'checked' => false,
+            ],
+            'updated_at' => [
+                'label' => __('columns.updated_at'),
+                'checked' => false,
+            ],
         ];
     }
 }

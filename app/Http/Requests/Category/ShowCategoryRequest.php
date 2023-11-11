@@ -14,7 +14,7 @@ class ShowCategoryRequest extends ShowRequest
         return array_merge(
             parent::getAllowedIncludes(),
             [
-                //
+                'tags',
             ]
         );
     }

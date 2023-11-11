@@ -15,11 +15,12 @@ return new class extends Migration
     {
         Schema::create('services', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 50)->unique('services_unique_TITLE');
+            $table->string('title');
             $table->string('description')->nullable();
             $table->decimal('once_paid_price')->unsigned()->default(0.0);
             $table->decimal('hourly_paid_price')->unsigned()->default(0.0);
             $table->boolean('archived')->default(false);
+            $table->integer('popularity')->nullable();
             $table->text('metadata')->nullable();
             $table->timestamps();
             $table->softDeletes();

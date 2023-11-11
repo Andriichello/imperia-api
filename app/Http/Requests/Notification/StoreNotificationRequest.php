@@ -4,6 +4,7 @@ namespace App\Http\Requests\Notification;
 
 use App\Enums\NotificationChannel;
 use App\Http\Requests\Crud\ShowRequest;
+use OpenApi\Annotations as OA;
 
 /**
  * Class StoreNotificationRequest.
@@ -55,13 +56,18 @@ class StoreNotificationRequest extends ShowRequest
         );
     }
 
-    protected function prepareForValidation(): void
+    /**
+     * Get form request fields' default values.
+     *
+     * @return array
+     */
+    protected function defaults(): array
     {
-        $this->mergeIfMissing([
+        return [
             'send_at' => now(),
             'sender_id' => $this->userId(),
             'channel' => NotificationChannel::Default,
-        ]);
+        ];
     }
 
     /**

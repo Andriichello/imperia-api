@@ -36,6 +36,7 @@ class UserSubscriber extends BaseSubscriber
         /** @var Customer|null $customer */
         $customer = Customer::query()
             ->where('email', $user->email)
+            ->where('phone', $event->getPhone())
             ->first();
 
         if (!$customer) {

@@ -6,11 +6,15 @@ use Andriichello\Media\MediaField;
 use App\Models\Scopes\ArchivedScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 /**
@@ -28,11 +32,20 @@ class Menu extends Resource
     public static string $model = \App\Models\Menu::class;
 
     /**
-     * The single value that should be used to represent the resource when being displayed.
+     * Get the value that should be displayed to represent the resource.
      *
-     * @var string
+     * @return string
      */
-    public static $title = 'title';
+    public function title(): string
+    {
+        $title = '';
+
+        if ($this->slug && !empty($this->slug)) {
+            $title = "$this->slug - ";
+        }
+
+        return $title . $this->title;
+    }
 
     /**
      * The columns that should be searched.
@@ -40,7 +53,7 @@ class Menu extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'title', 'description',
+        'id', 'slug', 'title', 'description',
     ];
 
     /**
@@ -53,6 +66,8 @@ class Menu extends Resource
      */
     public static function indexQuery(NovaRequest $request, $query): Builder
     {
+        $query = parent::indexQuery($request, $query);
+
         /** @var User $user */
         $user = $request->user();
         if ($user->isAdmin()) {
@@ -70,31 +85,67 @@ class Menu extends Resource
      */
     public function fields(Request $request): array
     {
+        /** @var \App\Models\User $user */
+        $user = $request->user();
+        $resourceId = $request->route('resourceId');
+
+        $slugValidationRules = [
+            'required',
+            Rule::unique('menus', 'slug')
+                ->where(function ($query) use ($user, $resourceId) {
+                    if ($resourceId) {
+                        $query->where('id', '!=', $resourceId);
+                    }
+
+                    if ($user->restaurant_id) {
+                        $query->where('restaurant_id', $user->restaurant_id);
+                    }
+                }),
+        ];
+
         return [
-            ID::make()->sortable(),
+            ID::make(__('columns.id'), 'id')
+                ->sortable(),
 
-            MediaField::make('Media'),
+            Text::make(__('columns.slug'), 'slug')
+                ->rules($slugValidationRules),
 
-            Text::make('Title')
-                ->updateRules('sometimes', 'min:1', 'max:50')
-                ->creationRules('required', 'min:1', 'max:50'),
+            Boolean::make(__('columns.active'))
+                ->resolveUsing(fn() => !$this->archived)
+                ->exceptOnForms(),
 
-            Text::make('Description')
-                ->rules('nullable', 'min:1', 'max:255'),
-
-            HasMany::make('Products'),
-
-            Boolean::make('Archived')
+            Boolean::make(__('columns.archived'), 'archived')
+                ->onlyOnForms()
                 ->default(fn() => false),
 
-            HasMany::make('Categories')
+            MediaField::make(__('columns.media'), 'media')
+                ->canSee(fn() => !$request->user()->isPreviewOnly()),
+
+            Number::make(__('columns.popularity'), 'popularity')
+                ->step(1)
+                ->sortable()
+                ->nullable(),
+
+            Text::make(__('columns.title'), 'title')
+                ->updateRules('sometimes', 'min:1', 'max:255')
+                ->creationRules('required', 'min:1', 'max:255'),
+
+            Textarea::make(__('columns.description'), 'description')
+                ->rules('nullable', 'min:1'),
+
+            HasMany::make(__('columns.categories'), 'categories', Category::class)
                 ->readonly(),
 
-            DateTime::make('Created At')
+            HasMany::make(__('columns.products'), 'products', Product::class),
+
+            BelongsTo::make(__('columns.restaurant'), 'restaurant', Restaurant::class)
+                ->default(fn() => $user->restaurant_id),
+
+            DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
                 ->exceptOnForms(),
 
-            DateTime::make('Updated At')
+            DateTime::make(__('columns.updated_at'))
                 ->sortable()
                 ->exceptOnForms(),
         ];
@@ -111,14 +162,42 @@ class Menu extends Resource
     protected function columnsFilterFields(Request $request): array
     {
         return [
-            'id' => true,
-            'media' => true,
-            'title' => true,
-            'description' => false,
-            'archived' => true,
-            'categories' => false,
-            'created_at' => false,
-            'updated_at' => false,
+            'id' => [
+                'label' => __('columns.id'),
+                'checked' => true,
+            ],
+            'slug' => [
+                'label' => __('columns.slug'),
+                'checked' => true,
+            ],
+            'media' => [
+                'label' => __('columns.media'),
+                'checked' => true,
+            ],
+            'popularity' => [
+                'label' => __('columns.popularity'),
+                'checked' => true,
+            ],
+            'title' => [
+                'label' => __('columns.title'),
+                'checked' => true,
+            ],
+            'description' => [
+                'label' => __('columns.description'),
+                'checked' => false
+            ],
+            'restaurant' => [
+                'label' => __('columns.restaurant'),
+                'checked' => false,
+            ],
+            'created_at' => [
+                'label' => __('columns.created_at'),
+                'checked' => false
+            ],
+            'updated_at' => [
+                'label' => __('columns.updated_at'),
+                'checked' => false
+            ],
         ];
     }
 }

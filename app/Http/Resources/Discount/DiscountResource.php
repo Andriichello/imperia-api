@@ -5,6 +5,7 @@ namespace App\Http\Resources\Discount;
 use App\Models\Morphs\Discount;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use OpenApi\Annotations as OA;
 
 /**
  * Class DiscountResource.

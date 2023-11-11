@@ -249,6 +249,9 @@ trait HasColumnsFilter
     {
         return [
             'title' => 'Columns',
+            'button' => [
+                'apply' => 'Apply',
+            ],
 
             'cache' => ['key' => $this->getCacheKey()],
 

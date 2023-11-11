@@ -3,6 +3,7 @@
 namespace App\Queries;
 
 use App\Models\BaseModel;
+use App\Models\User;
 use Illuminate\Database\Query\JoinClause;
 
 /**
@@ -10,6 +11,24 @@ use Illuminate\Database\Query\JoinClause;
  */
 class MediaQueryBuilder extends BaseQueryBuilder
 {
+    /**
+     * Apply index query conditions.
+     *
+     * @param User $user
+     *
+     * @return static
+     */
+    public function index(User $user): static
+    {
+        $query = parent::index($user);
+
+        if ($user->restaurant_id) {
+            $query->withRestaurant($user->restaurant_id);
+        }
+
+        return $query;
+    }
+
     /**
      * Select media with given names.
      *
@@ -83,5 +102,23 @@ class MediaQueryBuilder extends BaseQueryBuilder
     public function attachedTo(BaseModel $model): static
     {
         return $this->attachedBy($model->id, $model->type);
+    }
+
+    /**
+     * Only media for given restaurants.
+     *
+     * @param mixed ...$restaurants
+     *
+     * @return static
+     */
+    public function withRestaurant(mixed ...$restaurants): static
+    {
+        $ids = $this->extract('id', ...$restaurants);
+
+        if (!empty($ids)) {
+            $this->whereIn($this->model->getTable() . '.restaurant_id', $ids);
+        }
+
+        return $this;
     }
 }

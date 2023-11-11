@@ -15,16 +15,16 @@ return new class extends Migration
     {
         Schema::create('spaces', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 50)->unique('spaces_unique_TITLE');
+            $table->string('title');
             $table->smallInteger('number');
             $table->smallInteger('floor');
             $table->string('description')->nullable();
             $table->decimal('price')->unsigned();
             $table->boolean('archived')->default(false);
+            $table->integer('popularity')->nullable();
             $table->text('metadata')->nullable();
             $table->timestamps();
-            $table->softDeletes();
-            $table->unique(['title', 'number', 'floor'], 'spaces_unique_TITLE_and_NUMBER_and_FLOOR');
+            $table->softDeletes();;
         });
     }
 

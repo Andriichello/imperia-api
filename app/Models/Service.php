@@ -16,20 +16,27 @@ use App\Queries\ServiceQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\ServiceFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
+use Illuminate\Support\Collection;
 
 /**
  * Class Service.
  *
+ * @property int|null $restaurant_id
+ * @property string|null $slug
  * @property string $title
  * @property string|null $description
  * @property float $once_paid_price
  * @property float $hourly_paid_price
  * @property bool $archived
+ * @property int|null $popularity
  * @property string|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
+ *
+ * @property Restaurant[]|Collection $restaurants
  *
  * @method static ServiceQueryBuilder query()
  * @method static ServiceFactory factory(...$parameters)
@@ -54,11 +61,14 @@ class Service extends BaseModel implements
      * @var string[]
      */
     protected $fillable = [
+        'restaurant_id',
+        'slug',
         'title',
         'description',
         'once_paid_price',
         'hourly_paid_price',
         'archived',
+        'popularity',
         'metadata',
     ];
 
@@ -90,7 +100,18 @@ class Service extends BaseModel implements
     protected $relations = [
         'media',
         'categories',
+        'restaurant',
     ];
+
+    /**
+     * Restaurant associated with the model.
+     *
+     * @return BelongsTo
+     */
+    public function restaurant(): BelongsTo
+    {
+        return $this->belongsTo(Restaurant::class);
+    }
 
     /**
      * @param DatabaseBuilder $query

@@ -6,6 +6,7 @@ use Andriichello\Media\MediaField;
 use App\Models\Scopes\ArchivedScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
@@ -13,6 +14,7 @@ use Laravel\Nova\Fields\MorphMany;
 use Laravel\Nova\Fields\MorphToMany;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
 /**
@@ -30,11 +32,20 @@ class Service extends Resource
     public static string $model = \App\Models\Service::class;
 
     /**
-     * The single value that should be used to represent the resource when being displayed.
+     * Get the value that should be displayed to represent the resource.
      *
-     * @var string
+     * @return string
      */
-    public static $title = 'title';
+    public function title(): string
+    {
+        $title = '';
+
+        if ($this->slug && !empty($this->slug)) {
+            $title = "$this->slug - ";
+        }
+
+        return $title . $this->title;
+    }
 
     /**
      * The columns that should be searched.
@@ -42,7 +53,7 @@ class Service extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'title', 'description',
+        'id', 'slug', 'title', 'description',
     ];
 
     /**
@@ -55,7 +66,9 @@ class Service extends Resource
      */
     public static function indexQuery(NovaRequest $request, $query): Builder
     {
-        /** @var User $user */
+        parent::indexQuery($request, $query);
+
+       /** @var User $user */
         $user = $request->user();
         if ($user->isAdmin()) {
             $query->withoutGlobalScope(ArchivedScope::class);
@@ -73,16 +86,36 @@ class Service extends Resource
     public function fields(Request $request): array
     {
         return [
-            ID::make()->sortable(),
+            ID::make(__('columns.id'), 'id')
+                ->sortable(),
 
-            MediaField::make('Media'),
+            Text::make(__('columns.slug'), 'slug')
+                ->rules('required', 'min:1', 'max:50')
+                ->creationRules('unique:services,slug')
+                ->updateRules('unique:services,slug,{{resourceId}}'),
 
-            Text::make('Title')
-                ->updateRules('sometimes', 'min:1', 'max:50')
-                ->creationRules('required', 'min:1', 'max:50'),
+            Boolean::make('Active')
+                ->resolveUsing(fn() => !$this->archived)
+                ->exceptOnForms(),
 
-            Text::make('Description')
-                ->rules('nullable', 'min:1', 'max:255'),
+            Boolean::make('Archived')
+                ->onlyOnForms()
+                ->default(fn() => false),
+
+            MediaField::make(__('columns.media'), 'media')
+                ->canSee(fn() => !$request->user()->isPreviewOnly()),
+
+            Number::make('Popularity')
+                ->step(1)
+                ->sortable()
+                ->nullable(),
+
+            Text::make(__('columns.title'), 'title')
+                ->updateRules('sometimes', 'min:1', 'max:255')
+                ->creationRules('required', 'min:1', 'max:255'),
+
+            Textarea::make(__('columns.description'), 'description')
+                ->rules('nullable', 'min:1'),
 
             Number::make('Once Paid Price')
                 ->step(0.01)
@@ -94,18 +127,17 @@ class Service extends Resource
                 ->updateRules('sometimes', 'min:0')
                 ->creationRules('required', 'min:0'),
 
-            Boolean::make('Archived')
-                ->default(fn() => false),
-
             MorphToMany::make('Categories'),
+
+            BelongsToMany::make('Restaurants'),
 
             MorphMany::make('Logs', 'logs', Log::class),
 
-            DateTime::make('Created At')
+            DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
                 ->exceptOnForms(),
 
-            DateTime::make('Updated At')
+            DateTime::make(__('columns.updated_at' ), 'updated_at')
                 ->sortable()
                 ->exceptOnForms(),
         ];
@@ -122,15 +154,50 @@ class Service extends Resource
     protected function columnsFilterFields(Request $request): array
     {
         return [
-            'id' => true,
-            'media' => true,
-            'title' => true,
-            'description' => false,
-            'once_paid_price' => true,
-            'hourly_paid_price' => true,
-            'archived' => true,
-            'created_at' => false,
-            'updated_at' => false,
+            'id' => [
+                'label' => __('columns.id'),
+                'checked' => true,
+            ],
+            'slug' => [
+                'label' => __('columns.slug'),
+                'checked' => true,
+            ],
+            'active' => [
+                'label' => __('columns.active'),
+                'checked' => true,
+            ],
+            'media' => [
+                'label' => __('columns.media'),
+                'checked' => true,
+            ],
+            'popularity' => [
+                'label' => __('columns.popularity'),
+                'checked' => true,
+            ],
+            'title' => [
+                'label' => __('columns.title'),
+                'checked' => false,
+            ],
+            'description' => [
+                'label' => __('columns.description'),
+                'checked' => false,
+            ],
+            'once_paid_price' => [
+                'label' => __('columns.once_paid_price'),
+                'checked' => true,
+            ],
+            'hourly_paid_price' => [
+                'label' => __('columns.hourly_paid_price'),
+                'checked' => true,
+            ],
+            'created_at' => [
+                'label' => __('columns.created_at'),
+                'checked' => false,
+            ],
+            'updated_at' => [
+                'label' => __('columns.updated_at'),
+                'checked' => false,
+            ],
         ];
     }
 }

@@ -9,6 +9,7 @@ use App\Http\Resources\Category\CategoryCollection;
 use App\Http\Resources\Category\CategoryResource;
 use App\Policies\CategoryPolicy;
 use App\Repositories\CategoryRepository;
+use OpenApi\Annotations as OA;
 
 /**
  * Class CategoryController.
@@ -51,9 +52,19 @@ class CategoryController extends CrudController
      *   security={{"bearerAuth": {}}},
      *   tags={"categories"},
      *
+     *   @OA\Parameter(name="include", in="query",
+     *     @OA\Schema(ref ="#/components/schemas/CategoryIncludes")),
      *   @OA\Parameter(name="page[size]", in="query", @OA\Schema(ref ="#/components/schemas/PageSize")),
      *   @OA\Parameter(name="page[number]", in="query", @OA\Schema(ref ="#/components/schemas/PageNumber")),
-     *  @OA\Parameter(name="filter[target]", in="query", example="products", @OA\Schema(type="string"),
+     *   @OA\Parameter(name="sort", in="query", example="-popularity", @OA\Schema(type="string"),
+            description="Available sorts: `popularity` (is default, but in descending order)"),
+     *   @OA\Parameter(name="filter[restaurants]", required=false, in="query", example="1",
+     *   @OA\Schema(type="string"), description="Coma-separated array of restaurant ids. Limits categories to those
+         that are attached at least to one of those restaurants"),
+     *   @OA\Parameter(name="filter[tags]", required=false, in="query", example="1",
+     *      @OA\Schema(type="string"), description="Coma-separated array of tag ids. Limits categories to those
+         that have at least one of given tags attached to them"),
+     *   @OA\Parameter(name="filter[target]", in="query", example="products", @OA\Schema(type="string"),
      *     description="Target class morph slug. Examples: `products`, `tickets`, `services`, `spaces`"),
      *
      *   @OA\Response(
@@ -76,6 +87,8 @@ class CategoryController extends CrudController
      *
      *  @OA\Parameter(name="id", required=true, in="path", example=1, @OA\Schema(type="integer"),
      *     description="Id of the category."),
+     *  @OA\Parameter(name="include", in="query",
+     *    @OA\Schema(ref ="#/components/schemas/CategoryIncludes")),
      *
      *   @OA\Response(
      *     response=200,
@@ -104,5 +117,12 @@ class CategoryController extends CrudController
      *   @OA\Property(property="data", ref ="#/components/schemas/Category"),
      *   @OA\Property(property="message", type="string", example="Success"),
      * ),
+     *
+     * @OA\Schema(
+     *   schema="CategoryIncludes",
+     *   description="Coma-separated list of inluded relations.
+         Available relations: `tags`",
+     *   type="string", example="tags"
+     * )
      */
 }

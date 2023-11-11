@@ -4,6 +4,7 @@ namespace App\Http\Requests\Comment;
 
 use App\Http\Requests\Crud\StoreRequest;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use OpenApi\Annotations as OA;
 
 /**
  * Class StoreCommentRequest.

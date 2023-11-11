@@ -2,8 +2,6 @@
 
 namespace App\Queries\Interfaces;
 
-use App\Queries\BaseQueryBuilder;
-
 /**
  * Interface ArchivableInterface.
  */

@@ -14,7 +14,14 @@ class ShowProductRequest extends ShowRequest
         return array_merge(
             parent::getAllowedIncludes(),
             [
+                'tags',
                 'categories',
+                'alterations',
+                'pendingAlterations',
+                'performedAlterations',
+                'variants.alterations',
+                'variants.pendingAlterations',
+                'variants.performedAlterations',
             ]
         );
     }

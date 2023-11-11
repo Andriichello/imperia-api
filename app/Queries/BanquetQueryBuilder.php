@@ -3,6 +3,7 @@
 namespace App\Queries;
 
 use App\Models\Customer;
+use App\Models\Restaurant;
 use App\Models\User;
 
 /**
@@ -20,6 +21,10 @@ class BanquetQueryBuilder extends BaseQueryBuilder
      */
     public function index(User $user): static
     {
+        if ($user->restaurant_id) {
+            $this->withRestaurant($user->restaurant_id);
+        }
+
         if ($user->isStaff()) {
             return $this;
         }
@@ -74,6 +79,22 @@ class BanquetQueryBuilder extends BaseQueryBuilder
     public function forCustomers(Customer|int ...$customers): static
     {
         $this->whereIn('customer_id', $this->extract('id', ...$customers));
+
+        return $this;
+    }
+
+    /**
+     * @param Restaurant|int ...$restaurants
+     *
+     * @return static
+     */
+    public function withRestaurant(Restaurant|int ...$restaurants): static
+    {
+        $ids = $this->extract('id', ...$restaurants);
+
+        if (!empty($ids)) {
+            $this->whereIn($this->model->getTable() . '.restaurant_id', $ids);
+        }
 
         return $this;
     }

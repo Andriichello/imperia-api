@@ -13,6 +13,7 @@ use App\Http\Resources\Banquet\BanquetResource;
 use App\Policies\BanquetPolicy;
 use App\Queries\BanquetQueryBuilder;
 use App\Repositories\BanquetRepository;
+use OpenApi\Annotations as OA;
 
 /**
  * Class BanquetController.
@@ -75,6 +76,17 @@ class BanquetController extends CrudController
      *
      *   @OA\Parameter(name="include", in="query",
      *     @OA\Schema(ref ="#/components/schemas/BanquetIncludes")),
+     *   @OA\Parameter(name="filter[search]", in="query", example="John", @OA\Schema(type="string"),
+     *     description="Allows to search by banquet's `title` and customer's `name`, `surname`,
+           `phone` and `email` at the same time"),
+     *   @OA\Parameter(name="filter[restaurant_id]", in="query", example=1, @OA\Schema(type="integer")),
+     *   @OA\Parameter(name="filter[state]", in="query", example="draft,new", @OA\Schema(type="string")),
+     *   @OA\Parameter(name="filter[from]", in="query", example="2023-01-25",
+     *     @OA\Schema(type="string", format="date")),
+     *   @OA\Parameter(name="filter[until]", in="query", example="2023-12-25",
+     *     @OA\Schema(type="string", format="date")),
+     *   @OA\Parameter(name="sort", in="query", example="-created_at", @OA\Schema(type="string"),
+     *     description="Available fields: `start_at`, `created_at`, `updated_at`."),
      *   @OA\Parameter(name="page[size]", in="query", @OA\Schema(ref ="#/components/schemas/PageSize")),
      *   @OA\Parameter(name="page[number]", in="query", @OA\Schema(ref ="#/components/schemas/PageNumber")),
      *   @OA\Parameter(name="deleted", in="query",
@@ -116,11 +128,13 @@ class BanquetController extends CrudController
      * ),
      * @OA\Post(
      *   path="/api/banquets",
-     *   summary="Store banquet.",
+     *   summary="Store banquet. Order record will automatically be created.",
      *   operationId="storeBanquet",
      *   security={{"bearerAuth": {}}},
      *   tags={"banquets"},
      *
+     *  @OA\Parameter(name="include", in="query",
+     *     @OA\Schema(ref ="#/components/schemas/BanquetIncludes")),
      *  @OA\RequestBody(
      *     required=true,
      *     description="Store banquet request object.",
@@ -144,6 +158,8 @@ class BanquetController extends CrudController
      *   security={{"bearerAuth": {}}},
      *   tags={"banquets"},
      *
+     *  @OA\Parameter(name="include", in="query",
+     *     @OA\Schema(ref ="#/components/schemas/BanquetIncludes")),
      *  @OA\Parameter(name="id", required=true, in="path", example=1, @OA\Schema(type="integer"),
      *     description="Id of the banquet."),
      *  @OA\RequestBody(
@@ -213,7 +229,7 @@ class BanquetController extends CrudController
      * @OA\Schema(
      *   schema="BanquetIncludes",
      *   description="Coma-separated list of inluded relations.
-    Available relations: `creator`, `customer`, `comments`",
+    Available relations: `order`, `creator`, `customer`, `comments`",
      *   type="string", example="creator,customer,comments"
      * ),
      * @OA\Schema(

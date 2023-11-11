@@ -5,6 +5,7 @@ namespace App\Http\Resources\Notification;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use OpenApi\Annotations as OA;
 
 /**
  * Class MenuResource.
@@ -16,7 +17,7 @@ class NotificationResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return array
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -24,27 +25,22 @@ class NotificationResource extends JsonResource
     public function toArray($request): array
     {
         // @phpstan-ignore-next-line
-        if (!str_contains($request->route()->getName(), '.index')) {
-            $data = [
-                'body' => $this->body,
-                'payload' => $this->payload,
-            ];
-        }
+        $isIndex = str_contains($request->route()->getName(), '.index');
+        $isAccessible = $this->seen_at || !$isIndex;
 
-        return array_merge(
-            [
-                'id' => $this->id,
-                'type' => $this->type,
-                'sender_id' => $this->sender_id,
-                'receiver_id' => $this->receiver_id,
-                'channel' => $this->channel,
-                'subject' => $this->subject,
-                'send_at' => $this->send_at,
-                'sent_at' => $this->sent_at,
-                'seen_at' => $this->seen_at,
-            ],
-            $data ?? []
-        );
+        return [
+            'id' => $this->id,
+            'type' => $this->type,
+            'sender_id' => $this->sender_id,
+            'receiver_id' => $this->receiver_id,
+            'channel' => $this->channel,
+            'subject' => $this->subject,
+            'body' => $isAccessible ? $this->body : null,
+            'payload' => $isAccessible ? $this->payload : null,
+            'send_at' => $this->send_at,
+            'sent_at' => $this->sent_at,
+            'seen_at' => $this->seen_at,
+        ];
     }
 
     /**
@@ -58,7 +54,7 @@ class NotificationResource extends JsonResource
      *   schema="Notification",
      *   description="Notification resource object",
      *   required = {"id", "type", "sender_id", "receiver_id", "channel", "subject",
-     *     "send_at", "sent_at", "seen_at"},
+     *     "body", "payload", "send_at", "sent_at", "seen_at"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="notifications"),
      *   @OA\Property(property="channel", type="string", example="default"),

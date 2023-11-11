@@ -6,6 +6,7 @@ use App\Enums\UserRole;
 use App\Models\User;
 use App\Policies\Base\CrudPolicy;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Response;
 use Spatie\Permission\Models\Role;
 
 /**
@@ -24,6 +25,40 @@ class UserPolicy extends CrudPolicy
     }
 
     /**
+     * Perform pre-authorization checks.
+     *
+     * @param User|null $user
+     * @param string $ability
+     *
+     * @return Response|bool|null
+     */
+    public function before(?User $user, string $ability): Response|bool|null
+    {
+        if (!$user) {
+            return false;
+        }
+
+        if (!$user->isStaff() && !in_array($ability, ['view', 'viewAny'])) {
+            return false;
+        }
+
+        return null;
+    }
+
+    /**
+     * Determine whether the user can view Laravel Nova.
+     *
+     * @param User $user
+     *
+     * @return bool
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function viewNova(User $user): bool
+    {
+        return $user->isStaff();
+    }
+
+    /**
      * Determine whether the user can view any models.
      *
      * @param User $user
@@ -33,7 +68,7 @@ class UserPolicy extends CrudPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $user->isAdmin();
     }
 
     /**
@@ -73,8 +108,15 @@ class UserPolicy extends CrudPolicy
      */
     public function update(User $user, User $model): bool
     {
-        return $user->is($model)
-            || ($this->isHigher($user, $model) && $user->isAdmin());
+        if ($user->is($model)) {
+            return true;
+        }
+
+        if (!$this->isHigher($user, $model)) {
+            return false;
+        }
+
+        return $this->restaurantCheck($user, $model) && $user->isAdmin();
     }
 
     /**
@@ -87,8 +129,15 @@ class UserPolicy extends CrudPolicy
      */
     public function delete(User $user, User $model): bool
     {
-        return $user->is($model)
-            || ($this->isHigher($user, $model) && $user->isAdmin());
+        if ($user->is($model) && !$user->isPreviewOnly()) {
+            return true;
+        }
+
+        if (!$this->isHigher($user, $model)) {
+            return false;
+        }
+
+        return $this->restaurantCheck($user, $model) && $user->isAdmin();
     }
 
     /**

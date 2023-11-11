@@ -46,8 +46,8 @@ class OrderPolicy extends CrudPolicy
     public function view(User $user, Order $order): bool
     {
         return $user->isStaff()
-            || $order->banquet->creator_id === $user->id
-            || $order->banquet->customer_id === $user->customer_id;
+            || $order->banquet->isCreator($user)
+            || $order->banquet->isCustomer($user);
     }
 
     /**
@@ -73,11 +73,11 @@ class OrderPolicy extends CrudPolicy
      */
     public function update(User $user, Order $order): bool
     {
-        if (!$order->canBeEdited()) {
-            return false;
+        if ($order->banquet) {
+            return $order->banquet->canBeEditedBy($user);
         }
 
-        return $user->isStaff() || $order->banquet->creator_id === $user->id;
+        return $order->canBeEditedBy($user);
     }
 
     /**
@@ -90,11 +90,7 @@ class OrderPolicy extends CrudPolicy
      */
     public function delete(User $user, Order $order): bool
     {
-        if (!$order->canBeEdited()) {
-            return false;
-        }
-
-        return $user->isStaff() || $order->banquet->creator_id === $user->id;
+        return $order->canBeEditedBy($user);
     }
 
     /**
@@ -107,11 +103,7 @@ class OrderPolicy extends CrudPolicy
      */
     public function restore(User $user, Order $order): bool
     {
-        if (!$order->canBeEdited()) {
-            return false;
-        }
-
-        return $user->isStaff() || $order->banquet->creator_id === $user->id;
+        return $order->canBeEditedBy($user);
     }
 
     /**
@@ -121,13 +113,10 @@ class OrderPolicy extends CrudPolicy
      * @param Order $order
      *
      * @return bool
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function forceDelete(User $user, Order $order): bool
     {
-        if (!$order->canBeEdited()) {
-            return false;
-        }
-
-        return $user->isStaff() || $order->banquet->creator_id === $user->id;
+        return $user->isStaff();
     }
 }

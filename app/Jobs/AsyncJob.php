@@ -9,7 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
 /**
- * Class BaseJob.
+ * Class AsyncJob.
  */
 abstract class AsyncJob implements ShouldQueue
 {

@@ -5,6 +5,7 @@ namespace App\Http\Requests\Order;
 use App\Http\Requests\Crud\StoreRequest;
 use App\Models\Morphs\Comment;
 use App\Models\Morphs\Discount;
+use OpenApi\Annotations as OA;
 
 /**
  * Class StoreOrderRequest.
@@ -81,8 +82,14 @@ class StoreOrderRequest extends StoreRequest
             'products.*.product_id' => [
                 'required',
                 'integer',
-                'distinct',
                 'exists:products,id',
+            ],
+            'products.*.variant_id' => [
+                'sometimes',
+                'nullable',
+                'integer',
+                'distinct',
+                'exists:product_variants,id',
             ],
             'products.*.amount' => [
                 'required',
@@ -119,6 +126,7 @@ class StoreOrderRequest extends StoreRequest
                 'banquet_id' => [
                     'required',
                     'integer',
+                    'exists:banquets,id',
                     'unique:orders,banquet_id',
                 ],
             ]
@@ -188,8 +196,9 @@ class StoreOrderRequest extends StoreRequest
      * @OA\Schema(
      *   schema="StoreOrderRequestProductField",
      *   description="Store order request product field",
-     *   required={"product_id", "amount"},
+     *   required={"product_id", "variant_id", "amount"},
      *   @OA\Property(property="product_id", type="integer", example=1),
+     *   @OA\Property(property="variant_id", type="integer", example=1),
      *   @OA\Property(property="amount", type="integer", example=3),
      *   @OA\Property(property="comments", type="array",
      *     @OA\Items(ref ="#/components/schemas/AttachingComment")),

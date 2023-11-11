@@ -15,6 +15,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Collection;
+use OpenApi\Annotations as OA;
 use Spatie\QueryBuilder\QueryBuilder as SpatieBuilder;
 
 /**
@@ -31,17 +32,17 @@ abstract class Controller extends BaseController
      * @OA\Info(title="imperia-api", version="0.1"),
      * @OA\Servers(
      *   @OA\Server(
+     *     url="https://dev.imperia.pp.ua",
+     *     description="Google Cloud development server"
+     *   ),
+     *   @OA\Server(
+     *     url="https://api.imperia.pp.ua",
+     *     description="Google Cloud staging server"
+     *   ),
+     *   @OA\Server(
      *     url="http://localhost:8080",
-     *     description="Mapped server"
+     *     description="Local server"
      *   ),
-     *   @OA\Server(
-     *     url=L5_SWAGGER_CONST_HOST,
-     *     description="Current server"
-     *   ),
-     *   @OA\Server(
-     *     url="https://imperia-api.herokuapp.com",
-     *     description="Production server"
-     *   )
      * ),
      * @OA\SecurityScheme(
      *   securityScheme="bearerAuth",

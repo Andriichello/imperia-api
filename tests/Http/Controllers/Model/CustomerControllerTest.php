@@ -5,6 +5,7 @@ namespace Tests\Http\Controllers\Model;
 use App\Enums\FamilyRelation;
 use App\Models\Customer;
 use App\Models\FamilyMember;
+use App\Models\Restaurant;
 use Illuminate\Foundation\Testing\Concerns\MakesHttpRequests;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
@@ -23,6 +24,13 @@ class CustomerControllerTest extends RegisteringTestCase
      * @var bool
      */
     protected bool $shouldLogin = true;
+
+    /**
+     * Test customer.
+     *
+     * @var Restaurant
+     */
+    protected Restaurant $restaurant;
 
     /**
      * Test customer.
@@ -47,13 +55,19 @@ class CustomerControllerTest extends RegisteringTestCase
     {
         parent::setUp();
 
+        $this->restaurant = Restaurant::factory()
+            ->create();
+
         $this->customer = Customer::factory()
+            ->withRestaurant($this->restaurant)
             ->create();
 
         $this->familyMembers = FamilyMember::factory()
             ->withRelative($this->customer, FamilyRelation::Child())
             ->count(2)
             ->create();
+
+        $this->user->update(['restaurant_id' => $this->restaurant->id]);
     }
 
     /**
@@ -144,6 +158,7 @@ class CustomerControllerTest extends RegisteringTestCase
         $response = $this->postJson(
             route('api.customers.store'),
             $attributes = [
+                'restaurant_id' => $this->restaurant->id,
                 'name' => 'John',
                 'surname' => 'John Doe',
                 'email' => 'john.doe@email.com',
@@ -177,6 +192,7 @@ class CustomerControllerTest extends RegisteringTestCase
     public function testUpdateNameAndEmail()
     {
         $attributes = [
+            'restaurant_id' => $this->restaurant->id,
             'name' => 'Jane Doe',
             'email' => 'jane.doe@email.com',
         ];

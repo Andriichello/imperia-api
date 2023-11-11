@@ -5,6 +5,7 @@ namespace App\Http\Requests\Media;
 use App\Http\Requests\Crud\StoreRequest;
 use App\Models\Morphs\Media;
 use Illuminate\Validation\Rule;
+use OpenApi\Annotations as OA;
 
 /**
  * Class StoreMediaRequest.
@@ -32,10 +33,6 @@ class StoreMediaRequest extends StoreRequest
                     'string',
                     'min:1',
                     'max:255',
-                    Rule::unique(Media::class)
-                        ->where('folder', $this->get('folder'))
-                        ->where('name', $this->get('name')),
-
                 ],
                 'title' => [
                     'nullable',
@@ -52,7 +49,7 @@ class StoreMediaRequest extends StoreRequest
                 'disk' => [
                     'sometimes',
                     'string',
-                    'in:public,google-cloud',
+                    'in:public,uploads',
                 ],
                 'folder' => [
                     'sometimes',
@@ -73,6 +70,11 @@ class StoreMediaRequest extends StoreRequest
                     'nullable',
                     'object',
                 ],
+                'restaurant_id' => [
+                    'integer',
+                    'nullable',
+                    'exists:restaurants,id',
+                ],
             ]
         );
     }
@@ -87,6 +89,7 @@ class StoreMediaRequest extends StoreRequest
         return [
             'disk' => config('media.disk'),
             'folder' => config('media.folder'),
+            'restaurant_id' => $this->user()?->restaurant_id,
         ];
     }
 
@@ -102,10 +105,11 @@ class StoreMediaRequest extends StoreRequest
      *   @OA\Property(property="title", type="string", nullable="true", example="Drinks"),
      *   @OA\Property(property="description", type="string", nullable="true"),
      *   @OA\Property(property="disk", type="string", example="public",
-     *      enum={"public", "google-cloud"}),
+     *      enum={"public", "uploads"}),
      *   @OA\Property(property="folder", type="string", example="/media/",
      *     description="Must start and end with the `/`."),
-     *   @OA\Property(property="metadata", type="object", nullable="true", example="{}"),
+     *   @OA\Property(property="metadata", nullable="true",
+     *      ref ="#/components/schemas/MediaMetadata"),
      *  )
      */
 }
