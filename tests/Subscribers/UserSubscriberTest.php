@@ -27,7 +27,7 @@ class UserSubscriberTest extends TestCase
         $this->assertTrue($admin->isAdmin());
         $this->assertFalse($admin->isManager());
         $this->assertFalse($admin->isCustomer());
-        $this->assertEmpty($admin->customer);
+        $this->assertCount(0, $admin->customers);
 
         $manager = User::factory()->withRole(UserRole::Manager())->create();
         event(new Registered($manager));
@@ -35,7 +35,7 @@ class UserSubscriberTest extends TestCase
         $this->assertFalse($manager->isAdmin());
         $this->assertTrue($manager->isManager());
         $this->assertFalse($manager->isCustomer());
-        $this->assertEmpty($manager->customer);
+        $this->assertCount(0, $manager->customers);
 
         $user = User::factory()->create();
         event(new Registered($user));
@@ -43,7 +43,7 @@ class UserSubscriberTest extends TestCase
         $this->assertFalse($user->isAdmin());
         $this->assertFalse($user->isManager());
         $this->assertFalse($user->isCustomer());
-        $this->assertEmpty($admin->customer);
+        $this->assertCount(0, $admin->customers);
 
         $customer = User::factory()->withRole(UserRole::Customer())->create();
         event(new Registered($customer, $phone = '+380509876543'));
@@ -51,8 +51,8 @@ class UserSubscriberTest extends TestCase
         $this->assertFalse($customer->isAdmin());
         $this->assertFalse($customer->isManager());
         $this->assertTrue($customer->isCustomer());
-        $this->assertNotEmpty($customer->customer);
-        $this->assertEquals($phone, $customer->customer->phone);
+        $this->assertCount(1, $customer->customers);
+        $this->assertEquals($phone, $customer->customers->first()->phone);
 
         $subscriber = $this->createPartialMock(UserSubscriber::class, ['registered']);
         $subscriber->expects($this->once())

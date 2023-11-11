@@ -181,8 +181,8 @@ class UserController extends CrudController
      *  @OA\Schema(
      *   schema="MeIncludes",
      *   description="Coma-separated list of inluded relations.
-    Available relations: `customer`",
-     *   type="string", example="customer"
+    Available relations: `customers`",
+     *   type="string", example="customers"
      * ),
      * @OA\Schema(
      *   schema="MeResponse",

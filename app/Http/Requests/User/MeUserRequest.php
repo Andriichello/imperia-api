@@ -12,7 +12,7 @@ class MeUserRequest extends ShowUserRequest
         return array_merge(
             parent::getAllowedIncludes(),
             [
-                'customer',
+                'customers',
             ]
         );
     }

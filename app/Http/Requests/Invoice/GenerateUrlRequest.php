@@ -59,7 +59,7 @@ class GenerateUrlRequest extends CrudRequest
             $banquet = $order->banquet;
 
             $hasPermissions = $banquet->creator_id === $user->id
-                || $banquet->customer_id === $user->customer_id;
+                || in_array($banquet->customer_id, $user->customer_ids);
 
             if (!$hasPermissions) {
                 return false;

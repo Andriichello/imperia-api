@@ -37,14 +37,16 @@ class RegisterControllerTest extends RegisteringTestCase
 
         /** @var User $user */
         $user = User::query()->findOrFail($response->json('data.id'));
+        /** @var Customer $customer */
+        $customer = $user->customers->first();
 
-        $this->assertNotEmpty($user->customer);
+        $this->assertNotEmpty($customer);
 
         $this->assertEquals($name . ' ' . $surname, $user->name);
-        $this->assertEquals($name . ' ' . $surname, $user->customer->fullName);
+        $this->assertEquals($name . ' ' . $surname, $customer->fullName);
 
-        $this->assertStringContainsString($user->customer->name, $name);
-        $this->assertStringContainsString($user->customer->surname, $surname);
+        $this->assertStringContainsString($customer->name, $name);
+        $this->assertStringContainsString($customer->surname, $surname);
     }
 
     /**

@@ -5,6 +5,7 @@ namespace App\Http\Requests\Banquet;
 use App\Enums\BanquetState;
 use App\Enums\PaymentMethod;
 use App\Http\Requests\Crud\StoreRequest;
+use App\Models\Customer;
 use App\Models\Morphs\Comment;
 use App\Models\Morphs\Discount;
 use OpenApi\Annotations as OA;
@@ -156,8 +157,17 @@ class StoreBanquetRequest extends StoreRequest
         if ($this->missing('creator_id')) {
             $defaults['creator_id'] = $user->id;
         }
+
         if ($user->isCustomer()) {
-            $defaults['customer_id'] = $user->customer_id;
+            $restaurantId = $this->get('restaurant_id', $user->restaurant_id);
+            /** @var Customer|null $customer */
+            $customer = $user->customers
+                ->where('restaurant_id', $restaurantId)
+                ->first();
+
+            if ($customer) {
+                $defaults['customer_id'] = $customer->id;
+            }
         }
 
 

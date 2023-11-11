@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources\User;
 
-use App\Http\Resources\Customer\CustomerResource;
+use App\Http\Resources\Customer\CustomerCollection;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -33,7 +33,7 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'email_verified_at' => $this->email_verified_at,
-            'customer' => new CustomerResource($this->whenLoaded('customer')),
+            'customers' => new CustomerCollection($this->whenLoaded('customers')),
         ];
     }
 
@@ -46,11 +46,11 @@ class UserResource extends JsonResource
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="users"),
      *   @OA\Property(property="restaurant_id", type="integer", nullable="true", example="null"),
-     *   @OA\Property(property="customer_ids", type="array", @OA\Items(type="integer"),
+     *   @OA\Property(property="customer_ids", type="array", @OA\Items(type="integer")),
      *   @OA\Property(property="name", type="string", example="Admin Admins"),
      *   @OA\Property(property="email", type="string", example="admin@email.com", nullable="true"),
      *   @OA\Property(property="email_verified_at", type="string", format="date-time", nullable="true"),
-     *   @OA\Property(property="customer", ref ="#/components/schemas/Customer"),
+     *   @OA\Property(property="customers", type="array", @OA\Items(ref ="#/components/schemas/Customer")),
      * )
      */
 }

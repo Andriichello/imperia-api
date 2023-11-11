@@ -464,7 +464,7 @@ class Banquet extends BaseModel implements
      */
     public function isCustomer(User $user): bool
     {
-        return $user->customer_id === $this->customer_id;
+        return in_array($this->customer_id, $user->customer_ids);
     }
 
     /**

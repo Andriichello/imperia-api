@@ -6048,9 +6048,9 @@
                 "example": "categories"
             },
             "MeIncludes": {
-                "description": "Coma-separated list of inluded relations.\n    Available relations: `customer`",
+                "description": "Coma-separated list of inluded relations.\n    Available relations: `customers`",
                 "type": "string",
-                "example": "customer"
+                "example": "customers"
             },
             "MeResponse": {
                 "description": "Get me response object.",
@@ -9252,7 +9252,7 @@
                     "id",
                     "type",
                     "restaurant_id",
-                    "customer_id",
+                    "customer_ids",
                     "name",
                     "email",
                     "email_verified_at"
@@ -9271,10 +9271,11 @@
                         "example": "null",
                         "nullable": "true"
                     },
-                    "customer_id": {
-                        "type": "integer",
-                        "example": "null",
-                        "nullable": "true"
+                    "customer_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
                     },
                     "name": {
                         "type": "string",
@@ -9290,8 +9291,11 @@
                         "format": "date-time",
                         "nullable": "true"
                     },
-                    "customer": {
-                        "$ref": "#/components/schemas/Customer"
+                    "customers": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Customer"
+                        }
                     }
                 },
                 "type": "object"
