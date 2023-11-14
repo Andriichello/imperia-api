@@ -100,6 +100,34 @@ if (!function_exists('extractValues')) {
     }
 }
 
+if (!function_exists('matches')) {
+
+    /**
+     * Extract regexp matches from given strings.
+     *
+     * @param string $regex
+     * @param string ...$strings
+     *
+     * @return array
+     */
+    function matches(string $regex, mixed ...$strings): array
+    {
+        $result = [];
+
+        foreach ($strings as $string) {
+            $matches = [];
+
+            preg_match_all($regex, $string, $matches);
+
+            foreach ($matches as $match) {
+                $result = array_merge($result, $match);
+            }
+        }
+
+        return $result;
+    }
+}
+
 if (!function_exists('translate')) {
 
     /**
