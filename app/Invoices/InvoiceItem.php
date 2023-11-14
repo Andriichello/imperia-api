@@ -4,6 +4,7 @@ namespace App\Invoices;
 
 use App\Models\BaseModel;
 use Exception;
+use Illuminate\Support\Arr;
 use LaravelDaily\Invoices\Classes\InvoiceItem as BaseItem;
 
 /**
@@ -19,6 +20,13 @@ class InvoiceItem extends BaseItem
      * @var array|null
      */
     protected ?array $comments = null;
+
+    /**
+     * Overrides field's time of serving.
+     *
+     * @var string|null
+     */
+    protected ?string $timeOfServing = null;
 
     /**
      * Get field.
@@ -110,6 +118,36 @@ class InvoiceItem extends BaseItem
     }
 
     /**
+     * Get requested time of serving.
+     *
+     * @return string|null
+     */
+    public function getTimeOfServing(): ?string
+    {
+        if (is_string($this->timeOfServing)) {
+            return empty($this->timeOfServing) ? null : $this->timeOfServing;
+        }
+
+        $times = [];
+
+        foreach ($this->getComments() as $comment) {
+            $regex = '/\d{1,2}:\d{2}/';
+            $text = data_get($comment, 'text');
+
+            $matches = matches($regex, $text);
+
+            if (!empty($matches)) {
+                $times = array_merge($times, $matches);
+                break;
+            }
+        }
+
+        $timeOfServing = Arr::first($times);
+
+        return $this->timeOfServing = empty($timeOfServing) ? '' : $timeOfServing;
+    }
+
+    /**
      * Returns true if item can be merged with current one.
      *
      * @param InvoiceItem $item
@@ -150,5 +188,40 @@ class InvoiceItem extends BaseItem
         $this->subTotalPrice($this->sub_total_price + $item->sub_total_price);
 
         return $this;
+    }
+
+    /**
+     * Compare given items to figure out their place in an ordered list.
+     *
+     * @param InvoiceItem $itemOne
+     * @param InvoiceItem $itemTwo
+     *
+     * @return int
+     */
+    public static function compare(InvoiceItem $itemOne, InvoiceItem $itemTwo): int
+    {
+        $timeOne = $itemOne->getTimeOfServing();
+        $timeTwo = $itemTwo->getTimeOfServing();
+
+        if (!$timeOne) {
+            return $timeTwo !== null ? 1 : -1;
+        } elseif (!$timeTwo) {
+            return -1;
+        }
+
+        [$hourOne, $minuteOne] = explode(':', $timeOne);
+        [$hourTwo, $minuteTwo] = explode(':', $timeTwo);
+
+        if ($hourOne > $hourTwo) {
+            return 1;
+        } elseif ($hourOne < $hourTwo) {
+            return -1;
+        } elseif ($minuteOne > $minuteTwo) {
+            return 1;
+        } elseif ($minuteOne < $minuteTwo) {
+            return -1;
+        }
+
+        return 0;
     }
 }
