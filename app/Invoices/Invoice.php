@@ -7,8 +7,11 @@ use App\Invoices\Items\ServiceItem;
 use App\Invoices\Items\SpaceItem;
 use App\Invoices\Items\TicketItem;
 use App\Models\Menu;
+use App\Models\Morphs\Comment;
 use App\Models\Orders\Order;
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Arr;
+use LaravelDaily\Invoices\Classes\InvoiceItem;
 use LaravelDaily\Invoices\Invoice as BaseInvoice;
 
 /**
@@ -542,5 +545,41 @@ class Invoice extends BaseInvoice
         }
 
         return $total;
+    }
+
+    /**
+     * Add item to the invoice.
+     *
+     * @param InvoiceItem $item
+     *
+     * @return $this
+     */
+    public function addItem(InvoiceItem $item): static
+    {
+        return parent::addItem($item);
+    }
+
+    /**
+     * Add item to the invoice.
+     *
+     * @return $this
+     */
+    public function sortItems(): static
+    {
+        $items = $this->items
+            ->sort(function ($one, $two) {
+                $compatible = $one instanceof \App\Invoices\InvoiceItem
+                    && $two instanceof \App\Invoices\InvoiceItem;
+
+                if ($compatible) {
+                    return \App\Invoices\InvoiceItem::compare($one, $two);
+                }
+
+                return 0;
+            });
+
+        $this->items = collect($items->values());
+
+        return $this;
     }
 }
