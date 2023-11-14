@@ -37,7 +37,8 @@ class InvoiceFactory
             ->template('banquet')
             ->buyer(self::buyer($order->banquet->customer))
             ->seller(self::seller($order->banquet->restaurant))
-            ->addItems(self::items($order));
+            ->addItems(self::items($order))
+            ->sortItems();
     }
 
     /**
@@ -114,7 +115,8 @@ class InvoiceFactory
             ->buyer(new Buyer([]))
             ->template('banquet')
             ->addTicketEntries(...$ticketEntries)
-            ->addItems($items);
+            ->addItems($items)
+            ->sortItems();
     }
 
     /**
