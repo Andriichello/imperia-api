@@ -122,4 +122,17 @@ class ProductOrderField extends BaseModel implements
     {
         return round($this->price * $this->amount, 2);
     }
+
+    /**
+     * Accessor for the serve at time of the field.
+     *
+     * @return string|null
+     */
+    public function getServeAtAttribute(): ?string
+    {
+        $serveAt = data_get($this->attributes, 'serve_at');
+
+        return empty($serveAt)
+            ? null : (new Carbon($serveAt))->format('H:i');
+    }
 }

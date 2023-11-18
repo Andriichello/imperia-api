@@ -3,6 +3,10 @@
 namespace App\Invoices;
 
 use App\Models\BaseModel;
+use App\Models\Orders\ProductOrderField;
+use App\Models\Orders\ServiceOrderField;
+use App\Models\Orders\SpaceOrderField;
+use App\Models\Orders\TicketOrderField;
 use Exception;
 use Illuminate\Support\Arr;
 use LaravelDaily\Invoices\Classes\InvoiceItem as BaseItem;
@@ -31,7 +35,7 @@ class InvoiceItem extends BaseItem
     /**
      * Get field.
      *
-     * @return BaseModel
+     * @return BaseModel|ProductOrderField|TicketOrderField|ServiceOrderField|SpaceOrderField
      */
     public function getField(): BaseModel
     {
@@ -47,7 +51,7 @@ class InvoiceItem extends BaseItem
     public function getPrice(): ?float
     {
         // @phpstan-ignore-next-line
-        return $this->field?->price;
+        return $this->getField()?->price;
     }
 
     /**
@@ -67,7 +71,7 @@ class InvoiceItem extends BaseItem
      */
     public function getOncePaidPrice(): ?float
     {
-        return $this->field?->once_paid_price;
+        return $this->getField()?->once_paid_price;
     }
 
     /**
@@ -78,7 +82,18 @@ class InvoiceItem extends BaseItem
     public function getAmount(): ?int
     {
         // @phpstan-ignore-next-line
-        return $this->field?->amount;
+        return $this->getField()?->amount;
+    }
+
+    /**
+     * Get serve at time.
+     *
+     * @return string|null
+     */
+    public function getServeAt(): ?string
+    {
+        // @phpstan-ignore-next-line
+        return $this->getField()?->serve_at;
     }
 
     /**
@@ -89,7 +104,7 @@ class InvoiceItem extends BaseItem
     public function getTotal(): ?float
     {
         // @phpstan-ignore-next-line
-        return $this->field?->total;
+        return $this->getField()?->total;
     }
 
     /**
@@ -114,7 +129,7 @@ class InvoiceItem extends BaseItem
     public function getComments(): array
     {
         // @phpstan-ignore-next-line
-        return $this->comments ?? ($this->field?->comments?->toArray() ?? []);
+        return $this->comments ?? ($this->getField()?->comments?->toArray() ?? []);
     }
 
     /**
@@ -126,6 +141,10 @@ class InvoiceItem extends BaseItem
     {
         if (is_string($this->timeOfServing)) {
             return empty($this->timeOfServing) ? null : $this->timeOfServing;
+        }
+
+        if (!empty($this->getServeAt())) {
+            return $this->timeOfServing = $this->getServeAt();
         }
 
         $times = [];

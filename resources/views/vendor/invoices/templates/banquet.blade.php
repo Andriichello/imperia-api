@@ -538,6 +538,9 @@
                         <td class="p-0">
                             {{ $item->title}}
 
+                            @if(!empty($item->getServeAt()))
+                                <br><span class="cool-gray">{{ $item->getServeAt() }}</span>
+                            @endif
                             @if($item->description)
                                 <br><span class="cool-gray">{{ $item->description }}</span>
                             @endif
