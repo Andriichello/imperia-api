@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $product_id
  * @property int|null $variant_id
  * @property int $amount
+ * @property string|null $serve_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
@@ -55,6 +56,7 @@ class ProductOrderField extends BaseModel implements
         'product_id',
         'variant_id',
         'amount',
+        'serve_at',
     ];
 
     /**
