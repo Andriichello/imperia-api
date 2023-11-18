@@ -2,6 +2,7 @@
 
 namespace App\Nova;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\DateTime;
@@ -9,6 +10,8 @@ use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\MorphMany;
 use Laravel\Nova\Fields\MorphToMany;
 use Laravel\Nova\Fields\Number;
+use Laravel\Nova\Fields\Text;
+use Michielfb\Time\Time;
 
 /**
  * Class ProductOrderField.
@@ -54,21 +57,29 @@ class ProductOrderField extends Resource
             ID::make(__('columns.id'), 'id')
                 ->sortable(),
 
-            BelongsTo::make('Order'),
+            BelongsTo::make(__('columns.order'), 'order', Order::class),
 
-            BelongsTo::make('Product'),
+            BelongsTo::make(__('columns.product'), 'product', Product::class),
 
-            Number::make('Amount')
+            BelongsTo::make(__('columns.variant'), 'variant', ProductVariant::class)
+                ->nullable(),
+
+            Number::make(__('columns.amount'), 'amount')
                 ->step(1)
                 ->rules('required', 'min:1'),
 
-            Number::make('Total')
+            Text::make(__('columns.serve_at'), 'serve_at')
+                ->resolveUsing(fn() => $this->serve_at ? (new Carbon($this->serve_at))->format('H:i') : $this->serve_at)
+                ->nullable()
+                ->rules('sometimes', 'nullable', 'date_format:H:i'),
+
+            Number::make(__('columns.total'))
                 ->exceptOnForms()
                 ->readonly(),
 
-            MorphToMany::make('Discounts', 'discounts', Discount::class),
+            // MorphToMany::make(__('columns.discounts'), 'discounts', Discount::class),
 
-            MorphMany::make('Comments', 'comments', Comment::class),
+            MorphMany::make(__('columns.comments'), 'comments', Comment::class),
 
             DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()
@@ -103,9 +114,21 @@ class ProductOrderField extends Resource
                 'label' => __('columns.product'),
                 'checked' => true,
             ],
+            'variant' => [
+                'label' => __('columns.variant'),
+                'checked' => true,
+            ],
             'amount' => [
                 'label' => __('columns.amount'),
                 'checked' => true,
+            ],
+            'serve_at' => [
+                'label' => __('columns.serve_at'),
+                'checked' => true,
+            ],
+            'total' => [
+                'label' => __('columns.total'),
+                'checked' => false,
             ],
             'created_at' => [
                 'label' => __('columns.created_at'),
