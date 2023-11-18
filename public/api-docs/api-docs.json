@@ -7178,9 +7178,20 @@
                         "type": "integer",
                         "example": 1
                     },
+                    "batch": {
+                        "type": "string",
+                        "example": "iSXC",
+                        "nullable": "true"
+                    },
                     "amount": {
                         "type": "integer",
                         "example": 3
+                    },
+                    "serve_at": {
+                        "description": "24-hours format time, HOURS:MINUTES",
+                        "type": "string",
+                        "example": "16:50",
+                        "nullable": "true"
                     },
                     "comments": {
                         "type": "array",
@@ -7797,7 +7808,9 @@
                     "order_id",
                     "product_id",
                     "variant_id",
+                    "batch",
                     "amount",
+                    "serve_at",
                     "total",
                     "discounts_amount",
                     "discounts_percent",
@@ -7824,9 +7837,20 @@
                         "type": "integer",
                         "example": 1
                     },
+                    "batch": {
+                        "type": "string",
+                        "example": "iSXC",
+                        "nullable": "true"
+                    },
                     "amount": {
                         "type": "integer",
                         "example": 5
+                    },
+                    "serve_at": {
+                        "description": "24-hours format time, HOURS:MINUTES",
+                        "type": "string",
+                        "example": "16:50",
+                        "nullable": "true"
                     },
                     "total": {
                         "type": "float",

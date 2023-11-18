@@ -108,6 +108,7 @@ class OrderRepository extends CrudRepository
 
             foreach ($attributes['products'] as $values) {
                 $identifiers = Arr::only($values, ['product_id', 'variant_id']);
+                $identifiers['batch'] = data_get($values, 'batch');
 
                 /** @var ProductOrderField $field */
                 $field = $order->products()

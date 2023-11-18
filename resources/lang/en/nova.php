@@ -38,6 +38,10 @@ return [
             'Notification' => 'Notification',
             'Tag' => 'Tag',
             'Alteration' => 'Alteration',
+            'ProductOrderField' => 'Product Order Field',
+            'TicketOrderField' => 'Ticket Order Field',
+            'ServiceOrderField' => 'Service Order Field',
+            'SpaceOrderField' => 'Space Order Field',
         ],
         'plural' => [
             'User' => 'Users',
@@ -63,6 +67,10 @@ return [
             'Notification' => 'Notifications',
             'Tag' => 'Tags',
             'Alteration' => 'Alterations',
+            'ProductOrderField' => 'Product Order Fields',
+            'TicketOrderField' => 'Ticket Order Fields',
+            'ServiceOrderField' => 'Service Order Fields',
+            'SpaceOrderField' => 'Space Order Fields',
         ],
     ],
     'metrics' => [

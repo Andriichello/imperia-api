@@ -38,6 +38,10 @@ return [
             'Notification' => 'Сповіщення',
             'Tag' => 'Тег',
             'Alteration' => 'Запланована Зміна',
+            'ProductOrderField' => 'Замовлена Страва',
+            'TicketOrderField' => 'Замовлений Квиток',
+            'ServiceOrderField' => 'Замовлена Послуга',
+            'SpaceOrderField' => 'Замовлене Приміщення',
         ],
         'plural' => [
             'User' => 'Користувачі',
@@ -63,6 +67,10 @@ return [
             'Notification' => 'Сповіщення',
             'Tag' => 'Теги',
             'Alteration' => 'Заплановані Зміни',
+            'ProductOrderField' => 'Замовлені Страви',
+            'TicketOrderField' => 'Замовлені Квитки',
+            'ServiceOrderField' => 'Замовлені Послуги',
+            'SpaceOrderField' => 'Замовлені Приміщення',
         ],
     ],
     'metrics' => [

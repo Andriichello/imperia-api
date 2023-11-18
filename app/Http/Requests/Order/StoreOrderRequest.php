@@ -5,6 +5,8 @@ namespace App\Http\Requests\Order;
 use App\Http\Requests\Crud\StoreRequest;
 use App\Models\Morphs\Comment;
 use App\Models\Morphs\Discount;
+use App\Models\Orders\ProductOrderField;
+use Illuminate\Validation\Rule;
 use OpenApi\Annotations as OA;
 
 /**
@@ -91,10 +93,21 @@ class StoreOrderRequest extends StoreRequest
                 'distinct',
                 'exists:product_variants,id',
             ],
+            'products.*.batch' => [
+                'sometimes',
+                'nullable',
+                'string',
+            ],
             'products.*.amount' => [
                 'required',
                 'integer',
                 'min:1',
+            ],
+            'products.*.serve_at' => [
+                'sometimes',
+                'nullable',
+                'string',
+                'date_format:H:i',
             ],
         ];
         return array_merge(
@@ -199,7 +212,10 @@ class StoreOrderRequest extends StoreRequest
      *   required={"product_id", "variant_id", "amount"},
      *   @OA\Property(property="product_id", type="integer", example=1),
      *   @OA\Property(property="variant_id", type="integer", example=1),
+     *   @OA\Property(property="batch", type="string", nullable="true", example="iSXC"),
      *   @OA\Property(property="amount", type="integer", example=3),
+     *   @OA\Property(property="serve_at", type="string", nullable="true", example="16:50",
+     *     description="24-hours format time, HOURS:MINUTES"),
      *   @OA\Property(property="comments", type="array",
      *     @OA\Items(ref ="#/components/schemas/AttachingComment")),
      *   @OA\Property(property="discounts", type="array",
