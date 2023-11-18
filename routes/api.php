@@ -45,12 +45,6 @@ Route::group(['as' => 'api.'], function () {
     Route::get('status', [StatusController::class, 'check'])
         ->name('status');
 
-    Route::post('queue/backup', [QueueController::class, 'backup'])
-        ->name('queue.backup');
-
-    Route::post('queue/alterations/perform', [QueueController::class, 'performAlternations'])
-        ->name('queue.alterations.perform');
-
     Route::get('status/list', [StatusController::class, 'list'])
         ->name('status.list');
 
@@ -93,6 +87,11 @@ Route::group(['as' => 'api.'], function () {
 });
 
 Route::group(['middleware' => ['auth:signature,sanctum'], 'as' => 'api.'], function () {
+    Route::post('queue/backup', [QueueController::class, 'backup'])
+        ->name('queue.backup');
+    Route::post('queue/alterations/perform', [QueueController::class, 'performAlternations'])
+        ->name('queue.alterations.perform');
+
     Route::get('/orders/{id}/invoice', [InvoiceController::class, 'view'])
         ->name('orders.invoice');
     Route::get('/orders/{id}/invoice/pdf', [InvoiceController::class, 'pdf'])
