@@ -3,6 +3,8 @@
 namespace App\Http\Requests\Order;
 
 use App\Http\Requests\Crud\UpdateRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Support\Arr;
 use OpenApi\Annotations as OA;
 
 /**
@@ -24,6 +26,43 @@ class UpdateOrderRequest extends UpdateRequest
                 //
             ]
         );
+    }
+
+    /**
+     * Ensures that product order fields are unique.
+     *
+     * @param Validator $validator
+     *
+     * @return void
+     */
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator) {
+            $orderId = $this->id();
+            $products = collect($this->get('products'));
+
+            $unique = $products->unique(function (array $field) use ($orderId) {
+                $combination = Arr::only(
+                    $field,
+                    [
+                        'batch',
+                        'product_id',
+                        'variant_id'
+                    ]
+                );
+
+                return implode('-', $combination) . '-' . $orderId;
+            });
+
+            if ($unique->count() < $products->count()) {
+                $validator->errors()
+                    ->add(
+                        'products',
+                        'The order_id, batch, product_id and variant_id'
+                        . ' combination must be unique within products.'
+                    );
+            }
+        });
     }
 
     /**

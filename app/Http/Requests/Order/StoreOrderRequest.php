@@ -5,8 +5,8 @@ namespace App\Http\Requests\Order;
 use App\Http\Requests\Crud\StoreRequest;
 use App\Models\Morphs\Comment;
 use App\Models\Morphs\Discount;
-use App\Models\Orders\ProductOrderField;
-use Illuminate\Validation\Rule;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Support\Arr;
 use OpenApi\Annotations as OA;
 
 /**
@@ -90,7 +90,6 @@ class StoreOrderRequest extends StoreRequest
                 'sometimes',
                 'nullable',
                 'integer',
-                'distinct',
                 'exists:product_variants,id',
             ],
             'products.*.batch' => [
@@ -144,6 +143,42 @@ class StoreOrderRequest extends StoreRequest
                 ],
             ]
         );
+    }
+
+    /**
+     * Ensures that product order fields are unique.
+     *
+     * @param Validator $validator
+     *
+     * @return void
+     */
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator) {
+            $products = collect($this->get('products'));
+
+            $unique = $products->unique(function (array $field) {
+                $combination = Arr::only(
+                    $field,
+                    [
+                        'batch',
+                        'product_id',
+                        'variant_id'
+                    ]
+                );
+
+                return implode('-', $combination);
+            });
+
+            if ($unique->count() < $products->count()) {
+                $validator->errors()
+                    ->add(
+                        'products',
+                        'The batch, product_id and variant_id'
+                        . ' combination must be unique within products.'
+                    );
+            }
+        });
     }
 
     /**
