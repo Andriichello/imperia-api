@@ -7,6 +7,7 @@ use App\Http\Requests\Queue\QueueBackupRequest;
 use App\Http\Requests\Queue\QueuePerformAlternationsRequest;
 use App\Http\Responses\ApiResponse;
 use App\Jobs\Morph\PerformAlternations;
+use App\Jobs\Queue\Backup;
 use Illuminate\Http\JsonResponse;
 use Spatie\BackupTool\Jobs\CreateBackupJob;
 
@@ -21,11 +22,10 @@ class QueueController extends Controller
      * @param QueueBackupRequest $request
      *
      * @return JsonResponse
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function backup(QueueBackupRequest $request): JsonResponse
     {
-        $this->dispatch(new CreateBackupJob());
+        $this->dispatch(new Backup($request->isDb(), $request->isFiles()));
 
         return ApiResponse::make();
     }
