@@ -11,11 +11,11 @@ use Spatie\BackupTool\Jobs\CreateBackupJob;
 class Backup extends AsyncJob
 {
     /**
-     * Number of times the job should be tried.
+     * The number of seconds to wait before retrying the job.
      *
-     * @var int
+     * @var array<int, int>
      */
-    protected int $attempts = 1;
+    protected array $backoff = [30, 45, 60];
 
     /**
      * Determines if the database should be backed up.

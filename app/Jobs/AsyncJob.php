@@ -19,23 +19,12 @@ abstract class AsyncJob implements ShouldQueue
     use SerializesModels;
 
     /**
-     * Number of times the job should be tried.
+     * Get the number of seconds to wait before retrying the job.
      *
-     * @var int
+     * @return int|array
      */
-    protected int $attempts = 3;
-
-    /**
-     * Set the number of times that the job should be tried.
-     *
-     * @param int $attempts
-     *
-     * @return static
-     */
-    public function setAttempts(int $attempts): static
+    public function backoff(): int|array
     {
-        $this->attempts = $attempts;
-
-        return $this;
+        return $this->backoff ?? 1;
     }
 }
