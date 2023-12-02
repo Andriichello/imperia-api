@@ -6,6 +6,8 @@
 auth.json
 google-cloud.json
 .env
+.env.dev
+.env.staging
 .env.backup
 .phpunit.result.cache
 docker-compose.override.yml
