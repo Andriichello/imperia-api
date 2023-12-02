@@ -17,4 +17,25 @@ abstract class AsyncJob implements ShouldQueue
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
+
+    /**
+     * Number of times the job should be tried.
+     *
+     * @var int
+     */
+    protected int $attempts = 3;
+
+    /**
+     * Set the number of times that the job should be tried.
+     *
+     * @param int $attempts
+     *
+     * @return static
+     */
+    public function setAttempts(int $attempts): static
+    {
+        $this->attempts = $attempts;
+
+        return $this;
+    }
 }
