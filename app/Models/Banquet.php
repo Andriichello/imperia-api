@@ -41,6 +41,7 @@ use Illuminate\Support\Collection;
  * @property Carbon|null $deleted_at
  *
  * @property array|null $totals
+ * @property float $tickets_total
  * @property float|null $actual_total
  * @property string|null $advance_amount_payment_method
  * @property bool|null $is_birthday_club
@@ -210,14 +211,14 @@ class Banquet extends BaseModel implements
     /**
      * Accessor for the array of last stored order totals.
      *
-     * @return ?array = [
-     *   'all' => 'float',
-     *   'spaces' => 'float',
-     *   'tickets' => 'float',
-     *   'products' => 'float',
-     *   'services' => 'float',
-     *   'timestamp' => 'int'
-     * ]
+     * @return null|array{
+     *   all: float,
+     *   spaces: float,
+     *   tickets: float,
+     *   products: float,
+     *   services: float,
+     *   timestamp: int
+     * }
      */
     public function getTotalsAttribute(): ?array
     {
@@ -227,20 +228,41 @@ class Banquet extends BaseModel implements
     /**
      * Mutator for the array of last stored order totals.
      *
-     * @param ?array $totals = [
-     *   'all' => 'float',
-     *   'spaces' => 'float',
-     *   'tickets' => 'float',
-     *   'products' => 'float',
-     *   'services' => 'float',
-     *   'timestamp' => 'int'
-     * ]
+     * @param null|array{
+     *   all: float,
+     *   spaces: float,
+     *   tickets: float,
+     *   products: float,
+     *   services: float,
+     *   timestamp: int
+     * } $totals
      *
      * @return void
      */
     public function setTotalsAttribute(?array $totals): void
     {
         $this->setToJson('metadata', 'totals', $totals);
+    }
+
+    /**
+     * Accessor for the total of the tickets, which were
+     * set to the banquet's metadata.
+     *
+     * @return float
+     */
+    public function getTicketsTotalAttribute(): float
+    {
+        $total = 0.0;
+
+        if ($this->adults_amount && $this->adult_ticket_price) {
+            $total += $this->adults_amount * $this->adult_ticket_price;
+        }
+
+        if ($this->children_amount && $this->child_ticket_price) {
+            $total += $this->children_amount * $this->child_ticket_price;
+        }
+
+        return $total;
     }
 
     /**
