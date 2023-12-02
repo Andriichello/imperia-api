@@ -43,7 +43,8 @@ class MetricsController extends Controller
     {
         $data = Banquet::query()
             ->withRestaurant($request->restaurant())
-            ->within($request->beg(), $request->end())
+            ->thatAreRelevant()
+            ->within($request->beg(), $request->end(), 'start_at')
             ->chunkMap(function (Banquet $banquet) use ($request) {
                 $id = $banquet->id;
                 $guests = $this->helper->guests($banquet);
