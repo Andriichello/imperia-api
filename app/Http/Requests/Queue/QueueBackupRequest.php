@@ -19,9 +19,51 @@ class QueueBackupRequest extends BaseRequest
         return array_merge(
             parent::rules(),
             [
-                //
+                'only' => [
+                    'sometimes',
+                    'nullable',
+                    'array',
+                ],
+                'only.*' => [
+                    'required',
+                    'string',
+                    'min:1',
+                    'in:db,files'
+                ],
             ]
         );
+    }
+
+    /**
+     * If true, then database should be backed up.
+     *
+     * @return bool
+     */
+    public function isDb(): bool
+    {
+        $only = $this->get('only');
+
+        if (empty($only)) {
+            return false;
+        }
+
+        return in_array('db', $only);
+    }
+
+    /**
+     * If true, then files should be backed up.
+     *
+     * @return bool
+     */
+    public function isFiles(): bool
+    {
+        $only = $this->get('only');
+
+        if (empty($only)) {
+            return false;
+        }
+
+        return in_array('files', $only);
     }
 
     /**
