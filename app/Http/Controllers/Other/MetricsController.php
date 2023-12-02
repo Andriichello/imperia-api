@@ -56,12 +56,13 @@ class MetricsController extends Controller
                 return compact('id', 'guests', 'totals', 'sales');
             });
 
+        $banquets = ['amount' => $data->count()];
         $guests = $this->sumOfGuests($data->pluck('guests'));
         $totals = $this->sumOfTotals($data->pluck('totals'));
         $totals['metrics'] = $this->helper->metricsOnTotals($totals);
         $sales = $this->sumOfSales($data->pluck('sales'));
 
-        $summary = compact('guests', 'totals', 'sales');
+        $summary = compact('banquets', 'guests', 'totals', 'sales');
 
         return ApiResponse::make(compact('summary'));
     }
