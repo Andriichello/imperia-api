@@ -2,6 +2,7 @@
 
 namespace App\Queries;
 
+use App\Enums\BanquetState;
 use App\Models\Customer;
 use App\Models\Restaurant;
 use App\Models\User;
@@ -95,6 +96,44 @@ class BanquetQueryBuilder extends BaseQueryBuilder
         if (!empty($ids)) {
             $this->whereIn($this->model->getTable() . '.restaurant_id', $ids);
         }
+
+        return $this;
+    }
+
+    /**
+     * Only banquets that are in given states
+     *
+     * @param string ...$states
+     *
+     * @return static
+     */
+    public function inState(string ...$states): static
+    {
+        $this->whereIn('state', $states);
+
+        return $this;
+    }
+
+    /**
+     * Only banquets that are relevant (new, confirmed, completed).
+     *
+     * @return static
+     */
+    public function thatAreRelevant(): static
+    {
+        $this->inState(BanquetState::New, BanquetState::Confirmed, BanquetState::Completed);
+
+        return $this;
+    }
+
+    /**
+     *  Only banquets that are irrelevant (postponed, cancelled).
+     *
+     * @return static
+     */
+    public function thatAreIrrelevant(): static
+    {
+        $this->inState(BanquetState::Postponed, BanquetState::Cancelled);
 
         return $this;
     }
