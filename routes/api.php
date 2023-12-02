@@ -22,6 +22,7 @@ use App\Http\Controllers\Model\TagController;
 use App\Http\Controllers\Model\TicketController;
 use App\Http\Controllers\Model\UserController;
 use App\Http\Controllers\Other\InvoiceController;
+use App\Http\Controllers\Other\MetricsController;
 use App\Http\Controllers\Other\QueueController;
 use App\Http\Controllers\Other\StatusController;
 use App\Http\Responses\ApiResponse;
@@ -91,6 +92,8 @@ Route::group(['middleware' => ['auth:signature,sanctum'], 'as' => 'api.'], funct
         ->name('queue.backup');
     Route::post('queue/alterations/perform', [QueueController::class, 'performAlternations'])
         ->name('queue.alterations.perform');
+
+    Route::get('metrics/full', [MetricsController::class, 'full']);
 
     Route::get('/orders/{id}/invoice', [InvoiceController::class, 'view'])
         ->name('orders.invoice');
