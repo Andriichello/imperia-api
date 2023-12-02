@@ -77,7 +77,7 @@ class MetricsHelper implements MetricsHelperInterface
         return [
             'difference' => $diff = (($actual ?? $full) - $full),
             'percentage' => $full !== 0.0
-                ? round($diff / $full, 5) : null,
+                ? round(($diff / $full) * 100, 3) : null,
         ];
     }
 
