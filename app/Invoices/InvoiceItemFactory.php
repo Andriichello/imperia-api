@@ -29,16 +29,16 @@ class InvoiceItemFactory
     public static function fromField(BaseModel $field): InvoiceItem
     {
         if ($field instanceof SpaceOrderField) {
-            $item = SpaceItem::make($field);
+            $item = SpaceItem::make('space', $field);
         }
         if ($field instanceof TicketOrderField) {
-            $item = TicketItem::make($field);
+            $item = TicketItem::make('ticket', $field);
         }
         if ($field instanceof ServiceOrderField) {
-            $item = ServiceItem::make($field);
+            $item = ServiceItem::make('service', $field);
         }
         if ($field instanceof ProductOrderField) {
-            $item = ProductItem::make($field);
+            $item = ProductItem::make('product', $field);
         }
 
         if (!isset($item)) {

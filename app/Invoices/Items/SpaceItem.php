@@ -21,7 +21,16 @@ class SpaceItem extends InvoiceItem
      */
     protected SpaceOrderField $field;
 
-    public static function make(SpaceOrderField $field): static
+    /**
+     * Make a new instance of SpaceItem.
+     *
+     * @param $title
+     * @param SpaceOrderField|null $field
+     *
+     * @return static
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public static function make($title, SpaceOrderField $field = null): static
     {
         // @phpstan-ignore-next-line
         $item = new static();

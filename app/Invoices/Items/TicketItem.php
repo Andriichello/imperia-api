@@ -20,8 +20,18 @@ class TicketItem extends InvoiceItem
      */
     protected TicketOrderField $field;
 
-    public static function make(TicketOrderField $field): static
+    /**
+     * Make a new instance of TicketItem.
+     *
+     * @param $title
+     * @param TicketOrderField|null $field
+     *
+     * @return static
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public static function make($title, TicketOrderField $field = null): static
     {
+        // @phpstan-ignore-next-line
         $item = new static();
         $item->field = $field;
 

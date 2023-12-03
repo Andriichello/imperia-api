@@ -20,8 +20,18 @@ class ProductItem extends InvoiceItem
      */
     protected ProductOrderField $field;
 
-    public static function make(ProductOrderField $field): static
+    /**
+     * Make a new instance of ProductItem.
+     *
+     * @param $title
+     * @param ProductOrderField|null $field
+     *
+     * @return static
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public static function make($title, ProductOrderField $field = null): static
     {
+        // @phpstan-ignore-next-line
         $item = new static();
         $item->field = $field;
 
