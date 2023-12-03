@@ -140,6 +140,7 @@ class MetricsHelper implements MetricsHelperInterface
         foreach ($menus as $menu) {
             $saleByMenu = [
                 'id' => $menu->id,
+                'title' => $menu->title,
                 'amount' => 0,
                 'total' => 0.0,
             ];

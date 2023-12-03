@@ -140,6 +140,11 @@ class MetricsController extends Controller
             $accumulator = data_get($carry, $sale['id'], []);
 
             $accumulator['id'] = $sale['id'];
+
+            if (isset($sale['title'])) {
+                $accumulator['title'] = $sale['title'];
+            }
+
             $accumulator['amount'] = $sale['amount']
                 + data_get($accumulator, 'amount', 0);
             $accumulator['total'] = $sale['total']
