@@ -12,12 +12,16 @@
     <div class="w-full flex flex-row justify-center gap-6 px-3 py-3">
       <div class="flex flex-col justify-center">
         <label for="beg" class="font-semibold">Початок</label>
-        <input name="beg" type="date" v-model="beg">
+        <input name="beg" type="date"
+               class="bg-transparent"
+               v-model="beg">
       </div>
 
       <div class="flex flex-col justify-center">
         <label for="end" class="font-semibold">Кінець</label>
-        <input name=end type="date" v-model="end">
+        <input name=end type="date"
+               class="bg-transparent"
+               v-model="end">
       </div>
     </div>
 
@@ -61,23 +65,6 @@
                     :value="totals['tickets_total'] ?? null"
                     title="Вартість квитків"
                     description="Загальна вартість квитків усіх банкетів"/>
-      </div>
-
-      <div class="w-full flex flex-wrap justify-start items-start gap-6">
-        <ValueBlock class="flex-grow" style="flex-basis: 25%; max-width: 30%;"
-                    :value="totals?.metrics?.difference ?? null"
-                    title="Різниця вартостей"
-                    description="Різниця вартостей = Фактична Вартість - Вартість"/>
-
-        <ValueBlock class="flex-grow" style="flex-basis: 25%; max-width: 30%;"
-                    :value="totals?.metrics?.percentage ?? null"
-                    title="Відсоткова різниця"
-                    description="Відсоткова різниця = Різниця вартостей / Вартість"/>
-
-        <ValueBlock class="flex-grow" style="flex-basis: 25%; max-width: 30%;"
-                    :value="totals?.actual_total && banquets?.amount ? Math.round((totals?.actual_total / banquets?.amount +  Number.EPSILON) * 100) / 100 : null"
-                    title="Середній вартість"
-                    description="Середній вартість = Фактична вартість / Банкети"/>
       </div>
 
       <div class="w-full flex flex-wrap justify-start items-start gap-6">
