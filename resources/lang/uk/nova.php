@@ -3,6 +3,8 @@
 return [
     /* Dashboard */
     'dashboard' => [
+        'dashboard' => 'Інформаційна панель',
+        'dashboards' => 'Інформаційні панелі',
         'user' => 'Користувач',
         'users' => 'Користувачі',
         'order' => 'Замовлення',
@@ -12,6 +14,7 @@ return [
         'restaurant' => 'Заклад',
         'restaurants' => 'Заклади',
         'media' => 'Зображення',
+        'metrics' => 'Метрики',
     ],
     'labels' => [
         'singular' => [

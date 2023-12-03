@@ -3,6 +3,8 @@
 return [
     /* Dashboard */
     'dashboard' => [
+        'dashboard' => 'Dashboard',
+        'dashboards' => 'Dashboards',
         'user' => 'User',
         'users' => 'Users',
         'order' => 'Order',
@@ -12,6 +14,7 @@ return [
         'restaurant' => 'Restaurant',
         'restaurants' => 'Restaurants',
         'media' => 'Media',
+        'metrics' => 'Metrics',
     ],
     'labels' => [
         'singular' => [
