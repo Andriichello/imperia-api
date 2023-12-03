@@ -9,6 +9,18 @@
       </button>
     </div>
 
+    <div class="w-full flex flex-row justify-center gap-6 px-3 py-3">
+      <div class="flex flex-col justify-center">
+        <label for="beg" class="font-semibold">Початок</label>
+        <input name="beg" type="date" v-model="beg">
+      </div>
+
+      <div class="flex flex-col justify-center">
+        <label for="end" class="font-semibold">Кінець</label>
+        <input name=end type="date" v-model="end">
+      </div>
+    </div>
+
     <div class="w-full flex flex-col flex-wrap justify-center items-between px-4 py-4 gap-2">
       <div class="w-full flex flex-wrap justify-start items-start gap-6">
         <ValueBlock class="flex-grow" style="flex-basis: 25%; max-width: 30%;"
@@ -81,8 +93,8 @@
 
         <ValueBlock class="flex-grow" style="flex-basis: 25%; max-width: 30%;"
                     :value="totals?.actual_total && banquets?.amount ? Math.round((totals?.actual_total / banquets?.amount +  Number.EPSILON) * 100) / 100 : null"
-                    title="Середній вартість"
-                    description="Середній вартість = Фактична вартість / Банкети"/>
+                    title="Середня вартість"
+                    description="Середня вартість = Фактична вартість / Банкети"/>
       </div>
 
       <template v-if="menuSales?.length">
@@ -124,7 +136,13 @@ export default {
     // 'resourceName',
   ],
   data() {
+    const date = new Date();
+    const beg = new Date(date.getFullYear(), date.getMonth(), 1);
+    const end = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
     return {
+      beg: this.formatDate(beg),
+      end: this.formatDate(end),
       metrics: null,
       isFetching: false,
     }
@@ -170,6 +188,22 @@ export default {
     }
   },
   methods: {
+    formatDate(date) {
+      let d = new Date(date);
+      let month = '' + (d.getMonth() + 1);
+      let day = '' + d.getDate();
+      const year = d.getFullYear();
+
+      if (month.length < 2) {
+        month = '0' + month;
+      }
+
+      if (day.length < 2) {
+        day = '0' + day;
+      }
+
+      return [year, month, day].join('-');
+    },
     splitOnChunks(array, chunkSize) {
       const chunks = [];
 
@@ -180,10 +214,18 @@ export default {
       return chunks;
     },
     fetchMetrics(restaurantId) {
-      const url = `/nova-vendor/metrics-card/full?restaurant_id=${restaurantId}`;
+      const url = `/nova-vendor/metrics-card/full`;
+      let query = `?restaurant_id=${restaurantId}`;
+
+      if (this.beg?.length) {
+        query += `&beg=${this.beg}`;
+      }
+      if (this.end?.length) {
+        query += `&end=${this.end}`;
+      }
 
       this.isFetching = true;
-      Nova.request().get(url)
+      Nova.request().get(url + query)
         .then(response => {
           this.metrics = response.data;
           this.isFetching = false;
