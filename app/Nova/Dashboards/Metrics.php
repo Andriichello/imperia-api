@@ -3,6 +3,8 @@
 namespace App\Nova\Dashboards;
 
 use Andriichello\Metrics\MetricsCard;
+use App\Models\User;
+use Illuminate\Http\Request;
 use Laravel\Nova\Dashboards\Main as Dashboard;
 
 class Metrics extends Dashboard
@@ -24,10 +26,27 @@ class Metrics extends Dashboard
      */
     public function cards(): array
     {
-        $restaurantId = data_get(request()->user(), 'restaurant_id');
+        /** @var User|null $user */
+        $user = request()->user();
+
+        $restaurantId = $user?->restaurant_id ?? 0;
+        $isSuper = $user && $user->isAdmin() && !$user->isPreviewOnly();
 
         return [
-            (new MetricsCard())->restaurant($restaurantId ?? 0),
+            (new MetricsCard())
+                ->restaurant($restaurantId)
+                ->withMeta(compact('isSuper'))
+                ->canSee(function (Request $request) use ($restaurantId) {
+                    /** @var User|null $user */
+                    $user = $request->user();
+
+                    if (!$user || !$user->isAdmin()) {
+                        return false;
+                    }
+
+                    return !$user->isPreviewOnly()
+                        || $user->restaurant_id === $restaurantId;
+                }),
         ];
     }
 }

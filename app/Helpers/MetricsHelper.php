@@ -74,11 +74,14 @@ class MetricsHelper implements MetricsHelperInterface
         $full = data_get($totals, 'total');
         $actual = data_get($totals, 'actual_total');
 
-        return [
-            'difference' => $diff = (($actual ?? $full) - $full),
-            'percentage' => $full !== 0.0
-                ? round(($diff / $full) * 100, 3) : null,
-        ];
+        $difference = ($actual ?? $full) - $full;
+        try {
+            $percentage = round(($difference / $full) * 100, 3);
+        } catch (\DivisionByZeroError) {
+            $percentage = null;
+        }
+
+        return compact('difference', 'percentage');
     }
 
     /**

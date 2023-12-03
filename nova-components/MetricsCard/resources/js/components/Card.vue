@@ -9,7 +9,14 @@
       </button>
     </div>
 
-    <div class="w-full flex flex-row justify-center gap-6 px-3 py-3">
+    <div class="w-full flex flex-wrap flex-row justify-center gap-6 px-3 py-3">
+      <div class="flex flex-col justify-center" v-if="isSuper">
+        <label for="id" class="font-semibold">Ідентифікатор закладу</label>
+        <input name="id" type="number"
+               class="bg-transparent"
+               v-model="id">
+      </div>
+
       <div class="flex flex-col justify-center">
         <label for="beg" class="font-semibold">Початок</label>
         <input name="beg" type="date"
@@ -128,6 +135,7 @@ export default {
     const end = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
     return {
+      id: null,
       beg: this.formatDate(beg),
       end: this.formatDate(end),
       metrics: null,
@@ -135,6 +143,12 @@ export default {
     }
   },
   computed: {
+    isSuper() {
+      return this.card?.isSuper;
+    },
+    restaurantId() {
+      return this.card?.restaurantId;
+    },
     summary() {
       return this.metrics?.summary ?? null;
     },
@@ -211,10 +225,15 @@ export default {
         query += `&end=${this.end}`;
       }
 
+      this.metrics = null;
       this.isFetching = true;
       Nova.request().get(url + query)
         .then(response => {
           this.metrics = response.data;
+          this.isFetching = false;
+        })
+        .catch(error => {
+          console.error(error);
           this.isFetching = false;
         });
     },
@@ -223,12 +242,16 @@ export default {
         return;
       }
 
-      this.fetchMetrics(this.card?.restaurantId);
+      const restaurantId = this.isSuper
+        ? (this.id ?? this.restaurantId) : this.restaurantId;
+
+      if (restaurantId) {
+        this.fetchMetrics(restaurantId);
+      }
     },
   },
   mounted() {
-    console.log({restaurantId: this.card?.restaurantId})
-    this.fetchMetrics(this.card?.restaurantId);
+    this.onFetch();
   },
 }
 </script>
