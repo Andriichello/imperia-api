@@ -31,7 +31,7 @@ class MetricsCard extends Card
      */
     public function restaurant(int $id): static
     {
-        $this->withMeta(['restaurant_id' => $id]);
+        $this->withMeta(['restaurantId' => $id]);
 
         return $this;
     }

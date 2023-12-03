@@ -223,11 +223,12 @@ export default {
         return;
       }
 
-      this.fetchMetrics(1);
+      this.fetchMetrics(this.card?.restaurantId);
     },
   },
   mounted() {
-    this.fetchMetrics(1);
+    console.log({restaurantId: this.card?.restaurantId})
+    this.fetchMetrics(this.card?.restaurantId);
   },
 }
 </script>

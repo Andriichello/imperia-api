@@ -130,6 +130,9 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
 
             if ($user && $user->isAdmin()) {
                 $sections[] = MediaTool::section($request, __('nova.dashboard.media'));
+                $sections[] = MenuSection::make(__('nova.dashboard.dashboards'), [
+                    MenuItem::dashboard(\App\Nova\Dashboards\Metrics::class),
+                ])->collapsable()->collapsedByDefault();
 
                 if (!$user->isPreviewOnly()) {
                     $sections[] = BackupTool::section($request);
@@ -145,7 +148,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      *
      * @return void
      */
-    protected function routes()
+    protected function routes(): void
     {
         Nova::routes()
             ->withAuthenticationRoutes()

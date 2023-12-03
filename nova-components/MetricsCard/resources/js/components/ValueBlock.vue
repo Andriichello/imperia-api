@@ -13,9 +13,7 @@ export default {
   name: 'ValueBlock',
   components: {Block},
   props: {
-    value: {
-      type: String,
-    },
+    value: {},
     title: {
       type: String,
     },

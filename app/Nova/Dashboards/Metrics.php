@@ -24,8 +24,10 @@ class Metrics extends Dashboard
      */
     public function cards(): array
     {
+        $restaurantId = data_get(request()->user(), 'restaurant_id');
+
         return [
-            new MetricsCard(),
+            (new MetricsCard())->restaurant($restaurantId ?? 0),
         ];
     }
 }
