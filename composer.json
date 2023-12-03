@@ -40,7 +40,8 @@
         "symfony/http-client": "^6.2.8",
         "symfony/mailgun-mailer": "^6.2.7",
         "symfony/validator": "^6.2.8",
-        "zircote/swagger-php": "3.3.7"
+        "zircote/swagger-php": "3.3.7",
+        "andriichello/metrics-card": "*"
     },
     "require-dev": {
         "mockery/mockery": "^1.5.1",
@@ -86,6 +87,10 @@
         {
             "type": "path",
             "url": "./nova-components/Media"
+        },
+        {
+            "type": "path",
+            "url": "./nova-components/MetricsCard"
         }
     ],
     "scripts": {

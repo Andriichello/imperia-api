@@ -28,7 +28,7 @@ class Media extends Tool
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         Nova::script('media', __DIR__ . '/../dist/js/tool.js');
         Nova::style('media', __DIR__ . '/../dist/css/tool.css');
@@ -37,10 +37,12 @@ class Media extends Tool
     /**
      * Build the menu that renders the navigation links for the tool.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
+     *
      * @return mixed
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function menu(Request $request)
+    public function menu(Request $request): mixed
     {
         return MenuSection::make($this->name)
             ->path('/media')

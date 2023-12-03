@@ -15,7 +15,9 @@
         "build-media": "cd nova-components/Media && npm run dev",
         "build-media-prod": "cd nova-components/Media && npm run prod",
         "build-MediaTool": "cd nova-components/MediaTool && npm run dev",
-        "build-MediaTool-prod": "cd nova-components/MediaTool && npm run prod"
+        "build-MediaTool-prod": "cd nova-components/MediaTool && npm run prod",
+        "build-metrics": "cd nova-components/Metrics && npm run dev",
+        "build-metrics-prod": "cd nova-components/Metrics && npm run prod"
     },
     "devDependencies": {
         "axios": "^0.21",
