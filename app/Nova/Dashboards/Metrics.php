@@ -2,12 +2,10 @@
 
 namespace App\Nova\Dashboards;
 
-use Andriichello\ColumnsCard\ColumnsCard;
 use Andriichello\Metrics\MetricsCard;
-use Laravel\Nova\Cards\Help;
 use Laravel\Nova\Dashboards\Main as Dashboard;
 
-class Main extends Dashboard
+class Metrics extends Dashboard
 {
     /**
      * Get the cards for the dashboard.
@@ -17,7 +15,7 @@ class Main extends Dashboard
     public function cards(): array
     {
         return [
-            new Help,
+            new MetricsCard(),
         ];
     }
 }

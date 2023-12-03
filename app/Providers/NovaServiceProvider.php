@@ -6,6 +6,7 @@ use Andriichello\Marketplace\Marketplace;
 use App\Models\Banquet;
 use App\Models\User;
 use App\Nova\Dashboards\Main;
+use App\Nova\Dashboards\Metrics;
 use App\Nova\Tools\BackupTool;
 use App\Nova\Tools\MediaTool;
 use App\Subscribers\NovaSubscriber;
@@ -30,8 +31,9 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
      * Bootstrap any application services.
      *
      * @return void
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function boot()
+    public function boot(): void
     {
         parent::boot();
 
@@ -58,7 +60,10 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
 
         Nova::mainMenu(function (Request $request, Menu $menu) {
             $sections = [
-                Marketplace::section($request),
+                MenuSection::make(__('Dashboards'), [
+                    MenuItem::dashboard(\App\Nova\Dashboards\Main::class),
+                    MenuItem::dashboard(\App\Nova\Dashboards\Metrics::class),
+                ]),
                 MenuSection::make(__('Offers'), [
                     MenuItem::resource(\App\Nova\Banquet::class),
                     MenuItem::resource(\App\Nova\Order::class),
@@ -185,6 +190,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
     {
         return [
             new Main(),
+            new Metrics(),
         ];
     }
 
