@@ -110,6 +110,11 @@ class StoreBanquetRequest extends StoreRequest
                     'nullable',
                     'boolean',
                 ],
+                'with_photographer' => [
+                    'sometimes',
+                    'nullable',
+                    'boolean',
+                ],
                 'adults_amount' => [
                     'sometimes',
                     'nullable',
@@ -182,6 +187,7 @@ class StoreBanquetRequest extends StoreRequest
      *   @OA\Property(property="advance_amount_payment_method", type="string",
      *     nullable="true", example="card", enum={"card", "cash"}),
      *   @OA\Property(property="is_birthday_club", type="boolean", nullable="true", example="true"),
+     *   @OA\Property(property="with_photographer", type="boolean", nullable="true", example="true"),
      *   @OA\Property(property="children_amount", type="integer", nullable="true", example=5),
      *   @OA\Property(property="child_ticket_price", type="float", nullable="true", example=25.50),
      *   @OA\Property(property="adults_amount", type="integer", nullable="true", example=2),

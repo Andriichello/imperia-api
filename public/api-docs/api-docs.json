@@ -6332,6 +6332,11 @@
                         "example": "true",
                         "nullable": "true"
                     },
+                    "with_photographer": {
+                        "type": "boolean",
+                        "example": "true",
+                        "nullable": "true"
+                    },
                     "children_amount": {
                         "type": "integer",
                         "example": 5,
@@ -6436,6 +6441,11 @@
                         "nullable": "true"
                     },
                     "is_birthday_club": {
+                        "type": "boolean",
+                        "example": "true",
+                        "nullable": "true"
+                    },
+                    "with_photographer": {
                         "type": "boolean",
                         "example": "true",
                         "nullable": "true"
@@ -7388,6 +7398,7 @@
                     "actual_total",
                     "advance_amount_payment_method",
                     "is_birthday_club",
+                    "with_photographer",
                     "adults_amount",
                     "adult_ticket_price",
                     "children_amount",
@@ -7481,6 +7492,11 @@
                         "nullable": "true"
                     },
                     "is_birthday_club": {
+                        "type": "boolean",
+                        "example": "true",
+                        "nullable": "true"
+                    },
+                    "with_photographer": {
                         "type": "boolean",
                         "example": "true",
                         "nullable": "true"

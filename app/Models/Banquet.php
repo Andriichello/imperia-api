@@ -45,6 +45,7 @@ use Illuminate\Support\Collection;
  * @property float|null $actual_total
  * @property string|null $advance_amount_payment_method
  * @property bool|null $is_birthday_club
+ * @property bool|null $with_photographer
  * @property int|null $adults_amount
  * @property float|null $adult_ticket_price
  * @property int|null $children_amount
@@ -99,6 +100,7 @@ class Banquet extends BaseModel implements
         /** Dynamic */
         'actual_total',
         'is_birthday_club',
+        'with_photographer',
         'advance_amount_payment_method',
         'adults_amount',
         'adult_ticket_price',
@@ -333,6 +335,30 @@ class Banquet extends BaseModel implements
     public function setIsBirthdayClubAttribute(?bool $isBirthdayClub): void
     {
         $this->setToJson('metadata', 'is_birthday_club', $isBirthdayClub);
+    }
+
+    /**
+     * Accessor for the with photographer attribute.
+     *
+     * @return ?bool
+     */
+    public function getWithPhotographerAttribute(): ?bool
+    {
+        $value = $this->getFromJson('metadata', 'with_photographer');
+
+        return $value === null ? null : (bool) $value;
+    }
+
+    /**
+     * Mutator for the with photographer attribute.
+     *
+     * @param bool|null $withPhotographer
+     *
+     * @return void
+     */
+    public function setWithPhotographerAttribute(?bool $withPhotographer): void
+    {
+        $this->setToJson('metadata', 'with_photographer', $withPhotographer);
     }
 
     /**
