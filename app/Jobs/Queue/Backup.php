@@ -3,6 +3,8 @@
 namespace App\Jobs\Queue;
 
 use App\Jobs\AsyncJob;
+use Exception;
+use Spatie\Backup\Tasks\Backup\BackupJobFactory;
 use Spatie\BackupTool\Jobs\CreateBackupJob;
 
 /**
@@ -72,9 +74,30 @@ class Backup extends AsyncJob
      * Execute the job.
      *
      * @return void
+     * @throws Exception
      */
     public function handle(): void
     {
-        (new CreateBackupJob($this->option()))->handle();
+        $option = $this->option();
+
+        $job = BackupJobFactory::createFromArray(config('backup'));
+
+        if ($option === 'only-db') {
+            $job->dontBackupFilesystem();
+        }
+
+        if ($option === 'only-files') {
+            $job->dontBackupDatabases();
+        }
+
+        if (!empty($option)) {
+            $prefix = str_replace('_', '-', $option) . '-';
+
+            $job->setFilename($prefix . date('Y-m-d-H-i-s') . '.zip');
+        }
+
+        $job->disableNotifications();
+
+        $job->run();
     }
 }
