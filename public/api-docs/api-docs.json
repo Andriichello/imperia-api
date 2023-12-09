@@ -3761,6 +3761,16 @@
                         "example": "-popularity"
                     },
                     {
+                        "name": "filter[ids]",
+                        "in": "query",
+                        "description": "Coma-separated list of space ids.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1,2,3"
+                    },
+                    {
                         "name": "filter[title]",
                         "in": "query",
                         "description": "Can be used for searches. Is partial.",

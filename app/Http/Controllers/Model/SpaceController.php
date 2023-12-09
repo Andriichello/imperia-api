@@ -86,6 +86,8 @@ class SpaceController extends CrudController
      *   @OA\Parameter(name="page[number]", in="query", @OA\Schema(ref ="#/components/schemas/PageNumber")),
      *   @OA\Parameter(name="sort", in="query", example="-popularity", @OA\Schema(type="string"),
             description="Available sorts: `popularity` (is default, but in descending order)"),
+     *   @OA\Parameter(name="filter[ids]", required=false, in="query", example="1,2,3",
+     *     @OA\Schema(type="string"), description="Coma-separated list of space ids."),
      *   @OA\Parameter(name="filter[title]", required=false, in="query", example="#1",
      *     @OA\Schema(type="string"), description="Can be used for searches. Is partial."),
      *   @OA\Parameter(name="filter[categories]", required=false, in="query", example="2,3",
