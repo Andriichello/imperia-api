@@ -106,7 +106,6 @@ class StoreOrderRequest extends StoreRequest
                 'sometimes',
                 'nullable',
                 'string',
-                'date_format:H:i',
             ],
         ];
         return array_merge(
@@ -208,10 +207,6 @@ class StoreOrderRequest extends StoreRequest
      *   description="Store order request space field",
      *   required={"space_id"},
      *   @OA\Property(property="space_id", type="integer", example=1),
-     *   @OA\Property(property="start_at", type="string", format="date-time",
-     *     description="If not present then banquet start_at date will be used."),
-     *   @OA\Property(property="end_at", type="string", format="date-time",
-     *     description="If not present then banquet end_at date will be used."),
      *   @OA\Property(property="comments", type="array",
      *     @OA\Items(ref ="#/components/schemas/AttachingComment")),
      *   @OA\Property(property="discounts", type="array",
