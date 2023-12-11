@@ -100,18 +100,18 @@ class Space extends Resource
                 ->creationRules('unique:spaces,slug')
                 ->updateRules('unique:spaces,slug,{{resourceId}}'),
 
-            Boolean::make('Active')
+            Boolean::make(__('columns.active'), 'active')
                 ->resolveUsing(fn() => !$this->archived)
                 ->exceptOnForms(),
 
-            Boolean::make('Archived')
+            Boolean::make(__('columns.archived'), 'archived')
                 ->onlyOnForms()
                 ->default(fn() => false),
 
             MediaField::make(__('columns.media'), 'media')
                 ->canSee(fn() => !$request->user()->isPreviewOnly()),
 
-            Number::make('Popularity')
+            Number::make(__('columns.popularity'), 'popularity')
                 ->step(1)
                 ->sortable()
                 ->nullable(),
@@ -123,26 +123,26 @@ class Space extends Resource
             Textarea::make(__('columns.description'), 'description')
                 ->rules('nullable', 'min:1'),
 
-            Number::make('Floor')
+            Number::make(__('columns.floor'), 'floor')
                 ->step(1)
                 ->creationRules('required'),
 
-            Number::make('Number')
+            Number::make(__('columns.number'), 'number')
                 ->step(1)
                 ->creationRules('required'),
 
-            Number::make('Price')
+            Number::make(__('columns.price'), 'price')
                 ->step(0.01)
                 ->default(0.0)
                 ->updateRules('sometimes', 'min:0')
                 ->creationRules('required', 'min:0'),
 
-            MorphToMany::make('Categories'),
+            MorphToMany::make(__('columns.categories'), 'categories', Category::class),
 
             BelongsTo::make(__('columns.restaurant'), 'restaurant', Restaurant::class)
                 ->default(fn() => $user->restaurant_id),
 
-            MorphMany::make('Logs', 'logs', Log::class),
+            MorphMany::make(__('columns.logs'), 'logs', Log::class),
 
             DateTime::make(__('columns.created_at'), 'created_at')
                 ->sortable()

@@ -109,6 +109,8 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                         MenuSection::make(__('nova.dashboard.items'), [
                             MenuItem::resource(\App\Nova\Menu::class),
                             MenuItem::resource(\App\Nova\Product::class),
+                            MenuItem::resource(\App\Nova\Space::class),
+                            MenuItem::resource(\App\Nova\Service::class),
                             MenuItem::resource(\App\Nova\Category::class),
                             MenuItem::resource(\App\Nova\Tag::class),
                             MenuItem::resource(\App\Nova\Alteration::class),
