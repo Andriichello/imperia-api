@@ -3601,6 +3601,16 @@
                         "example": "-popularity"
                     },
                     {
+                        "name": "filter[ids]",
+                        "in": "query",
+                        "description": "Coma-separated list of space ids.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1,2,3"
+                    },
+                    {
                         "name": "filter[title]",
                         "in": "query",
                         "description": "Can be used for searches. Is partial.",
@@ -7090,16 +7100,6 @@
                     "space_id": {
                         "type": "integer",
                         "example": 1
-                    },
-                    "start_at": {
-                        "description": "If not present then banquet start_at date will be used.",
-                        "type": "string",
-                        "format": "date-time"
-                    },
-                    "end_at": {
-                        "description": "If not present then banquet end_at date will be used.",
-                        "type": "string",
-                        "format": "date-time"
                     },
                     "comments": {
                         "type": "array",

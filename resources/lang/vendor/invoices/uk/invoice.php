@@ -26,6 +26,7 @@ return [
     'units'                  => 'Одиниця вимірювання',
     'quantity'               => 'Кількість',
     'once_paid_price'        => 'Передплата',
+    'hourly_paid_price'      => 'Ціна за год.',
     'price'                  => 'Ціна',
     'discount'               => 'Знижка',
     'tax'                    => 'Податок',

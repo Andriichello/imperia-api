@@ -42,6 +42,21 @@ class ServiceItem extends InvoiceItem
         return $item;
     }
 
+    public function getDuration(): int
+    {
+        return $this->field->duration;
+    }
+
+    public function getOncePaidPrice(): ?float
+    {
+        return $this->field->service->once_paid_price;
+    }
+
+    public function getHourlyPaidPrice(): ?float
+    {
+        return $this->field->service->hourly_paid_price;
+    }
+
     /**
      * Returns true if item can be merged with current one.
      *

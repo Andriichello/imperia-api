@@ -27,6 +27,8 @@ use Laravel\Nova\Http\Requests\NovaRequest;
  * Class Product.
  *
  * @mixin \App\Models\Product
+ *
+ * @property \App\Models\Product $resource
  */
 class Product extends Resource
 {
@@ -46,11 +48,11 @@ class Product extends Resource
     {
         $title = '';
 
-        if ($this->slug && !empty($this->slug)) {
-            $title = "$this->slug - ";
+        if (!empty($this->resource->slug)) {
+            $title = "{$this->resource->slug} - ";
         }
 
-        return $title . $this->title;
+        return $title . $this->resource->title;
     }
 
     /**

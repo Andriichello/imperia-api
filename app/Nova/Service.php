@@ -6,6 +6,7 @@ use Andriichello\Media\MediaField;
 use App\Models\Scopes\ArchivedScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
@@ -85,6 +86,9 @@ class Service extends Resource
      */
     public function fields(Request $request): array
     {
+        /** @var \App\Models\User $user */
+        $user = $request->user();
+
         return [
             ID::make(__('columns.id'), 'id')
                 ->sortable(),
@@ -129,7 +133,8 @@ class Service extends Resource
 
             MorphToMany::make('Categories'),
 
-            BelongsToMany::make('Restaurants'),
+            BelongsTo::make(__('columns.restaurant'), 'restaurant', Restaurant::class)
+                ->default(fn() => $user->restaurant_id),
 
             MorphMany::make('Logs', 'logs', Log::class),
 

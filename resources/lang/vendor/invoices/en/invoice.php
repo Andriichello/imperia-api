@@ -25,6 +25,7 @@ return [
     'units'                  => 'Units',
     'quantity'               => 'Quantity',
     'once_paid_price'        => 'Once Paid Price',
+    'hourly_paid_price'      => 'Hourly Paid Price',
     'price'                  => 'Price',
     'discount'               => 'Discount',
     'tax'                    => 'Tax',

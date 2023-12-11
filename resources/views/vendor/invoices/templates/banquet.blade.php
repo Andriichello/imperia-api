@@ -460,7 +460,7 @@
         {{-- Summary --}}
         <tr>
             <td colspan="2" class="border-0"></td>
-            <td class="text-right p-0">Total</td>
+            <td class="text-right p-0">{{ __('invoices::invoice.total') }}</td>
             <td class="text-right p-0 total-amount">
                 {{ $invoice->formatCurrency($invoice->getTotal($spaces)) }}
             </td>
@@ -475,7 +475,8 @@
         <tr>
             <th scope="col" class="border-0 p-0 items-title">{{ __('invoices::invoice.services') }}</th>
             <th scope="col" class="border-0 p-0">{{ __('invoices::invoice.duration') }}</th>
-            <th scope="col" class="text-right border-0 p-0 min-w-20">{{ __('invoices::invoice.price') }}</th>
+            <th scope="col" class="text-right border-0 p-0 min-w-20">{{ __('invoices::invoice.hourly_paid_price') }}</th>
+            <th scope="col" class="text-right border-0 p-0 min-w-20">{{ __('invoices::invoice.once_paid_price') }}</th>
             <th scope="col" class="text-right border-0 p-0 min-w-20">{{ __('invoices::invoice.sum') }}</th>
         </tr>
         </thead>
@@ -498,7 +499,10 @@
                     {{ $item->getDuration() }}
                 </td>
                 <td class="text-right">
-                    {{ $invoice->itemFormattedPrice($item) }}
+                    {{  $invoice->formatCurrency($item->getHourlyPaidPrice()) }}
+                </td>
+                <td class="text-right">
+                    {{  $invoice->formatCurrency($item->getOncePaidPrice()) }}
                 </td>
                 <td class="text-right p-0">
                     {{ $invoice->formatCurrency($item->sub_total_price) }}
@@ -508,7 +512,8 @@
         {{-- Summary --}}
         <tr>
             <td colspan="2" class="border-0"></td>
-            <td class="text-right p-0">Total</td>
+            <td colspan="1" class="border-0"></td>
+            <td class="text-right p-0">{{ __('invoices::invoice.total') }}</td>
             <td class="text-right p-0 total-amount">
                 {{ $invoice->formatCurrency($invoice->getTotal($services)) }}
             </td>
