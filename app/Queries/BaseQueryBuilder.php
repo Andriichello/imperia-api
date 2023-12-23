@@ -109,4 +109,93 @@ class BaseQueryBuilder extends EloquentBuilder implements IndexableInterface
 
         return $this;
     }
+
+    /**
+     * Get list of scopes that query has.
+     *
+     * @return array
+     */
+    public function getScopes(): array
+    {
+        return $this->scopes;
+    }
+
+    /**
+     * Determines if query has a given scope.
+     *
+     * @param string $scope
+     *
+     * @return bool
+     */
+    public function hasScope(string $scope): bool
+    {
+        return in_array($scope, $this->getScopes())
+            || array_key_exists($scope, $this->getScopes());
+    }
+
+    /**
+     * Get list of joins that query has. Keys are aliases
+     * and values are table names.
+     *
+     * @return array
+     */
+    public function getJoins(): array
+    {
+        $joins = [];
+
+        // @phpstan-ignore-next-line
+        foreach ($this->getQuery()->joins ?? [] as $join) {
+            /** @var JoinClause $join */
+            $table = $join->table;
+            $alias = null;
+
+            $matches = [];
+            $pattern = '/(?<table>(\w+|\w+[.]\w+))(\W+as\W+)(?<alias>(\w+|\w+[.]\w+))/';
+
+            if (preg_match($pattern, $table, $matches)) {
+                $table = data_get($matches, 'table');
+                $alias = data_get($matches, 'alias');
+            }
+
+            $joins[$alias ?? $table] = $table;
+        }
+
+        return $joins;
+    }
+
+    /**
+     * Get alias of given joined table. Null is returned if given
+     * table is not joined. If there are multiple joins of the
+     * given table then only the first alias will be returned.
+     *
+     *
+     * @param string $table
+     *
+     * @return string|null
+     */
+    public function getJoinAlias(string $table): ?string
+    {
+        return array_search($table, $this->getJoins());
+    }
+
+    /**
+     * Determines if query has a given join by table name and optionally
+     * check if it's joined using a given alias.
+     *
+     * @param string $table
+     * @param string|null $alias
+     *
+     * @return bool
+     */
+    public function hasJoin(string $table, ?string $alias = null): bool
+    {
+        $joins = $this->getJoins();
+
+        if (empty($alias)) {
+            return in_array($table, $joins);
+        }
+
+        return in_array($table, $joins)
+            && array_key_exists($alias, $joins);
+    }
 }
