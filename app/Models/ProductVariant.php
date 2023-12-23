@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\Interfaces\AlterableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
+use App\Models\Scopes\ArchivedScope;
+use App\Models\Scopes\SoftDeletableScope;
 use App\Models\Traits\AlterableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use App\Queries\ProductVariantQueryBuilder;
@@ -78,7 +80,9 @@ class ProductVariant extends BaseModel implements
      */
     public function product(): BelongsTo
     {
-        return $this->belongsTo(Product::class);
+        /* @phpstan-ignore-next-line */
+        return $this->belongsTo(Product::class)
+            ->withoutGlobalScopes([ArchivedScope::class, SoftDeletableScope::class]);
     }
 
     /**

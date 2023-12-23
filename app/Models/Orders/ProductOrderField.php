@@ -8,6 +8,8 @@ use App\Models\Interfaces\DiscountableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\Scopes\ArchivedScope;
+use App\Models\Scopes\SoftDeletableScope;
 use App\Models\Traits\CommentableTrait;
 use App\Models\Traits\DiscountableTrait;
 use App\Models\Traits\SoftDeletableTrait;
@@ -78,7 +80,9 @@ class ProductOrderField extends BaseModel implements
      */
     public function product(): BelongsTo
     {
-        return $this->belongsTo(Product::class, 'product_id', 'id');
+        /* @phpstan-ignore-next-line */
+        return $this->belongsTo(Product::class, 'product_id', 'id')
+            ->withoutGlobalScopes([ArchivedScope::class, SoftDeletableScope::class]);
     }
 
     /**
@@ -88,7 +92,9 @@ class ProductOrderField extends BaseModel implements
      */
     public function variant(): BelongsTo
     {
-        return $this->belongsTo(ProductVariant::class, 'variant_id', 'id');
+        /* @phpstan-ignore-next-line */
+        return $this->belongsTo(ProductVariant::class, 'variant_id', 'id')
+            ->withoutGlobalScopes([ArchivedScope::class, SoftDeletableScope::class]);
     }
 
     /**
@@ -98,7 +104,9 @@ class ProductOrderField extends BaseModel implements
      */
     public function order(): BelongsTo
     {
-        return $this->belongsTo(Order::class, 'order_id', 'id');
+        /* @phpstan-ignore-next-line */
+        return $this->belongsTo(Order::class, 'order_id', 'id')
+            ->withoutGlobalScopes([ArchivedScope::class, SoftDeletableScope::class]);
     }
 
     /**

@@ -6,6 +6,8 @@ use App\Models\BaseModel;
 use App\Models\Interfaces\CommentableInterface;
 use App\Models\Interfaces\DiscountableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
+use App\Models\Scopes\ArchivedScope;
+use App\Models\Scopes\SoftDeletableScope;
 use App\Models\Service;
 use App\Models\Traits\CommentableTrait;
 use App\Models\Traits\DiscountableTrait;
@@ -70,7 +72,9 @@ class ServiceOrderField extends BaseModel implements
      */
     public function service(): BelongsTo
     {
-        return $this->belongsTo(Service::class, 'service_id', 'id');
+        /* @phpstan-ignore-next-line */
+        return $this->belongsTo(Service::class, 'service_id', 'id')
+            ->withoutGlobalScopes([ArchivedScope::class, SoftDeletableScope::class]);
     }
 
     /**
@@ -80,7 +84,9 @@ class ServiceOrderField extends BaseModel implements
      */
     public function order(): BelongsTo
     {
-        return $this->belongsTo(Order::class, 'order_id', 'id');
+        /* @phpstan-ignore-next-line */
+        return $this->belongsTo(Order::class, 'order_id', 'id')
+            ->withoutGlobalScopes([ArchivedScope::class, SoftDeletableScope::class]);
     }
 
     /**

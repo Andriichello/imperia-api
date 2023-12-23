@@ -7,6 +7,8 @@ use App\Models\BaseModel;
 use App\Models\Interfaces\CommentableInterface;
 use App\Models\Interfaces\DiscountableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
+use App\Models\Scopes\ArchivedScope;
+use App\Models\Scopes\SoftDeletableScope;
 use App\Models\Space;
 use App\Models\Traits\CommentableTrait;
 use App\Models\Traits\DiscountableTrait;
@@ -76,7 +78,9 @@ class SpaceOrderField extends BaseModel implements
      */
     public function space(): BelongsTo
     {
-        return $this->belongsTo(Space::class, 'space_id', 'id');
+        /* @phpstan-ignore-next-line */
+        return $this->belongsTo(Space::class, 'space_id', 'id')
+            ->withoutGlobalScopes([ArchivedScope::class, SoftDeletableScope::class]);
     }
 
     /**
@@ -86,7 +90,9 @@ class SpaceOrderField extends BaseModel implements
      */
     public function order(): BelongsTo
     {
-        return $this->belongsTo(Order::class, 'order_id', 'id');
+        /* @phpstan-ignore-next-line */
+        return $this->belongsTo(Order::class, 'order_id', 'id')
+            ->withoutGlobalScopes([ArchivedScope::class, SoftDeletableScope::class]);
     }
 
     /**
