@@ -11,6 +11,91 @@ use Illuminate\Http\Request;
 class CacheHelper implements CacheHelperInterface
 {
     /**
+     * Paths that should be cached if possible
+     * and their expiration duration (minutes).
+     *
+     * @var array
+     */
+    public static array $caching = [
+        'api/restaurants' =>  [
+            'minutes' => 120,
+            'groups' => ['restaurants'],
+        ],
+        'api/restaurant-reviews'  => [
+            'minutes' => 120,
+            'groups' => ['restaurants'],
+        ],
+        'api/menus' => [
+            'minutes' => 120,
+            'groups' => ['menus', 'products', 'categories', 'alterations'],
+        ],
+        'api/products' => [
+            'minutes' => 5,
+            'groups' => ['menus', 'products', 'categories', 'alterations'],
+        ],
+        'api/tickets' => [
+            'minutes' => 120,
+            'groups' => ['tickets', 'categories'],
+        ],
+        'api/services' => [
+            'minutes' => 120,
+            'groups' => ['services', 'categories'],
+        ],
+        'api/spaces' => [
+            'minutes' => 120,
+            'groups' => ['spaces', 'categories'],
+        ],
+        'api/customers' => [
+            'minutes' => 5,
+            'groups' => ['customers'],
+        ],
+    ];
+
+    /**
+     * Get cache settings for the given path.
+     *
+     * @param string $path
+     *
+     * @return array|null
+     */
+    public function settings(string $path): ?array
+    {
+        foreach (static::$caching as $prefix => $settings) {
+            if (str_starts_with($path, $prefix)) {
+                return $settings;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the number of minutes that the response should
+     * be cached for the given path.
+     *
+     * @param string $path
+     *
+     * @return int|null
+     */
+    public function minutes(string $path): ?int
+    {
+        return data_get($this->settings($path), 'minutes');
+    }
+
+    /**
+     * Get the groups that response should be cached
+     * into with the given path.
+     *
+     * @param string $path
+     *
+     * @return array|null
+     */
+    public function groups(string $path): ?array
+    {
+        return data_get($this->settings($path), 'groups');
+    }
+
+    /**
      * Determines if request's response should be cached.
      *
      * @param Request $request
@@ -23,7 +108,7 @@ class CacheHelper implements CacheHelperInterface
             return true;
         }
 
-        return false;
+        return (bool) $this->minutes($request);
     }
 
     /**

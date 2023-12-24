@@ -10,6 +10,35 @@ use Illuminate\Http\Request;
 interface CacheHelperInterface
 {
     /**
+     * Get cache settings for the given path.
+     *
+     * @param string $path
+     *
+     * @return array|null
+     */
+    public function settings(string $path): ?array;
+
+    /**
+     * Get the number of minutes that the response should
+     * be cached for the given path.
+     *
+     * @param string $path
+     *
+     * @return int|null
+     */
+    public function minutes(string $path): ?int;
+
+    /**
+     * Get the groups that response should be cached
+     * into with the given path.
+     *
+     * @param string $path
+     *
+     * @return array|null
+     */
+    public function groups(string $path): ?array;
+
+    /**
      * Determines if request's response should be cached.
      *
      * @param Request $request
