@@ -3,11 +3,7 @@
 namespace App\Helpers;
 
 use App\Helpers\Interfaces\CacheHelperInterface;
-use App\Http\Requests\Crud\IndexRequest;
-use App\Http\Requests\Crud\ShowRequest;
-use App\Http\Requests\CrudRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 /**
  * Class CacheHelper.
@@ -23,17 +19,8 @@ class CacheHelper implements CacheHelperInterface
      */
     public function should(Request $request): bool
     {
-        if ($request instanceof CrudRequest) {
-            if ($request->getMethod() !== 'GET') {
-                return false;
-            }
-
-            $isIndex = $request instanceof IndexRequest;
-            $isShow = $request instanceof ShowRequest;
-
-            if ($isIndex || $isShow) {
-                return true;
-            }
+        if ($request->getMethod() === 'GET') {
+            return true;
         }
 
         return false;
@@ -43,24 +30,44 @@ class CacheHelper implements CacheHelperInterface
      * Get request's unique key for caching.
      *
      * @param Request $request
+     * @param string ...$groups
      *
      * @return string
      */
-    public function key(Request $request): string
+    public function key(Request $request, string ...$groups): string
     {
-        return "{$this->prefix($request)}:{$this->hash($request)}";
+        return sprintf(
+            '[%s]:<%s>:{%s}',
+            $this->group($request, ...$groups),
+            $this->path($request),
+            $this->hash($request)
+        );
     }
 
     /**
      * Get request's prefix for caching.
      *
      * @param Request $request
+     * @param string ...$groups
+     *
+     * @return string
+     * @SuppressWarnings(PHPMD)
+     */
+    public function group(Request $request, string ...$groups): string
+    {
+        return implode(',', $groups);
+    }
+
+    /**
+     * Get request's path for caching.
+     *
+     * @param Request $request
      *
      * @return string
      */
-    public function prefix(Request $request): string
+    public function path(Request $request): string
     {
-        return "[{$request->path()}]";
+        return $request->path();
     }
 
     /**
@@ -72,6 +79,6 @@ class CacheHelper implements CacheHelperInterface
      */
     public function hash(Request $request): string
     {
-        return Hash::make(json_encode($request->all()));
+        return hash('md5', json_encode($request->all()));
     }
 }

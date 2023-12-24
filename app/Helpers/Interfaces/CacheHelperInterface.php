@@ -22,19 +22,31 @@ interface CacheHelperInterface
      * Get request's unique key for caching.
      *
      * @param Request $request
+     * @param string ...$groups
      *
      * @return string
      */
-    public function key(Request $request): string;
+    public function key(Request $request, string ...$groups): string;
 
     /**
      * Get request's prefix for caching.
      *
      * @param Request $request
+     * @param string ...$groups
+     *
+     * @return string
+     * @SuppressWarnings(PHPMD)
+     */
+    public function group(Request $request, string ...$groups): string;
+
+    /**
+     * Get request's path for caching.
+     *
+     * @param Request $request
      *
      * @return string
      */
-    public function prefix(Request $request): string;
+    public function path(Request $request): string;
 
     /**
      * Get request's payload hash for caching.
