@@ -6,6 +6,7 @@ use App\Http\Middleware\AcceptLanguage;
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\ForceJsonOnApi;
+use App\Http\Middleware\HandleCached;
 use App\Http\Middleware\HttpsProtocol;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\RedirectIfAuthenticated;
@@ -97,5 +98,6 @@ class Kernel extends HttpKernel
         'throttle' => ThrottleRequests::class,
         'verified' => EnsureEmailIsVerified::class,
         // 'https' => HttpsProtocol::class,
+        'cached' => HandleCached::class,
     ];
 }

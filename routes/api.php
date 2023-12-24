@@ -51,40 +51,59 @@ Route::group(['as' => 'api.'], function () {
 
     Route::apiResource('menus', MenuController::class)
         ->only('index', 'show')
-        ->parameters(['menus' => 'id']);
+        ->parameters(['menus' => 'id'])
+        ->middleware('cached:menus');
 
     Route::apiResource('products', ProductController::class)
         ->only('index', 'show')
-        ->parameters(['products' => 'id']);
+        ->parameters(['products' => 'id'])
+        ->middleware('cached:products');
 
     Route::apiResource('tickets', TicketController::class)
         ->only('index', 'show')
-        ->parameters(['tickets' => 'id']);
+        ->parameters(['tickets' => 'id'])
+        ->middleware('cached:tickets');
 
     Route::apiResource('services', ServiceController::class)
         ->only('index', 'show')
-        ->parameters(['services' => 'id']);
+        ->parameters(['services' => 'id'])
+        ->middleware('cached:services');
+
+    Route::get('/spaces/reservations', [SpaceController::class, 'reservations'])
+        ->name('spaces.reservations')
+        ->middleware('cached:spaces');
+    Route::apiResource('spaces', SpaceController::class)
+        ->only('index', 'show')
+        ->parameters(['spaces' => 'id'])
+        ->middleware('cached:spaces');
 
     Route::apiResource('tags', TagController::class)
         ->only('index', 'show')
-        ->parameters(['tags' => 'id']);
+        ->parameters(['tags' => 'id'])
+        ->middleware('cached:tags');
 
     Route::apiResource('categories', CategoryController::class)
         ->only('index', 'show')
-        ->parameters(['categories' => 'id']);
+        ->parameters(['categories' => 'id'])
+        ->middleware('cached:categories');
 
     Route::apiResource('restaurants', RestaurantController::class)
         ->only('index', 'show')
-        ->parameters(['restaurants' => 'id']);
+        ->parameters(['restaurants' => 'id'])
+        ->middleware('cached:restaurants');
 
     Route::get('/restaurants/{id}/schedules', [RestaurantController::class, 'getSchedules'])
-        ->name('restaurants.schedules');
+        ->name('restaurants.schedules')
+        ->middleware('cached:restaurants');
+
     Route::get('/restaurants/{id}/holidays', [RestaurantController::class, 'getHolidays'])
-        ->name('restaurants.holidays');
+        ->name('restaurants.holidays')
+        ->middleware('cached:restaurants');
 
     Route::apiResource('restaurant-reviews', RestaurantReviewController::class)
         ->only('index', 'show', 'store')
-        ->parameters(['restaurant-reviews' => 'id']);
+        ->parameters(['restaurant-reviews' => 'id'])
+        ->middleware('cached:restaurants');
 });
 
 Route::group(['middleware' => ['auth:signature,sanctum'], 'as' => 'api.'], function () {
@@ -143,16 +162,12 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
     Route::post('/customers/{id}/restore', [CustomerController::class, 'restore'])->name('customers.restore');
     Route::apiResource('customers', CustomerController::class)
         ->only('index', 'show', 'store', 'update', 'destroy')
-        ->parameters(['customers' => 'id']);
+        ->parameters(['customers' => 'id'])
+        ->middleware('cached:customers');
 
     Route::apiResource('family-members', FamilyMemberController::class)
         ->only('index', 'show', 'store', 'update', 'destroy')
         ->parameters(['family-members' => 'id']);
-
-    Route::get('/spaces/reservations', [SpaceController::class, 'reservations'])->name('spaces.reservations');
-    Route::apiResource('spaces', SpaceController::class)
-        ->only('index', 'show')
-        ->parameters(['spaces' => 'id']);
 
     Route::apiResource('comments', CommentController::class)
         ->only('index', 'show', 'store', 'update', 'destroy')
