@@ -149,6 +149,7 @@ class Banquet extends BaseModel implements
      */
     protected array $logFields = [
         'state',
+        'totals',
     ];
 
     /**
@@ -158,6 +159,7 @@ class Banquet extends BaseModel implements
      */
     protected $appends = [
         'order_id',
+        'totals',
     ];
 
     /**

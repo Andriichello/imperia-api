@@ -8,9 +8,11 @@ use App\Models\Banquet;
 use App\Models\BaseModel;
 use App\Models\Interfaces\CommentableInterface;
 use App\Models\Interfaces\DiscountableInterface;
+use App\Models\Interfaces\LoggableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Traits\CommentableTrait;
 use App\Models\Traits\DiscountableTrait;
+use App\Models\Traits\LoggableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use App\Models\User;
 use App\Queries\OrderQueryBuilder;
@@ -48,15 +50,18 @@ use Illuminate\Support\Str;
  *
  * @method static OrderQueryBuilder query()
  * @method static OrderFactory factory(...$parameters)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Order extends BaseModel implements
     SoftDeletableInterface,
     CommentableInterface,
+    LoggableInterface,
     DiscountableInterface
 {
     use HasFactory;
     use SoftDeletableTrait;
     use CommentableTrait;
+    use LoggableTrait;
     use DiscountableTrait;
 
     /**
@@ -107,6 +112,15 @@ class Order extends BaseModel implements
         'tickets',
         'services',
         'products',
+    ];
+
+    /**
+     * Array of column names changes of which should be logged.
+     *
+     * @var array
+     */
+    protected array $logFields = [
+        'totals',
     ];
 
     /**
