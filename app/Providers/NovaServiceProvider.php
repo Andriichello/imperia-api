@@ -60,10 +60,6 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
 
         Nova::mainMenu(function (Request $request, Menu $menu) {
             $sections = [
-                MenuSection::make(__('Dashboards'), [
-                    MenuItem::dashboard(\App\Nova\Dashboards\Main::class),
-                    MenuItem::dashboard(\App\Nova\Dashboards\Metrics::class),
-                ]),
                 MenuSection::make(__('Offers'), [
                     MenuItem::resource(\App\Nova\Banquet::class),
                     MenuItem::resource(\App\Nova\Order::class),
@@ -72,6 +68,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(\App\Nova\User::class),
                     MenuItem::resource(\App\Nova\Customer::class),
                     MenuItem::resource(\App\Nova\FamilyMember::class),
+                    MenuItem::resource(\App\Nova\Waiter::class),
                 ])->icon('user')->collapsable(),
                 MenuSection::make(__('Items'), [
                     MenuItem::resource(\App\Nova\Menu::class),
@@ -88,6 +85,7 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(\App\Nova\Alteration::class),
                     MenuItem::resource(\App\Nova\Log::class),
                     MenuItem::resource(\App\Nova\Notification::class),
+                    MenuItem::resource(\App\Nova\Tip::class),
                 ])->icon('paper-clip')->collapsable(),
                 MenuSection::make(__('Restaurants'), [
                     MenuItem::resource(\App\Nova\Restaurant::class),
@@ -95,6 +93,10 @@ class NovaServiceProvider extends NovaApplicationServiceProvider
                     MenuItem::resource(\App\Nova\Holiday::class),
                     MenuItem::resource(\App\Nova\RestaurantReview::class),
                 ])->icon('library')->collapsable(),
+                MenuSection::make(__('Dashboards'), [
+                    MenuItem::dashboard(\App\Nova\Dashboards\Main::class),
+                    MenuItem::dashboard(\App\Nova\Dashboards\Metrics::class),
+                ]),
             ];
 
             $user = $request->user();

@@ -22,7 +22,6 @@ use Illuminate\Database\Query\Builder as DatabaseBuilder;
 /**
  * Class Waiter.
  *
- * @property int|null $user_id
  * @property int|null $restaurant_id
  * @property string $name
  * @property string $surname
@@ -54,6 +53,15 @@ class Waiter extends BaseModel implements
     use LoggableTrait;
     use MediableTrait;
     use TippableTrait;
+
+    /**
+     * The model's attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'surname' => '',
+    ];
 
     /**
      * The attributes that are mass assignable.
