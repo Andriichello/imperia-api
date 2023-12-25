@@ -21,6 +21,7 @@ use App\Http\Controllers\Model\SpaceController;
 use App\Http\Controllers\Model\TagController;
 use App\Http\Controllers\Model\TicketController;
 use App\Http\Controllers\Model\UserController;
+use App\Http\Controllers\Model\WaiterController;
 use App\Http\Controllers\Other\InvoiceController;
 use App\Http\Controllers\Other\MetricsController;
 use App\Http\Controllers\Other\QueueController;
@@ -104,6 +105,11 @@ Route::group(['as' => 'api.'], function () {
         ->only('index', 'show', 'store')
         ->parameters(['restaurant-reviews' => 'id'])
         ->middleware('cached:restaurants');
+
+    Route::apiResource('waiters', WaiterController::class)
+        ->only('index', 'show')
+        ->parameters(['waiters' => 'id'])
+        ->middleware('cached:waiters');
 });
 
 Route::group(['middleware' => ['auth:signature,sanctum'], 'as' => 'api.'], function () {
@@ -168,6 +174,10 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
     Route::apiResource('family-members', FamilyMemberController::class)
         ->only('index', 'show', 'store', 'update', 'destroy')
         ->parameters(['family-members' => 'id']);
+
+    Route::apiResource('waiters', WaiterController::class)
+        ->only('store', 'update', 'destroy')
+        ->parameters(['waiters' => 'id']);
 
     Route::apiResource('comments', CommentController::class)
         ->only('index', 'show', 'store', 'update', 'destroy')

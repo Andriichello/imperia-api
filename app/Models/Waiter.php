@@ -23,6 +23,7 @@ use Illuminate\Database\Query\Builder as DatabaseBuilder;
  * Class Waiter.
  *
  * @property int|null $restaurant_id
+ * @property string|null $uuid
  * @property string $name
  * @property string $surname
  * @property string $fullName
@@ -70,6 +71,7 @@ class Waiter extends BaseModel implements
      */
     protected $fillable = [
         'restaurant_id',
+        'uuid',
         'name',
         'surname',
         'phone',
