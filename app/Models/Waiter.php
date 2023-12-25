@@ -4,9 +4,11 @@ namespace App\Models;
 
 use App\Models\Interfaces\CommentableInterface;
 use App\Models\Interfaces\LoggableInterface;
+use App\Models\Interfaces\MediableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Traits\CommentableTrait;
 use App\Models\Traits\LoggableTrait;
+use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use App\Queries\WaiterQueryBuilder;
 use Carbon\Carbon;
@@ -40,12 +42,14 @@ use Illuminate\Database\Query\Builder as DatabaseBuilder;
 class Waiter extends BaseModel implements
     SoftDeletableInterface,
     CommentableInterface,
-    LoggableInterface
+    LoggableInterface,
+    MediableInterface
 {
     use HasFactory;
     use SoftDeletableTrait;
     use CommentableTrait;
     use LoggableTrait;
+    use MediableTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -78,6 +82,7 @@ class Waiter extends BaseModel implements
      * @var array
      */
     protected $relations = [
+        'media',
         'restaurant',
     ];
 

@@ -29,6 +29,7 @@ use App\Models\Space;
 use App\Models\Ticket;
 use App\Models\User;
 use App\Models\Restaurant;
+use App\Models\Waiter;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 use Tests\Models\Stubs\BaseStub;
@@ -54,6 +55,7 @@ class MorphServiceProvider extends ServiceProvider
         User::class,
         Customer::class,
         FamilyMember::class,
+        Waiter::class,
         /** Restaurants */
         Restaurant::class,
         Schedule::class,
