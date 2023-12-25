@@ -4,7 +4,6 @@ namespace App\Subscribers;
 
 use App\Models\BaseModel;
 use App\Models\Cache;
-use App\Models\Customer;
 use App\Models\Menu;
 use App\Models\Morphs\Alteration;
 use App\Models\Morphs\Category;
@@ -15,7 +14,6 @@ use App\Models\Service;
 use App\Models\Space;
 use App\Models\Ticket;
 use Illuminate\Support\Arr;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class CacheSubscriber.
@@ -55,9 +53,9 @@ class CacheSubscriber extends BaseSubscriber
         Alteration::class => [
             'groups' => ['alterations', 'menus', 'products', 'services', 'tickets', 'spaces'],
         ],
-        Customer::class => [
-            'groups' => ['customers'],
-        ],
+        // Customer::class => [
+        //    'groups' => ['customers'],
+        // ],
     ];
 
     protected function map(): void
@@ -83,8 +81,6 @@ class CacheSubscriber extends BaseSubscriber
      */
     public function clear(BaseModel $model): void
     {
-        (new ConsoleOutput())->writeln('clear for ' . $model::class);
-
         $settings = data_get($this->models, $model::class);
 
         $paths = data_get($settings, 'paths');
