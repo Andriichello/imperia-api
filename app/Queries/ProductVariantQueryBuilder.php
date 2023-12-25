@@ -13,11 +13,11 @@ class ProductVariantQueryBuilder extends BaseQueryBuilder
     /**
      * Apply index query conditions.
      *
-     * @param User $user
+     * @param User|null $user
      *
      * @return static
      */
-    public function index(User $user): static
+    public function index(?User $user = null): static
     {
         $query = parent::index($user);
 

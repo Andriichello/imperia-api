@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Closure;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\JoinClause;
 
 /**
  * Class BaseQueryBuilder.
@@ -17,12 +18,12 @@ class BaseQueryBuilder extends EloquentBuilder implements IndexableInterface
     /**
      * Apply index query conditions.
      *
-     * @param User $user
+     * @param User|null $user
      *
      * @return static
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function index(User $user): static
+    public function index(?User $user = null): static
     {
         return $this;
     }

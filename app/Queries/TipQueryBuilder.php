@@ -13,12 +13,12 @@ class TipQueryBuilder extends BaseQueryBuilder
     /**
      * Apply index query conditions.
      *
-     * @param User $user
+     * @param User|null $user
      *
      * @return static
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function index(User $user): static
+    public function index(?User $user = null): static
     {
         if ($user->isStaff()) {
             return $this;
