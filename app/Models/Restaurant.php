@@ -50,9 +50,11 @@ use Illuminate\Support\Collection;
  * @property Holiday[]|Collection $holidays
  * @property Holiday[]|Collection $relevantHolidays
  * @property RestaurantReview[]|Collection $reviews
+ * @property Waiter[]|Collection $waiters
  *
  * @method static RestaurantQueryBuilder query()
  * @method static RestaurantFactory factory(...$parameters)
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Restaurant extends BaseModel implements
     MediableInterface,
@@ -103,6 +105,7 @@ class Restaurant extends BaseModel implements
         'holidays',
         'relevantHolidays',
         'reviews',
+        'waiters',
     ];
 
     /**
@@ -217,6 +220,16 @@ class Restaurant extends BaseModel implements
     {
         return $this->hasMany(RestaurantReview::class, 'restaurant_id', 'id')
             ->orderByDesc('created_at');
+    }
+
+    /**
+     * Waiters associated with the model.
+     *
+     * @return HasMany
+     */
+    public function waiters(): HasMany
+    {
+        return $this->hasMany(Waiter::class, 'restaurant_id', 'id');
     }
 
     /**
