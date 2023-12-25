@@ -42,14 +42,11 @@ class LogIfModelChanged extends AsyncJob
     public function handle(): void
     {
         if ($this->model->logFieldsChanged()) {
-            $attributes = Arr::only(
-                $this->model->getAttributes(),
-                $this->model->getLogFields(),
-            );
+            $values = $this->model->logFieldsValues();
 
             $this->model->logs()->create([
                 'title' => $this->event,
-                'metadata' => json_encode($attributes),
+                'metadata' => json_encode($values),
             ]);
         }
     }

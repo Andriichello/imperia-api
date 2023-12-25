@@ -18,7 +18,21 @@ interface LoggableInterface
      *
      * @return array
      */
-    public function getLogFields(): array;
+    public function logFields(): array;
+
+    /**
+     * Get current model's log fields values.
+     *
+     * @return array
+     */
+    public function logFieldsValues(): array;
+
+    /**
+     * Get current model's last log fields values.
+     *
+     * @return array|null
+     */
+    public function lastLogFieldsValues(): array|null;
 
     /**
      * Determines if log fields have changed since last log.

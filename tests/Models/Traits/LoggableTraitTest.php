@@ -154,7 +154,7 @@ class LoggableTraitTest extends StubsTestCase
         $log = $instance->logs()->offset(1)->first();
         $this->assertEquals($instance->name, $log->getFromJson('metadata', 'name'));
 
-        if (!in_array('metadata', $instance->getLogFields())) {
+        if (!in_array('metadata', $instance->logFields())) {
             $this->instance->update(['metadata' => '{"key": "value"}']);
             $this->assertEquals(2, $instance->logs()->count());
         }

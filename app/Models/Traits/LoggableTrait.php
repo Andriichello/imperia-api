@@ -23,7 +23,7 @@ trait LoggableTrait
      *
      * @return array
      */
-    public function getLogFields(): array
+    public function logFields(): array
     {
         return $this->logFields ?? [];
     }
@@ -35,19 +35,48 @@ trait LoggableTrait
      */
     public function logFieldsChanged(): bool
     {
-        $fields = $this->getLogFields();
+        $fields = $this->logFields();
         if (empty($fields)) {
             return false;
         }
-        /** @var Log|null $log */
-        $log = $this->logs()->latest()->first();
-        if ($log === null) {
+
+        $last = $this->lastLogFieldsValues();
+        if ($last === null || !Arr::has($last, $fields)) {
             return true;
         }
-        $metadata = $log->getJson('metadata');
-        $attributes = Arr::only($this->getAttributes(), $fields);
 
-        return !Arr::has($metadata, $fields) || $attributes !== $metadata;
+        $current = $this->logFieldsValues();
+
+        return json_encode($last) !== json_encode($current);
+    }
+
+    /**
+     * Get current model's log fields values.
+     *
+     * @return array
+     */
+    public function logFieldsValues(): array
+    {
+        $values = [];
+
+        foreach ($this->logFields() as $field) {
+            $values[$field] = $this->$field;
+        }
+
+        return $values;
+    }
+
+    /**
+     * Get current model's last log fields values.
+     *
+     * @return array|null
+     */
+    public function lastLogFieldsValues(): array|null
+    {
+        /** @var Log|null $log */
+        $log = $this->logs()->latest()->first();
+
+        return $log?->getJson('metadata');
     }
 
     /**
