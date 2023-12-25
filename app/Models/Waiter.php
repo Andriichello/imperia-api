@@ -6,10 +6,12 @@ use App\Models\Interfaces\CommentableInterface;
 use App\Models\Interfaces\LoggableInterface;
 use App\Models\Interfaces\MediableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
+use App\Models\Interfaces\TippableInterface;
 use App\Models\Traits\CommentableTrait;
 use App\Models\Traits\LoggableTrait;
 use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
+use App\Models\Traits\TippableTrait;
 use App\Queries\WaiterQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\WaiterFactory;
@@ -43,13 +45,15 @@ class Waiter extends BaseModel implements
     SoftDeletableInterface,
     CommentableInterface,
     LoggableInterface,
-    MediableInterface
+    MediableInterface,
+    TippableInterface
 {
     use HasFactory;
     use SoftDeletableTrait;
     use CommentableTrait;
     use LoggableTrait;
     use MediableTrait;
+    use TippableTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -84,6 +88,7 @@ class Waiter extends BaseModel implements
     protected $relations = [
         'media',
         'restaurant',
+        'tips',
     ];
 
     /**

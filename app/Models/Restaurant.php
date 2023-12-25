@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Interfaces\MediableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Morphs\Category;
+use App\Models\Morphs\Tip;
 use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use App\Queries\RestaurantQueryBuilder;
@@ -51,6 +52,7 @@ use Illuminate\Support\Collection;
  * @property Holiday[]|Collection $relevantHolidays
  * @property RestaurantReview[]|Collection $reviews
  * @property Waiter[]|Collection $waiters
+ * @property Tip[]|Collection $tips
  *
  * @method static RestaurantQueryBuilder query()
  * @method static RestaurantFactory factory(...$parameters)
@@ -106,6 +108,7 @@ class Restaurant extends BaseModel implements
         'relevantHolidays',
         'reviews',
         'waiters',
+        'tips',
     ];
 
     /**
@@ -230,6 +233,16 @@ class Restaurant extends BaseModel implements
     public function waiters(): HasMany
     {
         return $this->hasMany(Waiter::class, 'restaurant_id', 'id');
+    }
+
+    /**
+     * Tips associated with the model.
+     *
+     * @return HasMany
+     */
+    public function tips(): HasMany
+    {
+        return $this->hasMany(Tip::class, 'restaurant_id', 'id');
     }
 
     /**
