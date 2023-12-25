@@ -236,7 +236,7 @@ class Restaurant extends BaseModel implements
     }
 
     /**
-     * Tips associated with the model.
+     * Tips associated with the model (by the `restaurant_id`).
      *
      * @return HasMany
      */

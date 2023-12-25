@@ -21,6 +21,7 @@ use Illuminate\Database\Query\Builder as DatabaseBuilder;
  * Class Tip.
  *
  * @property int|null $restaurant_id
+ * @property string $uuid
  * @property float $amount
  * @property float|null $commission
  * @property string|null $note
@@ -49,6 +50,7 @@ class Tip extends BaseModel implements SoftDeletableInterface
      */
     protected $fillable = [
         'restaurant_id',
+        'uuid',
         'amount',
         'commission',
         'note',
