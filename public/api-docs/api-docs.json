@@ -4454,6 +4454,379 @@
                 ]
             }
         },
+        "/api/waiters": {
+            "get": {
+                "tags": [
+                    "waiters"
+                ],
+                "summary": "Index waiters.",
+                "operationId": "indexWaiters",
+                "parameters": [
+                    {
+                        "name": "filter[restaurants]",
+                        "in": "query",
+                        "description": "Coma-separated array of restaurant ids. Limits categories to those\n            that are attached at least to one of those restaurants",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1"
+                    },
+                    {
+                        "name": "filter[search]",
+                        "in": "query",
+                        "description": "Allows to search `uuid`, `name`, `surname`, `phone` and `email` fields at the same time.",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "John"
+                    },
+                    {
+                        "name": "filter[uuid]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "John"
+                    },
+                    {
+                        "name": "filter[name]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "John"
+                    },
+                    {
+                        "name": "filter[surname]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "Doe"
+                    },
+                    {
+                        "name": "filter[phone]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "+38050"
+                    },
+                    {
+                        "name": "filter[email]",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "john.doe@email.com"
+                    },
+                    {
+                        "name": "page[size]",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/PageSize"
+                        }
+                    },
+                    {
+                        "name": "page[number]",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/PageNumber"
+                        }
+                    },
+                    {
+                        "name": "deleted",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/DeletedParameter"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Index waiters response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IndexWaiterResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "waiters"
+                ],
+                "summary": "Store waiter.",
+                "operationId": "storeWaiter",
+                "requestBody": {
+                    "description": "Store waiter request object.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreWaiterRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Create waiter response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StoreWaiterResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/waiters/{id}": {
+            "get": {
+                "tags": [
+                    "waiters"
+                ],
+                "summary": "Show waiter by id.",
+                "operationId": "showWaiter",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the waiter.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Show waiter response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ShowWaiterResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "waiters"
+                ],
+                "summary": "Delete waiter.",
+                "operationId": "destroyWaiter",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the waiter.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "description": "Delete waiter request object.",
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DestroyRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Delete waiter response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DestroyWaiterResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "waiters"
+                ],
+                "summary": "Update waiter.",
+                "operationId": "updateWaiter",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the waiter.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "description": "Update waiter request object.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateWaiterRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update waiter response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UpdateWaiterResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/waiters/{id}/restore": {
+            "post": {
+                "tags": [
+                    "waiters"
+                ],
+                "summary": "Restore waiter.",
+                "operationId": "restoreWaiter",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the waiter.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Restore waiter response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RestoreWaiterResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/orders/{id}/invoice/url": {
             "post": {
                 "tags": [
@@ -6147,6 +6520,111 @@
                 },
                 "type": "object"
             },
+            "IndexWaiterResponse": {
+                "description": "Index waiters response object.",
+                "required": [
+                    "data",
+                    "meta",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Waiter"
+                        }
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/PaginationMeta"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "ShowWaiterResponse": {
+                "description": "Show waiter response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Waiter"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "StoreWaiterResponse": {
+                "description": "Store waiter response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Waiter"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Created"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateWaiterResponse": {
+                "description": "Update waiter response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Waiter"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "DestroyWaiterResponse": {
+                "description": "Delete waiter response object.",
+                "required": [
+                    "message"
+                ],
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Deleted"
+                    }
+                },
+                "type": "object"
+            },
+            "RestoreWaiterResponse": {
+                "description": "Restore waiter response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Waiter"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
             "OrderInvoiceUrlResponse": {
                 "description": "Generate url for accessing order's invoice response.",
                 "required": [
@@ -7329,6 +7807,104 @@
                         "description": "This is a current password. It is needed in order to perform\n     authorization. Required with `password`.",
                         "type": "string",
                         "example": "pa$$w0rd"
+                    }
+                },
+                "type": "object"
+            },
+            "StoreWaiterRequest": {
+                "description": "Store waiter request.",
+                "required": [
+                    "restaurant_id",
+                    "uuid",
+                    "name",
+                    "surname",
+                    "email",
+                    "phone",
+                    "birthdate",
+                    "about"
+                ],
+                "properties": {
+                    "restaurant_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": "true"
+                    },
+                    "uuid": {
+                        "type": "string",
+                        "nullable": "true"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "John"
+                    },
+                    "surname": {
+                        "type": "string",
+                        "example": "Forrester"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "ben.forrester@email.com",
+                        "nullable": "true"
+                    },
+                    "phone": {
+                        "description": "Phone number may start with a plus and must contain only digits 0-9.",
+                        "type": "string",
+                        "example": "+380507777777",
+                        "nullable": "true"
+                    },
+                    "birthdate": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "1992-10-16",
+                        "nullable": "true"
+                    },
+                    "about": {
+                        "type": "string",
+                        "nullable": "true"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateWaiterRequest": {
+                "description": "Update waiter request.",
+                "properties": {
+                    "restaurant_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": "true"
+                    },
+                    "uuid": {
+                        "type": "string",
+                        "nullable": "true"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "John"
+                    },
+                    "surname": {
+                        "type": "string",
+                        "example": "Forrester"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "ben.forrester@email.com",
+                        "nullable": "true"
+                    },
+                    "phone": {
+                        "description": "Phone number may start with a plus and must contain only digits 0-9.",
+                        "type": "string",
+                        "example": "+380507777777",
+                        "nullable": "true"
+                    },
+                    "birthdate": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "1992-10-16",
+                        "nullable": "true"
+                    },
+                    "about": {
+                        "type": "string",
+                        "nullable": "true"
                     }
                 },
                 "type": "object"
@@ -9296,6 +9872,48 @@
                 },
                 "type": "object"
             },
+            "Tip": {
+                "description": "Tip resource object",
+                "required": [
+                    "id",
+                    "restaurant_id",
+                    "type",
+                    "amount",
+                    "commission",
+                    "about"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "restaurant_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": "true"
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "tips"
+                    },
+                    "amount": {
+                        "type": "float",
+                        "example": 25
+                    },
+                    "commission": {
+                        "type": "float",
+                        "nullable": "true"
+                    },
+                    "about": {
+                        "type": "string",
+                        "nullable": "true"
+                    },
+                    "restaurant": {
+                        "$ref": "#/components/schemas/Restaurant"
+                    }
+                },
+                "type": "object"
+            },
             "User": {
                 "description": "User resource object",
                 "required": [
@@ -9342,6 +9960,53 @@
                     },
                     "customer": {
                         "$ref": "#/components/schemas/Customer"
+                    }
+                },
+                "type": "object"
+            },
+            "Waiter": {
+                "description": "Waiter resource object",
+                "required": [
+                    "id",
+                    "restaurant_id",
+                    "type",
+                    "uuid",
+                    "name",
+                    "surname",
+                    "about"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "restaurant_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": "true"
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "waiters"
+                    },
+                    "uuid": {
+                        "type": "string",
+                        "nullable": "true"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "John"
+                    },
+                    "surname": {
+                        "type": "string",
+                        "example": "Doe"
+                    },
+                    "about": {
+                        "type": "string",
+                        "nullable": "true"
+                    },
+                    "restaurant": {
+                        "$ref": "#/components/schemas/Restaurant"
                     }
                 },
                 "type": "object"
