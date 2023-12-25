@@ -30,7 +30,7 @@ class CacheHelper implements CacheHelperInterface
             'groups' => ['menus', 'products', 'categories', 'alterations'],
         ],
         'api/products' => [
-            'minutes' => 5,
+            'minutes' => 120,
             'groups' => ['menus', 'products', 'categories', 'alterations'],
         ],
         'api/tickets' => [
@@ -45,10 +45,10 @@ class CacheHelper implements CacheHelperInterface
             'minutes' => 120,
             'groups' => ['spaces', 'categories'],
         ],
-        'api/customers' => [
-            'minutes' => 5,
-            'groups' => ['customers'],
-        ],
+        // 'api/customers' => [
+        //    'minutes' => 60,
+        //    'groups' => ['customers'],
+        // ],
     ];
 
     /**
