@@ -45,6 +45,10 @@ class CacheHelper implements CacheHelperInterface
             'minutes' => 120,
             'groups' => ['spaces', 'categories'],
         ],
+        'api/waiters' => [
+            'minutes' => 120,
+            'groups' => ['waiters'],
+        ],
         // 'api/customers' => [
         //    'minutes' => 60,
         //    'groups' => ['customers'],
@@ -104,8 +108,8 @@ class CacheHelper implements CacheHelperInterface
      */
     public function should(Request $request): bool
     {
-        if ($request->getMethod() === 'GET') {
-            return true;
+        if ($request->getMethod() !== 'GET') {
+            return false;
         }
 
         return (bool) $this->minutes($request);

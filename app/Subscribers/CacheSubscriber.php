@@ -13,6 +13,7 @@ use App\Models\RestaurantReview;
 use App\Models\Service;
 use App\Models\Space;
 use App\Models\Ticket;
+use App\Models\Waiter;
 use Illuminate\Support\Arr;
 
 /**
@@ -52,6 +53,9 @@ class CacheSubscriber extends BaseSubscriber
         ],
         Alteration::class => [
             'groups' => ['alterations', 'menus', 'products', 'services', 'tickets', 'spaces'],
+        ],
+        Waiter::class => [
+            'groups' => ['waiters'],
         ],
         // Customer::class => [
         //    'groups' => ['customers'],
