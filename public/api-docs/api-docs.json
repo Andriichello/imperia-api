@@ -959,6 +959,15 @@
                         }
                     },
                     {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Available sorts: `name`, `surname`, `created_at`, `updated_at`\n            (is default, but in descending order)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "-updated_at"
+                    },
+                    {
                         "name": "filter[search]",
                         "in": "query",
                         "description": "Allows to search `name`, `surname`, `phone` and `email` fields at the same time.",
