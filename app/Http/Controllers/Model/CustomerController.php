@@ -76,6 +76,9 @@ class CustomerController extends CrudController
      *
      *   @OA\Parameter(name="include", in="query",
      *     @OA\Schema(ref ="#/components/schemas/CustomerIncludes")),
+     *   @OA\Parameter(name="sort", in="query", example="-updated_at", @OA\Schema(type="string"),
+            description="Available sorts: `name`, `surname`, `created_at`, `updated_at`
+            (is default, but in descending order)"),
      *   @OA\Parameter(name="filter[search]", in="query", example="John", @OA\Schema(type="string"),
      *     description="Allows to search `name`, `surname`, `phone` and `email` fields at the same time."),
      *   @OA\Parameter(name="filter[name]", in="query", example="John", @OA\Schema(type="string")),
