@@ -58,6 +58,8 @@ class BanquetResource extends JsonResource
             'adult_ticket_price' => $this->adult_ticket_price,
             'children_amount' => $this->children_amount,
             'child_ticket_price' => $this->child_ticket_price,
+            'children_amounts' => $this->children_amounts,
+            'child_ticket_prices' => $this->child_ticket_prices,
             'invoice_url' => $this->getInvoiceUrl($request->user()),
             'order' => new OrderResource($this->whenLoaded('order')),
             'creator' => new UserResource($this->whenLoaded('creator')),

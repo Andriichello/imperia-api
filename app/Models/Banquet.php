@@ -108,6 +108,8 @@ class Banquet extends BaseModel implements
         'adult_ticket_price',
         'children_amount',
         'child_ticket_price',
+        'children_amounts',
+        'child_ticket_prices',
     ];
 
     /**
