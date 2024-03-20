@@ -63,6 +63,6 @@ class FamilyMemberPolicy extends CrudPolicy
      */
     public function view(User $user, FamilyMember $member): bool
     {
-        return $member->relative_id === $user->customer_id || $user->isStaff();
+        return in_array($member->relative_id, $user->customer_ids) || $user->isStaff();
     }
 }

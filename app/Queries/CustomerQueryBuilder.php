@@ -30,7 +30,7 @@ class CustomerQueryBuilder extends BaseQueryBuilder
             return $this;
         }
 
-        $this->where('id', $user->customer_id);
+        $this->whereIn('id', $user->customer_ids);
 
         return $this;
     }

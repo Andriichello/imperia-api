@@ -29,8 +29,8 @@ class OrderQueryBuilder extends BaseQueryBuilder
                 'banquet',
                 function (BanquetQueryBuilder $query) use ($user) {
                     $query->where('creator_id', $user->id);
-                    if ($user->customer_id) {
-                        $query->orWhere('customer_id', $user->customer_id);
+                    if (!empty($user->customer_ids)) {
+                        $query->orWhereIn('customer_id', $user->customer_ids);
                     }
                 }
             );

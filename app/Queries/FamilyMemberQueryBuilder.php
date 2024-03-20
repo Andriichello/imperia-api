@@ -23,7 +23,7 @@ class FamilyMemberQueryBuilder extends BaseQueryBuilder
             return $this;
         }
 
-        $this->where('relative_id', $user->customer_id);
+        $this->whereIn('relative_id', $user->customer_ids);
 
         return $this;
     }
