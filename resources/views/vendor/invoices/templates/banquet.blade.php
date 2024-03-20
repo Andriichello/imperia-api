@@ -397,25 +397,27 @@
         <tbody>
 
         {{-- Items --}}
-        <tr>
-            <td class="p-0">{{ __('invoices::invoice.children') }}</td>
-            <td class="text-right">{{ ($amount = $invoice->getChildrenAmount()) ?? '' }}</td>
-            <td class="text-right">{{ ($price = $invoice->getChildTicketPrice()) ? $invoice->formatCurrency($price) : '' }}</td>
-            <td class="text-right p-0">{{ $price && $amount ? ($childTicketsTotal = $invoice->formatCurrency($price * $amount)) : '' }}</td>
-        </tr>
-        <tr>
-            <td class="p-0">{{ __('invoices::invoice.adults') }}</td>
-            <td class="text-right">{{ ($amount = $invoice->getAdultsAmount()) ?? '' }}</td>
-            <td class="text-right">{{ ($price = $invoice->getAdultTicketPrice()) ? $invoice->formatCurrency($price) : '' }}</td>
-            <td class="text-right p-0">{{ $price && $amount ? ($adultTicketsTotal = $invoice->formatCurrency($price * $amount)) : '' }}</td>
-        </tr>
+        <?php $ticketSubtotals = [] ?>
+
+        @foreach($invoice->getTicketsEntries() as $items)
+            @foreach($items as $item)
+                <tr>
+                    <td class="p-0">{{ data_get($item, 'type') === 'child' ? __('invoices::invoice.children') : __('invoices::invoice.adults') }}</td>
+                    <td class="text-right">{{ ($amount = data_get($item, 'amount')) ?? '' }}</td>
+                    <td class="text-right">{{ ($price = data_get($item, 'price')) ? $invoice->formatCurrency($price) : '' }}</td>
+                    <?php $ticketSubtotals[] = $subtotal = $price * $amount // @phpstan-ignore-line ?>
+                    <td class="text-right p-0">{{ $price && $amount ? ($invoice->formatCurrency($subtotal)) : '' }}</td>
+                </tr>
+            @endforeach
+        @endforeach
+
         {{-- Summary --}}
         <tr>
             <td colspan="1" class="border-0"></td>
             <td class="text-right p-0"></td>
             <td class="text-right p-0">{{ __('invoices::invoice.total') }}</td>
             <td colspan="1"
-                class="text-right p-0 total-amount min-w-20">{{ (isset($childTicketsTotal) || isset($adultTicketsTotal)) ? $invoice->formatCurrency((float)($childTicketsTotal ?? 0) + (float)($adultTicketsTotal ?? 0)) : '' }}</td>
+                class="text-right p-0 total-amount min-w-20">{{ $invoice->formatCurrency(array_sum(array_map(fn($subtotal) => (float) $subtotal ?? 0.0, $ticketSubtotals)))}}</td>
         </tr>
         </tbody>
     </table>
