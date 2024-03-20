@@ -236,18 +236,18 @@ class Invoice extends BaseInvoice
      */
     public function getAdultTicketsTotal(): float
     {
-        if (!isset($this->ticketEntries)) {
-            return ($this->getAdultsAmount() ?? 0)
-                * ($this->getAdultTicketPrice() ?? 0);
-        }
-
         $total = 0;
 
         foreach ($this->ticketEntries as $entry) {
-            $price = data_get($entry, 'adult.price', 0);
-            $amount = data_get($entry, 'adult.amount', 0);
+            $subs = array_map(
+                fn($item) => (int) data_get($item, 'amount') * (float) data_get($item, 'price'),
+                array_filter(
+                    $entry,
+                    fn($item) => data_get($item, 'type') === 'adult'
+                ),
+            );
 
-            $total += $price * $amount;
+            $total += array_sum($subs);
         }
 
         return $total;
@@ -260,18 +260,18 @@ class Invoice extends BaseInvoice
      */
     public function getChildTicketsTotal(): float
     {
-        if (!isset($this->ticketEntries)) {
-            return ($this->getChildrenAmount() ?? 0)
-                * ($this->getChildTicketPrice() ?? 0);
-        }
-
         $total = 0;
 
         foreach ($this->ticketEntries as $entry) {
-            $price = data_get($entry, 'child.price', 0);
-            $amount = data_get($entry, 'child.amount', 0);
+            $subs = array_map(
+                fn($item) => (int) data_get($item, 'amount') * (float) data_get($item, 'price'),
+                array_filter(
+                    $entry,
+                    fn($item) => data_get($item, 'type') === 'child'
+                ),
+            );
 
-            $total += $price * $amount;
+            $total += array_sum($subs);
         }
 
         return $total;
@@ -284,19 +284,21 @@ class Invoice extends BaseInvoice
      */
     public function getAdultsAmount(): ?int
     {
-        $entries = $this->getTicketsEntries();
+        $amount = 0;
 
-        if ($entries) {
-            $amount = 0;
+        foreach ($this->ticketEntries as $entry) {
+            $subs = array_map(
+                fn($item) => (int)data_get($item, 'amount'),
+                array_filter(
+                    $entry,
+                    fn($item) => data_get($item, 'type') === 'adult'
+                ),
+            );
 
-            foreach ($entries as $entry) {
-                $amount += data_get($entry, 'adult.amount', 0);
-            }
-
-            return $amount;
+            $amount += array_sum($subs);
         }
 
-        return $this->order?->banquet->adults_amount;
+        return $amount;
     }
 
     /**
@@ -306,19 +308,28 @@ class Invoice extends BaseInvoice
      */
     public function getAdultTicketPrice(): ?float
     {
-        if (!isset($this->ticketEntries)) {
-            return $this->order?->banquet->adult_ticket_price;
-        }
-
         $totalPrice = 0;
         $totalAmount = 0;
 
         foreach ($this->ticketEntries as $entry) {
-            $price = data_get($entry, 'adult.price', 0);
-            $amount = data_get($entry, 'adult.amount', 0);
+            $items = array_filter(
+                $entry,
+                fn($item) => data_get($item, 'type') === 'adult'
+            );
 
-            $totalPrice += $price * $amount;
-            $totalAmount += $amount;
+            $subs = array_map(
+                fn($item) => (int)data_get($item, 'amount') * (float)data_get($item, 'price'),
+                $items
+            );
+
+            $totalPrice += array_sum($subs);
+
+            $subs = array_map(
+                fn($item) => (int)data_get($item, 'amount'),
+                $items
+            );
+
+            $totalAmount += array_sum($subs);
         }
 
         return $totalPrice / ($totalAmount > 0 ? $totalAmount : 1);
@@ -331,19 +342,21 @@ class Invoice extends BaseInvoice
      */
     public function getChildrenAmount(): ?int
     {
-        $entries = $this->getTicketsEntries();
+        $amount = 0;
 
-        if ($entries) {
-            $amount = 0;
+        foreach ($this->ticketEntries as $entry) {
+            $subs = array_map(
+                fn($item) => (int)data_get($item, 'amount'),
+                array_filter(
+                    $entry,
+                    fn($item) => data_get($item, 'type') === 'child'
+                ),
+            );
 
-            foreach ($entries as $entry) {
-                $amount += data_get($entry, 'child.amount', 0);
-            }
-
-            return $amount;
+            $amount += array_sum($subs);
         }
 
-        return $this->order?->banquet->children_amount;
+        return $amount;
     }
 
     /**
@@ -353,19 +366,28 @@ class Invoice extends BaseInvoice
      */
     public function getChildTicketPrice(): ?float
     {
-        if (!isset($this->ticketEntries)) {
-            return $this->order?->banquet->child_ticket_price;
-        }
-
         $totalPrice = 0;
         $totalAmount = 0;
 
         foreach ($this->ticketEntries as $entry) {
-            $price = data_get($entry, 'child.price', 0);
-            $amount = data_get($entry, 'child.amount', 0);
+            $items = array_filter(
+                $entry,
+                fn($item) => data_get($item, 'type') === 'child'
+            );
 
-            $totalPrice += $price * $amount;
-            $totalAmount += $amount;
+            $subs = array_map(
+                fn($item) => (int)data_get($item, 'amount') * (float)data_get($item, 'price'),
+                $items
+            );
+
+            $totalPrice += array_sum($subs);
+
+            $subs = array_map(
+                fn($item) => (int)data_get($item, 'amount'),
+                $items
+            );
+
+            $totalAmount += array_sum($subs);
         }
 
         return $totalPrice / ($totalAmount > 0 ? $totalAmount : 1);
@@ -380,7 +402,9 @@ class Invoice extends BaseInvoice
     {
         $formatted = $this->formatCurrency($item->price_per_unit);
 
+        /* @phpstan-ignore-next-line */
         if ($item->getOncePaidPrice()) {
+            /* @phpstan-ignore-next-line */
             $hourly = $this->formatCurrency($item->getOncePaidPrice());
             return "$formatted + $hourly * hours";
         }
@@ -541,6 +565,7 @@ class Invoice extends BaseInvoice
 
         foreach ($items as $item) {
             /** @var InvoiceItem $item */
+            /* @phpstan-ignore-next-line */
             $total += $item->getTotal() ?? 0.0;
         }
 

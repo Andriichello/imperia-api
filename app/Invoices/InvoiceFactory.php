@@ -37,6 +37,7 @@ class InvoiceFactory
             ->template('banquet')
             ->buyer(self::buyer($order->banquet->customer))
             ->seller(self::seller($order->banquet->restaurant))
+            ->addTicketEntries(self::ticketEntries($order))
             ->addItems(self::items($order))
             ->sortItems();
     }
@@ -58,16 +59,7 @@ class InvoiceFactory
         $ticketEntries = [];
 
         foreach ($orders as $order) {
-            $ticketEntries[] = [
-                'adult' => [
-                    'amount' => $order->banquet->adults_amount,
-                    'price' => $order->banquet->adult_ticket_price,
-                ],
-                'child' => [
-                    'amount' => $order->banquet->children_amount,
-                    'price' => $order->banquet->child_ticket_price,
-                ],
-            ];
+            $ticketEntries[] = self::ticketEntries($order);
 
             if (empty($items)) {
                 $items = self::items($order)->all();
@@ -191,5 +183,38 @@ class InvoiceFactory
         }
 
         return $items;
+    }
+
+    /**
+     * Get ticket entries for given order.
+     *
+     * @param Order $order
+     *
+     * @return array
+     */
+    public static function ticketEntries(Order $order): array
+    {
+        $entry = [
+            [
+                'type' => 'adult',
+                'amount' => $order->banquet->adults_amount,
+                'price' => $order->banquet->adult_ticket_price,
+            ],
+            [
+                'type' => 'child',
+                'amount' => $order->banquet->children_amount,
+                'price' => $order->banquet->child_ticket_price,
+            ],
+        ];
+
+        foreach ($order->banquet->children_amounts ?? [] as $index => $amount) {
+            $entry[] = [
+                'type' => 'child',
+                'amount' => $amount,
+                'price' => (float) data_get($order->banquet->child_ticket_prices, $index),
+            ];
+        }
+
+        return $entry;
     }
 }
