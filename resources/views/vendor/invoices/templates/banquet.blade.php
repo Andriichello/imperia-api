@@ -401,6 +401,10 @@
 
         @foreach($invoice->getTicketsEntries() as $items)
             @foreach($items as $item)
+                @if(data_get($item, 'amount') === null)
+                    @continue
+                @endif
+
                 <tr>
                     <td class="p-0">{{ data_get($item, 'type') === 'child' ? __('invoices::invoice.children') : __('invoices::invoice.adults') }}</td>
                     <td class="text-right">{{ ($amount = data_get($item, 'amount')) ?? '' }}</td>

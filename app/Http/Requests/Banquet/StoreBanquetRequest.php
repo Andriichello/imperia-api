@@ -139,13 +139,26 @@ class StoreBanquetRequest extends StoreRequest
                     'numeric',
                     'min:0',
                 ],
+                'children_amounts' => [
+                    'sometimes',
+                    'nullable',
+                    'array',
+                ],
+                'children_amounts.*' => [
+                    'sometimes',
+                    'nullable',
+                    'integer',
+                    'min:0',
+                ],
                 'child_ticket_prices' => [
                     'sometimes',
                     'nullable',
                     'array',
                 ],
                 'child_ticket_prices.*' => [
-                    'integer',
+                    'sometimes',
+                    'nullable',
+                    'numeric',
                     'min:0',
                 ],
             ]

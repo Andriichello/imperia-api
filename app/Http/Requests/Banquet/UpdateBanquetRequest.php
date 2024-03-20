@@ -141,6 +141,8 @@ class UpdateBanquetRequest extends UpdateRequest
                     'array',
                 ],
                 'children_amounts.*' => [
+                    'sometimes',
+                    'nullable',
                     'integer',
                     'min:0',
                 ],
@@ -150,7 +152,9 @@ class UpdateBanquetRequest extends UpdateRequest
                     'array',
                 ],
                 'child_ticket_prices.*' => [
-                    'integer',
+                    'sometimes',
+                    'nullable',
+                    'numeric',
                     'min:0',
                 ],
             ]
