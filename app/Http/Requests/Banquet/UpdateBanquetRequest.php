@@ -135,6 +135,24 @@ class UpdateBanquetRequest extends UpdateRequest
                     'numeric',
                     'min:0',
                 ],
+                'children_amounts' => [
+                    'sometimes',
+                    'nullable',
+                    'array',
+                ],
+                'children_amounts.*' => [
+                    'integer',
+                    'min:0',
+                ],
+                'child_ticket_prices' => [
+                    'sometimes',
+                    'nullable',
+                    'array',
+                ],
+                'child_ticket_prices.*' => [
+                    'integer',
+                    'min:0',
+                ],
             ]
         );
     }
@@ -185,6 +203,8 @@ class UpdateBanquetRequest extends UpdateRequest
      *   @OA\Property(property="with_photographer", type="boolean", nullable="true", example="true"),
      *   @OA\Property(property="children_amount", type="integer", nullable="true", example=5),
      *   @OA\Property(property="child_ticket_price", type="float", nullable="true", example=25.50),
+     *   @OA\Property(property="children_amounts", type="array", @OA\Items(type="integer", example=5)),
+     *   @OA\Property(property="child_ticket_prices", type="array", @OA\Items(type="float", example=25.50)),
      *   @OA\Property(property="adults_amount", type="integer", nullable="true", example=2),
      *   @OA\Property(property="adult_ticket_price", type="float", nullable="true", example=35.50),
      *   @OA\Property(property="start_at", type="string", format="date-time", example="2022-01-12 10:00:00",

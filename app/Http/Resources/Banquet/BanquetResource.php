@@ -101,6 +101,8 @@ class BanquetResource extends JsonResource
      *   @OA\Property(property="with_photographer", type="boolean", nullable="true", example="true"),
      *   @OA\Property(property="children_amount", type="integer", nullable="true", example=5),
      *   @OA\Property(property="child_ticket_price", type="float", nullable="true", example=25.50),
+     *   @OA\Property(property="children_amounts", type="array", @OA\Items(type="integer", example=5)),
+     *   @OA\Property(property="child_ticket_prices", type="array", @OA\Items(type="float", example=25.50)),
      *   @OA\Property(property="adults_amount", type="integer", nullable="true", example=2),
      *   @OA\Property(property="adult_ticket_price", type="float", nullable="true", example=35.50),
      *   @OA\Property(property="totals", nullable="true", ref ="#/components/schemas/OrderTotals"),

@@ -50,6 +50,8 @@ use Illuminate\Support\Collection;
  * @property float|null $adult_ticket_price
  * @property int|null $children_amount
  * @property float|null $child_ticket_price
+ * @property int[]|null $children_amounts
+ * @property float[]|null $child_ticket_prices
  *
  * @property Order|null $order
  * @property User|null $creator
@@ -457,6 +459,54 @@ class Banquet extends BaseModel implements
     public function setChildTicketPriceAttribute(?float $childTicketPrice): void
     {
         $this->setToJson('metadata', 'child_ticket_price', $childTicketPrice);
+    }
+
+    /**
+     * Accessor for the children amounts attribute.
+     *
+     * @return int[]|null
+     */
+    public function getChildrenAmountsAttribute(): ?array
+    {
+        $value = $this->getFromJson('metadata', 'children_amounts');
+
+        return $value === null ? null : (array) $value;
+    }
+
+    /**
+     * Mutator for the children amounts attribute.
+     *
+     * @param int[]|null $childrenAmounts
+     *
+     * @return void
+     */
+    public function setChildrenAmountsAttribute(?array $childrenAmounts): void
+    {
+        $this->setToJson('metadata', 'children_amounts', $childrenAmounts);
+    }
+
+    /**
+     * Accessor for the child ticket price attribute.
+     *
+     * @return float[]|null
+     */
+    public function getChildTicketPricesAttribute(): ?array
+    {
+        $value = $this->getFromJson('metadata', 'child_ticket_prices');
+
+        return $value === null ? null : (array) $value;
+    }
+
+    /**
+     * Mutator for the child ticket price attribute.
+     *
+     * @param float[]|null $childTicketPrices
+     *
+     * @return void
+     */
+    public function setChildTicketPricesAttribute(?array $childTicketPrices): void
+    {
+        $this->setToJson('metadata', 'child_ticket_prices', $childTicketPrices);
     }
 
     /**

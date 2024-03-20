@@ -6854,6 +6854,20 @@
                         "example": 25.5,
                         "nullable": "true"
                     },
+                    "children_amounts": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    },
+                    "child_ticket_prices": {
+                        "type": "array",
+                        "items": {
+                            "type": "float",
+                            "example": 25.5
+                        }
+                    },
                     "adults_amount": {
                         "type": "integer",
                         "example": 2,
@@ -6966,6 +6980,20 @@
                         "type": "float",
                         "example": 25.5,
                         "nullable": "true"
+                    },
+                    "children_amounts": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    },
+                    "child_ticket_prices": {
+                        "type": "array",
+                        "items": {
+                            "type": "float",
+                            "example": 25.5
+                        }
                     },
                     "adults_amount": {
                         "type": "integer",
@@ -8105,6 +8133,20 @@
                         "type": "float",
                         "example": 25.5,
                         "nullable": "true"
+                    },
+                    "children_amounts": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    },
+                    "child_ticket_prices": {
+                        "type": "array",
+                        "items": {
+                            "type": "float",
+                            "example": 25.5
+                        }
                     },
                     "adults_amount": {
                         "type": "integer",
