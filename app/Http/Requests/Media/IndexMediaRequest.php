@@ -6,7 +6,6 @@ use App\Http\Filters\MediaSearchFilter;
 use App\Http\Requests\Crud\IndexRequest;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
-use Illuminate\Support\Carbon;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\QueryBuilder as SpatieBuilder;
@@ -38,6 +37,16 @@ class IndexMediaRequest extends IndexRequest
                 AllowedFilter::partial('extension'),
                 AllowedFilter::partial('folder'),
                 AllowedFilter::partial('disk'),
+            ]
+        );
+    }
+
+    public function getAllowedIncludes(): array
+    {
+        return array_merge(
+            parent::getAllowedIncludes(),
+            [
+                'variants',
             ]
         );
     }
