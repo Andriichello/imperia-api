@@ -37,7 +37,8 @@ class TicketResource extends JsonResource
             'popularity' => $this->popularity,
             'categories' => new CategoryCollection($this->whenLoaded('categories')),
             'category_ids' => $categoryIds,
-            'media' => new MediaCollection($this->media),
+            /* @phpstan-ignore-next-line */
+            'media' => new MediaCollection($this->media->load('variants')),
         ];
     }
 

@@ -1701,6 +1701,13 @@
                 "operationId": "indexMedia",
                 "parameters": [
                     {
+                        "name": "include",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/MediaIncludes"
+                        }
+                    },
+                    {
                         "name": "page[size]",
                         "in": "query",
                         "schema": {
@@ -1870,6 +1877,13 @@
                             "type": "integer"
                         },
                         "example": 1
+                    },
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/MediaIncludes"
+                        }
                     }
                 ],
                 "responses": {
@@ -5649,6 +5663,11 @@
                 "type": "string",
                 "example": "relative"
             },
+            "MediaIncludes": {
+                "description": "Coma-separated list of inluded relations.\n            Available relations: `variants`",
+                "type": "string",
+                "example": "variants"
+            },
             "IndexMediaResponse": {
                 "description": "Index media response object.",
                 "required": [
@@ -8860,6 +8879,10 @@
                         "type": "string",
                         "example": "drinks.svg"
                     },
+                    "mime": {
+                        "type": "string",
+                        "example": "image/svg+xml"
+                    },
                     "extension": {
                         "type": "string",
                         "example": "svg"
@@ -8894,6 +8917,12 @@
                     },
                     "metadata": {
                         "$ref": "#/components/schemas/MediaMetadata"
+                    },
+                    "variants": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Media"
+                        }
                     }
                 },
                 "type": "object"

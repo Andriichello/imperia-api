@@ -12,12 +12,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 /**
  * Class Media.
  *
  * @property int|null $restaurant_id
+ * @property int|null $original_id
  * @property string $name
  * @property string $extension
  * @property string|null $title
@@ -29,8 +31,12 @@ use Illuminate\Support\Str;
  * @property Carbon|null $updated_at
  *
  * @property string $url
+ * @property string $full_path
+ * @property string|null $mime
  * @property int|null $order
  *
+ * @property Media|null $original
+ * @property Media[]|Collection $variants
  * @property Restaurant|null $restaurant
  * @property Mediable[]|Collection $mediables
  *
@@ -46,6 +52,7 @@ class Media extends BaseModel
      */
     protected $fillable = [
         'restaurant_id',
+        'original_id',
         'name',
         'extension',
         'title',
@@ -72,17 +79,39 @@ class Media extends BaseModel
      */
     protected $relations = [
         'mediables',
+        'original',
+        'variants',
         'restaurant',
     ];
 
     /**
-     * Related mediables.
+     * Related original.
      *
      * @return HasMany
      */
     public function mediables(): HasMany
     {
         return $this->hasMany(Mediable::class, 'media_id', 'id');
+    }
+
+    /**
+     * Related original media.
+     *
+     * @return BelongsTo
+     */
+    public function original(): BelongsTo
+    {
+        return $this->belongsTo(Media::class, 'original_id', 'id');
+    }
+
+    /**
+     * Related variants.
+     *
+     * @return HasMany
+     */
+    public function variants(): HasMany
+    {
+        return $this->hasMany(Media::class, 'original_id', 'id');
     }
 
     /**
@@ -94,7 +123,6 @@ class Media extends BaseModel
     {
         return $this->belongsTo(Restaurant::class);
     }
-
 
     /**
      * Accessor for Media url.
@@ -108,6 +136,27 @@ class Media extends BaseModel
     }
 
     /**
+     * Accessor for Media mime type.
+     *
+     * @return string|null
+     */
+    public function getMimeAttribute(): ?string
+    {
+        return $this->attributes['extension'];
+    }
+
+    /**
+     * Accessor for Media extension.
+     *
+     * @return string|null
+     */
+    public function getExtensionAttribute(): ?string
+    {
+        return extensionOfMime($this->attributes['extension'])
+            ?? $this->attributes['extension'];
+    }
+
+    /**
      * Accessor for Media's order.
      *
      * @return int|null
@@ -116,6 +165,33 @@ class Media extends BaseModel
     public function getOrderAttribute(): ?int
     {
         return data_get($this, 'pivot.order');
+    }
+
+    /**
+     * Accessor for the full path of the file.
+     */
+    protected function getFullPathAttribute(): string
+    {
+        return Str::of($this->folder)
+            ->beforeLast($this->name)
+            ->finish('/')
+            ->append($this->name)
+            ->value();
+    }
+
+    /**
+     * Get media in a temporary file.
+     *
+     * @return resource|false Temporary file.
+     */
+    public function asTemporaryFile(): mixed
+    {
+        $body = Http::get($this->url)->body();
+
+        $file = tmpfile();
+        fwrite($file, $body);
+
+        return $file;
     }
 
     /**

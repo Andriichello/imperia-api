@@ -35,7 +35,8 @@ class CategoryResource extends JsonResource
             'popularity' => $this->popularity,
             'description' => $this->description,
             'tags' => new TagCollection($this->whenLoaded('tags')),
-            'media' => new MediaCollection($this->media),
+            /* @phpstan-ignore-next-line */
+            'media' => new MediaCollection($this->media->load('variants')),
         ];
     }
 

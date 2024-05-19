@@ -81,6 +81,9 @@ class MediaController extends CrudController
      *   security={{"bearerAuth": {}}},
      *   tags={"media"},
      *
+     *
+     *   @OA\Parameter(name="include", in="query",
+     *     @OA\Schema(ref ="#/components/schemas/MediaIncludes")),
      *   @OA\Parameter(name="page[size]", in="query", @OA\Schema(ref ="#/components/schemas/PageSize")),
      *   @OA\Parameter(name="page[number]", in="query", @OA\Schema(ref ="#/components/schemas/PageNumber")),
      *   @OA\Parameter(name="filter[search]", required=false, in="query", example="Cafe",
@@ -115,6 +118,8 @@ class MediaController extends CrudController
      *
      *  @OA\Parameter(name="id", required=true, in="path", example=1, @OA\Schema(type="integer"),
      *     description="Id of the media."),
+     *  @OA\Parameter(name="include", in="query",
+     *     @OA\Schema(ref ="#/components/schemas/MediaIncludes")),
      *
      *   @OA\Response(
      *     response=200,
@@ -208,6 +213,12 @@ class MediaController extends CrudController
      *   )
      * ),
      *
+     * @OA\Schema(
+     *   schema="MediaIncludes",
+     *   description="Coma-separated list of inluded relations.
+            Available relations: `variants`",
+     *   type="string", example="variants",
+     * ),
      * @OA\Schema(
      *   schema="IndexMediaResponse",
      *   description="Index media response object.",

@@ -42,7 +42,8 @@ class RestaurantResource extends JsonResource
             'timezone' => $this->timezone,
             'timezone_offset' => $this->timezone_offset,
             'popularity' => $this->popularity,
-            'media' => new MediaCollection($this->media),
+            /* @phpstan-ignore-next-line */
+            'media' => new MediaCollection($this->media->load('variants')),
             'schedules' => new ScheduleCollection($this->whenLoaded('schedules')),
         ];
     }

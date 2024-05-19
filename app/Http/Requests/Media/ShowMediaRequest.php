@@ -9,6 +9,16 @@ use App\Http\Requests\Crud\ShowRequest;
  */
 class ShowMediaRequest extends ShowRequest
 {
+    public function getAllowedIncludes(): array
+    {
+        return array_merge(
+            parent::getAllowedIncludes(),
+            [
+                'variants',
+            ]
+        );
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *

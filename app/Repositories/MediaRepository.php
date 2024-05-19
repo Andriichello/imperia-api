@@ -45,7 +45,7 @@ class MediaRepository extends CrudRepository
         $from = $attributes['file'];
 
         if ($from instanceof File || $from instanceof UploadedFile) {
-            $attributes['extension'] = $from->getClientMimeType();
+            $attributes['extension'] = mime_content_type($from->getPathname());
 
             if (!isset($attributes['title'])) {
                 $attributes['title'] = $attributes['name'];
@@ -72,6 +72,51 @@ class MediaRepository extends CrudRepository
 
         $this->fillFromAttributes($media, $attributes);
         $media->touch();
+
+        $this->refreshMetadata($media);
+
+        return $media;
+    }
+
+    /**
+     * @param Media $original
+     * @param mixed $variant
+     *
+     * @return Media
+     * @throws FileNotFoundException
+     */
+    public function createVariant(Media $original, mixed $variant): Media
+    {
+        $attributes = [
+            'original_id' => $original->id,
+            'restaurant_id' => $original->restaurant_id,
+            'disk' => $original->disk,
+            'title' => $original->title,
+            'description' => $original->description,
+            'folder' => $original->folder,
+        ];
+
+        if (is_resource($variant)) {
+            $attributes['extension'] = mime_content_type($path = pathOf($variant));
+            $attributes['name'] = Media::hash($path);
+        }
+
+        if ($variant instanceof File || $variant instanceof UploadedFile) {
+            $attributes['extension'] = mime_content_type($path = $variant->getPathname());
+            $attributes['name'] = Media::hash($path);
+        }
+
+        $path = Str::of($original->folder)
+            ->finish('/')
+            ->append($attributes['name'])
+            ->value();
+
+        $media = $this->helper->store($variant, $path, $original->disk);
+
+        $this->fillFromAttributes($media, $attributes);
+        $media->touch();
+
+        $this->refreshMetadata($media);
 
         return $media;
     }
@@ -116,6 +161,7 @@ class MediaRepository extends CrudRepository
      */
     public function delete(Model|Media $model): bool
     {
+        /* @phpstan-ignore-next-line */
         return $this->helper->delete($model, $model->disk);
     }
 
@@ -132,6 +178,9 @@ class MediaRepository extends CrudRepository
         if (Arr::exists($attributes, 'restaurant_id') && $attributes['restaurant_id']) {
             $media->restaurant_id = $attributes['restaurant_id'];
         }
+        if (Arr::exists($attributes, 'original_id') && $attributes['original_id']) {
+            $media->original_id = $attributes['original_id'];
+        }
         if (Arr::exists($attributes, 'title')) {
             $media->title = $attributes['title'];
         }
@@ -146,5 +195,25 @@ class MediaRepository extends CrudRepository
         }
 
         return $media;
+    }
+
+    /**
+     * Refresh metadata for the given file model.
+     *
+     * @param Media $media
+     *
+     * @return bool
+     */
+    public function refreshMetadata(Media $media): bool
+    {
+        $media->setJson(
+            'metadata',
+            array_merge(
+                $media->getJson('metadata'),
+                $this->helper->metadata($media) ?? [],
+            )
+        );
+
+        return $media->save();
     }
 }

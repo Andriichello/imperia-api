@@ -28,6 +28,7 @@ class MediaResource extends JsonResource
             'id' => $this->id,
             'type' => $this->type,
             'name' => $this->name,
+            'mime' => $this->mime,
             'extension' => $this->extension,
             'title' => $this->title,
             'description' => $this->description,
@@ -36,6 +37,7 @@ class MediaResource extends JsonResource
             'order' => $this->order,
             'url' => $this->url,
             'metadata' => $this->metadata,
+            'variants' => new MediaCollection($this->whenLoaded('variants')),
         ];
     }
 
@@ -54,6 +56,7 @@ class MediaResource extends JsonResource
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="media"),
      *   @OA\Property(property="name", type="string", example="drinks.svg"),
+     *   @OA\Property(property="mime", type="string", example="image/svg+xml"),
      *   @OA\Property(property="extension", type="string", example="svg"),
      *   @OA\Property(property="title", type="string", nullable="true", example="Drinks"),
      *   @OA\Property(property="description", type="string", nullable="true"),
@@ -64,6 +67,8 @@ class MediaResource extends JsonResource
      *   @OA\Property(property="url", type="string", example="http://localhost/storage/drinks.svg"),
      *   @OA\Property(property="metadata", nullable="true",
      *     ref ="#/components/schemas/MediaMetadata"),
+     *   @OA\Property(property="variants", type="array",
+     *     @OA\Items(ref ="#/components/schemas/Media")),
      * )
      */
 }
