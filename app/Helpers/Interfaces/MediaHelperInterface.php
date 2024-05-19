@@ -59,6 +59,15 @@ interface MediaHelperInterface
     public function attributes(string $file, string $disk): array;
 
     /**
+     * Get metadata for the given file.
+     *
+     * @param Media|UploadedFile|File|string|resource $file
+     *
+     * @return array|null
+     */
+    public function metadata(mixed $file): ?array;
+
+    /**
      * Upload file to disk.
      *
      * @param File|UploadedFile $from

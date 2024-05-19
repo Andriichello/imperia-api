@@ -84,6 +84,49 @@ class MediaHelper implements MediaHelperInterface
     }
 
     /**
+     * Get metadata for the given file.
+     *
+     * @param Media|UploadedFile|File|string|resource $file
+     *
+     * @return array|null
+     */
+    public function metadata(mixed $file): ?array
+    {
+        if ($file instanceof Media) {
+            $file = $file->asTemporaryFile();
+        }
+
+        if ($file instanceof File) {
+            return [
+                'size' => $file->getSize(),
+                'type' => $file->getMimeType(),
+                'extension' => $file->guessExtension(),
+            ];
+        }
+
+        if (is_string($file)) {
+            $path = $file;
+            $file = fopen($path, 'r');
+            $shouldClose = true;
+        }
+
+        if (is_resource($file)) {
+            $meta = stream_get_meta_data($file);
+
+            return [
+                'size' => filesize($meta['uri']),
+                'type' => mime_content_type($meta['uri']),
+            ];
+        }
+
+        if (isset($shouldClose) && is_resource($file)) {
+            fclose($file);
+        }
+
+        return null;
+    }
+
+    /**
      * Upload file to disk.
      *
      * @param File|UploadedFile $from
