@@ -36,7 +36,8 @@ class MenuResource extends JsonResource
             'archived' => $this->archived,
             'products' => new ProductCollection($this->whenLoaded('products')),
             'categories' => new CategoryCollection($this->categories),
-            'media' => new MediaCollection($this->media),
+            /* @phpstan-ignore-next-line */
+            'media' => new MediaCollection($this->media->load('variants')),
         ];
     }
 

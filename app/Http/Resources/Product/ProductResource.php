@@ -44,7 +44,8 @@ class ProductResource extends JsonResource
             'categories' => new CategoryCollection($this->whenLoaded('categories')),
             'category_ids' => $categoryIds,
             'tags' => new TagCollection($this->whenLoaded('tags')),
-            'media' => new MediaCollection($this->media),
+            /* @phpstan-ignore-next-line */
+            'media' => new MediaCollection($this->media->load('variants')),
             'alterations' => new AlternationCollection($this->whenLoaded('alterations')),
             'pendingAlterations' => new AlternationCollection($this->whenLoaded('pendingAlterations')),
             'performedAlterations' => new AlternationCollection($this->whenLoaded('performedAlterations')),
