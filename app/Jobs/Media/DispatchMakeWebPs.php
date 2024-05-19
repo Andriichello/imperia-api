@@ -37,14 +37,14 @@ class DispatchMakeWebPs extends AsyncJob
     public function handle(): void
     {
         /* @phpstan-ignore-next-line  */
-        Media::query()
-            ->limit($this->limit)
+        $collection = \App\Models\Morphs\Media::query()
             ->whereNull('original_id')
             ->whereNotNull('extension')
             ->whereIn('extension', ['image/jpeg', 'image/png', 'image/x-png'])
             ->doesntHave('variants')
-            ->eachById(function (Media $media) {
-                dispatch(new MakeWebP($media));
-            });
+            ->limit($this->limit)
+            ->get();
+
+        $collection->each(fn(Media $media) => dispatch(new MakeWebP($media)));
     }
 }
