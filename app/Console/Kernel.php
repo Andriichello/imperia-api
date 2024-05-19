@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Jobs\Holiday\DispatchProlongHolidays;
+use App\Jobs\Media\DispatchMakeWebPs;
 use App\Jobs\Notification\DispatchNotifications;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -28,6 +29,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->job(new DispatchMakeWebPs(10))->everyFifteenMinutes();
         $schedule->job(new DispatchNotifications(100))->everyMinute();
         $schedule->job(new DispatchProlongHolidays())->hourly();
     }
