@@ -8860,6 +8860,10 @@
                         "type": "string",
                         "example": "drinks.svg"
                     },
+                    "mime": {
+                        "type": "string",
+                        "example": "image/svg+xml"
+                    },
                     "extension": {
                         "type": "string",
                         "example": "svg"
