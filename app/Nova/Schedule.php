@@ -2,7 +2,6 @@
 
 namespace App\Nova;
 
-use App\Nova\Options\BanquetStateOptions;
 use App\Nova\Options\WeekdayOptions;
 use Illuminate\Http\Request;
 use Laravel\Nova\Fields\BelongsTo;
@@ -59,6 +58,14 @@ class Schedule extends Resource
         return [
             ID::make(__('columns.id'), 'id')
                 ->sortable(),
+
+            Boolean::make(__('columns.active'))
+                ->exceptOnForms()
+                ->resolveUsing(fn() => !$this->archived),
+
+            Boolean::make(__('columns.archived'), 'archived')
+                ->onlyOnForms()
+                ->default(fn() => false),
 
             Select::make(__('columns.weekday'), 'weekday')
                 ->required()
