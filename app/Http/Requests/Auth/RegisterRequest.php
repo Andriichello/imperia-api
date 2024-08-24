@@ -69,7 +69,7 @@ class RegisterRequest extends BaseRequest
      *   @OA\Property(property="name", type="string", example="John"),
      *   @OA\Property(property="surname", type="string", example="Doe"),
      *   @OA\Property(property="email", type="string", example="john.doe@email.com"),
-     *   @OA\Property(property="phone", type="string", nullable="true", example="null"),
+     *   @OA\Property(property="phone", type="string", nullable=true, example="null"),
      *   @OA\Property(property="password", type="string", example="pa$$w0rd"),
      *   @OA\Property(property="password_confirmation", type="string", example="pa$$w0rd"),
      * )

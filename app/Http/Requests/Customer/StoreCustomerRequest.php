@@ -137,13 +137,13 @@ class StoreCustomerRequest extends StoreRequest
      *   description="Store customer request. `email` or `phone`
            must be specified.",
      *   required={"restaurant_id", "name", "surname", "email", "phone", "birthdate"},
-     *   @OA\Property(property="restaurant_id", type="integer", nullable="true", example=1),
+     *   @OA\Property(property="restaurant_id", type="integer", nullable=true, example=1),
      *   @OA\Property(property="name", type="string", example="John"),
      *   @OA\Property(property="surname", type="string", example="Forrester"),
-     *   @OA\Property(property="email", type="string", nullable="true", example="ben.forrester@email.com"),
-     *   @OA\Property(property="phone", type="string", nullable="true", example="+380507777777",
+     *   @OA\Property(property="email", type="string", nullable=true, example="ben.forrester@email.com"),
+     *   @OA\Property(property="phone", type="string", nullable=true, example="+380507777777",
      *     description="Phone number may start with a plus and must contain only digits 0-9."),
-     *   @OA\Property(property="birthdate", type="string", nullable="true", format="date", example="1992-10-16"),
+     *   @OA\Property(property="birthdate", type="string", nullable=true, format="date", example="1992-10-16"),
      * )
      */
 }

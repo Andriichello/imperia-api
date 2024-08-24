@@ -65,7 +65,7 @@ class OrderResource extends JsonResource
      *   @OA\Property(property="type", type="string", example="orders"),
      *   @OA\Property(property="totals", ref ="#/components/schemas/OrderTotals"),
      *   @OA\Property(property="banquet_id", type="integer", example=1),
-     *   @OA\Property(property="invoice_url", type="string", nullable="true",
+     *   @OA\Property(property="invoice_url", type="string", nullable=true,
      *      example="host/path?signature=long-string"),
      *   @OA\Property(property="spaces", type="array",
      *     @OA\Items(ref ="#/components/schemas/SpaceOrderField")),

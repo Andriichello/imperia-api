@@ -52,7 +52,7 @@ class MenuResource extends JsonResource
      *   @OA\Property(property="title", type="string", example="Kitchen"),
      *   @OA\Property(property="description", type="string", example="Some text..."),
      *   @OA\Property(property="archived", type="boolean", example="false"),
-     *   @OA\Property(property="popularity", type="integer", nullable="true", example="1"),
+     *   @OA\Property(property="popularity", type="integer", nullable=true, example="1"),
      *   @OA\Property(property="products", type="array", @OA\Items(ref ="#/components/schemas/Product")),
      *   @OA\Property(property="categories", type="array", @OA\Items(ref ="#/components/schemas/Category")),
      *   @OA\Property(property="media", type="array", @OA\Items(ref ="#/components/schemas/Media")),

@@ -54,7 +54,7 @@ class TicketResource extends JsonResource
      *   @OA\Property(property="description", type="string", example="Some text..."),
      *   @OA\Property(property="price", type="float", example=19.60),
      *   @OA\Property(property="archived", type="boolean", example="false"),
-     *   @OA\Property(property="popularity", type="integer", nullable="true", example="1"),
+     *   @OA\Property(property="popularity", type="integer", nullable=true, example="1"),
      *   @OA\Property(property="categories", type="array", @OA\Items(ref ="#/components/schemas/Category")),
      *   @OA\Property(property="category_ids", type="array", @OA\Items(type="integer", example=1)),
      *   @OA\Property(property="media", type="array", @OA\Items(ref ="#/components/schemas/Media")),

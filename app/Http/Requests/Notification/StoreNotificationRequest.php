@@ -77,7 +77,7 @@ class StoreNotificationRequest extends ShowRequest
      *   required = {"subject", "body", "payload", "receiver_id"},
      *   @OA\Property(property="subject", type="string", example="Notification subject."),
      *   @OA\Property(property="body", type="string", example="Notification body..."),
-     *   @OA\Property(property="payload", type="object", nullable="true", example="{}"),
+     *   @OA\Property(property="payload", type="object", nullable=true, example="{}"),
      *   @OA\Property(property="receiver_id", type="integer", example=1),
      *   @OA\Property(property="channel", type="string", example="default", enum={"default"}),
      *   @OA\Property(property="send_at", type="string", format="date-time", example="2022-12-12 10:00:00",
