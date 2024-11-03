@@ -8,7 +8,10 @@ use App\Models\Morphs\Category;
 use App\Models\Morphs\Tip;
 use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
+use App\Queries\CategoryQueryBuilder;
+use App\Queries\HolidayQueryBuilder;
 use App\Queries\RestaurantQueryBuilder;
+use App\Queries\RestaurantReviewQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\RestaurantFactory;
 use DateTimeZone;
@@ -174,12 +177,15 @@ class Restaurant extends BaseModel implements
     /**
      * Categories associated with the model.
      *
-     * @return HasMany
+     * @return HasMany|CategoryQueryBuilder
      */
-    public function categories(): HasMany
+    public function categories(): HasMany|CategoryQueryBuilder
     {
-        return $this->hasMany(Category::class)
-            ->orderBy('date');
+        /** @var HasMany|CategoryQueryBuilder $builder */
+        $builder = $this->hasMany(Category::class);
+        $builder->orderBy('date');
+
+        return $builder;
     }
 
     /**
@@ -195,34 +201,43 @@ class Restaurant extends BaseModel implements
     /**
      * Holidays associated with the model.
      *
-     * @return HasMany
+     * @return HasMany|HolidayQueryBuilder
      */
-    public function holidays(): HasMany
+    public function holidays(): HasMany|HolidayQueryBuilder
     {
-        return $this->hasMany(Holiday::class)
-            ->orderBy('date');
+        /** @var HasMany|HolidayQueryBuilder $builder */
+        $builder = $this->hasMany(Holiday::class);
+        $builder->orderBy('date');
+
+        return $builder;
     }
 
     /**
      * Holidays that are relevant for the restaurant (for one year).
      *
-     * @return HasMany
+     * @return HasMany|HolidayQueryBuilder
      */
-    public function relevantHolidays(): HasMany
+    public function relevantHolidays(): HasMany|HolidayQueryBuilder
     {
-        return $this->holidays()
-            ->where('date', '>=', now()->setTime(0, 0));
+        /** @var HasMany|HolidayQueryBuilder $builder */
+        $builder = $this->holidays();
+        $builder->where('date', '>=', now()->setTime(0, 0));
+
+        return $builder;
     }
 
     /**
      * Reviews associated with the model.
      *
-     * @return HasMany
+     * @return HasMany|RestaurantReviewQueryBuilder
      */
-    public function reviews(): HasMany
+    public function reviews(): HasMany|RestaurantReviewQueryBuilder
     {
-        return $this->hasMany(RestaurantReview::class, 'restaurant_id', 'id')
-            ->orderByDesc('created_at');
+        /** @var HasMany|RestaurantReviewQueryBuilder $builder */
+        $builder = $this->hasMany(RestaurantReview::class, 'restaurant_id', 'id');
+        $builder->orderByDesc('created_at');
+
+        return $builder;
     }
 
     /**

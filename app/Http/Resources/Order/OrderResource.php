@@ -50,11 +50,11 @@ class OrderResource extends JsonResource
      *   schema="OrderTotals",
      *   description="Order totals resource object",
      *   required = {"all", "spaces", "tickets", "services", "products", "invoice_url"},
-     *   @OA\Property(property="all", type="float", example=40.04),
-     *   @OA\Property(property="spaces", type="float", example=10.01),
-     *   @OA\Property(property="tickets", type="float", example=10.01),
-     *   @OA\Property(property="services", type="float", example=10.01),
-     *   @OA\Property(property="products", type="float", example=10.01)
+     *   @OA\Property(property="all", type="number", example=40.04),
+     *   @OA\Property(property="spaces", type="number", example=10.01),
+     *   @OA\Property(property="tickets", type="number", example=10.01),
+     *   @OA\Property(property="services", type="number", example=10.01),
+     *   @OA\Property(property="products", type="number", example=10.01)
      * ),
      *
      * @OA\Schema(

@@ -44,8 +44,11 @@ class MediaResource extends JsonResource
     /**
      * @OA\Schema(
      *    schema="MediaMetadata",
+     *    type="object",
      *    description="Media metadata resource object",
-     *    type="object"
+     *    @OA\Property(property="size", type="integer", example=150215),
+     *    @OA\Property(property="type", type="string", example="image\jpeg"),
+     *    additionalProperties=true,
      * ),
      *
      * @OA\Schema(

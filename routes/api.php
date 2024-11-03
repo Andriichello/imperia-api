@@ -89,7 +89,7 @@ Route::group(['as' => 'api.'], function () {
         ->middleware('cached:categories');
 
     Route::apiResource('restaurants', RestaurantController::class)
-        ->only('index', 'show')
+        ->only('index', 'show', 'store', 'update')
         ->parameters(['restaurants' => 'id'])
         ->middleware('cached:restaurants');
 

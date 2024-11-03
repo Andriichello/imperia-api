@@ -45,8 +45,8 @@ class TipResource extends JsonResource
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="restaurant_id", type="integer", nullable=true, example=1),
      *   @OA\Property(property="type", type="string", example="tips"),
-     *   @OA\Property(property="amount", type="float", example=25.0),
-     *   @OA\Property(property="commission", type="float", nullable=true),
+     *   @OA\Property(property="amount", type="number", example=25.0),
+     *   @OA\Property(property="commission", type="number", nullable=true),
      *   @OA\Property(property="about", type="string", nullable=true),
      *   @OA\Property(property="restaurant", ref ="#/components/schemas/Restaurant"),
      * )

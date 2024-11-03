@@ -176,10 +176,10 @@ class NotificationController extends CrudController
      *   tags={"notifications"},
      *
      *   @OA\Parameter(name="seen", in="query", required=false,
-     *     @OA\Schema(type="boolean", example="false"),
+     *     @OA\Schema(type="boolean", example=false),
      *     description="Optional, false by default (only unseen notifications)."),
      *   @OA\Parameter(name="system", in="query", required=false,
-     *     @OA\Schema(type="boolean", example="false"),
+     *     @OA\Schema(type="boolean", example=false),
      *     description="Optional, if true, then filters to notifications sent by system."),
      *   @OA\Parameter(name="sender_id", in="query", required=false,
      *     @OA\Schema(type="integer", example=1)),

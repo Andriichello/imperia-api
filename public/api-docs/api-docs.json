@@ -2546,7 +2546,7 @@
                         "required": false,
                         "schema": {
                             "type": "boolean",
-                            "example": "false"
+                            "example": false
                         }
                     },
                     {
@@ -2556,7 +2556,7 @@
                         "required": false,
                         "schema": {
                             "type": "boolean",
-                            "example": "false"
+                            "example": false
                         }
                     },
                     {
@@ -3232,6 +3232,51 @@
                         "bearerAuth": []
                     }
                 ]
+            },
+            "post": {
+                "tags": [
+                    "restaurants"
+                ],
+                "summary": "Store restaurant.",
+                "operationId": "storeRestaurant",
+                "requestBody": {
+                    "description": "Store restaurant request object.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreRestaurantRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Create restaurant response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StoreRestaurantResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/restaurants/{id}": {
@@ -3267,6 +3312,63 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ShowRestaurantResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "restaurants"
+                ],
+                "summary": "Update restaurant.",
+                "operationId": "updateRestaurant",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the restaurant.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "description": "Update restaurant request object.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateRestaurantRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update restaurant response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UpdateRestaurantResponse"
                                 }
                             }
                         }
@@ -3459,7 +3561,7 @@
                         "required": false,
                         "schema": {
                             "type": "boolean",
-                            "example": "true"
+                            "example": true
                         }
                     }
                 ],
@@ -6167,6 +6269,40 @@
                 },
                 "type": "object"
             },
+            "StoreRestaurantResponse": {
+                "description": "Store restaurant response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Restaurant"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Created"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateRestaurantResponse": {
+                "description": "Update restaurant response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Restaurant"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
             "GetSchedulesResponse": {
                 "description": "Get restaurant's schedules response object.",
                 "required": [
@@ -6780,7 +6916,7 @@
                     "phone": {
                         "type": "string",
                         "example": "null",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "password": {
                         "type": "string",
@@ -6808,7 +6944,7 @@
                         "description": "If null, then title will be autogenerated as Banquet-ID.",
                         "type": "string",
                         "example": "Banquet title.",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "description": {
                         "type": "string",
@@ -6833,16 +6969,16 @@
                     "restaurant_id": {
                         "type": "integer",
                         "example": 1,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "advance_amount": {
-                        "type": "float",
+                        "type": "number",
                         "example": 535.25
                     },
                     "actual_total": {
-                        "type": "float",
+                        "type": "number",
                         "example": 692.25,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "advance_amount_payment_method": {
                         "type": "string",
@@ -6851,27 +6987,27 @@
                             "cash"
                         ],
                         "example": "card",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "is_birthday_club": {
                         "type": "boolean",
-                        "example": "true",
-                        "nullable": "true"
+                        "example": true,
+                        "nullable": true
                     },
                     "with_photographer": {
                         "type": "boolean",
-                        "example": "true",
-                        "nullable": "true"
+                        "example": true,
+                        "nullable": true
                     },
                     "children_amount": {
                         "type": "integer",
                         "example": 5,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "child_ticket_price": {
-                        "type": "float",
+                        "type": "number",
                         "example": 25.5,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "children_amounts": {
                         "type": "array",
@@ -6883,19 +7019,19 @@
                     "child_ticket_prices": {
                         "type": "array",
                         "items": {
-                            "type": "float",
+                            "type": "number",
                             "example": 25.5
                         }
                     },
                     "adults_amount": {
                         "type": "integer",
                         "example": 2,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "adult_ticket_price": {
-                        "type": "float",
+                        "type": "number",
                         "example": 35.5,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "start_at": {
                         "description": "Date and time of when banquet should start.",
@@ -6914,7 +7050,7 @@
                         "type": "string",
                         "format": "date-time",
                         "example": null,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "comments": {
                         "type": "array",
@@ -6938,7 +7074,7 @@
                         "description": "If null, then title will be autogenerated as Banquet-ID.",
                         "type": "string",
                         "example": "Banquet title.",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "description": {
                         "type": "string",
@@ -6960,16 +7096,16 @@
                     "restaurant_id": {
                         "type": "integer",
                         "example": 1,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "advance_amount": {
-                        "type": "float",
+                        "type": "number",
                         "example": 535.25
                     },
                     "actual_total": {
-                        "type": "float",
+                        "type": "number",
                         "example": 692.25,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "advance_amount_payment_method": {
                         "type": "string",
@@ -6978,27 +7114,27 @@
                             "cash"
                         ],
                         "example": "card",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "is_birthday_club": {
                         "type": "boolean",
-                        "example": "true",
-                        "nullable": "true"
+                        "example": true,
+                        "nullable": true
                     },
                     "with_photographer": {
                         "type": "boolean",
-                        "example": "true",
-                        "nullable": "true"
+                        "example": true,
+                        "nullable": true
                     },
                     "children_amount": {
                         "type": "integer",
                         "example": 5,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "child_ticket_price": {
-                        "type": "float",
+                        "type": "number",
                         "example": 25.5,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "children_amounts": {
                         "type": "array",
@@ -7010,19 +7146,19 @@
                     "child_ticket_prices": {
                         "type": "array",
                         "items": {
-                            "type": "float",
+                            "type": "number",
                             "example": 25.5
                         }
                     },
                     "adults_amount": {
                         "type": "integer",
                         "example": 2,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "adult_ticket_price": {
-                        "type": "float",
+                        "type": "number",
                         "example": 35.5,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "start_at": {
                         "description": "Date and time of when banquet should start.",
@@ -7041,7 +7177,7 @@
                         "type": "string",
                         "format": "date-time",
                         "example": null,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "comments": {
                         "type": "array",
@@ -7126,7 +7262,7 @@
                     "force": {
                         "description": "Determines whether resource should be deleted without chance of restoring.",
                         "type": "boolean",
-                        "example": "false"
+                        "example": false
                     }
                 },
                 "type": "object"
@@ -7155,7 +7291,7 @@
                     "restaurant_id": {
                         "type": "integer",
                         "example": 1,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "name": {
                         "type": "string",
@@ -7168,19 +7304,19 @@
                     "email": {
                         "type": "string",
                         "example": "ben.forrester@email.com",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "phone": {
                         "description": "Phone number may start with a plus and must contain only digits 0-9.",
                         "type": "string",
                         "example": "+380507777777",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "birthdate": {
                         "type": "string",
                         "format": "date",
                         "example": "1992-10-16",
-                        "nullable": "true"
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -7191,7 +7327,7 @@
                     "restaurant_id": {
                         "type": "integer",
                         "example": 1,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "name": {
                         "type": "string",
@@ -7264,7 +7400,7 @@
                             "grandparent",
                             "partner"
                         ],
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "birthdate": {
                         "type": "string",
@@ -7360,18 +7496,18 @@
                     "tags": {
                         "type": "string",
                         "example": "1,2",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "menus": {
                         "type": "string",
                         "example": "1,2,3",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "sections": {
                         "description": "Coma-separated list of invoice sections.\n     *     Available sections: `info`, `comments`, `tickets`, `menus`,\n     *     `spaces`, `services`",
                         "type": "string",
                         "example": "info,comments,tickets",
-                        "nullable": "true"
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -7386,18 +7522,18 @@
                     "tags": {
                         "type": "string",
                         "example": "1,2",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "menus": {
                         "type": "string",
                         "example": "1,2,3",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "sections": {
                         "description": "Coma-separated list of invoice sections.\n     *     Available sections: `info`, `comments`, `tickets`, `menus`,\n     *     `spaces`, `services`",
                         "type": "string",
                         "example": "info,comments,tickets",
-                        "nullable": "true"
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -7420,11 +7556,11 @@
                     "title": {
                         "type": "string",
                         "example": "Drinks",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "description": {
                         "type": "string",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "disk": {
                         "type": "string",
@@ -7458,11 +7594,11 @@
                     "title": {
                         "type": "string",
                         "example": "Drinks",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "description": {
                         "type": "string",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "folder": {
                         "description": "Must start and end with the `/`.",
@@ -7529,7 +7665,7 @@
                     "payload": {
                         "type": "object",
                         "example": "{}",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "receiver_id": {
                         "type": "integer",
@@ -7565,7 +7701,7 @@
                     "payload": {
                         "type": "object",
                         "example": "{}",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "send_at": {
                         "description": "Date and time when notification should be sent. Only future values are acceptable.",
@@ -7735,7 +7871,7 @@
                     "batch": {
                         "type": "string",
                         "example": "iSXC",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "amount": {
                         "type": "integer",
@@ -7745,7 +7881,7 @@
                         "description": "24-hours format time, HOURS:MINUTES",
                         "type": "string",
                         "example": "16:50",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "comments": {
                         "type": "array",
@@ -7804,6 +7940,116 @@
                 },
                 "type": "object"
             },
+            "StoreRestaurantRequest": {
+                "description": "Store restaurant request",
+                "required": [
+                    "slug",
+                    "name",
+                    "country",
+                    "city",
+                    "place",
+                    "timezone"
+                ],
+                "properties": {
+                    "slug": {
+                        "description": "Must be unique within the database.",
+                        "type": "string",
+                        "example": "imperia"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Imperia"
+                    },
+                    "country": {
+                        "type": "string",
+                        "example": "Ukraine"
+                    },
+                    "city": {
+                        "type": "string",
+                        "example": "Uzhhorod"
+                    },
+                    "place": {
+                        "type": "string",
+                        "example": "Dovzhenka St, 12"
+                    },
+                    "timezone": {
+                        "type": "string",
+                        "example": "Europe/Kyiv"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "imperia@email.com"
+                    },
+                    "phone": {
+                        "description": "Phone number may start with a plus and must contain only digits 0-9.",
+                        "type": "string",
+                        "example": "+380507777777"
+                    },
+                    "location": {
+                        "description": "Link to restaurant's location on Google Maps.",
+                        "type": "string",
+                        "example": "https://maps.app.goo.gl/uPWnGp3eTw2LGctEA",
+                        "nullable": true
+                    },
+                    "website": {
+                        "description": "Link to restaurant's website.",
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateRestaurantRequest": {
+                "description": "Update restaurant request",
+                "properties": {
+                    "slug": {
+                        "description": "Must be unique within the database.",
+                        "type": "string",
+                        "example": "imperia"
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Imperia"
+                    },
+                    "country": {
+                        "type": "string",
+                        "example": "Ukraine"
+                    },
+                    "city": {
+                        "type": "string",
+                        "example": "Uzhhorod"
+                    },
+                    "place": {
+                        "type": "string",
+                        "example": "Dovzhenka St, 12"
+                    },
+                    "timezone": {
+                        "type": "string",
+                        "example": "Europe/Kyiv"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "imperia@email.com"
+                    },
+                    "phone": {
+                        "description": "Phone number may start with a plus and must contain only digits 0-9.",
+                        "type": "string",
+                        "example": "+380507777777"
+                    },
+                    "location": {
+                        "description": "Link to restaurant's location on Google Maps.",
+                        "type": "string",
+                        "example": "https://maps.app.goo.gl/uPWnGp3eTw2LGctEA",
+                        "nullable": true
+                    },
+                    "website": {
+                        "description": "Link to restaurant's website.",
+                        "type": "string",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "StoreRestaurantReviewRequest": {
                 "description": "Store restaurant review request",
                 "required": [
@@ -7833,12 +8079,12 @@
                     "title": {
                         "type": "string",
                         "example": "Great",
-                        "nullable": "null"
+                        "nullable": true
                     },
                     "description": {
                         "type": "string",
                         "example": "This is a great establishment, nice personnel.",
-                        "nullable": "null"
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -7883,11 +8129,11 @@
                     "restaurant_id": {
                         "type": "integer",
                         "example": 1,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "uuid": {
                         "type": "string",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "name": {
                         "type": "string",
@@ -7900,23 +8146,23 @@
                     "email": {
                         "type": "string",
                         "example": "ben.forrester@email.com",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "phone": {
                         "description": "Phone number may start with a plus and must contain only digits 0-9.",
                         "type": "string",
                         "example": "+380507777777",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "birthdate": {
                         "type": "string",
                         "format": "date",
                         "example": "1992-10-16",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "about": {
                         "type": "string",
-                        "nullable": "true"
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -7927,11 +8173,11 @@
                     "restaurant_id": {
                         "type": "integer",
                         "example": 1,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "uuid": {
                         "type": "string",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "name": {
                         "type": "string",
@@ -7944,23 +8190,23 @@
                     "email": {
                         "type": "string",
                         "example": "ben.forrester@email.com",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "phone": {
                         "description": "Phone number may start with a plus and must contain only digits 0-9.",
                         "type": "string",
                         "example": "+380507777777",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "birthdate": {
                         "type": "string",
                         "format": "date",
                         "example": "1992-10-16",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "about": {
                         "type": "string",
-                        "nullable": "true"
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -7987,7 +8233,7 @@
                     },
                     "metadata": {
                         "type": "object",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "alterable_id": {
                         "type": "integer",
@@ -8001,13 +8247,13 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2022-01-12 10:00:00",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "performed_at": {
                         "type": "string",
                         "format": "date-time",
                         "example": null,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "alterable": {
                         "oneOf": [
@@ -8090,12 +8336,12 @@
                     "is_editable": {
                         "description": "Determines if banquet can be edited.",
                         "type": "boolean",
-                        "example": "true"
+                        "example": true
                     },
                     "can_edit": {
                         "description": "Determines if logged in user can edit this banquet.",
                         "type": "boolean",
-                        "example": "true"
+                        "example": true
                     },
                     "title": {
                         "type": "string",
@@ -8104,7 +8350,7 @@
                     "description": {
                         "type": "string",
                         "example": "Banquet description...",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "start_at": {
                         "type": "string",
@@ -8117,7 +8363,7 @@
                     "paid_at": {
                         "type": "string",
                         "format": "date-time",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "advance_amount": {
                         "type": "integer",
@@ -8126,32 +8372,32 @@
                     "advance_amount_payment_method": {
                         "type": "string",
                         "example": "card",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "actual_total": {
-                        "type": "float",
+                        "type": "number",
                         "example": 2502.55,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "is_birthday_club": {
                         "type": "boolean",
-                        "example": "true",
-                        "nullable": "true"
+                        "example": true,
+                        "nullable": true
                     },
                     "with_photographer": {
                         "type": "boolean",
-                        "example": "true",
-                        "nullable": "true"
+                        "example": true,
+                        "nullable": true
                     },
                     "children_amount": {
                         "type": "integer",
                         "example": 5,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "child_ticket_price": {
-                        "type": "float",
+                        "type": "number",
                         "example": 25.5,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "children_amounts": {
                         "type": "array",
@@ -8163,19 +8409,19 @@
                     "child_ticket_prices": {
                         "type": "array",
                         "items": {
-                            "type": "float",
+                            "type": "number",
                             "example": 25.5
                         }
                     },
                     "adults_amount": {
                         "type": "integer",
                         "example": 2,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "adult_ticket_price": {
-                        "type": "float",
+                        "type": "number",
                         "example": 35.5,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "totals": {
                         "$ref": "#/components/schemas/OrderTotals"
@@ -8183,12 +8429,12 @@
                     "invoice_url": {
                         "type": "string",
                         "example": "host/path?signature=long-string",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "order_id": {
                         "type": "integer",
                         "example": 1,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "creator_id": {
                         "type": "integer",
@@ -8201,7 +8447,7 @@
                     "restaurant_id": {
                         "type": "integer",
                         "example": 1,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "order": {
                         "$ref": "#/components/schemas/Order"
@@ -8254,7 +8500,7 @@
                     "target": {
                         "type": "string",
                         "example": "products",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "title": {
                         "type": "string",
@@ -8262,7 +8508,7 @@
                     },
                     "description": {
                         "example": "Some text...",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "tags": {
                         "type": "array",
@@ -8332,7 +8578,7 @@
                     "restaurant_id": {
                         "type": "integer",
                         "example": 1,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "type": {
                         "type": "string",
@@ -8353,13 +8599,13 @@
                     "email": {
                         "type": "string",
                         "example": "john.doe@email.com",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "birthdate": {
                         "type": "string",
                         "format": "date",
                         "example": "1986-01-26",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "restaurant": {
                         "$ref": "#/components/schemas/Restaurant"
@@ -8402,7 +8648,7 @@
                     "target": {
                         "type": "string",
                         "example": "orders",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "title": {
                         "type": "string",
@@ -8411,17 +8657,17 @@
                     "description": {
                         "type": "string",
                         "example": "Discount description...",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "amount": {
-                        "type": "float",
+                        "type": "number",
                         "example": 125.55,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "percent": {
-                        "type": "float",
+                        "type": "number",
                         "example": 25.5,
-                        "nullable": "true"
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -8512,7 +8758,7 @@
                     "batch": {
                         "type": "string",
                         "example": "iSXC",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "amount": {
                         "type": "integer",
@@ -8522,22 +8768,22 @@
                         "description": "24-hours format time, HOURS:MINUTES",
                         "type": "string",
                         "example": "16:50",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "total": {
-                        "type": "float",
+                        "type": "number",
                         "example": 125.55
                     },
                     "discounts_amount": {
-                        "type": "float",
+                        "type": "number",
                         "example": 25.55
                     },
                     "discounts_percent": {
-                        "type": "float",
+                        "type": "number",
                         "example": 12.5
                     },
                     "discounted_total": {
-                        "type": "float",
+                        "type": "number",
                         "example": 100
                     },
                     "comments": {
@@ -8595,19 +8841,19 @@
                         "example": 90
                     },
                     "total": {
-                        "type": "float",
+                        "type": "number",
                         "example": 125.55
                     },
                     "discounts_amount": {
-                        "type": "float",
+                        "type": "number",
                         "example": 25.55
                     },
                     "discounts_percent": {
-                        "type": "float",
+                        "type": "number",
                         "example": 12.5
                     },
                     "discounted_total": {
-                        "type": "float",
+                        "type": "number",
                         "example": 100
                     },
                     "comments": {
@@ -8671,19 +8917,19 @@
                         "example": 60
                     },
                     "total": {
-                        "type": "float",
+                        "type": "number",
                         "example": 159.99
                     },
                     "discounts_amount": {
-                        "type": "float",
+                        "type": "number",
                         "example": 25.55
                     },
                     "discounts_percent": {
-                        "type": "float",
+                        "type": "number",
                         "example": 12.5
                     },
                     "discounted_total": {
-                        "type": "float",
+                        "type": "number",
                         "example": 100
                     },
                     "comments": {
@@ -8776,19 +9022,19 @@
                         "example": 5
                     },
                     "total": {
-                        "type": "float",
+                        "type": "number",
                         "example": 125
                     },
                     "discounts_amount": {
-                        "type": "float",
+                        "type": "number",
                         "example": 25.55
                     },
                     "discounts_percent": {
-                        "type": "float",
+                        "type": "number",
                         "example": 12.5
                     },
                     "discounted_total": {
-                        "type": "float",
+                        "type": "number",
                         "example": 100
                     },
                     "comments": {
@@ -8831,7 +9077,7 @@
                     "description": {
                         "type": "string",
                         "example": "null",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "date": {
                         "type": "string",
@@ -8842,14 +9088,25 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2022-01-12 10:00:00",
-                        "nullable": "true"
+                        "nullable": true
                     }
                 },
                 "type": "object"
             },
             "MediaMetadata": {
                 "description": "Media metadata resource object",
-                "type": "object"
+                "properties": {
+                    "size": {
+                        "type": "integer",
+                        "example": 150215
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "image\\jpeg"
+                    }
+                },
+                "type": "object",
+                "additionalProperties": true
             },
             "Media": {
                 "description": "Media resource object",
@@ -8890,16 +9147,16 @@
                     "title": {
                         "type": "string",
                         "example": "Drinks",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "description": {
                         "type": "string",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "disk": {
                         "type": "string",
                         "example": "public",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "folder": {
                         "description": "Must start and end with `/`.",
@@ -8909,7 +9166,7 @@
                     "order": {
                         "type": "integer",
                         "example": 1,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "url": {
                         "type": "string",
@@ -8958,12 +9215,12 @@
                     },
                     "archived": {
                         "type": "boolean",
-                        "example": "false"
+                        "example": false
                     },
                     "popularity": {
                         "type": "integer",
                         "example": "1",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "products": {
                         "type": "array",
@@ -9034,16 +9291,16 @@
                     "body": {
                         "type": "string",
                         "example": "Your order was accepted",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "payload": {
                         "type": "object",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "sender_id": {
                         "type": "integer",
                         "example": 1,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "receiver_id": {
                         "type": "integer",
@@ -9058,13 +9315,13 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2022-01-12 23:00:00",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "seen_at": {
                         "type": "string",
                         "format": "date-time",
                         "example": "null",
-                        "nullable": "true"
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -9081,23 +9338,23 @@
                 ],
                 "properties": {
                     "all": {
-                        "type": "float",
+                        "type": "number",
                         "example": 40.04
                     },
                     "spaces": {
-                        "type": "float",
+                        "type": "number",
                         "example": 10.01
                     },
                     "tickets": {
-                        "type": "float",
+                        "type": "number",
                         "example": 10.01
                     },
                     "services": {
-                        "type": "float",
+                        "type": "number",
                         "example": 10.01
                     },
                     "products": {
-                        "type": "float",
+                        "type": "number",
                         "example": 10.01
                     }
                 },
@@ -9130,7 +9387,7 @@
                     "invoice_url": {
                         "type": "string",
                         "example": "host/path?signature=long-string",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "spaces": {
                         "type": "array",
@@ -9204,16 +9461,16 @@
                     "description": {
                         "type": "string",
                         "example": "Some text...",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "price": {
-                        "type": "float",
+                        "type": "number",
                         "example": 15.99
                     },
                     "weight": {
-                        "type": "float",
+                        "type": "number",
                         "example": 120,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "weight_unit": {
                         "type": "string",
@@ -9225,21 +9482,21 @@
                             "cm"
                         ],
                         "example": "g",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "badge": {
                         "type": "string",
                         "example": "New",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "archived": {
                         "type": "boolean",
-                        "example": "false"
+                        "example": false
                     },
                     "popularity": {
                         "type": "integer",
                         "example": "1",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "variants": {
                         "type": "array",
@@ -9317,11 +9574,11 @@
                         "example": "product-variants"
                     },
                     "price": {
-                        "type": "float",
+                        "type": "number",
                         "example": 15.99
                     },
                     "weight": {
-                        "type": "float",
+                        "type": "number",
                         "example": 120
                     },
                     "weight_unit": {
@@ -9372,7 +9629,7 @@
                     "prev": {
                         "type": "string",
                         "example": null,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "self": {
                         "type": "string"
@@ -9380,12 +9637,12 @@
                     "next": {
                         "type": "string",
                         "example": null,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "last": {
                         "type": "string",
                         "example": null,
-                        "nullable": "true"
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -9406,12 +9663,12 @@
                     "from": {
                         "type": "integer",
                         "example": 1,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "to": {
                         "type": "integer",
                         "example": 1,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "total": {
                         "type": "integer",
@@ -9420,7 +9677,7 @@
                     "path": {
                         "type": "integer",
                         "example": null,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "per_page": {
                         "type": "integer",
@@ -9495,22 +9752,22 @@
                     "phone": {
                         "type": "string",
                         "example": "+380501234567",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "email": {
                         "type": "string",
                         "example": "imperia@email.com",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "location": {
                         "type": "string",
                         "example": "https://goo.gl/maps/g7XZq9H712osMLZW9",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "website": {
                         "type": "string",
                         "example": "https://app.imperia.pp.ua",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "timezone": {
                         "type": "string",
@@ -9524,7 +9781,7 @@
                     "popularity": {
                         "type": "integer",
                         "example": 1,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "media": {
                         "type": "array",
@@ -9584,24 +9841,24 @@
                     "title": {
                         "type": "string",
                         "example": "Great",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "description": {
                         "type": "string",
                         "example": "The restaurant is great and the personnel is nice.",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "created_at": {
                         "type": "string",
                         "format": "date-time",
                         "example": "2022-01-12 10:00:00",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "updated_at": {
                         "type": "string",
                         "format": "date-time",
                         "example": "2022-01-12 10:00:00",
-                        "nullable": "true"
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -9616,6 +9873,7 @@
                     "end_hour",
                     "beg_minute",
                     "end_minute",
+                    "archived",
                     "restaurant_id",
                     "begs_in",
                     "ends_in",
@@ -9666,22 +9924,26 @@
                         "type": "integer",
                         "example": 30
                     },
+                    "archived": {
+                        "type": "boolean",
+                        "nullable": true
+                    },
                     "restaurant_id": {
                         "type": "integer",
                         "example": null,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "begs_in": {
                         "description": "Number of minutes untill the restaurant starts operating.\n     If null then restaurant is already operating on this schedule.",
                         "type": "integer",
                         "example": 30,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "ends_in": {
                         "description": "Number of minutes untill the restaurant ends operating.",
                         "type": "integer",
                         "example": 780,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "is_cross_date": {
                         "type": "boolean",
@@ -9691,18 +9953,18 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2022-01-12 10:00:00",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "timezone": {
                         "type": "string",
                         "example": "Europe/Kyiv",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "timezone_offset": {
                         "description": "Minutes offset from UTC, which is already applied to `closest_date`",
                         "type": "integer",
                         "example": 3,
-                        "nullable": "true"
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -9737,24 +9999,24 @@
                     "description": {
                         "type": "string",
                         "example": "Some text...",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "once_paid_price": {
-                        "type": "float",
+                        "type": "number",
                         "example": 350
                     },
                     "hourly_paid_price": {
-                        "type": "float",
+                        "type": "number",
                         "example": 200
                     },
                     "archived": {
                         "type": "boolean",
-                        "example": "false"
+                        "example": false
                     },
                     "popularity": {
                         "type": "integer",
                         "example": "1",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "categories": {
                         "type": "array",
@@ -9819,17 +10081,17 @@
                         "example": 1
                     },
                     "price": {
-                        "type": "float",
+                        "type": "number",
                         "example": 15.99
                     },
                     "archived": {
                         "type": "boolean",
-                        "example": "false"
+                        "example": false
                     },
                     "popularity": {
                         "type": "integer",
                         "example": "1",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "categories": {
                         "type": "array",
@@ -9874,7 +10136,7 @@
                     "target": {
                         "type": "string",
                         "example": "products",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "title": {
                         "type": "string",
@@ -9882,7 +10144,7 @@
                     },
                     "description": {
                         "example": "Some text...",
-                        "nullable": "true"
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -9918,17 +10180,17 @@
                         "example": "Some text..."
                     },
                     "price": {
-                        "type": "float",
+                        "type": "number",
                         "example": 19.6
                     },
                     "archived": {
                         "type": "boolean",
-                        "example": "false"
+                        "example": false
                     },
                     "popularity": {
                         "type": "integer",
                         "example": "1",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "categories": {
                         "type": "array",
@@ -9970,23 +10232,23 @@
                     "restaurant_id": {
                         "type": "integer",
                         "example": 1,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "type": {
                         "type": "string",
                         "example": "tips"
                     },
                     "amount": {
-                        "type": "float",
+                        "type": "number",
                         "example": 25
                     },
                     "commission": {
-                        "type": "float",
-                        "nullable": "true"
+                        "type": "number",
+                        "nullable": true
                     },
                     "about": {
                         "type": "string",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "restaurant": {
                         "$ref": "#/components/schemas/Restaurant"
@@ -10017,12 +10279,12 @@
                     "restaurant_id": {
                         "type": "integer",
                         "example": "null",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "customer_id": {
                         "type": "integer",
                         "example": "null",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "name": {
                         "type": "string",
@@ -10031,12 +10293,12 @@
                     "email": {
                         "type": "string",
                         "example": "admin@email.com",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "email_verified_at": {
                         "type": "string",
                         "format": "date-time",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "customer": {
                         "$ref": "#/components/schemas/Customer"
@@ -10063,7 +10325,7 @@
                     "restaurant_id": {
                         "type": "integer",
                         "example": 1,
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "type": {
                         "type": "string",
@@ -10071,7 +10333,7 @@
                     },
                     "uuid": {
                         "type": "string",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "name": {
                         "type": "string",
@@ -10083,7 +10345,7 @@
                     },
                     "about": {
                         "type": "string",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "restaurant": {
                         "$ref": "#/components/schemas/Restaurant"

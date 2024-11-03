@@ -65,7 +65,7 @@ class RestaurantReviewController extends CrudController
      *   @OA\Parameter(name="filter[ip]", required=false, in="query",
      *     example="127.0.0.1", @OA\Schema(type="string")),
      *   @OA\Parameter(name="is_approved", required=false, in="query",
-     *     @OA\Schema(type="boolean", example="true")),
+     *     @OA\Schema(type="boolean", example=true)),
      *
      *   @OA\Response(
      *     response=200,
