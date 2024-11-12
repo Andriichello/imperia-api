@@ -6,6 +6,7 @@ use App\Models\Interfaces\MediableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Morphs\Category;
 use App\Models\Morphs\Tip;
+use App\Models\Scopes\ArchivedScope;
 use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use App\Queries\CategoryQueryBuilder;
@@ -200,6 +201,7 @@ class Restaurant extends BaseModel implements
     {
         /** @var HasMany|ScheduleQueryBuilder $builder */
         $builder = $this->hasMany(Schedule::class, 'restaurant_id', 'id');
+        $builder->withoutGlobalScope(ArchivedScope::class);
 
         return $builder;
     }
