@@ -253,7 +253,7 @@ abstract class CrudController extends Controller
             ->findOrFail($request->id());
 
         $this->repository->update($model, $request->validated());
-        return $this->asResourceResponse($model->fresh());
+        return $this->asResourceResponse($model->refresh());
     }
 
     /**
@@ -300,6 +300,6 @@ abstract class CrudController extends Controller
             throw new HttpException("Failed restoring " . get_class($model), 500);
         }
 
-        return $this->asResourceResponse($model->fresh());
+        return $this->asResourceResponse($model->refresh());
     }
 }

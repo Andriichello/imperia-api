@@ -40,7 +40,7 @@ class OrderRepository extends CrudRepository
             $this->createDiscounts($order, $attributes);
             CalculateTotals::dispatchSync($order);
 
-            return $order->fresh();
+            return $order->refresh();
         });
     }
 
