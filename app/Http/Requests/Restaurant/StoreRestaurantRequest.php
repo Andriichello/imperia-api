@@ -59,25 +59,21 @@ class StoreRestaurantRequest extends StoreRequest
             'email' => [
                 'sometimes',
                 'nullable',
-                'string',
                 'email',
             ],
             'phone' => [
                 'sometimes',
                 'nullable',
-                'string',
                 'regex:/(\+?[0-9]{1,2})?[0-9]{10,12}/',
             ],
             'location' => [
                 'sometimes',
                 'nullable',
-                'string',
                 'url',
             ],
             'website' => [
                 'sometimes',
                 'nullable',
-                'string',
                 'url',
             ],
         ];
@@ -112,8 +108,8 @@ class StoreRestaurantRequest extends StoreRequest
      *   @OA\Property(property="city", type="string", example="Uzhhorod"),
      *   @OA\Property(property="place", type="string", example="Dovzhenka St, 12"),
      *   @OA\Property(property="timezone", type="string", example="Europe/Kyiv"),
-     *   @OA\Property(property="email", type="string", example="imperia@email.com"),
-     *   @OA\Property(property="phone", type="string", example="+380507777777",
+     *   @OA\Property(property="email", type="string", nullable=true, example="imperia@email.com"),
+     *   @OA\Property(property="phone", type="string", nullable=true, example="+380507777777",
      *     description="Phone number may start with a plus and must contain only digits 0-9."),
      *   @OA\Property(property="location", type="string", nullable=true,
      *     example="https://maps.app.goo.gl/uPWnGp3eTw2LGctEA",

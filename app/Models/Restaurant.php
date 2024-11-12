@@ -91,6 +91,8 @@ class Restaurant extends BaseModel implements
         'place',
         'timezone',
         'popularity',
+        'phone',
+        'email',
     ];
 
     /**

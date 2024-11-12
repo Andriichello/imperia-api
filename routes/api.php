@@ -89,7 +89,7 @@ Route::group(['as' => 'api.'], function () {
         ->middleware('cached:categories');
 
     Route::apiResource('restaurants', RestaurantController::class)
-        ->only('index', 'show', 'store', 'update')
+        ->only('index', 'show')
         ->parameters(['restaurants' => 'id'])
         ->middleware('cached:restaurants');
 
@@ -159,6 +159,10 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
     Route::apiResource('users', UserController::class)
         ->only('index', 'show', 'store', 'update', 'destroy')
         ->parameters(['users' => 'id']);
+
+    Route::apiResource('restaurants', RestaurantController::class)
+        ->only('store', 'update')
+        ->parameters(['restaurants' => 'id']);
 
     Route::get('/notifications/poll', [NotificationController::class, 'poll'])->name('notifications.poll');
     Route::apiResource('notifications', NotificationController::class)
