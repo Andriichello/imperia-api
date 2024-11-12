@@ -2,16 +2,34 @@
 
 namespace App\Http\Requests\Restaurant;
 
+use App\Enums\Weekday;
 use App\Http\Requests\Crud\UpdateRequest;
 use App\Models\Restaurant;
+use App\Models\Schedule;
 use App\Models\User;
+use Closure;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Validation\Rule;
+use Spatie\QueryBuilder\QueryBuilder as SpatieBuilder;
 
 /**
  * Class UpdateRestaurantRequest.
+ *
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class UpdateRestaurantRequest extends UpdateRequest
 {
+    public function getAllowedIncludes(): array
+    {
+        return array_merge(
+            parent::getAllowedIncludes(),
+            [
+                'schedules',
+            ]
+        );
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -77,6 +95,62 @@ class UpdateRestaurantRequest extends UpdateRequest
                 'nullable',
                 'url',
             ],
+            'schedules' => [
+                'sometimes',
+                'nullable',
+                'array',
+            ],
+            'schedules.*' => [
+                'required',
+                'array',
+            ],
+            'schedules.*.id' => [
+                'sometimes',
+                'integer',
+                Rule::exists(Schedule::class, 'id'),
+            ],
+            'schedules.*.restaurant_id' => [
+                'sometimes',
+                'integer',
+                function (string $attribute, int $value, Closure $fail) {
+                    if ($value !== ((int) $this->id())) {
+                        $fail('Must be same as current restaurant\'s id.');
+                    }
+                }
+            ],
+            'schedules.*.weekday' => [
+                'required',
+                'string',
+                Weekday::getValidationRule(),
+            ],
+            'schedules.*.beg_hour' => [
+                'required',
+                'integer',
+                'min:0',
+                'max:23',
+            ],
+            'schedules.*.beg_minute' => [
+                'required',
+                'integer',
+                'min:0',
+                'max:59',
+            ],
+            'schedules.*.end_hour' => [
+                'required',
+                'integer',
+                'min:0',
+                'max:23',
+            ],
+            'schedules.*.end_minute' => [
+                'required',
+                'integer',
+                'min:0',
+                'max:59',
+            ],
+            'schedules.*.archived' => [
+                'required',
+                'boolean',
+            ],
         ];
     }
 
@@ -99,6 +173,35 @@ class UpdateRestaurantRequest extends UpdateRequest
     }
 
     /**
+     * Apply allowed options to spatie builder.
+     *
+     * @param Builder|EloquentBuilder|SpatieBuilder $builder
+     *
+     * @return SpatieBuilder
+     */
+    public function spatieBuilder(SpatieBuilder|EloquentBuilder|Builder $builder): SpatieBuilder
+    {
+        /** @phpstan-ignore-next-line */
+        return parent::spatieBuilder($builder)
+            ->with('schedules');
+    }
+
+    /**
+     * @OA\Schema(
+     *   schema="ScheduleForUpdateRestaurantRequest",
+     *   description="Schedule object for update restaurant request.",
+     *   required={"weekday", "beg_hour", "beg_minute", "end_hour", "end_minute"},
+     *   @OA\Property(property="id", type="integer", example=1),
+     *   @OA\Property(property="restaurant_id", type="integer", example=1),
+     *   @OA\Property(property="weekday", type="string", example="monday",
+     *     enum={"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"}),
+     *   @OA\Property(property="beg_hour", type="integer", example=8),
+     *   @OA\Property(property="beg_minute", type="integer", example=30),
+     *   @OA\Property(property="end_hour", type="integer", example=8),
+     *   @OA\Property(property="end_minute", type="integer", example=30),
+     *   @OA\Property(property="archived", type="boolean", example=false),
+     * ),
+     *
      * @OA\Schema(
      *   schema="UpdateRestaurantRequest",
      *   description="Update restaurant request",
@@ -117,6 +220,8 @@ class UpdateRestaurantRequest extends UpdateRequest
      *     description="Link to restaurant's location on Google Maps."),
      *   @OA\Property(property="website", type="string", nullable=true,
      *     description="Link to restaurant's website."),
+     *   @OA\Property(property="schedules", type="array", nullable=true,
+     *     @OA\Items(ref ="#/components/schemas/ScheduleForUpdateRestaurantRequest"))),
      * )
      */
 }

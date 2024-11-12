@@ -69,7 +69,9 @@ class IndexRestaurantRequest extends IndexRequest
      */
     public function spatieBuilder(SpatieBuilder|EloquentBuilder|Builder $builder): SpatieBuilder
     {
+        /** @phpstan-ignore-next-line */
         return parent::spatieBuilder($builder)
-            ->defaultSort('-popularity');
+            ->defaultSort('-popularity')
+            ->with('schedules');
     }
 }

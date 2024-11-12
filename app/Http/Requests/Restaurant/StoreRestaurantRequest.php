@@ -2,16 +2,30 @@
 
 namespace App\Http\Requests\Restaurant;
 
+use App\Enums\Weekday;
 use App\Http\Requests\Crud\StoreRequest;
 use App\Models\Restaurant;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Validation\Rule;
+use Spatie\QueryBuilder\QueryBuilder as SpatieBuilder;
 
 /**
  * Class StoreRestaurantRequest.
  */
 class StoreRestaurantRequest extends StoreRequest
 {
+    public function getAllowedIncludes(): array
+    {
+        return array_merge(
+            parent::getAllowedIncludes(),
+            [
+                'schedules',
+            ]
+        );
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -76,6 +90,48 @@ class StoreRestaurantRequest extends StoreRequest
                 'nullable',
                 'url',
             ],
+            'schedules' => [
+                'sometimes',
+                'nullable',
+                'array',
+            ],
+            'schedules.*' => [
+                'required',
+                'array',
+            ],
+            'schedules.*.weekday' => [
+                'required',
+                'string',
+                Weekday::getValidationRule(),
+            ],
+            'schedules.*.beg_hour' => [
+                'required',
+                'integer',
+                'min:0',
+                'max:23',
+            ],
+            'schedules.*.beg_minute' => [
+                'required',
+                'integer',
+                'min:0',
+                'max:59',
+            ],
+            'schedules.*.end_hour' => [
+                'required',
+                'integer',
+                'min:0',
+                'max:23',
+            ],
+            'schedules.*.end_minute' => [
+                'required',
+                'integer',
+                'min:0',
+                'max:59',
+            ],
+            'schedules.*.archived' => [
+                'required',
+                'boolean',
+            ],
         ];
     }
 
@@ -97,6 +153,33 @@ class StoreRestaurantRequest extends StoreRequest
     }
 
     /**
+     * Apply allowed options to spatie builder.
+     *
+     * @param Builder|EloquentBuilder|SpatieBuilder $builder
+     *
+     * @return SpatieBuilder
+     */
+    public function spatieBuilder(SpatieBuilder|EloquentBuilder|Builder $builder): SpatieBuilder
+    {
+        /** @phpstan-ignore-next-line */
+        return parent::spatieBuilder($builder)
+            ->with('schedules');
+    }
+
+    /**
+     * @OA\Schema(
+     *   schema="ScheduleForStoreRestaurantRequest",
+     *   description="Schedule object for store restaurant request.",
+     *   required={"weekday", "beg_hour", "beg_minute", "end_hour", "end_minute"},
+     *   @OA\Property(property="weekday", type="string", example="monday",
+     *     enum={"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"}),
+     *   @OA\Property(property="beg_hour", type="integer", example=8),
+     *   @OA\Property(property="beg_minute", type="integer", example=30),
+     *   @OA\Property(property="end_hour", type="integer", example=8),
+     *   @OA\Property(property="end_minute", type="integer", example=30),
+     *   @OA\Property(property="archived", type="boolean", example=false),
+     * ),
+     *
      * @OA\Schema(
      *   schema="StoreRestaurantRequest",
      *   description="Store restaurant request",
@@ -116,6 +199,8 @@ class StoreRestaurantRequest extends StoreRequest
      *     description="Link to restaurant's location on Google Maps."),
      *   @OA\Property(property="website", type="string", nullable=true,
      *     description="Link to restaurant's website."),
+     *   @OA\Property(property="schedules", type="array", nullable=true,
+     *     @OA\Items(ref ="#/components/schemas/ScheduleForStoreRestaurantRequest"))),
      * )
      */
 }

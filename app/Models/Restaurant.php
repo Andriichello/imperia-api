@@ -12,6 +12,7 @@ use App\Queries\CategoryQueryBuilder;
 use App\Queries\HolidayQueryBuilder;
 use App\Queries\RestaurantQueryBuilder;
 use App\Queries\RestaurantReviewQueryBuilder;
+use App\Queries\ScheduleQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\RestaurantFactory;
 use DateTimeZone;
@@ -193,11 +194,14 @@ class Restaurant extends BaseModel implements
     /**
      * Schedules associated with the model.
      *
-     * @return HasMany
+     * @return HasMany|ScheduleQueryBuilder
      */
-    public function schedules(): HasMany
+    public function schedules(): HasMany|ScheduleQueryBuilder
     {
-        return $this->hasMany(Schedule::class, 'restaurant_id', 'id');
+        /** @var HasMany|ScheduleQueryBuilder $builder */
+        $builder = $this->hasMany(Schedule::class, 'restaurant_id', 'id');
+
+        return $builder;
     }
 
     /**

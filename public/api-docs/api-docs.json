@@ -7940,6 +7940,52 @@
                 },
                 "type": "object"
             },
+            "ScheduleForStoreRestaurantRequest": {
+                "description": "Schedule object for store restaurant request.",
+                "required": [
+                    "weekday",
+                    "beg_hour",
+                    "beg_minute",
+                    "end_hour",
+                    "end_minute"
+                ],
+                "properties": {
+                    "weekday": {
+                        "type": "string",
+                        "enum": [
+                            "monday",
+                            "tuesday",
+                            "wednesday",
+                            "thursday",
+                            "friday",
+                            "saturday",
+                            "sunday"
+                        ],
+                        "example": "monday"
+                    },
+                    "beg_hour": {
+                        "type": "integer",
+                        "example": 8
+                    },
+                    "beg_minute": {
+                        "type": "integer",
+                        "example": 30
+                    },
+                    "end_hour": {
+                        "type": "integer",
+                        "example": 8
+                    },
+                    "end_minute": {
+                        "type": "integer",
+                        "example": 30
+                    },
+                    "archived": {
+                        "type": "boolean",
+                        "example": false
+                    }
+                },
+                "type": "object"
+            },
             "StoreRestaurantRequest": {
                 "description": "Store restaurant request",
                 "required": [
@@ -7978,12 +8024,14 @@
                     },
                     "email": {
                         "type": "string",
-                        "example": "imperia@email.com"
+                        "example": "imperia@email.com",
+                        "nullable": true
                     },
                     "phone": {
                         "description": "Phone number may start with a plus and must contain only digits 0-9.",
                         "type": "string",
-                        "example": "+380507777777"
+                        "example": "+380507777777",
+                        "nullable": true
                     },
                     "location": {
                         "description": "Link to restaurant's location on Google Maps.",
@@ -7995,6 +8043,67 @@
                         "description": "Link to restaurant's website.",
                         "type": "string",
                         "nullable": true
+                    },
+                    "schedules": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ScheduleForStoreRestaurantRequest"
+                        },
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ScheduleForUpdateRestaurantRequest": {
+                "description": "Schedule object for update restaurant request.",
+                "required": [
+                    "weekday",
+                    "beg_hour",
+                    "beg_minute",
+                    "end_hour",
+                    "end_minute"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "restaurant_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "weekday": {
+                        "type": "string",
+                        "enum": [
+                            "monday",
+                            "tuesday",
+                            "wednesday",
+                            "thursday",
+                            "friday",
+                            "saturday",
+                            "sunday"
+                        ],
+                        "example": "monday"
+                    },
+                    "beg_hour": {
+                        "type": "integer",
+                        "example": 8
+                    },
+                    "beg_minute": {
+                        "type": "integer",
+                        "example": 30
+                    },
+                    "end_hour": {
+                        "type": "integer",
+                        "example": 8
+                    },
+                    "end_minute": {
+                        "type": "integer",
+                        "example": 30
+                    },
+                    "archived": {
+                        "type": "boolean",
+                        "example": false
                     }
                 },
                 "type": "object"
@@ -8029,12 +8138,14 @@
                     },
                     "email": {
                         "type": "string",
-                        "example": "imperia@email.com"
+                        "example": "imperia@email.com",
+                        "nullable": true
                     },
                     "phone": {
                         "description": "Phone number may start with a plus and must contain only digits 0-9.",
                         "type": "string",
-                        "example": "+380507777777"
+                        "example": "+380507777777",
+                        "nullable": true
                     },
                     "location": {
                         "description": "Link to restaurant's location on Google Maps.",
@@ -8045,6 +8156,13 @@
                     "website": {
                         "description": "Link to restaurant's website.",
                         "type": "string",
+                        "nullable": true
+                    },
+                    "schedules": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ScheduleForUpdateRestaurantRequest"
+                        },
                         "nullable": true
                     }
                 },

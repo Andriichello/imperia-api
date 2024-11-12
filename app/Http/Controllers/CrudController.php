@@ -99,7 +99,14 @@ abstract class CrudController extends Controller
      */
     protected function spatieBuilder(CrudRequest $request): SpatieBuilder
     {
-        return $request->spatieBuilder($this->builder($request));
+        $builder = $request->spatieBuilder($this->builder($request));
+
+        if ($this->repository->isSoftDeletable()) {
+            /** @phpstan-ignore-next-line */
+            $builder->withTrashed();
+        }
+
+        return $builder;
     }
 
     /**
@@ -174,7 +181,9 @@ abstract class CrudController extends Controller
      */
     protected function checkPolicy(CrudRequest $request): void
     {
-        $result = empty($this->policy) || $this->policy->determine($request);
+        $result = empty($this->policy)
+            || $this->policy->determine($request);
+
         if ($result === false) {
             throw new AuthorizationException();
         }
@@ -191,6 +200,7 @@ abstract class CrudController extends Controller
     protected function handleIndex(IndexRequest $request): ApiResponse
     {
         $builder = $this->spatieBuilder($request);
+
         return $this->asPaginatedResponse($builder);
     }
 
@@ -203,11 +213,8 @@ abstract class CrudController extends Controller
      */
     protected function handleShow(ShowRequest $request): ApiResponse
     {
-        $isSoftDeletable = $this->repository->isSoftDeletable();
-
         /** @var BaseModel $model */
         $model = $this->spatieBuilder($request)
-            ->when($isSoftDeletable, fn ($builder) => $builder->withTrashed())
             ->findOrFail($request->id());
 
         return $this->asResourceResponse($model);
@@ -223,6 +230,11 @@ abstract class CrudController extends Controller
     protected function handleStore(StoreRequest $request): ApiResponse
     {
         $model = $this->repository->create($request->validated());
+
+        /** @var BaseModel $model */
+        $model = $this->spatieBuilder($request)
+            ->findOrFail($model->getKey());
+
         return $this->asResourceResponse($model, 201, 'Created');
     }
 
@@ -236,11 +248,8 @@ abstract class CrudController extends Controller
      */
     protected function handleUpdate(UpdateRequest $request): ApiResponse
     {
-        $isSoftDeletable = $this->repository->isSoftDeletable();
-
         /** @var BaseModel $model */
         $model = $this->spatieBuilder($request)
-            ->when($isSoftDeletable, fn ($builder) => $builder->withTrashed())
             ->findOrFail($request->id());
 
         $this->repository->update($model, $request->validated());
@@ -257,11 +266,8 @@ abstract class CrudController extends Controller
      */
     protected function handleDestroy(DestroyRequest $request): ApiResponse
     {
-        $isSoftDeletable = $this->repository->isSoftDeletable();
-
         /** @var BaseModel $model */
         $model = $this->spatieBuilder($request)
-            ->when($isSoftDeletable, fn ($builder) => $builder->withTrashed())
             ->findOrFail($request->id());
 
         $deleted = $request->force() ? $model->forceDelete() : $model->deleteOrFail();
@@ -282,19 +288,18 @@ abstract class CrudController extends Controller
      */
     protected function handleRestore(RestoreRequest $request): ApiResponse
     {
-        $isSoftDeletable = $this->repository->isSoftDeletable();
-
         /** @var BaseModel $model */
         $model = $this->spatieBuilder($request)
-            ->when($isSoftDeletable, fn ($builder) => $builder->withTrashed())
             ->findOrFail($request->id());
 
         if (!method_exists($model, 'restore')) {
             throw new HttpException("There is no restore method in the " . get_class($model), 400);
         }
+
         if (!$model->restore()) {
             throw new HttpException("Failed restoring " . get_class($model), 500);
         }
+
         return $this->asResourceResponse($model->fresh());
     }
 }
