@@ -50,11 +50,11 @@ class FamilyMember extends BaseModel
     ];
 
     /**
-     * The loadable relationships for the model.
+     * List of relationship names.
      *
      * @var array
      */
-    protected $relations = [
+    protected array $relationships = [
         'relative',
     ];
 

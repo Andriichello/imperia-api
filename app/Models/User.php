@@ -102,11 +102,11 @@ class User extends Authenticatable implements SoftDeletableInterface
     ];
 
     /**
-     * The loadable relationships for the model.
+     * List of relationship names.
      *
      * @var array
      */
-    protected $relations = [
+    protected array $relationships = [
         'restaurant',
         'customer',
         'banquets',

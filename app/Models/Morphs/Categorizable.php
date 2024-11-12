@@ -46,7 +46,7 @@ class Categorizable extends BaseModel
      *
      * @var array
      */
-    protected $relations = [
+    protected array $relationships = [
         'category',
         'categorized',
     ];

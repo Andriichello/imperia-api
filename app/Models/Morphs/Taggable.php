@@ -46,7 +46,7 @@ class Taggable extends BaseModel
      *
      * @var array
      */
-    protected $relations = [
+    protected array $relationships = [
         'tag',
         'tagged',
     ];

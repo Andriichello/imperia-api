@@ -88,11 +88,11 @@ class Ticket extends BaseModel implements
     ];
 
     /**
-     * The loadable relationships for the model.
+     * List of relationship names.
      *
      * @var array
      */
-    protected $relations = [
+    protected array $relationships = [
         'media',
         'categories',
         'restaurant',
