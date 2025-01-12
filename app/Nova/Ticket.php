@@ -90,9 +90,7 @@ class Ticket extends Resource
                 ->sortable(),
 
             Text::make(__('columns.slug'), 'slug')
-                ->rules('required', 'min:1', 'max:50')
-                ->creationRules('unique:tickets,slug')
-                ->updateRules('unique:tickets,slug,{{resourceId}}'),
+                ->rules('required', 'min:1', 'max:50'),
 
             Boolean::make('Active')
                 ->resolveUsing(fn() => !$this->archived)

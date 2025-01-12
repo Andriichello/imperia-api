@@ -12,10 +12,12 @@ use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
+use Laravel\Nova\Fields\MorphToMany;
 use Laravel\Nova\Fields\Number;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\Textarea;
 use Laravel\Nova\Http\Requests\NovaRequest;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class Menu.
@@ -133,8 +135,10 @@ class Menu extends Resource
             Textarea::make(__('columns.description'), 'description')
                 ->rules('nullable', 'min:1'),
 
-            HasMany::make(__('columns.categories'), 'categories', Category::class)
+            HasMany::make(__('columns.categories_by_products'), 'categoriesByProducts', Category::class)
                 ->readonly(),
+
+            MorphToMany::make(__('columns.categories'), 'categories', Category::class),
 
             HasMany::make(__('columns.products'), 'products', Product::class),
 

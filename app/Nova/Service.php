@@ -94,9 +94,7 @@ class Service extends Resource
                 ->sortable(),
 
             Text::make(__('columns.slug'), 'slug')
-                ->rules('required', 'min:1', 'max:50')
-                ->creationRules('unique:services,slug')
-                ->updateRules('unique:services,slug,{{resourceId}}'),
+                ->rules('required', 'min:1', 'max:50'),
 
             Boolean::make(__('columns.active'), 'active')
                 ->resolveUsing(fn() => !$this->archived)

@@ -13,7 +13,27 @@ return new class extends Migration
      */
     public function up()
     {
+        Schema::table('menus', function (Blueprint $table) {
+            $table->dropUnique(['slug']);
+        });
+
+        Schema::table('categories', function (Blueprint $table) {
+            $table->dropUnique(['slug']);
+        });
+
+        Schema::table('spaces', function (Blueprint $table) {
+            $table->dropUnique(['slug']);
+        });
+
         Schema::table('products', function (Blueprint $table) {
+            $table->dropUnique(['slug']);
+        });
+
+        Schema::table('tickets', function (Blueprint $table) {
+            $table->dropUnique(['slug']);
+        });
+
+        Schema::table('services', function (Blueprint $table) {
             $table->dropUnique(['slug']);
         });
     }
@@ -25,8 +45,28 @@ return new class extends Migration
      */
     public function down()
     {
+        Schema::table('menus', function (Blueprint $table) {
+            $table->unique(['slug']);
+        });
+
+        Schema::table('categories', function (Blueprint $table) {
+            $table->unique(['slug']);
+        });
+
+        Schema::table('spaces', function (Blueprint $table) {
+            $table->unique(['slug']);
+        });
+
         Schema::table('products', function (Blueprint $table) {
-            //
+            $table->unique(['slug']);
+        });
+
+        Schema::table('tickets', function (Blueprint $table) {
+            $table->unique(['slug']);
+        });
+
+        Schema::table('services', function (Blueprint $table) {
+            $table->unique(['slug']);
         });
     }
 };

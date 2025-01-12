@@ -3,12 +3,10 @@
 namespace App\Nova;
 
 use Andriichello\Media\MediaField;
-use App\Enums\WeightUnit;
 use App\Models\Scopes\ArchivedScope;
 use App\Nova\Options\WeightUnitOptions;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\BelongsToMany;
 use Laravel\Nova\Fields\Boolean;
@@ -99,16 +97,6 @@ class Product extends Resource
 
         $slugValidationRules = [
             'required',
-            Rule::unique('products', 'slug')
-                ->where(function ($query) use ($user, $resourceId) {
-                    if ($resourceId) {
-                        $query->where('id', '!=', $resourceId);
-                    }
-
-                    if ($user->restaurant_id) {
-                        $query->where('restaurant_id', $user->restaurant_id);
-                    }
-                }),
         ];
 
         $units = [];

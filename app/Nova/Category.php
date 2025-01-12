@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\DateTime;
@@ -94,16 +93,6 @@ class Category extends Resource
 
         $slugValidationRules = [
             'required',
-            Rule::unique('categories', 'slug')
-                ->where(function ($query) use ($user, $resourceId) {
-                    if ($resourceId) {
-                        $query->where('id', '!=', $resourceId);
-                    }
-
-                    if ($user->restaurant_id) {
-                        $query->where('restaurant_id', $user->restaurant_id);
-                    }
-                }),
         ];
 
         $categorizables = MorphOptions::categorizable();
@@ -171,7 +160,12 @@ class Category extends Resource
      */
     public static function relatableQuery(NovaRequest $request, $query): EloquentBuilder
     {
-        $target = slugClass($request->resource());
+        $target = slugClass($resource = $request->resource());
+
+        if ($resource === Menu::class) {
+            $target = slugClass(Product::class);
+        }
+
         // @phpstan-ignore-next-line
         return parent::relatableQuery($request, $query)
             ->whereIn('target', [$target, null]);
