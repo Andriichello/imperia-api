@@ -150,4 +150,14 @@ class Alteration extends BaseModel
     {
         return new AlterationQueryBuilder($query);
     }
+
+    /**
+     * Get the corresponding restaurant id.
+     *
+     * @return int|null
+     */
+    public function getRestaurantId(): ?int
+    {
+        return data_get($this->alterable, 'restaurant_id');
+    }
 }

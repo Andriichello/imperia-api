@@ -178,6 +178,7 @@ class Restaurant extends BaseModel implements
      */
     public function categories(): HasMany
     {
+        /** @phpstan-ignore-next-line */
         return $this->hasMany(Category::class)
             ->orderBy('date');
     }
@@ -199,6 +200,7 @@ class Restaurant extends BaseModel implements
      */
     public function holidays(): HasMany
     {
+        /** @phpstan-ignore-next-line */
         return $this->hasMany(Holiday::class)
             ->orderBy('date');
     }
@@ -210,6 +212,7 @@ class Restaurant extends BaseModel implements
      */
     public function relevantHolidays(): HasMany
     {
+        /** @phpstan-ignore-next-line */
         return $this->holidays()
             ->where('date', '>=', now()->setTime(0, 0));
     }
@@ -221,6 +224,7 @@ class Restaurant extends BaseModel implements
      */
     public function reviews(): HasMany
     {
+        /** @phpstan-ignore-next-line */
         return $this->hasMany(RestaurantReview::class, 'restaurant_id', 'id')
             ->orderByDesc('created_at');
     }
@@ -378,5 +382,16 @@ class Restaurant extends BaseModel implements
     public function newEloquentBuilder($query): RestaurantQueryBuilder
     {
         return new RestaurantQueryBuilder($query);
+    }
+
+
+    /**
+     * Get the corresponding restaurant id.
+     *
+     * @return int|null
+     */
+    public function getRestaurantId(): ?int
+    {
+        return $this->id;
     }
 }

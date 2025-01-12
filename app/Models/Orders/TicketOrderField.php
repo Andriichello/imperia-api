@@ -97,4 +97,14 @@ class TicketOrderField extends BaseModel implements
     {
         return round($this->ticket->price * $this->amount, 2);
     }
+
+    /**
+     * Get the corresponding restaurant id.
+     *
+     * @return int|null
+     */
+    public function getRestaurantId(): ?int
+    {
+        return data_get($this->order, 'restaurant_id');
+    }
 }

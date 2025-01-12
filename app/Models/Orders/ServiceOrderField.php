@@ -100,4 +100,14 @@ class ServiceOrderField extends BaseModel implements
             $this->service->hourly_paid_price * ($this->duration / 60.0);
         return round($total * $this->amount, 2);
     }
+
+    /**
+     * Get the corresponding restaurant id.
+     *
+     * @return int|null
+     */
+    public function getRestaurantId(): ?int
+    {
+        return data_get($this->order, 'restaurant_id');
+    }
 }
