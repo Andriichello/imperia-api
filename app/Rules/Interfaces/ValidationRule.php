@@ -16,5 +16,5 @@ interface ValidationRule
      * @param mixed $value
      * @param Closure $fail
      */
-    public function validate(string $attribute, mixed $value, Closure $fail): void;
+    public function validate(string $attribute, mixed $value, Closure $fail): bool;
 }

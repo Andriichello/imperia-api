@@ -91,10 +91,10 @@ class SameRestaurant implements ValidationRule
      * @param mixed $value
      * @param Closure $fail
      */
-    public function validate(string $attribute, mixed $value, Closure $fail): void
+    public function validate(string $attribute, mixed $value, Closure $fail): bool
     {
         if ($this->user?->isAdmin() && $this->user->isPreviewOnly()) {
-            return;
+            return true;
         }
 
         /** @var BaseModel|null $model */
@@ -106,24 +106,34 @@ class SameRestaurant implements ValidationRule
         if ($this->user === null) {
             if ($restaurantId && $this->failUnauthenticated) {
                 $fail(static::notAvailableForUnauthenticated($attribute));
+
+                return false;
             }
 
-            return;
+            return true;
         }
 
         if (!empty($this->roles)) {
             if (!$this->user->hasAnyRole(...$this->roles)) {
                 $fail(static::notAvailableForRole($attribute, $this->roles));
+
+                return false;
             }
         }
 
         if ($this->failPreviewOnly && $this->user->isPreviewOnly()) {
             $fail(static::notAvailableForPreviewOnly($attribute));
+
+            return false;
         }
 
         if ($restaurantId === null && $this->failNullRestaurantId) {
             $fail(static::notAvailableWithin($attribute, $userRestaurantId));
+
+            return false;
         }
+
+        return true;
     }
 
     /**
