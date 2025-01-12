@@ -76,7 +76,7 @@ class User extends Authenticatable implements SoftDeletableInterface
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var array
+     * @var array<string>
      */
     protected $hidden = [
         'password',
@@ -267,6 +267,7 @@ class User extends Authenticatable implements SoftDeletableInterface
     public function isCustomer(): bool
     {
         return $this->hasRole(UserRole::Customer)
+            /** @phpstan-ignore-next-line */
             && $this->customer()->exists();
     }
 
@@ -278,5 +279,15 @@ class User extends Authenticatable implements SoftDeletableInterface
     public function newEloquentBuilder($query): UserQueryBuilder
     {
         return new UserQueryBuilder($query);
+    }
+
+    /**
+     * Get the corresponding restaurant id.
+     *
+     * @return int|null
+     */
+    public function getRestaurantId(): ?int
+    {
+        return $this->restaurant_id;
     }
 }
