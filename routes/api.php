@@ -164,6 +164,16 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
         ->only('store', 'update')
         ->parameters(['restaurants' => 'id']);
 
+    Route::post('/menus/attach-category', [MenuController::class, 'attachCategory'])
+        ->name('menus.attach.category');
+    Route::delete('/menus/detach-category', [MenuController::class, 'detachCategory'])
+        ->name('menus.detach.category');
+
+    Route::post('/menus/attach-product', [MenuController::class, 'attachProduct'])
+        ->name('menus.attach.product');
+    Route::delete('/menus/detach-product', [MenuController::class, 'detachProduct'])
+        ->name('menus.detach.product');
+
     Route::apiResource('products', ProductController::class)
         ->only('store', 'update', 'destroy')
         ->parameters(['products' => 'id'])

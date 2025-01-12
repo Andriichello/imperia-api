@@ -2169,6 +2169,194 @@
                 ]
             }
         },
+        "/api/menus/attach-category": {
+            "post": {
+                "tags": [
+                    "menus"
+                ],
+                "summary": "Attach category to menu.",
+                "operationId": "attachCategoryToMenu",
+                "requestBody": {
+                    "description": "Attach category to menu request object.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AttachCategoryToMenuRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Attach category to menu response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AttachCategoryToMenuResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/menus/detach-category": {
+            "delete": {
+                "tags": [
+                    "menus"
+                ],
+                "summary": "Detach category from menu.",
+                "operationId": "detachCategoryFromMenu",
+                "requestBody": {
+                    "description": "Detach category from menu request object.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DetachCategoryFromMenuRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Detach category from menu response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DetachCategoryFromMenuResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/menus/attach-product": {
+            "post": {
+                "tags": [
+                    "menus"
+                ],
+                "summary": "Attach product to menu.",
+                "operationId": "attachProductToMenu",
+                "requestBody": {
+                    "description": "Attach product to menu request object.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AttachProductToMenuRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Attach product to menu response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AttachProductToMenuResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/menus/detach-product": {
+            "delete": {
+                "tags": [
+                    "menus"
+                ],
+                "summary": "Detach product from menu.",
+                "operationId": "detachProductFromMenu",
+                "requestBody": {
+                    "description": "Detach product from menu request object.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DetachProductFromMenuRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Detach product from menu response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DetachProductFromMenuResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/model-media": {
             "get": {
                 "tags": [
@@ -6009,6 +6197,58 @@
                 "type": "string",
                 "example": "products"
             },
+            "AttachCategoryToMenuResponse": {
+                "description": "Attach category to menu response object.",
+                "required": [
+                    "message"
+                ],
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "DetachCategoryFromMenuResponse": {
+                "description": "Detach category from menu response object.",
+                "required": [
+                    "message"
+                ],
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "AttachProductToMenuResponse": {
+                "description": "Attach category to menu response object.",
+                "required": [
+                    "message"
+                ],
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "DetachProductFromMenuResponse": {
+                "description": "Detach product from menu response object.",
+                "required": [
+                    "message"
+                ],
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
             "GetModelMediaResponse": {
                 "description": "Get model's media response object.",
                 "required": [
@@ -7746,6 +7986,78 @@
                 },
                 "type": "object"
             },
+            "AttachCategoryToMenuRequest": {
+                "description": "Attach category to menu request.",
+                "required": [
+                    "menu_id",
+                    "category_id"
+                ],
+                "properties": {
+                    "menu_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "category_id": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "AttachProductToMenuRequest": {
+                "description": "Attach product to menu request.",
+                "required": [
+                    "menu_id",
+                    "product_id"
+                ],
+                "properties": {
+                    "menu_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "product_id": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "DetachCategoryFromMenuRequest": {
+                "description": "Detach category from menu request.",
+                "required": [
+                    "menu_id",
+                    "category_id"
+                ],
+                "properties": {
+                    "menu_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "category_id": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "DetachProductFromMenuRequest": {
+                "description": "Detach product from menu request.",
+                "required": [
+                    "menu_id",
+                    "product_id"
+                ],
+                "properties": {
+                    "menu_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "product_id": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
             "AttachingMedia": {
                 "description": "Attaching media",
                 "required": [
@@ -9366,6 +9678,14 @@
                         }
                     },
                     "categories": {
+                        "description": "Categories that are attached directly to the products of the menu.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Category"
+                        }
+                    },
+                    "categoriesByMenu": {
+                        "description": "Categories that are attached directly to the menu.",
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/Category"

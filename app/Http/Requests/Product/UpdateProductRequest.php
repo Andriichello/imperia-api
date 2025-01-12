@@ -107,7 +107,7 @@ class UpdateProductRequest extends UpdateRequest
     }
 
     /**
-      * @OA\Schema(
+     * @OA\Schema(
      *   schema="UpdateProductRequest",
      *   description="Update product request.",
      *   @OA\Property(property="restaurant_id", type="integer", example=1),

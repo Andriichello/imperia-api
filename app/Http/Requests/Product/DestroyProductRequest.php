@@ -3,8 +3,7 @@
 namespace App\Http\Requests\Product;
 
 use App\Http\Requests\Crud\DestroyRequest;
-use App\Models\Restaurant;
-use App\Models\User;
+use App\Models\Product;
 use App\Rules\SameRestaurant;
 
 /**
@@ -19,7 +18,7 @@ class DestroyProductRequest extends DestroyRequest
      */
     public function authorize(): bool
     {
-        return SameRestaurant::make($this->user(), Restaurant::class)
+        return SameRestaurant::make($this->user(), Product::class)
             ->onlyAdmins()
             ->validate('id', $this->id(), fn() => null);
     }

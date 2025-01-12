@@ -9,9 +9,9 @@ use App\Rules\SameRestaurant;
 use Illuminate\Validation\Rule;
 
 /**
- * Class AttachProductRequest.
+ * Class DetachProductRequest.
  */
-class AttachProductRequest extends CrudRequest
+class DetachProductRequest extends CrudRequest
 {
     /**
      * Get ability, which should be checked for the request.
@@ -20,7 +20,7 @@ class AttachProductRequest extends CrudRequest
      */
     public function getAbility(): ?string
     {
-        return 'attach';
+        return 'detach';
     }
 
     /**
@@ -60,8 +60,8 @@ class AttachProductRequest extends CrudRequest
 
     /**
      * @OA\Schema(
-     *   schema="AttachProductToMenuRequest",
-     *   description="Attach product to menu request.",
+     *   schema="DetachProductFromMenuRequest",
+     *   description="Detach product from menu request.",
      *   required={"menu_id", "product_id"},
      *   @OA\Property(property="menu_id", type="integer", example=1),
      *   @OA\Property(property="product_id", type="integer", example=1),

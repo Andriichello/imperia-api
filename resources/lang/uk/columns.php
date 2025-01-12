@@ -79,6 +79,7 @@ return [
     'tags' => 'Теги',
     'category' => 'Категорія',
     'categories' => 'Категорії',
+    'categories_by_products' => 'Категорії через Страви',
     'variant' => 'Варіант',
     'variants' => 'Варіанти',
     'product' => 'Страва',

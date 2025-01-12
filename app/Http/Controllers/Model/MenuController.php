@@ -3,18 +3,23 @@
 namespace App\Http\Controllers\Model;
 
 use App\Http\Controllers\CrudController;
-use App\Http\Requests\CrudRequest;
+use App\Http\Requests\Menu\AttachCategoryRequest;
+use App\Http\Requests\Menu\AttachProductRequest;
+use App\Http\Requests\Menu\DetachCategoryRequest;
+use App\Http\Requests\Menu\DetachProductRequest;
 use App\Http\Requests\Menu\IndexMenuRequest;
 use App\Http\Requests\Menu\ShowMenuRequest;
 use App\Http\Resources\Menu\MenuCollection;
 use App\Http\Resources\Menu\MenuResource;
+use App\Http\Responses\ApiResponse;
+use App\Models\Menu;
 use App\Policies\MenuPolicy;
-use App\Queries\MenuQueryBuilder;
 use App\Repositories\MenuRepository;
-use OpenApi\Annotations as OA;
 
 /**
  * Class MenuController.
+ *
+ * @property MenuRepository $repository
  */
 class MenuController extends CrudController
 {
@@ -44,6 +49,90 @@ class MenuController extends CrudController
 
         $this->actions['index'] = IndexMenuRequest::class;
         $this->actions['show'] = ShowMenuRequest::class;
+    }
+
+    /**
+     * Attaches category to menu.
+     *
+     * @param AttachCategoryRequest $request
+     *
+     * @return ApiResponse
+     */
+    public function attachCategory(AttachCategoryRequest $request): ApiResponse
+    {
+        $menuId = $request->get('menu_id');
+        $categoryId = $request->get('category_id');
+
+        /** @var Menu $menu */
+        $menu = Menu::query()
+            ->findOrFail($menuId);
+
+        $this->repository->attachCategory($menu, $categoryId);
+
+        return ApiResponse::make();
+    }
+
+    /**
+     * Detaches category from menu.
+     *
+     * @param DetachCategoryRequest $request
+     *
+     * @return ApiResponse
+     */
+    public function detachCategory(DetachCategoryRequest $request): ApiResponse
+    {
+        $menuId = $request->get('menu_id');
+        $categoryId = $request->get('category_id');
+
+        /** @var Menu $menu */
+        $menu = Menu::query()
+            ->findOrFail($menuId);
+
+        $this->repository->detachCategory($menu, $categoryId);
+
+        return ApiResponse::make();
+    }
+
+    /**
+     * Attaches product to menu.
+     *
+     * @param AttachProductRequest $request
+     *
+     * @return ApiResponse
+     */
+    public function attachProduct(AttachProductRequest $request): ApiResponse
+    {
+        $menuId = $request->get('menu_id');
+        $productId = $request->get('product_id');
+
+        /** @var Menu $menu */
+        $menu = Menu::query()
+            ->findOrFail($menuId);
+
+        $this->repository->attachProduct($menu, $productId);
+
+        return ApiResponse::make();
+    }
+
+    /**
+     * Detaches product from menu.
+     *
+     * @param DetachProductRequest $request
+     *
+     * @return ApiResponse
+     */
+    public function detachProduct(DetachProductRequest $request): ApiResponse
+    {
+        $menuId = $request->get('menu_id');
+        $productId = $request->get('product_id');
+
+        /** @var Menu $menu */
+        $menu = Menu::query()
+            ->findOrFail($menuId);
+
+        $this->repository->detachProduct($menu, $productId);
+
+        return ApiResponse::make();
     }
 
     /**
@@ -121,5 +210,126 @@ class MenuController extends CrudController
     Available relations: `products`",
      *   type="string", example="products"
      * )
+     */
+
+    /**
+     * @OA\Post(
+     *   path="/api/menus/attach-category",
+     *   summary="Attach category to menu.",
+     *   operationId="attachCategoryToMenu",
+     *   security={{"bearerAuth": {}}},
+     *   tags={"menus"},
+     *
+     *  @OA\RequestBody(
+     *     required=true,
+     *     description="Attach category to menu request object.",
+     *     @OA\JsonContent(ref ="#/components/schemas/AttachCategoryToMenuRequest")
+     *   ),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Attach category to menu response object.",
+     *     @OA\JsonContent(ref ="#/components/schemas/AttachCategoryToMenuResponse")
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     description="Unauthenticated.",
+     *     @OA\JsonContent(ref ="#/components/schemas/UnauthenticatedResponse")
+     *   )
+     * ),
+     * @OA\Delete(
+     *   path="/api/menus/detach-category",
+     *   summary="Detach category from menu.",
+     *   operationId="detachCategoryFromMenu",
+     *   security={{"bearerAuth": {}}},
+     *   tags={"menus"},
+     *
+     *  @OA\RequestBody(
+     *     required=true,
+     *     description="Detach category from menu request object.",
+     *     @OA\JsonContent(ref ="#/components/schemas/DetachCategoryFromMenuRequest")
+     *   ),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Detach category from menu response object.",
+     *     @OA\JsonContent(ref ="#/components/schemas/DetachCategoryFromMenuResponse")
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     description="Unauthenticated.",
+     *     @OA\JsonContent(ref ="#/components/schemas/UnauthenticatedResponse")
+     *   )
+     * ),
+     *
+     * @OA\Post(
+     *   path="/api/menus/attach-product",
+     *   summary="Attach product to menu.",
+     *   operationId="attachProductToMenu",
+     *   security={{"bearerAuth": {}}},
+     *   tags={"menus"},
+     *
+     *  @OA\RequestBody(
+     *     required=true,
+     *     description="Attach product to menu request object.",
+     *     @OA\JsonContent(ref ="#/components/schemas/AttachProductToMenuRequest")
+     *   ),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Attach product to menu response object.",
+     *     @OA\JsonContent(ref ="#/components/schemas/AttachProductToMenuResponse")
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     description="Unauthenticated.",
+     *     @OA\JsonContent(ref ="#/components/schemas/UnauthenticatedResponse")
+     *   )
+     * ),
+     * @OA\Delete(
+     *   path="/api/menus/detach-product",
+     *   summary="Detach product from menu.",
+     *   operationId="detachProductFromMenu",
+     *   security={{"bearerAuth": {}}},
+     *   tags={"menus"},
+     *
+     *  @OA\RequestBody(
+     *     required=true,
+     *     description="Detach product from menu request object.",
+     *     @OA\JsonContent(ref ="#/components/schemas/DetachProductFromMenuRequest")
+     *   ),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Detach product from menu response object.",
+     *     @OA\JsonContent(ref ="#/components/schemas/DetachProductFromMenuResponse")
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     description="Unauthenticated.",
+     *     @OA\JsonContent(ref ="#/components/schemas/UnauthenticatedResponse")
+     *   )
+     * ),
+     *
+     * @OA\Schema(
+     *   schema="AttachCategoryToMenuResponse",
+     *   description="Attach category to menu response object.",
+     *   required = {"message"},
+     *   @OA\Property(property="message", type="string", example="Success"),
+     * ),
+     * @OA\Schema(
+     *   schema="DetachCategoryFromMenuResponse",
+     *   description="Detach category from menu response object.",
+     *   required = {"message"},
+     *   @OA\Property(property="message", type="string", example="Success"),
+     * ),
+      * @OA\Schema(
+     *   schema="AttachProductToMenuResponse",
+     *   description="Attach category to menu response object.",
+     *   required = {"message"},
+     *   @OA\Property(property="message", type="string", example="Success"),
+     * ),
+     * @OA\Schema(
+     *   schema="DetachProductFromMenuResponse",
+     *   description="Detach product from menu response object.",
+     *   required = {"message"},
+     *   @OA\Property(property="message", type="string", example="Success"),
+     * ),
      */
 }

@@ -4,6 +4,7 @@ namespace App\Http\Requests\Menu;
 
 use App\Http\Requests\CrudRequest;
 use App\Models\Menu;
+use App\Models\Morphs\Category;
 use App\Models\Product;
 use App\Rules\SameRestaurant;
 use Illuminate\Validation\Rule;
@@ -11,7 +12,7 @@ use Illuminate\Validation\Rule;
 /**
  * Class AttachProductRequest.
  */
-class AttachProductRequest extends CrudRequest
+class AttachCategoryRequest extends CrudRequest
 {
     /**
      * Get ability, which should be checked for the request.
@@ -38,11 +39,12 @@ class AttachProductRequest extends CrudRequest
                 SameRestaurant::make($this->user(), Menu::class)
                     ->onlyAdmins(),
             ],
-            'product_id' => [
+            'category_id' => [
                 'required',
                 'integer',
-                Rule::exists(Product::class, 'id'),
-                SameRestaurant::make($this->user(), Menu::class)
+                Rule::exists(Category::class, 'id')
+                    ->where('target', slugClass(Product::class)),
+                SameRestaurant::make($this->user(), Category::class)
                     ->onlyAdmins(),
             ],
         ];
@@ -60,11 +62,11 @@ class AttachProductRequest extends CrudRequest
 
     /**
      * @OA\Schema(
-     *   schema="AttachProductToMenuRequest",
-     *   description="Attach product to menu request.",
-     *   required={"menu_id", "product_id"},
+     *   schema="AttachCategoryToMenuRequest",
+     *   description="Attach category to menu request.",
+     *   required={"menu_id", "category_id"},
      *   @OA\Property(property="menu_id", type="integer", example=1),
-     *   @OA\Property(property="product_id", type="integer", example=1),
+     *   @OA\Property(property="category_id", type="integer", example=1),
      *  ),
      */
 }

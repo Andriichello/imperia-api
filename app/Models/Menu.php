@@ -8,6 +8,7 @@ use App\Models\Interfaces\MediableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Morphs\Category;
 use App\Models\Traits\ArchivableTrait;
+use App\Models\Traits\CategorizableTrait;
 use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use App\Queries\MenuQueryBuilder;
@@ -37,6 +38,7 @@ use Illuminate\Support\Collection;
  *
  * @property Product[]|Collection $products
  * @property Category[]|Collection $categories
+ * @property Category[]|Collection $categories_by_products
  * @property Restaurant|null $restaurant
  *
  * @method static MenuQueryBuilder query()
@@ -51,6 +53,7 @@ class Menu extends BaseModel implements
     use SoftDeletableTrait;
     use ArchivableTrait;
     use MediableTrait;
+    use CategorizableTrait;
 
     /**
      * The table associated with the model.
@@ -102,6 +105,7 @@ class Menu extends BaseModel implements
         'media',
         'products',
         'restaurant',
+        'categories',
     ];
 
     /**
@@ -129,7 +133,7 @@ class Menu extends BaseModel implements
      *
      * @return EloquentBuilder|Builder
      */
-    public function categories(): EloquentBuilder|Builder
+    public function categoriesByProducts(): EloquentBuilder|Builder
     {
         $slug = slugClass(Product::class);
 
@@ -157,12 +161,12 @@ class Menu extends BaseModel implements
      *
      * @return Collection
      */
-    public function getCategoriesAttribute(): Collection
+    public function getCategoriesByProductsAttribute(): Collection
     {
-        if (!isset($this->attributes['categories'])) {
-            $this->attributes['categories'] = $this->categories()->get();
+        if (!isset($this->attributes['categories_by_products'])) {
+            $this->attributes['categories_by_products'] = $this->categoriesByProducts()->get();
         }
-        return $this->attributes['categories'];
+        return $this->attributes['categories_by_products'];
     }
 
     /**

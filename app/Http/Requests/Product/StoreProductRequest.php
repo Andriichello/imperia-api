@@ -106,7 +106,7 @@ class StoreProductRequest extends StoreRequest
     }
 
     /**
-      * @OA\Schema(
+     * @OA\Schema(
      *   schema="StoreProductRequest",
      *   description="Store product request.",
      *   required={"restaurant_id", "title", "price"},

@@ -76,6 +76,7 @@ return [
     'tags' => 'Tags',
     'category' => 'Category',
     'categories' => 'Categories',
+    'categories_by_products' => 'Categories By Products',
     'variant' => 'Variant',
     'variants' => 'Variants',
     'product' => 'Product',

@@ -8,7 +8,6 @@ use App\Http\Resources\Product\ProductCollection;
 use App\Models\Menu;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use OpenApi\Annotations as OA;
 
 /**
  * Class MenuResource.
@@ -27,6 +26,12 @@ class MenuResource extends JsonResource
      */
     public function toArray($request): array
     {
+        $categories = collect($this->categories_by_products);
+
+        foreach ($this->categories as $category) {
+            $categories->push($category);
+        }
+
         return [
             'id' => $this->id,
             'type' => $this->type,
@@ -35,7 +40,8 @@ class MenuResource extends JsonResource
             'popularity' => $this->popularity,
             'archived' => $this->archived,
             'products' => new ProductCollection($this->whenLoaded('products')),
-            'categories' => new CategoryCollection($this->categories),
+            'categories' => new CategoryCollection($this->categories_by_products),
+            'categoriesByMenu' => new CategoryCollection($this->categories),
             /* @phpstan-ignore-next-line */
             'media' => new MediaCollection($this->media->load('variants')),
         ];
@@ -54,7 +60,10 @@ class MenuResource extends JsonResource
      *   @OA\Property(property="archived", type="boolean", example=false),
      *   @OA\Property(property="popularity", type="integer", nullable=true, example=1),
      *   @OA\Property(property="products", type="array", @OA\Items(ref ="#/components/schemas/Product")),
-     *   @OA\Property(property="categories", type="array", @OA\Items(ref ="#/components/schemas/Category")),
+     *   @OA\Property(property="categories", type="array", @OA\Items(ref ="#/components/schemas/Category"),
+     *     description="Categories that are attached directly to the products of the menu."),
+     *   @OA\Property(property="categoriesByMenu", type="array", @OA\Items(ref ="#/components/schemas/Category"),
+     *     description="Categories that are attached directly to the menu."),
      *   @OA\Property(property="media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
      * )
      */
