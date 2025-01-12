@@ -7,12 +7,14 @@ use App\Models\BaseModel;
 use App\Models\User;
 use App\Rules\Interfaces\ValidationRule;
 use Closure;
+use Illuminate\Contracts\Validation\InvokableRule;
 use Illuminate\Support\Str;
+use Illuminate\Translation\PotentiallyTranslatedString;
 
 /**
  * Class SameRestaurant.
  */
-class SameRestaurant implements ValidationRule
+class SameRestaurant implements ValidationRule, InvokableRule
 {
     /**
      * Determines if error should be returned if there
@@ -55,7 +57,7 @@ class SameRestaurant implements ValidationRule
     /**
      * User roles that are allowed.
      *
-     * @var UserRole[]|null
+     * @var string[]|null
      */
     protected ?array $roles = null;
 
@@ -87,9 +89,25 @@ class SameRestaurant implements ValidationRule
     /**
      * Run the validation rule.
      *
+     * @param  string  $attribute
+     * @param  mixed  $value
+     * @param Closure(string): PotentiallyTranslatedString $fail
+     *
+     * @return void
+     */
+    public function __invoke($attribute, mixed $value, $fail): void
+    {
+        $this->validate($attribute, $value, $fail);
+    }
+
+    /**
+     * Run the validation rule.
+     *
      * @param string $attribute
      * @param mixed $value
      * @param Closure $fail
+     *
+     * @return bool
      */
     public function validate(string $attribute, mixed $value, Closure $fail): bool
     {
@@ -196,17 +214,12 @@ class SameRestaurant implements ValidationRule
     /**
      * Set `roles` restriction's value.
      *
-     * @param UserRole|string ...$roles
+     * @param string ...$roles
      *
      * @return $this
      */
-    public function onlyRoles(UserRole|string ...$roles): static
+    public function onlyRoles(string ...$roles): static
     {
-        $roles = array_map(
-            fn($role) => is_string($role) ? UserRole::fromValue($role) : $role,
-            $roles
-        );
-
         $this->roles = $roles;
 
         return $this;

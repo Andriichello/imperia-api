@@ -8,7 +8,7 @@
     "packages": [
         {
             "name": "andriichello/columns-card",
-            "version": "dev-media-variants",
+            "version": "dev-dev",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/ColumnsCard",
@@ -44,7 +44,7 @@
         },
         {
             "name": "andriichello/marketplace",
-            "version": "dev-media-variants",
+            "version": "dev-dev",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/Marketplace",
@@ -80,7 +80,7 @@
         },
         {
             "name": "andriichello/media",
-            "version": "dev-media-variants",
+            "version": "dev-dev",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/Media",
@@ -117,7 +117,7 @@
         },
         {
             "name": "andriichello/metrics-card",
-            "version": "dev-media-variants",
+            "version": "dev-dev",
             "dist": {
                 "type": "path",
                 "url": "./nova-components/MetricsCard",
@@ -3673,16 +3673,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v9.52.16",
+            "version": "v9.52.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "082345d76fc6a55b649572efe10b11b03e279d24"
+                "reference": "41c812bf83e00d0d3f4b6963b0d475b26cb6fbf7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/082345d76fc6a55b649572efe10b11b03e279d24",
-                "reference": "082345d76fc6a55b649572efe10b11b03e279d24",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/41c812bf83e00d0d3f4b6963b0d475b26cb6fbf7",
+                "reference": "41c812bf83e00d0d3f4b6963b0d475b26cb6fbf7",
                 "shasum": ""
             },
             "require": {
@@ -3867,7 +3867,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2023-10-03T13:02:30+00:00"
+            "time": "2024-11-20T15:56:00+00:00"
         },
         {
             "name": "laravel/nova",
@@ -15057,7 +15057,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
@@ -15066,6 +15066,6 @@
         "ext-pdo": "*",
         "ext-fileinfo": "*"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
 }

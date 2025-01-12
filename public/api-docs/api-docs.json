@@ -9678,13 +9678,6 @@
                         }
                     },
                     "categories": {
-                        "description": "Categories that are attached directly to the products of the menu.",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Category"
-                        }
-                    },
-                    "categoriesByMenu": {
                         "description": "Categories that are attached directly to the menu.",
                         "type": "array",
                         "items": {

@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\Menu;
-use App\Models\Morphs\Categorizable;
 use App\Models\Morphs\Category;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Model;
@@ -27,7 +26,14 @@ class MenuRepository extends CrudRepository
     {
         $id = is_int($category) ? $category : $category->id;
 
-        $menu->categories()->attach($id);
+        /** @phpstan-ignore-next-line */
+        $exists = $menu->categories()
+            ->where('id', $id)
+            ->exists();
+
+        if (!$exists) {
+            $menu->categories()->attach($id);
+        }
     }
 
     /**
@@ -47,7 +53,14 @@ class MenuRepository extends CrudRepository
     {
         $id = is_int($product) ? $product : $product->id;
 
-        $menu->products()->attach($id);
+        /** @phpstan-ignore-next-line */
+        $exists = $menu->products()
+            ->where('id', $id)
+            ->exists();
+
+        if (!$exists) {
+            $menu->products()->attach($id);
+        }
     }
 
     /**
