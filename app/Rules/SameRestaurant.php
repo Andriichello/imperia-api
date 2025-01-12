@@ -31,6 +31,14 @@ class SameRestaurant implements ValidationRule
     protected bool $failNullRestaurantId = false;
 
     /**
+     * Determines if error should be returned if the
+     * user is preview only.
+     *
+     * @var bool
+     */
+    protected bool $failPreviewOnly = false;
+
+    /**
      * User or application to be used for checks.
      *
      * @var User|null
@@ -104,7 +112,13 @@ class SameRestaurant implements ValidationRule
         }
 
         if (!empty($this->roles)) {
-            $fail(static::notAvailableForRole($attribute, $this->roles));
+            if (!$this->user->hasAnyRole(...$this->roles)) {
+                $fail(static::notAvailableForRole($attribute, $this->roles));
+            }
+        }
+
+        if ($this->failPreviewOnly && $this->user->isPreviewOnly()) {
+            $fail(static::notAvailableForPreviewOnly($attribute));
         }
 
         if ($restaurantId === null && $this->failNullRestaurantId) {
@@ -143,6 +157,21 @@ class SameRestaurant implements ValidationRule
     }
 
     /**
+     * Set `failPreviewOnly` flag's value.
+     *
+     * @param bool $should
+     *
+     * @return $this
+     * @SuppressWarnings(PHPMD)
+     */
+    public function failPreviewOnly(bool $should = true): static
+    {
+        $this->failPreviewOnly = $should;
+
+        return $this;
+    }
+
+    /**
      * Clear `roles` restriction's value.
      *
      * @return $this
@@ -169,6 +198,30 @@ class SameRestaurant implements ValidationRule
         );
 
         $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * Set `roles` restriction's to only allow staff members.
+     *
+     * @return $this
+     */
+    public function onlyStaff(): static
+    {
+        $this->onlyRoles(UserRole::Manager, UserRole::Admin);
+
+        return $this;
+    }
+
+    /**
+     * Set `roles` restriction's to only allow admins members.
+     *
+     * @return $this
+     */
+    public function onlyAdmins(): static
+    {
+        $this->onlyRoles(UserRole::Admin);
 
         return $this;
     }
@@ -236,5 +289,19 @@ class SameRestaurant implements ValidationRule
 
         return "The given $display is only available for roles: "
             . implode(', ', $roles) . '.';
+    }
+
+    /**
+     * Get the message for the not available for preview only.
+     *
+     * @param string $attribute
+     *
+     * @return string
+     */
+    public static function notAvailableForPreviewOnly(string $attribute): string
+    {
+        $display = static::forDisplay($attribute);
+
+        return "The given $display is only available for the super-admins.";
     }
 }
