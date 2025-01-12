@@ -99,7 +99,7 @@ class Product extends Resource
 
         $slugValidationRules = [
             'required',
-            Rule::unique('menus', 'slug')
+            Rule::unique('products', 'slug')
                 ->where(function ($query) use ($user, $resourceId) {
                     if ($resourceId) {
                         $query->where('id', '!=', $resourceId);

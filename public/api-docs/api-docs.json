@@ -3107,6 +3107,51 @@
                         "bearerAuth": []
                     }
                 ]
+            },
+            "post": {
+                "tags": [
+                    "products"
+                ],
+                "summary": "Store product.",
+                "operationId": "storeProduct",
+                "requestBody": {
+                    "description": "Store product request object.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreProductRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Create product response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StoreProductResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/products/{id}": {
@@ -3142,6 +3187,168 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ShowProductResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "products"
+                ],
+                "summary": "Delete product.",
+                "operationId": "destroyProduct",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the product.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "description": "Delete product request object.",
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DestroyRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Delete product response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DestroyProductResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "products"
+                ],
+                "summary": "Update product.",
+                "operationId": "updateProduct",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the product.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "description": "Update product request object.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateProductRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update product response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UpdateProductResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/products/{id}/restore": {
+            "post": {
+                "tags": [
+                    "products"
+                ],
+                "summary": "Restore product.",
+                "operationId": "restoreProduct",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the product.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Restore product response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RestoreProductResponse"
                                 }
                             }
                         }
@@ -6116,6 +6323,70 @@
                 },
                 "type": "object"
             },
+            "StoreProductResponse": {
+                "description": "Store product response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Product"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Created"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateProductResponse": {
+                "description": "Update product response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Product"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "DestroyProductResponse": {
+                "description": "Delete product response object.",
+                "required": [
+                    "message"
+                ],
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Deleted"
+                    }
+                },
+                "type": "object"
+            },
+            "RestoreProductResponse": {
+                "description": "Restore product response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Product"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
             "ProductIncludes": {
                 "description": "Coma-separated list of inluded relations.\n         Available relations: `categories`, `tags`,\n            `alterations`, `variants.alterations`,\n            `pendingAlterations`, `variants.pendingAlterations`,\n            `performedAlterations`, `variants.performedAlterations`",
                 "type": "string",
@@ -6779,8 +7050,8 @@
                     },
                     "phone": {
                         "type": "string",
-                        "example": "null",
-                        "nullable": "true"
+                        "example": null,
+                        "nullable": true
                     },
                     "password": {
                         "type": "string",
@@ -7800,6 +8071,129 @@
                         "items": {
                             "$ref": "#/components/schemas/AttachingDiscount"
                         }
+                    }
+                },
+                "type": "object"
+            },
+            "StoreProductRequest": {
+                "description": "Store product request.",
+                "required": [
+                    "restaurant_id",
+                    "title",
+                    "price"
+                ],
+                "properties": {
+                    "restaurant_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "slug": {
+                        "description": "Must be unique within the restaurant.",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "badge": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Tomato Soup"
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "price": {
+                        "type": "number",
+                        "example": 125
+                    },
+                    "weight": {
+                        "type": "number",
+                        "example": 200
+                    },
+                    "weight_unit": {
+                        "type": "string",
+                        "enum": [
+                            "g",
+                            "kg",
+                            "ml",
+                            "l",
+                            "cm",
+                            "pc"
+                        ],
+                        "example": "g"
+                    },
+                    "archived": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "popularity": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "metadata": {
+                        "type": "object",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateProductRequest": {
+                "description": "Update product request.",
+                "properties": {
+                    "restaurant_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "slug": {
+                        "description": "Must be unique within the restaurant.",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "badge": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Tomato Soup"
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "price": {
+                        "type": "number",
+                        "example": 125
+                    },
+                    "weight": {
+                        "type": "number",
+                        "example": 200
+                    },
+                    "weight_unit": {
+                        "type": "string",
+                        "enum": [
+                            "g",
+                            "kg",
+                            "ml",
+                            "l",
+                            "cm",
+                            "pc"
+                        ],
+                        "example": "g"
+                    },
+                    "archived": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "popularity": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "metadata": {
+                        "type": "object",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -8958,12 +9352,12 @@
                     },
                     "archived": {
                         "type": "boolean",
-                        "example": "false"
+                        "example": false
                     },
                     "popularity": {
                         "type": "integer",
-                        "example": "1",
-                        "nullable": "true"
+                        "example": 1,
+                        "nullable": true
                     },
                     "products": {
                         "type": "array",
@@ -9230,16 +9624,16 @@
                     "badge": {
                         "type": "string",
                         "example": "New",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "archived": {
                         "type": "boolean",
-                        "example": "false"
+                        "example": false
                     },
                     "popularity": {
                         "type": "integer",
-                        "example": "1",
-                        "nullable": "true"
+                        "example": 1,
+                        "nullable": true
                     },
                     "variants": {
                         "type": "array",
@@ -10016,13 +10410,11 @@
                     },
                     "restaurant_id": {
                         "type": "integer",
-                        "example": "null",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "customer_id": {
                         "type": "integer",
-                        "example": "null",
-                        "nullable": "true"
+                        "nullable": true
                     },
                     "name": {
                         "type": "string",
