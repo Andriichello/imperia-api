@@ -52,7 +52,7 @@ class UpdateProductRequest extends UpdateRequest
                     'sometimes',
                     'string',
                     'min:1',
-                    'min:255',
+                    'max:255',
                 ],
                 'description' => [
                     'sometimes',

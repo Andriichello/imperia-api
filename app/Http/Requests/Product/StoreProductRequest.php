@@ -51,7 +51,7 @@ class StoreProductRequest extends StoreRequest
                     'required',
                     'string',
                     'min:1',
-                    'min:255',
+                    'max:255',
                 ],
                 'description' => [
                     'sometimes',
