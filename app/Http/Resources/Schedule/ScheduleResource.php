@@ -26,19 +26,20 @@ class ScheduleResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'restaurant_id' => $this->restaurant_id,
             'type' => $this->type,
             'weekday' => $this->weekday,
             'beg_hour' => $this->beg_hour,
             'beg_minute' => $this->beg_minute,
             'end_hour' => $this->end_hour,
             'end_minute' => $this->end_minute,
-            'restaurant_id' => $this->restaurant_id,
             'begs_in' => $this->begs_in,
             'ends_in' => $this->ends_in,
             'is_cross_date' => $this->is_cross_date,
             'closest_date' => $this->closest_date,
             'timezone' => $this->restaurant?->timezone,
             'timezone_offset' => $this->restaurant?->timezone_offset,
+            'archived' => $this->archived,
         ];
     }
 
@@ -48,7 +49,7 @@ class ScheduleResource extends JsonResource
      *   description="Schedule resource object",
      *   required = {"id", "type", "weekday", "beg_hour", "end_hour", "beg_minute",
      *     "end_minute", "restaurant_id", "begs_in", "ends_in", "is_cross_date",
-     *     "closest_date", "timezone", "timezone_offset"},
+     *     "closest_date", "timezone", "timezone_offset", "archived"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="schedules"),
      *   @OA\Property(property="weekday", type="string", example="monday",
@@ -74,6 +75,7 @@ class ScheduleResource extends JsonResource
      *   @OA\Property(property="timezone", type="string", nullable="true", example="Europe/Kyiv"),
      *   @OA\Property(property="timezone_offset", type="integer", nullable="true", example=3,
      *     description="Minutes offset from UTC, which is already applied to `closest_date`"),
+     *   @OA\Property(property="archived", type="boolean", example=false),
      * )
      */
 }

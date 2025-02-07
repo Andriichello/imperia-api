@@ -8510,6 +8510,98 @@
                 },
                 "type": "object"
             },
+            "ScheduleForUpdateRestaurantRequest": {
+                "description": "Request body for updating restaurant's schedules details",
+                "required": [
+                    "weekday",
+                    "beg_hour",
+                    "end_hour",
+                    "beg_minute",
+                    "end_minute",
+                    "archived"
+                ],
+                "properties": {
+                    "weekday": {
+                        "type": "string",
+                        "enum": [
+                            "monday",
+                            "tuesday",
+                            "wednesday",
+                            "thursday",
+                            "friday",
+                            "saturday",
+                            "sunday"
+                        ],
+                        "example": "monday"
+                    },
+                    "beg_hour": {
+                        "description": "Start hour of the day [0 ; 23].",
+                        "type": "integer",
+                        "example": 9
+                    },
+                    "end_hour": {
+                        "description": "End hour of the day [0 ; 23]. If less then beg_hour it,\n     *   then it meens that it's a cross day schedule",
+                        "type": "integer",
+                        "example": 23
+                    },
+                    "beg_minute": {
+                        "description": "Start minute of the day [0 ; 59].",
+                        "type": "integer",
+                        "example": 0
+                    },
+                    "end_minute": {
+                        "description": "End minute of the day [0 ; 59].",
+                        "type": "integer",
+                        "example": 30
+                    },
+                    "archived": {
+                        "type": "boolean",
+                        "example": false
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateRestaurantRequest": {
+                "description": "Request body for updating restaurant details",
+                "properties": {
+                    "name": {
+                        "description": "The name of the restaurant.",
+                        "type": "string",
+                        "example": "Examplace"
+                    },
+                    "country": {
+                        "description": "The country where the restaurant is located.",
+                        "type": "string",
+                        "example": "Ukraine",
+                        "nullable": true
+                    },
+                    "city": {
+                        "description": "The city where the restaurant is located.",
+                        "type": "string",
+                        "example": "Uzhhorod",
+                        "nullable": true
+                    },
+                    "place": {
+                        "description": "Additional information about the restaurant's location.",
+                        "type": "string",
+                        "example": "Teatralna Square",
+                        "nullable": true
+                    },
+                    "phone": {
+                        "description": "The contact phone number of the restaurant.",
+                        "type": "string",
+                        "example": "+380501234567",
+                        "nullable": true
+                    },
+                    "schedules": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ScheduleForUpdateRestaurantRequest"
+                        }
+                    }
+                },
+                "type": "object"
+            },
             "StoreRestaurantReviewRequest": {
                 "description": "Store restaurant review request",
                 "required": [
@@ -10329,7 +10421,8 @@
                     "is_cross_date",
                     "closest_date",
                     "timezone",
-                    "timezone_offset"
+                    "timezone_offset",
+                    "archived"
                 ],
                 "properties": {
                     "id": {
@@ -10410,6 +10503,10 @@
                         "type": "integer",
                         "example": 3,
                         "nullable": "true"
+                    },
+                    "archived": {
+                        "type": "boolean",
+                        "example": false
                     }
                 },
                 "type": "object"

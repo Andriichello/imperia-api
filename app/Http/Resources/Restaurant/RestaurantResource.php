@@ -44,7 +44,7 @@ class RestaurantResource extends JsonResource
             'popularity' => $this->popularity,
             /* @phpstan-ignore-next-line */
             'media' => new MediaCollection($this->media->load('variants')),
-            'schedules' => new ScheduleCollection($this->whenLoaded('schedules')),
+            'schedules' => new ScheduleCollection($this->schedules),
         ];
     }
 

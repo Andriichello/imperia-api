@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Helpers\ScheduleHelper;
+use App\Models\Interfaces\ArchivableInterface;
+use App\Models\Traits\ArchivableTrait;
 use App\Queries\ScheduleQueryBuilder;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
@@ -15,12 +17,13 @@ use Illuminate\Database\Query\Builder as DatabaseBuilder;
  * Class Schedule.
  *
  * @property int $id
+ * @property int|null $restaurant_id
  * @property string $weekday
  * @property int $beg_hour
  * @property int $beg_minute
  * @property int $end_hour
  * @property int $end_minute
- * @property int|null $restaurant_id
+ * @property bool $archived
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property int|null $begs_in
@@ -33,9 +36,13 @@ use Illuminate\Database\Query\Builder as DatabaseBuilder;
  * @method static ScheduleQueryBuilder query()
  * @method static ScheduleFactory factory(...$parameters)
  */
-class Schedule extends BaseModel
+class Schedule extends BaseModel implements
+    ArchivableInterface
 {
     use HasFactory;
+    use ArchivableTrait {
+        bootArchivableTrait as baseBootArchivableTrait;
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -43,12 +50,13 @@ class Schedule extends BaseModel
      * @var string[]
      */
     protected $fillable = [
+        'restaurant_id',
         'weekday',
         'beg_hour',
         'beg_minute',
         'end_hour',
         'end_minute',
-        'restaurant_id',
+        'archived',
     ];
 
     protected $appends = [
@@ -73,6 +81,7 @@ class Schedule extends BaseModel
      * Accessor for value, which shows if schedule crosses a date.
      *
      * @return bool
+     * @SuppressWarnings(PHPMD)
      */
     public function getIsCrossDateAttribute(): bool
     {
@@ -130,5 +139,15 @@ class Schedule extends BaseModel
     public function newEloquentBuilder($query): ScheduleQueryBuilder
     {
         return new ScheduleQueryBuilder($query);
+    }
+
+    /**
+     * Boot archivable trait.
+     *
+     * @return void
+     */
+    public static function bootArchivableTrait(): void
+    {
+        // do not add ArchivableTrait
     }
 }

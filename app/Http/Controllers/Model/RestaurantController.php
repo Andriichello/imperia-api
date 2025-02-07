@@ -7,6 +7,7 @@ use App\Http\Requests\Restaurant\GetHolidaysRequest;
 use App\Http\Requests\Restaurant\GetSchedulesRequest;
 use App\Http\Requests\Restaurant\IndexRestaurantRequest;
 use App\Http\Requests\Restaurant\ShowRestaurantRequest;
+use App\Http\Requests\Restaurant\UpdateRestaurantRequest;
 use App\Http\Resources\Holiday\HolidayCollection;
 use App\Http\Resources\Restaurant\RestaurantCollection;
 use App\Http\Resources\Restaurant\RestaurantResource;
@@ -48,6 +49,7 @@ class RestaurantController extends CrudController
 
         $this->actions['index'] = IndexRestaurantRequest::class;
         $this->actions['show'] = ShowRestaurantRequest::class;
+        $this->actions['update'] = UpdateRestaurantRequest::class;
     }
 
     /**
@@ -78,6 +80,7 @@ class RestaurantController extends CrudController
         /** @var Restaurant $restaurant */
         $restaurant = $request->targetOrFail(Restaurant::class);
 
+        /** @phpstan-ignore-next-line */
         $query = $restaurant->holidays()
             ->where('date', '>=', $request->date('from'))
             ->limit(25);
