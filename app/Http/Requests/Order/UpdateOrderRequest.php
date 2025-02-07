@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Order;
 
+use App\Enums\OrderKind;
+use App\Enums\OrderState;
 use App\Http\Requests\Crud\UpdateRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Support\Arr;
@@ -23,7 +25,18 @@ class UpdateOrderRequest extends UpdateRequest
             parent::rules(),
             StoreOrderRequest::rulesForRelations(),
             [
-                //
+                'kind' => [
+                    'sometimes',
+                    'nullable',
+                    'string',
+                    OrderKind::getValidationRule(),
+                ],
+                'state' => [
+                    'sometimes',
+                    'nullable',
+                    'string',
+                    OrderState::getValidationRule(),
+                ],
             ]
         );
     }
@@ -69,6 +82,10 @@ class UpdateOrderRequest extends UpdateRequest
      * @OA\Schema(
      *   schema="UpdateOrderRequest",
      *   description="Update order request",
+     *    @OA\Property(property="kind", type="string", nullable=true, example="delivery",
+     *     enum={"delivery", "banquet"}),
+     *   @OA\Property(property="state", type="string", nullable=true, example="new",
+     *     enum={"new", "confirmed", "postponed", "cancelled", "completed"}),
      *   @OA\Property(property="spaces", type="array",
      *     @OA\Items(ref ="#/components/schemas/StoreOrderRequestSpaceField")),
      *   @OA\Property(property="tickets", type="array",

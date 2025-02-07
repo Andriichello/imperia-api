@@ -33,6 +33,7 @@ use Illuminate\Support\Str;
  * @property int|null $creator_id
  * @property int|null $customer_id
  * @property int|null $restaurant_id
+ * @property string|null $kind
  * @property string|null $state
  * @property float|null $paid_amount
  * @property Carbon|null $paid_at
@@ -83,6 +84,7 @@ class Order extends BaseModel implements
         'creator_id',
         'customer_id',
         'restaurant_id',
+        'kind',
         'state',
         'paid_amount',
         'paid_at',

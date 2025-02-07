@@ -8169,6 +8169,27 @@
                         "type": "integer",
                         "example": 1
                     },
+                    "kind": {
+                        "type": "string",
+                        "enum": [
+                            "delivery",
+                            "banquet"
+                        ],
+                        "example": "delivery",
+                        "nullable": true
+                    },
+                    "state": {
+                        "type": "string",
+                        "enum": [
+                            "new",
+                            "confirmed",
+                            "postponed",
+                            "cancelled",
+                            "completed"
+                        ],
+                        "example": "new",
+                        "nullable": true
+                    },
                     "spaces": {
                         "type": "array",
                         "items": {
@@ -8348,6 +8369,27 @@
             "UpdateOrderRequest": {
                 "description": "Update order request",
                 "properties": {
+                    "kind": {
+                        "type": "string",
+                        "enum": [
+                            "delivery",
+                            "banquet"
+                        ],
+                        "example": "delivery",
+                        "nullable": true
+                    },
+                    "state": {
+                        "type": "string",
+                        "enum": [
+                            "new",
+                            "confirmed",
+                            "postponed",
+                            "cancelled",
+                            "completed"
+                        ],
+                        "example": "new",
+                        "nullable": true
+                    },
                     "spaces": {
                         "type": "array",
                         "items": {
@@ -9906,12 +9948,18 @@
                 "description": "Order resource object",
                 "required": [
                     "id",
+                    "banquet_id",
                     "type",
-                    "totals",
-                    "banquet_id"
+                    "kind",
+                    "state",
+                    "totals"
                 ],
                 "properties": {
                     "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "banquet_id": {
                         "type": "integer",
                         "example": 1
                     },
@@ -9919,12 +9967,29 @@
                         "type": "string",
                         "example": "orders"
                     },
+                    "kind": {
+                        "type": "string",
+                        "enum": [
+                            "delivery",
+                            "banquet"
+                        ],
+                        "example": "delivery",
+                        "nullable": true
+                    },
+                    "state": {
+                        "type": "string",
+                        "enum": [
+                            "new",
+                            "confirmed",
+                            "postponed",
+                            "cancelled",
+                            "completed"
+                        ],
+                        "example": "new",
+                        "nullable": true
+                    },
                     "totals": {
                         "$ref": "#/components/schemas/OrderTotals"
-                    },
-                    "banquet_id": {
-                        "type": "integer",
-                        "example": 1
                     },
                     "invoice_url": {
                         "type": "string",

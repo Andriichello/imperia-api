@@ -2,12 +2,13 @@
 
 namespace App\Http\Requests\Order;
 
+use App\Enums\OrderKind;
+use App\Enums\OrderState;
 use App\Http\Requests\Crud\StoreRequest;
 use App\Models\Morphs\Comment;
 use App\Models\Morphs\Discount;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Support\Arr;
-use OpenApi\Annotations as OA;
 
 /**
  * Class StoreOrderRequest.
@@ -135,10 +136,23 @@ class StoreOrderRequest extends StoreRequest
             static::rulesForRelations(),
             [
                 'banquet_id' => [
-                    'required',
+                    'sometimes',
+                    'nullable',
                     'integer',
                     'exists:banquets,id',
                     'unique:orders,banquet_id',
+                ],
+                'kind' => [
+                    'sometimes',
+                    'nullable',
+                    'string',
+                    OrderKind::getValidationRule(),
+                ],
+                'state' => [
+                    'sometimes',
+                    'nullable',
+                    'string',
+                    OrderState::getValidationRule(),
                 ],
             ]
         );
@@ -186,6 +200,10 @@ class StoreOrderRequest extends StoreRequest
      *   description="Store order request",
      *   required={"banquet_id"},
      *   @OA\Property(property="banquet_id", type="integer", example=1),
+     *   @OA\Property(property="kind", type="string", nullable=true, example="delivery",
+     *     enum={"delivery", "banquet"}),
+     *   @OA\Property(property="state", type="string", nullable=true, example="new",
+     *     enum={"new", "confirmed", "postponed", "cancelled", "completed"}),
      *   @OA\Property(property="spaces", type="array",
      *     @OA\Items(ref ="#/components/schemas/StoreOrderRequestSpaceField")),
      *   @OA\Property(property="tickets", type="array",
