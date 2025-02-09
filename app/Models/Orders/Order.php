@@ -33,8 +33,14 @@ use Illuminate\Support\Str;
  * @property int|null $creator_id
  * @property int|null $customer_id
  * @property int|null $restaurant_id
+ * @property string|null $slug
  * @property string|null $kind
  * @property string|null $state
+ * @property string|null $recipient
+ * @property string|null $phone
+ * @property string|null $address
+ * @property Carbon|null $delivery_time
+ * @property Carbon|null $delivery_date
  * @property float|null $paid_amount
  * @property Carbon|null $paid_at
  * @property string|null $metadata
@@ -84,8 +90,14 @@ class Order extends BaseModel implements
         'creator_id',
         'customer_id',
         'restaurant_id',
+        'slug',
         'kind',
         'state',
+        'name',
+        'phone',
+        'address',
+        'delivery_time',
+        'delivery_date',
         'paid_amount',
         'paid_at',
         'metadata',
@@ -133,6 +145,17 @@ class Order extends BaseModel implements
     protected $appends = [
         'type',
         'totals',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'delivery_time' => 'datetime',
+        'delivery_date' => 'datetime',
+        'paid_at' => 'datetime',
     ];
 
     /**

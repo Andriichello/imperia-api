@@ -9,6 +9,7 @@ use App\Models\Morphs\Comment;
 use App\Models\Morphs\Discount;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Support\Arr;
+use Illuminate\Validation\Rule;
 
 /**
  * Class StoreOrderRequest.
@@ -154,6 +155,38 @@ class StoreOrderRequest extends StoreRequest
                     'string',
                     OrderState::getValidationRule(),
                 ],
+                'slug' => [
+                    'sometimes',
+                    'nullable',
+                    'string',
+                    'min:1',
+                    'max:10',
+                    Rule::unique('orders', 'slug')
+                ],
+                'recipient' => [
+                    'sometimes',
+                    'nullable',
+                    'string',
+                    'min:1',
+                    'max:100',
+                ],
+                'address' => [
+                    'sometimes',
+                    'nullable',
+                    'string',
+                    'min:1',
+                    'max:255',
+                ],
+                'delivery_date' => [
+                    'sometimes',
+                    'nullable',
+                    'date',
+                ],
+                'delivery_time' => [
+                    'sometimes',
+                    'nullable',
+                    'date_format:H:i',
+                ]
             ]
         );
     }
@@ -198,12 +231,20 @@ class StoreOrderRequest extends StoreRequest
      * @OA\Schema(
      *   schema="StoreOrderRequest",
      *   description="Store order request",
-     *   required={"banquet_id"},
      *   @OA\Property(property="banquet_id", type="integer", example=1),
+     *   @OA\Property(property="slug", type="string", nullable=true, example="UD21P"),
      *   @OA\Property(property="kind", type="string", nullable=true, example="delivery",
      *     enum={"delivery", "banquet"}),
      *   @OA\Property(property="state", type="string", nullable=true, example="new",
      *     enum={"new", "confirmed", "postponed", "cancelled", "completed"}),
+     *   @OA\Property(property="recipient", type="string", nullable=true, example="Andrii"),
+     *   @OA\Property(property="phone", type="string", nullable=true, example="+380501234567"),
+     *   @OA\Property(property="address", type="string", nullable=true,
+     *     example="Street st. 5"),
+     *   @OA\Property(property="delivery_time", type="string", format="time",
+     *     nullable="true", example="12:00"),
+     *   @OA\Property(property="delivery_date", type="string", format="date",
+     *     nullable="true", example="2022-01-12"),
      *   @OA\Property(property="spaces", type="array",
      *     @OA\Items(ref ="#/components/schemas/StoreOrderRequestSpaceField")),
      *   @OA\Property(property="tickets", type="array",

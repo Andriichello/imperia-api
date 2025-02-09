@@ -139,6 +139,33 @@ class RestaurantController extends CrudController
      *     @OA\JsonContent(ref ="#/components/schemas/UnauthenticatedResponse")
      *   )
      * ),
+     * @OA\Patch(
+     *   path="/api/restaurants/{id}",
+     *   summary="Update restaurant.",
+     *   operationId="updateRestaurant",
+     *   security={{"bearerAuth": {}}},
+     *   tags={"restaurants"},
+     *
+     *  @OA\Parameter(name="include", in="query",
+     *     @OA\Schema(ref ="#/components/schemas/RestaurantIncludes")),
+     *  @OA\Parameter(name="id", required=true, in="path", example=1, @OA\Schema(type="integer"),
+     *     description="Id of the restaurant."),
+     *  @OA\RequestBody(
+     *     required=true,
+     *     description="Update restaurant request object.",
+     *     @OA\JsonContent(ref ="#/components/schemas/UpdateRestaurantRequest")
+     *   ),
+     *   @OA\Response(
+     *     response=200,
+     *     description="Update restaurant response object.",
+     *     @OA\JsonContent(ref ="#/components/schemas/UpdateRestaurantResponse")
+     *   ),
+     *   @OA\Response(
+     *     response=401,
+     *     description="Unauthenticated.",
+     *     @OA\JsonContent(ref ="#/components/schemas/UnauthenticatedResponse")
+     *   )
+     * ),
      * @OA\Get(
      *   path="/api/restaurants/{id}/schedules",
      *   summary="Get restaurant's schedules.",
@@ -203,6 +230,13 @@ class RestaurantController extends CrudController
      * @OA\Schema(
      *   schema="ShowRestaurantResponse",
      *   description="Show restaurant response object.",
+     *   required = {"data", "message"},
+     *   @OA\Property(property="data", ref ="#/components/schemas/Restaurant"),
+     *   @OA\Property(property="message", type="string", example="Success"),
+     * ),
+     * @OA\Schema(
+     *   schema="UpdateRestaurantResponse",
+     *   description="Update restaurant response object.",
      *   required = {"data", "message"},
      *   @OA\Property(property="data", ref ="#/components/schemas/Restaurant"),
      *   @OA\Property(property="message", type="string", example="Success"),

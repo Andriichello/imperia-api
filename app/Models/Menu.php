@@ -93,7 +93,6 @@ class Menu extends BaseModel implements
      */
     protected $appends = [
         'type',
-        'categories',
     ];
 
     /**

@@ -79,7 +79,7 @@ class UpdateMediaRequest extends UpdateRequest
         $validator->sometimes(
             'name',
             [
-                Rule::unique(Media::class)
+                Rule::unique(Media::class, 'name')
                     ->where('folder', $this->get('folder', $media->folder))
                     ->where('disk', $this->get('disk', $media->disk))
                     ->where('name', $this->get('name', $media->name))

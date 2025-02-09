@@ -27,7 +27,7 @@ class UpdateRestaurantRequest extends UpdateRequest
                     'string',
                     'min:2',
                     'max:255',
-                    Rule::unique('restaurants')
+                    Rule::unique('restaurants', 'name')
                         ->ignore($this->id()),
                 ],
                 'country' => [
@@ -103,6 +103,16 @@ class UpdateRestaurantRequest extends UpdateRequest
                 ],
             ]
         );
+    }
+
+    /**
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
+    public function authorize(): bool
+    {
+        return $this->isByAdmin();
     }
 
     /**

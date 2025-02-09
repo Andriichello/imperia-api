@@ -5,7 +5,7 @@ return [
     'documentations' => [
         'default' => [
             'api' => [
-                'title' => 'imperia-api',
+                'title' => 'Imperia API',
             ],
 
             'routes' => [
@@ -39,7 +39,8 @@ return [
                  * Absolute paths to directory containing the swagger annotations are stored.
                 */
                 'annotations' => [
-                    base_path('app'),
+                    base_path('app/Http'),
+                    base_path('app/Models'),
                 ],
 
             ],
@@ -48,10 +49,15 @@ return [
     'defaults' => [
         'ui' => [
             'display' => [
-                'doc_expansion' => 'list',
-            ],
+                /**
+                 * Controls the default expansion setting for the operations and tags. It can be :
+                 * 'list' (expands only the tags),
+                 * 'full' (expands the tags and operations),
+                 * 'none' (expands nothing).
+                 */
+                'doc_expansion' => 'none',
+            ]
         ],
-
         'routes' => [
             /*
              * Route for accessing parsed swagger annotations.
@@ -101,7 +107,7 @@ return [
             'swagger_ui_assets_path' => env('L5_SWAGGER_UI_ASSETS_PATH', 'vendor/swagger-api/swagger-ui/dist/'),
 
             /*
-             * Absolute path to directories that should be exclude from scanning
+             * Absolute path to directories that should be excluded from scanning
              * @deprecated Please use `scanOptions.exclude`
              * `scanOptions.exclude` overwrites this
             */
@@ -114,7 +120,7 @@ return [
              *
              * @see \OpenApi\scan
              */
-            'analyser' => null,
+            'analyser' => new \OpenApi\Analysers\TokenAnalyser(),
 
             /**
              * analysis: defaults to a new \OpenApi\Analysis .
@@ -141,7 +147,7 @@ return [
             'pattern' => null,
 
             /*
-             * Absolute path to directories that should be exclude from scanning
+             * Absolute path to directories that should be excluded from scanning
              * @note This option overwrites `paths.excludes`
              * @see \OpenApi\scan
             */
@@ -168,8 +174,8 @@ return [
                     // The type of the security scheme. Valid values are "basic", "apiKey" or "oauth2".
                     'type' => 'oauth2',
                     'description' => 'A short description for oauth2 security scheme.',
-                    // The flow used by the OAuth2 security scheme.
-                    // Valid values are "implicit", "password", "application" or "accessCode".
+                    // The flow used by the OAuth2 security scheme. Valid values are
+                    // "implicit", "password", "application" or "accessCode".
                     'flow' => 'implicit',
                     // The authorization URL to be used for (implicit/accessCode)
                     'authorizationUrl' => 'http://example.com/auth',
@@ -204,16 +210,16 @@ return [
                 /*
                  * Examples of Securities
                 */
-                [
-                    /*
-                    'oauth2_security_example' => [
-                        'read',
-                        'write'
-                    ],
-
-                    'passport' => []
-                    */
+                // [
+                /*
+                'oauth2_security_example' => [
+                    'read',
+                    'write'
                 ],
+
+                'passport' => []
+                */
+                // ],
             ],
         ],
 

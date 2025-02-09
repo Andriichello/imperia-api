@@ -1814,6 +1814,9 @@
                             "schema": {
                                 "allOf": [
                                     {
+                                        "$ref": "#/components/schemas/StoreMediaRequest"
+                                    },
+                                    {
                                         "properties": {
                                             "file": {
                                                 "description": "File",
@@ -1822,9 +1825,6 @@
                                             }
                                         },
                                         "type": "object"
-                                    },
-                                    {
-                                        "$ref": "#/components/schemas/StoreMediaRequest"
                                     }
                                 ]
                             }
@@ -3662,6 +3662,70 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ShowRestaurantResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "restaurants"
+                ],
+                "summary": "Update restaurant.",
+                "operationId": "updateRestaurant",
+                "parameters": [
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/RestaurantIncludes"
+                        }
+                    },
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the restaurant.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "description": "Update restaurant request object.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateRestaurantRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update restaurant response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UpdateRestaurantResponse"
                                 }
                             }
                         }
@@ -6678,6 +6742,23 @@
                 },
                 "type": "object"
             },
+            "UpdateRestaurantResponse": {
+                "description": "Update restaurant response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Restaurant"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
             "GetSchedulesResponse": {
                 "description": "Get restaurant's schedules response object.",
                 "required": [
@@ -7347,11 +7428,13 @@
                         "nullable": "true"
                     },
                     "advance_amount": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 535.25
                     },
                     "actual_total": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 692.25,
                         "nullable": "true"
                     },
@@ -7380,7 +7463,8 @@
                         "nullable": "true"
                     },
                     "child_ticket_price": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 25.5,
                         "nullable": "true"
                     },
@@ -7404,7 +7488,8 @@
                         "nullable": "true"
                     },
                     "adult_ticket_price": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 35.5,
                         "nullable": "true"
                     },
@@ -7474,11 +7559,13 @@
                         "nullable": "true"
                     },
                     "advance_amount": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 535.25
                     },
                     "actual_total": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 692.25,
                         "nullable": "true"
                     },
@@ -7507,7 +7594,8 @@
                         "nullable": "true"
                     },
                     "child_ticket_price": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 25.5,
                         "nullable": "true"
                     },
@@ -7531,7 +7619,8 @@
                         "nullable": "true"
                     },
                     "adult_ticket_price": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 35.5,
                         "nullable": "true"
                     },
@@ -8161,13 +8250,15 @@
             },
             "StoreOrderRequest": {
                 "description": "Store order request",
-                "required": [
-                    "banquet_id"
-                ],
                 "properties": {
                     "banquet_id": {
                         "type": "integer",
                         "example": 1
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "UD21P",
+                        "nullable": true
                     },
                     "kind": {
                         "type": "string",
@@ -8189,6 +8280,33 @@
                         ],
                         "example": "new",
                         "nullable": true
+                    },
+                    "recipient": {
+                        "type": "string",
+                        "example": "Andrii",
+                        "nullable": true
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "+380501234567",
+                        "nullable": true
+                    },
+                    "address": {
+                        "type": "string",
+                        "example": "Street st. 5",
+                        "nullable": true
+                    },
+                    "delivery_time": {
+                        "type": "string",
+                        "format": "time",
+                        "example": "12:00",
+                        "nullable": "true"
+                    },
+                    "delivery_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2022-01-12",
+                        "nullable": "true"
                     },
                     "spaces": {
                         "type": "array",
@@ -8369,6 +8487,11 @@
             "UpdateOrderRequest": {
                 "description": "Update order request",
                 "properties": {
+                    "slug": {
+                        "type": "string",
+                        "example": "UD21P",
+                        "nullable": true
+                    },
                     "kind": {
                         "type": "string",
                         "enum": [
@@ -8389,6 +8512,33 @@
                         ],
                         "example": "new",
                         "nullable": true
+                    },
+                    "recipient": {
+                        "type": "string",
+                        "example": "Andrii",
+                        "nullable": true
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "+380501234567",
+                        "nullable": true
+                    },
+                    "address": {
+                        "type": "string",
+                        "example": "Street st. 5",
+                        "nullable": true
+                    },
+                    "delivery_time": {
+                        "type": "string",
+                        "format": "time",
+                        "example": "12:00",
+                        "nullable": "true"
+                    },
+                    "delivery_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2022-01-12",
+                        "nullable": "true"
                     },
                     "spaces": {
                         "type": "array",
@@ -8969,7 +9119,8 @@
                         "nullable": "true"
                     },
                     "actual_total": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 2502.55,
                         "nullable": "true"
                     },
@@ -8989,7 +9140,8 @@
                         "nullable": "true"
                     },
                     "child_ticket_price": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 25.5,
                         "nullable": "true"
                     },
@@ -9013,7 +9165,8 @@
                         "nullable": "true"
                     },
                     "adult_ticket_price": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 35.5,
                         "nullable": "true"
                     },
@@ -9254,12 +9407,14 @@
                         "nullable": "true"
                     },
                     "amount": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 125.55,
                         "nullable": "true"
                     },
                     "percent": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 25.5,
                         "nullable": "true"
                     }
@@ -9365,19 +9520,23 @@
                         "nullable": "true"
                     },
                     "total": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 125.55
                     },
                     "discounts_amount": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 25.55
                     },
                     "discounts_percent": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 12.5
                     },
                     "discounted_total": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 100
                     },
                     "comments": {
@@ -9435,19 +9594,23 @@
                         "example": 90
                     },
                     "total": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 125.55
                     },
                     "discounts_amount": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 25.55
                     },
                     "discounts_percent": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 12.5
                     },
                     "discounted_total": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 100
                     },
                     "comments": {
@@ -9507,23 +9670,27 @@
                         "example": "2022-01-12 23:00:00"
                     },
                     "duration": {
-                        "type": "int",
+                        "type": "integer",
                         "example": 60
                     },
                     "total": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 159.99
                     },
                     "discounts_amount": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 25.55
                     },
                     "discounts_percent": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 12.5
                     },
                     "discounted_total": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 100
                     },
                     "comments": {
@@ -9575,7 +9742,7 @@
                         "example": "2022-01-12 23:00:00"
                     },
                     "duration": {
-                        "type": "int",
+                        "type": "integer",
                         "example": "720"
                     }
                 },
@@ -9616,19 +9783,23 @@
                         "example": 5
                     },
                     "total": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 125
                     },
                     "discounts_amount": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 25.55
                     },
                     "discounts_percent": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 12.5
                     },
                     "discounted_total": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 100
                     },
                     "comments": {
@@ -9922,23 +10093,28 @@
                 ],
                 "properties": {
                     "all": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 40.04
                     },
                     "spaces": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 10.01
                     },
                     "tickets": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 10.01
                     },
                     "services": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 10.01
                     },
                     "products": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 10.01
                     }
                 },
@@ -9950,8 +10126,14 @@
                     "id",
                     "banquet_id",
                     "type",
+                    "slug",
                     "kind",
                     "state",
+                    "recipient",
+                    "phone",
+                    "address",
+                    "delivery_time",
+                    "delivery_date",
                     "totals"
                 ],
                 "properties": {
@@ -9962,6 +10144,11 @@
                     "banquet_id": {
                         "type": "integer",
                         "example": 1
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "UD21P",
+                        "nullable": true
                     },
                     "type": {
                         "type": "string",
@@ -9987,6 +10174,33 @@
                         ],
                         "example": "new",
                         "nullable": true
+                    },
+                    "recipient": {
+                        "type": "string",
+                        "example": "Andrii",
+                        "nullable": true
+                    },
+                    "phone": {
+                        "type": "string",
+                        "example": "+380501234567",
+                        "nullable": true
+                    },
+                    "address": {
+                        "type": "string",
+                        "example": "Street st. 5",
+                        "nullable": true
+                    },
+                    "delivery_time": {
+                        "type": "string",
+                        "format": "time",
+                        "example": "12:00",
+                        "nullable": "true"
+                    },
+                    "delivery_date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2022-01-12",
+                        "nullable": "true"
                     },
                     "totals": {
                         "$ref": "#/components/schemas/OrderTotals"
@@ -10071,11 +10285,13 @@
                         "nullable": "true"
                     },
                     "price": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 15.99
                     },
                     "weight": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 120,
                         "nullable": "true"
                     },
@@ -10181,11 +10397,13 @@
                         "example": "product-variants"
                     },
                     "price": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 15.99
                     },
                     "weight": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 120
                     },
                     "weight_unit": {
@@ -10609,11 +10827,13 @@
                         "nullable": "true"
                     },
                     "once_paid_price": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 350
                     },
                     "hourly_paid_price": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 200
                     },
                     "archived": {
@@ -10688,7 +10908,8 @@
                         "example": 1
                     },
                     "price": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 15.99
                     },
                     "archived": {
@@ -10787,7 +11008,8 @@
                         "example": "Some text..."
                     },
                     "price": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 19.6
                     },
                     "archived": {
@@ -10846,11 +11068,13 @@
                         "example": "tips"
                     },
                     "amount": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "example": 25
                     },
                     "commission": {
-                        "type": "float",
+                        "type": "number",
+                        "format": "float",
                         "nullable": "true"
                     },
                     "about": {
@@ -10976,7 +11200,90 @@
             }
         }
     },
-    "security": [
-        []
+    "tags": [
+        {
+            "name": "auth",
+            "description": "auth"
+        },
+        {
+            "name": "banquets",
+            "description": "banquets"
+        },
+        {
+            "name": "categories",
+            "description": "categories"
+        },
+        {
+            "name": "comments",
+            "description": "comments"
+        },
+        {
+            "name": "customers",
+            "description": "customers"
+        },
+        {
+            "name": "discounts",
+            "description": "discounts"
+        },
+        {
+            "name": "family-members",
+            "description": "family-members"
+        },
+        {
+            "name": "media",
+            "description": "media"
+        },
+        {
+            "name": "menus",
+            "description": "menus"
+        },
+        {
+            "name": "notifications",
+            "description": "notifications"
+        },
+        {
+            "name": "orders",
+            "description": "orders"
+        },
+        {
+            "name": "products",
+            "description": "products"
+        },
+        {
+            "name": "restaurants",
+            "description": "restaurants"
+        },
+        {
+            "name": "restaurant-reviews",
+            "description": "restaurant-reviews"
+        },
+        {
+            "name": "services",
+            "description": "services"
+        },
+        {
+            "name": "spaces",
+            "description": "spaces"
+        },
+        {
+            "name": "tags",
+            "description": "tags"
+        },
+        {
+            "name": "tickets",
+            "description": "tickets"
+        },
+        {
+            "name": "users",
+            "description": "users"
+        },
+        {
+            "name": "waiters",
+            "description": "waiters"
+        },
+        {
+            "name": "invoices",
+            "description": "invoices"
+        }
     ]
 }

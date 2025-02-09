@@ -19,7 +19,7 @@ class BaseRequest extends FormRequest
      *
      * @var string
      */
-    protected string $message = 'You are not authorized to perform this request.';
+    protected string $message = 'You are not authorized to perform this request';
 
     /**
      * Handle a failed authorization attempt.

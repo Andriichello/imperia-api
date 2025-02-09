@@ -7,7 +7,7 @@ use App\Enums\OrderState;
 use App\Http\Requests\Crud\UpdateRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Support\Arr;
-use OpenApi\Annotations as OA;
+use Illuminate\Validation\Rule;
 
 /**
  * Class UpdateOrderRequest.
@@ -36,6 +36,38 @@ class UpdateOrderRequest extends UpdateRequest
                     'nullable',
                     'string',
                     OrderState::getValidationRule(),
+                ],
+                'slug' => [
+                    'sometimes',
+                    'nullable',
+                    'string',
+                    'min:1',
+                    'max:10',
+                    Rule::unique('orders', 'slug')
+                ],
+                'recipient' => [
+                    'sometimes',
+                    'nullable',
+                    'string',
+                    'min:1',
+                    'max:100',
+                ],
+                'address' => [
+                    'sometimes',
+                    'nullable',
+                    'string',
+                    'min:1',
+                    'max:255',
+                ],
+                'delivery_date' => [
+                    'sometimes',
+                    'nullable',
+                    'date',
+                ],
+                'delivery_time' => [
+                    'sometimes',
+                    'nullable',
+                    'date_format:H:i',
                 ],
             ]
         );
@@ -82,10 +114,19 @@ class UpdateOrderRequest extends UpdateRequest
      * @OA\Schema(
      *   schema="UpdateOrderRequest",
      *   description="Update order request",
-     *    @OA\Property(property="kind", type="string", nullable=true, example="delivery",
+     *   @OA\Property(property="slug", type="string", nullable=true, example="UD21P"),
+     *   @OA\Property(property="kind", type="string", nullable=true, example="delivery",
      *     enum={"delivery", "banquet"}),
      *   @OA\Property(property="state", type="string", nullable=true, example="new",
      *     enum={"new", "confirmed", "postponed", "cancelled", "completed"}),
+     *   @OA\Property(property="recipient", type="string", nullable=true, example="Andrii"),
+     *   @OA\Property(property="phone", type="string", nullable=true, example="+380501234567"),
+     *   @OA\Property(property="address", type="string", nullable=true,
+     *     example="Street st. 5"),
+     *   @OA\Property(property="delivery_time", type="string", format="time",
+     *     nullable="true", example="12:00"),
+     *   @OA\Property(property="delivery_date", type="string", format="date",
+     *     nullable="true", example="2022-01-12"),
      *   @OA\Property(property="spaces", type="array",
      *     @OA\Items(ref ="#/components/schemas/StoreOrderRequestSpaceField")),
      *   @OA\Property(property="tickets", type="array",
