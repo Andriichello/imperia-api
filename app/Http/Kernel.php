@@ -72,6 +72,9 @@ class Kernel extends HttpKernel
             VerifyCsrfToken::class,
             SubstituteBindings::class,
             LanguageSwitch::class,
+        ],
+
+        'inertia' => [
             HandleInertiaRequests::class,
         ],
 

@@ -40,6 +40,12 @@ class RouteServiceProvider extends ServiceProvider
             Route::middleware('web')
                 ->namespace($this->namespace)
                 ->group(base_path('routes/web.php'));
+
+            Route::middleware(['web', 'inertia'])
+                ->namespace($this->namespace)
+                ->prefix('inertia')
+                ->name('inertia.')
+                ->group(base_path('routes/inertia.php'));
         });
     }
 
