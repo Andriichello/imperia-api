@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8ed9afbcd9d91d1071101e22a13667d5",
+    "content-hash": "2a183e88019efecb07930e0959cf174f",
     "packages": [
         {
             "name": "andriichello/columns-card",

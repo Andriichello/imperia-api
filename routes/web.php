@@ -3,6 +3,7 @@
 use App\Http\Controllers\Nova\LoginController;
 use App\Http\Controllers\Nova\RegisterController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 use Laravel\Nova\Http\Middleware\RedirectIfAuthenticated;
 use Laravel\Nova\Nova;
 
@@ -31,4 +32,12 @@ Route::domain(config('nova.domain', null))
 
         Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
         Route::post('register', [RegisterController::class, 'register']);
+    });
+
+/** Routes for Inertia.js */
+Route::prefix('inertia')
+    ->group(function () {
+        Route::get('/', function () {
+            return Inertia::render('Welcome');
+        });
     });

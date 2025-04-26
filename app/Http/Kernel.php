@@ -7,6 +7,7 @@ use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\ForceJsonOnApi;
 use App\Http\Middleware\HandleCached;
+use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\HttpsProtocol;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\RedirectIfAuthenticated;
@@ -71,6 +72,7 @@ class Kernel extends HttpKernel
             VerifyCsrfToken::class,
             SubstituteBindings::class,
             LanguageSwitch::class,
+            HandleInertiaRequests::class,
         ],
 
         'api' => [
