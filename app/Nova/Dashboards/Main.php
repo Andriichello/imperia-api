@@ -2,8 +2,6 @@
 
 namespace App\Nova\Dashboards;
 
-use Andriichello\ColumnsCard\ColumnsCard;
-use Andriichello\Metrics\MetricsCard;
 use Laravel\Nova\Cards\Help;
 use Laravel\Nova\Dashboards\Main as Dashboard;
 

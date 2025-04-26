@@ -13,6 +13,7 @@ use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Middleware\TrimStrings;
 use App\Http\Middleware\VerifyCsrfToken;
+use App\Http\Middleware\WithoutDataWrapping;
 use Badinansoft\LanguageSwitch\Http\Middleware\LanguageSwitch;
 use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
 use Illuminate\Auth\Middleware\Authorize;
@@ -75,6 +76,7 @@ class Kernel extends HttpKernel
         ],
 
         'inertia' => [
+            WithoutDataWrapping::class,
             HandleInertiaRequests::class,
         ],
 

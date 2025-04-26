@@ -13,9 +13,9 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "allowJs": true,
-    "baseUrl": "./resources/js",
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./*"],
+      "@/*": ["resources/js/*"],
     }
   }
 }
