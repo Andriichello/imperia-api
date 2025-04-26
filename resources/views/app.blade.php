@@ -11,7 +11,7 @@
 
     @inertiaHead
   </head>
-  <body>
+  <body data-theme="light">
     @inertia
   </body>
 </html>

@@ -1,9 +1,11 @@
 @import "tailwindcss";
-@source "../views";
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@plugin "daisyui";
+@source "../views";
 
 body {
   margin: 0;
