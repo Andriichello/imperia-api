@@ -43,12 +43,12 @@ class WaiterResource extends JsonResource
      *   description="Waiter resource object",
      *   required = {"id", "restaurant_id", "type", "uuid", "name", "surname", "about"},
      *   @OA\Property(property="id", type="integer", example=1),
-     *   @OA\Property(property="restaurant_id", type="integer", nullable="true", example=1),
+     *   @OA\Property(property="restaurant_id", type="integer", nullable=true, example=1),
      *   @OA\Property(property="type", type="string", example="waiters"),
-     *   @OA\Property(property="uuid", type="string", nullable="true"),
+     *   @OA\Property(property="uuid", type="string", nullable=true),
      *   @OA\Property(property="name", type="string", example="John"),
      *   @OA\Property(property="surname", type="string", example="Doe"),
-     *   @OA\Property(property="about", type="string", nullable="true"),
+     *   @OA\Property(property="about", type="string", nullable=true),
      *   @OA\Property(property="restaurant", ref ="#/components/schemas/Restaurant"),
      * )
      */

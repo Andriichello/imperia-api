@@ -16,6 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["resources/js/*"],
+      "@api/*": ["resources/js/api/*"],
     }
   }
 }

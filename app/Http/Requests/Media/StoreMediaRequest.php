@@ -102,13 +102,13 @@ class StoreMediaRequest extends StoreRequest
      *    @OA\Schema(@OA\Property(property="file", type="string", format="binary"))),
      *   @OA\Property(property="file", type="string", format="binary"),
      *   @OA\Property(property="name", type="string", example="drinks.svg"),
-     *   @OA\Property(property="title", type="string", nullable="true", example="Drinks"),
-     *   @OA\Property(property="description", type="string", nullable="true"),
+     *   @OA\Property(property="title", type="string", nullable=true, example="Drinks"),
+     *   @OA\Property(property="description", type="string", nullable=true),
      *   @OA\Property(property="disk", type="string", example="public",
      *      enum={"public", "uploads"}),
      *   @OA\Property(property="folder", type="string", example="/media/",
      *     description="Must start and end with the `/`."),
-     *   @OA\Property(property="metadata", nullable="true",
+     *   @OA\Property(property="metadata", nullable=true,
      *      ref ="#/components/schemas/MediaMetadata"),
      *  )
      */

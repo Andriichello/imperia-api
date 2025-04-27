@@ -148,7 +148,7 @@ class UpdateCustomerRequest extends UpdateRequest
      * @OA\Schema(
      *   schema="UpdateCustomerRequest",
      *   description="Update customer request",
-     *   @OA\Property(property="restaurant_id", type="integer", nullable="true", example=1),
+     *   @OA\Property(property="restaurant_id", type="integer", nullable=true, example=1),
      *   @OA\Property(property="name", type="string", example="John"),
      *   @OA\Property(property="surname", type="string", example="Forrester"),
      *   @OA\Property(property="email", type="string", example="ben.forrester@email.com"),

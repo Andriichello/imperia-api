@@ -1,11 +1,12 @@
 <script setup lang="ts">
-  import {computed, ref} from "vue";
+import {computed, PropType, ref} from "vue";
   import {Splide, SplideSlide} from '@splidejs/vue-splide';
   import {ChevronRight, ChevronDown, CalendarClock, DoorOpen, Lock, MapPin, Phone, Circle} from 'lucide-vue-next';
+  import {Restaurant, Menu} from "@/api";
 
   const props = defineProps({
-    restaurant: Object,
-    menus: Object,
+    restaurant: Object as PropType<Restaurant>,
+    menus: Array as PropType<Menu[]>,
   });
 
   console.log(props.restaurant);
@@ -16,8 +17,8 @@
     perMove: 1,
     rewind: false,
     rewindByDrag: false,
-    drag: Number(props.restaurant?.media?.length) > 1,
-    arrows: Number(props.restaurant?.media?.length) > 1,
+    drag: Number(props.restaurant!.media?.length) > 1,
+    arrows: Number(props.restaurant!.media?.length) > 1,
     pagination: true,
   });
 
@@ -30,8 +31,8 @@
   <div class="w-full h-full min-h-screen max-w-screen flex flex-col justify-start items-center ">
     <div class="w-full max-w-md flex flex-col justify-start items-center relative">
       <Splide class="w-full h-75" :options="slideOptions"
-              v-if="restaurant?.media?.length > 0">
-        <SplideSlide v-for="(media, index) in restaurant?.media ?? []" :key="media.id">
+              v-if="restaurant!.media?.length > 0">
+        <SplideSlide v-for="(media, index) in restaurant!.media ?? []" :key="media.id">
           <img class="w-full h-75 object-cover object-center"
                :src="media.url" :alt="`Slide ${index}`"
                :loading="index === 0 ? 'eager' : 'lazy'"/>
@@ -40,7 +41,7 @@
 
       <div class="w-full pt-3 pb-1 px-3 text-center bg-base-100">
         <h3 class="text-3xl font-bold">
-          {{ restaurant.name }}
+          {{ restaurant!.name }}
         </h3>
 
         <p class="text-md -translate-y-0.5 opacity-70">
@@ -49,9 +50,9 @@
       </div>
 
       <div class="w-full pt-1 pb-3 px-3 bg-base-100"
-           v-if="restaurant.notes?.length > 0">
+           v-if="restaurant!.notes!?.length > 0">
         <ul>
-          <template v-for="(note, index) in restaurant.notes" :key="index">
+          <template v-for="(note, index) in restaurant!.notes" :key="index">
             <li class="w-full flex justify-center items-start px-2 gap-3">
 
               <Circle class="w-2 h-6"/>
@@ -66,7 +67,7 @@
 
       <div class="w-full flex flex-col grow pt-2 pb-3 px-3 gap-2">
         <div class="w-full flex flex-col grow gap-2">
-          <template v-if="menus?.length > 0">
+          <template v-if="menus!?.length > 0">
             <div class="w-full flex items-center justify-center px-3 py-3 bg-base-100/60 border-2 border-base-300 rounded"
                  v-for="menu in menus" :key="menu.id">
               <div class="w-full flex flex-col">
@@ -144,7 +145,7 @@
           </div>
 
           <div class="w-full flex justify-start items-start gap-3"
-               v-if="restaurant?.phone?.length">
+               v-if="restaurant!.phone?.length">
             <div class="w-12 min-w-12 h-12 flex justify-center items-center bg-base-300/80 rounded">
               <Phone class="w-6 h-6"/>
             </div>
@@ -154,13 +155,13 @@
                 Phone:
               </h3>
               <p class="text-md text-base-content/90 font-semibold">
-                {{ restaurant.phone }}
+                {{ restaurant!.phone }}
               </p>
             </div>
           </div>
 
           <div class="w-full flex justify-start items-start gap-3"
-               v-if="restaurant?.full_address?.length">
+               v-if="restaurant!.full_address?.length">
             <div class="w-12 min-w-12 h-12 flex justify-center items-center bg-base-300/80 rounded">
               <MapPin class="w-6 h-6"/>
             </div>
@@ -170,7 +171,7 @@
                 Location:
               </h3>
               <p class="text-md text-base-content/90 font-semibold">
-                {{ restaurant.full_address }}
+                {{ restaurant!.full_address }}
               </p>
             </div>
           </div>

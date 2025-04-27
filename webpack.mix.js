@@ -14,7 +14,8 @@ mix.ts('resources/js/app.ts', 'public/js')
   .webpackConfig({
     resolve: {
       alias: {
-        '@': path.resolve('resources/js'),
+        '@': path.resolve(__dirname, 'resources/js'),
+        "@api": path.resolve(__dirname, "resources/js/api"),
       },
     },
     output: {

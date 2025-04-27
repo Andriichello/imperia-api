@@ -40,9 +40,9 @@ class TagResource extends JsonResource
      *   required = {"id", "type", "target", "title", "description"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="categories"),
-     *   @OA\Property(property="target", type="string", example="products", nullable="true"),
+     *   @OA\Property(property="target", type="string", example="products", nullable=true),
      *   @OA\Property(property="title", type="string", example="Pizza"),
-     *   @OA\Property(property="description", example="Some text...", nullable="true"),
+     *   @OA\Property(property="description", example="Some text...", nullable=true),
      * )
      */
 }

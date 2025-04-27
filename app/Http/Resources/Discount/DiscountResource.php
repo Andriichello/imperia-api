@@ -42,11 +42,11 @@ class DiscountResource extends JsonResource
      *   required = {"id", "type", "target", "title", "description", "amount", "percent"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="discounts"),
-     *   @OA\Property(property="target", type="string", example="orders", nullable="true"),
+     *   @OA\Property(property="target", type="string", example="orders", nullable=true),
      *   @OA\Property(property="title", type="string", example="Discount title."),
-     *   @OA\Property(property="description", type="string", example="Discount description...", nullable="true"),
-     *   @OA\Property(property="amount", type="float", example=125.55, nullable="true"),
-     *   @OA\Property(property="percent", type="float", example=25.5, nullable="true"),
+     *   @OA\Property(property="description", type="string", example="Discount description...", nullable=true),
+     *   @OA\Property(property="amount", type="float", example=125.55, nullable=true),
+     *   @OA\Property(property="percent", type="float", example=25.5, nullable=true),
      * )
      */
 }
