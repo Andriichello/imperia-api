@@ -1,16 +1,15 @@
 <script setup lang="ts">
-import {computed, PropType, ref} from "vue";
+import {computed, PropType, ref, shallowReactive} from "vue";
   import {Splide, SplideSlide} from '@splidejs/vue-splide';
-  import {ChevronRight, ChevronDown, CalendarClock, DoorOpen, Lock, MapPin, Phone, Circle} from 'lucide-vue-next';
-  import {Restaurant, Menu} from "@/api";
+  import {CalendarClock, ChevronUp, ChevronDown, ChevronRight, Circle, DoorOpen, Lock, MapPin, Phone} from 'lucide-vue-next';
+  import {Menu, Restaurant} from "@/api";
+  import Schedule from "@/Components/Restaurant/Schedule.vue";
+  import {getScheduleInfo, ScheduleInfo, time} from "@/helpers";
 
   const props = defineProps({
     restaurant: Object as PropType<Restaurant>,
     menus: Array as PropType<Menu[]>,
   });
-
-  console.log(props.restaurant);
-  console.log(props.menus);
 
   const slideOptions = ref({
     perPage: 1,
@@ -22,9 +21,11 @@ import {computed, PropType, ref} from "vue";
     pagination: true,
   });
 
-  const isOpen = computed(() => {
-    return true;
-  });
+  const scheduleInfo = computed<ScheduleInfo>(
+    () => getScheduleInfo(props.restaurant!)
+  );
+
+  const scheduleExpanded = ref(false);
 </script>
 
 <template>
@@ -68,7 +69,7 @@ import {computed, PropType, ref} from "vue";
       <div class="w-full flex flex-col grow pt-2 pb-3 px-3 gap-2">
         <div class="w-full flex flex-col grow gap-2">
           <template v-if="menus!?.length > 0">
-            <div class="w-full flex items-center justify-center px-3 py-3 bg-base-100/60 border-2 border-base-300 rounded"
+            <div class="w-full flex items-center justify-center px-3 py-3 bg-base-200/40 border-2 border-base-300 rounded"
                  v-for="menu in menus" :key="menu.id">
               <div class="w-full flex flex-col">
                 <h3 class="text-2xl font-bold">
@@ -93,58 +94,49 @@ import {computed, PropType, ref} from "vue";
         </div>
       </div>
 
-      <div class="w-full flex flex-col grow py-3 px-3 gap-1">
+      <div class="w-full flex flex-col grow mt-3 pb-3 gap-1 bg-base-200/80">
         <div class="w-full flex flex-col gap-3">
-          <div class="w-full flex justify-start items-center gap-3" v-if="isOpen">
-            <div class="w-12 min-w-12 h-12 flex justify-center items-center bg-base-300/80 rounded">
-              <DoorOpen class="w-6.5 h-6.5"/>
+          <div class="w-full flex flex-col gap-1">
+            <div class="w-full h-[2px] bg-base-300"/>
+
+            <div class="w-full flex flex-col justify-start items-start py-2 px-3">
+              <div class="w-full flex justify-start items-start gap-3 cursor-pointer"
+                   @click="scheduleExpanded = !scheduleExpanded">
+                <div class="w-12 min-w-12 h-12 flex justify-center items-center bg-base-300/80 rounded">
+                  <CalendarClock class="w-6 h-6"/>
+                </div>
+
+                <div class="flex grow flex-col justify-center items-start">
+                  <h3 class="text-sm font-semibold text-base-content/50 translate-y-0.5">
+                    Working hours:
+                  </h3>
+                  <p class="text-md text-base-content/90 font-semibold">
+                    {{ time(scheduleInfo.relevant.beg_hour, scheduleInfo.relevant.beg_minute) }} -
+                    {{ time(scheduleInfo.relevant.end_hour, scheduleInfo.relevant.end_minute) }}
+                  </p>
+                </div>
+
+                <div class="w-12 min-w-12 h-12 flex justify-center items-center">
+                  <ChevronUp class="w-6 h-6" v-if="scheduleExpanded"/>
+                  <ChevronDown class="w-6 h-6" v-else/>
+                </div>
+              </div>
+
+              <p class="w-full font-mono text-md cursor-pointer pl-15"
+                 :class="{'text-green-600': scheduleInfo.status === 'Open', 'text-red-600': scheduleInfo.status === 'Closed'}"
+                 @click="scheduleExpanded = !scheduleExpanded">
+                <span class="font-semibold">{{ scheduleInfo.status === 'Open' ? 'Open' : 'Closed' }}:</span> {{ scheduleInfo.timeBeforeOrUntil }} {{ scheduleInfo.status === 'Open' ? 'until closing' : 'until opening' }}
+              </p>
+
+              <Schedule class="w-full"
+                        v-if="scheduleExpanded"
+                        :info="scheduleInfo"/>
             </div>
 
-            <div class="w-full flex flex-col justify-center items-start translate-y-0.5">
-              <h3 class="text-lg font-bold translate-y-0.5">
-                Open
-              </h3>
-              <p class="text-md -translate-y-1">
-                7h 49m until closing
-              </p>
-            </div>
+            <div class="w-full h-[2px] bg-base-300"/>
           </div>
 
-          <div class="w-full flex justify-start items-center gap-3" v-else>
-            <div class="w-12 min-w-12 h-12 flex justify-center items-center bg-base-300/80 rounded">
-              <Lock class="w-7.5 h-7.5"/>
-            </div>
-
-            <div class="w-full flex flex-col justify-center items-start">
-              <h3 class="text-lg font-bold translate-y-0.5">
-                Closed
-              </h3>
-              <p class="text-md -translate-y-0.5">
-                12h 15m until opening
-              </p>
-            </div>
-          </div>
-
-          <div class="w-full flex justify-start items-start gap-3">
-            <div class="w-12 min-w-12 h-12 flex justify-center items-center bg-base-300/80 rounded">
-              <CalendarClock class="w-6 h-6"/>
-            </div>
-
-            <div class="flex grow flex-col justify-center items-start">
-              <h3 class="text-sm font-semibold text-base-content/50 translate-y-0.5">
-                Working hours:
-              </h3>
-              <p class="text-md text-base-content/90 font-semibold">
-                10:00 - 22:00
-              </p>
-            </div>
-
-            <div class="w-12 min-w-12 h-12 flex justify-center items-center" v-show="false">
-              <ChevronDown class="w-6 h-6"/>
-            </div>
-          </div>
-
-          <div class="w-full flex justify-start items-start gap-3"
+          <div class="w-full flex justify-start items-start gap-3 px-3"
                v-if="restaurant!.phone?.length">
             <div class="w-12 min-w-12 h-12 flex justify-center items-center bg-base-300/80 rounded">
               <Phone class="w-6 h-6"/>
@@ -160,7 +152,7 @@ import {computed, PropType, ref} from "vue";
             </div>
           </div>
 
-          <div class="w-full flex justify-start items-start gap-3"
+          <div class="w-full flex justify-start items-start gap-3 px-3"
                v-if="restaurant!.full_address?.length">
             <div class="w-12 min-w-12 h-12 flex justify-center items-center bg-base-300/80 rounded">
               <MapPin class="w-6 h-6"/>

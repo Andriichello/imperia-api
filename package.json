@@ -20,6 +20,7 @@
         "build-metrics-prod": "cd nova-components/Metrics && npm run prod"
     },
     "devDependencies": {
+        "@types/luxon": "^3.6.2",
         "@types/node": "^22.15.2",
         "@vue/tsconfig": "^0.7.0",
         "autoprefixer": "^10.4.21",
@@ -43,6 +44,7 @@
         "@tailwindcss/postcss": "^4.1.4",
         "@vitejs/plugin-vue": "^5.2.3",
         "lucide-vue-next": "^0.503.0",
+        "luxon": "^3.6.1",
         "orval": "^7.9.0",
         "vue": "^3.5.13"
     }
