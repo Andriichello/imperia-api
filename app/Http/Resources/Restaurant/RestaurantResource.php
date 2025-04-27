@@ -42,6 +42,7 @@ class RestaurantResource extends JsonResource
             'timezone' => $this->timezone,
             'timezone_offset' => $this->timezone_offset,
             'popularity' => $this->popularity,
+            'notes' => $this->notes,
             /* @phpstan-ignore-next-line */
             'media' => new MediaCollection($this->media->load('variants')),
             'schedules' => new ScheduleCollection($this->schedules),
@@ -54,7 +55,7 @@ class RestaurantResource extends JsonResource
      *   description="Restaurant resource object",
      *   required = {"id", "type", "slug", "name", "country", "city", "place",
      *     "phone", "email", "website", "location", "timezone", "timezone_offset",
-     *     "popularity", "media"},
+     *     "popularity", "notes", "media", "schedules"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="restaurants"),
      *   @OA\Property(property="slug", type="string", example="first"),
@@ -76,6 +77,7 @@ class RestaurantResource extends JsonResource
      *   @OA\Property(property="timezone_offset", type="integer", example=180,
      *     description="Selected timezone offset in minutes."),
      *   @OA\Property(property="popularity", type="integer", nullable="true", example=1),
+     *   @OA\Property(property="notes", type="array", nullable="true", @OA\Items(type="string")),
      *   @OA\Property(property="media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
      *   @OA\Property(property="schedules", type="array", @OA\Items(ref ="#/components/schemas/Schedule")),
      * )

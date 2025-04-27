@@ -1,5 +1,6 @@
-import { createApp, h } from 'vue'
-import { createInertiaApp } from '@inertiajs/vue3'
+import {createApp, h} from 'vue';
+import {createInertiaApp} from '@inertiajs/vue3';
+import VueSplide from '@splidejs/vue-splide';
 import Welcome from '@/Pages/Welcome.vue'
 import Restaurant from "@/Pages/Restaurant.vue";
 
@@ -17,6 +18,7 @@ createInertiaApp({
   setup({ el, App, props, plugin }) {
     createApp({ render: () => h(App, props) })
       .use(plugin)
+      .use(VueSplide)
       .mount(el)
   },
 })

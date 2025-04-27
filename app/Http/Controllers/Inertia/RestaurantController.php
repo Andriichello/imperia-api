@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Inertia;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Menu\MenuCollection;
 use App\Http\Resources\Restaurant\RestaurantResource;
 use App\Models\Restaurant;
 use Illuminate\Http\Request;
@@ -35,6 +36,7 @@ class RestaurantController extends Controller
 
         return Inertia::render('Restaurant', [
             'restaurant' => new RestaurantResource($restaurant),
+            'menus' => new MenuCollection($restaurant->menus()->get()),
         ]);
     }
 }

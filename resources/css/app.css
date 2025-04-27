@@ -1,8 +1,6 @@
 @import "tailwindcss";
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import '@splidejs/vue-splide/css';
+@import '@splidejs/vue-splide/css/core';
 
 @plugin "daisyui";
 @source "../views";

@@ -27,18 +27,20 @@ use Illuminate\Support\Collection;
  * @property string $country
  * @property string $city
  * @property string $place
- * @property string|null $full_address
- * @property string|null $phone
- * @property string|null $email
- * @property string|null $location
- * @property string|null $website
  * @property string $timezone
- * @property int $timezone_offset
  * @property int|null $popularity
  * @property string|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
+ *
+ * @property string|null $phone
+ * @property string|null $email
+ * @property string|null $website
+ * @property string|null $location
+ * @property string|null $full_address
+ * @property int $timezone_offset
+ * @property string[]|null $notes
  *
  * @property Banquet[]|Collection $banquets
  * @property Menu[]|Collection $menus
@@ -78,7 +80,7 @@ class Restaurant extends BaseModel implements
     /**
      * The attributes that are mass assignable.
      *
-     * @var string[]
+     * @var array<int, string>
      */
     protected $fillable = [
         'slug',
@@ -87,6 +89,7 @@ class Restaurant extends BaseModel implements
         'city',
         'place',
         'phone',
+        'notes',
         'timezone',
         'popularity',
     ];
@@ -376,6 +379,26 @@ class Restaurant extends BaseModel implements
     }
 
     /**
+     * Accessor for the restaurant's notes.
+     *
+     * @return string[]|null
+     */
+    public function getNotesAttribute(): ?array
+    {
+        return $this->getFromJson('metadata', 'notes');
+    }
+
+    /**
+     * Mutator for the restaurant's notes.
+     *
+     * @param $notes string[]|null
+     */
+    public function setNotesAttribute(array $notes): void
+    {
+        $this->setToJson('metadata', 'notes', $notes);
+    }
+
+    /**
      * @param DatabaseBuilder $query
      *
      * @return RestaurantQueryBuilder
@@ -384,7 +407,6 @@ class Restaurant extends BaseModel implements
     {
         return new RestaurantQueryBuilder($query);
     }
-
 
     /**
      * Get the corresponding restaurant id.
