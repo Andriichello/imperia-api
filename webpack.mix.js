@@ -29,7 +29,19 @@ mix.ts('resources/js/app.ts', 'public/js')
         '**/mix-manifest.json',
       ],
     },
-  });
+  })
+  .browserSync({
+    proxy: 'http://localhost:8080',
+    files: [
+      'resources/js/**/*',
+      'resources/css/**/*',
+      'app/**/*',
+      'routes/**/*',
+      'resources/views/**/*'
+    ],
+    open: false
+  })
+;
 
 // In development, let's see source maps
 if (!mix.inProduction()) {
