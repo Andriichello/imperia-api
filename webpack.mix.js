@@ -10,9 +10,7 @@ mix.ts('resources/js/app.ts', 'public/js')
       }
     }
   })
-  .postCss('resources/css/app.css', 'public/css', [
-    require('@tailwindcss/postcss'),
-  ])
+  .postCss('resources/css/app.css', 'public/css')
   .webpackConfig({
     resolve: {
       alias: {
@@ -21,7 +19,16 @@ mix.ts('resources/js/app.ts', 'public/js')
     },
     output: {
       chunkFilename: 'js/[name].js?id=[chunkhash]',
-    }
+    },
+    watchOptions: {
+      ignored: [
+        '**/public/**',
+        'node_modules/**',
+        './dist/**',
+        './mix-manifest.json',
+        '**/mix-manifest.json',
+      ],
+    },
   });
 
 // In development, let's see source maps
