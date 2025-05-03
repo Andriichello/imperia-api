@@ -5,6 +5,7 @@
   import {Menu, Restaurant} from "@/api";
   import Schedule from "@/Components/Restaurant/Schedule.vue";
   import {getScheduleInfo, ScheduleInfo, time} from "@/helpers";
+  import {router} from "@inertiajs/vue3";
 
   const props = defineProps({
     restaurant: Object as PropType<Restaurant>,
@@ -26,6 +27,10 @@
   );
 
   const scheduleExpanded = ref(false);
+
+  const openMenu = (menu: Menu) => {
+    router.visit(window.location.pathname + `/menu/${menu.id}`);
+  }
 
   const callPhone = (phone) => {
     if (window && phone?.length > 0) {
@@ -72,8 +77,9 @@
 
       <div class="w-full flex flex-col grow pt-2 pb-3 px-3 gap-2">
         <div class="w-full flex flex-col grow gap-2">
-          <template v-if="menus!?.length > 0">
-            <div class="w-full flex items-center justify-center pl-5 pr-3 py-3 bg-base-200/40 border-2 border-base-300 rounded"
+          <template v-if="menus!.length > 0">
+            <div class="w-full flex items-center justify-center pl-5 pr-3 py-3 bg-base-200/40 border-2 border-base-300 rounded cursor-pointer"
+                 @click="openMenu(menu)"
                  v-for="menu in menus" :key="menu.id">
               <div class="w-full flex flex-col">
                 <h3 class="text-xl font-bold">
