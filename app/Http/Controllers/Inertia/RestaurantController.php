@@ -36,7 +36,12 @@ class RestaurantController extends Controller
 
         return Inertia::render('Restaurant', [
             'restaurant' => new RestaurantResource($restaurant),
-            'menus' => new MenuCollection($restaurant->menus()->get()),
+            'menus' => new MenuCollection(
+                /** @phpstan-ignore-next-line  */
+                $restaurant->menus()
+                    ->orderByDesc('popularity')
+                    ->get()
+            ),
         ]);
     }
 }

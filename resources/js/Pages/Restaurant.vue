@@ -29,7 +29,7 @@ import {computed, PropType, ref, shallowReactive} from "vue";
 </script>
 
 <template>
-  <div class="w-full h-full min-h-screen max-w-screen flex flex-col justify-start items-center ">
+  <div class="w-full h-full min-h-screen max-w-screen flex flex-col justify-start items-center bg-base-200/80 pb-20">
     <div class="w-full max-w-md flex flex-col justify-start items-center relative">
       <Splide class="w-full h-75" :options="slideOptions"
               v-if="restaurant!.media?.length > 0">
@@ -40,39 +40,31 @@ import {computed, PropType, ref, shallowReactive} from "vue";
         </SplideSlide>
       </Splide>
 
-      <div class="w-full pt-3 pb-1 px-3 text-center bg-base-100">
-        <h3 class="text-3xl font-bold">
+      <div class="w-full pt-3 pb-1 px-3 text-center">
+        <h3 class="text-2xl font-bold">
           {{ restaurant!.name }}
         </h3>
 
         <p class="text-md -translate-y-0.5 opacity-70">
-          {{ 'cafe' }}
+          {{ 'restaurant' }}
         </p>
       </div>
-
-      <div class="w-full pt-1 pb-3 px-3 bg-base-100"
+      <div class="w-full pt-1 pb-3 px-3 pr-6 chat chat-start flex flex-col gap-1.5 translate-x-0.5"
            v-if="restaurant!.notes!?.length > 0">
-        <ul>
-          <template v-for="(note, index) in restaurant!.notes" :key="index">
-            <li class="w-full flex justify-center items-start px-2 gap-3">
-
-              <Circle class="w-2 h-6"/>
-
-              <p class="w-full">
-                {{ note }}
-              </p>
-            </li>
-          </template>
-        </ul>
+        <template v-for="(note, index) in restaurant!.notes" :key="index">
+          <p class="w-full chat-bubble bg-warning/20 rounded-xl">
+            {{ note }}
+          </p>
+        </template>
       </div>
 
       <div class="w-full flex flex-col grow pt-2 pb-3 px-3 gap-2">
         <div class="w-full flex flex-col grow gap-2">
           <template v-if="menus!?.length > 0">
-            <div class="w-full flex items-center justify-center px-3 py-3 bg-base-200/40 border-2 border-base-300 rounded"
+            <div class="w-full flex items-center justify-center pl-5 pr-3 py-3 bg-base-200/40 border-2 border-base-300 rounded"
                  v-for="menu in menus" :key="menu.id">
               <div class="w-full flex flex-col">
-                <h3 class="text-2xl font-bold">
+                <h3 class="text-xl font-bold">
                   {{ menu.title }}
                 </h3>
 
@@ -116,7 +108,7 @@ import {computed, PropType, ref, shallowReactive} from "vue";
                   </p>
                 </div>
 
-                <div class="w-12 min-w-12 h-12 flex justify-center items-center">
+                <div class="w-12 min-w-12 h-12 flex justify-center items-center mr-1.5">
                   <ChevronUp class="w-6 h-6" v-if="scheduleExpanded"/>
                   <ChevronDown class="w-6 h-6" v-else/>
                 </div>
