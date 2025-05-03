@@ -25,10 +25,7 @@ class RestaurantController extends Controller
      */
     public function show(Request $request): Response
     {
-        /** @var Restaurant|null $restaurant */
-        $restaurant = Restaurant::query()
-            ->where('id', $request->route('id'))
-            ->first();
+        $restaurant = $this->find($request->route('id'));
 
         if (!$restaurant) {
             abort(404);
@@ -43,5 +40,22 @@ class RestaurantController extends Controller
                     ->get()
             ),
         ]);
+    }
+
+    /**
+     * Find a restaurant by given identifier (id or slug).
+     *
+     * @param string|int $id
+     *
+     * @return Restaurant|null
+     */
+    protected function find(string|int $id): ?Restaurant
+    {
+        /** @var Restaurant|null $restaurant */
+        $restaurant = Restaurant::query()
+            ->where(is_numeric($id) ? 'id' : 'slug', $id)
+            ->first();
+
+        return $restaurant;
     }
 }
