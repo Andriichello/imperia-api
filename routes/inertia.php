@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Inertia\MenuController;
 use App\Http\Controllers\Inertia\WelcomeController;
 use App\Http\Controllers\Inertia\RestaurantController;
 use Illuminate\Support\Facades\Route;
@@ -16,4 +17,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', WelcomeController::class)->name('welcome');
-Route::get('/{id}', [RestaurantController::class, 'show'])->name('');
+
+Route::get('/{restaurant_id}', [RestaurantController::class, 'show'])
+    ->name('restaurant.show');
+Route::get('/{restaurant_id}/menu/{menu_id}', [MenuController::class, 'show'])
+    ->name('restaurant.menu.show');

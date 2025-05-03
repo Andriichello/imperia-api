@@ -6,17 +6,19 @@ use App\Helpers\RestaurantHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Menu\MenuCollection;
 use App\Http\Resources\Restaurant\RestaurantResource;
+use App\Models\Menu;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
 /**
- * Class RestaurantController.
+ * Class MenuController.
  */
-class RestaurantController extends Controller
+class MenuController extends Controller
 {
     /**
-     * Returns welcome page for UI with Inertia.js.
+     * Returns menu page for UI with Inertia.js.
      *
      * @param Request $request
      *
@@ -30,13 +32,27 @@ class RestaurantController extends Controller
             abort(404);
         }
 
-        return Inertia::render('Restaurant', [
+        $menuId = (int) $request->route('menu_id');
+        /** @var Menu|null $menu */
+        $menu = $restaurant->menus
+            ->sortByDesc('popularity')
+            ->where('id', $menuId)
+            ->first();
+
+        if (!$menu) {
+            abort(404);
+        }
+
+        foreach ($restaurant->menus as $menu) {
+            $menu->load('products');
+        }
+
+        return Inertia::render('Menu', [
+            'menuId' => $menuId,
             'restaurant' => new RestaurantResource($restaurant),
             'menus' => new MenuCollection(
-                /** @phpstan-ignore-next-line  */
-                $restaurant->menus()
-                    ->orderByDesc('popularity')
-                    ->get()
+                $restaurant->menus
+                    ->sortByDesc('popularity')
             ),
         ]);
     }

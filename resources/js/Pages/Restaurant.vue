@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, PropType, ref, shallowReactive} from "vue";
+  import {computed, PropType, ref} from "vue";
   import {Splide, SplideSlide} from '@splidejs/vue-splide';
   import {CalendarClock, ChevronUp, ChevronDown, ChevronRight, Circle, DoorOpen, Lock, MapPin, Phone} from 'lucide-vue-next';
   import {Menu, Restaurant} from "@/api";

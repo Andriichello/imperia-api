@@ -1,13 +1,15 @@
 import {createApp, h} from 'vue';
 import {createInertiaApp} from '@inertiajs/vue3';
 import VueSplide from '@splidejs/vue-splide';
-import Welcome from '@/Pages/Welcome.vue'
-import Restaurant from "@/Pages/Restaurant.vue";
+import WelcomePage from '@/Pages/Welcome.vue'
+import RestaurantPage from "@/Pages/Restaurant.vue";
+import MenuPage from "@/Pages/Menu.vue";
 
 // Map your pages
 const pages: Record<string, any> = {
-  'Welcome': Welcome,
-  'Restaurant': Restaurant,
+  'Welcome': WelcomePage,
+  'Restaurant': RestaurantPage,
+  'Menu': MenuPage,
   // Add other pages here as needed
 }
 
