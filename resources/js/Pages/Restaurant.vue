@@ -26,6 +26,18 @@ import {computed, PropType, ref, shallowReactive} from "vue";
   );
 
   const scheduleExpanded = ref(false);
+
+  const callPhone = (phone) => {
+    if (window && phone?.length > 0) {
+      window.open(`tel:${phone}`, '_blank');
+    }
+  };
+
+  const openMap = (address) => {
+    if (window && address?.length > 0) {
+      window.open(`https://www.google.com/maps/search/?api=1&query=${address}`, '_blank')
+    }
+  };
 </script>
 
 <template>
@@ -129,7 +141,8 @@ import {computed, PropType, ref, shallowReactive} from "vue";
           </div>
 
           <div class="w-full flex justify-start items-start gap-3 px-3"
-               v-if="restaurant!.phone?.length">
+               v-if="restaurant!.phone?.length"
+               @click="callPhone(restaurant!.phone)">
             <div class="w-12 min-w-12 h-12 flex justify-center items-center bg-base-300/80 rounded">
               <Phone class="w-6 h-6"/>
             </div>
@@ -145,7 +158,8 @@ import {computed, PropType, ref, shallowReactive} from "vue";
           </div>
 
           <div class="w-full flex justify-start items-start gap-3 px-3"
-               v-if="restaurant!.full_address?.length">
+               v-if="restaurant!.full_address?.length"
+               @click="openMap(restaurant!.full_address)">
             <div class="w-12 min-w-12 h-12 flex justify-center items-center bg-base-300/80 rounded">
               <MapPin class="w-6 h-6"/>
             </div>
