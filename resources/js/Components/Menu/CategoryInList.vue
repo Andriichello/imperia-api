@@ -30,7 +30,7 @@
 
     <template v-if="!products!.length">
       <div class="w-full flex flex-col text-center p-2">
-        <h3>Unfortunately, this category is empty</h3>
+        <h3 class="text-md text-light">Unfortunately, this category is empty</h3>
       </div>
     </template>
 

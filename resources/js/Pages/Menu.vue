@@ -82,7 +82,8 @@
         <template v-for="menu in menus" :key="menu.id">
           <MenuInList :menu="menu"
                       @switch-menu="switchMenu"
-                      @switch-category="switchCategory"/>
+                      @switch-category="switchCategory"
+                      v-if="menu.id === selectedMenu?.id"/>
         </template>
       </div>
 
