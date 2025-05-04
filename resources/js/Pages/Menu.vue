@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import {onMounted, onUnmounted, PropType, ref, watch} from "vue";
+  import {onMounted, onUnmounted, PropType, ref, watch} from "vue";
   import {Category, Menu, Restaurant} from "@/api";
   import MenuInList from "@/Components/Menu/MenuInList.vue";
-  import CategoryInList from "@/Components/Menu/CategoryInList.vue";
   import CategoryNavBar from "@/Components/Menu/CategoryNavBar.vue";
-import categories from "../../../nova-components/Marketplace/resources/js/components/Categories.vue";
 
   const props = defineProps({
     menuId: Number,
@@ -63,11 +61,30 @@ import categories from "../../../nova-components/Marketplace/resources/js/compon
         '', // title (ignored by most browsers)
         `${window.location.pathname}#${category.id}` // URL
       );
+    }
 
-      // Update your component's state locally
-      // This is needed since we're not hitting the backend
-      // You'd need to track the selected menu ID locally
-      selectedCategory.value = category;
+    // Update your component's state locally
+    // This is needed since we're not hitting the backend
+    // You'd need to track the selected menu ID locally
+    selectedCategory.value = category;
+
+    const divider = document.getElementById('category-' + category.id);
+
+    if ((shouldNotScroll.value === 0 || (Date.now() - shouldNotScroll.value) > 100) && divider) {
+      ignoringScroll.value = true;
+
+      window.scrollTo({
+        top: divider.getBoundingClientRect().top + window.pageYOffset - (window.innerHeight >= 800 ? 92 : 48),
+        behavior: 'smooth'
+      });
+
+      const idToCheck = ignoringScrollId.value++;
+
+      setTimeout(() => {
+        if (idToCheck === (ignoringScrollId.value - 1)) {
+          ignoringScroll.value = false;
+        }
+      }, 1000)
     }
   };
 
