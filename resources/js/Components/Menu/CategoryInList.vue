@@ -12,10 +12,10 @@
 </script>
 
 <template>
-  <div class="w-full flex flex-col">
+  <div class="w-full flex flex-col"
+       :id="'category-' + category.id">
     <div class="w-full flex flex-col text-center pt-4 pb-2"
-         @click="emits('switch-category', category)"
-         :id="'category-' + category.id">
+         @click="emits('switch-category', category)">
 
       <h3 class="text-xl">
         {{ category.title }}
