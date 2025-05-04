@@ -165,9 +165,9 @@ onMounted(() => {
       <div class="w-full flex flex-col">
         <template v-for="menu in menus" :key="menu.id">
           <MenuInList :menu="menu"
+                      :closed="menu.id !== selectedMenu?.id"
                       @switch-menu="switchMenu"
-                      @switch-category="switchCategory"
-                      v-if="menu.id === selectedMenu?.id"/>
+                      @switch-category="switchCategory"/>
         </template>
       </div>
 

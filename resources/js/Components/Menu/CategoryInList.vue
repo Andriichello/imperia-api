@@ -12,11 +12,10 @@
 </script>
 
 <template>
-  <div class="w-full flex flex-col"
+  <div class="w-full flex flex-col px-2"
        :id="'category-' + category.id">
-    <div class="w-full flex flex-col text-center pt-4 pb-2"
+    <div class="w-full flex flex-col text-center p-2 bg-neutral text-neutral-content rounded-t-xl mt-4"
          @click="emits('switch-category', category)">
-
       <h3 class="text-xl">
         {{ category.title }}
       </h3>
@@ -26,15 +25,13 @@
       </p>
     </div>
 
-<!--    <div class="w-full h-[1px] bg-base-300"/>-->
-
     <template v-if="!products!.length">
       <div class="w-full flex flex-col text-center p-2">
         <h3 class="text-md text-light">Unfortunately, this category is empty</h3>
       </div>
     </template>
 
-    <div class="w-full flex flex-col px-2 py-2 gap-3">
+    <div class="w-full flex flex-col py-2 gap-3">
       <template v-for="product in products" :key="product.id" v-else>
         <ProductInList :product="product"/>
       </template>

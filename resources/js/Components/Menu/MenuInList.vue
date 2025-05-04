@@ -6,6 +6,10 @@ import CategoryInList from "@/Components/Menu/CategoryInList.vue";
 
   const props = defineProps({
     menu: Object as PropType<Menu>,
+    closed: {
+      type: Boolean,
+      default: false,
+    }
   });
 
   const categoryProducts = (menu: Menu, category: Category) => {
@@ -33,7 +37,8 @@ import CategoryInList from "@/Components/Menu/CategoryInList.vue";
 
       <div class="w-full h-[1px] bg-base-300"/>
 
-      <template v-for="category in menu.categories" :key="category.id">
+      <template v-for="category in menu.categories" :key="category.id"
+                v-if="!closed">
         <CategoryInList :category="category"
                         :products="categoryProducts(menu, category)"
                         @switch-category="switchCategory"/>
