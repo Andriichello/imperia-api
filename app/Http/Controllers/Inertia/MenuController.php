@@ -7,7 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Menu\MenuCollection;
 use App\Http\Resources\Restaurant\RestaurantResource;
 use App\Models\Menu;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -22,9 +24,9 @@ class MenuController extends Controller
      *
      * @param Request $request
      *
-     * @return Response
+     * @return Response|RedirectResponse
      */
-    public function show(Request $request): Response
+    public function show(Request $request): Response|RedirectResponse
     {
         $restaurant = RestaurantHelper::find($request->route('restaurant_id'));
 
@@ -33,27 +35,44 @@ class MenuController extends Controller
         }
 
         $menuId = (int) $request->route('menu_id');
+
+        /** @var Collection<int, Menu> $menus */
+        $menus = $restaurant->menus
+            ->sortByDesc('popularity');
+
+        if (empty($menuId)) {
+            /** @var Menu|null $menu */
+            $menu = $menus->first();
+
+            if (!$menu) {
+                abort(404);
+            }
+
+            return redirect()
+                ->route(
+                    'inertia.menu.show',
+                    [
+                        'restaurant_id' => $request->route('restaurant_id'),
+                        'menu_id' => $menu->id,
+                    ]
+                );
+        }
+
         /** @var Menu|null $menu */
-        $menu = $restaurant->menus
-            ->sortByDesc('popularity')
-            ->where('id', $menuId)
-            ->first();
+        $menu = $menus->where('id', $menuId)->first();
 
         if (!$menu) {
             abort(404);
         }
 
-        foreach ($restaurant->menus as $menu) {
-            $menu->load('products');
+        foreach ($menus as $m) {
+            $m->load('products');
         }
 
         return Inertia::render('Menu', [
-            'menuId' => $menuId,
+            'menuId' => $menu->id,
             'restaurant' => new RestaurantResource($restaurant),
-            'menus' => new MenuCollection(
-                $restaurant->menus
-                    ->sortByDesc('popularity')
-            ),
+            'menus' => new MenuCollection($menus),
         ]);
     }
 }

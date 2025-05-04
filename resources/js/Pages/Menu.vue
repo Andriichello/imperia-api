@@ -5,19 +5,28 @@
   import CategoryNavBar from "@/Components/Menu/CategoryNavBar.vue";
 
   const props = defineProps({
-    menuId: Number,
-    restaurant: Object as PropType<Restaurant>,
-    menus: Array as PropType<Menu[]>,
+    menuId: {
+      type: Number,
+      required: true,
+    },
+    restaurant:  {
+      type: Object as PropType<Restaurant>,
+      required: true,
+    },
+    menus: {
+      type: Array as PropType<Menu[]>,
+      required: true,
+    },
   });
 
   const selectedMenu = ref<Menu>(
-    props.menus!.find((m: Menu) => Number(m.id) === props.menuId)
+    props.menus.find((m: Menu) => Number(m.id) === props.menuId)!
   );
 
   const findCategory = (categoryId: string|number|null) => {
     if (categoryId !== null) {
-      for (const menu: Menu of props.menus) {
-        for (const category: Category of menu.categories) {
+      for (const menu of props.menus) {
+        for (const category of menu.categories) {
           if (
             category.id === Number(categoryId) ||
             category.slug === String(categoryId)
@@ -52,12 +61,12 @@
     }
   };
 
-  const switchCategory = (category: Category, force: bool = false) => {
+  const switchCategory = (category: Category, force: boolean = false) => {
     // Only update if it's a different menu
     if (force || category.id !== selectedCategory.value?.id) {
       // Update the URL in the browser without a page reload
       window.history.replaceState(
-        {menuId: selectedMenu.id}, // state object
+        {menuId: selectedMenu.value.id}, // state object
         '', // title (ignored by most browsers)
         `${window.location.pathname}#${category.id}` // URL
       );
@@ -91,7 +100,7 @@
   const ignoringScroll = ref(false);
   const ignoringScrollId = ref(0);
 
-  const shouldNotScroll = ref(null);
+  const shouldNotScroll = ref(Date.now());
 
   const onScroll = () => {
     // Get the current scroll position

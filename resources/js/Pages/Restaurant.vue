@@ -8,8 +8,14 @@
   import {router} from "@inertiajs/vue3";
 
   const props = defineProps({
-    restaurant: Object as PropType<Restaurant>,
-    menus: Array as PropType<Menu[]>,
+    restaurant: {
+      type: Object as PropType<Restaurant>,
+      required: true,
+    },
+    menus: {
+      type: Array as PropType<Menu[]>,
+      required: true,
+    },
   });
 
   const slideOptions = ref({

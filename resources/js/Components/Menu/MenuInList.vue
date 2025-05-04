@@ -1,20 +1,23 @@
 <script setup lang="ts">
 import {Category, Menu, Product} from "@/api";
 import CategoryInList from "@/Components/Menu/CategoryInList.vue";
+import {PropType} from "vue";
 
   const emits = defineEmits(['switch-menu', 'switch-category']);
 
   const props = defineProps({
-    menu: Object as PropType<Menu>,
+    menu: {
+      type: Object as PropType<Menu>,
+      required: true,
+    },
     closed: {
       type: Boolean,
       default: false,
     }
   });
 
-  const categoryProducts = (menu: Menu, category: Category) => {
-    return menu.products!.filter((p: Product) => p.category_ids.includes(category.id))
-  }
+  const categoryProducts = (menu: Menu, category: Category) =>
+    menu.products!.filter((p: Product) => p.category_ids.includes(category.id))
 
   const switchCategory = (category: Category) => {
     emits('switch-category', category);

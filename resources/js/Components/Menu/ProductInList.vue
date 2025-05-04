@@ -1,10 +1,13 @@
 <script setup lang="ts">
   import {Product, ProductVariant} from "@/api";
   import {Splide, SplideSlide} from "@splidejs/vue-splide";
-  import {ref, computed} from "vue";
+  import {ref, computed, PropType} from "vue";
 
   const props = defineProps({
-    product: Object as PropType<Product>,
+    product: {
+      type: Object as PropType<Product>,
+      required: true,
+    },
   });
 
   const variants = computed<Partial<ProductVariant>[]>(() => {

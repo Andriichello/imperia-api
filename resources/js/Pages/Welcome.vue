@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import {ref} from "vue";
-  // Just to check if TypeScript works
+import {ref} from "vue";
+// Just to check if TypeScript works
   const title = ref("UI with Inertia.js");
 </script>
 

@@ -3,7 +3,10 @@
   import {ScheduleInfo} from "@/helpers";
 
   const props = defineProps({
-    info: Object as PropType<ScheduleInfo>,
+    info: {
+      type: Object as PropType<ScheduleInfo>,
+      required: true,
+    },
   });
 
   const time = (hour: number, minute: number) => {
@@ -17,6 +20,12 @@
 
     return time;
   }
+
+  /** Returns a function that checks if a schedule is active. */
+  const isActive = (scheduleId: number) =>
+    props.info.active?.id === scheduleId ||
+    props.info.relevant?.id === scheduleId;
+
 </script>
 
 <template>
@@ -26,15 +35,14 @@
         <table class="table table-sm w-full rounded-xl">
           <tbody class="w-full">
             <template v-for="(schedule) in info.schedules" :key="schedule.id">
-              {{ void(active = schedule.id === info.active?.id || schedule.id === info.relevant?.id) }}
-              <tr :class="{'bg-base-300/80': active}">
-                <td class="p-2 grow" :class="{'font-light': !active, 'font-bold': active}">
+              <tr :class="{'bg-base-300/80': isActive(schedule.id)}">
+                <td class="p-2 grow" :class="{'font-light': !isActive(schedule.id), 'font-bold': isActive(schedule.id)}">
                   <h5 class="text-[16px]">{{ capitalize(schedule.weekday) }}</h5>
                 </td>
-                <td class="p-2 w-[60px] text-end" :class="{'font-light': !active, 'font-bold': active}">
+                <td class="p-2 w-[60px] text-end" :class="{'font-light': !isActive(schedule.id), 'font-bold': isActive(schedule.id)}">
                   <p class="text-[16px]">{{ time(schedule.beg_hour, schedule.beg_minute) }}</p>
                 </td>
-                <td class="p-2 w-[60px]" :class="{'font-light': !active, 'font-bold': active}">
+                <td class="p-2 w-[60px]" :class="{'font-light': !isActive(schedule.id), 'font-bold': isActive(schedule.id)}">
                   <p class="text-[16px]">{{ time(schedule.end_hour, schedule.end_minute) }}</p>
                 </td>
               </tr>

@@ -20,5 +20,5 @@ Route::get('/', WelcomeController::class)->name('welcome');
 
 Route::get('/{restaurant_id}', [RestaurantController::class, 'show'])
     ->name('restaurant.show');
-Route::get('/{restaurant_id}/menu/{menu_id}', [MenuController::class, 'show'])
-    ->name('restaurant.menu.show');
+Route::get('/{restaurant_id}/menu/{menu_id?}', [MenuController::class, 'show'])
+    ->name('menu.show');

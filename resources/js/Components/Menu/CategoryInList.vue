@@ -1,13 +1,19 @@
 <script setup lang="ts">
-  import {Category, Menu, Product} from "@/api";
-  import {Splide, SplideSlide} from "@splidejs/vue-splide";
+  import {Category, Product} from "@/api";
   import ProductInList from "@/Components/Menu/ProductInList.vue";
+  import {PropType} from "vue";
 
   const emits = defineEmits(['switch-category']);
 
   const props = defineProps({
-    category: Object as PropType<Category>,
-    products: Array as PropType<Product[]>,
+    category: {
+      type: Object as PropType<Category>,
+      required: true,
+    },
+    products: {
+      type: Array as PropType<Product[]>,
+      required: true,
+    },
   });
 </script>
 
@@ -20,7 +26,7 @@
         {{ category.title }}
       </h3>
       <p class="text-md font-light opacity-80"
-         v-if="category!.description?.length">
+         v-if="category.description?.length">
         {{ category.description }}
       </p>
     </div>
@@ -31,8 +37,8 @@
       </div>
     </template>
 
-    <div class="w-full flex flex-col py-2 gap-3">
-      <template v-for="product in products" :key="product.id" v-else>
+    <div class="w-full flex flex-col py-2 gap-3" v-else>
+      <template v-for="product in products" :key="product.id">
         <ProductInList :product="product"/>
       </template>
     </div>

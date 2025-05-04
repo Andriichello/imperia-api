@@ -1,13 +1,19 @@
 <script setup lang="ts">
   import {Category} from "@/api";
   import {AlignRight} from "lucide-vue-next";
-  import {watch} from "vue";
+  import {watch, PropType} from "vue";
 
   const emits = defineEmits(['switch-category', 'open-drawer']);
 
   const props = defineProps({
-    categories: Array as PropType<Category[]>,
-    selected: Object as PropType<Category | null>,
+    categories: {
+      type: Array as PropType<Category[]>,
+      required: true,
+    },
+    selected: {
+      type: Object as PropType<Category | null>,
+      required: true,
+    },
   });
 
   watch(() => props.selected, (newCategory, oldCategory) => {
