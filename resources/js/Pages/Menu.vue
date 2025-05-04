@@ -17,8 +17,6 @@ import categories from "../../../nova-components/Marketplace/resources/js/compon
   );
 
   const findCategory = (categoryId: string|number|null) => {
-    console.log(categoryId);
-
     if (categoryId !== null) {
       for (const menu: Menu of props.menus) {
         for (const category: Category of menu.categories) {
@@ -35,9 +33,7 @@ import categories from "../../../nova-components/Marketplace/resources/js/compon
     return null;
   }
 
-  const selectedCategory = ref<Category>(
-    findCategory(window.location.hash?.replace('#', ''))
-  );
+  const selectedCategory = ref<Category | null>(null);
 
   const switchMenu = (menu: Menu) => {
     // Only update if it's a different menu
@@ -58,9 +54,9 @@ import categories from "../../../nova-components/Marketplace/resources/js/compon
     }
   };
 
-  const switchCategory = (category: Category) => {
+  const switchCategory = (category: Category, force: bool = false) => {
     // Only update if it's a different menu
-    if (category.id !== selectedCategory.value?.id) {
+    if (force || category.id !== selectedCategory.value?.id) {
       // Update the URL in the browser without a page reload
       window.history.replaceState(
         {menuId: selectedMenu.id}, // state object
@@ -118,7 +114,6 @@ import categories from "../../../nova-components/Marketplace/resources/js/compon
 
   watch(() => selectedCategory.value, (newCategory) => {
     if (newCategory) {
-
       const divider = document.getElementById('category-' + newCategory.id);
 
       if ((shouldNotScroll.value === 0 || (Date.now() - shouldNotScroll.value) > 100) && divider) {
@@ -142,9 +137,22 @@ import categories from "../../../nova-components/Marketplace/resources/js/compon
     shouldNotScroll.value = 0;
   });
 
-
-onMounted(() => {
+  onMounted(() => {
     window.addEventListener('scroll', onScroll);
+
+    if (window.location.hash) {
+      setTimeout(
+        () => {
+          const categoryId = window.location.hash.replace('#', '');
+          const category = findCategory(categoryId);
+
+          if (category && selectedMenu.value.categories?.[0]?.id !== category.id) {
+            switchCategory(category, true);
+          }
+        },
+        200
+      )
+    }
   });
 
   onUnmounted(() => {
