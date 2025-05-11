@@ -22,12 +22,12 @@ import {PropType} from "vue";
   const switchCategory = (category: Category) => {
     emits('switch-category', category);
   }
-</script>
+</script>W
 
 <template>
   <div class="w-full flex flex-col">
     <div class="w-full flex flex-col">
-      <div class="w-full flex flex-col text-center py-3 px-3"
+      <div class="w-full flex flex-col text-center py-3 pb-6 px-3"
            @click="emits('switch-menu', menu)">
         <h3 class="text-xl font-bold">
           {{ menu.title }}
@@ -45,10 +45,9 @@ import {PropType} from "vue";
         <CategoryInList :category="category"
                         :products="categoryProducts(menu, category)"
                         @switch-category="switchCategory"/>
+
+        <div class="w-full h-[1px] bg-base-300"/>
       </template>
-
-      <div class="w-full h-[1px] bg-base-300"/>
-
     </div>
   </div>
 </template>

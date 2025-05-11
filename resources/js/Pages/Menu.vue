@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {onMounted, onUnmounted, PropType, ref} from "vue";
+import {onMounted, onUnmounted, PropType, ref, watch} from "vue";
 import {Category, Menu, Restaurant} from "@/api";
 import MenuInList from "@/Components/Menu/MenuInList.vue";
 import CategoryNavBar from "@/Components/Menu/CategoryNavBar.vue";
@@ -44,23 +44,26 @@ const props = defineProps({
 
   const selectedCategory = ref<Category | null>(null);
 
-  const switchMenu = (menu: Menu) => {
+  const switchMenu = (menu: Menu, force: boolean = false) => {
     // Only update if it's a different menu
-    if (menu.id !== selectedMenu.value.id) {
+    if (force || menu.id !== selectedMenu.value.id) {
       const basePath = window.location.pathname.split('/menu/')[0];
 
       // Update the URL in the browser without a page reload
-      router.visit(
-        `${basePath}/menu/${menu.id}`,
-        {replace: false}
-      );
+      router.replace({
+        url: `${basePath}/menu/${menu.id}`,
+        preserveState: true,
+      });
 
       ignoringScroll.value = true;
+
+      window.scrollTo({top: 0, behavior: 'smooth'});
 
       // Update your component's state locally
       // This is needed since we're not hitting the backend
       // You'd need to track the selected menu ID locally
       selectedMenu.value = menu;
+      selectedCategory.value = null;
 
       const idToCheck = ignoringScrollId.value++;
 
@@ -155,9 +158,23 @@ const props = defineProps({
     shouldNotScroll.value = 0;
   }
 
-  const onSwitchCategory = (category: Category) => {
-    switchCategory(category);
-    scrollToCategory(category);
+  const onSwitchCategory = (category: Category, menu: Menu = selectedMenu.value) => {
+    isDrawerOpen.value = false;
+
+    if (menu.id !== selectedMenu.value.id) {
+      switchMenu(menu);
+    }
+
+    setTimeout(() => {
+      switchCategory(category);
+      scrollToCategory(category);
+    }, 200);
+  }
+
+  const onSwitchMenu = (menu: Menu) => {
+    isDrawerOpen.value = false;
+
+    switchMenu(menu, true);
   }
 
   onMounted(() => {
@@ -200,11 +217,9 @@ const props = defineProps({
                    :menus="menus"
                    :menu-id="selectedMenu.id"
                    :category-id="selectedCategory?.id"
-                   @close="isDrawerOpen = false">
-        <!-- Drawer content goes here -->
-        <h2 class="text-lg font-bold mb-2">Drawer Title</h2>
-        <p>This is your drawer content!</p>
-      </MenusDrawer>
+                   @close="isDrawerOpen = false"
+                   @switch-menu="onSwitchMenu"
+                   @switch-category="onSwitchCategory"/>
 
       <!-- Menus list -->
       <div class="w-full flex flex-col">
