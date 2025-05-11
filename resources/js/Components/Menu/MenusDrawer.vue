@@ -32,10 +32,10 @@
 
 <template>
   <transition name="slide">
-    <div class="fixed inset-0 z-50"
+    <div class="w-full fixed inset-0 z-50 flex justify-center"
          v-if="open"
          @click.self="close">
-      <div class="bg-white dark:bg-base-100 w-full h-full shadow-lg transition-transform transform translate-x-0 p-6 overflow-auto relative">
+      <div class="bg-base-100 w-full max-w-md h-full shadow-lg transition-transform transform translate-x-0 p-6 overflow-auto relative">
         <button class="absolute top-1.5 right-2 px-2 py-1 z-51"
                 @click="close">
           <X/>
