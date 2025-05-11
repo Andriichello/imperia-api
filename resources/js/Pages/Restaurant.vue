@@ -35,7 +35,7 @@
   const scheduleExpanded = ref(false);
 
   const openMenu = (menu: Menu) => {
-    router.visit(window.location.pathname + `/menu/${menu.id}`);
+    router.visit(window.location.pathname + `/menu/${menu.id}`, {replace: false});
   }
 
   const callPhone = (phone) => {

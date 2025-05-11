@@ -1,10 +1,12 @@
 <script setup lang="ts">
-  import {onMounted, onUnmounted, PropType, ref, watch} from "vue";
-  import {Category, Menu, Restaurant} from "@/api";
-  import MenuInList from "@/Components/Menu/MenuInList.vue";
-  import CategoryNavBar from "@/Components/Menu/CategoryNavBar.vue";
+import {onMounted, onUnmounted, PropType, ref} from "vue";
+import {Category, Menu, Restaurant} from "@/api";
+import MenuInList from "@/Components/Menu/MenuInList.vue";
+import CategoryNavBar from "@/Components/Menu/CategoryNavBar.vue";
+import MenusDrawer from "@/Components/Menu/MenusDrawer.vue";
+import {router} from "@inertiajs/vue3";
 
-  const props = defineProps({
+const props = defineProps({
     menuId: {
       type: Number,
       required: true,
@@ -48,44 +50,17 @@
       const basePath = window.location.pathname.split('/menu/')[0];
 
       // Update the URL in the browser without a page reload
-      window.history.pushState(
-        {menuId: menu.id}, // state object
-        '', // title (ignored by most browsers)
-        `${basePath}/menu/${menu.id}` // URL
+      router.visit(
+        `${basePath}/menu/${menu.id}`,
+        {replace: false}
       );
+
+      ignoringScroll.value = true;
 
       // Update your component's state locally
       // This is needed since we're not hitting the backend
       // You'd need to track the selected menu ID locally
       selectedMenu.value = menu;
-    }
-  };
-
-  const switchCategory = (category: Category, force: boolean = false) => {
-    // Only update if it's a different menu
-    if (force || category.id !== selectedCategory.value?.id) {
-      // Update the URL in the browser without a page reload
-      window.history.replaceState(
-        {menuId: selectedMenu.value.id}, // state object
-        '', // title (ignored by most browsers)
-        `${window.location.pathname}#${category.id}` // URL
-      );
-    }
-
-    // Update your component's state locally
-    // This is needed since we're not hitting the backend
-    // You'd need to track the selected menu ID locally
-    selectedCategory.value = category;
-
-    const divider = document.getElementById('category-' + category.id);
-
-    if ((shouldNotScroll.value === 0 || (Date.now() - shouldNotScroll.value) > 100) && divider) {
-      ignoringScroll.value = true;
-
-      window.scrollTo({
-        top: divider.getBoundingClientRect().top + window.pageYOffset - (window.innerHeight >= 800 ? 92 : 48),
-        behavior: 'smooth'
-      });
 
       const idToCheck = ignoringScrollId.value++;
 
@@ -93,9 +68,28 @@
         if (idToCheck === (ignoringScrollId.value - 1)) {
           ignoringScroll.value = false;
         }
-      }, 1000)
+      }, 200)
     }
   };
+
+  const switchCategory = (category: Category) => {
+    // Only update if it's a different menu
+    if (category.id !== selectedCategory.value?.id) {
+      // Update the URL in the browser without a page reload
+      router.replace({
+        url: window.location.pathname + '#' + category.id,
+        preserveState: true,
+        preserveScroll: true,
+      });
+
+      // Update your component's state locally
+      // This is needed since we're not hitting the backend
+      // You'd need to track the selected menu ID locally
+      selectedCategory.value = category;
+    }
+  };
+
+  const isDrawerOpen = ref(false)
 
   const ignoringScroll = ref(false);
   const ignoringScrollId = ref(0);
@@ -126,7 +120,7 @@
       }
 
       const isTopOutOfView = group.offsetTop < scrollPosition
-      const isBottomOutOfView = (group.offsetTop + group.clientHeight - 60) < scrollPosition;
+      const isBottomOutOfView = (group.offsetTop + group.clientHeight - 80) < scrollPosition;
 
       if (!isTopOutOfView || !isBottomOutOfView) {
         shouldNotScroll.value = Date.now();
@@ -138,62 +132,85 @@
     }
   };
 
-  watch(() => selectedCategory.value, (newCategory) => {
-    if (newCategory) {
-      const divider = document.getElementById('category-' + newCategory.id);
+  const scrollToCategory = (category: Category) => {
+    const divider = document.getElementById('category-' + category.id);
 
-      if ((shouldNotScroll.value === 0 || (Date.now() - shouldNotScroll.value) > 100) && divider) {
-        ignoringScroll.value = true;
+    if ((shouldNotScroll.value === 0 || (Date.now() - shouldNotScroll.value) > 100) && divider) {
+      ignoringScroll.value = true;
 
-        window.scrollTo({
-          top: divider.getBoundingClientRect().top + window.pageYOffset - (window.innerHeight >= 800 ? 92 : 48),
-          behavior: 'smooth'
-        });
+      console.log('scrolling to ' + category.title);
+      window.scrollTo({
+        top: divider.getBoundingClientRect().top + window.pageYOffset - 48,
+        behavior: 'smooth'
+      });
 
-        const idToCheck = ignoringScrollId.value++;
+      const idToCheck = ignoringScrollId.value++;
 
-        setTimeout(() => {
-          if (idToCheck === (ignoringScrollId.value - 1)) {
-            ignoringScroll.value = false;
-          }
-        }, 1000)
-      }
+      setTimeout(() => {
+        if (idToCheck === (ignoringScrollId.value - 1)) {
+          ignoringScroll.value = false;
+        }
+      }, 1000)
     }
 
     shouldNotScroll.value = 0;
-  });
+  }
+
+  const onSwitchCategory = (category: Category) => {
+    switchCategory(category);
+    scrollToCategory(category);
+  }
 
   onMounted(() => {
+    console.log('onMounted...')
+
     window.addEventListener('scroll', onScroll);
 
     if (window.location.hash) {
-      setTimeout(
-        () => {
-          const categoryId = window.location.hash.replace('#', '');
-          const category = findCategory(categoryId);
+      console.log('has hash', window.location.hash);
+        const categoryId = window.location.hash.replace('#', '');
+        const category = findCategory(categoryId);
 
-          if (category && selectedMenu.value.categories?.[0]?.id !== category.id) {
-            switchCategory(category, true);
-          }
-        },
-        200
-      )
+        if (category) {
+          console.log('found category', category.title);
+          setTimeout(() => {
+            switchCategory(category);
+
+            if (selectedMenu.value.categories?.[0]?.id !== category.id) {
+              console.log('scrolling to category');
+              shouldNotScroll.value = 0;
+              ignoringScroll.value = false;
+              scrollToCategory(category);
+            }
+          }, 100);
+        }
     }
   });
 
   onUnmounted(() => {
     window.removeEventListener('scroll', onScroll);
-  })
+  });
 </script>
 
 <template>
-  <div class="w-full h-full min-h-screen max-w-screen flex flex-col justify-start items-center bg-base-200/80 pb-20">
+  <div class="w-full h-full min-h-screen max-w-screen flex flex-col justify-start items-center bg-base-200/80 pb-50">
     <!-- Content -->
     <div class="w-full max-w-md flex flex-col justify-start items-center relative">
       <CategoryNavBar class="w-full sticky top-0 bg-base-100 z-10"
                       :categories="selectedMenu!.categories"
                       :selected="selectedCategory"
-                      @switch-category="switchCategory"/>
+                      @switch-category="onSwitchCategory"
+                      @open-drawer="isDrawerOpen = true"/>
+
+      <MenusDrawer :open="isDrawerOpen"
+                   :menus="menus"
+                   :menu-id="selectedMenu.id"
+                   :category-id="selectedCategory?.id"
+                   @close="isDrawerOpen = false">
+        <!-- Drawer content goes here -->
+        <h2 class="text-lg font-bold mb-2">Drawer Title</h2>
+        <p>This is your drawer content!</p>
+      </MenusDrawer>
 
       <!-- Menus list -->
       <div class="w-full flex flex-col">
@@ -201,10 +218,9 @@
           <MenuInList :menu="menu"
                       :closed="menu.id !== selectedMenu?.id"
                       @switch-menu="switchMenu"
-                      @switch-category="switchCategory"/>
+                      @switch-category="onSwitchCategory"/>
         </template>
       </div>
-
     </div>
   </div>
 </template>

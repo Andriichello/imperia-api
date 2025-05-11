@@ -20,7 +20,7 @@
 <template>
   <div class="w-full flex flex-col px-2"
        :id="'category-' + category.id">
-    <div class="w-full flex flex-col text-center p-2 bg-neutral text-neutral-content rounded-t-xl mt-4"
+    <div class="w-full flex flex-col text-center p-2 bg-neutral text-neutral-content rounded-t-xl mt-4 cursor-pointer"
          @click="emits('switch-category', category)">
       <h3 class="text-xl">
         {{ category.title }}
