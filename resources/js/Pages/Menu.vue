@@ -138,7 +138,6 @@ const props = defineProps({
     if ((shouldNotScroll.value === 0 || (Date.now() - shouldNotScroll.value) > 100) && divider) {
       ignoringScroll.value = true;
 
-      console.log('scrolling to ' + category.title);
       window.scrollTo({
         top: divider.getBoundingClientRect().top + window.pageYOffset - 48,
         behavior: 'smooth'
@@ -162,28 +161,23 @@ const props = defineProps({
   }
 
   onMounted(() => {
-    console.log('onMounted...')
-
     window.addEventListener('scroll', onScroll);
 
     if (window.location.hash) {
-      console.log('has hash', window.location.hash);
-        const categoryId = window.location.hash.replace('#', '');
-        const category = findCategory(categoryId);
+      const categoryId = window.location.hash.replace('#', '');
+      const category = findCategory(categoryId);
 
-        if (category) {
-          console.log('found category', category.title);
-          setTimeout(() => {
-            switchCategory(category);
+      if (category) {
+        setTimeout(() => {
+          switchCategory(category);
 
-            if (selectedMenu.value.categories?.[0]?.id !== category.id) {
-              console.log('scrolling to category');
-              shouldNotScroll.value = 0;
-              ignoringScroll.value = false;
-              scrollToCategory(category);
-            }
-          }, 100);
-        }
+          if (selectedMenu.value.categories?.[0]?.id !== category.id) {
+            shouldNotScroll.value = 0;
+            ignoringScroll.value = false;
+            scrollToCategory(category);
+          }
+        }, 100);
+      }
     }
   });
 
