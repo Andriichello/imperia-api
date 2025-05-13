@@ -5,6 +5,7 @@ import MenuInList from "@/Components/Menu/MenuInList.vue";
 import CategoryNavBar from "@/Components/Menu/CategoryNavBar.vue";
 import MenusDrawer from "@/Components/Menu/MenusDrawer.vue";
 import {router} from "@inertiajs/vue3";
+import MenuNavBar from "@/Components/Menu/MenuNavBar.vue";
 
 const props = defineProps({
     menuId: {
@@ -207,11 +208,19 @@ const props = defineProps({
   <div class="w-full h-full min-h-screen max-w-screen flex flex-col justify-start items-center bg-base-200/80 pb-50">
     <!-- Content -->
     <div class="w-full max-w-md flex flex-col justify-start items-center relative">
-      <CategoryNavBar class="w-full sticky top-0 bg-base-100 z-10"
-                      :categories="selectedMenu!.categories"
-                      :selected="selectedCategory"
-                      @switch-category="onSwitchCategory"
-                      @open-drawer="isDrawerOpen = true"/>
+      <div class="w-full sticky top-0 bg-base-100 z-10 mb-2 shadow-lg">
+        <MenuNavBar class="w-full"
+                    :menus="menus"
+                    :selected="selectedMenu"
+                    @switch-menu="onSwitchMenu"
+                    @open-drawer="isDrawerOpen = true"/>
+
+        <CategoryNavBar class="w-full"
+                        :categories="selectedMenu!.categories"
+                        :selected="selectedCategory"
+                        @switch-category="onSwitchCategory"
+                        @open-drawer="isDrawerOpen = true"/>
+      </div>
 
       <MenusDrawer :open="isDrawerOpen"
                    :menus="menus"

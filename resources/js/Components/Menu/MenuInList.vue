@@ -27,14 +27,13 @@ import {PropType} from "vue";
 <template>
   <div class="w-full flex flex-col">
     <div class="w-full flex flex-col">
-      <div class="w-full flex flex-col text-center py-3 pb-6 px-3"
+      <div class="w-full flex flex-col text-center py-3 px-3 cursor-pointer sticky"
            @click="emits('switch-menu', menu)">
         <h3 class="text-xl font-bold">
           {{ menu.title }}
         </h3>
-        <p class="text-md font-light opacity-80"
-           v-if="menu!.description?.length">
-          {{ menu.description }}
+        <p class="text-md font-light opacity-80">
+          {{ menu.description?.length ? menu.description : 'menu' }}
         </p>
       </div>
 

@@ -1,33 +1,33 @@
 <script setup lang="ts">
-  import {Category} from "@/api";
+import {Menu} from "@/api";
   import {AlignRight} from "lucide-vue-next";
   import {ref, watch, PropType, nextTick, onMounted} from "vue";
 
-  const emits = defineEmits(['switch-category', 'open-drawer']);
+  const emits = defineEmits(['switch-menu', 'open-drawer']);
 
   const props = defineProps({
-    categories: {
-      type: Array as PropType<Category[]>,
+    menus: {
+      type: Array as PropType<Menu[]>,
       required: true,
     },
     selected: {
-      type: Object as PropType<Category | null>,
+      type: Object as PropType<Menu | null>,
       default: null,
     },
     navigation: {
       type: Boolean,
-      default: false,
+      default: true,
     }
   });
 
-  watch(() => props.selected, (newCategory, oldCategory) => {
-    if (newCategory === oldCategory) {
+  watch(() => props.selected, (newMenu, oldMenu) => {
+    if (newMenu === oldMenu) {
       return;
     }
 
-    const scroll = document.getElementById('category-buttons-scroll');
+    const scroll = document.getElementById('menu-buttons-scroll');
 
-    if (!newCategory) {
+    if (!newMenu) {
       if (scroll) {
         scroll.scrollTo({
           top: 0,
@@ -39,7 +39,7 @@
       return;
     }
 
-    const button = document.getElementById(`category-${newCategory.id}-button`);
+    const button = document.getElementById(`menu-${newMenu.id}-button`);
 
     if (button && scroll) {
       scroll.scrollTo({
@@ -52,16 +52,18 @@
 
   const RIGHT_DIV_WIDTH = 56; // px (adjust if your right fixed div is wider)
 
-  const scrollRef = ref<HTMLElement|null>(null)
-  const hasOverflow = ref(false)
+  const scrollRef = ref<HTMLElement | null>(null);
+  const menuNavbarRef = ref<HTMLElement | null>(null);
+
+  const hasOverflow = ref(false);
 
   function checkOverflow() {
-    if (scrollRef.value) {
-      hasOverflow.value = scrollRef.value.scrollWidth > scrollRef.value.clientWidth + 1;
+    if (scrollRef.value && menuNavbarRef.value) {
+      hasOverflow.value = scrollRef.value.scrollWidth > menuNavbarRef.value.clientWidth + 1;
     }
   }
 
-  watch(() => props.categories, () => {
+  watch(() => props.menus, () => {
     nextTick(checkOverflow);
   });
 
@@ -70,19 +72,19 @@
     window.addEventListener('resize', checkOverflow);
   });
 
-  watch(() => props.selected, async (newCategory, oldCategory) => {
-    if (newCategory === oldCategory) return;
+  watch(() => props.selected, async (newMenu, oldMenu) => {
+    if (newMenu === oldMenu) return;
     await nextTick();
     checkOverflow();
 
     const scroll = scrollRef.value;
-    if (!newCategory) {
+    if (!newMenu) {
       if (scroll) {
         scroll.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
       }
       return;
     }
-    const button = document.getElementById(`category-${newCategory.id}-button`);
+    const button = document.getElementById(`menu-${newMenu.id}-button`);
     if (button && scroll) {
       scroll.scrollTo({
         top: 0,
@@ -91,35 +93,35 @@
       });
     }
   });
-
 </script>
 
 <template>
   <div class="w-full flex flex-col justify-center"
-       v-if="categories && categories.length">
+       ref="menuNavbarRef"
+       v-if="menus && menus.length">
     <div class="w-full flex justify-center items-start">
       <div
         ref="scrollRef"
         :class="[
-          'max-w-full flex justify-start items-start gap-2 p-2 pt-1 transition-all duration-200 overflow-x-auto overflow-y-hidden',
+          'max-w-full flex justify-start items-start gap-2 p-2 pb-1 transition-all duration-200 overflow-x-auto overflow-y-hidden',
           navigation && hasOverflow ? 'pr-16' : ''
         ]"
-        id="category-buttons-scroll"
+        id="menu-buttons-scroll"
         style="scrollbar-gutter: stable;">
-        <template v-for="c in categories" :key="c.id">
-          <button class="btn btn-sm text-[14px] normal-case"
-                  :id="`category-${c.id}-button`"
-                  :class="{'btn-ghost':  selected?.id !== c.id, 'btn-neutral': selected?.id === c.id}"
-                  @click="emits('switch-category', c)">
-            {{ c.title }}
-          </button>
+        <template v-for="m in menus" :key="m.id">
+          <h2 class="font-bold text-md normal-case py-1.5 px-1 whitespace-nowrap"
+              :class="{'opacity-70': selected.id !== m.id}"
+                  :id="`menu-${m.id}-button`"
+                  @click="emits('switch-menu', m)">
+            {{ m.title }}
+          </h2>
         </template>
       </div>
 
-      <div class="w-fit p-2 bg-base-100 absolute right-0"
+      <div class="w-fit pl-0 p-2 bg-base-100 absolute right-0"
            v-if="navigation"
            @click="$emit('open-drawer')">
-        <div class="btn btn-outline h-[32px] p-2 flex justify-center items-center normal-case rounded">
+        <div class="btn btn-outline h-[32px] p-2 flex justify-center items-center normal-case rounded bg-base-100">
           <AlignRight class="w-6 h-5"/>
         </div>
       </div>

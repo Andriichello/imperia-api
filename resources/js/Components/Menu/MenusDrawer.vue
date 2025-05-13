@@ -41,16 +41,15 @@
           <X/>
         </button>
 
-        <div class="w-full flex flex-col gap-3">
+        <div class="w-full flex flex-col">
           <template v-for="menu in menus" :key="menu.id">
             <div class="w-full flex flex-col text-start py-3 px-3 cursor-pointer"
                  @click="emits('switch-menu', menu)">
               <h3 class="text-xl font-bold">
                 {{ menu.title }}
               </h3>
-              <p class="text-md font-light opacity-80"
-                 v-if="menu!.description?.length">
-                {{ menu.description }}
+              <p class="text-md font-light opacity-80">
+                {{ menu.description?.length ? menu.description : 'menu' }}
               </p>
             </div>
 
@@ -60,7 +59,7 @@
               <template v-for="category in menu.categories" :key="category.id">
                 <div class="w-full flex flex-col text-start py-3 px-3 cursor-pointer"
                      @click="emits('switch-category', category, menu)">
-                  <h3 class="text-xl font-bold">
+                  <h3 class="text-lg font-bold">
                     {{ category.title }}
                   </h3>
                   <p class="text-md font-light opacity-80"
