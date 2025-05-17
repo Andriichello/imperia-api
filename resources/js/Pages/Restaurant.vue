@@ -1,7 +1,18 @@
 <script setup lang="ts">
   import {computed, PropType, ref} from "vue";
   import {Splide, SplideSlide} from '@splidejs/vue-splide';
-  import {CalendarClock, ChevronUp, ChevronDown, ChevronRight, Circle, DoorOpen, Lock, MapPin, Phone} from 'lucide-vue-next';
+  import {
+    CalendarClock,
+    ChevronUp,
+    ChevronDown,
+    ChevronRight,
+    Circle,
+    DoorOpen,
+    Lock,
+    MapPin,
+    Phone,
+    Search, Languages, ChevronLeft
+  } from 'lucide-vue-next';
   import {Menu, Restaurant} from "@/api";
   import Schedule from "@/Components/Restaurant/Schedule.vue";
   import {getScheduleInfo, ScheduleInfo, time} from "@/helpers";
@@ -54,6 +65,18 @@
 <template>
   <div class="w-full h-full min-h-screen max-w-screen flex flex-col justify-start items-center bg-base-200/80 pb-20">
     <div class="w-full max-w-md flex flex-col justify-start items-center relative">
+      <div class="w-full flex justify-end gap-2 p-2 absolute top-0 z-2">
+        <div class="flex gap-2">
+          <button class="btn btn-sm bg-base-100">
+            <Languages class="w-5 h-5 text-base-content/80"/>
+          </button>
+
+          <button class="btn btn-sm bg-base-100">
+            <Search class="w-5 h-5 text-base-content/80"/>
+          </button>
+        </div>
+      </div>
+
       <Splide class="w-full h-75" :options="slideOptions"
               v-if="restaurant!.media?.length > 0">
         <SplideSlide v-for="(media, index) in restaurant!.media ?? []" :key="media.id">

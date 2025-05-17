@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import {onMounted, onUnmounted, PropType, ref, watch} from "vue";
-import {Category, Menu, Restaurant} from "@/api";
-import MenuInList from "@/Components/Menu/MenuInList.vue";
-import CategoryNavBar from "@/Components/Menu/CategoryNavBar.vue";
-import MenusDrawer from "@/Components/Menu/MenusDrawer.vue";
-import {router} from "@inertiajs/vue3";
-import MenuNavBar from "@/Components/Menu/MenuNavBar.vue";
+  import {onMounted, onUnmounted, PropType, ref, watch} from "vue";
+  import {Category, Menu, Restaurant} from "@/api";
+  import MenuInList from "@/Components/Menu/MenuInList.vue";
+  import CategoryNavBar from "@/Components/Menu/CategoryNavBar.vue";
+  import MenusDrawer from "@/Components/Menu/MenusDrawer.vue";
+  import {router} from "@inertiajs/vue3";
+  import MenuNavBar from "@/Components/Menu/MenuNavBar.vue";
+  import NavBar from "@/Components/Menu/NavBar.vue";
 
-const props = defineProps({
+  const props = defineProps({
     menuId: {
       type: Number,
       required: true,
@@ -101,11 +102,23 @@ const props = defineProps({
   const shouldNotScroll = ref(Date.now());
   const lastScrollPosition = ref(0);
   const continuousScroll = ref(0);
-
+  const scrolledToSticky = ref(false);
 
   const onScroll = () => {
     // Get the current scroll position
     const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+
+    if (scrollPosition > 48) {
+      if (!scrolledToSticky.value) {
+        scrolledToSticky.value = true;
+        console.log('scrolled to sticky...')
+      }
+    } else {
+      if (scrolledToSticky.value) {
+        scrolledToSticky.value = false;
+        console.log('scrolled back from sticky...')
+      }
+    }
 
     // Because of momentum scrolling on mobiles, we shouldn't continue if it is less than zero
     if (scrollPosition < 0) {
@@ -125,7 +138,7 @@ const props = defineProps({
         continuousScroll.value = 0;
       }
 
-
+      continuousScroll.value += lastScrollPosition.value - scrollPosition;
     }
 
     const categoriesCount = selectedMenu.value.categories.length;
@@ -139,7 +152,7 @@ const props = defineProps({
       }
 
       const isTopOutOfView = group.offsetTop < scrollPosition
-      const isBottomOutOfView = (group.offsetTop + group.clientHeight - 80) < scrollPosition;
+      const isBottomOutOfView = (group.offsetTop + group.clientHeight - 96) < scrollPosition;
 
       if (!isTopOutOfView || !isBottomOutOfView) {
         shouldNotScroll.value = Date.now();
@@ -195,6 +208,15 @@ const props = defineProps({
     switchMenu(menu, true);
   }
 
+  const onBack = () => {
+    router.visit(
+      window.location.pathname.split('/menu/')[0],
+      {
+        fresh: false,
+      }
+    );
+  }
+
   onMounted(() => {
     window.addEventListener('scroll', onScroll);
 
@@ -225,7 +247,11 @@ const props = defineProps({
   <div class="w-full h-full min-h-screen max-w-screen flex flex-col justify-start items-center bg-base-200/80 pb-[50vh]">
     <!-- Content -->
     <div class="w-full max-w-md flex flex-col justify-start items-center relative">
-      <div class="w-full sticky top-0 bg-base-100 z-10 mb-2 shadow-lg">
+      <NavBar class="w-full px-2 py-2 bg-base-200"
+              @on-back="onBack"/>
+
+      <div class="w-full sticky top-0 bg-base-100 z-10 border-1 border-base-300"
+           :class="{'shadow-md': scrolledToSticky}">
         <MenuNavBar class="w-full"
                     :menus="menus"
                     :selected="selectedMenu"

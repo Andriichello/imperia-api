@@ -28,17 +28,13 @@
 <template>
   <div class="w-full flex flex-col">
     <div class="w-full flex flex-col">
-      <div class="w-full flex flex-col text-center py-3 px-3 cursor-pointer sticky"
+      <div class="w-full flex flex-col text-center pt-3 pb-0 px-3 cursor-pointer sticky"
            @click="emits('switch-menu', menu)">
-        <h3 class="text-xl font-bold">
-          {{ menu.title }}
-        </h3>
-        <p class="text-md font-light opacity-80">
-          {{ menu.description?.length ? menu.description : 'menu' }}
+        <p class="text-md font-light opacity-80"
+           v-if="menu.description?.length > 0">
+          {{ menu.description }}
         </p>
       </div>
-
-      <div class="w-full h-[1px] bg-base-300"/>
 
       <template v-for="category in menu.categories" :key="category.id"
                 v-if="!closed">
@@ -46,7 +42,7 @@
                         :products="categoryProducts(menu, category)"
                         @switch-category="switchCategory"/>
 
-        <div class="w-full h-[1px] bg-base-300"/>
+<!--        <div class="w-full h-[1px] bg-base-300"/>-->
       </template>
     </div>
   </div>

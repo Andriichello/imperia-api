@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import {Menu} from "@/api";
-  import {AlignRight} from "lucide-vue-next";
+  import {Menu} from "@/api";
+  import {AlignRight, Ellipsis} from "lucide-vue-next";
   import {ref, watch, PropType, nextTick, onMounted} from "vue";
 
   const emits = defineEmits(['switch-menu', 'open-drawer']);
@@ -109,7 +109,7 @@ import {Menu} from "@/api";
         id="menu-buttons-scroll"
         style="scrollbar-gutter: stable;">
         <template v-for="m in menus" :key="m.id">
-          <h2 class="font-bold text-lg normal-case py-1.5 pt-1 px-1 whitespace-nowrap"
+          <h2 class="font-bold text-lg normal-case py-1.5 pt-1 px-1 whitespace-nowrap cursor-pointer"
               :class="{'opacity-50': selected.id !== m.id}"
                   :id="`menu-${m.id}-button`"
                   @click="emits('switch-menu', m)">
@@ -121,8 +121,8 @@ import {Menu} from "@/api";
       <div class="w-fit pl-0 p-2 bg-base-100 absolute right-0"
            v-if="navigation"
            @click="$emit('open-drawer')">
-        <div class="btn btn-outline h-[32px] p-2 flex justify-center items-center normal-case rounded bg-base-100">
-          <AlignRight class="w-6 h-5"/>
+        <div class="btn btn-sm flex justify-center items-center normal-case rounded bg-base-100">
+          <Ellipsis class="w-5 h-5 text-base-content/80"/>
         </div>
       </div>
     </div>
