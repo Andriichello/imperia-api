@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import {Category, Menu, Product} from "@/api";
-import CategoryInList from "@/Components/Menu/CategoryInList.vue";
-import {PropType} from "vue";
+  import {Category, Menu, Product} from "@/api";
+  import CategoryInList from "@/Components/Menu/CategoryInList.vue";
+  import {PropType} from "vue";
+  import {Expand} from "lucide-vue-next";
 
   const emits = defineEmits(['switch-menu', 'switch-category']);
 

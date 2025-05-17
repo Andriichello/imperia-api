@@ -109,8 +109,8 @@ import {Menu} from "@/api";
         id="menu-buttons-scroll"
         style="scrollbar-gutter: stable;">
         <template v-for="m in menus" :key="m.id">
-          <h2 class="font-bold text-md normal-case py-1.5 px-1 whitespace-nowrap"
-              :class="{'opacity-70': selected.id !== m.id}"
+          <h2 class="font-bold text-lg normal-case py-1.5 pt-1 px-1 whitespace-nowrap"
+              :class="{'opacity-50': selected.id !== m.id}"
                   :id="`menu-${m.id}-button`"
                   @click="emits('switch-menu', m)">
             {{ m.title }}

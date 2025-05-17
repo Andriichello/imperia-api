@@ -99,6 +99,9 @@ const props = defineProps({
   const ignoringScrollId = ref(0);
 
   const shouldNotScroll = ref(Date.now());
+  const lastScrollPosition = ref(0);
+  const continuousScroll = ref(0);
+
 
   const onScroll = () => {
     // Get the current scroll position
@@ -106,11 +109,23 @@ const props = defineProps({
 
     // Because of momentum scrolling on mobiles, we shouldn't continue if it is less than zero
     if (scrollPosition < 0) {
+      lastScrollPosition.value = scrollPosition;
       return;
     }
 
     if (ignoringScroll.value) {
+      lastScrollPosition.value = scrollPosition;
       return;
+    }
+
+    const isScrollingUp = scrollPosition < lastScrollPosition.value;
+
+    if (isScrollingUp) {
+      if (continuousScroll.value < 0) {
+        continuousScroll.value = 0;
+      }
+
+
     }
 
     const categoriesCount = selectedMenu.value.categories.length;
@@ -134,6 +149,8 @@ const props = defineProps({
         break;
       }
     }
+
+    lastScrollPosition.value = scrollPosition;
   };
 
   const scrollToCategory = (category: Category) => {
@@ -143,7 +160,7 @@ const props = defineProps({
       ignoringScroll.value = true;
 
       window.scrollTo({
-        top: divider.getBoundingClientRect().top + window.pageYOffset - 48,
+        top: divider.getBoundingClientRect().top + window.pageYOffset - 86,
         behavior: 'smooth'
       });
 
@@ -205,7 +222,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="w-full h-full min-h-screen max-w-screen flex flex-col justify-start items-center bg-base-200/80 pb-50">
+  <div class="w-full h-full min-h-screen max-w-screen flex flex-col justify-start items-center bg-base-200/80 pb-[50vh]">
     <!-- Content -->
     <div class="w-full max-w-md flex flex-col justify-start items-center relative">
       <div class="w-full sticky top-0 bg-base-100 z-10 mb-2 shadow-lg">
@@ -232,12 +249,10 @@ const props = defineProps({
 
       <!-- Menus list -->
       <div class="w-full flex flex-col">
-        <template v-for="menu in menus" :key="menu.id">
-          <MenuInList :menu="menu"
-                      :closed="menu.id !== selectedMenu?.id"
-                      @switch-menu="switchMenu"
-                      @switch-category="onSwitchCategory"/>
-        </template>
+        <MenuInList :menu="selectedMenu"
+                    :closed="false"
+                    @switch-menu="switchMenu"
+                    @switch-category="onSwitchCategory"/>
       </div>
     </div>
   </div>
