@@ -8,9 +8,9 @@ use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\ForceJsonOnApi;
 use App\Http\Middleware\HandleCached;
 use App\Http\Middleware\HandleInertiaRequests;
-use App\Http\Middleware\HttpsProtocol;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Middleware\SetLocaleFromUrl;
 use App\Http\Middleware\TrimStrings;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Http\Middleware\WithoutDataWrapping;
@@ -76,6 +76,7 @@ class Kernel extends HttpKernel
         ],
 
         'inertia' => [
+            SetLocaleFromUrl::class,
             WithoutDataWrapping::class,
             HandleInertiaRequests::class,
         ],

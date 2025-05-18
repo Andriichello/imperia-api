@@ -34,6 +34,7 @@ use Illuminate\Support\Collection;
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  *
+ * @property string|null $locale
  * @property string|null $phone
  * @property string|null $email
  * @property string|null $website
@@ -296,6 +297,26 @@ class Restaurant extends BaseModel implements
                 ]);
             }
         );
+    }
+
+    /**
+     * Accessor for the restaurant's locale.
+     *
+     * @return string|null
+     */
+    public function getLocaleAttribute(): ?string
+    {
+        return $this->getFromJson('metadata', 'locale');
+    }
+
+    /**
+     * Mutator for the restaurant's locale.
+     *
+     * @param $locale string|null
+     */
+    public function setLocaleAttribute(?string $locale): void
+    {
+        $this->setToJson('metadata', 'locale', $locale);
     }
 
     /**

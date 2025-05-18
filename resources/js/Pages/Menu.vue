@@ -7,6 +7,9 @@
   import {router} from "@inertiajs/vue3";
   import MenuNavBar from "@/Components/Menu/MenuNavBar.vue";
   import NavBar from "@/Components/Menu/NavBar.vue";
+  import BaseDrawer from "@/Components/Drawer/BaseDrawer.vue";
+  import SearchDrawer from "@/Components/Menu/SearchDrawer.vue";
+  import LanguagesDrawer from "@/Components/Menu/LanguagesDrawer.vue";
 
   const props = defineProps({
     menuId: {
@@ -96,7 +99,9 @@
 
   const stickyRef = ref<HTMLElement | null>(null);
 
-  const isDrawerOpen = ref(false)
+  const isMenusDrawerOpen = ref(false)
+  const isSearchDrawerOpen = ref(false)
+  const isLanguagesDrawerOpen = ref(false)
 
   const ignoringScroll = ref(false);
   const ignoringScrollId = ref(0);
@@ -194,7 +199,7 @@
   }
 
   const onSwitchCategory = (category: Category, menu: Menu = selectedMenu.value) => {
-    isDrawerOpen.value = false;
+    isMenusDrawerOpen.value = false;
 
     if (menu.id !== selectedMenu.value.id) {
       switchMenu(menu);
@@ -207,7 +212,7 @@
   }
 
   const onSwitchMenu = (menu: Menu) => {
-    isDrawerOpen.value = false;
+    isMenusDrawerOpen.value = false;
 
     switchMenu(menu, true);
   }
@@ -252,7 +257,9 @@
     <!-- Content -->
     <div class="w-full max-w-md flex flex-col justify-start items-center relative">
       <NavBar class="w-full px-2 py-2 bg-base-200"
-              @on-back="onBack"/>
+              @on-back="onBack"
+              @on-search="isSearchDrawerOpen = true"
+              @on-language="isLanguagesDrawerOpen = true"/>
 
       <div class="w-full sticky top-0 bg-base-100 z-10 border-1 border-base-300"
            ref="stickyRef"
@@ -261,22 +268,28 @@
                     :menus="menus"
                     :selected="selectedMenu"
                     @switch-menu="onSwitchMenu"
-                    @open-drawer="isDrawerOpen = true"/>
+                    @open-drawer="isMenusDrawerOpen = true"/>
 
         <CategoryNavBar class="w-full"
                         :categories="selectedMenu!.categories"
                         :selected="selectedCategory"
                         @switch-category="onSwitchCategory"
-                        @open-drawer="isDrawerOpen = true"/>
+                        @open-drawer="isMenusDrawerOpen = true"/>
       </div>
 
-      <MenusDrawer :open="isDrawerOpen"
+      <MenusDrawer :open="isMenusDrawerOpen"
                    :menus="menus"
                    :menu-id="selectedMenu.id"
                    :category-id="selectedCategory?.id"
-                   @close="isDrawerOpen = false"
+                   @close="isMenusDrawerOpen = false"
                    @switch-menu="onSwitchMenu"
                    @switch-category="onSwitchCategory"/>
+
+      <SearchDrawer :open="isSearchDrawerOpen"
+                    @close="isSearchDrawerOpen = false"/>
+
+      <LanguagesDrawer :open="isLanguagesDrawerOpen"
+                    @close="isLanguagesDrawerOpen = false"/>
 
       <!-- Menus list -->
       <div class="w-full flex flex-col">
