@@ -32,7 +32,8 @@
 </script>
 
 <template>
-  <BaseDrawer :open="open">
+  <BaseDrawer :open="open"
+              @close="close">
     <div class="w-full flex flex-col">
       <template v-for="menu in menus" :key="menu.id">
         <div class="w-full flex flex-col text-start py-3 px-3 cursor-pointer"

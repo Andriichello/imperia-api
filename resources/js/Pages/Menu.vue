@@ -24,6 +24,14 @@
       type: Array as PropType<Menu[]>,
       required: true,
     },
+    locale: {
+      type: String,
+      required: true,
+    },
+    supported_locales: {
+      type: Array as PropType<string[]>,
+      required: true,
+    }
   });
 
   const selectedMenu = ref<Menu>(
@@ -289,7 +297,9 @@
                     @close="isSearchDrawerOpen = false"/>
 
       <LanguagesDrawer :open="isLanguagesDrawerOpen"
-                    @close="isLanguagesDrawerOpen = false"/>
+                       :locale="locale"
+                       :supported_locales="supported_locales"
+                       @close="isLanguagesDrawerOpen = false"/>
 
       <!-- Menus list -->
       <div class="w-full flex flex-col">
