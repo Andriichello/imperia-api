@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import {Menu} from "@/api";
-  import {AlignRight, Ellipsis} from "lucide-vue-next";
+  import {Ellipsis} from "lucide-vue-next";
   import {ref, watch, PropType, nextTick, onMounted} from "vue";
 
   const emits = defineEmits(['switch-menu', 'open-drawer']);

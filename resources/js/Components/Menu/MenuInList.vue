@@ -28,7 +28,8 @@
 <template>
   <div class="w-full flex flex-col">
     <div class="w-full flex flex-col">
-      <div class="w-full flex flex-col text-center pt-3 pb-0 px-3 cursor-pointer sticky"
+      <div class="w-full flex flex-col text-center pb-0 px-3 cursor-pointer sticky"
+           :class="{'pt-3': menu.description?.length > 0}"
            @click="emits('switch-menu', menu)">
         <p class="text-md font-light opacity-80"
            v-if="menu.description?.length > 0">

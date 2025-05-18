@@ -86,6 +86,9 @@
         </SplideSlide>
       </Splide>
 
+      <div class="w-full h-12 bg-base-200 border-b-1 border-base-300"
+           v-else/>
+
       <div class="w-full pt-3 pb-1 px-3 text-center">
         <h3 class="text-2xl font-bold">
           {{ restaurant!.name }}
@@ -136,7 +139,7 @@
       <div class="w-full flex flex-col grow mt-3 pb-3 gap-1 bg-base-200/80">
         <div class="w-full flex flex-col gap-3">
           <div class="w-full flex flex-col gap-1">
-            <div class="w-full h-[2px] bg-base-300"/>
+            <div class="w-full h-[1px] bg-base-300"/>
 
             <div class="w-full flex flex-col justify-start items-start py-2 px-3">
               <div class="w-full flex justify-start items-start gap-3 cursor-pointer"
@@ -172,10 +175,10 @@
                         :info="scheduleInfo"/>
             </div>
 
-            <div class="w-full h-[2px] bg-base-300"/>
+            <div class="w-full h-[1px] bg-base-300"/>
           </div>
 
-          <div class="w-full flex justify-start items-start gap-3 px-3"
+          <div class="w-full flex justify-start items-start gap-3 px-3 cursor-pointer"
                v-if="restaurant!.phone?.length"
                @click="callPhone(restaurant!.phone)">
             <div class="w-12 min-w-12 h-12 flex justify-center items-center bg-base-300/80 rounded">
@@ -192,7 +195,7 @@
             </div>
           </div>
 
-          <div class="w-full flex justify-start items-start gap-3 px-3"
+          <div class="w-full flex justify-start items-start gap-3 px-3 cursor-pointer"
                v-if="restaurant!.full_address?.length"
                @click="openMap(restaurant!.full_address)">
             <div class="w-12 min-w-12 h-12 flex justify-center items-center bg-base-300/80 rounded">
