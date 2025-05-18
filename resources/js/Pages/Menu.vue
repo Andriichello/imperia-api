@@ -94,6 +94,8 @@
     }
   };
 
+  const stickyRef = ref<HTMLElement | null>(null);
+
   const isDrawerOpen = ref(false)
 
   const ignoringScroll = ref(false);
@@ -111,12 +113,10 @@
     if (scrollPosition > 48) {
       if (!scrolledToSticky.value) {
         scrolledToSticky.value = true;
-        console.log('scrolled to sticky...')
       }
     } else {
       if (scrolledToSticky.value) {
         scrolledToSticky.value = false;
-        console.log('scrolled back from sticky...')
       }
     }
 
@@ -151,8 +151,10 @@
         continue;
       }
 
+      const stickyHeight = stickyRef.value?.clientHeight ?? 96;
+
       const isTopOutOfView = group.offsetTop < scrollPosition
-      const isBottomOutOfView = (group.offsetTop + group.clientHeight - 96) < scrollPosition;
+      const isBottomOutOfView = (group.offsetTop + group.clientHeight - stickyHeight) < scrollPosition;
 
       if (!isTopOutOfView || !isBottomOutOfView) {
         shouldNotScroll.value = Date.now();
@@ -172,8 +174,10 @@
     if ((shouldNotScroll.value === 0 || (Date.now() - shouldNotScroll.value) > 100) && divider) {
       ignoringScroll.value = true;
 
+      const stickyHeight = stickyRef.value?.clientHeight ?? 96;
+
       window.scrollTo({
-        top: divider.getBoundingClientRect().top + window.pageYOffset - 86,
+        top: divider.getBoundingClientRect().top + window.pageYOffset - stickyHeight + 4,
         behavior: 'smooth'
       });
 
@@ -251,6 +255,7 @@
               @on-back="onBack"/>
 
       <div class="w-full sticky top-0 bg-base-100 z-10 border-1 border-base-300"
+           ref="stickyRef"
            :class="{'shadow-md': scrolledToSticky}">
         <MenuNavBar class="w-full"
                     :menus="menus"

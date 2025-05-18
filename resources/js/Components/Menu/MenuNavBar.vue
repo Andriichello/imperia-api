@@ -59,7 +59,7 @@
 
   function checkOverflow() {
     if (scrollRef.value && menuNavbarRef.value) {
-      hasOverflow.value = scrollRef.value.scrollWidth > menuNavbarRef.value.clientWidth + 1;
+      hasOverflow.value = scrollRef.value.scrollWidth > (menuNavbarRef.value.clientWidth - 5);
     }
   }
 
@@ -99,11 +99,11 @@
   <div class="w-full flex flex-col justify-center"
        ref="menuNavbarRef"
        v-if="menus && menus.length">
-    <div class="w-full flex justify-center items-start">
+    <div class="w-full flex justify-center items-start overflow-x-hidden">
       <div
         ref="scrollRef"
         :class="[
-          'max-w-full flex justify-start items-start gap-2 p-2 pb-1 transition-all duration-200 overflow-x-auto overflow-y-hidden',
+          'max-w-full flex justify-start items-start gap-2 p-2 pb-1 pt-1 transition-all duration-200 overflow-x-auto overflow-y-hidden',
           navigation && hasOverflow ? 'pr-16' : ''
         ]"
         id="menu-buttons-scroll"
@@ -118,7 +118,7 @@
         </template>
       </div>
 
-      <div class="w-fit pl-0 p-2 bg-base-100 absolute right-0"
+      <div class="w-fit pl-0 p-2 pt-1.5 pb-1 bg-base-100 absolute right-0"
            v-if="navigation"
            @click="$emit('open-drawer')">
         <div class="btn btn-sm flex justify-center items-center normal-case rounded bg-base-100">
