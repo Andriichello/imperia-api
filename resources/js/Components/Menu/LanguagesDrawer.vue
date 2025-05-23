@@ -44,7 +44,7 @@
       <template v-for="l in supported_locales" :key="l">
         <label class="text-lg px-3 py-3 border-1 border-base-300 rounded flex justify-between"
                :class="{'font-bold': selected === l}">
-          {{ l }}
+          {{ $t('languages.names.' + l) }}
           <input class="radio"
                  type="radio"
                  :value="l"

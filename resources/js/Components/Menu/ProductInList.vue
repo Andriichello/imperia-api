@@ -9,6 +9,11 @@
       type: Object as PropType<Product>,
       required: true,
     },
+    currency: {
+      type: String as PropType<string | null>,
+      required: false,
+      default: null,
+    }
   });
 
   const variants = computed<Partial<ProductVariant>[]>(() => {
@@ -64,7 +69,7 @@
       price = selectedVariant.value?.price;
     }
 
-    return priceFormatted(price, 'uah');
+    return priceFormatted(price, props.currency?.toLowerCase() ?? 'uah');
   });
 
   const variantWeight = (variant: Partial<ProductVariant>) => {

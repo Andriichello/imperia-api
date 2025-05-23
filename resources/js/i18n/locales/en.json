@@ -15,7 +15,11 @@
     "empty_category": "Unfortunately, this category is empty"
   },
   "languages": {
-    "title": "Languages"
+    "title": "Languages",
+    "names": {
+      "en": "English",
+      "uk": "Українська"
+    }
   },
   "format": {
     "date": "DD/MM/YYYY",

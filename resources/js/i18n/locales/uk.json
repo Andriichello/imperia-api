@@ -15,7 +15,11 @@
     "empty_category": "На жаль, ця категорія порожня"
   },
   "languages": {
-    "title": "Мови"
+    "title": "Мови",
+    "names": {
+      "en": "English",
+      "uk": "Українська"
+    }
   },
   "format": {
     "date": "DD/MM/YYYY",
