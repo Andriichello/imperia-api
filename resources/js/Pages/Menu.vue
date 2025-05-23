@@ -225,6 +225,16 @@
     switchMenu(menu, true);
   }
 
+  const onSwitchLanguage = (locale: string) => {
+    const parts = window.location.pathname
+      .replace(/^\//, '')
+      .split('/');
+
+    parts[0] = locale;
+
+    router.visit('/' + parts.join('/'));
+  }
+
   const onBack = () => {
     router.visit(
       window.location.pathname.split('/menu/')[0],
@@ -299,7 +309,8 @@
       <LanguagesDrawer :open="isLanguagesDrawerOpen"
                        :locale="locale"
                        :supported_locales="supported_locales"
-                       @close="isLanguagesDrawerOpen = false"/>
+                       @close="isLanguagesDrawerOpen = false"
+                       @switch-language="onSwitchLanguage"/>
 
       <!-- Menus list -->
       <div class="w-full flex flex-col">

@@ -17,6 +17,8 @@
   import Schedule from "@/Components/Restaurant/Schedule.vue";
   import {getScheduleInfo, ScheduleInfo, time} from "@/helpers";
   import {router} from "@inertiajs/vue3";
+  import LanguagesDrawer from "@/Components/Menu/LanguagesDrawer.vue";
+  import SearchDrawer from "@/Components/Menu/SearchDrawer.vue";
 
   const props = defineProps({
     restaurant: {
@@ -27,6 +29,14 @@
       type: Array as PropType<Menu[]>,
       required: true,
     },
+    locale: {
+      type: String,
+      required: true,
+    },
+    supported_locales: {
+      type: Array as PropType<string[]>,
+      required: true,
+    }
   });
 
   const slideOptions = ref({
@@ -45,6 +55,9 @@
 
   const scheduleExpanded = ref(false);
 
+  const isSearchDrawerOpen = ref(false);
+  const isLanguagesDrawerOpen = ref(false);
+
   const openMenu = (menu: Menu) => {
     router.visit(window.location.pathname + `/menu/${menu.id}`, {replace: false});
   }
@@ -60,6 +73,16 @@
       window.open(`https://www.google.com/maps/search/?api=1&query=${address}`, '_blank')
     }
   };
+
+  const onSwitchLanguage = (locale: string) => {
+    const parts = window.location.pathname
+      .replace(/^\//, '')
+      .split('/');
+
+    parts[0] = locale;
+
+    router.visit('/' + parts.join('/'));
+  }
 </script>
 
 <template>
@@ -67,11 +90,13 @@
     <div class="w-full max-w-md flex flex-col justify-start items-center relative">
       <div class="w-full flex justify-end gap-2 p-2 absolute top-0 z-2">
         <div class="flex gap-2">
-          <button class="btn btn-sm bg-base-100">
+          <button class="btn btn-sm bg-base-100"
+                  @click="isLanguagesDrawerOpen = true">
             <Languages class="w-5 h-5 text-base-content/80"/>
           </button>
 
-          <button class="btn btn-sm bg-base-100">
+          <button class="btn btn-sm bg-base-100"
+                  @click="isSearchDrawerOpen = true">
             <Search class="w-5 h-5 text-base-content/80"/>
           </button>
         </div>
@@ -214,5 +239,14 @@
         </div>
       </div>
     </div>
+
+    <SearchDrawer :open="isSearchDrawerOpen"
+                  @close="isSearchDrawerOpen = false"/>
+
+    <LanguagesDrawer :open="isLanguagesDrawerOpen"
+                     :locale="locale"
+                     :supported_locales="supported_locales"
+                     @close="isLanguagesDrawerOpen = false"
+                     @switch-language="onSwitchLanguage"/>
   </div>
 </template>
