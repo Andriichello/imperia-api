@@ -14,6 +14,14 @@
     "title": "Menu",
     "empty_category": "Unfortunately, this category is empty"
   },
+  "search": {
+    "placeholder": "Search for menus, categories, products...",
+    "menus": "Menus",
+    "categories": "Categories",
+    "products": "Products",
+    "no_results": "No results found",
+    "start_typing": "Start typing to search"
+  },
   "languages": {
     "title": "Languages",
     "names": {

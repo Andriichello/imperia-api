@@ -14,6 +14,14 @@
     "title": "Меню",
     "empty_category": "На жаль, ця категорія порожня"
   },
+  "search": {
+    "placeholder": "Пошук меню, категорій, продуктів...",
+    "menus": "Меню",
+    "categories": "Категорії",
+    "products": "Продукти",
+    "no_results": "Нічого не знайдено",
+    "start_typing": "Почніть вводити для пошуку"
+  },
   "languages": {
     "title": "Мови",
     "names": {
