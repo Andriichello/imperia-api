@@ -81,18 +81,28 @@ export function timeFormatted(date: Date | string | null): string | null {
         .replace('MM', minutes);
 }
 
-export function priceFormatted(price: number | null): string | null {
+export function priceFormatted(price: number | null, currencyCode: string = 'uah'): string | null {
     if (price === null || price === undefined) {
         return null;
     }
 
     const formattedPrice = Number.isInteger(price) ? price.toString() : price.toFixed(2);
 
-    // Get the currency format from translations, default to "{price} ₴" if not available
-    const format = t('format.currency') || '{price} ₴';
+    // Get the currency symbol from translations
+    const currencySymbol = t(`currency_symbol.${currencyCode.toLowerCase()}`) || currencyCode;
 
-    // Replace placeholder with actual value
-    return format.replace('{price}', formattedPrice);
+  return t('format.currency', {price: formattedPrice, currency: currencySymbol});
+}
+
+/**
+ * Format a weight unit using translations
+ *
+ * @param unit The weight unit code (g, kg, ml, l, cm, pc)
+ * @returns The translated weight unit
+ */
+export function weightUnitFormatted(unit: string): string {
+    // Get the weight unit from translations, default to the unit code if not available
+    return t(`weight_unit.${unit.toLowerCase()}`) || unit;
 }
 
 export function sortByPopularity<T extends { popularity?: number }>(items: T[]): T[] {

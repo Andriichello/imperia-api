@@ -22,7 +22,7 @@
     "time": "HH:MM",
     "hour_short": "год",
     "minute_short": "хв",
-    "currency": "{price} ₴",
+    "currency": "{price} {currency}",
     "time_until_closing": "{time} до закриття",
     "time_until_opening": "{time} до відкриття"
   },
@@ -38,5 +38,22 @@
     "friday": "П'ятниця",
     "saturday": "Субота",
     "sunday": "Неділя"
+  },
+  "weight_unit": {
+    "g": "г",
+    "kg": "кг",
+    "ml": "мл",
+    "l": "л",
+    "cm": "см",
+    "pc": "шт"
+  },
+  "currency_symbol": {
+    "uah": "₴",
+    "eur": "€",
+    "usd": "$",
+    "gbp": "£",
+    "pln": "zł",
+    "czk": "Kč",
+    "rub": "₽"
   }
 }

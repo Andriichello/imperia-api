@@ -22,7 +22,7 @@
     "time": "HH:MM",
     "hour_short": "h",
     "minute_short": "m",
-    "currency": "{price} ₴",
+    "currency": "{price} {currency}",
     "time_until_closing": "{time} until closing",
     "time_until_opening": "{time} until opening"
   },
@@ -38,5 +38,22 @@
     "friday": "Friday",
     "saturday": "Saturday",
     "sunday": "Sunday"
+  },
+  "weight_unit": {
+    "g": "g",
+    "kg": "kg",
+    "ml": "ml",
+    "l": "l",
+    "cm": "cm",
+    "pc": "pc"
+  },
+  "currency_symbol": {
+    "uah": "₴",
+    "eur": "€",
+    "usd": "$",
+    "gbp": "£",
+    "pln": "zł",
+    "czk": "Kč",
+    "rub": "₽"
   }
 }

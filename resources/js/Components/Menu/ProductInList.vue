@@ -2,6 +2,7 @@
   import {Product, ProductVariant} from "@/api";
   import {Splide, SplideSlide} from "@splidejs/vue-splide";
   import {ref, computed, PropType} from "vue";
+  import {priceFormatted, weightUnitFormatted} from "@/helpers";
 
   const props = defineProps({
     product: {
@@ -50,7 +51,10 @@
       unit = selectedVariant.value?.weight_unit;
     }
 
-    return weight + (unit ?? '');
+    unit = unit ? weightUnitFormatted(unit) : '';
+    weight = weight ?? '';
+
+    return weight + ' ' + unit;
   });
 
   const price = computed(() => {
@@ -60,11 +64,12 @@
       price = selectedVariant.value?.price;
     }
 
-    return price + ' ₴';
+    return priceFormatted(price, 'uah');
   });
 
   const variantWeight = (variant: Partial<ProductVariant>) => {
-    return variant.weight + ((variant?.id ? variant.weight_unit : props.product!.weight_unit) ?? '');
+    return variant.weight + ' '
+      + (weightUnitFormatted((variant?.id ? variant.weight_unit : props.product!.weight_unit) ?? ''));
   };
 
   const selectVariant = (variant: Partial<ProductVariant> | null) => {
