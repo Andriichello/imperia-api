@@ -6,12 +6,10 @@
     ChevronUp,
     ChevronDown,
     ChevronRight,
-    Circle,
-    DoorOpen,
-    Lock,
     MapPin,
     Phone,
-    Search, Languages, ChevronLeft
+    Search,
+    Languages,
   } from 'lucide-vue-next';
   import {Menu, Restaurant} from "@/api";
   import Schedule from "@/Components/Restaurant/Schedule.vue";
@@ -19,6 +17,8 @@
   import {router} from "@inertiajs/vue3";
   import LanguagesDrawer from "@/Components/Menu/LanguagesDrawer.vue";
   import SearchDrawer from "@/Components/Menu/SearchDrawer.vue";
+  import { useI18n } from 'vue-i18n';
+  import {switchLanguage} from "@/i18n/utils";
 
   const props = defineProps({
     restaurant: {
@@ -38,6 +38,8 @@
       required: true,
     }
   });
+
+  const i18n = useI18n();
 
   const slideOptions = ref({
     perPage: 1,
@@ -75,13 +77,7 @@
   };
 
   const onSwitchLanguage = (locale: string) => {
-    const parts = window.location.pathname
-      .replace(/^\//, '')
-      .split('/');
-
-    parts[0] = locale;
-
-    router.visit('/' + parts.join('/'));
+    switchLanguage(i18n, locale);
   }
 </script>
 
@@ -120,7 +116,7 @@
         </h3>
 
         <p class="text-md -translate-y-0.5 opacity-70">
-          {{ 'restaurant' }}
+          {{ $t('restaurant.title') }}
         </p>
       </div>
       <div class="w-full pt-1 pb-3 px-3 pr-6 chat chat-start flex flex-col gap-1.5 translate-x-0.5"
@@ -155,7 +151,7 @@
 
           <div class="w-full flex items-center justify-center px-3 py-3" v-else>
             <h3 class="text-xl font-bold text-center opacity-70">
-              Unfortunately, there are no menus available now
+              {{ $t('restaurant.no_menus') }}
             </h3>
           </div>
         </div>
@@ -175,7 +171,7 @@
 
                 <div class="flex grow flex-col justify-center items-start">
                   <h3 class="text-sm font-semibold text-base-content/50 translate-y-0.5">
-                    Working hours:
+                    {{ $t('restaurant.working_hours') }}
                   </h3>
                   <p class="text-md text-base-content/90 font-semibold">
                     {{ time(scheduleInfo.relevant.beg_hour, scheduleInfo.relevant.beg_minute) }} -
@@ -192,7 +188,7 @@
               <p class="w-full font-mono text-md cursor-pointer pl-15"
                  :class="{'text-green-600': scheduleInfo.status === 'Open', 'text-red-600': scheduleInfo.status === 'Closed'}"
                  @click="scheduleExpanded = !scheduleExpanded">
-                <span class="font-semibold">{{ scheduleInfo.status === 'Open' ? 'Open' : 'Closed' }}:</span> {{ scheduleInfo.timeBeforeOrUntil }} {{ scheduleInfo.status === 'Open' ? 'until closing' : 'until opening' }}
+                <span class="font-semibold">{{ scheduleInfo.status === 'Open' ? $t('restaurant.open') : $t('restaurant.closed') }}:</span> {{ scheduleInfo.timeBeforeOrUntil }} {{ scheduleInfo.status === 'Open' ? $t('restaurant.until_closing') : $t('restaurant.until_opening') }}
               </p>
 
               <Schedule class="w-full"
@@ -212,7 +208,7 @@
 
             <div class="w-full flex flex-col justify-center items-start">
               <h3 class="text-sm font-semibold text-base-content/50 translate-y-0.5">
-                Phone:
+                {{ $t('restaurant.phone') }}
               </h3>
               <p class="text-md text-base-content/90 font-semibold">
                 {{ restaurant!.phone }}
@@ -229,7 +225,7 @@
 
             <div class="w-full flex flex-col justify-start items-start">
               <h3 class="text-sm font-semibold text-base-content/50">
-                Location:
+                {{ $t('restaurant.location') }}
               </h3>
               <p class="text-md text-base-content/90 font-semibold">
                 {{ restaurant!.full_address }}

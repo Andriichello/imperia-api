@@ -4,6 +4,8 @@ import VueSplide from '@splidejs/vue-splide';
 import WelcomePage from '@/Pages/Welcome.vue'
 import RestaurantPage from "@/Pages/Restaurant.vue";
 import MenuPage from "@/Pages/Menu.vue";
+import setupI18n from '@/i18n';
+import { setI18n } from '@/i18n/utils';
 
 // Map your pages
 const pages: Record<string, any> = {
@@ -18,9 +20,19 @@ createInertiaApp({
     return pages[name];
   },
   setup({ el, App, props, plugin }) {
+    // Get the locale from Inertia props
+    const locale = props.initialPage.props.locale || 'en';
+
+    // Create the i18n instance
+    const i18n = setupI18n(locale);
+
+    // Set the global i18n instance for use in non-component files
+    setI18n(i18n);
+
     createApp({ render: () => h(App, props) })
       .use(plugin)
       .use(VueSplide)
+      .use(i18n)
       .mount(el)
   },
 })

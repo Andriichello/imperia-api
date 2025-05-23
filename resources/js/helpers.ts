@@ -1,5 +1,6 @@
 import {DateTime} from "luxon";
 import {Restaurant, Schedule, ScheduleWeekday} from "@/api";
+import { t } from "@/i18n/utils";
 
 export function authHeaders(token: string, type = 'bearer'): object {
     if (type === 'bearer') {
@@ -51,7 +52,14 @@ export function dateFormatted(date: Date | string | null): string | null {
     const month = (1 + date.getMonth()).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
 
-    return day + '/' + month + '/' + year;
+    // Get the date format from translations, default to DD/MM/YYYY if not available
+    const format = t('format.date') || 'DD/MM/YYYY';
+
+    // Replace placeholders with actual values
+    return format
+        .replace('DD', day)
+        .replace('MM', month)
+        .replace('YYYY', year.toString());
 }
 
 export function timeFormatted(date: Date | string | null): string | null {
@@ -64,7 +72,13 @@ export function timeFormatted(date: Date | string | null): string | null {
     const hours = date.getUTCHours().toString().padStart(2, '0');
     const minutes = date.getUTCMinutes().toString().padStart(2, '0');
 
-    return hours + ':' + minutes;
+    // Get the time format from translations, default to HH:MM if not available
+    const format = t('format.time') || 'HH:MM';
+
+    // Replace placeholders with actual values
+    return format
+        .replace('HH', hours)
+        .replace('MM', minutes);
 }
 
 export function priceFormatted(price: number | null): string | null {
@@ -72,11 +86,13 @@ export function priceFormatted(price: number | null): string | null {
         return null;
     }
 
-    if (Number.isInteger(price)) {
-        return price + ' ₴';
-    }
+    const formattedPrice = Number.isInteger(price) ? price.toString() : price.toFixed(2);
 
-    return price.toFixed(2) + ' ₴';
+    // Get the currency format from translations, default to "{price} ₴" if not available
+    const format = t('format.currency') || '{price} ₴';
+
+    // Replace placeholder with actual value
+    return format.replace('{price}', formattedPrice);
 }
 
 export function sortByPopularity<T extends { popularity?: number }>(items: T[]): T[] {
@@ -176,15 +192,16 @@ export function getUpcomingSchedules(now: DateTime, schedules: Schedule[], timez
 }
 
 export function time(hour: number, minute: number) {
-  let time = '';
+  const hours = hour < 10 ? '0' + hour : hour.toString();
+  const minutes = minute < 10 ? '0' + minute : minute.toString();
 
-  time += hour < 10 ? '0' + hour : hour;
+  // Get the time format from translations, default to HH:MM if not available
+  const format = t('format.time') || 'HH:MM';
 
-  time += ':'
-
-  time += minute < 10 ? '0' + minute : minute;
-
-  return time;
+  // Replace placeholders with actual values
+  return format
+      .replace('HH', hours)
+      .replace('MM', minutes);
 }
 
 export interface ScheduleCalculations {
@@ -228,20 +245,20 @@ export function getScheduleInfo(restaurant: Restaurant): ScheduleInfo {
       let time = '';
 
       if (hours > 0) {
-        // replaced this.$t('schedule.hour_short')
-        time += hours + 'h';
+        // Use translation for hour abbreviation
+        time += hours + t('schedule.hour_short');
       }
 
       if (minutes % 60 > 0) {
         if (hours > 0) {
           time += ' ';
         }
-        // replaced this.$t('schedule.minute_short')
-        time += (minutes % 60) + 'm';
+        // Use translation for minute abbreviation
+        time += (minutes % 60) + t('schedule.minute_short');
       }
 
-      // replaced this.$t("schedule.T_until_closing", {time})
-      return time;
+      // Use translation for time until closing
+      return t('schedule.T_until_closing', { time });
     } else if (beg.toMillis() >= now.toMillis()) {
       const minutes = Math.trunc(beg.diff(now, 'minutes').values.minutes);
       const hours = Math.trunc(minutes / 60);
@@ -249,20 +266,20 @@ export function getScheduleInfo(restaurant: Restaurant): ScheduleInfo {
       let time = '';
 
       if (hours > 0) {
-        // replaced this.$t('schedule.hour_short')
-        time += hours + 'h';
+        // Use translation for hour abbreviation
+        time += hours + t('schedule.hour_short');
       }
 
       if (minutes % 60 > 0) {
         if (hours > 0) {
           time += ' ';
         }
-        // replaced this.$t('schedule.minute_short')
-        time += (minutes % 60) + 'm';
+        // Use translation for minute abbreviation
+        time += (minutes % 60) + t('schedule.minute_short');
       }
 
-      // replaced this.$t("schedule.T_before_opening", {time})
-      return time;
+      // Use translation for time until opening
+      return t('schedule.T_before_opening', { time });
     } else {
       const next = schedules[0];
 

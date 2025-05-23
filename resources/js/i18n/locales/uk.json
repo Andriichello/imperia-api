@@ -1,0 +1,42 @@
+{
+  "restaurant": {
+    "title": "Ресторан",
+    "no_menus": "На жаль, зараз немає доступних меню",
+    "working_hours": "Години роботи:",
+    "open": "Відкрито",
+    "closed": "Закрито",
+    "until_closing": "до закриття",
+    "until_opening": "до відкриття",
+    "phone": "Телефон:",
+    "location": "Адреса:"
+  },
+  "menu": {
+    "title": "Меню",
+    "empty_category": "На жаль, ця категорія порожня"
+  },
+  "languages": {
+    "title": "Мови"
+  },
+  "format": {
+    "date": "DD/MM/YYYY",
+    "time": "HH:MM",
+    "hour_short": "год",
+    "minute_short": "хв",
+    "currency": "{price} ₴",
+    "time_until_closing": "{time} до закриття",
+    "time_until_opening": "{time} до відкриття"
+  },
+  "schedule": {
+    "hour_short": "год",
+    "minute_short": "хв",
+    "T_until_closing": "{time}",
+    "T_before_opening": "{time}",
+    "monday": "Понеділок",
+    "tuesday": "Вівторок",
+    "wednesday": "Середа",
+    "thursday": "Четвер",
+    "friday": "П'ятниця",
+    "saturday": "Субота",
+    "sunday": "Неділя"
+  }
+}

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import {onMounted, onUnmounted, PropType, ref, watch} from "vue";
+  import {onMounted, onUnmounted, PropType, ref} from "vue";
   import {Category, Menu, Restaurant} from "@/api";
   import MenuInList from "@/Components/Menu/MenuInList.vue";
   import CategoryNavBar from "@/Components/Menu/CategoryNavBar.vue";
@@ -7,9 +7,10 @@
   import {router} from "@inertiajs/vue3";
   import MenuNavBar from "@/Components/Menu/MenuNavBar.vue";
   import NavBar from "@/Components/Menu/NavBar.vue";
-  import BaseDrawer from "@/Components/Drawer/BaseDrawer.vue";
   import SearchDrawer from "@/Components/Menu/SearchDrawer.vue";
   import LanguagesDrawer from "@/Components/Menu/LanguagesDrawer.vue";
+  import { useI18n } from 'vue-i18n';
+  import { switchLanguage } from "@/i18n/utils";
 
   const props = defineProps({
     menuId: {
@@ -33,6 +34,8 @@
       required: true,
     }
   });
+
+  const i18n = useI18n();
 
   const selectedMenu = ref<Menu>(
     props.menus.find((m: Menu) => Number(m.id) === props.menuId)!
@@ -226,13 +229,7 @@
   }
 
   const onSwitchLanguage = (locale: string) => {
-    const parts = window.location.pathname
-      .replace(/^\//, '')
-      .split('/');
-
-    parts[0] = locale;
-
-    router.visit('/' + parts.join('/'));
+    switchLanguage(i18n, locale);
   }
 
   const onBack = () => {

@@ -1,0 +1,42 @@
+{
+  "restaurant": {
+    "title": "Restaurant",
+    "no_menus": "Unfortunately, there are no menus available now",
+    "working_hours": "Working hours:",
+    "open": "Open",
+    "closed": "Closed",
+    "until_closing": "until closing",
+    "until_opening": "until opening",
+    "phone": "Phone:",
+    "location": "Location:"
+  },
+  "menu": {
+    "title": "Menu",
+    "empty_category": "Unfortunately, this category is empty"
+  },
+  "languages": {
+    "title": "Languages"
+  },
+  "format": {
+    "date": "DD/MM/YYYY",
+    "time": "HH:MM",
+    "hour_short": "h",
+    "minute_short": "m",
+    "currency": "{price} ₴",
+    "time_until_closing": "{time} until closing",
+    "time_until_opening": "{time} until opening"
+  },
+  "schedule": {
+    "hour_short": "h",
+    "minute_short": "m",
+    "T_until_closing": "{time}",
+    "T_before_opening": "{time}",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday"
+  }
+}
