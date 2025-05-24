@@ -82,7 +82,7 @@ class MenuController extends Controller
      *
      * @return ApiResponse
      */
-    public function load(Request $request): ApiResponse
+    public function menusWithProducts(Request $request): ApiResponse
     {
         $restaurant = $this->loadAndCacheRestaurant($request->route('restaurant_id'));
 

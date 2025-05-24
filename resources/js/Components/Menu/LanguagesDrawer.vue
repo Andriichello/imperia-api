@@ -36,7 +36,7 @@
 <template>
   <BaseDrawer :open="open"
               @close="close">
-    <div class="w-full h-full flex flex-col gap-2">
+    <div class="w-full h-full flex flex-col gap-2 px-6">
       <h2 class="w-full font-bold text-xl pb-1 cursor-pointer">
         {{ $t('languages.title') }}:
       </h2>

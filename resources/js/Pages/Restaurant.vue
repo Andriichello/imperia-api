@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import {computed, PropType, ref} from "vue";
+import {computed, onMounted, PropType, ref, watch} from "vue";
   import {Splide, SplideSlide} from '@splidejs/vue-splide';
   import {
     CalendarClock,
@@ -19,6 +19,7 @@
   import SearchDrawer from "@/Components/Menu/SearchDrawer.vue";
   import { useI18n } from 'vue-i18n';
   import {switchLanguage} from "@/i18n/utils";
+  import axios from "axios";
 
   const props = defineProps({
     restaurant: {
@@ -60,6 +61,26 @@
   const isSearchDrawerOpen = ref(false);
   const isLanguagesDrawerOpen = ref(false);
 
+  const menusWithProducts = ref<Menu[] | null>(null);
+  const isLoadingMenusWithProducts = ref(false);
+  const wasLoadingMenusWithProducts = ref(false);
+
+  const loadMenusWithProducts = async () => {
+    isLoadingMenusWithProducts.value = true;
+    wasLoadingMenusWithProducts.value = true;
+
+    axios(window.location.pathname + '/menus')
+      .catch(err => {
+        console.log(err);
+      })
+      .then(res => {
+        menusWithProducts.value = res.data.data as Menu[];
+      })
+      .finally(() => {
+        isLoadingMenusWithProducts.value = false;
+      })
+  }
+
   const openMenu = (menu: Menu) => {
     router.visit(window.location.pathname + `/menu/${menu.id}`, {replace: false});
   }
@@ -79,6 +100,12 @@
   const onSwitchLanguage = (locale: string) => {
     switchLanguage(i18n, locale);
   }
+
+  watch(() => isSearchDrawerOpen.value, (newValue) => {
+    if (newValue === true && wasLoadingMenusWithProducts.value === false) {
+      setTimeout(() => loadMenusWithProducts(), 1000);
+    }
+  }, {immediate: true});
 </script>
 
 <template>
@@ -238,6 +265,8 @@
 
     <SearchDrawer :open="isSearchDrawerOpen"
                   :restaurant="restaurant"
+                  :menus="menusWithProducts"
+                  :loading="isLoadingMenusWithProducts"
                   @close="isSearchDrawerOpen = false"/>
 
     <LanguagesDrawer :open="isLanguagesDrawerOpen"

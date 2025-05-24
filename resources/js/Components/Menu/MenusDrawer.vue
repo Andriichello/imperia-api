@@ -34,7 +34,7 @@
 <template>
   <BaseDrawer :open="open"
               @close="close">
-    <div class="w-full flex flex-col">
+    <div class="w-full flex flex-col px-6">
       <template v-for="menu in menus" :key="menu.id">
         <div class="w-full flex flex-col text-start py-3 px-3 cursor-pointer"
              @click="emits('switch-menu', menu)">

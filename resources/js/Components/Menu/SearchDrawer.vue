@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import BaseDrawer from "@/Components/Drawer/BaseDrawer.vue";
-  import { ref, watch, computed, PropType } from "vue";
+  import { ref, watch, computed, PropType, nextTick } from "vue";
   import { Restaurant, Category, Menu, Product } from "@/api";
   import { Search, X } from "lucide-vue-next";
   import { useI18n } from "vue-i18n";
@@ -19,17 +19,23 @@
       type: Array as PropType<Menu[] | null>,
       required: false,
       default: null,
-    }
+    },
+    loading: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   });
 
   const emits = defineEmits(['close', 'switch-menu', 'switch-category']);
 
   const { t } = useI18n();
 
+  const searchInputRef = ref<HTMLInputElement | null>(null);
+
   const currency = computed(() => props.restaurant?.currency ?? 'uah');
 
   const searchQuery = ref("");
-  const isLoading = ref(false);
 
   const filteredMenus = computed<Menu[]>(() => {
     if (!searchQuery.value) {
@@ -108,6 +114,15 @@
     emits('switch-category', categoryId);
     close();
   }
+
+  watch(() => props.open, (newVal, oldVal) => {
+    if (newVal && newVal !== oldVal) {
+
+      nextTick(() => {
+        searchInputRef.value?.focus()
+      });
+    }
+  })
 </script>
 
 <template>
@@ -115,11 +130,13 @@
               @close="close">
     <div class="max-w-full w-full h-full flex flex-col">
       <!-- Search input -->
-      <div class="relative mb-4">
+      <div class="relative mb-4 px-6">
         <div class="flex items-center border-b border-base-300 pb-2">
           <Search class="w-5 h-5 text-base-content/60 mr-2" />
           <input
             v-model="searchQuery"
+            ref="searchInputRef"
+            autofocus
             type="text"
             :placeholder="t('search.placeholder')"
             class="w-full bg-transparent border-none focus:outline-none text-base-content text-lg"
@@ -129,12 +146,12 @@
       </div>
 
       <!-- Loading indicator -->
-      <div v-if="isLoading" class="flex justify-center my-4">
-        <div class="loading loading-spinner loading-md"></div>
+      <div v-if="loading" class="flex justify-center my-4 px-6">
+        <div class="loading loading-spinner loading-lg opacity-60"></div>
       </div>
 
       <!-- Search results -->
-      <div v-else-if="searchQuery" class="overflow-auto">
+      <div v-else-if="searchQuery" class="overflow-auto px-6">
         <div v-if="hasResults">
           <!-- Menus section -->
           <div v-if="filteredMenus.length > 0" class="mb-6">
@@ -185,15 +202,15 @@
         </div>
 
         <!-- No results -->
-        <div v-else class="flex flex-col items-center justify-center py-10">
+        <div v-else class="flex flex-col items-center justify-center py-10 px-6">
           <div class="text-lg text-base-content/70">{{ t('search.no_results') }}</div>
         </div>
       </div>
 
       <!-- Empty state -->
-      <div v-else class="flex flex-col items-center justify-center py-10 opacity-60">
-        <Search class="w-16 h-16 mb-4 opacity-60" />
-        <div class="w-full text-center text-lg opacity-70">{{ t('search.start_typing') }}</div>
+      <div v-else class="flex flex-col items-center justify-center py-10 px-6">
+<!--        <Search class="w-16 h-16 mb-4 opacity-60" />-->
+        <div class="w-full text-center text-lg text-base-content/70">{{ t('search.start_typing') }}</div>
       </div>
     </div>
   </BaseDrawer>
