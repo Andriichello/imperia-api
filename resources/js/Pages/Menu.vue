@@ -204,16 +204,41 @@
     if ((shouldNotScroll.value === 0 || (Date.now() - shouldNotScroll.value) > 100) && divider) {
       ignoringScroll.value = true;
 
+      let top = divider.getBoundingClientRect().top;
+
       const stickyHeight = stickyRef.value?.clientHeight ?? 96;
 
-      const productDivider = product
-        ? document.getElementById('product-' + product.id)
-        : null;
+      let productDivider = null;
 
+      if (product) {
+        top += (divider.children[0]?.clientHeight ?? 0) + 12;
+
+        const productsContainer = document.getElementById('category-' + category.id + '-products');
+
+        if (productsContainer) {
+          productDivider = document.getElementById('product-' + product.id);
+
+          if (productDivider) {
+            let offset = 0;
+            const children = productsContainer.children;
+
+            for (let i = 0; i < children.length; i++) {
+              const el = children[i];
+
+              if (el.attributes.getNamedItem('id')?.value === 'product-' + product.id) {
+                break;
+              }
+
+              offset += el.clientHeight + 12;
+            }
+
+            top += offset;
+          }
+        }
+      }
 
       window.scrollTo({
-        top: divider.getBoundingClientRect().top + window.pageYOffset - stickyHeight + 4
-          + (productDivider?.getBoundingClientRect().y ?? 0),
+        top: top + window.pageYOffset - stickyHeight + 4,
         behavior: 'smooth'
       });
 
@@ -291,25 +316,15 @@
       const category = findCategory(categoryId);
       const product = findProduct(productId);
 
-      if (category && !product) {
+      if (category) {
         setTimeout(() => {
-          switchCategory(category);
+          selectedCategory.value = category;
 
-          if (selectedMenu.value.categories?.[0]?.id !== category.id) {
+          if (selectedMenu.value.categories?.[0]?.id !== category.id || product) {
             shouldNotScroll.value = 0;
             ignoringScroll.value = false;
-            scrollToCategory(category);
+            scrollToCategory(category, product);
           }
-        }, 100);
-      }
-
-      if (category && product) {
-        setTimeout(() => {
-          switchCategory(category);
-
-          shouldNotScroll.value = 0;
-          ignoringScroll.value = false;
-          scrollToProduct(product);
         }, 100);
       }
     }
@@ -346,12 +361,16 @@
       </div>
 
       <MenusDrawer :open="isMenusDrawerOpen"
+                   :restaurant="restaurant"
                    :menus="menus"
                    :menu-id="selectedMenu.id"
                    :category-id="selectedCategory?.id"
                    @close="isMenusDrawerOpen = false"
                    @switch-menu="onSwitchMenu"
-                   @switch-category="onSwitchCategory"/>
+                   @switch-category="onSwitchCategory"
+                   @open-menu="onSwitchMenu"
+                   @open-category="onSwitchCategory"
+                   @open-product="onSwitchProduct"/>
 
       <SearchDrawer :open="isSearchDrawerOpen"
                     :restaurant="restaurant"

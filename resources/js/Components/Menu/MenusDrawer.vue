@@ -1,8 +1,9 @@
 <script setup lang="ts">
   import {X} from "lucide-vue-next";
-  import {Menu} from "@/api";
-  import {PropType} from "vue";
+  import {Category, Menu, Product, Restaurant} from "@/api";
+  import {PropType, ref} from "vue";
   import BaseDrawer from "@/Components/Drawer/BaseDrawer.vue";
+  import SearchWithList from "@/Components/Menu/SearchWithList.vue";
 
   defineProps({
     menuId: {
@@ -18,23 +19,59 @@
       type: Array as PropType<Menu[]>,
       required: true,
     },
+    restaurant: {
+      type: Object as PropType<Restaurant>,
+      required: true,
+    },
     open: {
       type: Boolean,
       required: true,
     },
   });
 
-  const emits = defineEmits(['close', 'switch-menu', 'switch-category']);
+  const emits = defineEmits(['close', 'switch-menu', 'switch-category', 'open-menu', 'open-category', 'open-product']);
+
+  const hasResults = ref(false);
 
   function close() {
     emits('close')
+  }
+
+  function setHasResults(has: boolean) {
+    hasResults.value = has;
+  }
+
+  function openMenu(menu: Menu) {
+    emits('open-menu', menu);
+    close();
+  }
+
+  function openCategory(category: Category, menu: Menu) {
+      emits('open-category', category, menu);
+      close();
+  }
+
+  function openProduct(product: Product, category: Category, menu: Menu) {
+    emits('open-product', product, category, menu);
+    close();
   }
 </script>
 
 <template>
   <BaseDrawer :open="open"
               @close="close">
-    <div class="w-full h-full flex flex-col px-6 overflow-auto">
+    <SearchWithList class="w-full"
+                    :open="open"
+                    :restaurant="restaurant"
+                    :menus="menus"
+                    :withPlacehoders="false"
+                    @has-results-changed="setHasResults"
+                    @open-menu="openMenu"
+                    @open-category="openCategory"
+                    @open-product="openProduct"/>
+
+    <div class="w-full h-full flex flex-col px-6 overflow-auto"
+         v-if="!hasResults">
       <template v-for="menu in menus" :key="menu.id">
         <div class="w-full flex flex-col text-start py-3 px-3 cursor-pointer"
              @click="emits('switch-menu', menu)">

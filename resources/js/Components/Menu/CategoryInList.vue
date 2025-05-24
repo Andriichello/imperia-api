@@ -37,7 +37,9 @@
       </div>
     </template>
 
-    <div class="w-full flex flex-col py-2 gap-3" v-else>
+    <div class="w-full flex flex-col py-2 gap-3"
+         :id="'category-' + category.id + '-products'"
+         v-else>
       <template v-for="product in products" :key="product.id">
         <ProductInList :product="product"/>
       </template>

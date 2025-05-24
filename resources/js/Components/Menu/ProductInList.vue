@@ -83,7 +83,8 @@
 </script>
 
 <template>
-  <div class="w-full flex flex-col rounded shadow-lg bg-base-100" :id="'product-' + product.id">
+  <div class="w-full flex flex-col rounded shadow-lg bg-base-100"
+       :id="'product-' + product.id">
 
     <template v-if="product.media?.length">
       <Splide class="w-full h-45 rounded-t" :options="{

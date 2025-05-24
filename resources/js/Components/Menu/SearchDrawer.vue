@@ -1,10 +1,9 @@
 <script setup lang="ts">
   import BaseDrawer from "@/Components/Drawer/BaseDrawer.vue";
-  import { ref, watch, computed, PropType, nextTick } from "vue";
+  import {ref, watch, computed, PropType, nextTick, onMounted} from "vue";
   import { Restaurant, Category, Menu, Product } from "@/api";
-  import { Search, X } from "lucide-vue-next";
   import { useI18n } from "vue-i18n";
-  import ProductInList from "@/Components/Menu/ProductInList.vue";
+  import SearchWithList from "@/Components/Menu/SearchWithList.vue";
 
   const props = defineProps({
     open: {
@@ -25,84 +24,24 @@
       required: false,
       default: false,
     },
+    withAutofocus: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
+    withPlaceholders: {
+      type: Boolean,
+      required: false,
+      default: true,
+    },
   });
 
-  const emits = defineEmits(['close', 'open-menu', 'open-category', 'open-product']);
-
-  const { t } = useI18n();
+  const emits = defineEmits(['close', 'open-menu', 'open-category', 'open-product', 'query-updated']);
 
   const searchInputRef = ref<HTMLInputElement | null>(null);
 
-  const currency = computed(() => props.restaurant?.currency ?? 'uah');
-
-  const searchQuery = ref("");
-
-  const filteredMenus = computed<Menu[]>(() => {
-    if (!searchQuery.value) {
-      return [];
-    }
-
-    return props.menus?.filter(menu =>
-      menu.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      menu.description?.toLowerCase().includes(searchQuery.value.toLowerCase())
-    ) ?? [];
-  });
-
-  const filteredCategories = computed<Category[]>(() => {
-    if (!searchQuery.value) {
-      return [];
-    }
-
-    const filtered: Category[] = [];
-
-    props.menus?.forEach(menu => {
-      menu.categories.forEach(category => {
-        const matches = category.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-          (category.description?.length && category.description.toLowerCase().includes(searchQuery.value.toLowerCase()));
-
-        if (matches && !filtered.includes(category)) {
-          filtered.push(category);
-        }
-      });
-    });
-
-    return filtered;
-  });
-
-  const filteredProducts = computed<Product[]>(() => {
-    if (!searchQuery.value) {
-      return [];
-    }
-
-    const filtered: Product[] = [];
-
-    props.menus?.forEach(menu => {
-      menu.products?.forEach(product => {
-        const matches = product.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-          (product.description?.length && product.description.toLowerCase().includes(searchQuery.value.toLowerCase()));
-
-        if (matches && !filtered.includes(product)) {
-          filtered.push(product);
-        }
-      });
-    });
-
-    return filtered;
-  });
-
-  const hasResults = computed(() => {
-    return filteredMenus.value.length > 0 ||
-           filteredCategories.value.length > 0 ||
-           filteredProducts.value.length > 0;
-  });
-
   function close() {
-    searchQuery.value = "";
     emits('close');
-  }
-
-  function clearSearch() {
-    searchQuery.value = "";
   }
 
   function openMenu(menu: Menu) {
@@ -127,103 +66,31 @@
     close();
   }
 
-  watch(() => props.open, (newVal, oldVal) => {
-    if (newVal && newVal !== oldVal) {
+  function onQueryUpdated(query: string) {
+    emits('query-updated', query);
+  }
 
+  watch(() => props.open, (newVal, oldVal) => {
+    if (props.withAutofocus && newVal && newVal !== oldVal) {
       nextTick(() => {
-        searchInputRef.value?.focus()
+        document.getElementById('searchInputRef')?.focus()
       });
     }
-  })
+  });
 </script>
 
 <template>
   <BaseDrawer :open="open"
               @close="close">
-    <div class="max-w-full w-full h-full flex flex-col">
-      <!-- Search input -->
-      <div class="relative mb-4 px-6">
-        <div class="flex items-center border-b border-base-300 pb-2">
-          <Search class="w-5 h-5 text-base-content/60 mr-2" />
-          <input
-            v-model="searchQuery"
-            ref="searchInputRef"
-            type="text"
-            :placeholder="t('search.placeholder')"
-            class="w-full bg-transparent border-none focus:outline-none text-base-content text-lg"
-            autocomplete="off"
-          />
-        </div>
-      </div>
 
-      <!-- Loading indicator -->
-      <div v-if="loading" class="flex justify-center my-4 px-6">
-        <div class="loading loading-spinner loading-lg opacity-60"></div>
-      </div>
-
-      <!-- Search results -->
-      <div v-else-if="searchQuery" class="overflow-auto px-6">
-        <div v-if="hasResults">
-          <!-- Menus section -->
-          <div v-if="filteredMenus.length > 0" class="mb-6">
-            <h3 class="font-bold text-lg mb-2">{{ t('search.menus') }}</h3>
-            <div class="space-y-2">
-              <div
-                v-for="menu in filteredMenus"
-                :key="`menu-${menu.id}`"
-                @click="openMenu(menu)"
-                class="p-3 bg-base-200 rounded-lg cursor-pointer hover:bg-base-300 transition-colors"
-              >
-                <div class="font-medium">{{ menu.title }}</div>
-                <div class="text-sm text-base-content/70 line-clamp-1">{{ menu.description }}</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Categories section -->
-          <div v-if="filteredCategories.length > 0" class="mb-6">
-            <h3 class="font-bold text-lg mb-2">{{ t('search.categories') }}</h3>
-            <div class="space-y-2">
-              <div
-                v-for="category in filteredCategories"
-                :key="`category-${category.id}`"
-                @click="openCategory(category)"
-                class="p-3 bg-base-200 rounded-lg cursor-pointer hover:bg-base-300 transition-colors"
-              >
-                <div class="font-medium">{{ category.title }}</div>
-                <div v-if="category.description && category.description.length" class="text-sm text-base-content/70 line-clamp-1">
-                  {{ category.description }}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Products section -->
-          <div v-if="filteredProducts.length > 0" class="mb-6">
-            <h3 class="font-bold text-lg mb-2">{{ t('search.products') }}</h3>
-            <div class="space-y-4">
-              <ProductInList
-                v-for="product in filteredProducts"
-                :key="`product-${product.id}`"
-                :product="product"
-                :currency="currency"
-                @click="openProduct(product)"
-              />
-            </div>
-          </div>
-        </div>
-
-        <!-- No results -->
-        <div v-else class="flex flex-col items-center justify-center py-10 px-6">
-          <div class="text-lg text-base-content/70">{{ t('search.no_results') }}</div>
-        </div>
-      </div>
-
-      <!-- Empty state -->
-      <div v-else class="flex flex-col items-center justify-center py-10 px-6">
-<!--        <Search class="w-16 h-16 mb-4 opacity-60" />-->
-        <div class="w-full text-center text-lg text-base-content/70">{{ t('search.start_typing') }}</div>
-      </div>
-    </div>
+    <SearchWithList :open="open"
+                    :restaurant="restaurant"
+                    :menus="menus"
+                    :loading="loading"
+                    :withPlaceholders="true"
+                    @open-menu="openMenu"
+                    @open-category="openCategory"
+                    @open-product="openProduct"
+                    @query-updated="onQueryUpdated"/>
   </BaseDrawer>
 </template>
