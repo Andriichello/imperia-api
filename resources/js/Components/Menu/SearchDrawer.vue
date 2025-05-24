@@ -120,7 +120,10 @@
   }
 
   function openProduct(product: Product) {
-    emits('open-product', product);
+    const menu = props.menus?.filter(menu => (menu.products ?? []).includes(product))[0] ?? null;
+    const category = menu?.categories?.filter(category => (product.category_ids ?? []).includes(category.id))[0] ?? null;
+
+    emits('open-product', product, category, menu);
     close();
   }
 

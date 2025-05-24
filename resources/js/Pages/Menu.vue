@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import {onMounted, onUnmounted, PropType, ref} from "vue";
-  import {Category, Menu, Restaurant} from "@/api";
+  import {Category, Menu, Product, Restaurant} from "@/api";
   import MenuInList from "@/Components/Menu/MenuInList.vue";
   import CategoryNavBar from "@/Components/Menu/CategoryNavBar.vue";
   import MenusDrawer from "@/Components/Menu/MenusDrawer.vue";
@@ -58,6 +58,20 @@
     return null;
   }
 
+  const findProduct = (productId: string|number|null) => {
+    if (productId !== null) {
+      for (const menu of props.menus) {
+        for (const product of (menu.products ?? [])) {
+          if (product.id === Number(productId)) {
+            return product;
+          }
+        }
+      }
+    }
+
+    return null;
+  }
+
   const selectedCategory = ref<Category | null>(null);
 
   const switchMenu = (menu: Menu, force: boolean = false) => {
@@ -91,12 +105,12 @@
     }
   };
 
-  const switchCategory = (category: Category) => {
+  const switchCategory = (category: Category, product: Product | null = null) => {
     // Only update if it's a different menu
     if (category.id !== selectedCategory.value?.id) {
       // Update the URL in the browser without a page reload
       router.replace({
-        url: window.location.pathname + '#' + category.id,
+        url: window.location.pathname + '#' + category.id + (product ? '-' + product.id : ''),
         preserveState: true,
         preserveScroll: true,
       });
@@ -184,7 +198,7 @@
     lastScrollPosition.value = scrollPosition;
   };
 
-  const scrollToCategory = (category: Category) => {
+  const scrollToCategory = (category: Category, product: Product | null = null) => {
     const divider = document.getElementById('category-' + category.id);
 
     if ((shouldNotScroll.value === 0 || (Date.now() - shouldNotScroll.value) > 100) && divider) {
@@ -192,8 +206,14 @@
 
       const stickyHeight = stickyRef.value?.clientHeight ?? 96;
 
+      const productDivider = product
+        ? document.getElementById('product-' + product.id)
+        : null;
+
+
       window.scrollTo({
-        top: divider.getBoundingClientRect().top + window.pageYOffset - stickyHeight + 4,
+        top: divider.getBoundingClientRect().top + window.pageYOffset - stickyHeight + 4
+          + (productDivider?.getBoundingClientRect().y ?? 0),
         behavior: 'smooth'
       });
 
@@ -222,6 +242,19 @@
     }, 200);
   }
 
+  const onSwitchProduct = (product: Product, category: Category, menu: Menu = selectedMenu.value) => {
+    isMenusDrawerOpen.value = false;
+
+    if (menu.id !== selectedMenu.value.id) {
+      switchMenu(menu);
+    }
+
+    setTimeout(() => {
+      switchCategory(category, product);
+      scrollToCategory(category, product);
+    }, 200);
+  }
+
   const onSwitchMenu = (menu: Menu) => {
     isMenusDrawerOpen.value = false;
 
@@ -245,10 +278,20 @@
     window.addEventListener('scroll', onScroll);
 
     if (window.location.hash) {
-      const categoryId = window.location.hash.replace('#', '');
-      const category = findCategory(categoryId);
+      let categoryId = window.location.hash.replace('#', '');
+      let productId = null;
 
-      if (category) {
+      if (categoryId.includes('-')) {
+        const parts = categoryId.split('-');
+
+        categoryId = parts[0];
+        productId = parts[1];
+      }
+
+      const category = findCategory(categoryId);
+      const product = findProduct(productId);
+
+      if (category && !product) {
         setTimeout(() => {
           switchCategory(category);
 
@@ -257,6 +300,16 @@
             ignoringScroll.value = false;
             scrollToCategory(category);
           }
+        }, 100);
+      }
+
+      if (category && product) {
+        setTimeout(() => {
+          switchCategory(category);
+
+          shouldNotScroll.value = 0;
+          ignoringScroll.value = false;
+          scrollToProduct(product);
         }, 100);
       }
     }
@@ -305,7 +358,8 @@
                     :menus="menus"
                     @close="isSearchDrawerOpen = false"
                     @open-menu="onSwitchMenu"
-                    @open-category="onSwitchCategory"/>
+                    @open-category="onSwitchCategory"
+                    @open-product="onSwitchProduct"/>
 
       <LanguagesDrawer :open="isLanguagesDrawerOpen"
                        :locale="locale"
