@@ -11,7 +11,7 @@ import {computed, onMounted, PropType, ref, watch} from "vue";
     Search,
     Languages,
   } from 'lucide-vue-next';
-  import {Menu, Restaurant} from "@/api";
+import {Category, Menu, Restaurant} from "@/api";
   import Schedule from "@/Components/Restaurant/Schedule.vue";
   import {getScheduleInfo, ScheduleInfo, time} from "@/helpers";
   import {router} from "@inertiajs/vue3";
@@ -83,6 +83,10 @@ import {computed, onMounted, PropType, ref, watch} from "vue";
 
   const openMenu = (menu: Menu) => {
     router.visit(window.location.pathname + `/menu/${menu.id}`, {replace: false});
+  }
+
+  const openCategory = (category: Category, menu: Menu) => {
+    router.visit(window.location.pathname + `/menu/${menu.id}#${category.id}`, {replace: false});
   }
 
   const callPhone = (phone) => {
@@ -267,7 +271,9 @@ import {computed, onMounted, PropType, ref, watch} from "vue";
                   :restaurant="restaurant"
                   :menus="menusWithProducts"
                   :loading="isLoadingMenusWithProducts"
-                  @close="isSearchDrawerOpen = false"/>
+                  @close="isSearchDrawerOpen = false"
+                  @open-menu="openMenu"
+                  @open-category="openCategory"/>
 
     <LanguagesDrawer :open="isLanguagesDrawerOpen"
                      :locale="locale"

@@ -303,7 +303,9 @@
       <SearchDrawer :open="isSearchDrawerOpen"
                     :restaurant="restaurant"
                     :menus="menus"
-                    @close="isSearchDrawerOpen = false"/>
+                    @close="isSearchDrawerOpen = false"
+                    @open-menu="onSwitchMenu"
+                    @open-category="onSwitchCategory"/>
 
       <LanguagesDrawer :open="isLanguagesDrawerOpen"
                        :locale="locale"

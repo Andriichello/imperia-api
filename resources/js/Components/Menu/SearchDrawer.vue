@@ -27,7 +27,7 @@
     },
   });
 
-  const emits = defineEmits(['close', 'switch-menu', 'switch-category']);
+  const emits = defineEmits(['close', 'open-menu', 'open-category', 'open-product']);
 
   const { t } = useI18n();
 
@@ -105,13 +105,22 @@
     searchQuery.value = "";
   }
 
-  function switchMenu(menuId: number) {
-    emits('switch-menu', menuId);
+  function openMenu(menu: Menu) {
+    emits('open-menu', menu);
     close();
   }
 
-  function switchCategory(categoryId: number) {
-    emits('switch-category', categoryId);
+  function openCategory(category: Category) {
+    const menu = props.menus?.filter(menu => menu.categories.includes(category))[0] ?? null;
+
+    if (menu) {
+      emits('open-category', category, menu);
+      close();
+    }
+  }
+
+  function openProduct(product: Product) {
+    emits('open-product', product);
     close();
   }
 
@@ -136,7 +145,6 @@
           <input
             v-model="searchQuery"
             ref="searchInputRef"
-            autofocus
             type="text"
             :placeholder="t('search.placeholder')"
             class="w-full bg-transparent border-none focus:outline-none text-base-content text-lg"
@@ -160,7 +168,7 @@
               <div
                 v-for="menu in filteredMenus"
                 :key="`menu-${menu.id}`"
-                @click="switchMenu(menu.id)"
+                @click="openMenu(menu)"
                 class="p-3 bg-base-200 rounded-lg cursor-pointer hover:bg-base-300 transition-colors"
               >
                 <div class="font-medium">{{ menu.title }}</div>
@@ -176,7 +184,7 @@
               <div
                 v-for="category in filteredCategories"
                 :key="`category-${category.id}`"
-                @click="switchCategory(category.id)"
+                @click="openCategory(category)"
                 class="p-3 bg-base-200 rounded-lg cursor-pointer hover:bg-base-300 transition-colors"
               >
                 <div class="font-medium">{{ category.title }}</div>
@@ -196,6 +204,7 @@
                 :key="`product-${product.id}`"
                 :product="product"
                 :currency="currency"
+                @click="openProduct(product)"
               />
             </div>
           </div>
