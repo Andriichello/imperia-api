@@ -22,3 +22,16 @@ Route::get('/{restaurant_id}', [RestaurantController::class, 'show'])
     ->name('restaurant.show');
 Route::get('/{restaurant_id}/menu/{menu_id?}', [MenuController::class, 'show'])
     ->name('menu.show');
+
+
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where the routes that are called from Inertia UI should be placed.
+*/
+
+Route::get('/{restaurant_id}/menus', [MenuController::class, 'menusWithProducts'])
+    ->name('menu.load');

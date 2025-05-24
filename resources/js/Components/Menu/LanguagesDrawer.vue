@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import BaseDrawer from "@/Components/Drawer/BaseDrawer.vue";
-  import {ref, watch} from "vue";
+  import {PropType, ref, watch} from "vue";
   import { switchLanguage } from "@/i18n/utils";
 
   const props = defineProps({
@@ -37,7 +37,7 @@
   <BaseDrawer :open="open"
               @close="close">
     <div class="w-full h-full flex flex-col gap-2">
-      <h2 class="w-full font-bold text-xl pb-1">
+      <h2 class="w-full font-bold text-xl pb-1 cursor-pointer">
         {{ $t('languages.title') }}:
       </h2>
 

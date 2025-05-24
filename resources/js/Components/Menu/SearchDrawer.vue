@@ -1,8 +1,7 @@
 <script setup lang="ts">
   import BaseDrawer from "@/Components/Drawer/BaseDrawer.vue";
-  import { ref, watch, computed } from "vue";
-  import { indexMenus, indexCategories, indexProducts } from "@/api";
-  import { Menu, Category, Product } from "@/api";
+  import { ref, watch, computed, PropType } from "vue";
+  import { Restaurant, Category, Menu, Product } from "@/api";
   import { Search, X } from "lucide-vue-next";
   import { useI18n } from "vue-i18n";
   import ProductInList from "@/Components/Menu/ProductInList.vue";
@@ -12,41 +11,77 @@
       type: Boolean,
       required: true,
     },
-    currency: {
-      type: String,
-      default: "uah",
+    restaurant: {
+      type: Object as PropType<Restaurant>,
+      required: true,
     },
+    menus: {
+      type: Array as PropType<Menu[] | null>,
+      required: false,
+      default: null,
+    }
   });
 
   const emits = defineEmits(['close', 'switch-menu', 'switch-category']);
+
   const { t } = useI18n();
+
+  const currency = computed(() => props.restaurant?.currency ?? 'uah');
 
   const searchQuery = ref("");
   const isLoading = ref(false);
-  const menus = ref<Menu[]>([]);
-  const categories = ref<Category[]>([]);
-  const products = ref<Product[]>([]);
 
-  const filteredMenus = computed(() => {
-    if (!searchQuery.value) return [];
-    return menus.value.filter(menu =>
+  const filteredMenus = computed<Menu[]>(() => {
+    if (!searchQuery.value) {
+      return [];
+    }
+
+    return props.menus?.filter(menu =>
       menu.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
       menu.description?.toLowerCase().includes(searchQuery.value.toLowerCase())
-    );
+    ) ?? [];
   });
 
-  const filteredCategories = computed(() => {
-    if (!searchQuery.value) return [];
-    return categories.value.filter(category =>
-      category.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      (category?.description && typeof category.description === 'object' &&
-       category.description.text && category.description.text.toLowerCase().includes(searchQuery.value.toLowerCase()))
-    );
+  const filteredCategories = computed<Category[]>(() => {
+    if (!searchQuery.value) {
+      return [];
+    }
+
+    const filtered: Category[] = [];
+
+    props.menus?.forEach(menu => {
+      menu.categories.forEach(category => {
+        const matches = category.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+          (category.description?.length && category.description.toLowerCase().includes(searchQuery.value.toLowerCase()));
+
+        if (matches && !filtered.includes(category)) {
+          filtered.push(category);
+        }
+      });
+    });
+
+    return filtered;
   });
 
-  const filteredProducts = computed(() => {
-    if (!searchQuery.value) return [];
-    return products.value;
+  const filteredProducts = computed<Product[]>(() => {
+    if (!searchQuery.value) {
+      return [];
+    }
+
+    const filtered: Product[] = [];
+
+    props.menus?.forEach(menu => {
+      menu.products?.forEach(product => {
+        const matches = product.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+          (product.description?.length && product.description.toLowerCase().includes(searchQuery.value.toLowerCase()));
+
+        if (matches && !filtered.includes(product)) {
+          filtered.push(product);
+        }
+      });
+    });
+
+    return filtered;
   });
 
   const hasResults = computed(() => {
@@ -73,54 +108,12 @@
     emits('switch-category', categoryId);
     close();
   }
-
-  async function fetchData() {
-    isLoading.value = true;
-    try {
-      // Fetch menus and categories only once when the drawer opens
-      if (menus.value.length === 0) {
-        const menusResponse = await indexMenus();
-        menus.value = menusResponse.data.data;
-      }
-
-      if (categories.value.length === 0) {
-        const categoriesResponse = await indexCategories();
-        categories.value = categoriesResponse.data.data;
-      }
-
-      // Fetch products with title filter
-      if (searchQuery.value) {
-        const productsResponse = await indexProducts({
-          "filter[title]": searchQuery.value
-        });
-        products.value = productsResponse.data.data;
-      } else {
-        products.value = [];
-      }
-
-      console.log({menus: menus.value, categories: categories.value, products: products.value});
-    } catch (error) {
-      console.error("Error fetching search data:", error);
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  watch(() => props.open, (newValue) => {
-    if (newValue) {
-      fetchData();
-    }
-  }, { immediate: true });
-
-  watch(searchQuery, () => {
-    fetchData();
-  });
 </script>
 
 <template>
   <BaseDrawer :open="open"
               @close="close">
-    <div class="w-full h-full flex flex-col">
+    <div class="max-w-full w-full h-full flex flex-col">
       <!-- Search input -->
       <div class="relative mb-4">
         <div class="flex items-center border-b border-base-300 pb-2">
@@ -129,16 +122,9 @@
             v-model="searchQuery"
             type="text"
             :placeholder="t('search.placeholder')"
-            class="w-full bg-transparent border-none focus:outline-none text-base-content"
+            class="w-full bg-transparent border-none focus:outline-none text-base-content text-lg"
             autocomplete="off"
           />
-          <button
-            v-if="searchQuery"
-            @click="clearSearch"
-            class="p-1"
-          >
-            <X class="w-5 h-5 text-base-content/60" />
-          </button>
         </div>
       </div>
 
@@ -177,8 +163,8 @@
                 class="p-3 bg-base-200 rounded-lg cursor-pointer hover:bg-base-300 transition-colors"
               >
                 <div class="font-medium">{{ category.title }}</div>
-                <div v-if="category.description && category.description.text" class="text-sm text-base-content/70 line-clamp-1">
-                  {{ category.description.text }}
+                <div v-if="category.description && category.description.length" class="text-sm text-base-content/70 line-clamp-1">
+                  {{ category.description }}
                 </div>
               </div>
             </div>
@@ -205,9 +191,9 @@
       </div>
 
       <!-- Empty state -->
-      <div v-else class="flex flex-col items-center justify-center py-10">
-        <Search class="w-16 h-16 text-base-content/30 mb-4" />
-        <div class="text-lg text-base-content/70">{{ t('search.start_typing') }}</div>
+      <div v-else class="flex flex-col items-center justify-center py-10 opacity-60">
+        <Search class="w-16 h-16 mb-4 opacity-60" />
+        <div class="w-full text-center text-lg opacity-70">{{ t('search.start_typing') }}</div>
       </div>
     </div>
   </BaseDrawer>

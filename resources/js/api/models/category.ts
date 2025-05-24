@@ -4,7 +4,6 @@
  * imperia-api
  * OpenAPI spec version: 0.1
  */
-import type { CategoryDescription } from "./categoryDescription";
 import type { Tag } from "./tag";
 import type { Media } from "./media";
 
@@ -19,7 +18,7 @@ export interface Category {
   target: string | null;
   title: string;
   /** @nullable */
-  description: CategoryDescription;
+  description: string | null;
   tags?: Tag[];
   media: Media[];
 }

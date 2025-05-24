@@ -15,12 +15,12 @@
     "empty_category": "Unfortunately, this category is empty"
   },
   "search": {
-    "placeholder": "Search for menus, categories, products...",
+    "placeholder": "Search",
     "menus": "Menus",
     "categories": "Categories",
-    "products": "Products",
+    "products": "Dishes",
     "no_results": "No results found",
-    "start_typing": "Start typing to search"
+    "start_typing": "Start typing to search for menus, categories, dishes..."
   },
   "languages": {
     "title": "Languages",

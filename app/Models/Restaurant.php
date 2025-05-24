@@ -34,13 +34,14 @@ use Illuminate\Support\Collection;
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
  *
- * @property string|null $locale
  * @property string|null $phone
  * @property string|null $email
  * @property string|null $website
  * @property string|null $location
  * @property string|null $full_address
  * @property int $timezone_offset
+ * @property string|null $locale
+ * @property string|null $currency
  * @property string[]|null $notes
  *
  * @property Banquet[]|Collection $banquets
@@ -297,6 +298,26 @@ class Restaurant extends BaseModel implements
                 ]);
             }
         );
+    }
+
+    /**
+     * Accessor for the restaurant's currency.
+     *
+     * @return string|null
+     */
+    public function getCurrencyAttribute(): ?string
+    {
+        return $this->getFromJson('metadata', 'currency');
+    }
+
+    /**
+     * Mutator for the restaurant's locale.
+     *
+     * @param $currency string|null
+     */
+    public function setCurrencyAttribute(?string $currency): void
+    {
+        $this->setToJson('metadata', 'currency', $currency);
     }
 
     /**

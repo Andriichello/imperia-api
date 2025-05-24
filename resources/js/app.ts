@@ -24,7 +24,7 @@ createInertiaApp({
     const locale = props.initialPage.props.locale || 'en';
 
     // Create the i18n instance
-    const i18n = setupI18n(locale);
+    const i18n = setupI18n(locale as string);
 
     // Set the global i18n instance for use in non-component files
     setI18n(i18n);

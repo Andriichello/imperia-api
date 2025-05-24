@@ -13,7 +13,7 @@
   import { switchLanguage } from "@/i18n/utils";
 
   const props = defineProps({
-    menuId: {
+    menu_id: {
       type: Number,
       required: true,
     },
@@ -38,7 +38,7 @@
   const i18n = useI18n();
 
   const selectedMenu = ref<Menu>(
-    props.menus.find((m: Menu) => Number(m.id) === props.menuId)!
+    props.menus.find((m: Menu) => Number(m.id) === props.menu_id)!
   );
 
   const findCategory = (categoryId: string|number|null) => {
@@ -301,6 +301,8 @@
                    @switch-category="onSwitchCategory"/>
 
       <SearchDrawer :open="isSearchDrawerOpen"
+                    :restaurant="restaurant"
+                    :menus="menus"
                     @close="isSearchDrawerOpen = false"/>
 
       <LanguagesDrawer :open="isLanguagesDrawerOpen"

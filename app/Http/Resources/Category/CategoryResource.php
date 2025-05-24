@@ -50,7 +50,7 @@ class CategoryResource extends JsonResource
      *   @OA\Property(property="type", type="string", example="categories"),
      *   @OA\Property(property="target", type="string", example="products", nullable=true),
      *   @OA\Property(property="title", type="string", example="Pizza"),
-     *   @OA\Property(property="description", example="Some text...", nullable=true),
+     *   @OA\Property(property="description", type="string", example="Some text...", nullable=true),
      *   @OA\Property(property="tags", type="array", @OA\Items(ref ="#/components/schemas/Tag")),
      *   @OA\Property(property="media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
      * )

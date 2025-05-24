@@ -26,7 +26,6 @@ export * from "./banquetMultipleInvoiceUrlResponse";
 export * from "./banquetState";
 export * from "./banquetTotals";
 export * from "./category";
-export * from "./categoryDescription";
 export * from "./categoryIncludes";
 export * from "./comment";
 export * from "./customer";

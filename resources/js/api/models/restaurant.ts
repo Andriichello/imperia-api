@@ -31,6 +31,10 @@ export interface Restaurant {
   /** Selected timezone offset in minutes. */
   timezone_offset: number;
   /** @nullable */
+  locale: string | null;
+  /** @nullable */
+  currency: string | null;
+  /** @nullable */
   popularity: number | null;
   /** @nullable */
   notes: string[] | null;

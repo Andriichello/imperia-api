@@ -9269,6 +9269,7 @@
                         "example": "Pizza"
                     },
                     "description": {
+                        "type": "string",
                         "example": "Some text...",
                         "nullable": true
                     },
@@ -10559,6 +10560,8 @@
                     "timezone",
                     "timezone_offset",
                     "popularity",
+                    "locale",
+                    "currency",
                     "notes",
                     "media",
                     "schedules"
@@ -10624,6 +10627,16 @@
                         "description": "Selected timezone offset in minutes.",
                         "type": "integer",
                         "example": 180
+                    },
+                    "locale": {
+                        "type": "string",
+                        "example": "en",
+                        "nullable": true
+                    },
+                    "currency": {
+                        "type": "string",
+                        "example": "uah",
+                        "nullable": true
                     },
                     "popularity": {
                         "type": "integer",

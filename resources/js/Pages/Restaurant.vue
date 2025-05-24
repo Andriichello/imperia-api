@@ -237,6 +237,7 @@
     </div>
 
     <SearchDrawer :open="isSearchDrawerOpen"
+                  :restaurant="restaurant"
                   @close="isSearchDrawerOpen = false"/>
 
     <LanguagesDrawer :open="isLanguagesDrawerOpen"
