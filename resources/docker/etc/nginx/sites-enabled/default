@@ -23,14 +23,14 @@ server {
     # Allow api/status to be accessed via http
     location /api/status {
         try_files $uri $uri/ /index.php?$query_string;
-        fastcgi_pass unix:/run/php/php8.1-fpm.sock;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
         fastcgi_index index.php;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         fastcgi_read_timeout 300;
         include fastcgi_params;
     }
 
-    # Pass the PHP scripts to FastCGI server listening on /run/php/php8.1-fpm.sock
+    # Pass the PHP scripts to FastCGI server listening on /run/php/php8.3-fpm.sock
     location / {
     if ($request_method = 'OPTIONS') {
           add_header 'Access-Control-Allow-Origin' '*';
@@ -61,10 +61,10 @@ server {
         try_files $uri $uri/ /index.php?$query_string;
     }
 
-    # Pass the PHP scripts to FastCGI server listening on /run/php/php8.1-fpm.sock
+    # Pass the PHP scripts to FastCGI server listening on /run/php/php8.3-fpm.sock
     location ~ \.php$ {
         try_files $uri =404;
-        fastcgi_pass unix:/run/php/php8.1-fpm.sock;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
         fastcgi_index index.php;
         fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         fastcgi_read_timeout 300;

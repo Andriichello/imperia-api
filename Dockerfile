@@ -1,4 +1,4 @@
-FROM ubuntu:focal
+FROM ubuntu:jammy
 
 ARG ENV
 ARG AWS_ACCESS_KEY_ID
@@ -17,10 +17,10 @@ RUN export LANG=C.UTF-8 \
     && apt-get install --yes --allow-unauthenticated --no-install-recommends \
         nginx supervisor \
         wget git unzip curl nano dos2unix \
-        php8.1 php8.1-cli php8.1-fpm \
-        php8.1-intl php8.1-xml php8.1-zip php8.1-curl \
-        php8.1-http php8.1-raphf php8.1-gd \
-        php8.1-mbstring php8.1-memcached php8.1-mysql \
+        php8.3 php8.3-cli php8.3-fpm \
+        php8.3-intl php8.3-xml php8.3-zip php8.3-curl \
+        php8.3-http php8.3-raphf php8.3-gd \
+        php8.3-mbstring php8.3-memcached php8.3-mysql \
         mysql-client \
         openssh-client \
         python3-pip \
@@ -28,6 +28,19 @@ RUN export LANG=C.UTF-8 \
     && pip3 install awscli \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# Install nvm and setup npm
+RUN mkdir /usr/local/nvm
+ENV NVM_DIR /usr/local/nvm
+ENV NODE_VERSION 22.14.0
+RUN curl https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash \
+    && . $NVM_DIR/nvm.sh \
+    && nvm install $NODE_VERSION \
+    && nvm alias default $NODE_VERSION \
+    && nvm use default
+
+ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
 # Apply the filesystem overlay, which mainly provides scripts in /opt.
 COPY resources/docker /
@@ -55,7 +68,10 @@ RUN chmod -R u+x ./resources/scripts \
 # Install Composer dependencies.
 RUN curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php \
     && php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer \
-    && composer install -o -n
+    && composer install -o -n --no-dev
+
+RUN npm ci --audit false \
+    && npm run prod
 
 # Expose HTTP and HTTPS ports.
 EXPOSE 80 443
