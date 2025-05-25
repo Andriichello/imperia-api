@@ -11,7 +11,7 @@ use Closure;
 use Illuminate\Support\Collection;
 
 /**
- * Class MetricsController.
+ * Class WelcomeController.
  */
 class MetricsController extends Controller
 {
@@ -23,7 +23,7 @@ class MetricsController extends Controller
     protected MetricsHelper $helper;
 
     /**
-     * MetricsController constructor.
+     * WelcomeController constructor.
      *
      * @param MetricsHelper $helper
      */

@@ -50,7 +50,7 @@ class UpdateNotificationRequest extends UpdateRequest
      *   description="Update notification request",
      *   @OA\Property(property="subject", type="string", example="Notification subject."),
      *   @OA\Property(property="body", type="string", example="Notification body..."),
-     *   @OA\Property(property="payload", type="object", nullable="true", example="{}"),
+     *   @OA\Property(property="payload", type="object", nullable=true, example="{}"),
      *   @OA\Property(property="send_at", type="string", format="date-time", example="2022-12-12 10:00:00",
      *     description="Date and time when notification should be sent. Only future values are acceptable."),
      *  )

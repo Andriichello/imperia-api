@@ -51,13 +51,13 @@ class RestaurantReviewResource extends JsonResource
      *   @OA\Property(property="reviewer", type="string", example="Steve"),
      *   @OA\Property(property="score", type="integer", example=5,
      *     description="Min value: `0`, max value: `5`."),
-     *   @OA\Property(property="title", type="string", nullable="true", example="Great"),
-     *   @OA\Property(property="description", type="string", nullable="true",
+     *   @OA\Property(property="title", type="string", nullable=true, example="Great"),
+     *   @OA\Property(property="description", type="string", nullable=true,
      *     example="The restaurant is great and the personnel is nice."),
      *   @OA\Property(property="created_at", type="string", format="date-time",
-     *     nullable="true", example="2022-01-12 10:00:00"),
+     *     nullable=true, example="2022-01-12 10:00:00"),
      *   @OA\Property(property="updated_at", type="string", format="date-time",
-     *     nullable="true", example="2022-01-12 10:00:00"),
+     *     nullable=true, example="2022-01-12 10:00:00"),
      * )
      */
 }

@@ -20,9 +20,33 @@
         "build-metrics-prod": "cd nova-components/Metrics && npm run prod"
     },
     "devDependencies": {
-        "axios": "^0.21",
+        "@types/luxon": "^3.6.2",
+        "@types/node": "^22.15.2",
+        "@vue/tsconfig": "^0.7.0",
+        "autoprefixer": "^10.4.21",
+        "axios": "^1.9.0",
+        "browser-sync": "^2.29.3",
+        "browser-sync-webpack-plugin": "^2.3.0",
+        "daisyui": "^5.0.28",
         "laravel-mix": "^6.0.6",
         "lodash": "^4.17.19",
-        "postcss": "^8.1.14"
+        "postcss": "^8.5.3",
+        "prettier": "^3.5.3",
+        "tailwindcss": "^4.1.4",
+        "ts-loader": "^9.5.2",
+        "typescript": "^5.8.3",
+        "vue-loader": "^16.8.3",
+        "vue-tsc": "^2.2.10"
+    },
+    "dependencies": {
+        "@inertiajs/vue3": "^2.0.8",
+        "@splidejs/vue-splide": "^0.6.12",
+        "@tailwindcss/postcss": "^4.1.4",
+        "@vitejs/plugin-vue": "^5.2.3",
+        "lucide-vue-next": "^0.503.0",
+        "luxon": "^3.6.1",
+        "orval": "^7.9.0",
+        "vue": "^3.5.13",
+        "vue-i18n": "^9.1.11"
     }
 }

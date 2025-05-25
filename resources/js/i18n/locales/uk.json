@@ -1,0 +1,76 @@
+{
+  "restaurant": {
+    "title": "Ресторан",
+    "cafe_title": "Кафе",
+    "bakery_title": "Пекарня",
+    "bistro_title": "Бістро",
+    "pizzeria_title": "Піцерія",
+    "bar_title": "Бар",
+    "no_menus": "На жаль, зараз немає доступних меню",
+    "working_hours": "Години роботи:",
+    "open": "Відчинено",
+    "closed": "Зачинено",
+    "until_closing": "до закриття",
+    "until_opening": "до відкриття",
+    "phone": "Телефон:",
+    "location": "Адреса:"
+  },
+  "menu": {
+    "title": "Меню",
+    "empty_category": "На жаль, ця категорія порожня"
+  },
+  "search": {
+    "placeholder": "Пошук",
+    "menus": "Меню",
+    "categories": "Категорії",
+    "products": "Страви",
+    "no_results": "Нічого не знайдено",
+    "start_typing": "Почніть вводити текст для пошуку меню, категорій, страв..."
+  },
+  "languages": {
+    "title": "Мови",
+    "names": {
+      "en": "English",
+      "uk": "Українська"
+    }
+  },
+  "format": {
+    "date": "DD/MM/YYYY",
+    "time": "HH:MM",
+    "hour_short": "год",
+    "minute_short": "хв",
+    "currency": "{price} {currency}",
+    "time_until_closing": "{time} до закриття",
+    "time_until_opening": "{time} до відкриття"
+  },
+  "schedule": {
+    "hour_short": "год",
+    "minute_short": "хв",
+    "T_until_closing": "{time}",
+    "T_before_opening": "{time}",
+    "monday": "Понеділок",
+    "tuesday": "Вівторок",
+    "wednesday": "Середа",
+    "thursday": "Четвер",
+    "friday": "П'ятниця",
+    "saturday": "Субота",
+    "sunday": "Неділя"
+  },
+  "weight_unit": {
+    "g": "г",
+    "kg": "кг",
+    "ml": "мл",
+    "l": "л",
+    "cm": "см",
+    "pc": "шт"
+  },
+  "currency_symbol": {
+    "uah": "₴",
+    "eur": "€",
+    "usd": "$",
+    "gbp": "£",
+    "pln": "zł",
+    "czk": "Kč",
+    "rub": "₽"
+  }
+}

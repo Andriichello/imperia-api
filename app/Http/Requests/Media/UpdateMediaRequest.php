@@ -101,11 +101,11 @@ class UpdateMediaRequest extends UpdateRequest
      *   description="Update media request",
      *   @OA\Property(property="file", type="file"),
      *   @OA\Property(property="name", type="string", example="drinks.svg"),
-     *   @OA\Property(property="title", type="string", nullable="true", example="Drinks"),
-     *   @OA\Property(property="description", type="string", nullable="true"),
+     *   @OA\Property(property="title", type="string", nullable=true, example="Drinks"),
+     *   @OA\Property(property="description", type="string", nullable=true),
      *   @OA\Property(property="folder", type="string", example="/media/",
      *     description="Must start and end with the `/`."),
-     *   @OA\Property(property="metadata", nullable="true",
+     *   @OA\Property(property="metadata", nullable=true,
      *     ref ="#/components/schemas/MediaMetadata"),
      *  )
      */

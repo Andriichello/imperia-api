@@ -142,11 +142,11 @@ class ShowInvoiceRequest extends ShowRequest
      * @OA\Schema(
      *   schema="ShowInvoiceRequest",
      *   description="Show invoice request",
-     *   @OA\Property(property="tags", type="string", nullable="true",
+     *   @OA\Property(property="tags", type="string", nullable=true,
      *     example="1,2"),
-     *   @OA\Property(property="menus", type="string", nullable="true",
+     *   @OA\Property(property="menus", type="string", nullable=true,
      *     example="1,2,3"),
-     *   @OA\Property(property="sections", type="string", nullable="true",
+     *   @OA\Property(property="sections", type="string", nullable=true,
      *     example="info,comments,tickets",
      *     description="Coma-separated list of invoice sections.
      *     Available sections: `info`, `comments`, `tickets`, `menus`,

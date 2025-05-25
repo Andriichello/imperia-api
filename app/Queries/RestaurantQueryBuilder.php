@@ -2,10 +2,16 @@
 
 namespace App\Queries;
 
+use App\Models\Restaurant;
 use App\Models\User;
 
 /**
  * Class RestaurantQueryBuilder.
+ *
+ * @method Restaurant|null first($columns = ['*'])
+ * @method Restaurant|null find($columns = ['*'])
+ * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
+ * @method $this orWhere($column, $operator = null, $value = null)
  */
 class RestaurantQueryBuilder extends BaseQueryBuilder
 {
@@ -25,6 +31,20 @@ class RestaurantQueryBuilder extends BaseQueryBuilder
         }
 
         return $query;
+    }
+
+    /**
+     * Searches restaurants with given id or slug.
+     *
+     * @param string|null $idOrSlug
+     *
+     * @return static
+     */
+    public function search(string|null $idOrSlug): static
+    {
+        $this->where(is_numeric($idOrSlug) ? 'id' : 'slug', $idOrSlug);
+
+        return $this;
     }
 
     /**

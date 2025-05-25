@@ -27,18 +27,23 @@ use Illuminate\Support\Collection;
  * @property string $country
  * @property string $city
  * @property string $place
- * @property string|null $full_address
- * @property string|null $phone
- * @property string|null $email
- * @property string|null $location
- * @property string|null $website
  * @property string $timezone
- * @property int $timezone_offset
  * @property int|null $popularity
  * @property string|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
+ *
+ * @property string|null $phone
+ * @property string|null $email
+ * @property string|null $website
+ * @property string|null $location
+ * @property string|null $full_address
+ * @property int $timezone_offset
+ * @property string|null $locale
+ * @property string|null $currency
+ * @property string|null $establishment
+ * @property string[]|null $notes
  *
  * @property Banquet[]|Collection $banquets
  * @property Menu[]|Collection $menus
@@ -78,7 +83,7 @@ class Restaurant extends BaseModel implements
     /**
      * The attributes that are mass assignable.
      *
-     * @var string[]
+     * @var array<int, string>
      */
     protected $fillable = [
         'slug',
@@ -87,6 +92,7 @@ class Restaurant extends BaseModel implements
         'city',
         'place',
         'phone',
+        'notes',
         'timezone',
         'popularity',
     ];
@@ -296,6 +302,66 @@ class Restaurant extends BaseModel implements
     }
 
     /**
+     * Accessor for the restaurant's currency.
+     *
+     * @return string|null
+     */
+    public function getCurrencyAttribute(): ?string
+    {
+        return $this->getFromJson('metadata', 'currency');
+    }
+
+    /**
+     * Mutator for the restaurant's currency.
+     *
+     * @param $currency string|null
+     */
+    public function setCurrencyAttribute(?string $currency): void
+    {
+        $this->setToJson('metadata', 'currency', $currency);
+    }
+
+    /**
+     * Accessor for the restaurant's establishment type (restaurant, café, bakery...).
+     *
+     * @return string|null
+     */
+    public function getEstablishmentAttribute(): ?string
+    {
+        return $this->getFromJson('metadata', 'establishment');
+    }
+
+    /**
+     * Mutator for the restaurant's establishment type (restaurant, café, bakery...).
+     *
+     * @param $establishment string|null
+     */
+    public function setEstablishmentAttribute(?string $establishment): void
+    {
+        $this->setToJson('metadata', 'establishment', $establishment);
+    }
+
+    /**
+     * Accessor for the restaurant's locale.
+     *
+     * @return string|null
+     */
+    public function getLocaleAttribute(): ?string
+    {
+        return $this->getFromJson('metadata', 'locale');
+    }
+
+    /**
+     * Mutator for the restaurant's locale.
+     *
+     * @param $locale string|null
+     */
+    public function setLocaleAttribute(?string $locale): void
+    {
+        $this->setToJson('metadata', 'locale', $locale);
+    }
+
+    /**
      * Accessor for the restaurant's phone.
      *
      * @return string|null
@@ -376,6 +442,26 @@ class Restaurant extends BaseModel implements
     }
 
     /**
+     * Accessor for the restaurant's notes.
+     *
+     * @return string[]|null
+     */
+    public function getNotesAttribute(): ?array
+    {
+        return $this->getFromJson('metadata', 'notes');
+    }
+
+    /**
+     * Mutator for the restaurant's notes.
+     *
+     * @param $notes string[]|null
+     */
+    public function setNotesAttribute(array $notes): void
+    {
+        $this->setToJson('metadata', 'notes', $notes);
+    }
+
+    /**
      * @param DatabaseBuilder $query
      *
      * @return RestaurantQueryBuilder
@@ -384,7 +470,6 @@ class Restaurant extends BaseModel implements
     {
         return new RestaurantQueryBuilder($query);
     }
-
 
     /**
      * Get the corresponding restaurant id.

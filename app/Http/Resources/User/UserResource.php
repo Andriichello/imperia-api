@@ -48,8 +48,8 @@ class UserResource extends JsonResource
      *   @OA\Property(property="restaurant_id", type="integer", nullable=true),
      *   @OA\Property(property="customer_id", type="integer", nullable=true),
      *   @OA\Property(property="name", type="string", example="Admin Admins"),
-     *   @OA\Property(property="email", type="string", example="admin@email.com", nullable="true"),
-     *   @OA\Property(property="email_verified_at", type="string", format="date-time", nullable="true"),
+     *   @OA\Property(property="email", type="string", example="admin@email.com", nullable=true),
+     *   @OA\Property(property="email_verified_at", type="string", format="date-time", nullable=true),
      *   @OA\Property(property="customer", ref ="#/components/schemas/Customer"),
      * )
      */

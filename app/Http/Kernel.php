@@ -7,11 +7,13 @@ use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\ForceJsonOnApi;
 use App\Http\Middleware\HandleCached;
-use App\Http\Middleware\HttpsProtocol;
+use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Middleware\SetLocaleFromUrl;
 use App\Http\Middleware\TrimStrings;
 use App\Http\Middleware\VerifyCsrfToken;
+use App\Http\Middleware\WithoutDataWrapping;
 use Badinansoft\LanguageSwitch\Http\Middleware\LanguageSwitch;
 use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
 use Illuminate\Auth\Middleware\Authorize;
@@ -71,6 +73,12 @@ class Kernel extends HttpKernel
             VerifyCsrfToken::class,
             SubstituteBindings::class,
             LanguageSwitch::class,
+        ],
+
+        'inertia' => [
+            SetLocaleFromUrl::class,
+            WithoutDataWrapping::class,
+            HandleInertiaRequests::class,
         ],
 
         'api' => [

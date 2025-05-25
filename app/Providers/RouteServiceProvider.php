@@ -2,11 +2,13 @@
 
 namespace App\Providers;
 
+use App\Http\Middleware\SetLocaleFromUrl;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 /**
  * Class RouteServiceProvider.
@@ -40,6 +42,23 @@ class RouteServiceProvider extends ServiceProvider
             Route::middleware('web')
                 ->namespace($this->namespace)
                 ->group(base_path('routes/web.php'));
+
+            Route::middleware(['web', 'inertia'])
+                ->namespace($this->namespace)
+                ->prefix('/{locale}/inertia')
+                ->name('inertia.')
+                ->group(base_path('routes/inertia.php'));
+
+            Route::fallback(function (Request $request) {
+                if (Str::startsWith($request->path(), 'inertia')) {
+                    $locale = $request->route('locale');
+                    $resolvedLocale = SetLocaleFromUrl::getLocaleFromUrl($request);
+
+                    if ($locale !== $resolvedLocale) {
+                        return redirect('/' . $resolvedLocale . '/' . $request->path());
+                    }
+                }
+            });
         });
     }
 
