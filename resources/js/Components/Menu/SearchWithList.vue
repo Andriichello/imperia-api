@@ -33,7 +33,7 @@
 
   const emits = defineEmits(['open-menu', 'open-category', 'open-product', 'query-updated', 'has-results-changed']);
 
-  const { t } = useI18n();
+  const i18n = useI18n();
 
   const currency = computed(() => props.restaurant?.currency ?? 'uah');
 
@@ -150,7 +150,7 @@
           id="searchInputRef"
           ref="searchInputRef"
           type="text"
-          :placeholder="t('search.placeholder')"
+          :placeholder="i18n.t('search.placeholder')"
           class="w-full bg-transparent border-none focus:outline-none text-base-content text-lg"
           autocomplete="off"
         />
@@ -167,7 +167,7 @@
       <div v-if="hasResults">
         <!-- Menus section -->
         <div v-if="filteredMenus.length > 0" class="mb-6">
-          <h3 class="font-bold text-lg mb-2">{{ t('search.menus') }}</h3>
+          <h3 class="font-bold text-lg mb-2">{{ i18n.t('search.menus') }}</h3>
           <div class="space-y-2">
             <div class="p-3 bg-base-200 rounded-lg cursor-pointer hover:bg-base-300 transition-colors"
                  v-for="menu in filteredMenus"
@@ -181,7 +181,7 @@
 
         <!-- Categories section -->
         <div v-if="filteredCategories.length > 0" class="mb-6">
-          <h3 class="font-bold text-lg mb-2">{{ t('search.categories') }}</h3>
+          <h3 class="font-bold text-lg mb-2">{{ i18n.t('search.categories') }}</h3>
           <div class="space-y-2">
             <div class="p-3 bg-base-200 rounded-lg cursor-pointer hover:bg-base-300 transition-colors"
                  v-for="category in filteredCategories"
@@ -198,7 +198,7 @@
 
         <!-- Products section -->
         <div v-if="filteredProducts.length > 0" class="mb-6">
-          <h3 class="font-bold text-lg mb-2">{{ t('search.products') }}</h3>
+          <h3 class="font-bold text-lg mb-2">{{ i18n.t('search.products') }}</h3>
           <div class="space-y-4">
             <ProductInList class="cursor-pointer bg-base-200 hover:bg-base-300"
                            v-for="product in filteredProducts"
@@ -213,14 +213,14 @@
 
       <!-- No results -->
       <div v-else class="flex flex-col items-center justify-center py-10 px-6">
-        <div class="text-lg text-base-content/70">{{ t('search.no_results') }}</div>
+        <div class="text-lg text-base-content/70">{{ i18n.t('search.no_results') }}</div>
       </div>
     </div>
 
     <!-- Empty state -->
     <div v-else-if="withPlaceholders" class="flex flex-col items-center justify-center py-10 px-6" >
 <!--        <Search class="w-16 h-16 mb-4 opacity-60" />-->
-      <div class="w-full text-center text-lg text-base-content/70">{{ t('search.start_typing') }}</div>
+      <div class="w-full text-center text-lg text-base-content/70">{{ i18n.t('search.start_typing') }}</div>
     </div>
   </div>
 </template>

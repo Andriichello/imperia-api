@@ -47,7 +47,6 @@
   });
 
   const i18n = useI18n();
-
   const slideOptions = ref({
     perPage: 1,
     perMove: 1,
@@ -110,6 +109,7 @@
         console.log(err);
       })
       .then(res => {
+        // @ts-ignore
         menusWithProducts.value = res.data.data as Menu[];
       })
       .finally(() => {
@@ -129,13 +129,13 @@
     router.visit(window.location.pathname + `/menu/${menu.id}#${category.id}-${product.id}`, {replace: false});
   }
 
-  const callPhone = (phone) => {
+  const callPhone = (phone: string | null) => {
     if (window && phone?.length > 0) {
       window.open(`tel:${phone}`, '_blank');
     }
   };
 
-  const openMap = (address) => {
+  const openMap = (address: string | null) => {
     if (window && address?.length > 0) {
       window.open(`https://www.google.com/maps/search/?api=1&query=${address}`, '_blank')
     }
@@ -251,7 +251,7 @@
 
           <div class="w-full flex items-center justify-center px-3 py-3" v-else>
             <h3 class="text-xl font-bold text-center opacity-70">
-              {{ $t('restaurant.no_menus') }}
+              {{ i18n.t('restaurant.no_menus') }}
             </h3>
           </div>
         </div>
@@ -271,7 +271,7 @@
 
                 <div class="flex grow flex-col justify-center items-start">
                   <h3 class="text-sm font-semibold text-base-content/50 translate-y-0.5">
-                    {{ $t('restaurant.working_hours') }}
+                    {{ i18n.t('restaurant.working_hours') }}
                   </h3>
                   <p class="text-md text-base-content/90 font-semibold">
                     {{ time(scheduleInfo.relevant.beg_hour, scheduleInfo.relevant.beg_minute) }} -
@@ -288,7 +288,7 @@
               <p class="w-full font-mono text-md cursor-pointer pl-15"
                  :class="{'text-green-600': scheduleInfo.status === 'Open', 'text-red-600': scheduleInfo.status === 'Closed'}"
                  @click="scheduleExpanded = !scheduleExpanded">
-                <span class="font-semibold">{{ scheduleInfo.status === 'Open' ? $t('restaurant.open') : $t('restaurant.closed') }}:</span> {{ scheduleInfo.timeBeforeOrUntil }} {{ scheduleInfo.status === 'Open' ? $t('restaurant.until_closing') : $t('restaurant.until_opening') }}
+                <span class="font-semibold">{{ scheduleInfo.status === 'Open' ? i18n.t('restaurant.open') : i18n.t('restaurant.closed') }}:</span> {{ scheduleInfo.timeBeforeOrUntil }} {{ scheduleInfo.status === 'Open' ? i18n.t('restaurant.until_closing') : i18n.t('restaurant.until_opening') }}
               </p>
 
               <Schedule class="w-full"
@@ -308,7 +308,7 @@
 
             <div class="w-full flex flex-col justify-center items-start">
               <h3 class="text-sm font-semibold text-base-content/50 translate-y-0.5">
-                {{ $t('restaurant.phone') }}
+                {{ i18n.t('restaurant.phone') }}
               </h3>
               <p class="text-md text-base-content/90 font-semibold">
                 {{ restaurant!.phone }}
@@ -325,7 +325,7 @@
 
             <div class="w-full flex flex-col justify-start items-start">
               <h3 class="text-sm font-semibold text-base-content/50">
-                {{ $t('restaurant.location') }}
+                {{ i18n.t('restaurant.location') }}
               </h3>
               <p class="text-md text-base-content/90 font-semibold">
                 {{ restaurant!.full_address }}

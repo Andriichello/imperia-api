@@ -32,6 +32,7 @@ createInertiaApp({
     createApp({ render: () => h(App, props) })
       .use(plugin)
       .use(VueSplide)
+      // @ts-ignore
       .use(i18n)
       .mount(el)
   },

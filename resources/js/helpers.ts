@@ -150,7 +150,7 @@ export function getNextOccurrence(baseDate: DateTime, weekday: string) {
         monday: 1, tuesday: 2, wednesday: 3, thursday: 4, friday: 5, saturday: 6, sunday: 7,
     };
 
-    const targetWeekday = weekdayMap[weekday.toLowerCase() as keyof typeof weekdayMap] ?? [];
+    const targetWeekday = weekdayMap[weekday.toLowerCase() as keyof typeof weekdayMap] ?? 0;
     const daysUntilNext = (targetWeekday + 7 - baseDate.weekday) % 7;
 
     return baseDate.plus({days: daysUntilNext});
@@ -233,7 +233,7 @@ export function getScheduleInfo(restaurant: Restaurant): ScheduleInfo {
   const schedules = restaurant.schedules;
   const timezoneOffset = restaurant.timezone_offset;
 
-  const upcoming = getUpcomingSchedules(now, schedules);
+  const upcoming = getUpcomingSchedules(now, schedules, timezoneOffset);
   const relevant = upcoming[0] ?? null;
   const active = relevant && relevant.closestBegDate <= now && now <= relevant.closestEndDate
     ? relevant : null;
@@ -249,7 +249,7 @@ export function getScheduleInfo(restaurant: Restaurant): ScheduleInfo {
     const end = relevant.closestEndDate;
 
     if (status === 'Open') {
-      const minutes = Math.trunc(end.diff(now, 'minutes').values.minutes);
+      const minutes = Math.trunc(end.diff(now, 'minutes').minutes);
       const hours = Math.trunc(minutes / 60);
 
       let time = '';
@@ -270,7 +270,7 @@ export function getScheduleInfo(restaurant: Restaurant): ScheduleInfo {
       // Use translation for time until closing
       return t('schedule.T_until_closing', { time });
     } else if (beg.toMillis() >= now.toMillis()) {
-      const minutes = Math.trunc(beg.diff(now, 'minutes').values.minutes);
+      const minutes = Math.trunc(beg.diff(now, 'minutes').minutes);
       const hours = Math.trunc(minutes / 60);
 
       let time = '';
@@ -293,12 +293,12 @@ export function getScheduleInfo(restaurant: Restaurant): ScheduleInfo {
     } else {
       const next = schedules[0];
 
-      let nextBeg = DateTime.utc()
-        .set({hours: next.beg_hour, minutes: next.beg_minute, seconds: 0, milliseconds: 0})
+      let nextBeg: DateTime = DateTime.utc()
+        .set({hour: next.beg_hour, minute: next.beg_minute, second: 0, millisecond: 0})
         .minus({minutes: timezoneOffset});
 
       if (next.closest_date) {
-        nextBeg = DateTime.fromJSDate(next.closest_date)
+        nextBeg = DateTime.fromJSDate(new Date(next.closest_date))
           .minus({minutes: timezoneOffset});
       } else {
         const weekdays = {
@@ -317,7 +317,7 @@ export function getScheduleInfo(restaurant: Restaurant): ScheduleInfo {
         }
       }
 
-      const minutes = Math.trunc(nextBeg.diff(now, 'minutes').values.minutes);
+      const minutes = Math.trunc(nextBeg.diff(now, 'minutes').minutes);
       const hours = Math.trunc(minutes / 60);
 
       // replaced this.$t("schedule.T_before_opening", {time: this.time(hours, minutes % 60)})

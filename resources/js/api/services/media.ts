@@ -65,6 +65,7 @@ export const storeMedia = <TData = AxiosResponse<StoreMediaResponse>>(
     storeMediaBody.metadata !== undefined &&
     storeMediaBody.metadata !== null
   ) {
+    // @ts-ignore
     formData.append(`metadata`, storeMediaBody.metadata);
   }
 

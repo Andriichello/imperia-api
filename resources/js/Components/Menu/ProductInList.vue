@@ -33,10 +33,11 @@
     const variants = [...props.product.variants];
     const base = {
       id: null,
-      productId: props.product.id,
+      type: 'variants',
+      product_id: props.product.id,
       price: props.product.price,
       weight: props.product.weight,
-      weightUnit: props.product.weightUnit,
+      weight_unit: props.product.weight_unit,
     };
 
     variants.push(base);
@@ -57,8 +58,8 @@
   );
 
   const weight = computed(() => {
-    let weight = props.product!.weight;
-    let unit = props.product!.weight_unit;
+    let weight: number | string = props.product!.weight;
+    let unit: string = props.product!.weight_unit;
 
     if (selectedVariant.value) {
       weight = selectedVariant.value?.weight;
