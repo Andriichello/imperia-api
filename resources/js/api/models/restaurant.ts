@@ -35,6 +35,8 @@ export interface Restaurant {
   /** @nullable */
   currency: string | null;
   /** @nullable */
+  establishment: string | null;
+  /** @nullable */
   popularity: number | null;
   /** @nullable */
   notes: string[] | null;

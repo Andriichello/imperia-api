@@ -14,6 +14,10 @@
     closed: {
       type: Boolean,
       default: false,
+    },
+    establishment: {
+      type: String as PropType<string | null>,
+      default: 'restaurant',
     }
   });
 
@@ -41,6 +45,7 @@
                 v-if="!closed">
         <CategoryInList :category="category"
                         :products="categoryProducts(menu, category)"
+                        :establishment="establishment"
                         @switch-category="switchCategory"/>
 
 <!--        <div class="w-full h-[1px] bg-base-300"/>-->

@@ -35,10 +35,15 @@
 
   function close() {
     emits('close')
+    hasResults.value = false;
   }
 
   function setHasResults(has: boolean) {
     hasResults.value = has;
+  }
+
+  function setQuery(query: string) {
+    hasResults.value = query.length > 0;
   }
 
   function openMenu(menu: Menu) {
@@ -66,6 +71,7 @@
                     :menus="menus"
                     :withPlacehoders="false"
                     @has-results-changed="setHasResults"
+                    @query-updated="setQuery"
                     @open-menu="openMenu"
                     @open-category="openCategory"
                     @open-product="openProduct"/>

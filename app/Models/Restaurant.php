@@ -42,6 +42,7 @@ use Illuminate\Support\Collection;
  * @property int $timezone_offset
  * @property string|null $locale
  * @property string|null $currency
+ * @property string|null $establishment
  * @property string[]|null $notes
  *
  * @property Banquet[]|Collection $banquets
@@ -311,13 +312,33 @@ class Restaurant extends BaseModel implements
     }
 
     /**
-     * Mutator for the restaurant's locale.
+     * Mutator for the restaurant's currency.
      *
      * @param $currency string|null
      */
     public function setCurrencyAttribute(?string $currency): void
     {
         $this->setToJson('metadata', 'currency', $currency);
+    }
+
+    /**
+     * Accessor for the restaurant's establishment type (restaurant, café, bakery...).
+     *
+     * @return string|null
+     */
+    public function getEstablishmentAttribute(): ?string
+    {
+        return $this->getFromJson('metadata', 'establishment');
+    }
+
+    /**
+     * Mutator for the restaurant's establishment type (restaurant, café, bakery...).
+     *
+     * @param $establishment string|null
+     */
+    public function setEstablishmentAttribute(?string $establishment): void
+    {
+        $this->setToJson('metadata', 'establishment', $establishment);
     }
 
     /**

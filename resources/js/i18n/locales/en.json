@@ -1,6 +1,11 @@
 {
   "restaurant": {
     "title": "Restaurant",
+    "cafe_title": "Café",
+    "bakery_title": "Bakery",
+    "bistro_title": "Bistro",
+    "pizzeria_title": "Pizzeria",
+    "bar_title": "Bar",
     "no_menus": "Unfortunately, there are no menus available now",
     "working_hours": "Working hours:",
     "open": "Open",

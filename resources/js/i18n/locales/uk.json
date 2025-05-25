@@ -1,6 +1,11 @@
 {
   "restaurant": {
     "title": "Ресторан",
+    "cafe_title": "Кафе",
+    "bakery_title": "Пекарня",
+    "bistro_title": "Бістро",
+    "pizzeria_title": "Піцерія",
+    "bar_title": "Бар",
     "no_menus": "На жаль, зараз немає доступних меню",
     "working_hours": "Години роботи:",
     "open": "Відчинено",

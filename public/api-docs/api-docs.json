@@ -10562,6 +10562,7 @@
                     "popularity",
                     "locale",
                     "currency",
+                    "establishment",
                     "notes",
                     "media",
                     "schedules"
@@ -10636,6 +10637,11 @@
                     "currency": {
                         "type": "string",
                         "example": "uah",
+                        "nullable": true
+                    },
+                    "establishment": {
+                        "type": "string",
+                        "example": "restaurant",
                         "nullable": true
                     },
                     "popularity": {

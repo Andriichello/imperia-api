@@ -14,6 +14,14 @@
       type: Array as PropType<Product[]>,
       required: true,
     },
+    establishment: {
+      type: String as PropType<string | null>,
+      default: 'restaurant',
+    },
+    preview: {
+      type: Boolean as PropType<boolean>,
+      default: false,
+    }
   });
 </script>
 
@@ -41,7 +49,9 @@
          :id="'category-' + category.id + '-products'"
          v-else>
       <template v-for="product in products" :key="product.id">
-        <ProductInList :product="product"/>
+        <ProductInList :product="product"
+                       :preview="preview"
+                       :establishment="establishment"/>
       </template>
     </div>
   </div>

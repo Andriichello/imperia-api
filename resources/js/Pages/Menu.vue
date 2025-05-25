@@ -390,6 +390,7 @@
       <div class="w-full flex flex-col">
         <MenuInList :menu="selectedMenu"
                     :closed="false"
+                    :establishment="restaurant.establishment ?? 'restaurant'"
                     @switch-menu="switchMenu"
                     @switch-category="onSwitchCategory"/>
       </div>

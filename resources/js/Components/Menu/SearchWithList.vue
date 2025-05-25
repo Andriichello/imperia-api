@@ -204,6 +204,7 @@
                            v-for="product in filteredProducts"
                            :key="`product-${product.id}`"
                            :product="product"
+                           :preview="true"
                            :currency="currency"
                            @click="openProduct(product)"/>
           </div>

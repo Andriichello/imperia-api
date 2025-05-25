@@ -1,7 +1,13 @@
 <script setup lang="ts">
-import {computed, onMounted, PropType, ref, watch} from "vue";
+  import {computed, onMounted, PropType, ref, watch} from "vue";
   import {Splide, SplideSlide} from '@splidejs/vue-splide';
   import {
+    Coffee,
+    Pizza,
+    CakeSlice,
+    Croissant,
+    ChefHat,
+    Utensils,
     CalendarClock,
     ChevronUp,
     ChevronDown,
@@ -11,7 +17,7 @@ import {computed, onMounted, PropType, ref, watch} from "vue";
     Search,
     Languages,
   } from 'lucide-vue-next';
-import {Category, Menu, Product, Restaurant} from "@/api";
+  import {Category, Menu, Product, Restaurant} from "@/api";
   import Schedule from "@/Components/Restaurant/Schedule.vue";
   import {getScheduleInfo, ScheduleInfo, time} from "@/helpers";
   import {router} from "@inertiajs/vue3";
@@ -55,6 +61,36 @@ import {Category, Menu, Product, Restaurant} from "@/api";
   const scheduleInfo = computed<ScheduleInfo>(
     () => getScheduleInfo(props.restaurant!)
   );
+
+  const getEstablishmentTitle = computed(() => {
+    const establishment = props.restaurant?.establishment?.toLowerCase();
+
+    if (!establishment) {
+      return i18n.t('restaurant.title');
+    }
+
+    if (establishment.includes('café') || establishment.includes('cafe')) {
+      return i18n.t('restaurant.cafe_title');
+    }
+
+    if (establishment.includes('bakery')) {
+      return i18n.t('restaurant.bakery_title');
+    }
+
+    if (establishment.includes('bistro')) {
+      return i18n.t('restaurant.bistro_title');
+    }
+
+    if (establishment.includes('pizzeria')) {
+      return i18n.t('restaurant.pizzeria_title');
+    }
+
+    if (establishment.includes('bar')) {
+      return i18n.t('restaurant.bar_title');
+    }
+
+    return i18n.t('restaurant.title');
+  });
 
   const scheduleExpanded = ref(false);
 
@@ -133,6 +169,34 @@ import {Category, Menu, Product, Restaurant} from "@/api";
         </div>
       </div>
 
+      <div class="absolute top-0 left-0 right-0 h-75 bg-base-200 border-b-1 border-base-300 overflow-hidden flex flex-col justify-center">
+        <div class="w-full h-full flex flex-col justify-between gap-6 -rotate-45 scale-165 opacity-60">
+          <template v-for="j in 10">
+            <div class="w-full flex justify-between gap-1">
+              <Coffee class="w-2 h-2" v-for="u in 10" :key="'row-' + j + 'coffee'+u"
+                        v-if="restaurant.establishment?.toLowerCase().includes('café') || restaurant.establishment?.toLowerCase().includes('cafe')"/>
+
+              <Pizza class="w-2 h-2 rotate-45" v-for="u in 10" :key="'row-' + j + 'pizza'+u"
+                     v-else-if="restaurant.establishment?.toLowerCase().includes('pizzeria')"/>
+
+              <CakeSlice class="w-2 h-2 rotate-45" v-for="u in 10" :key="'row-' + j + 'bakery'+u"
+                     v-else-if="restaurant.establishment?.toLowerCase().includes('bakery')"/>
+
+              <Utensils class="w-2 h-2" v-for="u in 10" :key="'row-' + j + 'utensils'+u"
+                          v-else/>
+            </div>
+
+            <div class="w-full flex justify-between gap-1">
+              <Croissant class="w-2 h-2 -rotate-45" v-for="u in 10" :key="'row-' + j + 'croissant'+u"
+                      v-if="restaurant.establishment?.toLowerCase().includes('café') || restaurant.establishment?.toLowerCase().includes('cafe') || restaurant.establishment?.toLowerCase().includes('bakery')"/>
+
+              <ChefHat class="w-2 h-2" v-for="c in 10" :key="'row-' + j + 'chef'+c"
+                       v-else/>
+            </div>
+          </template>
+        </div>
+      </div>
+
       <Splide class="w-full h-75" :options="slideOptions"
               v-if="restaurant!.media?.length > 0">
         <SplideSlide v-for="(media, index) in restaurant!.media ?? []" :key="media.id">
@@ -142,8 +206,9 @@ import {Category, Menu, Product, Restaurant} from "@/api";
         </SplideSlide>
       </Splide>
 
-      <div class="w-full h-12 bg-base-200 border-b-1 border-base-300"
-           v-else/>
+      <div class="w-full h-75"
+           v-else>
+      </div>
 
       <div class="w-full pt-3 pb-1 px-3 text-center">
         <h3 class="text-2xl font-bold">
@@ -151,7 +216,7 @@ import {Category, Menu, Product, Restaurant} from "@/api";
         </h3>
 
         <p class="text-md -translate-y-0.5 opacity-70">
-          {{ $t('restaurant.title') }}
+          {{ getEstablishmentTitle }}
         </p>
       </div>
       <div class="w-full pt-1 pb-3 px-3 pr-6 chat chat-start flex flex-col gap-1.5 translate-x-0.5"

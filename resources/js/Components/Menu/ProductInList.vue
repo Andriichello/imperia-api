@@ -3,6 +3,7 @@
   import {Splide, SplideSlide} from "@splidejs/vue-splide";
   import {ref, computed, PropType} from "vue";
   import {priceFormatted, weightUnitFormatted} from "@/helpers";
+  import {CakeSlice, ChefHat, Coffee, Croissant, Pizza, Utensils} from "lucide-vue-next";
 
   const props = defineProps({
     product: {
@@ -13,6 +14,14 @@
       type: String as PropType<string | null>,
       required: false,
       default: null,
+    },
+    establishment: {
+      type: String as PropType<string | null>,
+      default: 'restaurant',
+    },
+    preview: {
+      type: Boolean as PropType<boolean>,
+      default: false,
     }
   });
 
@@ -87,21 +96,51 @@
        :id="'product-' + product.id">
 
     <template v-if="product.media?.length">
-      <Splide class="w-full h-45 rounded-t" :options="{
+      <div class="w-full h-45 rounded-t relative">
+        <div class="absolute w-full top-0 h-45 border-b-1 border-base-300 overflow-hidden flex flex-col justify-center rounded-t">
+          <div class="w-full h-full flex flex-col justify-between gap-6 -rotate-45 scale-165 opacity-60 animate-pulse">
+            <template v-for="j in 7">
+              <div class="w-full flex justify-between gap-1">
+                <Coffee class="w-2 h-2" v-for="u in 10" :key="'row-' + j + 'coffee'+u"
+                        v-if="establishment?.toLowerCase().includes('café') || establishment?.toLowerCase().includes('cafe')"/>
+
+                <Pizza class="w-2 h-2 rotate-45" v-for="u in 10" :key="'row-' + j + 'pizza'+u"
+                       v-else-if="establishment?.toLowerCase().includes('pizzeria')"/>
+
+                <CakeSlice class="w-2 h-2 rotate-45" v-for="u in 10" :key="'row-' + j + 'bakery'+u"
+                           v-else-if="establishment?.toLowerCase().includes('bakery')"/>
+
+                <Utensils class="w-2 h-2" v-for="u in 10" :key="'row-' + j + 'utensils'+u"
+                          v-else/>
+              </div>
+
+              <div class="w-full flex justify-between gap-1">
+                <Croissant class="w-2 h-2 -rotate-45" v-for="u in 10" :key="'row-' + j + 'croissant'+u"
+                           v-if="establishment?.toLowerCase().includes('café') || establishment?.toLowerCase().includes('cafe') || establishment?.toLowerCase().includes('bakery')"/>
+
+                <ChefHat class="w-2 h-2" v-for="c in 10" :key="'row-' + j + 'chef'+c"
+                         v-else/>
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <Splide class="w-full h-45 rounded-t" :options="{
                     perPage: 1,
                     perMove: 1,
                     rewind: false,
                     rewindByDrag: false,
-                    drag: Number(product.media!.length) > 1,
-                    arrows: Number(product.media!.length) > 1,
-                    pagination: true,
+                    drag: !preview && Number(product.media!.length) > 1,
+                    arrows: !preview && Number(product.media!.length) > 1,
+                    pagination: !preview,
                   }">
-        <SplideSlide v-for="(media, index) in product.media" :key="media.id">
-          <img class="w-full h-45 object-cover object-center rounded-t"
-               :src="media.url" :alt="`Dish preview #${index}`"
-               :loading="index === 0 ? 'eager' : 'lazy'"/>
-        </SplideSlide>
-      </Splide>
+          <SplideSlide v-for="(media, index) in (preview ? [product.media[0]] : product.media)" :key="media.id">
+            <img class="w-full h-45 object-cover object-center rounded-t"
+                 :src="media.url" :alt="`Dish preview #${index}`"
+                 :loading="index === 0 ? 'eager' : 'lazy'"/>
+          </SplideSlide>
+        </Splide>
+      </div>
     </template>
 
     <div class="card-body min-h-[100px] rounded text-start">
