@@ -46,19 +46,6 @@ class UserPolicy extends CrudPolicy
     }
 
     /**
-     * Determine whether the user can view Laravel Nova.
-     *
-     * @param User $user
-     *
-     * @return bool
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function viewNova(User $user): bool
-    {
-        return $user->isStaff();
-    }
-
-    /**
      * Determine whether the user can view any models.
      *
      * @param User $user

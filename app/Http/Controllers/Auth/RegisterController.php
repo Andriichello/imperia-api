@@ -7,7 +7,6 @@ use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\User\UserResource;
 use App\Http\Responses\ApiResponse;
 use App\Repositories\UserRepository;
-use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Annotations as OA;
 
@@ -16,8 +15,6 @@ use OpenApi\Annotations as OA;
  */
 class RegisterController extends Controller
 {
-    use RegistersUsers;
-
     /**
      * @var UserRepository
      */

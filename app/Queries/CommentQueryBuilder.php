@@ -10,7 +10,7 @@ use App\Models\Orders\ServiceOrderField;
 use App\Models\Orders\SpaceOrderField;
 use App\Models\Orders\TicketOrderField;
 use App\Models\User;
-use App\Nova\FamilyMember;
+use App\Models\FamilyMember;
 use App\Providers\MorphServiceProvider;
 use Illuminate\Database\Eloquent\Model;
 
