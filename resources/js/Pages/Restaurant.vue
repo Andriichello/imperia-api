@@ -36,6 +36,10 @@
       type: Array as PropType<Menu[]>,
       required: true,
     },
+    products: {
+      type: Array as PropType<Product[]>,
+      default: null,
+    },
     locale: {
       type: String,
       required: true,
@@ -96,27 +100,6 @@
   const isSearchDrawerOpen = ref(false);
   const isLanguagesDrawerOpen = ref(false);
 
-  const menusWithProducts = ref<Menu[] | null>(null);
-  const isLoadingMenusWithProducts = ref(false);
-  const wasLoadingMenusWithProducts = ref(false);
-
-  const loadMenusWithProducts = async () => {
-    isLoadingMenusWithProducts.value = true;
-    wasLoadingMenusWithProducts.value = true;
-
-    axios(window.location.pathname + '/menus')
-      .catch(err => {
-        console.log(err);
-      })
-      .then(res => {
-        // @ts-ignore
-        menusWithProducts.value = res.data.data as Menu[];
-      })
-      .finally(() => {
-        isLoadingMenusWithProducts.value = false;
-      })
-  }
-
   const openMenu = (menu: Menu) => {
     router.visit(window.location.pathname + `/menu/${menu.id}`, {replace: false});
   }
@@ -144,12 +127,6 @@
   const onSwitchLanguage = (locale: string) => {
     switchLanguage(i18n, locale);
   }
-
-  watch(() => isSearchDrawerOpen.value, (newValue) => {
-    if (newValue === true && wasLoadingMenusWithProducts.value === false) {
-      setTimeout(() => loadMenusWithProducts(), 1000);
-    }
-  }, {immediate: true});
 </script>
 
 <template>
@@ -338,8 +315,9 @@
 
     <SearchDrawer :open="isSearchDrawerOpen"
                   :restaurant="restaurant"
-                  :menus="menusWithProducts"
-                  :loading="isLoadingMenusWithProducts"
+                  :menus="menus"
+                  :products="products"
+                  :loading="products === null"
                   :with-placeholders="false"
                   @close="isSearchDrawerOpen = false"
                   @open-menu="openMenu"

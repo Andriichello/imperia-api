@@ -19,6 +19,11 @@
       required: false,
       default: null,
     },
+    products:{
+      type: Array as PropType<Product[] | null>,
+      required: false,
+      default: null,
+    },
     loading: {
       type: Boolean,
       required: false,
@@ -78,15 +83,13 @@
 
     const filtered: Product[] = [];
 
-    props.menus?.forEach(menu => {
-      menu.products?.forEach(product => {
-        const matches = product.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-          (product.description?.length && product.description.toLowerCase().includes(searchQuery.value.toLowerCase()));
+    props.products?.forEach(product => {
+      const matches = product.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        (product.description?.length && product.description.toLowerCase().includes(searchQuery.value.toLowerCase()));
 
-        if (matches && !filtered.includes(product)) {
-          filtered.push(product);
-        }
-      });
+      if (matches && !filtered.includes(product)) {
+        filtered.push(product);
+      }
     });
 
     return filtered;
@@ -117,7 +120,7 @@
   }
 
   function openProduct(product: Product) {
-    const menu = props.menus?.filter(menu => (menu.products ?? []).includes(product))[0] ?? null;
+    const menu = props.menus?.filter(menu => (menu.categories).find((c) => product.category_ids?.includes(c.id)) !== null);
     const category = menu?.categories?.filter(category => (product.category_ids ?? []).includes(category.id))[0] ?? null;
 
     emits('open-product', product, category, menu);

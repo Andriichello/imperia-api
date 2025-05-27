@@ -46,7 +46,31 @@ trait LoadsAndCachesTrait
     {
         $key = 'inertia_menus_for_' . $restaurant->id;
         $callback = fn() => $restaurant->menus
-            ->sortByDesc('popularity');
+            ->sortByDesc('popularity')
+            ->each(fn($menu) => $menu->load('categories'))
+            ->values();
+
+        return Cache::remember($key, $ttl, $callback);
+    }
+
+    /**
+     * Get products for the given restaurant (caches the result).
+     *
+     * @param Restaurant|int $restaurant
+     * @param int $ttl Time to live (in seconds)
+     *
+     * @return Collection<int, Menu>
+     */
+    protected function loadAndCacheProducts(Restaurant|int $restaurant, int $ttl = 300): Collection
+    {
+        if (is_numeric($restaurant)) {
+            $restaurant = new Restaurant(['id' => $restaurant]);
+        }
+
+        $key = 'inertia_restaurant_' . $restaurant->id . '_products';
+        $callback = fn() => $restaurant->products
+            ->sortByDesc('popularity')
+            ->values();
 
         return Cache::remember($key, $ttl, $callback);
     }
@@ -67,7 +91,9 @@ trait LoadsAndCachesTrait
 
         $key = 'inertia_menu_' . $menu->id . '_products';
         $callback = fn() => $menu->products
-            ->sortByDesc('popularity');
+            ->sortByDesc('popularity')
+            ->each(fn($menu) => $menu->load('categories'))
+            ->values();
 
         return Cache::remember($key, $ttl, $callback);
     }
