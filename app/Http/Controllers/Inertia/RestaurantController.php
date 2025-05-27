@@ -34,10 +34,6 @@ class RestaurantController extends Controller
 
         $menus = $this->loadAndCacheMenus($restaurant);
 
-        foreach ($menus as $m) {
-            $m->setRelation('products', $this->loadAndCacheProductsFor($m));
-        }
-
         return Inertia::render('Restaurant', [
             'restaurant' => new RestaurantResource($restaurant),
             'menus' => new MenuCollection($menus),
