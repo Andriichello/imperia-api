@@ -14,7 +14,6 @@ use App\Http\Middleware\SetLocaleFromUrl;
 use App\Http\Middleware\TrimStrings;
 use App\Http\Middleware\VerifyCsrfToken;
 use App\Http\Middleware\WithoutDataWrapping;
-use Badinansoft\LanguageSwitch\Http\Middleware\LanguageSwitch;
 use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
 use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
@@ -72,7 +71,6 @@ class Kernel extends HttpKernel
             ShareErrorsFromSession::class,
             VerifyCsrfToken::class,
             SubstituteBindings::class,
-            LanguageSwitch::class,
         ],
 
         'inertia' => [

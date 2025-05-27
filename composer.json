@@ -4,7 +4,6 @@
     "description": "The banquets managing api.",
     "keywords": [
         "api",
-        "nova",
         "laravel",
         "banquets"
     ],
@@ -21,7 +20,7 @@
         "dyrynda/laravel-cascade-soft-deletes": "^4.2.1",
         "fakerphp/faker": "^1.21",
         "guzzlehttp/guzzle": "^7.5.0",
-        "inertiajs/inertia-laravel": "^0.6.11",
+        "inertiajs/inertia-laravel": "^2.0",
         "intervention/image": "^3.6",
         "laravel/framework": "^10.0",
         "laravel/sanctum": "^3.2.1",
@@ -68,28 +67,6 @@
             "Tests\\": "tests/"
         }
     },
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://nova.laravel.com"
-        },
-        {
-            "type": "path",
-            "url": "./nova-components/Marketplace"
-        },
-        {
-            "type": "path",
-            "url": "./nova-components/ColumnsCard"
-        },
-        {
-            "type": "path",
-            "url": "./nova-components/Media"
-        },
-        {
-            "type": "path",
-            "url": "./nova-components/MetricsCard"
-        }
-    ],
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
