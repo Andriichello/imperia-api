@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Inertia\Traits;
 
 use App\Helpers\RestaurantHelper;
 use App\Models\Menu;
+use App\Models\Product;
 use App\Models\Restaurant;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 
 /**
  * Trait LoadsAndCachesTrait.
@@ -29,7 +29,8 @@ trait LoadsAndCachesTrait
         }
 
         $key = 'inertia_restaurant_' . $idOrSlug;
-        $callback = fn() => RestaurantHelper::find($idOrSlug);
+        $callback = fn() => RestaurantHelper::find($idOrSlug)
+            ?->load(['media', 'schedules']);
 
         return Cache::remember($key, $ttl, $callback);
     }
@@ -47,7 +48,7 @@ trait LoadsAndCachesTrait
         $key = 'inertia_menus_for_' . $restaurant->id;
         $callback = fn() => $restaurant->menus
             ->sortByDesc('popularity')
-            ->each(fn($menu) => $menu->load('categories'))
+            ->each(fn($menu) => $menu->load(['categories', 'media', 'media.variants']))
             ->values();
 
         return Cache::remember($key, $ttl, $callback);
@@ -59,7 +60,7 @@ trait LoadsAndCachesTrait
      * @param Restaurant|int $restaurant
      * @param int $ttl Time to live (in seconds)
      *
-     * @return Collection<int, Menu>
+     * @return Collection<int, Product>
      */
     protected function loadAndCacheProducts(Restaurant|int $restaurant, int $ttl = 300): Collection
     {
@@ -70,6 +71,7 @@ trait LoadsAndCachesTrait
         $key = 'inertia_restaurant_' . $restaurant->id . '_products';
         $callback = fn() => $restaurant->products
             ->sortByDesc('popularity')
+            ->each(fn(Product $product) => $product->load(['media', 'media.variants']))
             ->values();
 
         return Cache::remember($key, $ttl, $callback);
@@ -81,7 +83,7 @@ trait LoadsAndCachesTrait
      * @param Menu|int $menu
      * @param int $ttl Time to live (in seconds)
      *
-     * @return Collection<int, Menu>
+     * @return Collection<int, Product>
      */
     protected function loadAndCacheProductsFor(Menu|int $menu, int $ttl = 300): Collection
     {
@@ -92,7 +94,7 @@ trait LoadsAndCachesTrait
         $key = 'inertia_menu_' . $menu->id . '_products';
         $callback = fn() => $menu->products
             ->sortByDesc('popularity')
-            ->each(fn($menu) => $menu->load('categories'))
+            ->each(fn($menu) => $menu->load(['media', 'media.variants']))
             ->values();
 
         return Cache::remember($key, $ttl, $callback);

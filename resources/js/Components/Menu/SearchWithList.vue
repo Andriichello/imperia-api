@@ -111,7 +111,7 @@
   }
 
   function openCategory(category: Category) {
-    const menu = props.menus?.filter(menu => menu.categories.includes(category))[0] ?? null;
+    const menu: Menu | null = props.menus?.find((menu: Menu) => menu.categories.includes(category));
 
     if (menu) {
       emits('open-category', category, menu);
@@ -120,8 +120,15 @@
   }
 
   function openProduct(product: Product) {
-    const menu = props.menus?.filter(menu => (menu.categories).find((c) => product.category_ids?.includes(c.id)) !== null);
-    const category = menu?.categories?.filter(category => (product.category_ids ?? []).includes(category.id))[0] ?? null;
+    console.log({product});
+
+    const menu = props.menus?.find(
+      (menu: Menu) =>
+        menu.categories.find((c: Category) => product.category_ids?.includes(c.id)) !== null
+    );
+    const category = menu?.categories?.find(category => (product.category_ids ?? []).includes(category.id));
+
+    console.log({menu, category, product});
 
     emits('open-product', product, category, menu);
     close();

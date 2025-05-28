@@ -1,8 +1,7 @@
 <script setup lang="ts">
   import BaseDrawer from "@/Components/Drawer/BaseDrawer.vue";
-  import {ref, watch, computed, PropType, nextTick, onMounted} from "vue";
+  import { ref, watch, PropType, nextTick } from "vue";
   import { Restaurant, Category, Menu, Product } from "@/api";
-  import { useI18n } from "vue-i18n";
   import SearchWithList from "@/Components/Menu/SearchWithList.vue";
 
   const props = defineProps({
@@ -60,7 +59,7 @@
   }
 
   function openCategory(category: Category, menu: Menu = null as any) {
-    const m = menu ?? props.menus?.filter(menu => menu.categories.includes(category))[0] ?? null;
+    const m = menu ?? props.menus?.find((menu: Menu) => menu.categories.includes(category));
 
     if (m) {
       emits('open-category', category, m);
@@ -69,8 +68,23 @@
   }
 
   function openProduct(product: Product) {
-    const menu = props.menus?.filter(menu => (menu.categories).find((c) => product.category_ids?.includes(c.id)) !== null);
-    const category = menu?.categories?.filter(category => (product.category_ids ?? []).includes(category.id))[0] ?? null;
+    const menu: Menu | null = props.menus?.find(
+      (menu: Menu) =>
+        (menu.categories).find((c) => product.category_ids?.includes(c.id)) !== null
+    );
+
+    if (!menu) {
+      return null;
+    }
+
+    const category: Category | null = menu.categories?.find(
+      (category: Category) =>
+        (product.category_ids ?? []).includes(category.id)
+    );
+
+    if (!category) {
+      return null;
+    }
 
     emits('open-product', product, category, menu);
     close();

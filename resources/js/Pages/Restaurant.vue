@@ -56,8 +56,8 @@
     perMove: 1,
     rewind: false,
     rewindByDrag: false,
-    drag: Number(props.restaurant!.media?.length) > 1,
-    arrows: Number(props.restaurant!.media?.length) > 1,
+    drag: (props.restaurant!.media?.length ?? 0) > 1,
+    arrows: (props.restaurant!.media?.length ?? 0) > 1,
     pagination: true,
   });
 

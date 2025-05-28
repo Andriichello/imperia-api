@@ -4,10 +4,9 @@ namespace App\Http\Controllers\Inertia;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Inertia\Traits\LoadsAndCachesTrait;
-use App\Http\Controllers\Model\ProductController;
 use App\Http\Resources\Menu\MenuCollection;
+use App\Http\Resources\Product\ProductCollection;
 use App\Http\Resources\Restaurant\RestaurantResource;
-use App\Models\Product;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -39,7 +38,9 @@ class RestaurantController extends Controller
         return Inertia::render('Restaurant', [
             'restaurant' => new RestaurantResource($restaurant),
             'menus' => new MenuCollection($menus),
-            'products' => Inertia::defer(fn() => $this->loadAndCacheProducts($restaurant)),
+            'products' => Inertia::defer(
+                fn() => new ProductCollection($this->loadAndCacheProducts($restaurant))
+            ),
         ]);
     }
 }

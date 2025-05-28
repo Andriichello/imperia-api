@@ -15,6 +15,7 @@ use OpenApi\Annotations as OA;
  * Class ProductResource.
  *
  * @mixin Product
+ * @property Product $resource
  */
 class ProductResource extends JsonResource
 {
@@ -28,7 +29,10 @@ class ProductResource extends JsonResource
      */
     public function toArray($request): array
     {
-        $categoryIds = $this->resource->categories()->pluck('id');
+        $categoryIds = $this->resource->relationLoaded('categories')
+            ? $this->resource->categories->pluck('id')
+            : $this->resource->categories()->pluck('id'); // @phpstan-ignore-line
+
         return [
             'id' => $this->id,
             'type' => $this->type,
