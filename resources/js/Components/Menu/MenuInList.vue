@@ -11,6 +11,10 @@
       type: Object as PropType<Menu>,
       required: true,
     },
+    products: {
+      type: Array as PropType<Product[]>,
+      required: true,
+    },
     closed: {
       type: Boolean,
       default: false,
@@ -22,7 +26,9 @@
   });
 
   const categoryProducts = (menu: Menu, category: Category) =>
-    menu.products!.filter((p: Product) => p.category_ids.includes(category.id))
+    props.products.filter(
+      (p: Product) => p.category_ids.includes(category.id)
+    )
 
   const switchCategory = (category: Category) => {
     emits('switch-category', category);
