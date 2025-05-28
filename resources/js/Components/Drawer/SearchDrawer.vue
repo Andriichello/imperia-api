@@ -2,8 +2,7 @@
   import BaseDrawer from "@/Components/Drawer/BaseDrawer.vue";
   import { ref, watch, PropType, nextTick } from "vue";
   import { Restaurant, Category, Menu, Product } from "@/api";
-  import SearchWithList from "@/Components/Menu/SearchWithList.vue";
-  import {Deferred} from "@inertiajs/vue3";
+  import SearchWithList from "@/Components/Drawer/SearchWithList.vue";
 
   const props = defineProps({
     open: {
@@ -45,8 +44,11 @@
 
   const searchInputRef = ref<HTMLInputElement | null>(null);
   const hasResults = ref(false);
+  const searchQuery = ref("");
 
   function close() {
+    searchQuery.value = "";
+    hasResults.value = false;
     emits('close');
   }
 
@@ -70,6 +72,7 @@
   }
 
   function onQueryUpdated(query: string) {
+    searchQuery.value = query;
     emits('query-updated', query);
   }
 
@@ -87,7 +90,8 @@
               @close="close">
 
     <div class="w-full h-full flex flex-col">
-      <SearchWithList :open="open"
+      <SearchWithList class="max-h-full"
+                      :open="open"
                       :restaurant="restaurant"
                       :menus="menus"
                       :products="products"
@@ -100,8 +104,8 @@
                       @open-product="openProduct"
                       @query-updated="onQueryUpdated"/>
 
-      <div class="w-full flex flex-col px-6 overflow-auto"
-           v-if="!hasResults">
+      <div class="w-full flex flex-col px-6 pb-20 overflow-auto"
+           v-if="!hasResults && !searchQuery?.length">
         <template v-for="menu in menus" :key="menu.id">
           <div class="w-full flex flex-col text-start py-3 px-3 cursor-pointer"
                @click="openMenu(menu)">

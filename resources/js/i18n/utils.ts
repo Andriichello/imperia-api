@@ -43,19 +43,22 @@ export function t(key: string, params = {}) {
  *
  * @param i18n The i18n instance
  * @param locale The locale to switch to
+ * @param reload Flag to reload the page
  */
-export function switchLanguage(i18n, locale: string): void {
+export function switchLanguage(i18n, locale: string, reload: boolean = false): void {
   const { locale: currentLocale } = i18n;
 
   // Update the i18n locale
   currentLocale.value = locale;
 
-  // Get the current URL
-  const url = window.location.pathname;
+  if (reload) {
+    // Get the current URL
+    const url = window.location.pathname;
 
-  // Replace the locale in the URL
-  const newUrl = url.replace(/^\/([^\/]+)/, `/${locale}`);
+    // Replace the locale in the URL
+    const newUrl = url.replace(/^\/([^\/]+)/, `/${locale}`);
 
-  // Redirect to the new URL
-  router.visit(newUrl);
+    // Redirect to the new URL
+    router.visit(newUrl);
+  }
 }

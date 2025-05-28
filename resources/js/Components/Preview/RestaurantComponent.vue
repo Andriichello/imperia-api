@@ -1,39 +1,18 @@
-<script lang="ts">
-  import BaseLayout from "@/Layouts/BaseLayout.vue";
-
-  export default {
-    layout: (h, page) => h(BaseLayout, () => page),
-  }
-</script>
-
 <script setup lang="ts">
   import {computed, onMounted, PropType, ref, watch} from "vue";
   import {Splide, SplideSlide} from '@splidejs/vue-splide';
   import {
-    Coffee,
-    Pizza,
-    CakeSlice,
-    Croissant,
-    ChefHat,
-    Utensils,
     CalendarClock,
     ChevronUp,
     ChevronDown,
     ChevronRight,
     MapPin,
     Phone,
-    Search,
-    Languages,
   } from 'lucide-vue-next';
-  import {Category, Menu, Product, Restaurant} from "@/api";
+  import {Menu, Restaurant} from "@/api";
   import Schedule from "@/Components/Restaurant/Schedule.vue";
   import {getScheduleInfo, ScheduleInfo, time} from "@/helpers";
-  import {router} from "@inertiajs/vue3";
-  import LanguageDrawer from "@/Components/Drawer/LanguageDrawer.vue";
-  import SearchDrawer from "@/Components/Drawer/SearchDrawer.vue";
   import { useI18n } from 'vue-i18n';
-  import {switchLanguage} from "@/i18n/utils";
-  import axios from "axios";
 
   const props = defineProps({
     restaurant: {
@@ -44,19 +23,9 @@
       type: Array as PropType<Menu[]>,
       required: true,
     },
-    products: {
-      type: Array as PropType<Product[]>,
-      default: null,
-    },
-    locale: {
-      type: String,
-      required: true,
-    },
-    supported_locales: {
-      type: Array as PropType<string[]>,
-      required: true,
-    }
   });
+
+  const emits = defineEmits(['open-menu', 'open-phone', 'open-address']);
 
   const i18n = useI18n();
   const slideOptions = ref({
@@ -70,7 +39,7 @@
   });
 
   const scheduleInfo = computed<ScheduleInfo>(
-    () => getScheduleInfo(props.restaurant!)
+    () => getScheduleInfo(props.restaurant)
   );
 
   const getEstablishmentTitle = computed(() => {
@@ -104,84 +73,11 @@
   });
 
   const scheduleExpanded = ref(false);
-
-  const isSearchDrawerOpen = ref(false);
-  const isLanguageDrawerOpen = ref(false);
-
-  const openMenu = (menu: Menu) => {
-    router.visit(window.location.pathname + `/menu/${menu.id}`, {replace: false});
-  }
-
-  const openCategory = (category: Category, menu: Menu) => {
-    router.visit(window.location.pathname + `/menu/${menu.id}#${category.id}`, {replace: false});
-  }
-
-  const openProduct = (product: Product, category: Category, menu: Menu) => {
-    router.visit(window.location.pathname + `/menu/${menu.id}#${category.id}-${product.id}`, {replace: false});
-  }
-
-  const callPhone = (phone: string | null) => {
-    if (window && phone?.length > 0) {
-      window.open(`tel:${phone}`, '_blank');
-    }
-  };
-
-  const openMap = (address: string | null) => {
-    if (window && address?.length > 0) {
-      window.open(`https://www.google.com/maps/search/?api=1&query=${address}`, '_blank')
-    }
-  };
-
-  const onSwitchLanguage = (locale: string) => {
-    switchLanguage(i18n, locale);
-  }
 </script>
 
 <template>
   <div class="w-full h-full min-h-screen max-w-screen flex flex-col justify-start items-center bg-base-200/80 pb-20">
     <div class="w-full max-w-md flex flex-col justify-start items-center relative">
-      <div class="w-full flex justify-end gap-2 p-2 absolute top-0 z-2">
-        <div class="flex gap-2">
-          <button class="btn btn-sm bg-base-100"
-                  @click="isLanguageDrawerOpen = true">
-            <Languages class="w-5 h-5 text-base-content/80"/>
-          </button>
-
-          <button class="btn btn-sm bg-base-100"
-                  @click="isSearchDrawerOpen = true">
-            <Search class="w-5 h-5 text-base-content/80"/>
-          </button>
-        </div>
-      </div>
-
-      <div class="absolute top-0 left-0 right-0 h-75 bg-base-200 border-b-1 border-base-300 overflow-hidden flex flex-col justify-center">
-        <div class="w-full h-full flex flex-col justify-between gap-6 -rotate-45 scale-165 opacity-60">
-          <template v-for="j in 10">
-            <div class="w-full flex justify-between gap-1">
-              <Coffee class="w-2 h-2" v-for="u in 10" :key="'row-' + j + 'coffee'+u"
-                        v-if="restaurant.establishment?.toLowerCase().includes('café') || restaurant.establishment?.toLowerCase().includes('cafe')"/>
-
-              <Pizza class="w-2 h-2 rotate-45" v-for="u in 10" :key="'row-' + j + 'pizza'+u"
-                     v-else-if="restaurant.establishment?.toLowerCase().includes('pizzeria')"/>
-
-              <CakeSlice class="w-2 h-2 rotate-45" v-for="u in 10" :key="'row-' + j + 'bakery'+u"
-                     v-else-if="restaurant.establishment?.toLowerCase().includes('bakery')"/>
-
-              <Utensils class="w-2 h-2" v-for="u in 10" :key="'row-' + j + 'utensils'+u"
-                          v-else/>
-            </div>
-
-            <div class="w-full flex justify-between gap-1">
-              <Croissant class="w-2 h-2 -rotate-45" v-for="u in 10" :key="'row-' + j + 'croissant'+u"
-                      v-if="restaurant.establishment?.toLowerCase().includes('café') || restaurant.establishment?.toLowerCase().includes('cafe') || restaurant.establishment?.toLowerCase().includes('bakery')"/>
-
-              <ChefHat class="w-2 h-2" v-for="c in 10" :key="'row-' + j + 'chef'+c"
-                       v-else/>
-            </div>
-          </template>
-        </div>
-      </div>
-
       <Splide class="w-full h-75" :options="slideOptions"
               v-if="restaurant!.media?.length > 0">
         <SplideSlide v-for="(media, index) in restaurant!.media ?? []" :key="media.id">
@@ -217,7 +113,7 @@
         <div class="w-full flex flex-col grow gap-2">
           <template v-if="menus!.length > 0">
             <div class="w-full flex items-center justify-center pl-5 pr-3 py-3 bg-base-200/40 border-2 border-base-300 rounded cursor-pointer"
-                 @click="openMenu(menu)"
+                 @click="emits('open-menu', menu)"
                  v-for="menu in menus" :key="menu.id">
               <div class="w-full flex flex-col">
                 <h3 class="text-xl font-bold">
@@ -286,7 +182,7 @@
 
           <div class="w-full flex justify-start items-start gap-3 px-3 cursor-pointer"
                v-if="restaurant!.phone?.length"
-               @click="callPhone(restaurant!.phone)">
+               @click="emits('open-phone', restaurant!.phone)">
             <div class="w-12 min-w-12 h-12 flex justify-center items-center bg-base-300/80 rounded">
               <Phone class="w-6 h-6"/>
             </div>
@@ -303,7 +199,7 @@
 
           <div class="w-full flex justify-start items-start gap-3 px-3 cursor-pointer"
                v-if="restaurant!.full_address?.length"
-               @click="openMap(restaurant!.full_address)">
+               @click="emits('open-address', restaurant!.full_address)">
             <div class="w-12 min-w-12 h-12 flex justify-center items-center bg-base-300/80 rounded">
               <MapPin class="w-6 h-6"/>
             </div>
@@ -320,22 +216,5 @@
         </div>
       </div>
     </div>
-
-    <SearchDrawer :open="isSearchDrawerOpen"
-                  :restaurant="restaurant"
-                  :menus="menus"
-                  :products="products"
-                  :loading="products === null"
-                  :with-placeholders="false"
-                  @close="isSearchDrawerOpen = false"
-                  @open-menu="openMenu"
-                  @open-category="openCategory"
-                  @open-product="openProduct"/>
-
-    <LanguageDrawer :open="isLanguageDrawerOpen"
-                     :locale="locale"
-                     :supported_locales="supported_locales"
-                     @close="isLanguagesDrawerOpen = false"
-                     @switch-language="onSwitchLanguage"/>
   </div>
 </template>

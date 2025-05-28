@@ -33,7 +33,7 @@ class Taggable extends BaseModel
     /**
      * The attributes that are mass assignable.
      *
-     * @var string[]
+     * @var array<int, string>
      */
     protected $fillable = [
         'tag_id',

@@ -1,14 +1,21 @@
+<script lang="ts">
+  import BaseLayout from "@/Layouts/BaseLayout.vue";
+  export default {
+    layout: (h, page) => h(BaseLayout, () => page),
+  }
+</script>
+
 <script setup lang="ts">
   import {onMounted, onUnmounted, PropType, ref} from "vue";
   import {Category, Menu, Product, Restaurant} from "@/api";
   import MenuInList from "@/Components/Menu/MenuInList.vue";
   import CategoryNavBar from "@/Components/Menu/CategoryNavBar.vue";
   import MenusDrawer from "@/Components/Menu/MenusDrawer.vue";
-  import {router} from "@inertiajs/vue3";
+  import {Deferred, router} from "@inertiajs/vue3";
   import MenuNavBar from "@/Components/Menu/MenuNavBar.vue";
   import NavBar from "@/Components/Menu/NavBar.vue";
-  import SearchDrawer from "@/Components/Menu/SearchDrawer.vue";
-  import LanguagesDrawer from "@/Components/Menu/LanguagesDrawer.vue";
+  import SearchDrawer from "@/Components/Drawer/SearchDrawer.vue";
+  import LanguageDrawer from "@/Components/Drawer/LanguageDrawer.vue";
   import { useI18n } from 'vue-i18n';
   import { switchLanguage } from "@/i18n/utils";
 
@@ -24,6 +31,10 @@
     menus: {
       type: Array as PropType<Menu[]>,
       required: true,
+    },
+    products: {
+      type: Array as PropType<Product[]>,
+      default: null,
     },
     locale: {
       type: String,
@@ -126,7 +137,7 @@
 
   const isMenusDrawerOpen = ref(false)
   const isSearchDrawerOpen = ref(false)
-  const isLanguagesDrawerOpen = ref(false)
+  const isLanguageDrawerOpen = ref(false)
 
   const ignoringScroll = ref(false);
   const ignoringScrollId = ref(0);
@@ -342,7 +353,7 @@
       <NavBar class="w-full px-2 py-2 bg-base-200"
               @on-back="onBack"
               @on-search="isSearchDrawerOpen = true"
-              @on-language="isLanguagesDrawerOpen = true"/>
+              @on-language="isLanguageDrawerOpen = true"/>
 
       <div class="w-full sticky top-0 bg-base-100 z-10 border-1 border-base-300"
            ref="stickyRef"
@@ -380,20 +391,26 @@
                     @open-category="onSwitchCategory"
                     @open-product="onSwitchProduct"/>
 
-      <LanguagesDrawer :open="isLanguagesDrawerOpen"
+      <LanguageDrawer :open="isLanguageDrawerOpen"
                        :locale="locale"
                        :supported_locales="supported_locales"
-                       @close="isLanguagesDrawerOpen = false"
+                       @close="isLanguageDrawerOpen = false"
                        @switch-language="onSwitchLanguage"/>
 
       <!-- Menus list -->
-      <div class="w-full flex flex-col">
-        <MenuInList :menu="selectedMenu"
-                    :closed="false"
-                    :establishment="restaurant.establishment ?? 'restaurant'"
-                    @switch-menu="switchMenu"
-                    @switch-category="onSwitchCategory"/>
-      </div>
+      <Deferred data="products">
+        <template #fallback>
+          Loading...
+        </template>
+
+        <div class="w-full flex flex-col">
+          <MenuInList :menu="selectedMenu"
+                      :closed="false"
+                      :establishment="restaurant.establishment ?? 'restaurant'"
+                      @switch-menu="switchMenu"
+                      @switch-category="onSwitchCategory"/>
+        </div>
+      </Deferred>
     </div>
   </div>
 </template>

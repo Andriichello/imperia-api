@@ -69,10 +69,40 @@ trait LoadsAndCachesTrait
         }
 
         $key = 'inertia_restaurant_' . $restaurant->id . '_products';
-        $callback = fn() => $restaurant->products
-            ->sortByDesc('popularity')
-            ->each(fn(Product $product) => $product->load(['media', 'media.variants']))
-            ->values();
+        $callback = function () use ($restaurant) {
+
+
+            /** @var array<int, array{menu_id: int, product_ids: int[]}> $map */
+            $map = $restaurant->products()->getQuery()
+                ->join('menu_product', 'products.id', '=', 'menu_product.product_id')
+                ->groupBy('menu_product.menu_id')
+                ->selectRaw('menu_product.menu_id as menu_id,' .
+                    ' group_concat(menu_product.product_id separator \';\') as product_ids')
+                ->get()
+                ->map(fn(Product $p) => [
+                    'menu_id' => data_get($p, 'menu_id'),
+                    'product_ids' => array_map(
+                        fn($id) => (int) $id,
+                        explode(';', data_get($p, 'product_ids', ''))
+                    ),
+                ]);
+
+            return $restaurant->products
+                ->sortByDesc('popularity')
+                ->each(fn(Product $product) => $product->load(['media', 'media.variants']))
+                ->each(function (Product $product) use ($map) {
+                    $menuIds = [];
+
+                    foreach ($map as $values) {
+                        if (in_array($product->id, $values['product_ids'])) {
+                            $menuIds[] = $values['menu_id'];
+                        }
+                    }
+
+                    $product->menuIds = $menuIds;
+                })
+                ->values();
+        };
 
         return Cache::remember($key, $ttl, $callback);
     }

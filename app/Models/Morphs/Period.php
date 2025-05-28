@@ -30,7 +30,7 @@ class Period extends BaseModel
     /**
      * The attributes that are mass assignable.
      *
-     * @var string[]
+     * @var array<int, string>
      */
     protected $fillable = [
         'title',

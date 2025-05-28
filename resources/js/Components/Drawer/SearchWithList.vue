@@ -167,8 +167,8 @@
     </div>
 
     <!-- Search results -->
-    <div v-else-if="searchQuery" class="overflow-auto px-9 pt-2">
-      <div v-if="hasResults">
+    <div v-else-if="searchQuery" class="overflow-auto pt-2 px-9">
+      <div v-if="hasResults" class="pb-20">
         <!-- Menus section -->
         <div v-if="filteredMenus.length > 0" class="mb-6">
           <h3 class="font-bold text-lg mb-2">{{ i18n.t('search.menus') }}</h3>
@@ -218,6 +218,10 @@
       <!-- No results -->
       <div v-else class="flex flex-col items-center justify-center py-10 px-9">
         <div class="text-lg text-base-content/70">{{ i18n.t('search.no_results') }}</div>
+        <button class="btn btn-md text-base-content/70 mt-2"
+                @click="clearSearch">
+          {{ i18n.t('search.clear_query') }}
+        </button>
       </div>
     </div>
 

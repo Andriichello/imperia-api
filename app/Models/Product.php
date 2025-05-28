@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Class Product.
@@ -75,7 +76,7 @@ class Product extends BaseModel implements
     /**
      * The attributes that are mass assignable.
      *
-     * @var string[]
+     * @var array<int, string>
      */
     protected $fillable = [
         'restaurant_id',
@@ -156,6 +157,37 @@ class Product extends BaseModel implements
     public function restaurant(): BelongsTo
     {
         return $this->belongsTo(Restaurant::class);
+    }
+
+    /**
+     * Last loaded menu ids.
+     *
+     * @var array
+     */
+    public array $menuIds;
+
+    /**
+     * Menu ids associated with the model.
+     *
+     * @param bool $fresh
+     *
+     * @return int[]
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     */
+    public function menuIds(bool $fresh = false): array
+    {
+        if (!$fresh && isset($this->menuIds)) {
+            return $this->menuIds;
+        }
+
+        $this->menuIds = $this->relationLoaded('menus')
+            ? $this->menus->pluck('id')->toArray()
+            : DB::table('menu_product')
+            ->where('product_id', $this->id)
+            ->pluck('menu_id')
+            ->toArray();
+
+        return $this->menuIds;
     }
 
     /**

@@ -83,7 +83,7 @@ class Order extends BaseModel implements
     /**
      * The attributes that are mass assignable.
      *
-     * @var string[]
+     * @var array<int, string>
      */
     protected $fillable = [
         'banquet_id',

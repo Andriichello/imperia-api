@@ -31,6 +31,7 @@ export interface Product {
   /** @nullable */
   popularity: number | null;
   variants: ProductVariant[];
+  menu_ids: number[];
   categories?: Category[];
   category_ids: number[];
   tags?: Tag[];

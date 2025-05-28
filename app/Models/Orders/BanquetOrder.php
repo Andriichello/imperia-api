@@ -23,7 +23,7 @@ class BanquetOrder extends Pivot
     /**
      * The attributes that are mass assignable.
      *
-     * @var string[]
+     * @var array<int, string>
      */
     protected $fillable = [
         'order_id',

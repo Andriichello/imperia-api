@@ -35,7 +35,7 @@ class RestaurantReview extends BaseModel
     /**
      * The attributes that are mass assignable.
      *
-     * @var string[]
+     * @var array<int, string>
      */
     protected $fillable = [
         'restaurant_id',
@@ -49,7 +49,7 @@ class RestaurantReview extends BaseModel
     /**
      * The attributes that should be hidden for serialization.
      *
-     * @var array
+     * @var array<string>
      */
     protected $hidden = [
         'is_approved',

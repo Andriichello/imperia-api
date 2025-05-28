@@ -10284,6 +10284,7 @@
                     "archived",
                     "popularity",
                     "variants",
+                    "menu_ids",
                     "category_ids",
                     "media"
                 ],
@@ -10346,6 +10347,13 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/ProductVariant"
+                        }
+                    },
+                    "menu_ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
                         }
                     },
                     "categories": {

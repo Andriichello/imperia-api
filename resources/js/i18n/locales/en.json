@@ -25,7 +25,8 @@
     "categories": "Categories",
     "products": "Dishes",
     "no_results": "No results found",
-    "start_typing": "Start typing to search for menus, categories, dishes..."
+    "start_typing": "Start typing to search for menus, categories, dishes...",
+    "clear_query": "Clear search"
   },
   "languages": {
     "title": "Languages",

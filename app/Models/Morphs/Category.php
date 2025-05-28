@@ -50,7 +50,7 @@ class Category extends BaseModel implements
     /**
      * The attributes that are mass assignable.
      *
-     * @var string[]
+     * @var array<int, string>
      */
     protected $fillable = [
         'restaurant_id',
