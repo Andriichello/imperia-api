@@ -120,15 +120,12 @@
   }
 
   function openProduct(product: Product) {
-    console.log({product});
-
     const menu = props.menus?.find(
-      (menu: Menu) =>
-        menu.categories.find((c: Category) => product.category_ids?.includes(c.id)) !== null
+      (m: Menu) => !!m.categories.find((c: Category) => product.category_ids.includes(c.id))
     );
-    const category = menu?.categories?.find(category => (product.category_ids ?? []).includes(category.id));
-
-    console.log({menu, category, product});
+    const category = menu?.categories?.find(
+      (c: Category) => product.category_ids.includes(c.id)
+    );
 
     emits('open-product', product, category, menu);
     close();

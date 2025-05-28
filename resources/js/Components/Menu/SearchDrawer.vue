@@ -58,34 +58,12 @@
     close();
   }
 
-  function openCategory(category: Category, menu: Menu = null as any) {
-    const m = menu ?? props.menus?.find((menu: Menu) => menu.categories.includes(category));
-
-    if (m) {
-      emits('open-category', category, m);
-      close();
-    }
+  function openCategory(category: Category, menu: Menu) {
+    emits('open-category', category, menu);
+    close();
   }
 
-  function openProduct(product: Product) {
-    const menu: Menu | null = props.menus?.find(
-      (menu: Menu) =>
-        (menu.categories).find((c) => product.category_ids?.includes(c.id)) !== null
-    );
-
-    if (!menu) {
-      return null;
-    }
-
-    const category: Category | null = menu.categories?.find(
-      (category: Category) =>
-        (product.category_ids ?? []).includes(category.id)
-    );
-
-    if (!category) {
-      return null;
-    }
-
+  function openProduct(product: Product, category: Category, menu: Menu) {
     emits('open-product', product, category, menu);
     close();
   }
