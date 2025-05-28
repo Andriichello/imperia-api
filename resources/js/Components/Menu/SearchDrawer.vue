@@ -3,6 +3,7 @@
   import { ref, watch, PropType, nextTick } from "vue";
   import { Restaurant, Category, Menu, Product } from "@/api";
   import SearchWithList from "@/Components/Menu/SearchWithList.vue";
+  import {Deferred} from "@inertiajs/vue3";
 
   const props = defineProps({
     open: {
@@ -85,51 +86,53 @@
   <BaseDrawer :open="open"
               @close="close">
 
-    <SearchWithList :open="open"
-                    :restaurant="restaurant"
-                    :menus="menus"
-                    :products="products"
-                    :loading="loading"
-                    :withPlaceholders="false"
-                    @close="close"
-                    @has-results-changed="setHasResults"
-                    @open-menu="openMenu"
-                    @open-category="openCategory"
-                    @open-product="openProduct"
-                    @query-updated="onQueryUpdated"/>
+    <div class="w-full h-full flex flex-col">
+      <SearchWithList :open="open"
+                      :restaurant="restaurant"
+                      :menus="menus"
+                      :products="products"
+                      :loading="loading"
+                      :withPlaceholders="false"
+                      @close="close"
+                      @has-results-changed="setHasResults"
+                      @open-menu="openMenu"
+                      @open-category="openCategory"
+                      @open-product="openProduct"
+                      @query-updated="onQueryUpdated"/>
 
-    <div class="w-full h-full flex flex-col px-6 overflow-auto"
-         v-if="!hasResults">
-      <template v-for="menu in menus" :key="menu.id">
-        <div class="w-full flex flex-col text-start py-3 px-3 cursor-pointer"
-             @click="openMenu(menu)">
-          <h3 class="text-xl font-bold">
-            {{ menu.title }}
-          </h3>
-          <p class="text-md font-light opacity-80">
-            {{ menu.description?.length ? menu.description : 'menu' }}
-          </p>
-        </div>
+      <div class="w-full flex flex-col px-6 overflow-auto"
+           v-if="!hasResults">
+        <template v-for="menu in menus" :key="menu.id">
+          <div class="w-full flex flex-col text-start py-3 px-3 cursor-pointer"
+               @click="openMenu(menu)">
+            <h3 class="text-xl font-bold">
+              {{ menu.title }}
+            </h3>
+            <p class="text-md font-light opacity-80">
+              {{ menu.description?.length ? menu.description : 'menu' }}
+            </p>
+          </div>
 
-        <div class="w-full h-[1px] bg-base-300"/>
+          <div class="w-full h-[1px] bg-base-300"/>
 
-        <div class="w-full flex flex-col pl-5">
-          <template v-for="category in menu.categories" :key="category.id">
-            <div class="w-full flex flex-col text-start py-3 px-3 cursor-pointer"
-                 @click="openCategory(category, menu)">
-              <h3 class="text-lg font-bold">
-                {{ category.title }}
-              </h3>
-              <p class="text-md font-light opacity-80"
-                 v-if="category!.description?.length">
-                {{ category.description }}
-              </p>
-            </div>
-          </template>
-        </div>
+          <div class="w-full flex flex-col pl-5">
+            <template v-for="category in menu.categories" :key="category.id">
+              <div class="w-full flex flex-col text-start py-3 px-3 cursor-pointer"
+                   @click="openCategory(category, menu)">
+                <h3 class="text-lg font-bold">
+                  {{ category.title }}
+                </h3>
+                <p class="text-md font-light opacity-80"
+                   v-if="category!.description?.length">
+                  {{ category.description }}
+                </p>
+              </div>
+            </template>
+          </div>
 
-        <div class="w-full h-[1px] bg-base-300"/>
-      </template>
+          <div class="w-full h-[1px] bg-base-300"/>
+        </template>
+      </div>
     </div>
   </BaseDrawer>
 </template>

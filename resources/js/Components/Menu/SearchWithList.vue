@@ -107,7 +107,6 @@
 
   function openMenu(menu: Menu) {
     emits('open-menu', menu);
-    close();
   }
 
   function openCategory(category: Category) {
@@ -115,7 +114,6 @@
 
     if (menu) {
       emits('open-category', category, menu);
-      close();
     }
   }
 
@@ -128,7 +126,6 @@
     );
 
     emits('open-product', product, category, menu);
-    close();
   }
 
   watch(() => hasResults.value, (newVal, oldVal) => {
@@ -165,8 +162,8 @@
     </div>
 
     <!-- Loading indicator -->
-    <div v-if="loading" class="flex justify-center my-4 px-6">
-      <div class="loading loading-spinner loading-lg opacity-60"></div>
+    <div v-if="loading" class="flex justify-center my-2 mb-0 px-6">
+      <div class="loading loading-dots loading-lg opacity-60"></div>
     </div>
 
     <!-- Search results -->

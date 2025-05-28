@@ -65,49 +65,51 @@
 <template>
   <BaseDrawer :open="open"
               @close="close">
-    <SearchWithList class="w-full"
-                    :open="open"
-                    :restaurant="restaurant"
-                    :menus="menus"
-                    :withPlacehoders="false"
-                    @has-results-changed="setHasResults"
-                    @query-updated="setQuery"
-                    @open-menu="openMenu"
-                    @open-category="openCategory"
-                    @open-product="openProduct"/>
+    <div class="w-full h-full flex flex-col">
+      <SearchWithList class="w-full"
+                      :open="open"
+                      :restaurant="restaurant"
+                      :menus="menus"
+                      :withPlacehoders="false"
+                      @has-results-changed="setHasResults"
+                      @query-updated="setQuery"
+                      @open-menu="openMenu"
+                      @open-category="openCategory"
+                      @open-product="openProduct"/>
 
-    <div class="w-full h-full flex flex-col px-6 overflow-auto"
-         v-if="!hasResults">
-      <template v-for="menu in menus" :key="menu.id">
-        <div class="w-full flex flex-col text-start py-3 px-3 cursor-pointer"
-             @click="emits('switch-menu', menu)">
-          <h3 class="text-xl font-bold">
-            {{ menu.title }}
-          </h3>
-          <p class="text-md font-light opacity-80">
-            {{ menu.description?.length ? menu.description : 'menu' }}
-          </p>
-        </div>
+      <div class="w-full h-full flex flex-col px-6 overflow-auto"
+           v-if="!hasResults">
+        <template v-for="menu in menus" :key="menu.id">
+          <div class="w-full flex flex-col text-start py-3 px-3 cursor-pointer"
+               @click="emits('switch-menu', menu)">
+            <h3 class="text-xl font-bold">
+              {{ menu.title }}
+            </h3>
+            <p class="text-md font-light opacity-80">
+              {{ menu.description?.length ? menu.description : 'menu' }}
+            </p>
+          </div>
 
-        <div class="w-full h-[1px] bg-base-300"/>
+          <div class="w-full h-[1px] bg-base-300"/>
 
-        <div class="w-full flex flex-col pl-5">
-          <template v-for="category in menu.categories" :key="category.id">
-            <div class="w-full flex flex-col text-start py-3 px-3 cursor-pointer"
-                 @click="emits('switch-category', category, menu)">
-              <h3 class="text-lg font-bold">
-                {{ category.title }}
-              </h3>
-              <p class="text-md font-light opacity-80"
-                 v-if="category!.description?.length">
-                {{ category.description }}
-              </p>
-            </div>
-          </template>
-        </div>
+          <div class="w-full flex flex-col pl-5">
+            <template v-for="category in menu.categories" :key="category.id">
+              <div class="w-full flex flex-col text-start py-3 px-3 cursor-pointer"
+                   @click="emits('switch-category', category, menu)">
+                <h3 class="text-lg font-bold">
+                  {{ category.title }}
+                </h3>
+                <p class="text-md font-light opacity-80"
+                   v-if="category!.description?.length">
+                  {{ category.description }}
+                </p>
+              </div>
+            </template>
+          </div>
 
-        <div class="w-full h-[1px] bg-base-300"/>
-      </template>
+          <div class="w-full h-[1px] bg-base-300"/>
+        </template>
+      </div>
     </div>
   </BaseDrawer>
 </template>
