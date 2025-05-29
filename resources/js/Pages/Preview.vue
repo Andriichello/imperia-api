@@ -108,8 +108,6 @@ import {ref, PropType, onMounted, onUnmounted, watch} from "vue";
       productId.value = resolvedProductId;
       selectedProduct.value = findProduct(resolvedProductId);
     }
-
-    console.log({path: window.location.pathname, resolvedRestaurantId, resolvedMenuId, resolvedCategoryId, resolvedProductId});
   }
 
   const restaurantId = ref<number>();
@@ -342,11 +340,19 @@ import {ref, PropType, onMounted, onUnmounted, watch} from "vue";
   }
 
   const onSwitchMenu = (menu: Menu) => {
+    if (mode.value !== 'menu') {
+      mode.value = 'menu';
+    }
+
     isSearchOpened.value = false;
 
     switchMenu(menu, true);
   }
   const onSwitchCategory = (category: Category, menu: Menu = selectedMenu.value) => {
+    if (mode.value !== 'menu') {
+      mode.value = 'menu';
+    }
+
     isSearchOpened.value = false;
 
     if (menu.id !== selectedMenu.value.id) {
@@ -360,6 +366,10 @@ import {ref, PropType, onMounted, onUnmounted, watch} from "vue";
   }
 
   const onSwitchProduct = (product: Product, category: Category, menu: Menu = selectedMenu.value) => {
+    if (mode.value !== 'menu') {
+      mode.value = 'menu';
+    }
+
     isSearchOpened.value = false;
 
     if (menu.id !== selectedMenu.value.id) {
@@ -455,7 +465,7 @@ import {ref, PropType, onMounted, onUnmounted, watch} from "vue";
   }
 
   const onSwitchLanguage = (locale: string) => {
-    switchLanguage(i18n, locale)
+    switchLanguage(i18n, locale, true);
   }
 
   onMounted(() => {

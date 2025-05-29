@@ -59,6 +59,10 @@ export function switchLanguage(i18n, locale: string, reload: boolean = false): v
     const newUrl = url.replace(/^\/([^\/]+)/, `/${locale}`);
 
     // Redirect to the new URL
-    router.visit(newUrl);
+    router.replace({
+      url: newUrl,
+      preserveState: true,
+      preserveScroll: true,
+    });
   }
 }
