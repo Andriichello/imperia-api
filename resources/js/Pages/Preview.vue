@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import {ref, computed, PropType, onMounted, onUnmounted} from "vue";
+import {ref, PropType, onMounted, onUnmounted, watch} from "vue";
   import {Category, Menu, Product, Restaurant} from "@/api";
   import {Deferred, router} from "@inertiajs/vue3";
   import NavBar from "@/Components/Base/NavBar.vue";
@@ -10,9 +10,9 @@
   import BaseLayout from "@/Layouts/BaseLayout.vue";
   import DiagonalPattern from "@/Components/Base/DiagonalPattern.vue";
   import RestaurantComponent from "@/Components/Preview/RestaurantComponent.vue";
-  import CategoryNavBar from "@/Components/Menu/CategoryNavBar.vue";
-  import MenuNavBar from "@/Components/Menu/MenuNavBar.vue";
   import MenuInList from "@/Components/Menu/MenuInList.vue";
+  import MenuNavBar from "@/Components/Menu/MenuNavBar.vue";
+  import CategoryNavBar from "@/Components/Menu/CategoryNavBar.vue";
 
   const props = defineProps({
     restaurant:  {
@@ -47,11 +47,9 @@
   const mode = ref<string>(window.location.pathname.includes('/menu') ? 'menu' : 'restaurant');
 
   function resolveRestaurantId() {
-    const match = window.location.pathname.match(/\/inertia\/([^\/]+)\//);
+    const match = window.location.pathname.match(/\/inertia\/([^\/]+)\/?/);
     return match ? parseInt(match[1]) : null;
   }
-
-  const restaurantId = ref<number>(resolveRestaurantId()!);
 
   function resolveMenuId() {
     const match = window.location.pathname.match(/\/menu\/(\d+)/);
@@ -83,11 +81,51 @@
     return productId?.length > 0 ? parseInt(productId) : null;
   }
 
-  const menuId = ref<number | null>(resolveMenuId());
-  const categoryId = ref<number | null>(resolveCategoryId());
-  const productId = ref<number | null>(resolveProductId());
+  function resolveAllIds() {
+    const resolvedRestaurantId = resolveRestaurantId();
 
-  const findCategory = (categoryId: string|number|null) => {
+    if (resolvedRestaurantId !== restaurantId.value) {
+      restaurantId.value = resolvedRestaurantId;
+    }
+
+    const resolvedMenuId = resolveMenuId();
+
+    if (resolvedMenuId !== menuId.value) {
+      menuId.value = resolvedMenuId;
+      selectedMenu.value = findMenu(resolvedMenuId);
+    }
+
+    const resolvedCategoryId = resolveCategoryId();
+
+    if (resolvedCategoryId !== categoryId.value) {
+      categoryId.value = resolvedCategoryId;
+      selectedCategory.value = findCategory(resolvedCategoryId);
+    }
+
+    const resolvedProductId = resolveProductId();
+
+    if (resolvedProductId !== productId.value) {
+      productId.value = resolvedProductId;
+      selectedProduct.value = findProduct(resolvedProductId);
+    }
+
+    console.log({path: window.location.pathname, resolvedRestaurantId, resolvedMenuId, resolvedCategoryId, resolvedProductId});
+  }
+
+  const restaurantId = ref<number>();
+  const menuId = ref<number | null>();
+  const categoryId = ref<number | null>();
+  const productId = ref<number | null>();
+
+  function findMenu(menuId: string|number|null) {
+    if (menuId !== null) {
+      return props.menus.find((m: Menu) => Number(m.id) === menuId)
+    }
+
+    return null;
+  }
+
+  function findCategory(categoryId: string|number|null) {
     if (categoryId !== null) {
       for (const menu of props.menus) {
         for (const category of menu.categories) {
@@ -104,9 +142,9 @@
     return null;
   }
 
-  const findProduct = (productId: string|number|null) => {
+  function findProduct(productId: string|number|null) {
     if (productId !== null) {
-      for (const product of products) {
+      for (const product of props.products) {
         if (product.id === Number(productId)) {
           return product;
         }
@@ -116,83 +154,65 @@
     return null;
   }
 
-  const selectedMenu = ref<Category | null>(
-    props.menus.find((m: Menu) => Number(m.id) === menuId.value)
-  );
-  const selectedCategory = ref<Category | null>(
-    findCategory(categoryId.value)
-  );
-  const selectedProduct = ref<Category | null>(
-    findProduct(productId.value)
-  );
+  const selectedMenu = ref<Menu>();
+  const selectedCategory = ref<Category | null>();
+  const selectedProduct = ref<Product | null>();
 
-  function onBackFromMenu() {
-    mode.value = 'restaurant';
+  const switchMenu = (menu: Menu, force: boolean = false) => {
+    // Only update if it's a different menu
+    if (force || menu.id !== selectedMenu.value.id) {
+      const basePath = window.location.pathname.split('/menu/')[0];
 
-    menuId.value = null;
-    categoryId.value = null;
-    productId.value = null;
+      // Update the URL in the browser without a page reload
+      router.replace({
+        url: `${basePath}/menu/${menu.id}`,
+        preserveState: true,
+      });
 
-    router.replace({
-      url: window.location.pathname.split('/menu/')[0],
-      preserveState: true,
-    });
-  }
+      ignoringScroll.value = true;
 
-  function onOpenPhone(phone: string | null) {
-    if (window && phone?.length > 0) {
-      window.open(`tel:${phone}`, '_blank');
+      window.scrollTo({top: 0, behavior: 'smooth'});
+
+      // Update your component's state locally
+      // This is needed since we're not hitting the backend
+      // You'd need to track the selected menu ID locally
+      menuId.value = menu.id;
+      selectedMenu.value = menu;
+      categoryId.value = null;
+      selectedCategory.value = null;
+      productId.value = null;
+      selectedProduct.value = null;
+
+      const idToCheck = ignoringScrollId.value++;
+
+      setTimeout(() => {
+        if (idToCheck === (ignoringScrollId.value - 1)) {
+          ignoringScroll.value = false;
+        }
+      }, 200)
     }
-  }
+  };
 
-  function onOpenAddress(address: string | null) {
-    if (window && address?.length > 0) {
-      window.open(`https://www.google.com/maps/search/?api=1&query=${address}`, '_blank')
+  const switchCategory = (category: Category, product: Product | null = null) => {
+    // Only update if it's a different menu
+    if (category.id !== selectedCategory.value?.id) {
+      // Update the URL in the browser without a page reload
+      router.replace({
+        url: window.location.pathname + '#' + category.id + (product ? '-' + product.id : ''),
+        preserveState: true,
+        preserveScroll: true,
+      });
+
+      // Update your component's state locally
+      // This is needed since we're not hitting the backend
+      // You'd need to track the selected menu ID locally
+      categoryId.value = category.id;
+      selectedCategory.value = category;
+      productId.value = product?.id;
+      selectedProduct.value = product;
     }
-  }
+  };
 
-  // Methods for Drawers
-  function onOpenSearch() {
-    isSearchOpened.value = true;
-    isSearchWithAutofocus.value = true;
-  }
-
-  function onOpenLanguage() {
-    isLanguageOpened.value = true;
-  }
-
-  //  Event handlers for Drawers
-  const onOpenMenu = (menu: Menu) => {
-    isSearchOpened.value = false;
-    mode.value = 'menu';
-
-    menuId.value = menu.id;
-    categoryId.value = null;
-    productId.value = null;
-
-    selectedMenu.value = props.menus.find(m => m.id === menuId.value);
-    selectedCategory.value = null;
-    selectedCategory.value = null;
-
-    router.replace({
-      url: window.location.pathname.split('/menu/')[0] + `/menu/${menu.id}`,
-      preserveState: true,
-    });
-  }
-
-  const onOpenCategory = (category: Category, menu: Menu = selectedMenu.value) => {
-    isSearchOpened.value = false;
-  }
-
-  const onOpenProduct = (product: Product, category: Category, menu: Menu = selectedMenu.value) => {
-    isSearchOpened.value = false;
-  }
-
-  const onSwitchLanguage = (locale: string) => {
-    switchLanguage(i18n, locale)
-  }
-
-  // Logic for Menu
   const stickyRef = ref<HTMLElement | null>(null);
 
   const ignoringScroll = ref(false);
@@ -321,23 +341,11 @@
     shouldNotScroll.value = 0;
   }
 
-  const switchCategory = (category: Category, product: Product | null = null) => {
-    // Only update if it's a different menu
-    if (category.id !== selectedCategory.value?.id) {
-      // Update the URL in the browser without a page reload
-      router.replace({
-        url: window.location.pathname + '#' + category.id + (product ? '-' + product.id : ''),
-        preserveState: true,
-        preserveScroll: true,
-      });
+  const onSwitchMenu = (menu: Menu) => {
+    isSearchOpened.value = false;
 
-      // Update your component's state locally
-      // This is needed since we're not hitting the backend
-      // You'd need to track the selected menu ID locally
-      selectedCategory.value = category;
-    }
-  };
-
+    switchMenu(menu, true);
+  }
   const onSwitchCategory = (category: Category, menu: Menu = selectedMenu.value) => {
     isSearchOpened.value = false;
 
@@ -364,49 +372,131 @@
     }, 200);
   }
 
-  const switchMenu = (menu: Menu, force: boolean = false) => {
-    // Only update if it's a different menu
-    if (force || menu.id !== selectedMenu.value.id) {
-      const basePath = window.location.pathname.split('/menu/')[0];
+  function onBackFromMenu() {
+    mode.value = 'restaurant';
 
-      // Update the URL in the browser without a page reload
-      router.replace({
-        url: `${basePath}/menu/${menu.id}`,
-        preserveState: true,
-      });
+    router.replace({
+      url: window.location.pathname.split('/menu/')[0],
+      preserveState: true,
+    });
+  }
 
-      ignoringScroll.value = true;
-
-      window.scrollTo({top: 0, behavior: 'smooth'});
-
-      // Update your component's state locally
-      // This is needed since we're not hitting the backend
-      // You'd need to track the selected menu ID locally
-      selectedMenu.value = menu;
-      selectedCategory.value = null;
-
-      const idToCheck = ignoringScrollId.value++;
-
-      setTimeout(() => {
-        if (idToCheck === (ignoringScrollId.value - 1)) {
-          ignoringScroll.value = false;
-        }
-      }, 200)
+  function onOpenPhone(phone: string | null) {
+    if (window && phone?.length > 0) {
+      window.open(`tel:${phone}`, '_blank');
     }
-  };
+  }
 
-  const onSwitchMenu = (menu: Menu) => {
+  function onOpenAddress(address: string | null) {
+    if (window && address?.length > 0) {
+      window.open(`https://www.google.com/maps/search/?api=1&query=${address}`, '_blank')
+    }
+  }
+
+  // Methods for Drawers
+  function onOpenSearch() {
+    isSearchOpened.value = true;
+    isSearchWithAutofocus.value = true;
+  }
+
+  function onOpenLanguage() {
+    isLanguageOpened.value = true;
+  }
+
+  //  Event handlers for Drawers
+  const onOpenMenu = (menu: Menu) => {
+    isSearchOpened.value = false;
+    mode.value = 'menu';
+
+    menuId.value = menu.id;
+    categoryId.value = null;
+    productId.value = null;
+
+    selectedMenu.value = menu;
+    selectedCategory.value = null;
+    selectedProduct.value = null;
+
+    router.replace({
+      url: window.location.pathname.split('/menu/')[0] + `/menu/${menu.id}`,
+      preserveState: true,
+    });
+  }
+
+  const onOpenCategory = (category: Category, menu: Menu = null) => {
     isSearchOpened.value = false;
 
-    switchMenu(menu, true);
+    menu = menu ?? findMenu(menuId.value);
+
+    menuId.value = menu.id;
+    categoryId.value = category.id;
+    productId.value = null;
+
+    selectedMenu.value = menu;
+    selectedCategory.value = category;
+    selectedProduct.value = null;
+
+    router.replace({
+      url: window.location.pathname.split('/menu/')[0] + `/menu/${menu.id}`,
+      preserveState: true,
+    });
+  }
+
+  const onOpenProduct = (product: Product, category: Category, menu: Menu = null) => {
+    isSearchOpened.value = false;
+    menu = menu ?? findMenu(menuId.value);
+
+    menuId.value = menu.id;
+    categoryId.value = category.id;
+    productId.value = product.id;
+
+    selectedMenu.value = menu;
+    selectedCategory.value = category;
+    selectedProduct.value = product;
+  }
+
+  const onSwitchLanguage = (locale: string) => {
+    switchLanguage(i18n, locale)
   }
 
   onMounted(() => {
     window.addEventListener('scroll', onScroll);
+
+    resolveAllIds();
   });
 
   onUnmounted(() => {
     window.removeEventListener('scroll', onScroll);
+  });
+
+  watch(() => props.products, (newValue, oldValue) => {
+    if (oldValue) {
+      return;
+    }
+
+    let categoryId = window.location.hash.replace('#', '');
+    let productId = null;
+
+    if (categoryId.includes('-')) {
+      const parts = categoryId.split('-');
+
+      categoryId = parts[0];
+      productId = parts[1];
+    }
+
+    const category = findCategory(categoryId);
+    const product = findProduct(productId);
+
+    if (category) {
+      setTimeout(() => {
+        selectedCategory.value = category;
+
+        if (selectedMenu.value.categories?.[0]?.id !== category.id || product) {
+          shouldNotScroll.value = 0;
+          ignoringScroll.value = false;
+          scrollToCategory(category, product);
+        }
+      }, 100);
+    }
   });
 </script>
 
@@ -429,7 +519,7 @@
       <template v-else>
         <div class="h-12"/>
 
-        <div class="w-full max-w-md flex flex-col justify-start items-center relative">
+        <div class="w-full max-w-md flex flex-col justify-start items-center relative" v-if="selectedMenu">
           <div class="w-full sticky top-0 bg-base-100 z-10 border-1 border-base-300"
                ref="stickyRef"
                :class="{'shadow-md': scrolledToSticky}">
@@ -437,10 +527,10 @@
                         :menus="menus"
                         :selected="selectedMenu"
                         @switch-menu="onSwitchMenu"
-                        @open-drawer="isSearchWithAutofocus = true; isSearchOpened = true"/>
+                        @open-drawer="isSearchWithAutofocus = false; isSearchOpened = true"/>
 
             <CategoryNavBar class="w-full"
-                            :categories="selectedMenu!.categories"
+                            :categories="selectedMenu?.categories ?? []"
                             :selected="selectedCategory"
                             @switch-category="onSwitchCategory"/>
           </div>
@@ -448,22 +538,22 @@
           <!-- Menus list -->
           <Deferred data="products">
             <template #fallback>
-              <div class="loading loading-dots loading-xl p-3 mt-5 text-base-content/70"></div>
+              <div class="loading loading-dots loading-lg mt-4 text-base-content/70"/>
             </template>
 
             <div class="w-full flex flex-col">
-              <MenuInList :closed="false"
-                          :menu="selectedMenu"
-                          :products="products.filter((p: Product) => p.menu_ids?.includes(selectedMenu.id))"
+              <MenuInList :menu="selectedMenu"
+                          :products="products"
+                          :closed="false"
                           :establishment="restaurant.establishment ?? 'restaurant'"
-                          @switch-menu="onOpenMenu"
-                          @switch-category="onOpenCategory"/>
+                          @switch-menu="onSwitchMenu"
+                          @switch-category="onSwitchCategory"/>
             </div>
           </Deferred>
         </div>
       </template>
 
-      <div class="w-full max-w-md absolute top-0 p-2">
+      <div class="min-h-12 w-full max-w-md absolute top-0 p-2">
         <NavBar :back="mode === 'menu'"
                 @on-back="onBackFromMenu"
                 @on-search="onOpenSearch"
@@ -476,9 +566,9 @@
                     :products="products"
                     :with-autofocus="isSearchWithAutofocus"
                     @close="isSearchOpened = false"
-                    @open-menu="onOpenMenu"
-                    @open-category="onOpenCategory"
-                    @open-product="onOpenProduct"/>
+                    @open-menu="onSwitchMenu"
+                    @open-category="onSwitchCategory"
+                    @open-product="onSwitchProduct"/>
 
       <LanguageDrawer :open="isLanguageOpened"
                       :locale="locale"

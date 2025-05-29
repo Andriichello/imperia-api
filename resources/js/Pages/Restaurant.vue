@@ -7,7 +7,7 @@
 </script>
 
 <script setup lang="ts">
-  import {computed, onMounted, PropType, ref, watch} from "vue";
+  import {computed, PropType, ref} from "vue";
   import {Splide, SplideSlide} from '@splidejs/vue-splide';
   import {
     Coffee,
@@ -33,7 +33,6 @@
   import SearchDrawer from "@/Components/Drawer/SearchDrawer.vue";
   import { useI18n } from 'vue-i18n';
   import {switchLanguage} from "@/i18n/utils";
-  import axios from "axios";
 
   const props = defineProps({
     restaurant: {
