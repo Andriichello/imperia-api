@@ -10,6 +10,8 @@ RUN export LANG=C.UTF-8 TZ=Etc/UTC && apt-get update
 # Install Packages
 RUN export LANG=C.UTF-8 \
     && export DEBIAN_FRONTEND=noninteractive \
+    && sed -i 's/http:\/\/archive.ubuntu.com\/ubuntu\//http:\/\/mirrors.edge.kernel.org\/ubuntu\//g' /etc/apt/sources.list \
+    && apt-get update \
     && apt-get install --no-install-recommends --yes software-properties-common apt-transport-https \
     && apt-get --yes install gnupg software-properties-common tzdata \
     && add-apt-repository ppa:ondrej/php \
