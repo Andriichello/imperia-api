@@ -13,9 +13,8 @@
   import MenuInList from "@/Components/Menu/MenuInList.vue";
   import MenuNavBar from "@/Components/Menu/MenuNavBar.vue";
   import CategoryNavBar from "@/Components/Menu/CategoryNavBar.vue";
-  import {getScheduleInfo, ScheduleInfo, time} from "@/helpers";
-  import {CalendarClock, ChevronDown, ChevronUp, MapPin, Phone} from "lucide-vue-next";
-  import Schedule from "@/Components/Restaurant/Schedule.vue";
+  import {getScheduleInfo, ScheduleInfo} from "@/helpers";
+  import {useScrollLock} from "@/composables/useScrollLock";
 
   const props = defineProps({
     restaurant:  {
@@ -507,6 +506,26 @@
     switchLanguage(i18n, locale, true);
   }
 
+  const contentDiv = ref<HTMLElement | null>(document.documentElement);
+  const { disableScroll, enableScroll } = useScrollLock()
+
+  const isScrollDisabled = ref(false);
+
+  function toggleScroll() {
+    if (!contentDiv.value) {
+      return;
+    }
+
+    if (!isScrollDisabled.value) {
+      disableScroll(contentDiv.value);
+      isScrollDisabled.value = true;
+    } else {
+      enableScroll()
+      isScrollDisabled.value = false;
+    }
+  }
+
+
   onMounted(() => {
     window.addEventListener('scroll', onScroll);
 
@@ -547,6 +566,18 @@
       }, 100);
     }
   });
+
+  watch(() => isSearchOpened.value, (newValue, oldValue) => {
+    if (oldValue !== newValue) {
+      toggleScroll();
+    }
+  });
+
+  watch(() => isLanguageOpened.value, (newValue, oldValue) => {
+    if (oldValue !== newValue) {
+      toggleScroll();
+    }
+  });
 </script>
 
 <template>
@@ -582,7 +613,7 @@
                           :menus="menus"
                           :selected="selectedMenu"
                           @switch-menu="onSwitchMenu"
-                          @open-drawer="isSearchWithAutofocus = false; isSearchOpened = true"/>
+                          @open-drawer="isSearchWithAutofocus = false; isSearchOpened = true;"/>
 
               <CategoryNavBar class="w-full"
                               :categories="selectedMenu?.categories ?? []"
