@@ -3,8 +3,6 @@ import {createInertiaApp} from '@inertiajs/vue3';
 import VueSplide from '@splidejs/vue-splide';
 import WelcomePage from '@/Pages/Welcome.vue';
 import PreviewPage from "@/Pages/Preview.vue";
-import RestaurantPage from "@/Pages/Restaurant.vue";
-import MenuPage from "@/Pages/Menu.vue";
 import setupI18n from '@/i18n';
 import { setI18n } from '@/i18n/utils';
 
@@ -12,8 +10,6 @@ import { setI18n } from '@/i18n/utils';
 const pages: Record<string, any> = {
   'Welcome': WelcomePage,
   'Preview': PreviewPage,
-  'Restaurant': RestaurantPage,
-  'Menu': MenuPage,
   // Add other pages here as needed
 }
 

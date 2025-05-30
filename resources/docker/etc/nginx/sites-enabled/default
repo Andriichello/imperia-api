@@ -1,11 +1,15 @@
 server {
     listen 80 default_server;
-
-    root /var/www/imperia-api/public;
-    index index.php index.html index.htm;
-
-    # Make site accessible from http://localhost
+    listen [::]:80;
     server_name localhost;
+    root /var/www/imperia-api/public;
+
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-Content-Type-Options "nosniff";
+
+    index index.php;
+
+    charset utf-8;
 
     # Serve static files directly
     location ~* \.(jpg|jpeg|gif|css|png|svg|js|ico|html)$ {
@@ -13,12 +17,6 @@ server {
     	expires max;
     	log_not_found off;
     }
-
-    # Unless the request is for a valid file (image, js, css, etc.), send to bootstrap
-	if (!-e $request_filename) {
-		rewrite ^/(.*)$ /index.php?/$1 last;
-		break;
-	}
 
     # Allow api/status to be accessed via http
     location /api/status {
@@ -30,45 +28,23 @@ server {
         include fastcgi_params;
     }
 
-    # Pass the PHP scripts to FastCGI server listening on /run/php/php8.3-fpm.sock
     location / {
-    if ($request_method = 'OPTIONS') {
-          add_header 'Access-Control-Allow-Origin' '*';
-          add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
-          add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
-          add_header 'Access-Control-Max-Age' 1728000;
-          add_header 'Content-Type' 'text/plain; charset=utf-8';
-          add_header 'Content-Length' 0;
-
-          return 204;
-        }
-        if ($request_method = 'POST') {
-          add_header 'Access-Control-Allow-Origin' '*';
-          add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
-          add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
-          add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
-        }
-        if ($request_method = 'GET') {
-          add_header 'Access-Control-Allow-Origin' '*';
-          add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
-          add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
-          add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
-        }
-
-        # if ($http_x_forwarded_proto != "https") {
-        #      rewrite ^(.*)$ https://$http_host$1 permanent;
-        # }
         try_files $uri $uri/ /index.php?$query_string;
     }
 
-    # Pass the PHP scripts to FastCGI server listening on /run/php/php8.3-fpm.sock
-    location ~ \.php$ {
-        try_files $uri =404;
-        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
-        fastcgi_index index.php;
-        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        fastcgi_read_timeout 300;
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt  { access_log off; log_not_found off; }
+
+    error_page 404 /index.php;
+
+    location ~ ^/index\.php(/|$) {
+        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
         include fastcgi_params;
+        fastcgi_hide_header X-Powered-By;
+    }
+
+    location ~ /\.(?!well-known).* {
+        deny all;
     }
 }
-

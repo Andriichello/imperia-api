@@ -1,9 +1,7 @@
 <?php
 
-use App\Http\Controllers\Inertia\MenuController;
 use App\Http\Controllers\Inertia\PreviewController;
 use App\Http\Controllers\Inertia\WelcomeController;
-use App\Http\Controllers\Inertia\RestaurantController;
 use Illuminate\Support\Facades\Route;
 
 /*
