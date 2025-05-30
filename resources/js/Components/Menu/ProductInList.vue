@@ -99,8 +99,8 @@
     <template v-if="product.media?.length">
       <div class="w-full h-45 rounded-t relative">
         <div class="absolute w-full top-0 h-45 border-b-1 border-base-300 overflow-hidden flex flex-col justify-center rounded-t">
-          <div class="w-full h-full flex flex-col justify-between gap-6 -rotate-45 scale-165 opacity-60 animate-pulse">
-            <template v-for="j in 7">
+          <div class="w-full h-full flex flex-col justify-between gap-6 -rotate-45 scale-165 opacity-60">
+            <template v-for="j in 8">
               <div class="w-full flex justify-between gap-1">
                 <Coffee class="w-2 h-2" v-for="u in 10" :key="'row-' + j + 'coffee'+u"
                         v-if="establishment?.toLowerCase().includes('café') || establishment?.toLowerCase().includes('cafe')"/>
@@ -136,8 +136,8 @@
                     pagination: !preview,
                   }">
           <SplideSlide v-for="(media, index) in (preview ? [product.media[0]] : product.media)" :key="media.id">
-            <img class="w-full h-45 object-cover object-center rounded-t"
-                 :src="media.url" :alt="`Dish preview #${index}`"
+            <img class="w-full h-45 object-cover object-center rounded-t border-none"
+                 :src="media.url" alt=""
                  :loading="index === 0 ? 'eager' : 'lazy'"/>
           </SplideSlide>
         </Splide>

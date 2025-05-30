@@ -529,10 +529,9 @@ import {ref, PropType, onMounted, onUnmounted, watch} from "vue";
       <template v-else>
         <div class="h-12"/>
 
-        <div class="w-full max-w-md flex flex-col justify-start items-center relative" v-if="selectedMenu">
+        <div class="w-full max-w-md flex flex-col justify-start items-center relative">
           <div class="w-full sticky top-0 bg-base-100 z-10 border-1 border-base-300"
-               ref="stickyRef"
-               :class="{'shadow-md': scrolledToSticky}">
+               ref="stickyRef">
             <MenuNavBar class="w-full"
                         :menus="menus"
                         :selected="selectedMenu"
@@ -548,7 +547,7 @@ import {ref, PropType, onMounted, onUnmounted, watch} from "vue";
           <!-- Menus list -->
           <Deferred data="products">
             <template #fallback>
-              <div class="loading loading-dots loading-lg mt-4 text-base-content/70"/>
+              <div class="loading loading-dots loading-lg mt-8 text-base-content/70"/>
             </template>
 
             <div class="w-full flex flex-col">

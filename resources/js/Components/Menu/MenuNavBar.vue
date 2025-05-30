@@ -110,7 +110,7 @@
         style="scrollbar-gutter: stable;">
         <template v-for="m in menus" :key="m.id">
           <h2 class="font-bold text-lg normal-case py-1.5 pt-1 px-1 whitespace-nowrap cursor-pointer"
-              :class="{'opacity-50': selected.id !== m.id}"
+              :class="{'opacity-50': selected?.id !== m.id}"
                   :id="`menu-${m.id}-button`"
                   @click="emits('switch-menu', m)">
             {{ m.title }}

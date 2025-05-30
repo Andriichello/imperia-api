@@ -82,7 +82,7 @@
               v-if="restaurant!.media?.length > 0">
         <SplideSlide v-for="(media, index) in restaurant!.media ?? []" :key="media.id">
           <img class="w-full h-75 object-cover object-center"
-               :src="media.url" :alt="`Slide ${index}`"
+               :src="media.url" alt=""
                :loading="index === 0 ? 'eager' : 'lazy'"/>
         </SplideSlide>
       </Splide>
