@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import {capitalize, computed, PropType} from "vue";
+  import {PropType} from "vue";
   import {ScheduleInfo} from "@/helpers";
 
   const props = defineProps({

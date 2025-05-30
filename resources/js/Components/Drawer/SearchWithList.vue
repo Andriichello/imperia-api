@@ -178,7 +178,7 @@
 
       <!-- Search results -->
       <div v-else-if="searchQuery" class="overflow-auto pt-2 px-9">
-        <div v-if="hasResults" class="pb-20">
+        <div v-if="hasResults" class="pb-[250px]">
           <!-- Menus section -->
           <div v-if="filteredMenus.length > 0" class="mb-6">
             <h3 class="font-bold text-lg mb-2">{{ i18n.t('search.menus') }}</h3>

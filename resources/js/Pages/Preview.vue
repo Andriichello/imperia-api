@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, PropType, onMounted, onUnmounted, watch} from "vue";
+  import {ref, PropType, onMounted, onUnmounted, watch, computed} from "vue";
   import {Category, Menu, Product, Restaurant} from "@/api";
   import {Deferred, router} from "@inertiajs/vue3";
   import NavBar from "@/Components/Base/NavBar.vue";
@@ -13,6 +13,9 @@ import {ref, PropType, onMounted, onUnmounted, watch} from "vue";
   import MenuInList from "@/Components/Menu/MenuInList.vue";
   import MenuNavBar from "@/Components/Menu/MenuNavBar.vue";
   import CategoryNavBar from "@/Components/Menu/CategoryNavBar.vue";
+  import {getScheduleInfo, ScheduleInfo, time} from "@/helpers";
+  import {CalendarClock, ChevronDown, ChevronUp, MapPin, Phone} from "lucide-vue-next";
+  import Schedule from "@/Components/Restaurant/Schedule.vue";
 
   const props = defineProps({
     restaurant:  {
@@ -45,6 +48,42 @@ import {ref, PropType, onMounted, onUnmounted, watch} from "vue";
   const isSearchWithAutofocus = ref(true);
 
   const mode = ref<string>(window.location.pathname.includes('/menu') ? 'menu' : 'restaurant');
+
+  const scheduleInfo = computed<ScheduleInfo>(
+    () => getScheduleInfo(props.restaurant)
+  );
+
+  const getEstablishmentTitle = computed(() => {
+    const establishment = props.restaurant?.establishment?.toLowerCase();
+
+    if (!establishment) {
+      return i18n.t('restaurant.title');
+    }
+
+    if (establishment.includes('café') || establishment.includes('cafe')) {
+      return i18n.t('restaurant.cafe_title');
+    }
+
+    if (establishment.includes('bakery')) {
+      return i18n.t('restaurant.bakery_title');
+    }
+
+    if (establishment.includes('bistro')) {
+      return i18n.t('restaurant.bistro_title');
+    }
+
+    if (establishment.includes('pizzeria')) {
+      return i18n.t('restaurant.pizzeria_title');
+    }
+
+    if (establishment.includes('bar')) {
+      return i18n.t('restaurant.bar_title');
+    }
+
+    return i18n.t('restaurant.title');
+  });
+
+  const scheduleExpanded = ref(false);
 
   function resolveRestaurantId() {
     const match = window.location.pathname.match(/\/inertia\/([^\/]+)\/?/);
@@ -256,7 +295,7 @@ import {ref, PropType, onMounted, onUnmounted, watch} from "vue";
       continuousScroll.value += lastScrollPosition.value - scrollPosition;
     }
 
-    const categoriesCount = selectedMenu.value.categories.length;
+    const categoriesCount = selectedMenu.value?.categories?.length ?? 0;
 
     for (let i = 0; i < categoriesCount; i++) {
       const category = selectedMenu.value.categories[i];
@@ -530,27 +569,28 @@ import {ref, PropType, onMounted, onUnmounted, watch} from "vue";
         <div class="h-12"/>
 
         <div class="w-full max-w-md flex flex-col justify-start items-center relative">
-          <div class="w-full sticky top-0 bg-base-100 z-10 border-1 border-base-300"
-               ref="stickyRef">
-            <MenuNavBar class="w-full"
-                        :menus="menus"
-                        :selected="selectedMenu"
-                        @switch-menu="onSwitchMenu"
-                        @open-drawer="isSearchWithAutofocus = false; isSearchOpened = true"/>
-
-            <CategoryNavBar class="w-full"
-                            :categories="selectedMenu?.categories ?? []"
-                            :selected="selectedCategory"
-                            @switch-category="onSwitchCategory"/>
-          </div>
-
           <!-- Menus list -->
           <Deferred data="products">
             <template #fallback>
               <div class="loading loading-dots loading-lg mt-8 text-base-content/70"/>
             </template>
 
-            <div class="w-full flex flex-col">
+            <div class="w-full sticky top-0 bg-base-100 z-10 border-1 border-base-300"
+                 ref="stickyRef"
+                 :class="{'shadow-md': scrolledToSticky}">
+              <MenuNavBar class="w-full"
+                          :menus="menus"
+                          :selected="selectedMenu"
+                          @switch-menu="onSwitchMenu"
+                          @open-drawer="isSearchWithAutofocus = false; isSearchOpened = true"/>
+
+              <CategoryNavBar class="w-full"
+                              :categories="selectedMenu?.categories ?? []"
+                              :selected="selectedCategory"
+                              @switch-category="onSwitchCategory"/>
+            </div>
+
+            <div class="w-full flex flex-col pb-[250px]">
               <MenuInList :menu="selectedMenu"
                           :products="products"
                           :closed="false"

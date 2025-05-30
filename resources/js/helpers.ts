@@ -233,7 +233,7 @@ export function getScheduleInfo(restaurant: Restaurant): ScheduleInfo {
   const schedules = restaurant.schedules;
   const timezoneOffset = restaurant.timezone_offset;
 
-  const upcoming = getUpcomingSchedules(now, schedules, timezoneOffset);
+  const upcoming = getUpcomingSchedules(now, schedules, 0);
   const relevant = upcoming[0] ?? null;
   const active = relevant && relevant.closestBegDate <= now && now <= relevant.closestEndDate
     ? relevant : null;

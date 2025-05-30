@@ -104,7 +104,7 @@
                       @open-product="openProduct"
                       @query-updated="onQueryUpdated"/>
 
-      <div class="w-full flex flex-col px-6 pb-20 overflow-auto"
+      <div class="w-full flex flex-col px-6 pb-[250px] overflow-auto"
            v-if="!hasResults && !searchQuery?.length">
         <template v-for="menu in menus" :key="menu.id">
           <div class="w-full flex flex-col text-start py-3 px-3 cursor-pointer"
