@@ -73,12 +73,6 @@ class PreviewController extends Controller
             'products' => Inertia::defer(
                 fn() => new ProductCollection($this->loadAndCacheProducts($restaurant))
             ),
-//            'products' => Inertia::defer(
-//                function() use ($restaurant) {
-//                    sleep(3);
-//                    return new ProductCollection($this->loadAndCacheProducts($restaurant));
-//                }
-//            ),
         ]);
     }
 }
