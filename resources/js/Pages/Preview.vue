@@ -566,7 +566,7 @@
       </template>
 
       <template v-else>
-        <div class="h-12"/>
+        <div class="h-13"/>
 
         <div class="w-full max-w-md flex flex-col justify-start items-center relative">
           <!-- Menus list -->
@@ -602,7 +602,7 @@
         </div>
       </template>
 
-      <div class="min-h-12 w-full max-w-md absolute top-0 p-2">
+      <div class="min-h-13 w-full max-w-md absolute top-0 p-2">
         <NavBar :back="mode === 'menu'"
                 @on-back="onBackFromMenu"
                 @on-search="onOpenSearch"
