@@ -506,18 +506,13 @@
     switchLanguage(i18n, locale, true);
   }
 
-  const contentDiv = ref<HTMLElement | null>(document.documentElement);
   const { disableScroll, enableScroll } = useScrollLock()
 
   const isScrollDisabled = ref(false);
 
   function toggleScroll() {
-    if (!contentDiv.value) {
-      return;
-    }
-
     if (!isScrollDisabled.value) {
-      disableScroll(contentDiv.value);
+      disableScroll(document.documentElement);
       isScrollDisabled.value = true;
     } else {
       enableScroll()
