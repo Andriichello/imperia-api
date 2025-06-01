@@ -257,6 +257,7 @@
   const shouldNotScroll = ref(Date.now());
   const lastScrollPosition = ref(0);
   const continuousScroll = ref(0);
+  const continuousScrollAt = ref(null);
   const scrolledToSticky = ref(false);
 
   const showGoToTop = ref(false);
@@ -286,14 +287,13 @@
   }
 
   const onScroll = () => {
-    // console.log('value: ', continuousScroll.value);
-
     // Get the current scroll position
     const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
 
     if (scrollPosition > 48) {
       if (!scrolledToSticky.value) {
         scrolledToSticky.value = true;
+        showGoToTop.value = false;
       }
     } else {
       if (scrolledToSticky.value) {
@@ -310,32 +310,51 @@
       lastScrollPosition.value = scrollPosition;
     }
 
-
-    const isScrollingUp = (scrollPosition - lastScrollPosition.value) < 20;
-
-    // console.log('isScrollingUp: ', isScrollingUp);
+    const isScrollingUp = (lastScrollPosition.value - scrollPosition) > 0;
+    const isScrollingDown = (scrollPosition - lastScrollPosition.value) > 0;
 
     if (isScrollingUp) {
+      if (!continuousScrollAt.value || continuousScrollAt.value > 0) {
+        continuousScrollAt.value = -Date.now();
+      }
+
       if (continuousScroll.value < 0) {
         continuousScroll.value = 0;
+        continuousScrollAt.value = -Date.now();
       }
 
       continuousScroll.value += lastScrollPosition.value - scrollPosition;
-    } else {
+    }
+
+    if (isScrollingDown) {
+      if (!continuousScrollAt.value || continuousScrollAt.value < 0) {
+        continuousScrollAt.value = Date.now();
+      }
+
       if (continuousScroll.value > 0) {
         continuousScroll.value = 0;
+        continuousScrollAt.value = Date.now();
       }
 
       continuousScroll.value -= scrollPosition - lastScrollPosition.value;
     }
 
-    // console.log('continuousScroll: ', continuousScroll.value);
-    // console.log('scrollPosition: ', scrollPosition);
+    const scrollAt = Math.abs(continuousScrollAt.value ?? 0)
 
-    if (continuousScroll.value > 250) {
-      showGoToTop.value = true;
+    if (isScrollingUp && scrollAt && (Date.now() - scrollAt) < 500) {
+      if (continuousScroll.value > 600) {
+        showGoToTop.value = true;
+      }
     } else {
-      showGoToTop.value = false;
+      if (continuousScroll.value < -100 || scrollPosition < 150) {
+        showGoToTop.value = false;
+      }
+
+      continuousScrollAt.value = null;
+
+      if (isScrollingUp) {
+        continuousScroll.value = lastScrollPosition.value - scrollPosition;
+      }
     }
 
     if (scrollPosition < 0 || ignoringScroll.value) {
@@ -662,13 +681,15 @@
                               :categories="selectedMenu?.categories ?? []"
                               :selected="selectedCategory"
                               @switch-category="onSwitchCategory"/>
-            </div>
 
-<!--            <button class="btn btn-sm flex justify-center items-center sticky top-[100px] z-10 backdrop-blur-sm bg-neutral/35 text-white border-none uppercase"-->
-<!--                    v-if="!isGoingToTop && scrolledToSticky"-->
-<!--                    @click="goToTop">-->
-<!--              go to top-->
-<!--            </button>-->
+              <transition name="go-to-top">
+                <button class="text-sm px-2 py-1 font-semibold rounded-sm flex justify-center items-center absolute left-[50%] translate-x-[-50%] top-[100px] z-10 backdrop-blur-sm bg-neutral/35 text-white border-none uppercase"
+                        v-if="showGoToTop && !isGoingToTop && scrolledToSticky"
+                        @click="goToTop">
+                  go to top
+                </button>
+              </transition>
+            </div>
 
             <div class="w-full flex flex-col pb-[250px]">
               <MenuInList :menu="selectedMenu"
@@ -707,3 +728,16 @@
     </div>
   </BaseLayout>
 </template>
+
+<style scoped>
+.go-to-top-enter-active,
+.go-to-top-leave-active {
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.go-to-top-enter-from,
+.go-to-top-leave-to {
+  transform: translateY(-40%);
+  opacity: 0;
+}
+</style>
