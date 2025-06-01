@@ -31,13 +31,14 @@ html, body {
 
 
 body {
-  /*--color-warning: #71d855;*/
-  /*--color-warning-content: #284625;*/
-  /*--color-warning: #3bb517;*/
-  /*--color-warning-content: #284625;*/
+  /*--color-warning: #b768b3;*/
+  /*--color-warning-content: #5e0679;*/
 
-  --color-warning: #6db0bb;
-  --color-warning-content: #295a5a;
+  --color-warning: #3bb517;
+  --color-warning-content: #284625;
+
+  /*--color-warning: #6db0bb;*/
+  /*--color-warning-content: #295a5a;*/
 
   margin: 0;
   padding: 0;

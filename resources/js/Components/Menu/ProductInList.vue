@@ -97,7 +97,7 @@
 </script>
 
 <template>
-  <div class="w-full flex flex-col rounded shadow-lg bg-base-100"
+  <div class="w-full flex flex-col rounded shadow-md bg-base-100"
        :id="'product-' + product.id">
 
     <template v-if="product.media?.length">
@@ -127,8 +127,8 @@
 
     <div class="card-body min-h-[100px] rounded text-start relative">
       <div class="absolute top-0 right-0">
-        <div class="badge-md badge badge-warning text-warning-content bg-warning/60 select-none rounded-tl-none rounded-br-none translate-y-[-1px] py-3 px-5 font-semibold"
-             :class="{'rounded-tr-md': !product.media?.length, 'rounded-tr-none': product.media?.length}"
+        <div class="badge-md badge badge-warning text-warning-content bg-warning/60 select-none rounded-tl-none rounded-br-none translate-y-[-1px] translate-x-[1px] py-3 px-5 font-semibold"
+             :class="{'rounded-tr-sm': !product.media?.length, 'rounded-tr-none': product.media?.length}"
              v-if="product!.badge?.length">
           {{ product.badge }}
         </div>

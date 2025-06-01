@@ -52,7 +52,8 @@
          :id="'category-' + category.id + '-products'"
          v-else>
       <template v-for="product in products" :key="product.id">
-        <ProductInList :product="product"
+        <ProductInList class="border-1 border-warning-content/20"
+                       :product="product"
                        :preview="preview"
                        :establishment="establishment"/>
       </template>

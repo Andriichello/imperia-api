@@ -177,13 +177,13 @@
       </div>
 
       <!-- Search results -->
-      <div v-else-if="searchQuery" class="overflow-auto pt-2 px-9">
+      <div v-else-if="searchQuery" class="overflow-auto pt-2 px-6">
         <div v-if="hasResults" class="pb-[250px]">
           <!-- Menus section -->
           <div v-if="filteredMenus.length > 0" class="mb-6">
             <h3 class="font-bold text-lg mb-2">{{ i18n.t('search.menus') }}</h3>
             <div class="space-y-2">
-              <div class="p-3 bg-base-200 rounded-lg cursor-pointer hover:bg-base-300 transition-colors"
+              <div class="p-3 hover:bg-warning/10 border-1 border-warning-content/40 rounded-lg cursor-pointer transition-colors"
                    v-for="menu in filteredMenus"
                    :key="`menu-${menu.id}`"
                    @click="openMenu(menu)">
@@ -197,7 +197,7 @@
           <div v-if="filteredCategories.length > 0" class="mb-6">
             <h3 class="font-bold text-lg mb-2">{{ i18n.t('search.categories') }}</h3>
             <div class="space-y-2">
-              <div class="p-3 bg-base-200 rounded-lg cursor-pointer hover:bg-base-300 transition-colors"
+              <div class="p-3 hover:bg-warning/10 border-1 border-warning-content/40 rounded-lg cursor-pointer transition-colors"
                    v-for="category in filteredCategories"
                    :key="`category-${category.id}`"
                    @click="openCategory(category)">
@@ -214,7 +214,7 @@
           <div v-if="filteredProducts.length > 0" class="mb-6">
             <h3 class="font-bold text-lg mb-2">{{ i18n.t('search.products') }}</h3>
             <div class="space-y-4">
-              <ProductInList class="cursor-pointer bg-base-200 hover:bg-base-300"
+              <ProductInList class="cursor-pointer hover:bg-warning/10 border-1 border-warning-content/40"
                              v-for="product in filteredProducts"
                              :key="`product-${product.id}`"
                              :product="product"

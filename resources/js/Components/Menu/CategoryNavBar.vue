@@ -71,7 +71,10 @@
   });
 
   watch(() => props.selected, async (newCategory, oldCategory) => {
-    if (newCategory === oldCategory) return;
+    if (newCategory === oldCategory) {
+      return;
+    }
+
     await nextTick();
     checkOverflow();
 

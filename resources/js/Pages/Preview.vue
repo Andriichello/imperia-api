@@ -286,7 +286,7 @@
   }
 
   const onScroll = () => {
-    console.log('value: ', continuousScroll.value);
+    // console.log('value: ', continuousScroll.value);
 
     // Get the current scroll position
     const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
@@ -313,7 +313,7 @@
 
     const isScrollingUp = (scrollPosition - lastScrollPosition.value) < 20;
 
-    console.log('isScrollingUp: ', isScrollingUp);
+    // console.log('isScrollingUp: ', isScrollingUp);
 
     if (isScrollingUp) {
       if (continuousScroll.value < 0) {
@@ -329,8 +329,8 @@
       continuousScroll.value -= scrollPosition - lastScrollPosition.value;
     }
 
-    console.log('continuousScroll: ', continuousScroll.value);
-    console.log('scrollPosition: ', scrollPosition);
+    // console.log('continuousScroll: ', continuousScroll.value);
+    // console.log('scrollPosition: ', scrollPosition);
 
     if (continuousScroll.value > 250) {
       showGoToTop.value = true;
