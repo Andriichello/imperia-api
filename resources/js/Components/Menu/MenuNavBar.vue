@@ -103,7 +103,7 @@
       <div
         ref="scrollRef"
         :class="[
-          'max-w-full flex justify-start items-start gap-2 p-2 pb-1 pt-1 transition-all duration-200 overflow-x-auto overflow-y-hidden',
+          'max-w-full flex justify-start items-start gap-2 p-2 pt-1.5 pb-0 transition-all duration-200 overflow-x-auto overflow-y-hidden no-scrollbar',
           navigation && hasOverflow ? 'pr-16' : ''
         ]"
         id="menu-buttons-scroll"
@@ -128,3 +128,14 @@
     </div>
   </div>
 </template>
+
+<style>
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;  /* Safari and Chrome */
+  }
+</style>

@@ -346,7 +346,7 @@
         showGoToTop.value = true;
       }
     } else {
-      if (continuousScroll.value < -100 || scrollPosition < 150) {
+      if (continuousScroll.value < -100 || scrollPosition < 120) {
         showGoToTop.value = false;
       }
 
@@ -683,7 +683,7 @@
                               @switch-category="onSwitchCategory"/>
 
               <transition name="go-to-top">
-                <button class="text-sm px-2 py-1 font-semibold rounded-sm flex justify-center items-center absolute left-[50%] translate-x-[-50%] top-[100px] z-10 backdrop-blur-sm bg-neutral/35 text-white border-none uppercase"
+                <button class="text-sm px-2 py-1 font-semibold rounded-sm flex justify-center items-center absolute left-[50%] translate-x-[-50%] top-[92px] z-10 backdrop-blur-sm bg-neutral/35 text-white border-none uppercase"
                         v-if="showGoToTop && !isGoingToTop && scrolledToSticky"
                         @click="goToTop">
                   go to top
@@ -730,14 +730,16 @@
 </template>
 
 <style scoped>
-.go-to-top-enter-active,
-.go-to-top-leave-active {
-  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
+  .go-to-top-enter-active,
+  .go-to-top-leave-active {
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
 
-.go-to-top-enter-from,
-.go-to-top-leave-to {
-  transform: translateY(-40%);
-  opacity: 0;
-}
+  .go-to-top-enter-from,
+  .go-to-top-leave-to {
+    transform: translateY(-40%);
+    opacity: 0;
+  }
 </style>
+
+
