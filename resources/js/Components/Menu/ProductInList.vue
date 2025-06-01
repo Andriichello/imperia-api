@@ -3,7 +3,6 @@
   import {Splide, SplideSlide} from "@splidejs/vue-splide";
   import {ref, computed, PropType} from "vue";
   import {priceFormatted, weightUnitFormatted} from "@/helpers";
-  import {CakeSlice, ChefHat, Coffee, Croissant, Pizza, Utensils} from "lucide-vue-next";
   import DiagonalPattern from "@/Components/Base/DiagonalPattern.vue";
 
   const props = defineProps({
@@ -104,7 +103,7 @@
     <template v-if="product.media?.length">
       <div class="w-full h-45 rounded-t relative">
         <div class="absolute w-full top-0 h-45 border-b-1 border-base-300 overflow-hidden flex flex-col justify-center rounded-t">
-          <DiagonalPattern class="scale-165 opacity-60 text-warning-content"
+          <DiagonalPattern class="scale-165 opacity-60 text-warning-content/80"
                            :establishment="establishment ?? 'restaurant'"/>
         </div>
 
@@ -126,17 +125,20 @@
       </div>
     </template>
 
-    <div class="card-body min-h-[100px] rounded text-start">
+    <div class="card-body min-h-[100px] rounded text-start relative">
+      <div class="absolute top-0 right-0">
+        <div class="badge-md badge badge-warning text-warning-content bg-warning/60 select-none rounded-tl-none rounded-br-none translate-y-[-1px] py-3 px-5 font-semibold"
+             :class="{'rounded-tr-md': !product.media?.length, 'rounded-tr-none': product.media?.length}"
+             v-if="product!.badge?.length">
+          {{ product.badge }}
+        </div>
+      </div>
+
       <div class="flex justify-between items-center">
         <div class="grow flex flex-col justify-center items-start card-title gap-0">
           <h2 class="grow line-clamp-2 text-ellipsis flex justify-start items-center text-xl">
             {{ product.title }}
           </h2>
-
-          <div class="self-end badge-sm badge badge-warning bg-warning/80 select-none"
-               v-if="product!.badge?.length">
-            {{ product.badge }}
-          </div>
         </div>
       </div>
 

@@ -12,7 +12,7 @@ html, body {
 
 /* Blue */
 /*--color-warning: #6db0bb;*/
-/*--color-warning-content: #363939;*/
+/*--color-warning-content: #295a5a;*/
 
 /* Nude */
 /*--color-warning: #cc7a52;*/
@@ -22,15 +22,22 @@ html, body {
 /*--color-warning: #3bb517;*/
 /*--color-warning-content: #284625;*/
 
+/*--color-warning: #71d855;*/
+/*--color-warning-content: #284625;*/
+
 /* Purple */
 /*--color-warning: #b768b3;*/
 /*--color-warning-content: #5e0679;*/
 
 
 body {
-  /* Green */
-  --color-warning: #3bb517;
-  --color-warning-content: #273327;
+  /*--color-warning: #71d855;*/
+  /*--color-warning-content: #284625;*/
+  /*--color-warning: #3bb517;*/
+  /*--color-warning-content: #284625;*/
+
+  --color-warning: #6db0bb;
+  --color-warning-content: #295a5a;
 
   margin: 0;
   padding: 0;
