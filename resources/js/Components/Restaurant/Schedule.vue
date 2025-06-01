@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import {PropType} from "vue";
   import {ScheduleInfo} from "@/helpers";
+  import {useI18n} from "vue-i18n";
 
   const props = defineProps({
     info: {
@@ -8,6 +9,8 @@
       required: true,
     },
   });
+
+  const i18n = useI18n();
 
   const time = (hour: number, minute: number) => {
     let time = '';
@@ -35,9 +38,9 @@
         <table class="table table-sm w-full rounded-xl">
           <tbody class="w-full">
             <template v-for="(schedule) in info.schedules" :key="schedule.id">
-              <tr :class="{'bg-base-300/80': isActive(schedule.id)}">
+              <tr :class="{'bg-warning/10 text-warning-content/80': isActive(schedule.id)}">
                 <td class="p-2 grow" :class="{'font-light': !isActive(schedule.id), 'font-bold': isActive(schedule.id)}">
-                  <h5 class="text-[16px]">{{ $t('schedule.' + schedule.weekday) }}</h5>
+                  <h5 class="text-[16px]">{{ i18n.t('schedule.' + schedule.weekday) }}</h5>
                 </td>
                 <td class="p-2 w-[60px] text-end" :class="{'font-light': !isActive(schedule.id), 'font-bold': isActive(schedule.id)}">
                   <p class="text-[16px]">{{ time(schedule.beg_hour, schedule.beg_minute) }}</p>

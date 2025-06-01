@@ -109,7 +109,7 @@
         <template v-for="c in categories" :key="c.id">
           <button class="btn btn-sm text-[14px] normal-case"
                   :id="`category-${c.id}-button`"
-                  :class="{'btn-ghost':  selected?.id !== c.id, 'btn-neutral': selected?.id === c.id}"
+                  :class="{'btn-ghost':  selected?.id !== c.id, 'btn-warning bg-warning/20 border-warning/40': selected?.id === c.id}"
                   @click="emits('switch-category', c)">
             {{ c.title }}
           </button>

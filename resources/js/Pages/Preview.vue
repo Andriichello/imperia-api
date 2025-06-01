@@ -259,7 +259,35 @@
   const continuousScroll = ref(0);
   const scrolledToSticky = ref(false);
 
+  const showGoToTop = ref(false);
+  const isGoingToTop = ref(false);
+
+  const goToTop = () => {
+    showGoToTop.value = false;
+    ignoringScroll.value = true;
+    isGoingToTop.value = true;
+
+    selectedCategory.value = null;
+
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+
+    const idToCheck = ignoringScrollId.value++;
+
+    setTimeout(() => {
+      isGoingToTop.value = false;
+
+      if (idToCheck === (ignoringScrollId.value - 1)) {
+        ignoringScroll.value = false;
+      }
+    }, 1000)
+  }
+
   const onScroll = () => {
+    console.log('value: ', continuousScroll.value);
+
     // Get the current scroll position
     const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
 
@@ -276,15 +304,16 @@
     // Because of momentum scrolling on mobiles, we shouldn't continue if it is less than zero
     if (scrollPosition < 0) {
       lastScrollPosition.value = scrollPosition;
-      return;
     }
 
     if (ignoringScroll.value) {
       lastScrollPosition.value = scrollPosition;
-      return;
     }
 
-    const isScrollingUp = scrollPosition < lastScrollPosition.value;
+
+    const isScrollingUp = (scrollPosition - lastScrollPosition.value) < 20;
+
+    console.log('isScrollingUp: ', isScrollingUp);
 
     if (isScrollingUp) {
       if (continuousScroll.value < 0) {
@@ -292,6 +321,25 @@
       }
 
       continuousScroll.value += lastScrollPosition.value - scrollPosition;
+    } else {
+      if (continuousScroll.value > 0) {
+        continuousScroll.value = 0;
+      }
+
+      continuousScroll.value -= scrollPosition - lastScrollPosition.value;
+    }
+
+    console.log('continuousScroll: ', continuousScroll.value);
+    console.log('scrollPosition: ', scrollPosition);
+
+    if (continuousScroll.value > 250) {
+      showGoToTop.value = true;
+    } else {
+      showGoToTop.value = false;
+    }
+
+    if (scrollPosition < 0 || ignoringScroll.value) {
+      return;
     }
 
     const categoriesCount = selectedMenu.value?.categories?.length ?? 0;
@@ -580,8 +628,8 @@
     <div class="w-full max-w-md flex flex-col justify-center items-center">
       <template v-if="mode === 'restaurant'">
         <div class="w-full max-w-md absolute top-0 h-75 bg-base-200/20 border-b-1 border-base-300 overflow-hidden flex flex-col justify-center">
-          <DiagonalPattern class="scale-165 opacity-60"
-                           :restaurant="restaurant"/>
+          <DiagonalPattern class="scale-165 opacity-60 text-warning-content/80"
+                           :establishment="restaurant.establishment ?? 'restaurant'"/>
         </div>
 
         <RestaurantComponent :restaurant="restaurant"
@@ -615,6 +663,12 @@
                               :selected="selectedCategory"
                               @switch-category="onSwitchCategory"/>
             </div>
+
+<!--            <button class="btn btn-sm flex justify-center items-center sticky top-[100px] z-10 backdrop-blur-sm bg-neutral/35 text-white border-none uppercase"-->
+<!--                    v-if="!isGoingToTop && scrolledToSticky"-->
+<!--                    @click="goToTop">-->
+<!--              go to top-->
+<!--            </button>-->
 
             <div class="w-full flex flex-col pb-[250px]">
               <MenuInList :menu="selectedMenu"

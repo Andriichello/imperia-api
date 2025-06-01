@@ -4,9 +4,10 @@
   import {Restaurant} from "@/api";
 
   const props = defineProps({
-    restaurant: {
-      type: Object as PropType<Restaurant>,
-      required: true,
+    establishment: {
+      type: String as PropType<string>,
+      required: false,
+      default: 'restaurant',
     },
     rows: {
       type: Number as PropType<number>,
@@ -18,20 +19,16 @@
     }
   });
 
-  const establishment = computed(
-    () => props.restaurant.establishment?.toLowerCase() ?? 'restaurant'
-  );
-
   const isCafe = computed(
-    () => establishment.value.includes('café') || establishment.value.includes('cafe')
+    () => props.establishment.includes('café') || props.establishment.includes('cafe')
   );
 
   const isPizzeria = computed(
-    () => establishment.value.includes('pizzeria')
+    () => props.establishment.includes('pizzeria')
   );
 
   const isBakery = computed(
-    () => establishment.value.includes('bakery')
+    () => props.establishment.includes('bakery')
   );
 </script>
 

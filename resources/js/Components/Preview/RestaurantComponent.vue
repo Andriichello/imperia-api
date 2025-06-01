@@ -2,6 +2,7 @@
   import {computed, onMounted, PropType, ref, watch} from "vue";
   import {Splide, SplideSlide} from '@splidejs/vue-splide';
   import {
+    Copy,
     CalendarClock,
     ChevronUp,
     ChevronDown,
@@ -73,6 +74,12 @@
   });
 
   const scheduleExpanded = ref(false);
+
+  function copyToClipboard(text: string) {
+    navigator.clipboard.writeText(text)
+      .then(() => alert("Data copied"))
+      .catch(() => alert("Failed to copy"));
+  }
 </script>
 
 <template>
@@ -103,7 +110,7 @@
       <div class="w-full pt-1 pb-3 px-3 pr-6 chat chat-start flex flex-col gap-1.5 translate-x-0.5"
            v-if="restaurant!.notes!?.length > 0">
         <template v-for="(note, index) in restaurant!.notes" :key="index">
-          <p class="w-full chat-bubble bg-warning/20 rounded-xl">
+          <p class="w-full chat-bubble bg-warning/15 text-warning-content rounded-xl">
             {{ note }}
           </p>
         </template>
@@ -138,7 +145,7 @@
         </div>
       </div>
 
-      <div class="w-full flex flex-col grow mt-3 pb-3 gap-1 bg-base-200/80">
+      <div class="w-full flex flex-col grow mt-3 pb-3 gap-1 bg-base-200">
         <div class="w-full flex flex-col gap-3">
           <div class="w-full flex flex-col gap-1">
             <div class="w-full h-[1px] bg-base-300"/>
@@ -146,7 +153,7 @@
             <div class="w-full flex flex-col justify-start items-start py-2 px-3">
               <div class="w-full flex justify-start items-start gap-3 cursor-pointer"
                    @click="scheduleExpanded = !scheduleExpanded">
-                <div class="w-12 min-w-12 h-12 flex justify-center items-center bg-base-300/80 rounded">
+                <div class="w-12 min-w-12 h-12 flex justify-center items-center  bg-warning/15 border-1 border-warning/40 text-warning-content rounded">
                   <CalendarClock class="w-6 h-6"/>
                 </div>
 
@@ -160,13 +167,13 @@
                   </p>
                 </div>
 
-                <div class="w-12 min-w-12 h-12 flex justify-center items-center mr-1.5">
+                <div class="w-12 min-w-12 h-12 flex justify-center items-center mr-1.5 text-base-content/60">
                   <ChevronUp class="w-6 h-6" v-if="scheduleExpanded"/>
                   <ChevronDown class="w-6 h-6" v-else/>
                 </div>
               </div>
 
-              <p class="w-full font-mono text-md cursor-pointer pl-15"
+              <p class="w-full font-mono text-md cursor-pointer pl-15 pt-2"
                  :class="{'text-green-600': scheduleInfo.status === 'Open', 'text-red-600': scheduleInfo.status === 'Closed'}"
                  @click="scheduleExpanded = !scheduleExpanded">
                 <span class="font-semibold">{{ scheduleInfo.status === 'Open' ? i18n.t('restaurant.open') : i18n.t('restaurant.closed') }}:</span> {{ scheduleInfo.timeBeforeOrUntil }} {{ scheduleInfo.status === 'Open' ? i18n.t('restaurant.until_closing') : i18n.t('restaurant.until_opening') }}
@@ -180,10 +187,9 @@
             <div class="w-full h-[1px] bg-base-300"/>
           </div>
 
-          <div class="w-full flex justify-start items-start gap-3 px-3 cursor-pointer"
-               v-if="restaurant!.phone?.length"
-               @click="emits('open-phone', restaurant!.phone)">
-            <div class="w-12 min-w-12 h-12 flex justify-center items-center bg-base-300/80 rounded">
+          <div class="w-full flex justify-start items-start gap-3 px-3"
+               v-if="restaurant!.phone?.length">
+            <div class="w-12 min-w-12 h-12 flex justify-center items-center bg-warning/15 border-1 border-warning/60 text-warning-content rounded">
               <Phone class="w-6 h-6"/>
             </div>
 
@@ -195,12 +201,16 @@
                 {{ restaurant!.phone }}
               </p>
             </div>
+
+            <button class="w-13 min-w-13 h-12 flex justify-center items-center rounded text-base-content/60 cursor-pointer pr-1"
+                    @click="copyToClipboard(restaurant!.phone)">
+              <Copy class="w-6 h-6"/>
+            </button>
           </div>
 
-          <div class="w-full flex justify-start items-start gap-3 px-3 cursor-pointer"
-               v-if="restaurant!.full_address?.length"
-               @click="emits('open-address', restaurant!.full_address)">
-            <div class="w-12 min-w-12 h-12 flex justify-center items-center bg-base-300/80 rounded">
+          <div class="w-full flex justify-start items-start gap-3 px-3"
+               v-if="restaurant!.full_address?.length">
+            <div class="w-12 min-w-12 h-12 flex justify-center items-center bg-warning/15 border-1 border-warning/60 text-warning-content rounded">
               <MapPin class="w-6 h-6"/>
             </div>
 
@@ -212,6 +222,11 @@
                 {{ restaurant!.full_address }}
               </p>
             </div>
+
+            <button class="w-13 min-w-13 h-12 flex justify-center items-center rounded text-base-content/60 cursor-pointer pr-1"
+                    @click="copyToClipboard(restaurant!.full_address)">
+              <Copy class="w-6 h-6"/>
+            </button>
           </div>
         </div>
       </div>

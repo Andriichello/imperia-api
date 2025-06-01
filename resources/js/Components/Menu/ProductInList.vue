@@ -4,6 +4,7 @@
   import {ref, computed, PropType} from "vue";
   import {priceFormatted, weightUnitFormatted} from "@/helpers";
   import {CakeSlice, ChefHat, Coffee, Croissant, Pizza, Utensils} from "lucide-vue-next";
+  import DiagonalPattern from "@/Components/Base/DiagonalPattern.vue";
 
   const props = defineProps({
     product: {
@@ -87,6 +88,10 @@
       + (weightUnitFormatted((variant?.id ? variant.weight_unit : props.product!.weight_unit) ?? ''));
   };
 
+  const variantPrice = (variant: Partial<ProductVariant>) => {
+    return priceFormatted(variant.price, props.currency?.toLowerCase() ?? 'uah');
+  };
+
   const selectVariant = (variant: Partial<ProductVariant> | null) => {
     selectedVariant.value = variant;
   };
@@ -99,31 +104,8 @@
     <template v-if="product.media?.length">
       <div class="w-full h-45 rounded-t relative">
         <div class="absolute w-full top-0 h-45 border-b-1 border-base-300 overflow-hidden flex flex-col justify-center rounded-t">
-          <div class="w-full h-full flex flex-col justify-between gap-6 -rotate-45 scale-165 opacity-60">
-            <template v-for="j in 8">
-              <div class="w-full flex justify-between gap-1">
-                <Coffee class="w-2 h-2" v-for="u in 10" :key="'row-' + j + 'coffee'+u"
-                        v-if="establishment?.toLowerCase().includes('café') || establishment?.toLowerCase().includes('cafe')"/>
-
-                <Pizza class="w-2 h-2 rotate-45" v-for="u in 10" :key="'row-' + j + 'pizza'+u"
-                       v-else-if="establishment?.toLowerCase().includes('pizzeria')"/>
-
-                <CakeSlice class="w-2 h-2 rotate-45" v-for="u in 10" :key="'row-' + j + 'bakery'+u"
-                           v-else-if="establishment?.toLowerCase().includes('bakery')"/>
-
-                <Utensils class="w-2 h-2" v-for="u in 10" :key="'row-' + j + 'utensils'+u"
-                          v-else/>
-              </div>
-
-              <div class="w-full flex justify-between gap-1">
-                <Croissant class="w-2 h-2 -rotate-45" v-for="u in 10" :key="'row-' + j + 'croissant'+u"
-                           v-if="establishment?.toLowerCase().includes('café') || establishment?.toLowerCase().includes('cafe') || establishment?.toLowerCase().includes('bakery')"/>
-
-                <ChefHat class="w-2 h-2" v-for="c in 10" :key="'row-' + j + 'chef'+c"
-                         v-else/>
-              </div>
-            </template>
-          </div>
+          <DiagonalPattern class="scale-165 opacity-60 text-warning-content"
+                           :establishment="establishment ?? 'restaurant'"/>
         </div>
 
         <Splide class="w-full h-45 rounded-t" :options="{
@@ -168,10 +150,8 @@
         <div class="flex gap-1">
           <template v-if="variants?.length">
             <template v-for="v in variants" :key="v.id">
-              {{ void(isSelected = selectedVariant?.id === v.id) }}
-
-              <button class="btn btn-sm rounded-none normal-case text-[14px] px-2 py-2"
-                      :class="{'btn-neutral': isSelected, 'btn-outline': !isSelected}"
+              <button class="btn btn-sm normal-case text-[14px] px-2 py-2"
+                      :class="{'btn-warning bg-warning/20 border-warning/40': selectedVariant?.id === v.id, 'btn-outline border-dashed text-base-content/75 border-base-content/40': selectedVariant?.id !== v.id}"
                       @click="selectVariant(v)">
                 {{ variantWeight(v) }}
               </button>
