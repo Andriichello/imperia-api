@@ -90,7 +90,7 @@
         behavior: 'smooth',
       });
     }
-  });
+  }, {immediate: true});
 
 </script>
 
