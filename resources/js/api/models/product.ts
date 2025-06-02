@@ -5,6 +5,7 @@
  * OpenAPI spec version: 0.1
  */
 import type { ProductWeightUnit } from "./productWeightUnit";
+import type { ProductHotness } from "./productHotness";
 import type { ProductVariant } from "./productVariant";
 import type { Category } from "./category";
 import type { Tag } from "./tag";
@@ -30,11 +31,25 @@ export interface Product {
   archived: boolean;
   /** @nullable */
   popularity: number | null;
+  /** @nullable */
+  preparation_time: number | null;
+  /** @nullable */
+  calories: number | null;
+  /** @nullable */
+  is_vegan: boolean | null;
+  /** @nullable */
+  is_vegetarian: boolean | null;
+  /** @nullable */
+  has_eggs: boolean | null;
+  /** @nullable */
+  has_nuts: boolean | null;
+  /** @nullable */
+  hotness: ProductHotness;
   variants: ProductVariant[];
   menu_ids: number[];
-  categories?: Category[];
+  categories: Category[];
   category_ids: number[];
-  tags?: Tag[];
+  tags: Tag[];
   media: Media[];
   alterations?: Alternation[];
   pendingAlterations?: Alternation[];

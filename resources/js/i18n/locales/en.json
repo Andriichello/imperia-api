@@ -74,5 +74,21 @@
     "pln": "zł",
     "czk": "Kč",
     "rub": "₽"
+  },
+  "badges": {
+    "time": "{minutes} min",
+    "calories": "{calories} cal",
+    "vegan": "Vegan",
+    "vegetarian": "Vegetarian",
+    "nuts": "Nuts",
+    "eggs": "Eggs",
+    "hot": "Hot",
+    "hotness": {
+      "Unknown": "",
+      "Low": "(mild)",
+      "Medium": "(medium)",
+      "High": "(spicy)",
+      "Ultra": "(extra)"
+    }
   }
 }

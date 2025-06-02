@@ -6,6 +6,7 @@
  */
 import type { UpdateProductRequestWeightUnit } from "./updateProductRequestWeightUnit";
 import type { UpdateProductRequestMetadata } from "./updateProductRequestMetadata";
+import type { UpdateProductRequestHotness } from "./updateProductRequestHotness";
 
 /**
  * Update product request.
@@ -29,4 +30,18 @@ export interface UpdateProductRequest {
   popularity?: number;
   /** @nullable */
   metadata?: UpdateProductRequestMetadata;
+  /** @nullable */
+  preparation_time?: number | null;
+  /** @nullable */
+  calories?: number | null;
+  /** @nullable */
+  is_vegan?: boolean | null;
+  /** @nullable */
+  is_vegetarian?: boolean | null;
+  /** @nullable */
+  has_eggs?: boolean | null;
+  /** @nullable */
+  has_nuts?: boolean | null;
+  /** @nullable */
+  hotness?: UpdateProductRequestHotness;
 }

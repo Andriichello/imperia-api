@@ -4,6 +4,10 @@
   import {ref, computed, PropType} from "vue";
   import {priceFormatted, weightUnitFormatted} from "@/helpers";
   import DiagonalPattern from "@/Components/Base/DiagonalPattern.vue";
+  import {Timer, Flame, Vegan, Leaf, Nut, EggFried, Bean} from "lucide-vue-next";
+  import { useI18n } from "vue-i18n";
+
+  const i18n = useI18n();
 
   const props = defineProps({
     product: {
@@ -148,7 +152,60 @@
         </p>
       </div>
 
-      <div class="card-actions justify-between items-end pt-2">
+      <div class="card-actions justify-between items-end">
+        <div class="flex flex-wrap gap-x-3 gap-y-0.5 normal-case text-[12px] text-base-content/60">
+          <div v-if="product.preparation_time" class="flex flex-row justify-center items-center gap-1">
+            <Timer class="w-4 h-4"/>
+            <p class="font-semibold pt-0.5">
+              {{ i18n.t('badges.time', { minutes: product.preparation_time }) }}
+            </p>
+          </div>
+
+          <div v-if="product.calories" class="flex flex-row justify-center items-center gap-1">
+            <Flame class="w-4 h-4"/>
+            <p class="font-semibold pt-0.5">
+              {{ i18n.t('badges.calories', { calories: product.calories }) }}
+            </p>
+          </div>
+
+          <div v-if="product.is_vegan" class="flex flex-row justify-center items-center gap-1 text-green-800">
+            <Vegan class="w-4 h-4"/>
+            <p class="font-semibold pt-0.5">
+              {{ i18n.t('badges.vegan') }}
+            </p>
+          </div>
+
+          <div v-if="product.is_vegetarian" class="flex flex-row justify-center items-center gap-1 text-green-800">
+            <Leaf class="w-4 h-4"/>
+            <p class="font-semibold pt-0.5">
+              {{ i18n.t('badges.vegetarian') }}
+            </p>
+          </div>
+
+          <div v-if="product.has_nuts" class="flex flex-row justify-center items-center gap-1 text-orange-900">
+            <Nut class="w-4 h-4"/>
+            <p class="font-semibold pt-0.5">
+              {{ i18n.t('badges.nuts') }}
+            </p>
+          </div>
+
+          <div v-if="product.has_eggs" class="flex flex-row justify-center items-center gap-1 text-yellow-500">
+            <EggFried class="w-4 h-4"/>
+            <p class="font-semibold pt-0.5">
+              {{ i18n.t('badges.eggs') }}
+            </p>
+          </div>
+
+          <div v-if="product.hotness" class="flex flex-row justify-center items-center gap-1 text-red-500">
+            <Flame class="w-4 h-4"/>
+            <p class="font-semibold pt-0.5">
+              {{ i18n.t('badges.hot') }} {{ i18n.t(`badges.hotness.${product.hotness}`) }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-actions justify-between items-end">
         <div class="flex gap-1">
           <template v-if="variants?.length">
             <template v-for="v in variants" :key="v.id">

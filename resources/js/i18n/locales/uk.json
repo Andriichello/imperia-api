@@ -74,5 +74,21 @@
     "pln": "zł",
     "czk": "Kč",
     "rub": "₽"
+  },
+  "badges": {
+    "time": "{minutes} хв",
+    "calories": "{calories} кал",
+    "vegan": "Веганське",
+    "vegetarian": "Вегетаріанське",
+    "nuts": "Горіхи",
+    "eggs": "Яйця",
+    "hot": "Гострe",
+    "hotness": {
+      "Unknown": "",
+      "Low": "(трохи)",
+      "Medium": "(середньо)",
+      "High": "(сильно)",
+      "Ultra": "(дуже)"
+    }
   }
 }

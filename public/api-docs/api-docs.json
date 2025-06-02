@@ -8649,6 +8649,48 @@
                     "metadata": {
                         "type": "object",
                         "nullable": true
+                    },
+                    "preparation_time": {
+                        "type": "integer",
+                        "example": 30,
+                        "nullable": true
+                    },
+                    "calories": {
+                        "type": "integer",
+                        "example": 500,
+                        "nullable": true
+                    },
+                    "is_vegan": {
+                        "type": "boolean",
+                        "example": true,
+                        "nullable": true
+                    },
+                    "is_vegetarian": {
+                        "type": "boolean",
+                        "example": true,
+                        "nullable": true
+                    },
+                    "has_eggs": {
+                        "type": "boolean",
+                        "example": false,
+                        "nullable": true
+                    },
+                    "has_nuts": {
+                        "type": "boolean",
+                        "example": false,
+                        "nullable": true
+                    },
+                    "hotness": {
+                        "type": "string",
+                        "enum": [
+                            "Unknown",
+                            "Low",
+                            "Medium",
+                            "High",
+                            "Ultra"
+                        ],
+                        "example": "Medium",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -8707,6 +8749,48 @@
                     },
                     "metadata": {
                         "type": "object",
+                        "nullable": true
+                    },
+                    "preparation_time": {
+                        "type": "integer",
+                        "example": 30,
+                        "nullable": true
+                    },
+                    "calories": {
+                        "type": "integer",
+                        "example": 500,
+                        "nullable": true
+                    },
+                    "is_vegan": {
+                        "type": "boolean",
+                        "example": true,
+                        "nullable": true
+                    },
+                    "is_vegetarian": {
+                        "type": "boolean",
+                        "example": true,
+                        "nullable": true
+                    },
+                    "has_eggs": {
+                        "type": "boolean",
+                        "example": false,
+                        "nullable": true
+                    },
+                    "has_nuts": {
+                        "type": "boolean",
+                        "example": false,
+                        "nullable": true
+                    },
+                    "hotness": {
+                        "type": "string",
+                        "enum": [
+                            "Unknown",
+                            "Low",
+                            "Medium",
+                            "High",
+                            "Ultra"
+                        ],
+                        "example": "Medium",
                         "nullable": true
                     }
                 },
@@ -10283,6 +10367,16 @@
                     "badge",
                     "archived",
                     "popularity",
+                    "calories",
+                    "is_vegan",
+                    "is_vegetarian",
+                    "has_eggs",
+                    "has_nuts",
+                    "hotness",
+                    "preparation_time",
+                    "tags",
+                    "categories",
+                    "media",
                     "variants",
                     "menu_ids",
                     "category_ids",
@@ -10341,6 +10435,48 @@
                     "popularity": {
                         "type": "integer",
                         "example": 1,
+                        "nullable": true
+                    },
+                    "preparation_time": {
+                        "type": "integer",
+                        "example": 30,
+                        "nullable": true
+                    },
+                    "calories": {
+                        "type": "integer",
+                        "example": 500,
+                        "nullable": true
+                    },
+                    "is_vegan": {
+                        "type": "boolean",
+                        "example": true,
+                        "nullable": true
+                    },
+                    "is_vegetarian": {
+                        "type": "boolean",
+                        "example": true,
+                        "nullable": true
+                    },
+                    "has_eggs": {
+                        "type": "boolean",
+                        "example": false,
+                        "nullable": true
+                    },
+                    "has_nuts": {
+                        "type": "boolean",
+                        "example": false,
+                        "nullable": true
+                    },
+                    "hotness": {
+                        "type": "string",
+                        "enum": [
+                            "Unknown",
+                            "Low",
+                            "Medium",
+                            "High",
+                            "Ultra"
+                        ],
+                        "example": "Medium",
                         "nullable": true
                     },
                     "variants": {

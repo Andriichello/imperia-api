@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Product;
 
+use App\Enums\Hotness;
 use App\Enums\WeightUnit;
 use App\Http\Requests\Crud\UpdateRequest;
 use App\Models\Product;
@@ -90,6 +91,44 @@ class UpdateProductRequest extends UpdateRequest
                     'nullable',
                     'array',
                 ],
+                'preparation_time' => [
+                    'sometimes',
+                    'nullable',
+                    'integer',
+                    'min:0',
+                ],
+                'calories' => [
+                    'sometimes',
+                    'nullable',
+                    'integer',
+                    'min:0',
+                ],
+                'is_vegan' => [
+                    'sometimes',
+                    'nullable',
+                    'boolean',
+                ],
+                'is_vegetarian' => [
+                    'sometimes',
+                    'nullable',
+                    'boolean',
+                ],
+                'has_eggs' => [
+                    'sometimes',
+                    'nullable',
+                    'boolean',
+                ],
+                'has_nuts' => [
+                    'sometimes',
+                    'nullable',
+                    'boolean',
+                ],
+                'hotness' => [
+                    'sometimes',
+                    'nullable',
+                    'string',
+                    Hotness::getValidationRule(),
+                ],
             ]
         );
     }
@@ -123,6 +162,14 @@ class UpdateProductRequest extends UpdateRequest
      *   @OA\Property(property="archived", type="boolean", example=false),
      *   @OA\Property(property="popularity", type="integer", example=1),
      *   @OA\Property(property="metadata", type="object", nullable=true),
+     *   @OA\Property(property="preparation_time", type="integer", nullable=true, example=30),
+     *   @OA\Property(property="calories", type="integer", nullable=true, example=500),
+     *   @OA\Property(property="is_vegan", type="boolean", nullable=true, example=true),
+     *   @OA\Property(property="is_vegetarian", type="boolean", nullable=true, example=true),
+     *   @OA\Property(property="has_eggs", type="boolean", nullable=true, example=false),
+     *   @OA\Property(property="has_nuts", type="boolean", nullable=true, example=false),
+     *   @OA\Property(property="hotness", type="string", nullable=true, example="Medium",
+     *     enum={"Unknown", "Low", "Medium", "High", "Ultra"}),
      *  ),
      */
 }
