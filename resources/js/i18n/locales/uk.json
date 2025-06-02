@@ -78,6 +78,7 @@
   "badges": {
     "time": "{minutes} хв",
     "calories": "{calories} кал",
+    "low_calorie": "Низькокалорійне",
     "vegan": "Веганське",
     "vegetarian": "Вегетаріанське",
     "nuts": "Горіхи",

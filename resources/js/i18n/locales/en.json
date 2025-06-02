@@ -78,6 +78,7 @@
   "badges": {
     "time": "{minutes} min",
     "calories": "{calories} cal",
+    "low_calorie": "Low-Calorie",
     "vegan": "Vegan",
     "vegetarian": "Vegetarian",
     "nuts": "Nuts",

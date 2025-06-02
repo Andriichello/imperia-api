@@ -40,6 +40,8 @@ export interface Product {
   /** @nullable */
   is_vegetarian: boolean | null;
   /** @nullable */
+  is_low_calorie: boolean | null;
+  /** @nullable */
   has_eggs: boolean | null;
   /** @nullable */
   has_nuts: boolean | null;

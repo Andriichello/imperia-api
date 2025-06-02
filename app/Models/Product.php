@@ -51,6 +51,7 @@ use Throwable;
  * @property int|null $calories
  * @property bool|null $is_vegan
  * @property bool|null $is_vegetarian
+ * @property bool|null $is_low_calorie
  * @property bool|null $has_eggs
  * @property bool|null $has_nuts
  * @property Hotness|null $hotness
@@ -291,6 +292,30 @@ class Product extends BaseModel implements
     public function setIsVegetarianAttribute(?bool $isVegetarian): void
     {
         $this->setToJson('metadata', 'is_vegetarian', $isVegetarian);
+    }
+
+    /**
+     * Accessor for the `is_low_calorie` attribute.
+     *
+     * @return bool|null
+     */
+    public function getIsLowCalorieAttribute(): ?bool
+    {
+        $value = $this->getFromJson('metadata', 'is_low_calorie');
+
+        return $value === null ? null : (bool) $value;
+    }
+
+    /**
+     * Mutator for the `is_low_calorie` attribute.
+     *
+     * @param bool|null $isLowCalorie
+     *
+     * @return void
+     */
+    public function setIsLowCalorieAttribute(?bool $isLowCalorie): void
+    {
+        $this->setToJson('metadata', 'is_low_calorie', $isLowCalorie);
     }
 
     /**

@@ -113,6 +113,11 @@ class UpdateProductRequest extends UpdateRequest
                     'nullable',
                     'boolean',
                 ],
+                'is_low_calorie' => [
+                    'sometimes',
+                    'nullable',
+                    'boolean',
+                ],
                 'has_eggs' => [
                     'sometimes',
                     'nullable',
@@ -166,6 +171,7 @@ class UpdateProductRequest extends UpdateRequest
      *   @OA\Property(property="calories", type="integer", nullable=true, example=500),
      *   @OA\Property(property="is_vegan", type="boolean", nullable=true, example=true),
      *   @OA\Property(property="is_vegetarian", type="boolean", nullable=true, example=true),
+     *   @OA\Property(property="is_low_calorie", type="boolean", nullable=true, example=true),
      *   @OA\Property(property="has_eggs", type="boolean", nullable=true, example=false),
      *   @OA\Property(property="has_nuts", type="boolean", nullable=true, example=false),
      *   @OA\Property(property="hotness", type="string", nullable=true, example="Medium",

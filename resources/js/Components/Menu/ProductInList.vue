@@ -4,7 +4,7 @@
   import {ref, computed, PropType} from "vue";
   import {priceFormatted, weightUnitFormatted} from "@/helpers";
   import DiagonalPattern from "@/Components/Base/DiagonalPattern.vue";
-  import {Timer, Flame, Vegan, Leaf, Nut, EggFried, Bean} from "lucide-vue-next";
+  import {Timer, Flame, Vegan, Leaf, Nut, EggFried, Salad} from "lucide-vue-next";
   import { useI18n } from "vue-i18n";
 
   const i18n = useI18n();
@@ -172,6 +172,13 @@
             <Vegan class="w-4 h-4"/>
             <p class="font-semibold pt-0.5">
               {{ i18n.t('badges.vegan') }}
+            </p>
+          </div>
+
+          <div v-if="product.is_low_calorie" class="flex flex-row justify-center items-center gap-1 text-green-800">
+            <Salad class="w-4 h-4"/>
+            <p class="font-semibold pt-0.5">
+              {{ i18n.t('badges.low_calorie') }}
             </p>
           </div>
 
