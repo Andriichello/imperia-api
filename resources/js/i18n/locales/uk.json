@@ -17,7 +17,8 @@
   },
   "menu": {
     "title": "Меню",
-    "empty_category": "На жаль, ця категорія порожня"
+    "empty_category": "На жаль, ця категорія порожня",
+    "go_to_top": "На початок"
   },
   "search": {
     "placeholder": "Пошук",

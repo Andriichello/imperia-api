@@ -73,7 +73,10 @@
   });
 
   watch(() => props.selected, async (newMenu, oldMenu) => {
-    if (newMenu === oldMenu) return;
+    if (newMenu === oldMenu) {
+      return;
+    }
+
     await nextTick();
     checkOverflow();
 
@@ -82,8 +85,10 @@
       if (scroll) {
         scroll.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
       }
+
       return;
     }
+
     const button = document.getElementById(`menu-${newMenu.id}-button`);
     if (button && scroll) {
       scroll.scrollTo({
@@ -92,22 +97,18 @@
         behavior: 'smooth',
       });
     }
-  });
+  }, {immediate: true});
 </script>
 
 <template>
   <div class="w-full flex flex-col justify-center"
        ref="menuNavbarRef"
        v-if="menus && menus.length">
-    <div class="w-full flex justify-center items-start overflow-x-hidden">
-      <div
-        ref="scrollRef"
-        :class="[
-          'max-w-full flex justify-start items-start gap-2 p-2 pt-1.5 pb-0 transition-all duration-200 overflow-x-auto overflow-y-hidden no-scrollbar',
-          navigation && hasOverflow ? 'pr-16' : ''
-        ]"
-        id="menu-buttons-scroll"
-        style="scrollbar-gutter: stable;">
+    <div class="w-full flex justify-between items-start overflow-x-hidden">
+      <div class="max-w-full flex justify-start items-start gap-3 pl-2 pr-4 pt-1 pb-0 transition-all duration-200 overflow-x-auto overflow-y-hidden no-scrollbar"
+           ref="scrollRef"
+           id="menu-buttons-scroll"
+           style="scrollbar-gutter: stable;">
         <template v-for="m in menus" :key="m.id">
           <h2 class="font-bold text-lg normal-case py-1.5 pt-1 px-1 whitespace-nowrap cursor-pointer"
               :class="{'opacity-50': selected?.id !== m.id}"
@@ -118,7 +119,7 @@
         </template>
       </div>
 
-      <div class="w-fit pl-0 p-2 pt-1.5 pb-1 bg-base-100 absolute right-0"
+      <div class="w-fit pl-0 p-2 pt-1.5 pb-1 bg-base-100"
            v-if="navigation"
            @click="$emit('open-drawer')">
         <div class="btn btn-sm flex justify-center items-center normal-case rounded bg-base-100">

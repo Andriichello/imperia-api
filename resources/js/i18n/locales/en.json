@@ -17,7 +17,8 @@
   },
   "menu": {
     "title": "Menu",
-    "empty_category": "Unfortunately, this category is empty"
+    "empty_category": "Unfortunately, this category is empty",
+    "go_to_top": "Go to top"
   },
   "search": {
     "placeholder": "Search",

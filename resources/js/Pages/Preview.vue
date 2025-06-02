@@ -683,10 +683,10 @@
                               @switch-category="onSwitchCategory"/>
 
               <transition name="go-to-top">
-                <button class="text-sm px-2 py-1 font-semibold rounded-sm flex justify-center items-center absolute left-[50%] translate-x-[-50%] top-[92px] z-10 backdrop-blur-sm bg-neutral/35 text-white border-none uppercase"
+                <button class="text-sm px-2 py-1 font-semibold rounded-sm flex justify-center items-center absolute left-[50%] translate-x-[-50%] top-[96px] z-10 backdrop-blur-sm bg-neutral/35 text-white border-none uppercase"
                         v-if="showGoToTop && !isGoingToTop && scrolledToSticky"
                         @click="goToTop">
-                  go to top
+                  {{ i18n.t('menu.go_to_top') }}
                 </button>
               </transition>
             </div>
