@@ -167,13 +167,13 @@
     <Deferred data="products">
       <template #fallback>
         <div class="flex justify-center my-2 mb-0 px-9">
-          <div class="loading loading-dots loading-lg opacity-60"></div>
+          <div class="loading loading-dots loading-lg text-warning/20"></div>
         </div>
       </template>
 
       <!-- Loading indicator -->
       <div v-if="loading" class="flex justify-center my-2 mb-0 px-9">
-        <div class="loading loading-dots loading-lg opacity-60"></div>
+        <div class="loading loading-dots loading-lg text-warning/20"></div>
       </div>
 
       <!-- Search results -->

@@ -22,7 +22,12 @@
     preview: {
       type: Boolean as PropType<boolean>,
       default: false,
-    }
+    },
+    currency: {
+      type: String as PropType<string | null>,
+      required: false,
+      default: null,
+    },
   });
 
   const i18n = useI18n();
@@ -55,6 +60,7 @@
         <ProductInList class="border-1 border-warning-content/20"
                        :product="product"
                        :preview="preview"
+                       :currency="currency"
                        :establishment="establishment"/>
       </template>
     </div>

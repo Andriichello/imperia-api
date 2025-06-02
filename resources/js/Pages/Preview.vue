@@ -15,6 +15,10 @@
   import CategoryNavBar from "@/Components/Menu/CategoryNavBar.vue";
   import {getScheduleInfo, ScheduleInfo} from "@/helpers";
   import {useScrollLock} from "@/composables/useScrollLock";
+  import ProductInList from "@/Components/Menu/ProductInList.vue";
+  import LoadingProductInList from "@/Components/Menu/LoadingProductInList.vue";
+  import LoadingCategoryInList from "@/Components/Menu/LoadingCategoryInList.vue";
+  import LoadingMenuInList from "@/Components/Menu/LoadingMenuInList.vue";
 
   const props = defineProps({
     restaurant:  {
@@ -626,6 +630,10 @@
           scrollToCategory(category, product);
         }
       }, 100);
+    } else {
+      setTimeout(() => {
+        goToTop();
+      }, 100);
     }
   });
 
@@ -665,7 +673,14 @@
           <!-- Menus list -->
           <Deferred data="products">
             <template #fallback>
-              <div class="loading loading-dots loading-lg mt-8 text-base-content/70"/>
+              <div class="w-full min-h-[88px] flex flex-col justify-center items-center sticky top-0 bg-base-100 z-10 border-1 border-base-300"
+                   :class="{'shadow-md': scrolledToSticky}">
+                <div class="loading loading-dots loading-lg text-warning/40"/>
+              </div>
+
+              <LoadingMenuInList :products="[{image: true}, {image: false}]"
+                                 :establishment="restaurant.establishment ?? 'restaurant'"
+                                 :currency="restaurant.currency ?? 'uah'"/>
             </template>
 
             <div class="w-full sticky top-0 bg-base-100 z-10 border-1 border-base-300"
@@ -695,6 +710,7 @@
               <MenuInList :menu="selectedMenu"
                           :products="products"
                           :closed="false"
+                          :currency="restaurant.currency ?? 'uah'"
                           :establishment="restaurant.establishment ?? 'restaurant'"
                           @switch-menu="onSwitchMenu"
                           @switch-category="onSwitchCategory"/>

@@ -3,6 +3,8 @@
   import CategoryInList from "@/Components/Menu/CategoryInList.vue";
   import {PropType} from "vue";
   import {Expand} from "lucide-vue-next";
+  import ProductInList from "@/Components/Menu/ProductInList.vue";
+  import LoadingProductInList from "@/Components/Menu/LoadingProductInList.vue";
 
   const emits = defineEmits(['switch-menu', 'switch-category']);
 
@@ -22,7 +24,12 @@
     establishment: {
       type: String as PropType<string | null>,
       default: 'restaurant',
-    }
+    },
+    currency: {
+      type: String as PropType<string | null>,
+      required: false,
+      default: null,
+    },
   });
 
   const categoryProducts = (menu: Menu, category: Category) =>
@@ -33,7 +40,7 @@
   const switchCategory = (category: Category) => {
     emits('switch-category', category);
   }
-</script>W
+</script>
 
 <template>
   <div class="w-full flex flex-col">
@@ -51,6 +58,7 @@
                 v-if="!closed">
         <CategoryInList :category="category"
                         :products="categoryProducts(menu, category)"
+                        :currency="currency"
                         :establishment="establishment"
                         @switch-category="switchCategory"/>
 
