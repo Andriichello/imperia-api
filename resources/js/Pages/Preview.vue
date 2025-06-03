@@ -200,7 +200,7 @@
 
   const switchMenu = (menu: Menu, force: boolean = false) => {
     // Only update if it's a different menu
-    if (force || menu.id !== selectedMenu.value.id) {
+    if (force || menu.id !== selectedMenu.value?.id) {
       const basePath = window.location.pathname.split('/menu/')[0];
 
       // Update the URL in the browser without a page reload
@@ -464,7 +464,7 @@
 
     isSearchOpened.value = false;
 
-    if (menu.id !== selectedMenu.value.id) {
+    if (menu.id !== selectedMenu.value?.id) {
       switchMenu(menu);
     }
 
@@ -481,7 +481,7 @@
 
     isSearchOpened.value = false;
 
-    if (menu.id !== selectedMenu.value.id) {
+    if (menu.id !== selectedMenu.value?.id) {
       switchMenu(menu);
     }
 
@@ -624,7 +624,7 @@
       setTimeout(() => {
         selectedCategory.value = category;
 
-        if (selectedMenu.value.categories?.[0]?.id !== category.id || product) {
+        if (selectedMenu.value?.categories?.[0]?.id !== category.id || product) {
           shouldNotScroll.value = 0;
           ignoringScroll.value = false;
           scrollToCategory(category, product);

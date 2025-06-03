@@ -6,6 +6,7 @@
   import ProductInList from "@/Components/Menu/ProductInList.vue";
   import {Deferred} from "@inertiajs/vue3";
   import MenuInList from "@/Components/Menu/MenuInList.vue";
+  import LoadingProductInList from "@/Components/Menu/LoadingProductInList.vue";
 
   const props = defineProps({
     open: {
@@ -164,53 +165,61 @@
     </div>
 
     <!-- Menus list -->
-    <Deferred data="products">
-      <template #fallback>
-        <div class="flex justify-center my-2 mb-0 px-9">
-          <div class="loading loading-dots loading-lg text-warning/20"></div>
+    <!-- Loading indicator -->
+    <div v-if="loading" class="flex justify-center my-2 mb-0 px-9">
+      <div class="loading loading-dots loading-lg text-warning/40"></div>
+    </div>
+
+    <!-- Search results -->
+    <div v-if="searchQuery" class="overflow-auto pt-2 px-6">
+      <div v-if="hasResults" class="pb-[250px]">
+        <!-- Menus section -->
+        <div v-if="filteredMenus.length > 0" class="mb-6">
+          <h3 class="font-bold text-lg mb-2">{{ i18n.t('search.menus') }}</h3>
+          <div class="space-y-2">
+            <div class="p-3 hover:bg-warning/10 border-1 border-warning-content/40 rounded-lg cursor-pointer transition-colors"
+                 v-for="menu in filteredMenus"
+                 :key="`menu-${menu.id}`"
+                 @click="openMenu(menu)">
+              <div class="text-lg font-medium">{{ menu.title }}</div>
+              <div class="text-md text-base-content/80 line-clamp-1">{{ menu.description }}</div>
+            </div>
+          </div>
         </div>
-      </template>
 
-      <!-- Loading indicator -->
-      <div v-if="loading" class="flex justify-center my-2 mb-0 px-9">
-        <div class="loading loading-dots loading-lg text-warning/20"></div>
-      </div>
-
-      <!-- Search results -->
-      <div v-else-if="searchQuery" class="overflow-auto pt-2 px-6">
-        <div v-if="hasResults" class="pb-[250px]">
-          <!-- Menus section -->
-          <div v-if="filteredMenus.length > 0" class="mb-6">
-            <h3 class="font-bold text-lg mb-2">{{ i18n.t('search.menus') }}</h3>
-            <div class="space-y-2">
-              <div class="p-3 hover:bg-warning/10 border-1 border-warning-content/40 rounded-lg cursor-pointer transition-colors"
-                   v-for="menu in filteredMenus"
-                   :key="`menu-${menu.id}`"
-                   @click="openMenu(menu)">
-                <div class="text-lg font-medium">{{ menu.title }}</div>
-                <div class="text-md text-base-content/80 line-clamp-1">{{ menu.description }}</div>
+        <!-- Categories section -->
+        <div v-if="filteredCategories.length > 0" class="mb-6">
+          <h3 class="font-bold text-lg mb-2">{{ i18n.t('search.categories') }}</h3>
+          <div class="space-y-2">
+            <div class="p-3 hover:bg-warning/10 border-1 border-warning-content/40 rounded-lg cursor-pointer transition-colors"
+                 v-for="category in filteredCategories"
+                 :key="`category-${category.id}`"
+                 @click="openCategory(category)">
+              <div class="text-lg font-medium">{{ category.title }}</div>
+              <div class="text-md text-base-content/80 line-clamp-1"
+                   v-if="category.description && category.description.length">
+                {{ category.description }}
               </div>
             </div>
           </div>
+        </div>
 
-          <!-- Categories section -->
-          <div v-if="filteredCategories.length > 0" class="mb-6">
-            <h3 class="font-bold text-lg mb-2">{{ i18n.t('search.categories') }}</h3>
-            <div class="space-y-2">
-              <div class="p-3 hover:bg-warning/10 border-1 border-warning-content/40 rounded-lg cursor-pointer transition-colors"
-                   v-for="category in filteredCategories"
-                   :key="`category-${category.id}`"
-                   @click="openCategory(category)">
-                <div class="text-lg font-medium">{{ category.title }}</div>
-                <div class="text-md text-base-content/80 line-clamp-1"
-                     v-if="category.description && category.description.length">
-                  {{ category.description }}
-                </div>
+        <!-- Products section -->
+        <Deferred data="products">
+          <template #fallback>
+            <div class="mb-6">
+              <h3 class="font-bold text-lg mb-2">{{ i18n.t('search.products') }}</h3>
+              <div class="space-y-4">
+                <template v-for="product in [{image: true}, {image: false}]" :key="product.id">
+                  <LoadingProductInList class="border-1 border-warning-content/20"
+                                        :image="product?.image ?? false"
+                                        :currency="currency"
+                                        :establishment="restaurant.establishment"/>
+                </template>
               </div>
             </div>
-          </div>
+          </template>
 
-          <!-- Products section -->
           <div v-if="filteredProducts.length > 0" class="mb-6">
             <h3 class="font-bold text-lg mb-2">{{ i18n.t('search.products') }}</h3>
             <div class="space-y-4">
@@ -223,23 +232,23 @@
                              @click="openProduct(product)"/>
             </div>
           </div>
-        </div>
-
-        <!-- No results -->
-        <div v-else class="flex flex-col items-center justify-center py-5 px-9">
-          <div class="text-lg text-base-content/80">{{ i18n.t('search.no_results') }}</div>
-          <button class="btn btn-md text-base-content/80 mt-2 bg-base-100"
-                  @click="clearSearch">
-            {{ i18n.t('search.clear_query') }}
-          </button>
-        </div>
+        </Deferred>
       </div>
 
-      <!-- Empty state -->
-      <div v-else-if="withPlaceholders" class="flex flex-col items-center justify-center py-10 px-9" >
-        <!--        <Search class="w-16 h-16 mb-4 opacity-60" />-->
-        <div class="w-full text-center text-lg text-base-content/80">{{ i18n.t('search.start_typing') }}</div>
+      <!-- No results -->
+      <div v-else class="flex flex-col items-center justify-center py-5 px-9">
+        <div class="text-lg text-base-content/80">{{ i18n.t('search.no_results') }}</div>
+        <button class="btn btn-md text-base-content/80 mt-2 bg-base-100"
+                @click="clearSearch">
+          {{ i18n.t('search.clear_query') }}
+        </button>
       </div>
-    </Deferred>
+    </div>
+
+    <!-- Empty state -->
+    <div v-else-if="withPlaceholders" class="flex flex-col items-center justify-center py-10 px-9" >
+      <!--        <Search class="w-16 h-16 mb-4 opacity-60" />-->
+      <div class="w-full text-center text-lg text-base-content/80">{{ i18n.t('search.start_typing') }}</div>
+    </div>
   </div>
 </template>
