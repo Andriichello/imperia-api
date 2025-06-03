@@ -100,12 +100,11 @@
 <template>
   <div class="w-full flex flex-col justify-center"
        v-if="categories && categories.length">
-    <div class="w-full flex justify-center items-start">
+    <div class="w-full flex justify-start items-start">
       <div
         ref="scrollRef"
         :class="[
           'max-w-full flex justify-start items-start gap-2 p-2 pt-1 pb-2 transition-all duration-200 overflow-x-auto overflow-y-hidden no-scrollbar',
-          navigation && hasOverflow ? 'pr-16' : ''
         ]"
         id="category-buttons-scroll"
         style="scrollbar-gutter: stable;">
