@@ -70,15 +70,15 @@ class PreviewController extends Controller
         return Inertia::render('Preview', [
             'restaurant' => new RestaurantResource($restaurant),
             'menus' => new MenuCollection($menus),
-//            'products' => Inertia::defer(
-//                fn() => new ProductCollection($this->loadAndCacheProducts($restaurant))
-//            ),
             'products' => Inertia::defer(
-                function () use ($restaurant) {
-                    sleep(10);
-                    return new ProductCollection($this->loadAndCacheProducts($restaurant));
-                }
+                fn() => new ProductCollection($this->loadAndCacheProducts($restaurant))
             ),
+//            'products' => Inertia::defer(
+//                function () use ($restaurant) {
+//                    sleep(3);
+//                    return new ProductCollection($this->loadAndCacheProducts($restaurant));
+//                }
+//            ),
         ]);
     }
 }
