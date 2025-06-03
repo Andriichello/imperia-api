@@ -241,7 +241,8 @@
            v-if="hasHotness || hasLowCalorie || hasVegetarian">
         <div class="rounded-sm border-1 border-dashed border-red-500 flex flex-row justify-center items-center gap-1 text-red-500 pl-1 pr-2 py-0.5 cursor-pointer"
              :class="{'opacity-45': tag !== 'hotness', 'bg-red-500/80 border-solid border-red-500/80 text-white': tag === 'hotness'}"
-             @click="tag === 'hotness' ? tag = null : tag = 'hotness'">
+             @click="tag === 'hotness' ? tag = null : tag = 'hotness'"
+             v-if="hasHotness">
           <Flame class="w-4 h-4"/>
           <p class="font-semibold pt-0.5">
             {{ i18n.t('badges.hot') }}
@@ -250,7 +251,8 @@
 
         <div class="rounded-sm border-1 border-dashed border-green-800 flex flex-row justify-center items-center gap-1 text-green-800 pl-1 pr-2 py-0.5 cursor-pointer"
              :class="{'opacity-45': tag !== 'low-calorie', 'bg-green-800/80 border-solid border-green-800/80 text-white': tag === 'low-calorie'}"
-             @click="tag === 'low-calorie' ? tag = null : tag = 'low-calorie'">
+             @click="tag === 'low-calorie' ? tag = null : tag = 'low-calorie'"
+             v-if="hasLowCalorie">
           <Salad class="w-4 h-4"/>
           <p class="font-semibold pt-0.5">
             {{ i18n.t('badges.low_calorie') }}
@@ -259,7 +261,8 @@
 
         <div class="rounded-sm border-1 border-dashed border-green-800 flex flex-row justify-center items-center gap-1 text-green-800 pl-1 pr-2 py-0.5 cursor-pointer"
              :class="{'opacity-45': tag !== 'vegetarian', 'bg-green-800/80 border-solid border-green-800/80 text-white': tag === 'vegetarian'}"
-             @click="tag === 'vegetarian' ? tag = null : tag = 'vegetarian'">
+             @click="tag === 'vegetarian' ? tag = null : tag = 'vegetarian'"
+             v-if="hasVegan || hasVegetarian">
           <Leaf class="w-4 h-4"/>
           <p class="font-semibold pt-0.5">
             {{ i18n.t('badges.vegetarian') }}
