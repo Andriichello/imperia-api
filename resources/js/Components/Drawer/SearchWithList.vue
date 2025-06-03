@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import {ref, watch, computed, PropType, nextTick, onUnmounted} from "vue";
   import { Restaurant, Category, Menu, Product } from "@/api";
-  import { Search, X } from "lucide-vue-next";
+  import {EggFried, Flame, Leaf, Nut, Salad, Search, Timer, Vegan, X} from "lucide-vue-next";
   import { useI18n } from "vue-i18n";
   import ProductInList from "@/Components/Menu/ProductInList.vue";
   import {Deferred} from "@inertiajs/vue3";
@@ -39,7 +39,7 @@
     },
   });
 
-  const emits = defineEmits(['open-menu', 'open-category', 'open-product', 'query-updated', 'has-results-changed']);
+  const emits = defineEmits(['open-menu', 'open-category', 'open-product', 'query-updated', 'tag-updated', 'has-results-changed']);
 
   const i18n = useI18n();
 
@@ -47,8 +47,30 @@
 
   const searchQuery = ref("");
 
+  const tag = ref<string>(null);
+
+  const hasHotness = computed(() => {
+    return !!props.products?.find((p: Product) => !!p.hotness);
+  });
+
+  const hasVegan = computed(() => {
+    return !!props.products?.find((p: Product) => p.is_vegan);
+  });
+
+  const hasVegetarian = computed(() => {
+    if (hasVegan.value) {
+      return true;
+    }
+
+    return !!props.products?.find((p: Product) => p.is_vegetarian);
+  });
+
+  const hasLowCalorie = computed(() => {
+    return !!props.products?.find((p: Product) => p.is_low_calorie);
+  });
+
   const filteredMenus = computed<Menu[]>(() => {
-    if (!searchQuery.value) {
+    if (!searchQuery.value || tag.value !== null) {
       return [];
     }
 
@@ -59,7 +81,7 @@
   });
 
   const filteredCategories = computed<Category[]>(() => {
-    if (!searchQuery.value) {
+    if (!searchQuery.value || tag.value !== null) {
       return [];
     }
 
@@ -80,17 +102,20 @@
   });
 
   const filteredProducts = computed<Product[]>(() => {
-    if (!searchQuery.value) {
+    if (!searchQuery.value && !tag.value?.length) {
       return [];
     }
 
     const filtered: Product[] = [];
 
     props.products?.forEach(product => {
-      const matches = product.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-        (product.description?.length && product.description.toLowerCase().includes(searchQuery.value.toLowerCase()));
+      const matchesTag = !tag.value?.length || hasTag(product, tag.value);
+      const matchesQuery = !searchQuery.value?.length || (
+        product.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+        (product.description?.length && product.description.toLowerCase().includes(searchQuery.value.toLowerCase()))
+      );
 
-      if (matches && !filtered.includes(product)) {
+      if ((matchesTag && matchesQuery) && !filtered.includes(product)) {
         filtered.push(product);
       }
     });
@@ -98,14 +123,36 @@
     return filtered;
   });
 
+  const hasTag = (product: Product, tag: string): boolean => {
+    if (tag === 'hotness') {
+      return product.hotness !== null;
+    }
+
+    if (tag === 'low-calorie') {
+      return product.is_low_calorie;
+    }
+
+    if (tag === 'vegetarian') {
+      return product.is_vegan || product.is_vegetarian;
+    }
+
+    if (tag === 'vegan') {
+      return product.is_vegan;
+    }
+
+    return false;
+  }
+
   const hasResults = computed(() => {
-    return filteredMenus.value.length > 0 ||
+    return props.products === null ||
+           filteredMenus.value.length > 0 ||
            filteredCategories.value.length > 0 ||
            filteredProducts.value.length > 0;
   });
 
   function clearSearch() {
     searchQuery.value = "";
+    tag.value = null;
   }
 
   function openMenu(menu: Menu) {
@@ -141,6 +188,10 @@
     emits('query-updated', newVal);
   });
 
+  watch(() => tag.value, (newVal) => {
+    emits('tag-updated', newVal);
+  });
+
   onUnmounted(() => {
     clearSearch();
   });
@@ -149,8 +200,8 @@
 <template>
   <div class="max-w-full w-full flex flex-col">
     <!-- Search input -->
-    <div class="relative mb-4 px-6">
-      <div class="flex items-center border-b border-base-300 pb-2">
+    <div class="relative flex flex-col justify-center items-start px-6">
+      <div class="w-full flex items-center border-b border-base-300 pb-2">
         <Search class="w-5 h-5 text-base-content/60 mr-2" />
         <input
           v-model="searchQuery"
@@ -164,14 +215,61 @@
       </div>
     </div>
 
-    <!-- Menus list -->
-    <!-- Loading indicator -->
-    <div v-if="loading" class="flex justify-center my-2 mb-0 px-9">
-      <div class="loading loading-dots loading-lg text-warning/40"></div>
-    </div>
+    <Deferred data="products">
+      <template #fallback>
+        <div class="flex flex-wrap justify-center gap-x-2 gap-y-1 normal-case text-[12px] text-base-content/60 pt-2 pb-1 px-2 opacity-60">
+          <div class="w-[70px] h-[24px] px-1 flex justify-start items-center skeleton rounded-sm border-1 border-dashed">
+            <Flame class="w-4 h-4"/>
+          </div>
+
+          <div class="w-[128px] h-[24px] px-1 flex justify-start items-center skeleton rounded-sm border-1 border-dashed">
+            <Salad class="w-4 h-4"/>
+          </div>
+
+          <div class="w-[116px] h-[24px] px-1 flex justify-start items-center skeleton rounded-sm border-1 border-dashed">
+            <Leaf class="w-4 h-4"/>
+          </div>
+        </div>
+
+<!--        &lt;!&ndash; Loading indicator &ndash;&gt;-->
+<!--        <div class="flex justify-center mt-5 mb-0 px-9">-->
+<!--          <div class="loading loading-dots loading-lg text-warning/40"></div>-->
+<!--        </div>-->
+      </template>
+
+      <div class="flex flex-wrap justify-center gap-x-2 gap-y-1 normal-case text-[12px] pt-2 pb-1 px-2"
+           v-if="hasHotness || hasLowCalorie || hasVegetarian">
+        <div class="rounded-sm border-1 border-dashed border-red-500 flex flex-row justify-center items-center gap-1 text-red-500 pl-1 pr-2 py-0.5 cursor-pointer"
+             :class="{'opacity-45': tag !== 'hotness', 'bg-red-500/80 border-solid border-red-500/80 text-white': tag === 'hotness'}"
+             @click="tag === 'hotness' ? tag = null : tag = 'hotness'">
+          <Flame class="w-4 h-4"/>
+          <p class="font-semibold pt-0.5">
+            {{ i18n.t('badges.hot') }}
+          </p>
+        </div>
+
+        <div class="rounded-sm border-1 border-dashed border-green-800 flex flex-row justify-center items-center gap-1 text-green-800 pl-1 pr-2 py-0.5 cursor-pointer"
+             :class="{'opacity-45': tag !== 'low-calorie', 'bg-green-800/80 border-solid border-green-800/80 text-white': tag === 'low-calorie'}"
+             @click="tag === 'low-calorie' ? tag = null : tag = 'low-calorie'">
+          <Salad class="w-4 h-4"/>
+          <p class="font-semibold pt-0.5">
+            {{ i18n.t('badges.low_calorie') }}
+          </p>
+        </div>
+
+        <div class="rounded-sm border-1 border-dashed border-green-800 flex flex-row justify-center items-center gap-1 text-green-800 pl-1 pr-2 py-0.5 cursor-pointer"
+             :class="{'opacity-45': tag !== 'vegetarian', 'bg-green-800/80 border-solid border-green-800/80 text-white': tag === 'vegetarian'}"
+             @click="tag === 'vegetarian' ? tag = null : tag = 'vegetarian'">
+          <Leaf class="w-4 h-4"/>
+          <p class="font-semibold pt-0.5">
+            {{ i18n.t('badges.vegetarian') }}
+          </p>
+        </div>
+      </div>
+    </Deferred>
 
     <!-- Search results -->
-    <div v-if="searchQuery" class="overflow-auto pt-2 px-6">
+    <div v-if="searchQuery || tag?.length" class="overflow-auto pt-2 px-6">
       <div v-if="hasResults" class="pb-[250px]">
         <!-- Menus section -->
         <div v-if="filteredMenus.length > 0" class="mb-6">
@@ -209,7 +307,7 @@
           <template #fallback>
             <div class="mb-6">
               <h3 class="font-bold text-lg mb-2">{{ i18n.t('search.products') }}</h3>
-              <div class="space-y-4">
+              <div class="space-y-2">
                 <template v-for="product in [{image: true}, {image: false}]" :key="product.id">
                   <LoadingProductInList class="border-1 border-warning-content/20"
                                         :image="product?.image ?? false"
@@ -222,7 +320,7 @@
 
           <div v-if="filteredProducts.length > 0" class="mb-6">
             <h3 class="font-bold text-lg mb-2">{{ i18n.t('search.products') }}</h3>
-            <div class="space-y-4">
+            <div class="space-y-2">
               <ProductInList class="cursor-pointer hover:bg-warning/10 border-1 border-warning-content/40"
                              v-for="product in filteredProducts"
                              :key="`product-${product.id}`"

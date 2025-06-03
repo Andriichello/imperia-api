@@ -45,6 +45,7 @@
   const searchInputRef = ref<HTMLInputElement | null>(null);
   const hasResults = ref(false);
   const searchQuery = ref("");
+  const tag = ref(null);
 
   function close() {
     searchQuery.value = "";
@@ -76,6 +77,10 @@
     emits('query-updated', query);
   }
 
+  function onTagUpdated(val: string|null) {
+    tag.value = val;
+  }
+
   watch(() => props.open, (newVal, oldVal) => {
     if (props.withAutofocus && newVal && newVal !== oldVal) {
       nextTick(() => {
@@ -102,10 +107,11 @@
                       @open-menu="openMenu"
                       @open-category="openCategory"
                       @open-product="openProduct"
-                      @query-updated="onQueryUpdated"/>
+                      @query-updated="onQueryUpdated"
+                      @tag-updated="onTagUpdated"/>
 
       <div class="w-full flex flex-col px-6 pb-[250px] overflow-auto"
-           v-if="!hasResults && !searchQuery?.length">
+           v-if="!hasResults && !searchQuery?.length && !tag?.length">
         <template v-for="menu in menus" :key="menu.id">
           <div class="w-full flex flex-col text-start py-3 px-3 cursor-pointer"
                @click="openMenu(menu)">
