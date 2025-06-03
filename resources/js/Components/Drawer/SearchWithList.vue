@@ -311,7 +311,7 @@
             <div class="mb-6">
               <h3 class="font-bold text-lg mb-2">{{ i18n.t('search.products') }}</h3>
               <div class="space-y-2">
-                <template v-for="product in [{image: true}, {image: false}]" :key="product.id">
+                <template v-for="product in [{image: true}, {image: false}]">
                   <LoadingProductInList class="border-1 border-warning-content/20"
                                         :image="product?.image ?? false"
                                         :currency="currency"

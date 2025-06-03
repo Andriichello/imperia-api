@@ -7,7 +7,7 @@
 
   const props = defineProps({
     products: {
-      type: Array as PropType<object[]>,
+      type: Array as PropType<{image: boolean}[]>,
       required: true,
     },
     establishment: {
@@ -41,7 +41,7 @@
 
     <div class="w-full flex flex-col py-2 gap-3"
          v-else>
-      <template v-for="product in products" :key="product.id">
+      <template v-for="product in products">
         <LoadingProductInList class="border-1 border-warning-content/20"
                               :image="product?.image ?? false"
                               :currency="currency"
