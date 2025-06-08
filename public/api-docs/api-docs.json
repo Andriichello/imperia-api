@@ -10386,6 +10386,7 @@
                     "hotness",
                     "preparation_time",
                     "tags",
+                    "flags",
                     "categories",
                     "media",
                     "variants",
@@ -10519,6 +10520,12 @@
                         "items": {
                             "type": "integer",
                             "example": 1
+                        }
+                    },
+                    "flags": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
                         }
                     },
                     "tags": {

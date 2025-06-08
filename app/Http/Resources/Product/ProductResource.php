@@ -15,6 +15,7 @@ use OpenApi\Annotations as OA;
  * Class ProductResource.
  *
  * @mixin Product
+ *
  * @property Product $resource
  */
 class ProductResource extends JsonResource
@@ -56,6 +57,7 @@ class ProductResource extends JsonResource
             'menu_ids' => $this->menuIds(),
             'categories' => new CategoryCollection($this->whenLoaded('categories')),
             'category_ids' => $categoryIds,
+            'flags' => $this->flags,
             'tags' => new TagCollection($this->whenLoaded('tags')),
             /* @phpstan-ignore-next-line */
             'media' => new MediaCollection($this->media->load('variants')),
@@ -72,7 +74,7 @@ class ProductResource extends JsonResource
      *   required = {"id", "type", "title", "description", "price", "weight", "weight_unit",
      *     "badge", "archived", "popularity", "calories", "is_vegan", "is_vegetarian", "is_low_calorie",
      *     "has_eggs", "has_nuts", "hotness", "preparation_time",
-     *     "tags", "categories", "media", "variants", "menu_ids", "category_ids", "media"},
+     *     "tags", "flags", "categories", "media", "variants", "menu_ids", "category_ids", "media"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="products"),
      *   @OA\Property(property="title", type="string", example="Margarita"),
@@ -97,6 +99,7 @@ class ProductResource extends JsonResource
      *   @OA\Property(property="menu_ids", type="array", @OA\Items(type="integer", example=1)),
      *   @OA\Property(property="categories", type="array", @OA\Items(ref ="#/components/schemas/Category")),
      *   @OA\Property(property="category_ids", type="array", @OA\Items(type="integer", example=1)),
+     *   @OA\Property(property="flags", type="array", @OA\Items(type="string")),
      *   @OA\Property(property="tags", type="array", @OA\Items(ref ="#/components/schemas/Tag")),
      *   @OA\Property(property="media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
      *   @OA\Property(property="alterations", type="array",

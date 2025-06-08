@@ -6,6 +6,7 @@ use App\Enums\Hotness;
 use App\Models\Interfaces\AlterableInterface;
 use App\Models\Interfaces\ArchivableInterface;
 use App\Models\Interfaces\CategorizableInterface;
+use App\Models\Interfaces\FlaggableInterface;
 use App\Models\Interfaces\LoggableInterface;
 use App\Models\Interfaces\MediableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
@@ -13,6 +14,7 @@ use App\Models\Interfaces\TaggableInterface;
 use App\Models\Traits\AlterableTrait;
 use App\Models\Traits\ArchivableTrait;
 use App\Models\Traits\CategorizableTrait;
+use App\Models\Traits\FlaggableTrait;
 use App\Models\Traits\LoggableTrait;
 use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
@@ -25,6 +27,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -66,6 +69,7 @@ use Throwable;
 class Product extends BaseModel implements
     SoftDeletableInterface,
     TaggableInterface,
+    FlaggableInterface,
     CategorizableInterface,
     AlterableInterface,
     ArchivableInterface,
@@ -75,6 +79,7 @@ class Product extends BaseModel implements
     use HasFactory;
     use SoftDeletableTrait;
     use TaggableTrait;
+    use FlaggableTrait;
     use CategorizableTrait;
     use AlterableTrait;
     use ArchivableTrait;

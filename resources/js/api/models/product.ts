@@ -51,6 +51,7 @@ export interface Product {
   menu_ids: number[];
   categories: Category[];
   category_ids: number[];
+  flags: string[];
   tags: Tag[];
   media: Media[];
   alterations?: Alternation[];
