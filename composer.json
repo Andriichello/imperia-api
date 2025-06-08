@@ -19,6 +19,7 @@
         "doctrine/dbal": "^3.6.1",
         "dyrynda/laravel-cascade-soft-deletes": "^4.2.1",
         "fakerphp/faker": "^1.21",
+        "filament/filament": "^3.3",
         "guzzlehttp/guzzle": "^7.5.0",
         "inertiajs/inertia-laravel": "^2.0",
         "intervention/image": "^3.6",
@@ -70,7 +71,8 @@
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
+            "@php artisan package:discover --ansi",
+            "@php artisan filament:upgrade"
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
