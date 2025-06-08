@@ -105,8 +105,14 @@ abstract class CrudPolicy implements CrudPolicyInterface
      */
     public function isHigher(User $user, User $target): bool
     {
-        if (!$target->isAdmin() && $user->isAdmin()) {
-            return true;
+        if ($user->isAdmin()) {
+            if (!$target->isAdmin()) {
+                return true;
+            }
+
+            if ($target->restaurant_id && !$user->restaurant_id) {
+                return true;
+            }
         }
 
         return !$target->isStaff() && $user->isStaff();

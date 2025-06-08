@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\BaseResource;
-use App\Filament\Fields\RestaurantId;
+use App\Filament\Fields\RestaurantSelect;
 use App\Filament\Resources\MenuResource\Pages;
 use App\Models\Menu;
 use Filament\Forms\Components\Textarea;
@@ -28,8 +28,7 @@ class MenuResource extends BaseResource
     {
         return $form
             ->schema([
-                RestaurantId::make()
-                    ->searchable()
+                RestaurantSelect::make()
                     ->required(),
                 TextInput::make('slug')
                     ->maxLength(255),

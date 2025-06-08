@@ -4,7 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Enums\Hotness;
 use App\Filament\BaseResource;
-use App\Filament\Fields\RestaurantId;
+use App\Filament\Fields\RestaurantSelect;
 use App\Filament\Resources\ProductResource\Pages;
 use App\Models\Product;
 use Filament\Forms\Components\Select;
@@ -30,8 +30,7 @@ class ProductResource extends BaseResource
     {
         return $form
             ->schema([
-                RestaurantId::make()
-                    ->searchable()
+                RestaurantSelect::make()
                     ->required(),
                 TextInput::make('slug')
                     ->maxLength(255),

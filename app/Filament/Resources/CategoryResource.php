@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\BaseResource;
-use App\Filament\Fields\RestaurantId;
+use App\Filament\Fields\RestaurantSelect;
 use App\Filament\Resources\CategoryResource\Pages;
 use App\Models\Morphs\Category;
 use Filament\Forms\Components\Select;
@@ -29,8 +29,7 @@ class CategoryResource extends BaseResource
     {
         return $form
             ->schema([
-                RestaurantId::make()
-                    ->searchable()
+                RestaurantSelect::make()
                     ->required(),
                 TextInput::make('slug')
                     ->maxLength(255),

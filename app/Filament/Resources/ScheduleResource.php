@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\BaseResource;
-use App\Filament\Fields\RestaurantId;
+use App\Filament\Fields\RestaurantSelect;
 use App\Filament\Resources\ScheduleResource\Pages;
 use App\Models\Schedule;
 use Filament\Forms\Components\Select;
@@ -28,8 +28,7 @@ class ScheduleResource extends BaseResource
     {
         return $form
             ->schema([
-                RestaurantId::make()
-                    ->searchable()
+                RestaurantSelect::make()
                     ->required(),
                 Select::make('weekday')
                     ->options([

@@ -3,12 +3,13 @@
 namespace App\Filament\Fields;
 
 use App\Filament\Resources\RestaurantResource;
+use App\Models\User;
 use Filament\Forms\Components\Select;
 
 /**
  * Class RestaurantId.
  */
-class RestaurantId extends Select
+class RestaurantSelect extends Select
 {
     public static function make(string $name = 'restaurant_id'): static
     {
@@ -22,12 +23,17 @@ class RestaurantId extends Select
     {
         parent::setUp();
 
-        $this->label('Restaurant');
-
+        /** @var User|null $user */
+        $user = auth()->user();
         $options = RestaurantResource::getEloquentQuery()
             ->get()
             ->pluck('name', 'id');
 
-        $this->options($options);
+        $this->label('Restaurant')
+            ->default($user?->restaurant_id)
+            ->extraAttributes(['readonly' => $user?->restaurant_id])
+            ->options($options)
+            ->required()
+            ->searchable();
     }
 }

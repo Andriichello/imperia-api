@@ -3,9 +3,13 @@
 namespace App\Filament\Resources;
 
 use App\Filament\BaseResource;
+use App\Filament\Fields\RestaurantSelect;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -19,13 +23,37 @@ class UserResource extends BaseResource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
 
     public static function form(Form $form): Form
     {
+        /** @var User|null $user */
+        $user = auth()->user();
+
         return $form
             ->schema([
-                //
+                RestaurantSelect::make()
+                    ->nullable($user && $user->hasRole('admin') && !$user->restaurant_id),
+                TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
+                TextInput::make('email')
+                    ->email()
+                    ->required()
+                    ->maxLength(255)
+                    ->unique(ignoreRecord: true),
+                DateTimePicker::make('email_verified_at')
+                    ->disabled(!$user || !($user->hasRole('admin') && !$user->restaurant_id))
+                    ->nullable(),
+                TextInput::make('password')
+                    ->password()
+                    ->required(fn(string $context): bool => $context === 'create')
+                    ->maxLength(255),
+                Select::make('roles')
+                    ->disabled(!$user || !($user->hasRole('admin') && !$user->restaurant_id))
+                    ->multiple()
+                    ->relationship('roles', 'name')
+                    ->preload(),
             ]);
     }
 
@@ -34,9 +62,14 @@ class UserResource extends BaseResource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')->sortable(),
-                Tables\Columns\TextColumn::make('restaurant_id'),
+                Tables\Columns\TextColumn::make('restaurant.name')
+                    ->label('Restaurant')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('email'),
+                Tables\Columns\IconColumn::make('email_verified_at')
+                    ->label('Verified')
+                    ->boolean(),
             ])
             ->filters([
                 //
