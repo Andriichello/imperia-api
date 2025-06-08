@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Enums\Hotness;
+use App\Enums\WeightUnit;
 use App\Filament\BaseResource;
 use App\Filament\Fields\RestaurantSelect;
 use App\Filament\Resources\ProductResource\Pages;
@@ -45,8 +46,8 @@ class ProductResource extends BaseResource
                     ->required(),
                 TextInput::make('weight')
                     ->maxLength(255),
-                TextInput::make('weight_unit')
-                    ->maxLength(255),
+                Select::make('weight_unit')
+                    ->options(array_flip(WeightUnit::getMap())),
                 TextInput::make('badge')
                     ->maxLength(255),
                 Toggle::make('archived')
