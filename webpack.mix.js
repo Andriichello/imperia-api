@@ -42,7 +42,7 @@ mix.ts('resources/js/app.ts', 'public/js')
     ],
     open: false
   })
-;
+  .version();
 
 // In development, let's see source maps
 if (!mix.inProduction()) {
