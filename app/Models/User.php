@@ -10,6 +10,8 @@ use App\Queries\UserQueryBuilder;
 use App\Traits\StaticMethodsAccess;
 use Carbon\Carbon;
 use Database\Factories\UserFactory;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -50,7 +52,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static UserQueryBuilder query()
  * @method static UserFactory factory(...$parameters)
  */
-class User extends Authenticatable implements SoftDeletableInterface
+class User extends Authenticatable implements SoftDeletableInterface, FilamentUser
 {
     use StaticMethodsAccess;
     use SoftDeletableTrait;
@@ -279,6 +281,17 @@ class User extends Authenticatable implements SoftDeletableInterface
     public function newEloquentBuilder($query): UserQueryBuilder
     {
         return new UserQueryBuilder($query);
+    }
+
+    /**
+     * @param Panel $panel
+     *
+     * @return bool
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->isStaff();
     }
 
     /**
