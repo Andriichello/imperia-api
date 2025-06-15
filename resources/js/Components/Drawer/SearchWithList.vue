@@ -316,7 +316,7 @@
 <!--        </div>-->
       </template>
 
-      <div class="flex justify-start gap-x-2 gap-y-1 normal-case text-[12px] pt-2 pb-1 px-2 overflow-x-auto no-scrollbar min-h-[38px]"
+      <div class="w-fit max-w-full flex justify-start gap-x-2 gap-y-1 normal-case text-[12px] pt-2 pb-1 px-2 overflow-x-auto no-scrollbar min-h-[38px] self-center"
            v-if="hasHotness || hasLowCalorie || hasHighCalorie || hasVegetarian || hasVegan || hasLactoseFree || hasDairyFree || hasPlantMilk || hasHighProtein || hasLowFat || hasHighFat || hasAllergens">
         <!-- Hotness -->
         <div
