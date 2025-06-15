@@ -1,4 +1,8 @@
 {
+  "clipboard": {
+    "copied": "Copied",
+    "failed": "Failed to copy"
+  },
   "restaurant": {
     "title": "Restaurant",
     "cafe_title": "Café",

@@ -85,8 +85,8 @@
 
   function copyToClipboard(text: string) {
     navigator.clipboard.writeText(text)
-      .then(() => alert("Data copied"))
-      .catch(() => alert("Failed to copy"));
+      .then(() => alert(i18n.t('clipboard.copied')))
+      .catch(() => alert(i18n.t('clipboard.failed')));
   }
 </script>
 
