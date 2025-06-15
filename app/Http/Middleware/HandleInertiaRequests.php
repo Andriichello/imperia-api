@@ -30,4 +30,19 @@ class HandleInertiaRequests extends Middleware
             'supported_locales' => config('app.supported_locales'),
         ]);
     }
+
+    /**
+     * Determines the current asset version.
+     *
+     * @see https://inertiajs.com/asset-versioning
+     *
+     * @param Request $request
+     *
+     * @return string|null
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function version(Request $request): ?string
+    {
+        return env('NEW_UI_VERSION') ?? now()->format('d.m.Y H:00');
+    }
 }
