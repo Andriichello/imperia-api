@@ -4,7 +4,6 @@
  * imperia-api
  * OpenAPI spec version: 0.1
  */
-import type { DishMetadata } from "./dishMetadata";
 import type { DishVariant } from "./dishVariant";
 import type { DishMenu } from "./dishMenu";
 import type { DishCategory } from "./dishCategory";
@@ -24,6 +23,8 @@ export interface Dish {
   title: string;
   /** @nullable */
   description: string | null;
+  /** @nullable */
+  badge: string | null;
   price: number;
   /** @nullable */
   weight: string | null;
@@ -33,13 +34,11 @@ export interface Dish {
   calories: number | null;
   /** @nullable */
   preparation_time: number | null;
-  /** @nullable */
-  badge: string | null;
   archived: boolean;
   /** @nullable */
   popularity: number | null;
   /** @nullable */
-  metadata: DishMetadata;
+  flags: string[] | null;
   variants: DishVariant[];
   menu?: DishMenu;
   category?: DishCategory;

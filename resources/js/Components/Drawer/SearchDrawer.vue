@@ -49,6 +49,7 @@
 
   function close() {
     searchQuery.value = "";
+    tag.value = null;
     hasResults.value = false;
     emits('close');
   }

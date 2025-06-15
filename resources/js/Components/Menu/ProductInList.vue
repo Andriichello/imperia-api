@@ -4,7 +4,7 @@ import {Dish, DishVariant, Media} from "@/api";
   import {ref, computed, PropType} from "vue";
   import {priceFormatted, weightUnitFormatted} from "@/helpers";
   import DiagonalPattern from "@/Components/Base/DiagonalPattern.vue";
-  import {Timer, Flame, Vegan, Leaf, Nut, EggFried, Salad} from "lucide-vue-next";
+  import {Timer, Flame, Vegan, Leaf, Nut, EggFried, Salad, Milk, Droplet, DropletOff, Dumbbell, MilkOff, TriangleAlert } from "lucide-vue-next";
   import { useI18n } from "vue-i18n";
 
   const i18n = useI18n();
@@ -49,6 +49,8 @@ import {Dish, DishVariant, Media} from "@/api";
       price: props.product.price,
       weight: props.product.weight,
       weight_unit: props.product.weight_unit,
+      calories: props.product.calories,
+      preparation_time: props.product.preparation_time,
     };
 
     variants.push(base);
@@ -108,6 +110,17 @@ import {Dish, DishVariant, Media} from "@/api";
 
     return props.product!.preparation_time;
   });
+
+  const allergens = computed(() => {
+    if (!props.product.flags) return [];
+    return props.product.flags.filter(flag => flag.startsWith('alg-'));
+  });
+
+  const getAllergenTranslation = (allergen: string) => {
+    // Remove 'alg-' prefix to get the allergen name
+    const allergenName = allergen.replace('alg-', '');
+    return i18n.t(`badges.${allergenName}`);
+  };
 
   const variantWeight = (variant: Partial<DishVariant>) => {
     return variant.weight + ' '
@@ -171,61 +184,151 @@ import {Dish, DishVariant, Media} from "@/api";
         </p>
       </div>
 
-      <div class="card-actions justify-between items-end">
-        <div class="flex flex-wrap gap-x-3 gap-y-0.5 normal-case text-[12px] text-base-content/60">
-          <div v-if="preparationTime" class="flex flex-row justify-center items-center gap-1">
+      <div class="card-actions justify-between items-end gap-0">
+        <div class="w-full flex flex-wrap gap-x-3 gap-y-0.5 normal-case text-[12px] text-base-content/60">
+          <!-- Allergens - Combined Badge -->
+          <div v-if="allergens.length > 0" class="relative tooltip">
+            <div @click="toggleAllergensList" class="flex flex-row justify-center items-center gap-1 cursor-pointer text-orange-600/75 border border-1 border-dashed border-orange-600/75 pl-1 pr-2 rounded-sm opacity-80">
+              <TriangleAlert class="w-4 h-4"/>
+              <p class="font-semibold pt-0.5">
+                {{ i18n.t('badges.allergens') }}
+              </p>
+            </div>
+
+            <!-- Allergens Popover -->
+            <div class="tooltip-content absolute z-4 rounded-sm bg-base-100 text-orange-600 border-orange-600 border-1 border-dashed">
+              <div class="flex flex-col gap-x-2 gap-y-0.5">
+                <div v-for="allergen in allergens" :key="allergen" class="flex flex-row items-start opacity-80">
+                  <p class="text-start font-semibold text-[12px] pb-0.5">
+                    - {{ getAllergenTranslation(allergen) }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div v-if="preparationTime" class="flex flex-row justify-center items-center gap-1 opacity-70">
             <Timer class="w-4 h-4"/>
             <p class="font-semibold pt-0.5">
               {{ i18n.t('badges.time', { minutes: preparationTime }) }}
             </p>
           </div>
 
-          <div v-if="calories" class="flex flex-row justify-center items-center gap-1">
+          <div v-if="calories" class="flex flex-row justify-center items-center gap-1 opacity-70">
             <Flame class="w-4 h-4"/>
             <p class="font-semibold pt-0.5">
               {{ i18n.t('badges.calories', { calories: calories }) }}
             </p>
           </div>
+        </div>
 
-          <div v-if="product.is_vegan" class="flex flex-row justify-center items-center gap-1 text-green-800">
+        <div class="flex flex-wrap gap-x-3 gap-y-0.5 normal-case text-[12px] text-base-content/60 opacity-70 mt-1">
+          <div v-if="product.flags?.includes('vegan')" class="flex flex-row justify-center items-center gap-1">
             <Vegan class="w-4 h-4"/>
             <p class="font-semibold pt-0.5">
               {{ i18n.t('badges.vegan') }}
             </p>
           </div>
 
-          <div v-if="product.is_low_calorie" class="flex flex-row justify-center items-center gap-1 text-green-800">
+          <div v-if="product.flags?.includes('low_calorie')" class="flex flex-row justify-center items-center gap-1">
             <Salad class="w-4 h-4"/>
             <p class="font-semibold pt-0.5">
               {{ i18n.t('badges.low_calorie') }}
             </p>
           </div>
 
-          <div v-if="product.is_vegetarian" class="flex flex-row justify-center items-center gap-1 text-green-800">
+          <div v-if="product.flags?.includes('vegetarian')" class="flex flex-row justify-center items-center gap-1">
             <Leaf class="w-4 h-4"/>
             <p class="font-semibold pt-0.5">
               {{ i18n.t('badges.vegetarian') }}
             </p>
           </div>
 
-          <div v-if="product.has_nuts" class="flex flex-row justify-center items-center gap-1 text-orange-900">
+          <div v-if="product.flags?.includes('nuts')" class="flex flex-row justify-center items-center gap-1">
             <Nut class="w-4 h-4"/>
             <p class="font-semibold pt-0.5">
               {{ i18n.t('badges.nuts') }}
             </p>
           </div>
 
-          <div v-if="product.has_eggs" class="flex flex-row justify-center items-center gap-1 text-yellow-500">
+          <div v-if="product.flags?.includes('eggs')" class="flex flex-row justify-center items-center gap-1">
             <EggFried class="w-4 h-4"/>
             <p class="font-semibold pt-0.5">
               {{ i18n.t('badges.eggs') }}
             </p>
           </div>
 
-          <div v-if="product.hotness" class="flex flex-row justify-center items-center gap-1 text-red-500">
+          <div v-if="product.flags?.find((flag: string) => flag?.endsWith('hotness'))" class="flex flex-row justify-center items-center gap-1">
             <Flame class="w-4 h-4"/>
             <p class="font-semibold pt-0.5">
-              {{ i18n.t('badges.hot') }} {{ i18n.t(`badges.hotness.${product.hotness}`) }}
+              <template v-if="product.flags?.includes('extreme-hotness')">
+                {{ i18n.t('badges.extreme_hot') }}
+              </template>
+              <template v-else-if="product.flags?.includes('high-hotness')">
+                {{ i18n.t('badges.high_hot') }}
+              </template>
+              <template v-else-if="product.flags?.includes('medium-hotness')">
+                {{ i18n.t('badges.medium_hot') }}
+              </template>
+              <template v-else-if="product.flags?.includes('low-hotness')">
+                {{ i18n.t('badges.low_hot') }}
+              </template>
+              <template v-else>
+                {{ i18n.t('badges.hot') }}
+              </template>
+            </p>
+          </div>
+
+          <!-- Lactose related -->
+          <div v-if="product.flags?.includes('lactose-free')" class="flex flex-row justify-center items-center gap-1">
+            <Milk class="w-4 h-4"/>
+            <p class="font-semibold pt-0.5">
+              {{ i18n.t('badges.lactose_free') }}
+            </p>
+          </div>
+
+          <div v-if="product.flags?.includes('dairy-free')" class="flex flex-row justify-center items-center gap-1">
+            <MilkOff class="w-4 h-4"/>
+            <p class="font-semibold pt-0.5">
+              {{ i18n.t('badges.dairy_free') }}
+            </p>
+          </div>
+
+          <div v-if="product.flags?.includes('plant-milk')" class="flex flex-row justify-center items-center gap-1">
+            <Milk class="w-4 h-4"/>
+            <p class="font-semibold pt-0.5">
+              {{ i18n.t('badges.plant_milk') }}
+            </p>
+          </div>
+
+          <!-- Calorie related -->
+          <div v-if="product.flags?.includes('high-calorie')" class="flex flex-row justify-center items-center gap-1">
+            <Flame class="w-4 h-4"/>
+            <p class="font-semibold pt-0.5">
+              {{ i18n.t('badges.high_calorie') }}
+            </p>
+          </div>
+
+          <!-- Protein related -->
+          <div v-if="product.flags?.includes('high-protein')" class="flex flex-row justify-center items-center gap-1">
+            <Dumbbell class="w-4 h-4"/>
+            <p class="font-semibold pt-0.5">
+              {{ i18n.t('badges.high_protein') }}
+            </p>
+          </div>
+
+          <!-- Fat related -->
+          <div v-if="product.flags?.includes('low-fat')" class="flex flex-row justify-center items-center gap-1">
+            <DropletOff class="w-4 h-4"/>
+            <p class="font-semibold pt-0.5">
+              {{ i18n.t('badges.low_fat') }}
+            </p>
+          </div>
+
+          <div v-if="product.flags?.includes('high-fat')" class="flex flex-row justify-center items-center gap-1">
+            <Droplet class="w-4 h-4"/>
+            <p class="font-semibold pt-0.5">
+              {{ i18n.t('badges.high_fat') }}
             </p>
           </div>
         </div>

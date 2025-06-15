@@ -10892,15 +10892,15 @@
                     "slug",
                     "title",
                     "description",
+                    "badge",
                     "price",
                     "weight",
                     "weight_unit",
                     "calories",
                     "preparation_time",
-                    "badge",
                     "archived",
                     "popularity",
-                    "metadata",
+                    "flags",
                     "variants"
                 ],
                 "properties": {
@@ -10935,6 +10935,11 @@
                         "example": "Some text...",
                         "nullable": true
                     },
+                    "badge": {
+                        "type": "string",
+                        "example": "New",
+                        "nullable": true
+                    },
                     "price": {
                         "type": "number",
                         "format": "float",
@@ -10960,11 +10965,6 @@
                         "example": 30,
                         "nullable": true
                     },
-                    "badge": {
-                        "type": "string",
-                        "example": "New",
-                        "nullable": true
-                    },
                     "archived": {
                         "type": "boolean",
                         "example": false
@@ -10974,8 +10974,11 @@
                         "example": 1,
                         "nullable": true
                     },
-                    "metadata": {
-                        "type": "object",
+                    "flags": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
                         "nullable": true
                     },
                     "variants": {

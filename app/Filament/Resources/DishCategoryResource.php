@@ -40,8 +40,6 @@ class DishCategoryResource extends BaseResource
                     ->searchable(),
                 TextInput::make('slug')
                     ->maxLength(255),
-                TextInput::make('target')
-                    ->maxLength(255),
                 TextInput::make('title')
                     ->required()
                     ->maxLength(255),
@@ -65,8 +63,6 @@ class DishCategoryResource extends BaseResource
                     ->label('Menu')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('title')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('target')
                     ->searchable(),
                 Tables\Columns\IconColumn::make('archived')
                     ->label('Live')

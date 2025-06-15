@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\ProductFlag;
 use App\Enums\WeightUnit;
 use App\Filament\BaseResource;
 use App\Filament\Resources\DishResource\Pages;
@@ -15,6 +16,8 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 /**
  * Class DishResource.
@@ -34,6 +37,12 @@ class DishResource extends BaseResource
 
     public static function form(Form $form): Form
     {
+        $flags = [];
+
+        foreach (ProductFlag::getMap() as $flag) {
+            $flags[$flag] = $flag;
+        }
+
         return $form
             ->schema([
                 Select::make('menu_id')
@@ -86,6 +95,10 @@ class DishResource extends BaseResource
                 TextInput::make('popularity')
                     ->numeric()
                     ->nullable(),
+                Select::make('flags')
+                    ->multiple()
+                    ->searchable()
+                    ->options($flags),
             ]);
     }
 

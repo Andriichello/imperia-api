@@ -3,12 +3,14 @@
 namespace App\Models;
 
 use App\Models\Interfaces\ArchivableInterface;
+use App\Models\Interfaces\FlaggableInterface;
 use App\Models\Interfaces\LoggableInterface;
 use App\Models\Interfaces\MediableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Scopes\ArchivedScope;
 use App\Models\Scopes\SoftDeletableScope;
 use App\Models\Traits\ArchivableTrait;
+use App\Models\Traits\FlaggableTrait;
 use App\Models\Traits\LoggableTrait;
 use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
@@ -46,12 +48,14 @@ class Dish extends BaseModel implements
     SoftDeletableInterface,
     ArchivableInterface,
     LoggableInterface,
-    MediableInterface
+    MediableInterface,
+    FlaggableInterface
 {
     use SoftDeletableTrait;
     use ArchivableTrait;
     use LoggableTrait;
     use MediableTrait;
+    use FlaggableTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -71,6 +75,17 @@ class Dish extends BaseModel implements
         'archived',
         'popularity',
         'metadata',
+        'flags',
+    ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var string[]
+     */
+    protected $appends = [
+        'type',
+        'flags',
     ];
 
     /**

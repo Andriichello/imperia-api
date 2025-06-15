@@ -55,7 +55,6 @@ export * from "./dishIncludes";
 export * from "./dishMenu";
 export * from "./dishMenuIncludes";
 export * from "./dishMenuMetadata";
-export * from "./dishMetadata";
 export * from "./dishVariant";
 export * from "./dishVariantIncludes";
 export * from "./familyMember";
