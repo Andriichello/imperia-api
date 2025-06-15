@@ -10,7 +10,7 @@
     MapPin,
     Phone,
   } from 'lucide-vue-next';
-  import {Menu, Restaurant} from "@/api";
+  import {Media, Menu, Restaurant} from "@/api";
   import Schedule from "@/Components/Restaurant/Schedule.vue";
   import {getScheduleInfo, ScheduleInfo, time} from "@/helpers";
   import { useI18n } from 'vue-i18n';
@@ -29,13 +29,21 @@
   const emits = defineEmits(['open-menu', 'open-phone', 'open-address']);
 
   const i18n = useI18n();
+
+  const media = computed<Media[]>(() => {
+    return props.restaurant.media.map((m: Media) => {
+      const webp = m?.variants.find((v: Media) => v.extension === 'webp');
+      return webp ?? m;
+    })
+  });
+
   const slideOptions = ref({
     perPage: 1,
     perMove: 1,
     rewind: false,
     rewindByDrag: false,
-    drag: (props.restaurant!.media?.length ?? 0) > 1,
-    arrows: (props.restaurant!.media?.length ?? 0) > 1,
+    drag: (media.value?.length ?? 0) > 1,
+    arrows: (media.value?.length ?? 0) > 1,
     pagination: true,
   });
 
@@ -86,10 +94,10 @@
   <div class="w-full h-full min-h-screen max-w-screen flex flex-col justify-start items-center bg-base-200/80 pb-20">
     <div class="w-full max-w-md flex flex-col justify-start items-center relative">
       <Splide class="w-full h-75" :options="slideOptions"
-              v-if="restaurant!.media?.length > 0">
-        <SplideSlide v-for="(media, index) in restaurant!.media ?? []" :key="media.id">
+              v-if="media?.length > 0">
+        <SplideSlide v-for="(m, index) in media ?? []" :key="m.id">
           <img class="w-full h-75 object-cover object-center"
-               :src="media.url" alt=""
+               :src="m.url" alt=""
                :loading="index === 0 ? 'eager' : 'lazy'"/>
         </SplideSlide>
       </Splide>

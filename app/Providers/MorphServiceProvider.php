@@ -4,6 +4,10 @@ namespace App\Providers;
 
 use App\Models\Banquet;
 use App\Models\Customer;
+use App\Models\Dish;
+use App\Models\DishCategory;
+use App\Models\DishMenu;
+use App\Models\DishVariant;
 use App\Models\FamilyMember;
 use App\Models\Holiday;
 use App\Models\Menu;
@@ -22,13 +26,13 @@ use App\Models\Orders\SpaceOrderField;
 use App\Models\Orders\TicketOrderField;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\Restaurant;
 use App\Models\RestaurantReview;
 use App\Models\Schedule;
 use App\Models\Service;
 use App\Models\Space;
 use App\Models\Ticket;
 use App\Models\User;
-use App\Models\Restaurant;
 use App\Models\Waiter;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
@@ -94,6 +98,13 @@ class MorphServiceProvider extends ServiceProvider
         LoggableStub::class,
         PeriodicalStub::class,
         TaggableStub::class,
+
+        /** Items */
+        Dish::class,
+        DishMenu::class,
+        DishCategory::class,
+        /** Items (additional) */
+        DishVariant::class,
     ];
 
     /**

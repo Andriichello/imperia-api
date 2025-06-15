@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import {Dish, DishVariant} from "@/api";
+import {Dish, DishVariant, Media} from "@/api";
   import {Splide, SplideSlide} from "@splidejs/vue-splide";
   import {ref, computed, PropType} from "vue";
   import {priceFormatted, weightUnitFormatted} from "@/helpers";
@@ -27,6 +27,13 @@
       type: Boolean as PropType<boolean>,
       default: false,
     }
+  });
+
+  const media = computed<Media[]>(() => {
+    return props.product.media.map((m: Media) => {
+      const webp = m?.variants.find((v: Media) => v.extension === 'webp');
+      return webp ?? m;
+    })
   });
 
   const variants = computed<Partial<DishVariant>[]>(() => {
@@ -116,13 +123,13 @@
                     perMove: 1,
                     rewind: false,
                     rewindByDrag: false,
-                    drag: !preview && Number(product.media!.length) > 1,
-                    arrows: !preview && Number(product.media!.length) > 1,
+                    drag: !preview && Number(media!.length) > 1,
+                    arrows: !preview && !(Number(media!.length)<=1),
                     pagination: !preview,
                   }">
-          <SplideSlide v-for="(media, index) in (preview ? [product.media[0]] : product.media)" :key="media.id">
+          <SplideSlide v-for="(m, index) in (preview ? [media[0]] : media)" :key="m.id">
             <img class="w-full h-45 object-cover object-center rounded-t border-none"
-                 :src="media.url" alt=""
+                 :src="m.url" alt=""
                  :loading="index === 0 ? 'eager' : 'lazy'"/>
           </SplideSlide>
         </Splide>
