@@ -4,6 +4,7 @@ namespace App\Policies\Base;
 
 use App\Http\Requests\CrudRequest;
 use App\Http\Requests\Interfaces\WithTargetInterface;
+use App\Models\BaseModel;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Database\Eloquent\Model;
@@ -132,6 +133,10 @@ abstract class CrudPolicy implements CrudPolicyInterface
     {
         if ($user->isAdmin() && !$user->restaurant_id) {
             return true;
+        }
+
+        if ($target instanceof BaseModel) {
+            return $user->restaurant_id === $target->getRestaurantId();
         }
 
         $attributes = $target->only('restaurant_id');

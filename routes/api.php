@@ -7,6 +7,10 @@ use App\Http\Controllers\Model\BanquetController;
 use App\Http\Controllers\Model\CategoryController;
 use App\Http\Controllers\Model\CommentController;
 use App\Http\Controllers\Model\CustomerController;
+use App\Http\Controllers\Model\DishCategoryController;
+use App\Http\Controllers\Model\DishController;
+use App\Http\Controllers\Model\DishMenuController;
+use App\Http\Controllers\Model\DishVariantController;
 use App\Http\Controllers\Model\FamilyMemberController;
 use App\Http\Controllers\Model\MediaController;
 use App\Http\Controllers\Model\MenuController;
@@ -49,6 +53,30 @@ Route::group(['as' => 'api.'], function () {
 
     Route::get('status/list', [StatusController::class, 'list'])
         ->name('status.list');
+
+    Route::prefix('dishes')
+        ->name('dishes.')
+        ->group(function () {
+            Route::apiResource('menus', DishMenuController::class)
+                ->only('index', 'show')
+                ->parameters(['menus' => 'id'])
+                ->middleware('cached:dish-menus');
+
+            Route::apiResource('categories', DishCategoryController::class)
+                ->only('index', 'show')
+                ->parameters(['categories' => 'id'])
+                ->middleware('cached:dish-categories');
+
+            Route::apiResource('variants', DishVariantController::class)
+                ->only('index', 'show')
+                ->parameters(['variants' => 'id'])
+                ->middleware('cached:dish-variants');
+        });
+
+    Route::apiResource('dishes', DishController::class)
+        ->only('index', 'show')
+        ->parameters(['dishes' => 'id'])
+        ->middleware('cached:dishes');
 
     Route::apiResource('menus', MenuController::class)
         ->only('index', 'show')

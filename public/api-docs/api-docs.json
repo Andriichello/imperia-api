@@ -1430,6 +1430,808 @@
                 ]
             }
         },
+        "/api/dishes/categories": {
+            "get": {
+                "tags": [
+                    "dish.categories"
+                ],
+                "summary": "Index dish categories.",
+                "operationId": "indexDishCategories",
+                "parameters": [
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/DishCategoryIncludes"
+                        }
+                    },
+                    {
+                        "name": "page[size]",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/PageSize"
+                        }
+                    },
+                    {
+                        "name": "page[number]",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/PageNumber"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Available sorts: `popularity` (is default, but in descending order)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "-popularity"
+                    },
+                    {
+                        "name": "filter[menu_id]",
+                        "in": "query",
+                        "description": "Menu ID to filter categories by.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1"
+                    },
+                    {
+                        "name": "filter[target]",
+                        "in": "query",
+                        "description": "Target class morph slug. Examples: `dishes`",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "dishes"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Index dish categories response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IndexDishCategoryResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/dishes/categories/{id}": {
+            "get": {
+                "tags": [
+                    "dish.categories"
+                ],
+                "summary": "Show dish category by id.",
+                "operationId": "showDishCategory",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the dish category.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/DishCategoryIncludes"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Show dish category response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ShowDishCategoryResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/dishes": {
+            "get": {
+                "tags": [
+                    "dish.dishes"
+                ],
+                "summary": "Index dishes.",
+                "operationId": "indexDishes",
+                "parameters": [
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/DishIncludes"
+                        }
+                    },
+                    {
+                        "name": "page[size]",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/PageSize"
+                        }
+                    },
+                    {
+                        "name": "page[number]",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/PageNumber"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Available sorts: `popularity` (is default, but in descending order)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "-popularity"
+                    },
+                    {
+                        "name": "filter[ids]",
+                        "in": "query",
+                        "description": "Coma-separated list of dish ids.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1,2,3"
+                    },
+                    {
+                        "name": "filter[title]",
+                        "in": "query",
+                        "description": "Can be used for searches. Is partial.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "Mojito"
+                    },
+                    {
+                        "name": "filter[menu_id]",
+                        "in": "query",
+                        "description": "Menu ID to filter dishes by.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1"
+                    },
+                    {
+                        "name": "filter[category_id]",
+                        "in": "query",
+                        "description": "Category ID to filter dishes by.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "2"
+                    },
+                    {
+                        "name": "archived",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/ArchivedParameter"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Index dishes response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IndexDishResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "dish.dishes"
+                ],
+                "summary": "Store dish.",
+                "operationId": "storeDish",
+                "requestBody": {
+                    "description": "Store dish request object.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreDishRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Create dish response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StoreDishResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/dishes/{id}": {
+            "get": {
+                "tags": [
+                    "dish.dishes"
+                ],
+                "summary": "Show dish by id.",
+                "operationId": "showDish",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the dish.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/DishIncludes"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Show dish response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ShowDishResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "dish.dishes"
+                ],
+                "summary": "Delete dish.",
+                "operationId": "destroyDish",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the dish.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "description": "Delete dish request object.",
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DestroyRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Delete dish response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/DestroyDishResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "dish.dishes"
+                ],
+                "summary": "Update dish.",
+                "operationId": "updateDish",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the dish.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "description": "Update dish request object.",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateDishRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update dish response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UpdateDishResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/dishes/{id}/restore": {
+            "post": {
+                "tags": [
+                    "dish.dishes"
+                ],
+                "summary": "Restore dish.",
+                "operationId": "restoreDish",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the dish.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Restore dish response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RestoreDishResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/dishes/menus": {
+            "get": {
+                "tags": [
+                    "dish.menus"
+                ],
+                "summary": "Index dish menus.",
+                "operationId": "indexDishMenus",
+                "parameters": [
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/DishMenuIncludes"
+                        }
+                    },
+                    {
+                        "name": "page[size]",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/PageSize"
+                        }
+                    },
+                    {
+                        "name": "page[number]",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/PageNumber"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Available sorts: `popularity` (is default, but in descending order)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "-popularity"
+                    },
+                    {
+                        "name": "filter[restaurants]",
+                        "in": "query",
+                        "description": "Coma-separated array of restaurant ids. Limits menus to those\n     * that are attached at least to one of those restaurants",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1"
+                    },
+                    {
+                        "name": "archived",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/ArchivedParameter"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Index dish menus response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IndexDishMenuResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/dishes/menus/{id}": {
+            "get": {
+                "tags": [
+                    "dish.menus"
+                ],
+                "summary": "Show dish menu by id.",
+                "operationId": "showDishMenu",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the dish menu.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/DishMenuIncludes"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Show dish menu response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ShowDishMenuResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/dishes/variants": {
+            "get": {
+                "tags": [
+                    "dish.variants"
+                ],
+                "summary": "Index dish variants.",
+                "operationId": "indexDishVariants",
+                "parameters": [
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/DishVariantIncludes"
+                        }
+                    },
+                    {
+                        "name": "page[size]",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/PageSize"
+                        }
+                    },
+                    {
+                        "name": "page[number]",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/PageNumber"
+                        }
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "description": "Available sorts: `price` (is default)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "price"
+                    },
+                    {
+                        "name": "filter[ids]",
+                        "in": "query",
+                        "description": "Coma-separated list of dish variant ids.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1,2,3"
+                    },
+                    {
+                        "name": "filter[dish_id]",
+                        "in": "query",
+                        "description": "Dish ID to filter variants by.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Index dish variants response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IndexDishVariantResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/dishes/variants/{id}": {
+            "get": {
+                "tags": [
+                    "dish.variants"
+                ],
+                "summary": "Show dish variant by id.",
+                "operationId": "showDishVariant",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the dish variant.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "include",
+                        "in": "query",
+                        "schema": {
+                            "$ref": "#/components/schemas/DishVariantIncludes"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Show dish variant response object.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ShowDishVariantResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/family-members": {
             "get": {
                 "tags": [
@@ -6029,6 +6831,254 @@
                 },
                 "type": "object"
             },
+            "IndexDishCategoryResponse": {
+                "description": "Index dish categories response object.",
+                "required": [
+                    "data",
+                    "meta",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DishCategory"
+                        }
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/PaginationMeta"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "ShowDishCategoryResponse": {
+                "description": "Show dish category response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/DishCategory"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "DishCategoryIncludes": {
+                "description": "Coma-separated list of inluded relations.\n     *       Available relations: `menu`, `media`",
+                "type": "string",
+                "example": "menu"
+            },
+            "IndexDishResponse": {
+                "description": "Index dishes response object.",
+                "required": [
+                    "data",
+                    "meta",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Dish"
+                        }
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/PaginationMeta"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "ShowDishResponse": {
+                "description": "Show dish response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Dish"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "StoreDishResponse": {
+                "description": "Store dish response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Dish"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Created"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateDishResponse": {
+                "description": "Update dish response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Dish"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "DestroyDishResponse": {
+                "description": "Delete dish response object.",
+                "required": [
+                    "message"
+                ],
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "example": "Deleted"
+                    }
+                },
+                "type": "object"
+            },
+            "RestoreDishResponse": {
+                "description": "Restore dish response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/Dish"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "DishIncludes": {
+                "description": "Coma-separated list of inluded relations.\n     *       Available relations: `menu`, `category`, `variants`, `media`",
+                "type": "string",
+                "example": "menu,category,variants"
+            },
+            "IndexDishMenuResponse": {
+                "description": "Index dish menus response object.",
+                "required": [
+                    "data",
+                    "meta",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DishMenu"
+                        }
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/PaginationMeta"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "ShowDishMenuResponse": {
+                "description": "Show dish menu response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/DishMenu"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "DishMenuIncludes": {
+                "description": "Coma-separated list of inluded relations.\n     *       Available relations: `dishes`, `categories`, `restaurant`, `media`",
+                "type": "string",
+                "example": "dishes,categories"
+            },
+            "IndexDishVariantResponse": {
+                "description": "Index dish variants response object.",
+                "required": [
+                    "data",
+                    "meta",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DishVariant"
+                        }
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/PaginationMeta"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "ShowDishVariantResponse": {
+                "description": "Show dish variant response object.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/DishVariant"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "DishVariantIncludes": {
+                "description": "Coma-separated list of inluded relations.\n     *       Available relations: `dish`",
+                "type": "string",
+                "example": "dish"
+            },
             "IndexFamilyMemberResponse": {
                 "description": "Index family members response object.",
                 "required": [
@@ -7843,6 +8893,159 @@
                 },
                 "type": "object"
             },
+            "StoreDishRequest": {
+                "description": "Store dish request.",
+                "required": [
+                    "menu_id",
+                    "title",
+                    "price"
+                ],
+                "properties": {
+                    "menu_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "category_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "slug": {
+                        "description": "Must be unique within the menu.",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "badge": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Tomato Soup"
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "price": {
+                        "type": "number",
+                        "example": 125
+                    },
+                    "weight": {
+                        "type": "number",
+                        "example": 200
+                    },
+                    "weight_unit": {
+                        "type": "string",
+                        "enum": [
+                            "g",
+                            "kg",
+                            "ml",
+                            "l",
+                            "cm",
+                            "pc"
+                        ],
+                        "example": "g"
+                    },
+                    "calories": {
+                        "type": "integer",
+                        "example": 500,
+                        "nullable": true
+                    },
+                    "preparation_time": {
+                        "type": "integer",
+                        "example": 30,
+                        "nullable": true
+                    },
+                    "archived": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "popularity": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "metadata": {
+                        "type": "object",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateDishRequest": {
+                "description": "Update dish request.",
+                "properties": {
+                    "menu_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "category_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "slug": {
+                        "description": "Must be unique within the menu.",
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "badge": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Tomato Soup"
+                    },
+                    "description": {
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "price": {
+                        "type": "number",
+                        "example": 125
+                    },
+                    "weight": {
+                        "type": "number",
+                        "example": 200
+                    },
+                    "weight_unit": {
+                        "type": "string",
+                        "enum": [
+                            "g",
+                            "kg",
+                            "ml",
+                            "l",
+                            "cm",
+                            "pc"
+                        ],
+                        "example": "g"
+                    },
+                    "calories": {
+                        "type": "integer",
+                        "example": 500,
+                        "nullable": true
+                    },
+                    "preparation_time": {
+                        "type": "integer",
+                        "example": 30,
+                        "nullable": true
+                    },
+                    "archived": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "popularity": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "metadata": {
+                        "type": "object",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
             "StoreFamilyMemberRequest": {
                 "description": "Store family member request",
                 "required": [
@@ -9526,6 +10729,324 @@
                         "type": "number",
                         "format": "float",
                         "example": 25.5,
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "DishCategory": {
+                "description": "Dish category resource object",
+                "required": [
+                    "id",
+                    "menu_id",
+                    "type",
+                    "slug",
+                    "target",
+                    "title",
+                    "description",
+                    "archived",
+                    "popularity",
+                    "metadata"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "menu_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "dish-categories"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "appetizers",
+                        "nullable": true
+                    },
+                    "target": {
+                        "type": "string",
+                        "example": "dishes",
+                        "nullable": true
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Appetizers"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Small dishes to start your meal",
+                        "nullable": true
+                    },
+                    "archived": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "popularity": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "metadata": {
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "menu": {
+                        "$ref": "#/components/schemas/DishMenu"
+                    },
+                    "media": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Media"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "DishMenu": {
+                "description": "Dish menu resource object",
+                "required": [
+                    "id",
+                    "restaurant_id",
+                    "type",
+                    "slug",
+                    "title",
+                    "description",
+                    "archived",
+                    "popularity",
+                    "metadata"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "restaurant_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "dish-menus"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "lunch-menu",
+                        "nullable": true
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Lunch Menu"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Available from 12pm to 3pm",
+                        "nullable": true
+                    },
+                    "archived": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "popularity": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "metadata": {
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "dishes": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Dish"
+                        }
+                    },
+                    "categories": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DishCategory"
+                        }
+                    },
+                    "restaurant": {
+                        "$ref": "#/components/schemas/Restaurant"
+                    },
+                    "media": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Media"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "Dish": {
+                "description": "Dish resource object",
+                "required": [
+                    "id",
+                    "menu_id",
+                    "category_id",
+                    "type",
+                    "slug",
+                    "title",
+                    "description",
+                    "price",
+                    "weight",
+                    "weight_unit",
+                    "calories",
+                    "preparation_time",
+                    "badge",
+                    "archived",
+                    "popularity",
+                    "metadata",
+                    "variants"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "menu_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "category_id": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "dishes"
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "margarita",
+                        "nullable": true
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "Margarita"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Some text...",
+                        "nullable": true
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 15.99
+                    },
+                    "weight": {
+                        "type": "string",
+                        "example": "120",
+                        "nullable": true
+                    },
+                    "weight_unit": {
+                        "type": "string",
+                        "example": "g",
+                        "nullable": true
+                    },
+                    "calories": {
+                        "type": "integer",
+                        "example": 500,
+                        "nullable": true
+                    },
+                    "preparation_time": {
+                        "type": "integer",
+                        "example": 30,
+                        "nullable": true
+                    },
+                    "badge": {
+                        "type": "string",
+                        "example": "New",
+                        "nullable": true
+                    },
+                    "archived": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "popularity": {
+                        "type": "integer",
+                        "example": 1,
+                        "nullable": true
+                    },
+                    "metadata": {
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "variants": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DishVariant"
+                        }
+                    },
+                    "menu": {
+                        "$ref": "#/components/schemas/DishMenu"
+                    },
+                    "category": {
+                        "$ref": "#/components/schemas/DishCategory"
+                    },
+                    "media": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Media"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "DishVariant": {
+                "description": "Dish variant resource object",
+                "required": [
+                    "id",
+                    "dish_id",
+                    "type",
+                    "price",
+                    "weight",
+                    "weight_unit",
+                    "calories",
+                    "preparation_time"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "dish_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "type": {
+                        "type": "string",
+                        "example": "dish-variants"
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 15.99
+                    },
+                    "weight": {
+                        "type": "string",
+                        "example": "120",
+                        "nullable": true
+                    },
+                    "weight_unit": {
+                        "type": "string",
+                        "example": "g",
+                        "nullable": true
+                    },
+                    "calories": {
+                        "type": "integer",
+                        "example": 500,
+                        "nullable": true
+                    },
+                    "preparation_time": {
+                        "type": "integer",
+                        "example": 30,
                         "nullable": true
                     }
                 },
@@ -11439,6 +12960,22 @@
         {
             "name": "discounts",
             "description": "discounts"
+        },
+        {
+            "name": "dish.categories",
+            "description": "dish.categories"
+        },
+        {
+            "name": "dish.dishes",
+            "description": "dish.dishes"
+        },
+        {
+            "name": "dish.menus",
+            "description": "dish.menus"
+        },
+        {
+            "name": "dish.variants",
+            "description": "dish.variants"
         },
         {
             "name": "family-members",
