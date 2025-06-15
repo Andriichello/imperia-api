@@ -73,10 +73,8 @@ RUN curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php \
     && composer install -o -n --no-dev
 
 RUN npm ci --audit false \
-    && npm run prod
-
-# Install Filament.
-RUN php artisan filament:install --forms -n
+    && npm run prod \
+    && php artisan vendor:publish --force --tag=livewire:assets
 
 # Expose HTTP and HTTPS ports.
 EXPOSE 80 443
