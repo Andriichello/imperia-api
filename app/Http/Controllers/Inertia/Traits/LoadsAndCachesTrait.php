@@ -22,7 +22,7 @@ trait LoadsAndCachesTrait
      *
      * @return Restaurant|null
      */
-    protected function loadAndCacheRestaurant(int|string|null $idOrSlug, int $ttl = 300): ?Restaurant
+    protected function loadAndCacheRestaurant(int|string|null $idOrSlug, int $ttl = 5): ?Restaurant
     {
         if (is_null($idOrSlug)) {
             return null;
@@ -43,7 +43,7 @@ trait LoadsAndCachesTrait
      *
      * @return Collection<int, Menu>
      */
-    protected function loadAndCacheMenus(Restaurant $restaurant, int $ttl = 300): Collection
+    protected function loadAndCacheMenus(Restaurant $restaurant, int $ttl = 5): Collection
     {
         $key = 'inertia_menus_for_' . $restaurant->id;
         $callback = fn() => $restaurant->menus
@@ -62,7 +62,7 @@ trait LoadsAndCachesTrait
      *
      * @return Collection<int, Product>
      */
-    protected function loadAndCacheProducts(Restaurant|int $restaurant, int $ttl = 300): Collection
+    protected function loadAndCacheProducts(Restaurant|int $restaurant, int $ttl = 5): Collection
     {
         if (is_numeric($restaurant)) {
             $restaurant = new Restaurant(['id' => $restaurant]);
@@ -115,7 +115,7 @@ trait LoadsAndCachesTrait
      *
      * @return Collection<int, Product>
      */
-    protected function loadAndCacheProductsFor(Menu|int $menu, int $ttl = 300): Collection
+    protected function loadAndCacheProductsFor(Menu|int $menu, int $ttl = 5): Collection
     {
         if (is_numeric($menu)) {
             $menu = new Menu(['id' => $menu]);

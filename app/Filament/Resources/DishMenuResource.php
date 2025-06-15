@@ -4,8 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\BaseResource;
 use App\Filament\Fields\RestaurantSelect;
-use App\Filament\Resources\MenuResource\Pages;
-use App\Models\Menu;
+use App\Filament\Resources\DishMenuResource\Pages;
+use App\Models\DishMenu;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -14,15 +14,20 @@ use Filament\Tables;
 use Filament\Tables\Table;
 
 /**
- * Class MenuResource.
+ * Class DishMenuResource.
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class MenuResource extends BaseResource
+class DishMenuResource extends BaseResource
 {
-    protected static ?string $model = Menu::class;
+    protected static ?string $model = DishMenu::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
+    protected static ?string $navigationIcon = 'heroicon-o-book-open';
+
+    protected static ?string $navigationGroup = 'Dish Management';
+
+    protected static ?string $modelLabel = 'Menu';
+
 
     public static function form(Form $form): Form
     {
@@ -56,8 +61,6 @@ class MenuResource extends BaseResource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('slug')
-                    ->searchable(),
                 Tables\Columns\IconColumn::make('archived')
                     ->label('Live')
                     ->alignCenter()
@@ -66,8 +69,6 @@ class MenuResource extends BaseResource
                     ->trueColor('danger')
                     ->falseIcon('heroicon-o-check-circle')
                     ->falseColor('success'),
-                Tables\Columns\TextColumn::make('popularity')
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
@@ -95,9 +96,9 @@ class MenuResource extends BaseResource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListMenus::route('/'),
-            'create' => Pages\CreateMenu::route('/create'),
-            'edit' => Pages\EditMenu::route('/{record}/edit'),
+            'index' => Pages\ListDishMenus::route('/'),
+            'create' => Pages\CreateDishMenu::route('/create'),
+            'edit' => Pages\EditDishMenu::route('/{record}/edit'),
         ];
     }
 }

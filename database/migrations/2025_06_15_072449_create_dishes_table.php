@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('slug')->nullable();
             $table->string('title');
             $table->string('description')->nullable();
+            $table->string('badge', 25)->nullable();
             $table->decimal('price')->unsigned();
             $table->string('weight')->nullable();
             $table->string('weight_unit', 50)->nullable();

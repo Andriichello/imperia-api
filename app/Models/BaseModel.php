@@ -4,9 +4,11 @@ namespace App\Models;
 
 use App\Models\Interfaces\JsonFieldInterface;
 use App\Models\Traits\JsonFieldTrait;
+use App\Queries\BaseQueryBuilder;
 use App\Traits\StaticMethodsAccess;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder as DatabaseBuilder;
 
 /**
  * Class BaseModel.
@@ -15,6 +17,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $type
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
+ * @method static BaseQueryBuilder query()
  */
 class BaseModel extends Model implements JsonFieldInterface
 {
@@ -48,5 +52,15 @@ class BaseModel extends Model implements JsonFieldInterface
     public function getRestaurantId(): ?int
     {
         return data_get($this, 'restaurant_id');
+    }
+
+    /**
+     * @param DatabaseBuilder $query
+     *
+     * @return BaseQueryBuilder
+     */
+    public function newEloquentBuilder($query): BaseQueryBuilder
+    {
+        return new BaseQueryBuilder($query);
     }
 }

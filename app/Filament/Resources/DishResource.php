@@ -2,12 +2,12 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\Hotness;
 use App\Enums\WeightUnit;
 use App\Filament\BaseResource;
-use App\Filament\Fields\RestaurantSelect;
-use App\Filament\Resources\ProductResource\Pages;
-use App\Models\Product;
+use App\Filament\Resources\DishResource\Pages;
+use App\Models\Dish;
+use App\Models\DishCategory;
+use App\Models\DishMenu;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -17,22 +17,46 @@ use Filament\Tables;
 use Filament\Tables\Table;
 
 /**
- * Class ProductResource.
+ * Class DishResource.
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class ProductResource extends BaseResource
+class DishResource extends BaseResource
 {
-    protected static ?string $model = Product::class;
+    protected static ?string $model = Dish::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
+    protected static ?string $navigationIcon = 'heroicon-o-cake';
+
+    protected static ?string $navigationGroup = 'Dish Management';
+
+    protected static ?string $modelLabel = 'Dish';
+
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                RestaurantSelect::make()
-                    ->required(),
+                Select::make('menu_id')
+                    ->label('Menu')
+                    ->options(DishMenu::all()->pluck('title', 'id'))
+                    ->required()
+                    ->searchable()
+                    ->live()
+                    ->afterStateUpdated(fn (callable $set) => $set('category_id', null)),
+                Select::make('category_id')
+                    ->label('Category')
+                    ->options(function (callable $get) {
+                        $menuId = $get('menu_id');
+
+                        if (!$menuId) {
+                            return [];
+                        }
+
+                        return DishCategory::query()
+                            ->where('menu_id', $menuId)
+                            ->pluck('title', 'id');
+                    })
+                    ->searchable(),
                 TextInput::make('slug')
                     ->maxLength(255),
                 TextInput::make('title')
@@ -50,35 +74,17 @@ class ProductResource extends BaseResource
                     ->options(array_flip(WeightUnit::getMap())),
                 TextInput::make('badge')
                     ->maxLength(255),
-                Toggle::make('archived')
-                    ->default(false),
-                TextInput::make('popularity')
+                TextInput::make('calories')
                     ->numeric()
                     ->nullable(),
                 TextInput::make('preparation_time')
                     ->label('Preparation Time (minutes)')
                     ->numeric()
                     ->nullable(),
-                TextInput::make('calories')
+                Toggle::make('archived')
+                    ->default(false),
+                TextInput::make('popularity')
                     ->numeric()
-                    ->nullable(),
-                Toggle::make('is_vegan')
-                    ->label('Vegan')
-                    ->default(false),
-                Toggle::make('is_vegetarian')
-                    ->label('Vegetarian')
-                    ->default(false),
-                Toggle::make('is_low_calorie')
-                    ->label('Low Calorie')
-                    ->default(false),
-                Toggle::make('has_eggs')
-                    ->label('Contains Eggs')
-                    ->default(false),
-                Toggle::make('has_nuts')
-                    ->label('Contains Nuts')
-                    ->default(false),
-                Select::make('hotness')
-                    ->options(Hotness::getValues())
                     ->nullable(),
             ]);
     }
@@ -88,8 +94,11 @@ class ProductResource extends BaseResource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')->sortable(),
-                Tables\Columns\TextColumn::make('restaurant.name')
-                    ->label('Restaurant')
+                Tables\Columns\TextColumn::make('menu.title')
+                    ->label('Menu')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('category.title')
+                    ->label('Category')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
@@ -106,13 +115,6 @@ class ProductResource extends BaseResource
                     ->trueColor('danger')
                     ->falseIcon('heroicon-o-check-circle')
                     ->falseColor('success'),
-                Tables\Columns\IconColumn::make('is_vegan')
-                    ->label('Vegan')
-                    ->icon('heroicon-o-check')
-                    ->boolean(),
-                Tables\Columns\IconColumn::make('is_vegetarian')
-                    ->label('Vegetarian')
-                    ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
@@ -140,9 +142,9 @@ class ProductResource extends BaseResource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListProducts::route('/'),
-            'create' => Pages\CreateProduct::route('/create'),
-            'edit' => Pages\EditProduct::route('/{record}/edit'),
+            'index' => Pages\ListDishes::route('/'),
+            'create' => Pages\CreateDish::route('/create'),
+            'edit' => Pages\EditDish::route('/{record}/edit'),
         ];
     }
 }

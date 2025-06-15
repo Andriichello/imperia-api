@@ -3,9 +3,10 @@
 namespace App\Filament\Resources;
 
 use App\Filament\BaseResource;
-use App\Filament\Fields\RestaurantSelect;
-use App\Filament\Resources\MenuResource\Pages;
-use App\Models\Menu;
+use App\Filament\Resources\DishCategoryResource\Pages;
+use App\Models\DishCategory;
+use App\Models\DishMenu;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -14,23 +15,32 @@ use Filament\Tables;
 use Filament\Tables\Table;
 
 /**
- * Class MenuResource.
+ * Class DishCategoryResource.
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class MenuResource extends BaseResource
+class DishCategoryResource extends BaseResource
 {
-    protected static ?string $model = Menu::class;
+    protected static ?string $model = DishCategory::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
+    protected static ?string $navigationIcon = 'heroicon-o-tag';
+
+    protected static ?string $navigationGroup = 'Dish Management';
+
+    protected static ?string $modelLabel = 'Category';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                RestaurantSelect::make()
-                    ->required(),
+                Select::make('menu_id')
+                    ->label('Menu')
+                    ->options(DishMenu::all()->pluck('title', 'id'))
+                    ->required()
+                    ->searchable(),
                 TextInput::make('slug')
+                    ->maxLength(255),
+                TextInput::make('target')
                     ->maxLength(255),
                 TextInput::make('title')
                     ->required()
@@ -51,12 +61,12 @@ class MenuResource extends BaseResource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')->sortable(),
-                Tables\Columns\TextColumn::make('restaurant.name')
-                    ->label('Restaurant')
+                Tables\Columns\TextColumn::make('menu.title')
+                    ->label('Menu')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('slug')
+                Tables\Columns\TextColumn::make('target')
                     ->searchable(),
                 Tables\Columns\IconColumn::make('archived')
                     ->label('Live')
@@ -66,8 +76,6 @@ class MenuResource extends BaseResource
                     ->trueColor('danger')
                     ->falseIcon('heroicon-o-check-circle')
                     ->falseColor('success'),
-                Tables\Columns\TextColumn::make('popularity')
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
@@ -95,9 +103,9 @@ class MenuResource extends BaseResource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListMenus::route('/'),
-            'create' => Pages\CreateMenu::route('/create'),
-            'edit' => Pages\EditMenu::route('/{record}/edit'),
+            'index' => Pages\ListDishCategories::route('/'),
+            'create' => Pages\CreateDishCategory::route('/create'),
+            'edit' => Pages\EditDishCategory::route('/{record}/edit'),
         ];
     }
 }

@@ -42,7 +42,7 @@ class CategoryResource extends BaseResource
                     ->required()
                     ->maxLength(255),
                 Textarea::make('description')
-                    ->maxLength(65535)
+                    ->maxLength(1020)
                     ->columnSpanFull(),
                 Toggle::make('archived')
                     ->default(false),
