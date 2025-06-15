@@ -75,6 +75,9 @@ RUN curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php \
 RUN npm ci --audit false \
     && npm run prod
 
+# Install Filament.
+RUN php artisan filament:install --forms -n
+
 # Expose HTTP and HTTPS ports.
 EXPOSE 80 443
 

@@ -13,8 +13,6 @@ php artisan storage:link
 php artisan cache:clear
 php artisan route:cache
 
-php artisan filament:install --forms -n
-
 # Create /var/run/php if it doesn't exist
 if [ ! -d "/var/run/php" ]; then
     mkdir -p /var/run/php
