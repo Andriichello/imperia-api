@@ -39,6 +39,8 @@ class DishVariant extends BaseModel implements
         'price',
         'weight',
         'weight_unit',
+        'calories',
+        'preparation_time',
     ];
 
     /**

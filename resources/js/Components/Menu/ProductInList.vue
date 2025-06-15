@@ -93,13 +93,25 @@ import {Dish, DishVariant, Media} from "@/api";
     return priceFormatted(price, props.currency?.toLowerCase() ?? 'uah');
   });
 
+  const calories = computed(() => {
+    if (selectedVariant.value?.id) {
+      return selectedVariant.value?.calories;
+    }
+
+    return props.product!.calories;
+  });
+
+  const preparationTime = computed(() => {
+    if (selectedVariant.value?.id) {
+      return selectedVariant.value?.preparation_time;
+    }
+
+    return props.product!.preparation_time;
+  });
+
   const variantWeight = (variant: Partial<DishVariant>) => {
     return variant.weight + ' '
       + (weightUnitFormatted((variant?.id ? variant.weight_unit : props.product!.weight_unit) ?? ''));
-  };
-
-  const variantPrice = (variant: Partial<DishVariant>) => {
-    return priceFormatted(variant.price, props.currency?.toLowerCase() ?? 'uah');
   };
 
   const selectVariant = (variant: Partial<DishVariant> | null) => {
@@ -161,17 +173,17 @@ import {Dish, DishVariant, Media} from "@/api";
 
       <div class="card-actions justify-between items-end">
         <div class="flex flex-wrap gap-x-3 gap-y-0.5 normal-case text-[12px] text-base-content/60">
-          <div v-if="product.preparation_time" class="flex flex-row justify-center items-center gap-1">
+          <div v-if="preparationTime" class="flex flex-row justify-center items-center gap-1">
             <Timer class="w-4 h-4"/>
             <p class="font-semibold pt-0.5">
-              {{ i18n.t('badges.time', { minutes: product.preparation_time }) }}
+              {{ i18n.t('badges.time', { minutes: preparationTime }) }}
             </p>
           </div>
 
-          <div v-if="product.calories" class="flex flex-row justify-center items-center gap-1">
+          <div v-if="calories" class="flex flex-row justify-center items-center gap-1">
             <Flame class="w-4 h-4"/>
             <p class="font-semibold pt-0.5">
-              {{ i18n.t('badges.calories', { calories: product.calories }) }}
+              {{ i18n.t('badges.calories', { calories: calories }) }}
             </p>
           </div>
 
