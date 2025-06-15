@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import {Product, ProductVariant} from "@/api";
+  import {Dish, DishVariant} from "@/api";
   import {Splide, SplideSlide} from "@splidejs/vue-splide";
   import {ref, computed, PropType} from "vue";
   import {priceFormatted, weightUnitFormatted} from "@/helpers";
@@ -11,7 +11,7 @@
 
   const props = defineProps({
     product: {
-      type: Object as PropType<Product>,
+      type: Object as PropType<Dish>,
       required: true,
     },
     currency: {
@@ -29,7 +29,7 @@
     }
   });
 
-  const variants = computed<Partial<ProductVariant>[]>(() => {
+  const variants = computed<Partial<DishVariant>[]>(() => {
     if (!props.product.variants || !props.product.variants.length) {
       return null;
     }
@@ -38,7 +38,7 @@
     const base = {
       id: null,
       type: 'variants',
-      product_id: props.product.id,
+      dish_id: props.product.id,
       price: props.product.price,
       weight: props.product.weight,
       weight_unit: props.product.weight_unit,
@@ -57,7 +57,7 @@
     });
   });
 
-  const selectedVariant = ref<Partial<ProductVariant> | null>(
+  const selectedVariant = ref<Partial<DishVariant> | null>(
     variants.value?.find((_) => true)
   );
 
@@ -86,16 +86,16 @@
     return priceFormatted(price, props.currency?.toLowerCase() ?? 'uah');
   });
 
-  const variantWeight = (variant: Partial<ProductVariant>) => {
+  const variantWeight = (variant: Partial<DishVariant>) => {
     return variant.weight + ' '
       + (weightUnitFormatted((variant?.id ? variant.weight_unit : props.product!.weight_unit) ?? ''));
   };
 
-  const variantPrice = (variant: Partial<ProductVariant>) => {
+  const variantPrice = (variant: Partial<DishVariant>) => {
     return priceFormatted(variant.price, props.currency?.toLowerCase() ?? 'uah');
   };
 
-  const selectVariant = (variant: Partial<ProductVariant> | null) => {
+  const selectVariant = (variant: Partial<DishVariant> | null) => {
     selectedVariant.value = variant;
   };
 </script>

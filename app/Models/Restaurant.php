@@ -15,6 +15,7 @@ use DateTimeZone;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
 
@@ -58,6 +59,10 @@ use Illuminate\Support\Collection;
  * @property RestaurantReview[]|Collection $reviews
  * @property Waiter[]|Collection $waiters
  * @property Tip[]|Collection $tips
+ *
+ * @property DishMenu[]|Collection $dishMenus
+ * @property DishCategory[]|Collection $dishCategories
+ * @property Dish[]|Collection $dishes
  *
  * @method static RestaurantQueryBuilder query()
  * @method static RestaurantFactory factory(...$parameters)
@@ -116,6 +121,9 @@ class Restaurant extends BaseModel implements
         'reviews',
         'waiters',
         'tips',
+        'dishMenus',
+        'dishCategories',
+        'dishes',
     ];
 
     /**
@@ -254,6 +262,50 @@ class Restaurant extends BaseModel implements
     public function tips(): HasMany
     {
         return $this->hasMany(Tip::class, 'restaurant_id', 'id');
+    }
+
+    /**
+     * Dish menus associated with the model.
+     *
+     * @return HasMany
+     */
+    public function dishMenus(): HasMany
+    {
+        return $this->hasMany(DishMenu::class);
+    }
+
+    /**
+     * Dish categories associated with the model.
+     *
+     * @return HasManyThrough
+     */
+    public function dishCategories(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            DishCategory::class,
+            DishMenu::class,
+            'restaurant_id',
+            'menu_id',
+            'id',
+            'id'
+        );
+    }
+
+    /**
+     * Dish categories associated with the model.
+     *
+     * @return HasManyThrough
+     */
+    public function dishes(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Dish::class,
+            DishMenu::class,
+            'restaurant_id',
+            'menu_id',
+            'id',
+            'id'
+        );
     }
 
     /**

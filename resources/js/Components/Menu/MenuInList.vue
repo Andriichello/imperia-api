@@ -1,20 +1,17 @@
 <script setup lang="ts">
-  import {Category, Menu, Product} from "@/api";
+  import {DishMenu, Dish, DishCategory} from "@/api";
   import CategoryInList from "@/Components/Menu/CategoryInList.vue";
   import {PropType} from "vue";
-  import {Expand} from "lucide-vue-next";
-  import ProductInList from "@/Components/Menu/ProductInList.vue";
-  import LoadingProductInList from "@/Components/Menu/LoadingProductInList.vue";
 
   const emits = defineEmits(['switch-menu', 'switch-category']);
 
   const props = defineProps({
     menu: {
-      type: Object as PropType<Menu>,
+      type: Object as PropType<DishMenu>,
       required: true,
     },
     products: {
-      type: Array as PropType<Product[]>,
+      type: Array as PropType<Dish[]>,
       required: true,
     },
     closed: {
@@ -32,12 +29,12 @@
     },
   });
 
-  const categoryProducts = (menu: Menu, category: Category) =>
+  const categoryProducts = (menu: DishMenu, category: DishCategory) =>
     props.products.filter(
-      (p: Product) => p.category_ids.includes(category.id)
+      (p: Dish) => p.category_id === category.id
     )
 
-  const switchCategory = (category: Category) => {
+  const switchCategory = (category: DishCategory) => {
     emits('switch-category', category);
   }
 </script>

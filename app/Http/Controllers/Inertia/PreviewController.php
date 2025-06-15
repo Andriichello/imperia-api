@@ -4,8 +4,9 @@ namespace App\Http\Controllers\Inertia;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Inertia\Traits\LoadsAndCachesTrait;
-use App\Http\Resources\Menu\MenuCollection;
-use App\Http\Resources\Product\ProductCollection;
+use App\Http\Resources\Dish\DishCollection;
+use App\Http\Resources\Dish\DishMenuCollection;
+use App\Http\Resources\Dish\DishMenuResource;
 use App\Http\Resources\Restaurant\RestaurantResource;
 use App\Models\Menu;
 use Illuminate\Http\RedirectResponse;
@@ -69,9 +70,9 @@ class PreviewController extends Controller
 
         return Inertia::render('Preview', [
             'restaurant' => new RestaurantResource($restaurant),
-            'menus' => new MenuCollection($menus),
+            'menus' => new DishMenuCollection($menus),
             'products' => Inertia::defer(
-                fn() => new ProductCollection($this->loadAndCacheProducts($restaurant))
+                fn() => new DishCollection($this->loadAndCacheDishes($restaurant))
             ),
 //            'products' => Inertia::defer(
 //                function () use ($restaurant) {

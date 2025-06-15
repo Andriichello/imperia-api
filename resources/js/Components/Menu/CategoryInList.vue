@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import {Category, Product} from "@/api";
+import {Category, Dish, DishCategory, Product} from "@/api";
   import ProductInList from "@/Components/Menu/ProductInList.vue";
   import {PropType} from "vue";
   import {useI18n} from "vue-i18n";
@@ -8,11 +8,11 @@
 
   const props = defineProps({
     category: {
-      type: Object as PropType<Category>,
+      type: Object as PropType<DishCategory>,
       required: true,
     },
     products: {
-      type: Array as PropType<Product[]>,
+      type: Array as PropType<Dish[]>,
       required: true,
     },
     establishment: {

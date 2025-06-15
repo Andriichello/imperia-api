@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import BaseDrawer from "@/Components/Drawer/BaseDrawer.vue";
   import { ref, watch, PropType, nextTick } from "vue";
-  import { Restaurant, Category, Menu, Product } from "@/api";
+  import { Restaurant, DishCategory, DishMenu, Dish } from "@/api";
   import SearchWithList from "@/Components/Drawer/SearchWithList.vue";
 
   const props = defineProps({
@@ -14,12 +14,12 @@
       required: true,
     },
     menus: {
-      type: Array as PropType<Menu[] | null>,
+      type: Array as PropType<DishMenu[] | null>,
       required: false,
       default: null,
     },
     products:{
-      type: Array as PropType<Product[] | null>,
+      type: Array as PropType<Dish[] | null>,
       required: false,
       default: null,
     },
@@ -57,17 +57,17 @@
     hasResults.value = has;
   }
 
-  function openMenu(menu: Menu) {
+  function openMenu(menu: DishMenu) {
     emits('open-menu', menu);
     close();
   }
 
-  function openCategory(category: Category, menu: Menu) {
+  function openCategory(category: DishCategory, menu: DishMenu) {
     emits('open-category', category, menu);
     close();
   }
 
-  function openProduct(product: Product, category: Category, menu: Menu) {
+  function openProduct(product: Dish, category: DishCategory, menu: DishMenu) {
     emits('open-product', product, category, menu);
     close();
   }

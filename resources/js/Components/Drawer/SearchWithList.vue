@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import {ref, watch, computed, PropType, nextTick, onUnmounted} from "vue";
-  import { Restaurant, Category, Menu, Product } from "@/api";
+  import { Restaurant, DishCategory, DishMenu, Dish } from "@/api";
   import {EggFried, Flame, Leaf, Nut, Salad, Search, Timer, Vegan, X} from "lucide-vue-next";
   import { useI18n } from "vue-i18n";
   import ProductInList from "@/Components/Menu/ProductInList.vue";
@@ -18,12 +18,12 @@
       required: true,
     },
     menus: {
-      type: Array as PropType<Menu[] | null>,
+      type: Array as PropType<DishMenu[] | null>,
       required: false,
       default: null,
     },
     products:{
-      type: Array as PropType<Product[] | null>,
+      type: Array as PropType<Dish[] | null>,
       required: false,
       default: null,
     },
@@ -50,11 +50,11 @@
   const tag = ref<string>(null);
 
   const hasHotness = computed(() => {
-    return !!props.products?.find((p: Product) => !!p.hotness);
+    return !!props.products?.find((p: Dish) => !!p.hotness);
   });
 
   const hasVegan = computed(() => {
-    return !!props.products?.find((p: Product) => p.is_vegan);
+    return !!props.products?.find((p: Dish) => p.is_vegan);
   });
 
   const hasVegetarian = computed(() => {
@@ -62,14 +62,14 @@
       return true;
     }
 
-    return !!props.products?.find((p: Product) => p.is_vegetarian);
+    return !!props.products?.find((p: Dish) => p.is_vegetarian);
   });
 
   const hasLowCalorie = computed(() => {
-    return !!props.products?.find((p: Product) => p.is_low_calorie);
+    return !!props.products?.find((p: Dish) => p.is_low_calorie);
   });
 
-  const filteredMenus = computed<Menu[]>(() => {
+  const filteredMenus = computed<DishMenu[]>(() => {
     if (!searchQuery.value || tag.value !== null) {
       return [];
     }
@@ -80,12 +80,12 @@
     ) ?? [];
   });
 
-  const filteredCategories = computed<Category[]>(() => {
+  const filteredCategories = computed<DishCategory[]>(() => {
     if (!searchQuery.value || tag.value !== null) {
       return [];
     }
 
-    const filtered: Category[] = [];
+    const filtered: DishCategory[] = [];
 
     props.menus?.forEach(menu => {
       menu.categories.forEach(category => {
@@ -101,12 +101,12 @@
     return filtered;
   });
 
-  const filteredProducts = computed<Product[]>(() => {
+  const filteredProducts = computed<Dish[]>(() => {
     if (!searchQuery.value && !tag.value?.length) {
       return [];
     }
 
-    const filtered: Product[] = [];
+    const filtered: Dish[] = [];
 
     props.products?.forEach(product => {
       const matchesTag = !tag.value?.length || hasTag(product, tag.value);
@@ -123,7 +123,7 @@
     return filtered;
   });
 
-  const hasTag = (product: Product, tag: string): boolean => {
+  const hasTag = (product: Dish, tag: string): boolean => {
     if (tag === 'hotness') {
       return product.hotness !== null;
     }
@@ -155,24 +155,24 @@
     tag.value = null;
   }
 
-  function openMenu(menu: Menu) {
+  function openMenu(menu: DishMenu) {
     emits('open-menu', menu);
   }
 
-  function openCategory(category: Category) {
-    const menu: Menu | null = props.menus?.find((menu: Menu) => menu.categories.includes(category));
+  function openCategory(category: DishCategory) {
+    const menu: DishMenu | null = props.menus?.find((menu: DishMenu) => menu.categories.includes(category));
 
     if (menu) {
       emits('open-category', category, menu);
     }
   }
 
-  function openProduct(product: Product) {
+  function openProduct(product: Dish) {
     const menu = props.menus?.find(
-      (m: Menu) => !!m.categories.find((c: Category) => product.category_ids.includes(c.id))
+      (m: DishMenu) => !!m.categories.find((c: DishCategory) => product.category_id === c.id)
     );
     const category = menu?.categories?.find(
-      (c: Category) => product.category_ids.includes(c.id)
+      (c: DishCategory) => product.category_id === c.id
     );
 
     emits('open-product', product, category, menu);

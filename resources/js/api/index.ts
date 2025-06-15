@@ -20,3 +20,7 @@ export * from "./services/users";
 export * from "./services/waiters";
 export * from "./services/invoices";
 export * from "./models";
+export * from "./services/dish-categories";
+export * from "./services/dish-dishes";
+export * from "./services/dish-menus";
+export * from "./services/dish-variants";

@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import {ref, PropType, onMounted, onUnmounted, watch, computed} from "vue";
-  import {Category, Menu, Product, Restaurant} from "@/api";
+  import {DishCategory, DishMenu, Dish, Restaurant} from "@/api";
   import {Deferred, router} from "@inertiajs/vue3";
   import NavBar from "@/Components/Base/NavBar.vue";
   import SearchDrawer from "@/Components/Drawer/SearchDrawer.vue";
@@ -15,9 +15,6 @@
   import CategoryNavBar from "@/Components/Menu/CategoryNavBar.vue";
   import {getScheduleInfo, ScheduleInfo} from "@/helpers";
   import {useScrollLock} from "@/composables/useScrollLock";
-  import ProductInList from "@/Components/Menu/ProductInList.vue";
-  import LoadingProductInList from "@/Components/Menu/LoadingProductInList.vue";
-  import LoadingCategoryInList from "@/Components/Menu/LoadingCategoryInList.vue";
   import LoadingMenuInList from "@/Components/Menu/LoadingMenuInList.vue";
 
   const props = defineProps({
@@ -26,11 +23,11 @@
       required: true,
     },
     menus: {
-      type: Array as PropType<Menu[]>,
+      type: Array as PropType<DishMenu[]>,
       required: true,
     },
     products: {
-      type: Array as PropType<Product[]>,
+      type: Array as PropType<Dish[]>,
       default: null,
     },
     locale: {
@@ -159,7 +156,7 @@
 
   function findMenu(menuId: string|number|null) {
     if (menuId !== null) {
-      return props.menus.find((m: Menu) => Number(m.id) === menuId)
+      return props.menus.find((m: DishMenu) => Number(m.id) === menuId)
     }
 
     return null;
@@ -194,11 +191,11 @@
     return null;
   }
 
-  const selectedMenu = ref<Menu>();
-  const selectedCategory = ref<Category | null>();
-  const selectedProduct = ref<Product | null>();
+  const selectedMenu = ref<DishMenu>();
+  const selectedCategory = ref<DishCategory | null>();
+  const selectedProduct = ref<Dish | null>();
 
-  const switchMenu = (menu: Menu, force: boolean = false) => {
+  const switchMenu = (menu: DishMenu, force: boolean = false) => {
     // Only update if it's a different menu
     if (force || menu.id !== selectedMenu.value?.id) {
       const basePath = window.location.pathname.split('/menu/')[0];
@@ -233,7 +230,7 @@
     }
   };
 
-  const switchCategory = (category: Category, product: Product | null = null) => {
+  const switchCategory = (category: DishCategory, product: Dish | null = null) => {
     // Only update if it's a different menu
     if (category.id !== selectedCategory.value?.id) {
       // Update the URL in the browser without a page reload
@@ -392,7 +389,7 @@
     lastScrollPosition.value = scrollPosition;
   };
 
-  const scrollToCategory = (category: Category, product: Product | null = null) => {
+  const scrollToCategory = (category: DishCategory, product: Dish | null = null) => {
     const divider = document.getElementById('category-' + category.id);
 
     if ((shouldNotScroll.value === 0 || (Date.now() - shouldNotScroll.value) > 100) && divider) {
@@ -448,7 +445,7 @@
     shouldNotScroll.value = 0;
   }
 
-  const onSwitchMenu = (menu: Menu) => {
+  const onSwitchMenu = (menu: DishMenu) => {
     if (mode.value !== 'menu') {
       mode.value = 'menu';
     }
@@ -457,7 +454,7 @@
 
     switchMenu(menu, true);
   }
-  const onSwitchCategory = (category: Category, menu: Menu = selectedMenu.value) => {
+  const onSwitchCategory = (category: DishCategory, menu: DishMenu = selectedMenu.value) => {
     if (mode.value !== 'menu') {
       mode.value = 'menu';
     }
@@ -474,7 +471,7 @@
     }, 200);
   }
 
-  const onSwitchProduct = (product: Product, category: Category, menu: Menu = selectedMenu.value) => {
+  const onSwitchProduct = (product: Dish, category: DishCategory, menu: DishMenu = selectedMenu.value) => {
     if (mode.value !== 'menu') {
       mode.value = 'menu';
     }
@@ -523,7 +520,7 @@
   }
 
   //  Event handlers for Drawers
-  const onOpenMenu = (menu: Menu) => {
+  const onOpenMenu = (menu: DishMenu) => {
     isSearchOpened.value = false;
     mode.value = 'menu';
 
@@ -541,7 +538,7 @@
     });
   }
 
-  const onOpenCategory = (category: Category, menu: Menu = null) => {
+  const onOpenCategory = (category: DishCategory, menu: DishMenu = null) => {
     isSearchOpened.value = false;
 
     menu = menu ?? findMenu(menuId.value);
@@ -560,7 +557,7 @@
     });
   }
 
-  const onOpenProduct = (product: Product, category: Category, menu: Menu = null) => {
+  const onOpenProduct = (product: Dish, category: DishCategory, menu: DishMenu = null) => {
     isSearchOpened.value = false;
     menu = menu ?? findMenu(menuId.value);
 
@@ -757,5 +754,3 @@
     opacity: 0;
   }
 </style>
-
-
