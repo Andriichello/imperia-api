@@ -13,6 +13,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Class DishVariantResource.
@@ -69,9 +70,13 @@ class DishVariantResource extends BaseResource
                     ->money($user?->restaurant?->currency ?? 'UAH')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('weight')
-                    ->searchable(),
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->where('dish_variants.weight', 'like', "%{$search}%");
+                    }),
                 Tables\Columns\TextColumn::make('weight_unit')
-                    ->searchable(),
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->where('dish_variants.weight_unit', 'like', "%{$search}%");
+                    }),
                 Tables\Columns\TextColumn::make('calories')
                     ->numeric()
                     ->sortable(),

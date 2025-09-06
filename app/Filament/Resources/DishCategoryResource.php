@@ -13,6 +13,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Class DishCategoryResource.
@@ -63,7 +64,9 @@ class DishCategoryResource extends BaseResource
                     ->label('Menu')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('title')
-                    ->searchable(),
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->where('dish_categories.title', 'like', "%{$search}%");
+                    }),
                 Tables\Columns\IconColumn::make('archived')
                     ->label('Live')
                     ->alignCenter()

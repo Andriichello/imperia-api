@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\BaseResource;
 use App\Filament\Resources\RestaurantResource\Pages;
 use App\Models\Restaurant;
+use App\Filament\Forms\Components\MediaAttachmentField;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -55,7 +56,7 @@ class RestaurantResource extends BaseResource
                     ->maxLength(255),
                 Select::make('timezone')
                     ->searchable()
-                    ->options(\DateTimeZone::listIdentifiers())
+                    ->options(array_combine(\DateTimeZone::listIdentifiers(), \DateTimeZone::listIdentifiers()))
                     ->required(),
                 TextInput::make('popularity')
                     ->numeric()
@@ -66,6 +67,15 @@ class RestaurantResource extends BaseResource
                     ->maxLength(255),
                 TextInput::make('locale')
                     ->maxLength(10),
+                MediaAttachmentField::make('media')
+                    ->label('Restaurant Images')
+                    ->modelType('restaurants')
+                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                    ->maxFiles(5)
+                    ->maxSize(2048)
+                    ->preview(true)
+                    ->multiple(true)
+                    ->columnSpanFull(),
             ]);
     }
 

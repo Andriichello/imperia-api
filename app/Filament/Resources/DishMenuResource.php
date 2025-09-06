@@ -12,6 +12,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Class DishMenuResource.
@@ -60,7 +61,9 @@ class DishMenuResource extends BaseResource
                     ->label('Restaurant')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('title')
-                    ->searchable(),
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->where('dish_menus.title', 'like', "%{$search}%");
+                    }),
                 Tables\Columns\IconColumn::make('archived')
                     ->label('Live')
                     ->alignCenter()

@@ -10,6 +10,7 @@ use App\Models\Dish;
 use App\Models\DishCategory;
 use App\Models\DishMenu;
 use App\Models\User;
+use App\Filament\Forms\Components\MediaAttachmentField;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -17,6 +18,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Class DishResource.
@@ -98,6 +100,15 @@ class DishResource extends BaseResource
                     ->multiple()
                     ->searchable()
                     ->options($flags),
+                MediaAttachmentField::make('media')
+                    ->label('Dish Images')
+                    ->modelType('dishes')
+                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                    ->maxFiles(5)
+                    ->maxSize(2048)
+                    ->preview(true)
+                    ->multiple(true)
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -111,17 +122,29 @@ class DishResource extends BaseResource
                 Tables\Columns\TextColumn::make('id')->sortable(),
                 Tables\Columns\TextColumn::make('menu.title')
                     ->label('Menu')
-                    ->searchable(),
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->whereHas('menu', function (Builder $q) use ($search): void {
+                            $q->where('dish_menus.title', 'like', "%{$search}%");
+                        });
+                    }),
                 Tables\Columns\TextColumn::make('category.title')
                     ->label('Category')
-                    ->searchable(),
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->whereHas('category', function (Builder $q) use ($search): void {
+                            $q->where('dish_categories.title', 'like', "%{$search}%");
+                        });
+                    }),
                 Tables\Columns\TextColumn::make('title')
-                    ->searchable(),
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->where('dishes.title', 'like', "%{$search}%");
+                    }),
                 Tables\Columns\TextColumn::make('price')
                     ->money($user?->restaurant?->currency ?? 'UAH')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('weight')
-                    ->searchable(),
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query->where('dishes.weight', 'like', "%{$search}%");
+                    }),
                 Tables\Columns\IconColumn::make('archived')
                     ->label('Live')
                     ->alignCenter()
