@@ -145,4 +145,9 @@ class ProductResource extends BaseResource
             'edit' => Pages\EditProduct::route('/{record}/edit'),
         ];
     }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 }

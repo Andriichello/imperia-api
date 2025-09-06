@@ -109,4 +109,9 @@ class CategoryResource extends BaseResource
             'edit' => Pages\EditCategory::route('/{record}/edit'),
         ];
     }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 }
