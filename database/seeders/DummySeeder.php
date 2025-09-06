@@ -9,10 +9,11 @@ use App\Enums\WeightUnit;
 use App\Models\Customer;
 use App\Models\FamilyMember;
 use App\Models\Holiday;
-use App\Models\Menu;
+use App\Models\DishMenu;
+use App\Models\DishCategory;
+use App\Models\Dish;
+use App\Models\DishVariant;
 use App\Models\Morphs\Category;
-use App\Models\Product;
-use App\Models\ProductVariant;
 use App\Models\Restaurant;
 use App\Models\Schedule;
 use App\Models\Service;
@@ -231,46 +232,52 @@ class DummySeeder extends Seeder
      */
     public function seedTickets(): void
     {
-        $workdayCategory = Category::factory()->create([
-            'slug' => 'work-day-tickets',
-            'target' => slugClass(Ticket::class),
-            'title' => 'Work Day Tickets',
-            'description' => 'Tickets that are available from Monday to Thursday.',
-        ]);
+        $workdayCategory = Category::factory()
+            ->create([
+                'slug' => 'work-day-tickets',
+                'target' => slugClass(Ticket::class),
+                'title' => 'Work Day Tickets',
+                'description' => 'Tickets that are available from Monday to Thursday.',
+            ]);
 
-        $ticket = Ticket::factory()->create([
-            'title' => 'Child workday ticket',
-            'description' => 'Tickets that are available for customers younger than 14 years.',
-            'price' => 50,
-        ]);
+        $ticket = Ticket::factory()
+            ->create([
+                'title' => 'Child workday ticket',
+                'description' => 'Tickets that are available for customers younger than 14 years.',
+                'price' => 50,
+            ]);
         $ticket->attachCategories($workdayCategory);
 
-        $ticket = Ticket::factory()->create([
-            'title' => 'Adult workday ticket',
-            'description' => 'Tickets that are available for customers older than 14 years.',
-            'price' => 75,
-        ]);
+        $ticket = Ticket::factory()
+            ->create([
+                'title' => 'Adult workday ticket',
+                'description' => 'Tickets that are available for customers older than 14 years.',
+                'price' => 75,
+            ]);
         $ticket->attachCategories($workdayCategory);
 
-        $weekendCategory = Category::factory()->create([
-            'slug' => 'weekend-tickets',
-            'target' => slugClass(Ticket::class),
-            'title' => 'Weekend Tickets',
-            'description' => 'Tickets that are available from Friday to Sunday.',
-        ]);
+        $weekendCategory = Category::factory()
+            ->create([
+                'slug' => 'weekend-tickets',
+                'target' => slugClass(Ticket::class),
+                'title' => 'Weekend Tickets',
+                'description' => 'Tickets that are available from Friday to Sunday.',
+            ]);
 
-        $ticket = Ticket::factory()->create([
-            'title' => 'Child weekend ticket',
-            'description' => 'Tickets that are available for customers younger than 14 years.',
-            'price' => 80,
-        ]);
+        $ticket = Ticket::factory()
+            ->create([
+                'title' => 'Child weekend ticket',
+                'description' => 'Tickets that are available for customers younger than 14 years.',
+                'price' => 80,
+            ]);
         $ticket->attachCategories($weekendCategory);
 
-        $ticket = Ticket::factory()->create([
-            'title' => 'Adult weekend ticket',
-            'description' => 'Tickets that are available for customers older than 14 years.',
-            'price' => 100,
-        ]);
+        $ticket = Ticket::factory()
+            ->create([
+                'title' => 'Adult weekend ticket',
+                'description' => 'Tickets that are available for customers older than 14 years.',
+                'price' => 100,
+            ]);
         $ticket->attachCategories($weekendCategory);
     }
 
@@ -281,45 +288,51 @@ class DummySeeder extends Seeder
      */
     public function seedServices(): void
     {
-        $indoorsCategory = Category::factory()->create([
-            'slug' => 'indoors',
-            'target' => slugClass(Service::class),
-            'title' => 'Indoors',
-            'description' => null,
-        ]);
+        $indoorsCategory = Category::factory()
+            ->create([
+                'slug' => 'indoors',
+                'target' => slugClass(Service::class),
+                'title' => 'Indoors',
+                'description' => null,
+            ]);
 
-        $service = Service::factory()->create([
-            'title' => 'Clown Show',
-            'once_paid_price' => 300,
-            'hourly_paid_price' => 200,
-        ]);
+        $service = Service::factory()
+            ->create([
+                'title' => 'Clown Show',
+                'once_paid_price' => 300,
+                'hourly_paid_price' => 200,
+            ]);
         $service->attachCategories($indoorsCategory);
 
-        $service = Service::factory()->create([
-            'title' => 'Fruits Carving',
-            'once_paid_price' => 1000,
-        ]);
+        $service = Service::factory()
+            ->create([
+                'title' => 'Fruits Carving',
+                'once_paid_price' => 1000,
+            ]);
         $service->attachCategories($indoorsCategory);
 
-        $outdoorsCategory = Category::factory()->create([
-            'slug' => 'outdoors',
-            'target' => slugClass(Service::class),
-            'title' => 'Outdoors',
-            'description' => null,
-        ]);
+        $outdoorsCategory = Category::factory()
+            ->create([
+                'slug' => 'outdoors',
+                'target' => slugClass(Service::class),
+                'title' => 'Outdoors',
+                'description' => null,
+            ]);
 
-        $service = Service::factory()->create([
-            'title' => 'Fire Show',
-            'once_paid_price' => 1200,
-            'hourly_paid_price' => 600,
-        ]);
+        $service = Service::factory()
+            ->create([
+                'title' => 'Fire Show',
+                'once_paid_price' => 1200,
+                'hourly_paid_price' => 600,
+            ]);
         $service->attachCategories($outdoorsCategory);
 
-        $service = Service::factory()->create([
-            'title' => 'Magic Show',
-            'once_paid_price' => 1000,
-            'hourly_paid_price' => 500,
-        ]);
+        $service = Service::factory()
+            ->create([
+                'title' => 'Magic Show',
+                'once_paid_price' => 1000,
+                'hourly_paid_price' => 500,
+            ]);
         $service->attachCategories($outdoorsCategory);
     }
 
@@ -330,37 +343,41 @@ class DummySeeder extends Seeder
      */
     public function seedSpaces(): void
     {
-        $roomsCategory = Category::factory()->create([
-            'slug' => 'rooms',
-            'target' => slugClass(Space::class),
-            'title' => 'Rooms',
-            'description' => null,
-        ]);
+        $roomsCategory = Category::factory()
+            ->create([
+                'slug' => 'rooms',
+                'target' => slugClass(Space::class),
+                'title' => 'Rooms',
+                'description' => null,
+            ]);
 
-        $tablesCategory = Category::factory()->create([
-            'slug' => 'tables',
-            'target' => slugClass(Space::class),
-            'title' => 'Tables',
-            'description' => null,
-        ]);
+        $tablesCategory = Category::factory()
+            ->create([
+                'slug' => 'tables',
+                'target' => slugClass(Space::class),
+                'title' => 'Tables',
+                'description' => null,
+            ]);
 
         for ($i = 1; $i <= 2; $i++) {
             for ($j = 1; $j <= 5; $j++) {
-                $table = Space::factory()->create([
-                    'title' => "Table #$j($i)",
-                    'floor' => $i,
-                    'number' => $j,
-                    'price' => 0.0,
-                ]);
+                $table = Space::factory()
+                    ->create([
+                        'title' => "Table #$j($i)",
+                        'floor' => $i,
+                        'number' => $j,
+                        'price' => 0.0,
+                    ]);
                 $table->attachCategories($tablesCategory);
 
                 if ($j <= 3) {
-                    $room = Space::factory()->create([
-                        'title' => "Room #$j($i)",
-                        'floor' => $i,
-                        'number' => $j,
-                        'price' => rand(1, 10) * 10,
-                    ]);
+                    $room = Space::factory()
+                        ->create([
+                            'title' => "Room #$j($i)",
+                            'floor' => $i,
+                            'number' => $j,
+                            'price' => rand(1, 10) * 10,
+                        ]);
                     $room->attachCategories($roomsCategory);
                 }
             }
@@ -378,7 +395,7 @@ class DummySeeder extends Seeder
             ->where('slug', 'first')
             ->firstOrFail();
 
-        $kitchen = Menu::factory()
+        $kitchen = DishMenu::factory()
             ->withRestaurant($restaurant)
             ->create([
                 'title' => 'Kitchen',
@@ -389,7 +406,7 @@ class DummySeeder extends Seeder
         $this->seedSoups($kitchen);
         $this->seedDesserts($kitchen);
 
-        $bar = Menu::factory()
+        $bar = DishMenu::factory()
             ->withRestaurant($restaurant)
             ->create([
                 'title' => 'Bar',
@@ -402,73 +419,73 @@ class DummySeeder extends Seeder
     /**
      * Seed pizza.
      *
-     * @param Menu $kitchen
+     * @param DishMenu $kitchen
      *
      * @return void
      */
-    public function seedPizza(Menu $kitchen): void
+    public function seedPizza(DishMenu $kitchen): void
     {
-        $pizzaCategory = Category::factory()->create([
-            'slug' => 'pizza',
-            'target' => slugClass(Product::class),
-            'title' => 'Pizza',
-            'description' => null,
-            'restaurant_id' => $kitchen->restaurant_id,
-        ]);
+        $pizzaCategory = DishCategory::factory()
+            ->create([
+                'menu_id' => $kitchen->id,
+                'slug' => 'pizza',
+                'title' => 'Pizza',
+                'description' => null,
+            ]);
 
-        $product = Product::factory()->create([
-            'title' => 'Margarita',
-            'description' => 'The simplest and probably most iconic Italian pizza.'
-                . ' Ingredients: dough, mozzarella, tomato paste, basil, oregano.',
-            'price' => 125,
-            'weight' => 28,
-            'weight_unit' => WeightUnit::Centimeter,
-            'restaurant_id' => $kitchen->restaurant_id,
-        ]);
-        $product->attachCategories($pizzaCategory);
-        $product->menus()->attach($kitchen->id);
+        $dish = Dish::factory()
+            ->create([
+                'menu_id' => $kitchen->id,
+                'category_id' => $pizzaCategory->id,
+                'title' => 'Margarita',
+                'description' => 'The simplest and probably most iconic Italian pizza.'
+                    . ' Ingredients: dough, mozzarella, tomato paste, basil, oregano.',
+                'price' => 125,
+                'weight' => 28,
+                'weight_unit' => WeightUnit::Centimeter,
+            ]);
 
-        ProductVariant::factory()
-            ->withProduct($product)
+        DishVariant::factory()
+            ->withDish($dish)
             ->create([
                 'price' => 200,
                 'weight' => 36,
                 'weight_unit' => WeightUnit::Centimeter,
             ]);
 
-        ProductVariant::factory()
-            ->withProduct($product)
+        DishVariant::factory()
+            ->withDish($dish)
             ->create([
                 'price' => 295,
                 'weight' => 42,
                 'weight_unit' => WeightUnit::Centimeter,
             ]);
 
-        $product = Product::factory()->create([
-            'title' => 'Romana',
-            'description' => 'Ingredients: dough, mozzarella, ham, tomato paste, arugula.',
-            'price' => 130,
-            'weight' => 420,
-            'weight_unit' => WeightUnit::Gram,
-            'restaurant_id' => $kitchen->restaurant_id,
-        ]);
-        $product->attachCategories($pizzaCategory);
-        $product->menus()->attach($kitchen->id);
+        Dish::factory()
+            ->create([
+                'menu_id' => $kitchen->id,
+                'category_id' => $pizzaCategory->id,
+                'title' => 'Romana',
+                'description' => 'Ingredients: dough, mozzarella, ham, tomato paste, arugula.',
+                'price' => 130,
+                'weight' => 420,
+                'weight_unit' => WeightUnit::Gram,
+            ]);
 
-        $product = Product::factory()->create([
-            'title' => 'Four Cheese',
-            'description' => 'Ingredients: dough, tomato sauce, mozzarella, gorgonzola'
-                . ', Parmigiano Reggiano, goat cheese',
-            'price' => 160,
-            'weight' => 28,
-            'weight_unit' => WeightUnit::Centimeter,
-            'restaurant_id' => $kitchen->restaurant_id,
-        ]);
-        $product->attachCategories($pizzaCategory);
-        $product->menus()->attach($kitchen->id);
+        $dish = Dish::factory()
+            ->create([
+                'menu_id' => $kitchen->id,
+                'category_id' => $pizzaCategory->id,
+                'title' => 'Four Cheese',
+                'description' => 'Ingredients: dough, tomato sauce, mozzarella, gorgonzola'
+                    . ', Parmigiano Reggiano, goat cheese',
+                'price' => 160,
+                'weight' => 28,
+                'weight_unit' => WeightUnit::Centimeter,
+            ]);
 
-        ProductVariant::factory()
-            ->withProduct($product)
+        DishVariant::factory()
+            ->withDish($dish)
             ->create([
                 'price' => 300,
                 'weight' => 40,
@@ -479,153 +496,153 @@ class DummySeeder extends Seeder
     /**
      * Seed soups.
      *
-     * @param Menu $kitchen
+     * @param DishMenu $kitchen
      *
      * @return void
      */
-    public function seedSoups(Menu $kitchen): void
+    public function seedSoups(DishMenu $kitchen): void
     {
-        $soupsCategory = Category::factory()->create([
-            'slug' => 'soups',
-            'target' => slugClass(Product::class),
-            'title' => 'Soups',
-            'description' => null,
-            'restaurant_id' => $kitchen->restaurant_id,
-        ]);
+        $soupsCategory = DishCategory::factory()
+            ->create([
+                'menu_id' => $kitchen->id,
+                'slug' => 'soups',
+                'title' => 'Soups',
+                'description' => null,
+            ]);
 
-        $product = Product::factory()->create([
-            'title' => 'Tomato Soup',
-            'price' => 80,
-            'weight' => 300,
-            'weight_unit' => WeightUnit::Gram,
-            'restaurant_id' => $kitchen->restaurant_id,
-        ]);
-        $product->attachCategories($soupsCategory);
-        $product->menus()->attach($kitchen->id);
+        Dish::factory()
+            ->create([
+                'menu_id' => $kitchen->id,
+                'category_id' => $soupsCategory->id,
+                'title' => 'Tomato Soup',
+                'price' => 80,
+                'weight' => 300,
+                'weight_unit' => WeightUnit::Gram,
+            ]);
 
-        $product = Product::factory()->create([
-            'title' => 'Celery Soup',
-            'price' => 95,
-            'weight' => 350,
-            'weight_unit' => WeightUnit::Gram,
-            'restaurant_id' => $kitchen->restaurant_id,
-        ]);
-        $product->attachCategories($soupsCategory);
-        $product->menus()->attach($kitchen->id);
+        Dish::factory()
+            ->create([
+                'menu_id' => $kitchen->id,
+                'category_id' => $soupsCategory->id,
+                'title' => 'Celery Soup',
+                'price' => 95,
+                'weight' => 350,
+                'weight_unit' => WeightUnit::Gram,
+            ]);
     }
 
     /**
      * Seed desserts.
      *
-     * @param Menu $kitchen
+     * @param DishMenu $kitchen
      *
      * @return void
      */
-    public function seedDesserts(Menu $kitchen): void
+    public function seedDesserts(DishMenu $kitchen): void
     {
-        $dessertsCategory = Category::factory()->create([
-            'slug' => 'desserts',
-            'target' => slugClass(Product::class),
-            'title' => 'Desserts',
-            'description' => null,
-            'restaurant_id' => $kitchen->restaurant_id,
-        ]);
+        $dessertsCategory = DishCategory::factory()
+            ->create([
+                'menu_id' => $kitchen->id,
+                'slug' => 'desserts',
+                'title' => 'Desserts',
+                'description' => null,
+            ]);
 
-        $product = Product::factory()->create([
-            'title' => 'Tiramisu',
-            'price' => 75,
-            'weight' => 150,
-            'weight_unit' => WeightUnit::Gram,
-            'restaurant_id' => $kitchen->restaurant_id,
-        ]);
-        $product->attachCategories($dessertsCategory);
-        $product->menus()->attach($kitchen->id);
+        Dish::factory()
+            ->create([
+                'menu_id' => $kitchen->id,
+                'category_id' => $dessertsCategory->id,
+                'title' => 'Tiramisu',
+                'price' => 75,
+                'weight' => 150,
+                'weight_unit' => WeightUnit::Gram,
+            ]);
 
-        $product = Product::factory()->create([
-            'title' => 'Panna Cotta',
-            'price' => 60,
-            'weight' => 120,
-            'weight_unit' => WeightUnit::Gram,
-            'restaurant_id' => $kitchen->restaurant_id,
-        ]);
-        $product->attachCategories($dessertsCategory);
-        $product->menus()->attach($kitchen->id);
+        Dish::factory()
+            ->create([
+                'menu_id' => $kitchen->id,
+                'category_id' => $dessertsCategory->id,
+                'title' => 'Panna Cotta',
+                'price' => 60,
+                'weight' => 120,
+                'weight_unit' => WeightUnit::Gram,
+            ]);
     }
 
     /**
      * Seed cocktails.
      *
-     * @param Menu $bar
+     * @param DishMenu $bar
      *
      * @return void
      */
-    public function seedCocktails(Menu $bar): void
+    public function seedCocktails(DishMenu $bar): void
     {
-        $alcoholicCategory = Category::factory()->create([
-            'slug' => 'alcoholic',
-            'target' => slugClass(Product::class),
-            'title' => 'Alcoholic',
-            'description' => null,
-            'restaurant_id' => $bar->restaurant_id,
-        ]);
+        $alcoholicCategory = DishCategory::factory()
+            ->create([
+                'menu_id' => $bar->id,
+                'slug' => 'alcoholic',
+                'title' => 'Alcoholic',
+                'description' => null,
+            ]);
 
-        $product = Product::factory()->create([
-            'title' => 'Martini',
-            'price' => 85,
-            'weight' => 120,
-            'weight_unit' => WeightUnit::Milliliter,
-            'restaurant_id' => $bar->restaurant_id,
-        ]);
-        $product->attachCategories($alcoholicCategory);
-        $product->menus()->attach($bar->id);
+        Dish::factory()
+            ->create([
+                'menu_id' => $bar->id,
+                'category_id' => $alcoholicCategory->id,
+                'title' => 'Martini',
+                'price' => 85,
+                'weight' => 120,
+                'weight_unit' => WeightUnit::Milliliter,
+            ]);
 
-        $product = Product::factory()->create([
-            'title' => 'Pear Mimosa',
-            'description' => 'Champagne and pear nectar combine in a delicate drink.',
-            'price' => 72,
-            'weight' => 170,
-            'weight_unit' => WeightUnit::Milliliter,
-            'restaurant_id' => $bar->restaurant_id,
-        ]);
-        $product->attachCategories($alcoholicCategory);
-        $product->menus()->attach($bar->id);
+        Dish::factory()
+            ->create([
+                'menu_id' => $bar->id,
+                'category_id' => $alcoholicCategory->id,
+                'title' => 'Pear Mimosa',
+                'description' => 'Champagne and pear nectar combine in a delicate drink.',
+                'price' => 72,
+                'weight' => 170,
+                'weight_unit' => WeightUnit::Milliliter,
+            ]);
 
-        $nonalcoholicCategory = Category::factory()->create([
-            'slug' => 'non-alcoholic',
-            'target' => slugClass(Product::class),
-            'title' => 'Non-alcoholic',
-            'description' => null,
-            'restaurant_id' => $bar->restaurant_id,
-        ]);
+        $nonalcoholicCategory = DishCategory::factory()
+            ->create([
+                'menu_id' => $bar->id,
+                'slug' => 'non-alcoholic',
+                'title' => 'Non-alcoholic',
+                'description' => null,
+            ]);
 
-        $product = Product::factory()->create([
-            'title' => 'Mojito',
-            'description' => 'Iced Sprite with mint, lime and lemon.',
-            'price' => 45,
-            'weight' => 250,
-            'weight_unit' => WeightUnit::Milliliter,
-            'restaurant_id' => $bar->restaurant_id,
-        ]);
-        $product->attachCategories($nonalcoholicCategory);
-        $product->menus()->attach($bar->id);
+        $dish = Dish::factory()
+            ->create([
+                'menu_id' => $bar->id,
+                'category_id' => $nonalcoholicCategory->id,
+                'title' => 'Mojito',
+                'description' => 'Iced Sprite with mint, lime and lemon.',
+                'price' => 45,
+                'weight' => 250,
+                'weight_unit' => WeightUnit::Milliliter,
+            ]);
 
-        ProductVariant::factory()
-            ->withProduct($product)
+        DishVariant::factory()
+            ->withDish($dish)
             ->create([
                 'price' => 70,
                 'weight' => 400,
                 'weight_unit' => WeightUnit::Milliliter,
             ]);
 
-        $product = Product::factory()->create([
-            'title' => 'Iced Tea With Plums and Thyme',
-            'description' => 'Served nonalcoholic fruit-and-herb blend sipper.',
-            'price' => 30,
-            'weight' => 200,
-            'weight_unit' => WeightUnit::Milliliter,
-            'restaurant_id' => $bar->restaurant_id,
-        ]);
-        $product->attachCategories($nonalcoholicCategory);
-        $product->menus()->attach($bar->id);
+        Dish::factory()
+            ->create([
+                'menu_id' => $bar->id,
+                'category_id' => $nonalcoholicCategory->id,
+                'title' => 'Iced Tea With Plums and Thyme',
+                'description' => 'Served nonalcoholic fruit-and-herb blend sipper.',
+                'price' => 30,
+                'weight' => 200,
+                'weight_unit' => WeightUnit::Milliliter,
+            ]);
     }
 }
