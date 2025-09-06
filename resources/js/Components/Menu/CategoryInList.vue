@@ -3,6 +3,7 @@ import {Category, Dish, DishCategory, Product} from "@/api";
   import ProductInList from "@/Components/Menu/ProductInList.vue";
   import {PropType} from "vue";
   import {useI18n} from "vue-i18n";
+import ProductInListRightMedia from "@/Components/Menu/ProductInListRightMedia.vue";
 
   const emits = defineEmits(['switch-category']);
 
@@ -53,15 +54,17 @@ import {Category, Dish, DishCategory, Product} from "@/api";
       </div>
     </template>
 
-    <div class="w-full flex flex-col py-2 gap-3"
+    <div class="w-full flex flex-col py-2 gap-2"
          :id="'category-' + category.id + '-products'"
          v-else>
       <template v-for="product in products" :key="product.id">
-        <ProductInList class="border-1 border-warning-content/20"
+        <ProductInListRightMedia class="cursor-pointer"
                        :product="product"
-                       :preview="preview"
+                       :preview="true"
                        :currency="currency"
                        :establishment="establishment"/>
+
+        <div class="w-full h-[1px] flex flex-col bg-warning-content/25"/>
       </template>
     </div>
   </div>
