@@ -7,6 +7,7 @@ use App\Filament\BaseResource;
 use App\Filament\Resources\DishVariantResource\Pages;
 use App\Models\Dish;
 use App\Models\DishVariant;
+use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -55,6 +56,9 @@ class DishVariantResource extends BaseResource
 
     public static function table(Table $table): Table
     {
+        /** @var User|null $user */
+        $user = request()->user();
+
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')->sortable(),
@@ -62,7 +66,7 @@ class DishVariantResource extends BaseResource
                     ->label('Dish')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('price')
-                    ->money('USD')
+                    ->money($user?->restaurant?->currency ?? 'UAH')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('weight')
                     ->searchable(),

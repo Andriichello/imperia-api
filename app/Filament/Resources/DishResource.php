@@ -9,6 +9,7 @@ use App\Filament\Resources\DishResource\Pages;
 use App\Models\Dish;
 use App\Models\DishCategory;
 use App\Models\DishMenu;
+use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -16,8 +17,6 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 /**
  * Class DishResource.
@@ -104,6 +103,9 @@ class DishResource extends BaseResource
 
     public static function table(Table $table): Table
     {
+        /** @var User|null $user */
+        $user = request()->user();
+
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')->sortable(),
@@ -116,7 +118,7 @@ class DishResource extends BaseResource
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('price')
-                    ->money('USD')
+                    ->money($user?->restaurant?->currency ?? 'UAH')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('weight')
                     ->searchable(),
