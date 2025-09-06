@@ -8,6 +8,13 @@ use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Class UserQueryBuilder.
+ *
+ * @method User|null first($columns = ['*'])
+ * @method User|null firstOrFail($columns = ['*'])
+ * @method User|null find($columns = ['*'])
+ * @method User|null findOrFail($id, $columns = ['*'])
+ * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
+ * @method $this orWhere($column, $operator = null, $value = null)
  */
 class UserQueryBuilder extends BaseQueryBuilder
 {

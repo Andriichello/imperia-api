@@ -2,12 +2,20 @@
 
 namespace App\Queries;
 
+use App\Models\Morphs\Alteration;
 use App\Models\User;
 use App\Providers\MorphServiceProvider;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Class AlterationQueryBuilder.
+ *
+ * @method Alteration|null first($columns = ['*'])
+ * @method Alteration|null firstOrFail($columns = ['*'])
+ * @method Alteration|null find($columns = ['*'])
+ * @method Alteration|null findOrFail($id, $columns = ['*'])
+ * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
+ * @method $this orWhere($column, $operator = null, $value = null)
  */
 class AlterationQueryBuilder extends BaseQueryBuilder
 {

@@ -2,8 +2,17 @@
 
 namespace App\Queries;
 
+use App\Models\Cache;
+
 /**
  * Class CacheQueryBuilder.
+ *
+ * @method Cache|null first($columns = ['*'])
+ * @method Cache|null firstOrFail($columns = ['*'])
+ * @method Cache|null find($columns = ['*'])
+ * @method Cache|null findOrFail($id, $columns = ['*'])
+ * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
+ * @method $this orWhere($column, $operator = null, $value = null)
  */
 class CacheQueryBuilder extends BaseQueryBuilder
 {

@@ -2,10 +2,18 @@
 
 namespace App\Queries;
 
+use App\Models\FamilyMember;
 use App\Models\User;
 
 /**
  * Class FamilyMemberQueryBuilder.
+ *
+ * @method FamilyMember|null first($columns = ['*'])
+ * @method FamilyMember|null firstOrFail($columns = ['*'])
+ * @method FamilyMember|null find($columns = ['*'])
+ * @method FamilyMember|null findOrFail($id, $columns = ['*'])
+ * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
+ * @method $this orWhere($column, $operator = null, $value = null)
  */
 class FamilyMemberQueryBuilder extends BaseQueryBuilder
 {

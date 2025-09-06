@@ -3,6 +3,7 @@
 namespace App\Queries;
 
 use App\Models\Menu;
+use App\Models\Product;
 use App\Models\Restaurant;
 use App\Models\User;
 use App\Queries\Interfaces\ArchivableInterface;
@@ -14,6 +15,13 @@ use App\Queries\Traits\Taggable;
 
 /**
  * Class ProductQueryBuilder.
+ *
+ * @method Product|null first($columns = ['*'])
+ * @method Product|null firstOrFail($columns = ['*'])
+ * @method Product|null find($columns = ['*'])
+ * @method Product|null findOrFail($id, $columns = ['*'])
+ * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
+ * @method $this orWhere($column, $operator = null, $value = null)
  */
 class ProductQueryBuilder extends BaseQueryBuilder implements
     TaggableInterface,

@@ -4,9 +4,17 @@ namespace App\Queries;
 
 use App\Models\Restaurant;
 use App\Models\User;
+use App\Models\Waiter;
 
 /**
  * Class WaiterQueryBuilder.
+ *
+ * @method Waiter|null first($columns = ['*'])
+ * @method Waiter|null firstOrFail($columns = ['*'])
+ * @method Waiter|null find($columns = ['*'])
+ * @method Waiter|null findOrFail($id, $columns = ['*'])
+ * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
+ * @method $this orWhere($column, $operator = null, $value = null)
  */
 class WaiterQueryBuilder extends BaseQueryBuilder
 {

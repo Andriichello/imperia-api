@@ -3,12 +3,20 @@
 namespace App\Queries;
 
 use App\Enums\BanquetState;
+use App\Models\Banquet;
 use App\Models\Customer;
 use App\Models\Restaurant;
 use App\Models\User;
 
 /**
  * Class BanquetQueryBuilder.
+ *
+ * @method Banquet|null first($columns = ['*'])
+ * @method Banquet|null firstOrFail($columns = ['*'])
+ * @method Banquet|null find($columns = ['*'])
+ * @method Banquet|null findOrFail($id, $columns = ['*'])
+ * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
+ * @method $this orWhere($column, $operator = null, $value = null)
  */
 class BanquetQueryBuilder extends BaseQueryBuilder
 {

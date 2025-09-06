@@ -4,6 +4,7 @@ namespace App\Queries;
 
 use App\Models\Banquet;
 use App\Models\Customer;
+use App\Models\Morphs\Comment;
 use App\Models\Orders\Order;
 use App\Models\Orders\ProductOrderField;
 use App\Models\Orders\ServiceOrderField;
@@ -16,6 +17,13 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class CommentQueryBuilder.
+ *
+ * @method Comment|null first($columns = ['*'])
+ * @method Comment|null firstOrFail($columns = ['*'])
+ * @method Comment|null find($columns = ['*'])
+ * @method Comment|null findOrFail($id, $columns = ['*'])
+ * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
+ * @method $this orWhere($column, $operator = null, $value = null)
  */
 class CommentQueryBuilder extends BaseQueryBuilder
 {

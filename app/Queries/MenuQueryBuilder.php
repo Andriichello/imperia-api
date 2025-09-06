@@ -2,6 +2,7 @@
 
 namespace App\Queries;
 
+use App\Models\Menu;
 use App\Models\Product;
 use App\Models\Restaurant;
 use App\Models\User;
@@ -9,6 +10,13 @@ use App\Queries\Traits\Archivable;
 
 /**
  * Class MenuQueryBuilder.
+ *
+ * @method Menu|null first($columns = ['*'])
+ * @method Menu|null firstOrFail($columns = ['*'])
+ * @method Menu|null find($columns = ['*'])
+ * @method Menu|null findOrFail($id, $columns = ['*'])
+ * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
+ * @method $this orWhere($column, $operator = null, $value = null)
  */
 class MenuQueryBuilder extends BaseQueryBuilder
 {

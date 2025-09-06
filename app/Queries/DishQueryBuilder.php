@@ -2,6 +2,7 @@
 
 namespace App\Queries;
 
+use App\Models\Dish;
 use App\Models\DishMenu;
 use App\Models\Restaurant;
 use App\Models\User;
@@ -10,6 +11,13 @@ use App\Queries\Traits\Archivable;
 
 /**
  * Class DishQueryBuilder.
+ *
+ * @method Dish|null first($columns = ['*'])
+ * @method Dish|null firstOrFail($columns = ['*'])
+ * @method Dish|null find($columns = ['*'])
+ * @method Dish|null findOrFail($id, $columns = ['*'])
+ * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
+ * @method $this orWhere($column, $operator = null, $value = null)
  */
 class DishQueryBuilder extends BaseQueryBuilder implements
     ArchivableInterface

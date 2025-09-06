@@ -2,11 +2,19 @@
 
 namespace App\Queries;
 
+use App\Models\ProductVariant;
 use App\Models\Restaurant;
 use App\Models\User;
 
 /**
  * Class ProductVariantQueryBuilder.
+ *
+ * @method ProductVariant|null first($columns = ['*'])
+ * @method ProductVariant|null firstOrFail($columns = ['*'])
+ * @method ProductVariant|null find($columns = ['*'])
+ * @method ProductVariant|null findOrFail($id, $columns = ['*'])
+ * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
+ * @method $this orWhere($column, $operator = null, $value = null)
  */
 class ProductVariantQueryBuilder extends BaseQueryBuilder
 {

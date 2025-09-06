@@ -3,10 +3,18 @@
 namespace App\Queries;
 
 use App\Enums\NotificationChannel;
+use App\Models\Notification;
 use App\Models\User;
 
 /**
  * Class NotificationQueryBuilder.
+ *
+ * @method Notification|null first($columns = ['*'])
+ * @method Notification|null firstOrFail($columns = ['*'])
+ * @method Notification|null find($columns = ['*'])
+ * @method Notification|null findOrFail($id, $columns = ['*'])
+ * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
+ * @method $this orWhere($column, $operator = null, $value = null)
  */
 class NotificationQueryBuilder extends BaseQueryBuilder
 {

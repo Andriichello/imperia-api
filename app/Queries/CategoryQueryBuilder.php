@@ -2,6 +2,7 @@
 
 namespace App\Queries;
 
+use App\Models\Morphs\Category;
 use App\Models\Restaurant;
 use App\Models\User;
 use App\Queries\Interfaces\ArchivableInterface;
@@ -11,6 +12,13 @@ use App\Queries\Traits\Taggable;
 
 /**
  * Class CategoryQueryBuilder.
+ *
+ * @method Category|null first($columns = ['*'])
+ * @method Category|null firstOrFail($columns = ['*'])
+ * @method Category|null find($columns = ['*'])
+ * @method Category|null findOrFail($id, $columns = ['*'])
+ * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
+ * @method $this orWhere($column, $operator = null, $value = null)
  */
 class CategoryQueryBuilder extends BaseQueryBuilder implements
     TaggableInterface,

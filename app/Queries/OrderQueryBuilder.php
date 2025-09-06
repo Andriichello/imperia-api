@@ -3,10 +3,18 @@
 namespace App\Queries;
 
 use App\Models\Customer;
+use App\Models\Orders\Order;
 use App\Models\User;
 
 /**
  * Class OrderQueryBuilder.
+ *
+ * @method Order|null first($columns = ['*'])
+ * @method Order|null firstOrFail($columns = ['*'])
+ * @method Order|null find($columns = ['*'])
+ * @method Order|null findOrFail($id, $columns = ['*'])
+ * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
+ * @method $this orWhere($column, $operator = null, $value = null)
  */
 class OrderQueryBuilder extends BaseQueryBuilder
 {

@@ -3,12 +3,20 @@
 namespace App\Queries;
 
 use App\Models\Orders\Order;
+use App\Models\Orders\SpaceOrderField;
 use App\Models\Space;
 use DateTimeInterface;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 
 /**
  * Class SpaceOrderFieldQueryBuilder.
+ *
+ * @method SpaceOrderField|null first($columns = ['*'])
+ * @method SpaceOrderField|null firstOrFail($columns = ['*'])
+ * @method SpaceOrderField|null find($columns = ['*'])
+ * @method SpaceOrderField|null findOrFail($id, $columns = ['*'])
+ * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
+ * @method $this orWhere($column, $operator = null, $value = null)
  */
 class SpaceOrderFieldQueryBuilder extends BaseQueryBuilder
 {

@@ -2,11 +2,19 @@
 
 namespace App\Queries;
 
+use App\Models\Holiday;
 use App\Models\User;
 use Carbon\CarbonInterface;
 
 /**
  * Class HolidayQueryBuilder.
+ *
+ * @method Holiday|null first($columns = ['*'])
+ * @method Holiday|null firstOrFail($columns = ['*'])
+ * @method Holiday|null find($columns = ['*'])
+ * @method Holiday|null findOrFail($id, $columns = ['*'])
+ * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
+ * @method $this orWhere($column, $operator = null, $value = null)
  */
 class HolidayQueryBuilder extends BaseQueryBuilder
 {

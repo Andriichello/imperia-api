@@ -3,11 +3,19 @@
 namespace App\Queries;
 
 use App\Models\BaseModel;
+use App\Models\Morphs\Media;
 use App\Models\User;
 use Illuminate\Database\Query\JoinClause;
 
 /**
  * Class MediaQueryBuilder.
+ *
+ * @method Media|null first($columns = ['*'])
+ * @method Media|null firstOrFail($columns = ['*'])
+ * @method Media|null find($columns = ['*'])
+ * @method Media|null findOrFail($id, $columns = ['*'])
+ * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
+ * @method $this orWhere($column, $operator = null, $value = null)
  */
 class MediaQueryBuilder extends BaseQueryBuilder
 {

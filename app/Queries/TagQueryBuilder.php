@@ -2,12 +2,20 @@
 
 namespace App\Queries;
 
+use App\Models\Morphs\Tag;
 use App\Models\Restaurant;
 use App\Models\User;
 use App\Queries\Traits\Archivable;
 
 /**
- * Class CategoryQueryBuilder.
+ * Class TagQueryBuilder.
+ *
+ * @method Tag|null first($columns = ['*'])
+ * @method Tag|null firstOrFail($columns = ['*'])
+ * @method Tag|null find($columns = ['*'])
+ * @method Tag|null findOrFail($id, $columns = ['*'])
+ * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
+ * @method $this orWhere($column, $operator = null, $value = null)
  */
 class TagQueryBuilder extends BaseQueryBuilder
 {

@@ -2,11 +2,19 @@
 
 namespace App\Queries;
 
+use App\Models\Customer;
 use App\Models\Restaurant;
 use App\Models\User;
 
 /**
  * Class CustomerQueryBuilder.
+ *
+ * @method Customer|null first($columns = ['*'])
+ * @method Customer|null firstOrFail($columns = ['*'])
+ * @method Customer|null find($columns = ['*'])
+ * @method Customer|null findOrFail($id, $columns = ['*'])
+ * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
+ * @method $this orWhere($column, $operator = null, $value = null)
  */
 class CustomerQueryBuilder extends BaseQueryBuilder
 {

@@ -2,10 +2,18 @@
 
 namespace App\Queries;
 
+use App\Models\Schedule;
 use App\Models\User;
 
 /**
  * Class ScheduleQueryBuilder.
+ *
+ * @method Schedule|null first($columns = ['*'])
+ * @method Schedule|null firstOrFail($columns = ['*'])
+ * @method Schedule|null find($columns = ['*'])
+ * @method Schedule|null findOrFail($id, $columns = ['*'])
+ * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
+ * @method $this orWhere($column, $operator = null, $value = null)
  */
 class ScheduleQueryBuilder extends BaseQueryBuilder
 {

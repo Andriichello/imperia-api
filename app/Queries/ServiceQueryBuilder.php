@@ -3,6 +3,7 @@
 namespace App\Queries;
 
 use App\Models\Restaurant;
+use App\Models\Service;
 use App\Models\User;
 use App\Queries\Interfaces\ArchivableInterface;
 use App\Queries\Interfaces\CategorizableInterface;
@@ -11,6 +12,13 @@ use App\Queries\Traits\Categorizable;
 
 /**
  * Class ServiceQueryBuilder.
+ *
+ * @method Service|null first($columns = ['*'])
+ * @method Service|null firstOrFail($columns = ['*'])
+ * @method Service|null find($columns = ['*'])
+ * @method Service|null findOrFail($id, $columns = ['*'])
+ * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
+ * @method $this orWhere($column, $operator = null, $value = null)
  */
 class ServiceQueryBuilder extends BaseQueryBuilder implements
     ArchivableInterface,

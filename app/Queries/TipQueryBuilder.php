@@ -2,11 +2,19 @@
 
 namespace App\Queries;
 
+use App\Models\Morphs\Tip;
 use App\Models\User;
 use App\Providers\MorphServiceProvider;
 
 /**
  * Class TipQueryBuilder.
+ *
+ * @method Tip|null first($columns = ['*'])
+ * @method Tip|null firstOrFail($columns = ['*'])
+ * @method Tip|null find($columns = ['*'])
+ * @method Tip|null findOrFail($id, $columns = ['*'])
+ * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
+ * @method $this orWhere($column, $operator = null, $value = null)
  */
 class TipQueryBuilder extends BaseQueryBuilder
 {

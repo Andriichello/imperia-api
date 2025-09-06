@@ -9,7 +9,9 @@ use App\Models\User;
  * Class RestaurantQueryBuilder.
  *
  * @method Restaurant|null first($columns = ['*'])
+ * @method Restaurant|null firstOrFail($columns = ['*'])
  * @method Restaurant|null find($columns = ['*'])
+ * @method Restaurant|null findOrFail($id, $columns = ['*'])
  * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
  * @method $this orWhere($column, $operator = null, $value = null)
  */

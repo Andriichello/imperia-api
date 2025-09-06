@@ -4,11 +4,19 @@ namespace App\Queries;
 
 use App\Models\Dish;
 use App\Models\DishMenu;
+use App\Models\DishVariant;
 use App\Models\Restaurant;
 use App\Models\User;
 
 /**
  * Class DishVariantQueryBuilder.
+ *
+ * @method DishVariant|null first($columns = ['*'])
+ * @method DishVariant|null firstOrFail($columns = ['*'])
+ * @method DishVariant|null find($columns = ['*'])
+ * @method DishVariant|null findOrFail($id, $columns = ['*'])
+ * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
+ * @method $this orWhere($column, $operator = null, $value = null)
  */
 class DishVariantQueryBuilder extends BaseQueryBuilder
 {
