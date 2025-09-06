@@ -29,6 +29,12 @@ const props = defineProps({
   }
 });
 
+const emit = defineEmits(['productClick']);
+
+const handleProductClick = () => {
+  emit('productClick', props.product);
+};
+
 const media = computed<Media[]>(() => {
   return props.product.media.map((m: Media) => {
     const webp = m?.variants.find((v: Media) => v.extension === 'webp');
@@ -134,7 +140,8 @@ const selectVariant = (variant: Partial<DishVariant> | null) => {
 
 <template>
   <div class="w-full flex flex-col rounded"
-       :id="'product-' + product.id">
+       :id="'product-' + product.id"
+       @click="handleProductClick">
 
     <div class="w-full text-warning-content/80 bg-warning/10 opacity-80 border-none select-none rounded-none py-2 px-2 font-semibold text-md text-start"
          v-if="product!.badge?.length">
@@ -341,7 +348,7 @@ const selectVariant = (variant: Partial<DishVariant> | null) => {
             <template v-for="v in variants" :key="v.id">
               <button class="btn btn-sm normal-case text-[14px] px-2 py-2"
                       :class="{'btn-warning bg-warning/20 border-warning/40': selectedVariant?.id === v.id, 'btn-outline border-dashed text-base-content/75 border-base-content/40': selectedVariant?.id !== v.id}"
-                      @click="selectVariant(v)">
+                      @click.stop="selectVariant(v)">
                 {{ variantWeight(v) }}
               </button>
             </template>
