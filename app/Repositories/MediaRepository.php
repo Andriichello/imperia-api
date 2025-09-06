@@ -46,12 +46,13 @@ class MediaRepository extends CrudRepository
 
         if ($from instanceof File || $from instanceof UploadedFile) {
             $attributes['extension'] = mime_content_type($from->getPathname());
+            $hash = Media::hash($from->path());
 
             if (!isset($attributes['title'])) {
-                $attributes['title'] = $attributes['name'];
+                $attributes['title'] = $attributes['name'] ?? $hash;
             }
 
-            $attributes['name'] = Media::hash($from->path());
+            $attributes['name'] = $hash;
         }
 
         $restaurantId = $attributes['restaurant_id'] ?? null;

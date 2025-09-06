@@ -3,8 +3,6 @@
 namespace App\Http\Requests\Media;
 
 use App\Http\Requests\Crud\StoreRequest;
-use App\Models\Morphs\Media;
-use Illuminate\Validation\Rule;
 use OpenApi\Annotations as OA;
 
 /**
@@ -29,7 +27,7 @@ class StoreMediaRequest extends StoreRequest
                     'max:' . config('media.max_size'),
                 ],
                 'name' => [
-                    'required',
+                    'sometimes',
                     'string',
                     'min:1',
                     'max:255',
