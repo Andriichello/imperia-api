@@ -83,6 +83,8 @@ class Dish extends BaseModel implements
         'archived',
         'popularity',
         'metadata',
+        'calories',
+        'preparation_time',
         'flags',
     ];
 

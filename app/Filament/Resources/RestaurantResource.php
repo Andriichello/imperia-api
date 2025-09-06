@@ -7,10 +7,13 @@ use App\Filament\Resources\RestaurantResource\Pages;
 use App\Models\Restaurant;
 use App\Filament\Forms\Components\MediaAttachmentField;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Collection;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class RestaurantResource.
@@ -67,6 +70,31 @@ class RestaurantResource extends BaseResource
                     ->maxLength(255),
                 TextInput::make('locale')
                     ->maxLength(10),
+                TagsInput::make('notes')
+                    ->label('Notes')
+                    ->afterStateHydrated(function (TagsInput $component, $state): void {
+                        $state = $state ?? [];
+                        if ($state instanceof Collection) {
+                            $state = $state->all();
+                        }
+                        if (!is_array($state)) {
+                            $state = (array)$state;
+                        }
+                        $component->state($state);
+                    })
+                    ->dehydrateStateUsing(function ($state): array {
+                        if ($state instanceof Collection) {
+                            $state = $state->all();
+                        }
+                        $state = (array)$state;
+
+                        // Ensure values are strings and remove empties
+                        $mapped = array_map(
+                            static fn($v) => is_string($v) ? $v : (is_scalar($v) ? (string)$v : ''),
+                            $state
+                        );
+                        return array_values(array_filter($mapped, static fn($v) => $v !== ''));
+                    }),
                 MediaAttachmentField::make('media')
                     ->label('Restaurant Images')
                     ->modelType('restaurants')

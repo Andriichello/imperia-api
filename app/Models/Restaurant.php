@@ -96,10 +96,37 @@ class Restaurant extends BaseModel implements
         'country',
         'city',
         'place',
-        'phone',
-        'notes',
         'timezone',
         'popularity',
+        'phone',
+        'email',
+        'website',
+        'location',
+        'full_address',
+        'timezone_offset',
+        'locale',
+        'currency',
+        'establishment',
+        'notes',
+    ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var string[]
+     */
+    protected $appends = [
+        'type',
+        'phone',
+        'email',
+        'website',
+        'location',
+        'full_address',
+        'timezone_offset',
+        'locale',
+        'currency',
+        'establishment',
+        'notes',
     ];
 
     /**
