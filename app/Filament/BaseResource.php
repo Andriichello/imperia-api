@@ -6,7 +6,7 @@ use App\Queries\BaseQueryBuilder;
 use Filament\Resources\Resource;
 
 /**
- * Class CategoryResource.
+ * Class BaseResource.
  */
 abstract class BaseResource extends Resource
 {
