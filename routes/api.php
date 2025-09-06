@@ -230,13 +230,6 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
         ->only('index', 'show', 'store', 'update', 'destroy')
         ->parameters(['comments' => 'id']);
 
-      Route::apiResource('media', MediaController::class)
-        ->only('index', 'show', 'store', 'update', 'destroy')
-        ->parameters(['media' => 'id']);
-
-    Route::get('/model-media', [ModelMediaController::class, 'getModelMedia'])->name('media.get-model-media');
-    Route::post('/model-media', [ModelMediaController::class, 'setModelMedia'])->name('media.set-model-media');
-
     Route::post('/orders/{id}/restore', [OrderController::class, 'restore'])->name('orders.restore');
     Route::apiResource('orders', OrderController::class)
         ->only('index', 'show', 'store', 'update', 'destroy')
@@ -247,6 +240,15 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
     Route::apiResource('banquets', BanquetController::class)
         ->only('index', 'show', 'store', 'update', 'destroy')
         ->parameters(['banquets' => 'id']);
+});
+
+Route::group(['middleware' => ['web', 'auth:sanctum,web'], 'as' => 'api.'], function () {
+    Route::apiResource('media', MediaController::class)
+        ->only('index', 'show', 'store', 'update', 'destroy')
+        ->parameters(['media' => 'id']);
+
+    Route::get('/model-media', [ModelMediaController::class, 'getModelMedia'])->name('media.get-model-media');
+    Route::post('/model-media', [ModelMediaController::class, 'setModelMedia'])->name('media.set-model-media');
 });
 
 Route::fallback(function () {
