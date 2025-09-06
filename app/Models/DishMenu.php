@@ -8,7 +8,11 @@ use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Traits\ArchivableTrait;
 use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
+use App\Queries\DishMenuQueryBuilder;
 use Carbon\Carbon;
+use Database\Factories\DishMenuFactory;
+use Illuminate\Database\Query\Builder as DatabaseBuilder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
@@ -30,12 +34,16 @@ use Illuminate\Support\Collection;
  * @property Restaurant $restaurant
  * @property Dish[]|Collection $dishes
  * @property DishCategory[]|Collection $categories
+ *
+ * @method static DishMenuQueryBuilder query()
+ * @method static DishMenuFactory factory(...$parameters)
  */
 class DishMenu extends BaseModel implements
     ArchivableInterface,
     SoftDeletableInterface,
     MediableInterface
 {
+    use HasFactory;
     use SoftDeletableTrait;
     use ArchivableTrait;
     use MediableTrait;
@@ -121,5 +129,15 @@ class DishMenu extends BaseModel implements
     public function restaurant(): BelongsTo
     {
         return $this->belongsTo(Restaurant::class);
+    }
+
+    /**
+     * @param DatabaseBuilder $query
+     *
+     * @return DishMenuQueryBuilder
+     */
+    public function newEloquentBuilder($query): DishMenuQueryBuilder
+    {
+        return new DishMenuQueryBuilder($query);
     }
 }

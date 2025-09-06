@@ -7,7 +7,11 @@ use App\Models\Scopes\ArchivedScope;
 use App\Models\Scopes\SoftDeletableScope;
 use App\Models\Traits\ArchivableTrait;
 use App\Models\Traits\MediableTrait;
+use App\Queries\DishCategoryQueryBuilder;
 use Carbon\Carbon;
+use Database\Factories\DishCategoryFactory;
+use Illuminate\Database\Query\Builder as DatabaseBuilder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -25,10 +29,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon|null $updated_at
  *
  * @property DishMenu $menu
+ *
+ * @method static DishCategoryQueryBuilder query()
+ * @method static DishCategoryFactory factory(...$parameters)
  */
 class DishCategory extends BaseModel implements
     MediableInterface
 {
+    use HasFactory;
     use ArchivableTrait;
     use MediableTrait;
 
@@ -78,5 +86,15 @@ class DishCategory extends BaseModel implements
     public function getRestaurantId(): ?int
     {
         return $this->menu->getRestaurantId();
+    }
+
+    /**
+     * @param DatabaseBuilder $query
+     *
+     * @return DishCategoryQueryBuilder
+     */
+    public function newEloquentBuilder($query): DishCategoryQueryBuilder
+    {
+        return new DishCategoryQueryBuilder($query);
     }
 }

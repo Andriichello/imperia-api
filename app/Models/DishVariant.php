@@ -6,7 +6,11 @@ use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Scopes\ArchivedScope;
 use App\Models\Scopes\SoftDeletableScope;
 use App\Models\Traits\SoftDeletableTrait;
+use App\Queries\DishVariantQueryBuilder;
 use Carbon\Carbon;
+use Database\Factories\DishVariantFactory;
+use Illuminate\Database\Query\Builder as DatabaseBuilder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -23,10 +27,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon|null $deleted_at
  *
  * @property Dish $dish
+ *
+ * @method static DishVariantQueryBuilder query()
+ * @method static DishVariantFactory factory(...$parameters)
  */
 class DishVariant extends BaseModel implements
     SoftDeletableInterface
 {
+    use HasFactory;
     use SoftDeletableTrait;
 
     /**
@@ -81,5 +89,15 @@ class DishVariant extends BaseModel implements
     public function getRestaurantId(): ?int
     {
         return $this->dish->getRestaurantId();
+    }
+
+    /**
+     * @param DatabaseBuilder $query
+     *
+     * @return DishVariantQueryBuilder
+     */
+    public function newEloquentBuilder($query): DishVariantQueryBuilder
+    {
+        return new DishVariantQueryBuilder($query);
     }
 }

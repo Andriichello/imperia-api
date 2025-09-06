@@ -14,7 +14,11 @@ use App\Models\Traits\FlaggableTrait;
 use App\Models\Traits\LoggableTrait;
 use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
+use App\Queries\DishQueryBuilder;
 use Carbon\Carbon;
+use Database\Factories\DishFactory;
+use Illuminate\Database\Query\Builder as DatabaseBuilder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
@@ -43,6 +47,9 @@ use Illuminate\Support\Collection;
  * @property DishMenu $menu
  * @property DishCategory|null $category
  * @property DishVariant[]|Collection $variants
+ *
+ * @method static DishQueryBuilder query()
+ * @method static DishFactory factory(...$parameters)
  */
 class Dish extends BaseModel implements
     SoftDeletableInterface,
@@ -51,6 +58,7 @@ class Dish extends BaseModel implements
     MediableInterface,
     FlaggableInterface
 {
+    use HasFactory;
     use SoftDeletableTrait;
     use ArchivableTrait;
     use LoggableTrait;
@@ -163,5 +171,15 @@ class Dish extends BaseModel implements
     public function getRestaurantId(): ?int
     {
         return $this->menu->getRestaurantId();
+    }
+
+    /**
+     * @param DatabaseBuilder $query
+     *
+     * @return DishQueryBuilder
+     */
+    public function newEloquentBuilder($query): DishQueryBuilder
+    {
+        return new DishQueryBuilder($query);
     }
 }
