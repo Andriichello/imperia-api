@@ -116,5 +116,9 @@
       "High": "(spicy)",
       "Ultra": "(extra)"
     }
+  },
+  "product": {
+    "variants": "Variants",
+    "no_media": "No media"
   }
 }
