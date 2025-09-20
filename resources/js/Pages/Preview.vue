@@ -183,7 +183,7 @@
 
   function findProduct(productId: string|number|null) {
     if (productId !== null) {
-      for (const product of props.products) {
+      for (const product of props.products ?? []) {
         if (product.id === Number(productId)) {
           return product;
         }
@@ -563,6 +563,16 @@
   const onOpenProduct = ({product, category, menu}: { product: Dish, category: DishCategory, menu: DishMenu}) => {
     isSearchOpened.value = false;
 
+    // Only update if it's a different menu
+    if (product.id !== selectedProduct.value?.id) {
+      // Update the URL in the browser without a page reload
+      router.replace({
+        url: window.location.pathname + '#' + category.id + '-' + product.id + '-page',
+        preserveState: true,
+        preserveScroll: true,
+      });
+    }
+
     menuId.value = menu.id;
     categoryId.value = category.id;
     productId.value = product.id;
@@ -572,6 +582,17 @@
     selectedProduct.value = product;
 
     isProductOpened.value = true;
+  }
+
+  const onCloseProduct = () => {
+    isProductOpened.value = false;
+
+    // Update the URL in the browser without a page reload
+    router.replace({
+      url: window.location.pathname + '#' + selectedCategory.value.id,
+      preserveState: true,
+      preserveScroll: true,
+    });
   }
 
   const onSwitchLanguage = (locale: string) => {
@@ -744,11 +765,13 @@
                       @close="isLanguageOpened = false"
                       @switch-language="onSwitchLanguage"/>
 
-      <ProductDrawer :open="isProductOpened"
-                     :product="selectedProduct"
-                     :currency="restaurant.currency ?? 'uah'"
-                     :establishment="restaurant.establishment ?? 'restaurant'"
-                     @close="isProductOpened = false"/>
+      <template v-if="selectedProduct">
+        <ProductDrawer :open="isProductOpened"
+                       :product="selectedProduct"
+                       :currency="restaurant.currency ?? 'uah'"
+                       :establishment="restaurant.establishment ?? 'restaurant'"
+                       @close="onCloseProduct"/>
+      </template>
     </div>
   </BaseLayout>
 </template>
