@@ -194,27 +194,6 @@ const selectVariant = (variant: Partial<DishVariant> | null) => {
 
       <div class="card-actions justify-between items-end gap-0">
         <div class="w-full flex flex-wrap gap-x-3 gap-y-0.5 normal-case text-[12px] text-base-content/60">
-          <!-- Allergens - Combined Badge -->
-          <div v-if="allergens.length > 0" class="relative tooltip">
-            <div @click="toggleAllergensList" class="flex flex-row justify-center items-center gap-1 cursor-pointer text-orange-600/75 border border-1 border-dashed border-orange-600/75 pl-1 pr-2 rounded-sm opacity-80">
-              <TriangleAlert class="w-4 h-4"/>
-              <p class="font-semibold pt-0.5">
-                {{ i18n.t('badges.allergens') }}
-              </p>
-            </div>
-
-            <!-- Allergens Popover -->
-            <div class="tooltip-content absolute z-4 rounded-sm bg-base-100 text-orange-600 border-orange-600 border-1 border-dashed">
-              <div class="flex flex-col gap-x-2 gap-y-0.5">
-                <div v-for="allergen in allergens" :key="allergen" class="flex flex-row items-start opacity-80">
-                  <p class="text-start font-semibold text-[12px] pb-0.5">
-                    - {{ getAllergenTranslation(allergen) }}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <div v-if="preparationTime" class="flex flex-row justify-center items-center gap-1 opacity-70">
             <Timer class="w-4 h-4"/>
             <p class="font-semibold pt-0.5">
@@ -227,6 +206,17 @@ const selectVariant = (variant: Partial<DishVariant> | null) => {
             <p class="font-semibold pt-0.5">
               {{ i18n.t('badges.calories', { calories: calories }) }}
             </p>
+          </div>
+
+          <div class="grow flex flex-row justify-end "
+               v-if="allergens.length > 0">
+            <!-- Allergens - Combined Badge -->
+            <div class="flex flex-row justify-center items-center gap-1 cursor-pointer text-orange-600/75 border-1 border-dashed border-orange-600/75 pl-1 pr-2 rounded-sm translate-x-1">
+                <TriangleAlert class="w-4 h-4"/>
+                <p class="font-semibold pt-0.5">
+                  {{ i18n.t('badges.allergens') }}
+                </p>
+              </div>
           </div>
         </div>
 
