@@ -55,8 +55,8 @@ const closePopup = () => {
 </script>
 
 <template>
-  <BaseDrawer :open="isOpen" @close="closePopup">
-    <div class="w-full h-full flex flex-col overflow-auto -translate-y-12">
+  <BaseDrawer :open="isOpen" :padding-top="false" @close="closePopup">
+    <div class="w-full h-full flex flex-col overflow-auto">
       <template v-if="product.media?.length">
         <div class="w-full h-65 relative">
           <div class="absolute w-full top-0 h-65 border-b-1 border-base-300 overflow-hidden flex flex-col justify-center">
@@ -96,7 +96,7 @@ const closePopup = () => {
       </div>
 
       <!-- Scrollable content area -->
-      <div class="flex-1">
+      <div class="flex-1 pb-20">
         <div class="card-body px-4 pb-3 pt-4 rounded text-start relative">
           <div class="flex justify-between items-start gap-1">
             <div class="flex flex-col justify-start items-start gap-2">

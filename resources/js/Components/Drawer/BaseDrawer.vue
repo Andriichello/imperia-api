@@ -8,6 +8,10 @@
       type: Boolean,
       required: true,
     },
+    paddingTop: {
+      type: Boolean,
+      default: true,
+    },
   });
 
 
@@ -21,7 +25,8 @@
     <div class="w-full fixed inset-0 z-50 flex justify-center"
          v-if="open"
          @click.self="close">
-      <div class="bg-base-100 w-full max-w-md h-full max-h-full shadow-lg transition-transform transform translate-x-0 pt-12 overflow-none relative">
+      <div class="bg-base-100 w-full max-w-md h-full max-h-full shadow-lg transition-transform transform translate-x-0 overflow-none relative"
+           :class="{'pt-12': paddingTop}">
         <button class="absolute top-1.5 right-2 z-51 btn btn-sm h-9 bg-base-100"
                 @click="close">
           <X class="w-5 h-5 text-base-content/80"/>
