@@ -12,8 +12,9 @@ const i18n = useI18n();
 
 const props = defineProps({
   product: {
-    type: Object as PropType<Dish>,
-    required: true,
+    type: Object as PropType<Dish | null>,
+    required: false,
+    default: null,
   },
   currency: {
     type: String as PropType<string | null>,
@@ -33,15 +34,18 @@ const props = defineProps({
 const emit = defineEmits(['close']);
 
 const media = computed<Media[]>(() => {
-  return props.product.media.map((m: Media) => {
+  return props.product?.media?.map((m: Media) => {
     const webp = m?.variants?.find((v: Media) => v.extension === 'webp');
     return webp ?? m;
-  });
+  }) ?? [];
 });
 
-const allergens = computed(() => {
-  if (!props.product.flags) return [] as string[];
-  return (props.product.flags as string[]).filter((flag: string) => flag.startsWith('alg-')) as string[];
+const allergens = computed<string[]>(() => {
+  const flags = props.product?.flags as string[] | undefined;
+  if (!flags) {
+    return [];
+  }
+  return flags.filter((flag: string) => flag.startsWith('alg-'));
 });
 
 const getAllergenTranslation = (allergen: string) => {
@@ -57,6 +61,7 @@ const closePopup = () => {
 <template>
   <BaseDrawer :open="open" :padding-top="false" @close="closePopup">
     <div class="w-full h-full flex flex-col overflow-auto">
+      <template v-if="product">
       <template v-if="product.media?.length">
         <div class="w-full max-h-65 h-65 relative z-1">
           <div class="absolute w-full top-0 h-65 border-b-1 border-base-300 overflow-hidden flex flex-col justify-center">
@@ -307,6 +312,74 @@ const closePopup = () => {
 
         </div>
       </div>
+      </template>
+      <template v-else>
+        <!-- Skeleton preloader while product is null -->
+        <div class="w-full max-h-65 h-65 relative z-1">
+          <div class="absolute w-full top-0 h-65 border-b-1 border-base-300 overflow-hidden flex flex-col justify-center">
+            <DiagonalPattern class="scale-165 opacity-60 text-warning-content/80"
+                             :establishment="establishment ?? 'restaurant'"/>
+          </div>
+        </div>
+
+        <div class="w-full text-warning-content/80 bg-warning/10 opacity-80 border-none select-none rounded-none py-3 px-2 pr-16 font-semibold text-md text-start">
+          <div class="h-5 w-40 bg-base-300/70 rounded animate-pulse"></div>
+        </div>
+
+        <div class="flex-1 pb-20">
+          <div class="card-body px-4 pb-3 pt-4 rounded text-start relative">
+            <div class="flex justify-between items-start gap-1">
+              <div class="flex flex-col justify-start items-start gap-2 w-full">
+                <div class="h-7 w-3/4 bg-base-300/70 rounded animate-pulse"></div>
+                <div class="space-y-2 w-full">
+                  <div class="h-4 w-full bg-base-300/50 rounded animate-pulse"></div>
+                  <div class="h-4 w-5/6 bg-base-300/50 rounded animate-pulse"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1 px-6 py-1">
+            <div class="flex flex-wrap gap-x-3 gap-y-2 opacity-70">
+              <div class="h-5 w-24 bg-base-300/60 rounded animate-pulse"></div>
+              <div class="h-5 w-16 bg-base-300/60 rounded animate-pulse"></div>
+              <div class="h-5 w-20 bg-base-300/60 rounded animate-pulse"></div>
+            </div>
+
+            <div class="mb-4 mt-4">
+              <div class="h-6 w-40 bg-base-300/70 rounded mb-3 animate-pulse"></div>
+              <div class="w-full flex flex-col gap-2">
+                <div class="w-full py-3 px-3 rounded mb-2 btn-outline border border-dashed text-base-content/75 border-base-content/40">
+                  <div class="w-full flex justify-between items-center">
+                    <div class="h-5 w-32 bg-base-300/60 rounded animate-pulse"></div>
+                    <div class="h-6 w-20 bg-base-300/60 rounded animate-pulse"></div>
+                  </div>
+                  <div class="w-full flex justify-start gap-4 mt-2">
+                    <div class="h-4 w-24 bg-base-300/50 rounded animate-pulse"></div>
+                    <div class="h-4 w-28 bg-base-300/50 rounded animate-pulse"></div>
+                  </div>
+                </div>
+                <div class="w-full py-3 px-3 rounded btn-outline border border-dashed text-base-content/75 border-base-content/40">
+                  <div class="w-full flex justify-between items-center">
+                    <div class="h-5 w-28 bg-base-300/60 rounded animate-pulse"></div>
+                    <div class="h-6 w-16 bg-base-300/60 rounded animate-pulse"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="px-6">
+            <div class="mb-6">
+              <div class="h-6 w-36 bg-base-300/70 rounded mb-2 animate-pulse"></div>
+              <div class="flex flex-wrap gap-2">
+                <div class="h-6 w-24 bg-orange-300/40 rounded animate-pulse"></div>
+                <div class="h-6 w-20 bg-orange-300/40 rounded animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
     </div>
   </BaseDrawer>
 </template>

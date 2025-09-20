@@ -364,6 +364,12 @@
       return;
     }
 
+    // Pause auto-selection while any drawer is open or scroll is disabled
+    if (isSearchOpened.value || isLanguageOpened.value || isProductOpened.value) {
+      lastScrollPosition.value = scrollPosition;
+      return;
+    }
+
     const categoriesCount = selectedMenu.value?.categories?.length ?? 0;
 
     for (let i = 0; i < categoriesCount; i++) {
@@ -561,10 +567,13 @@
   }
 
   const onOpenProduct = ({product, category, menu}: { product: Dish, category: DishCategory, menu: DishMenu}) => {
+    console.log('Preview.onOpenProduct', product, category, menu);
     isSearchOpened.value = false;
 
     // Only update if it's a different menu
     if (product.id !== selectedProduct.value?.id) {
+      console.log('url: ', window.location.pathname + '#' + category.id + '-' + product.id + '-page')
+
       // Update the URL in the browser without a page reload
       router.replace({
         url: window.location.pathname + '#' + category.id + '-' + product.id + '-page',
@@ -618,6 +627,12 @@
     window.addEventListener('scroll', onScroll);
 
     resolveAllIds();
+
+    // Open Product drawer automatically if the URL hash targets a product page
+    const hash = window.location.hash || '';
+    if (hash.includes('-page') && selectedProduct.value) {
+      isProductOpened.value = true;
+    }
   });
 
   onUnmounted(() => {
@@ -629,27 +644,43 @@
       return;
     }
 
-    let categoryId = window.location.hash.replace('#', '');
-    let productId = null;
+    let hashVal = window.location.hash.replace('#', '');
+    let productIdLocal: number | string | null = null;
 
-    if (categoryId.includes('-')) {
-      const parts = categoryId.split('-');
+    const isProductPage = hashVal.includes('-page');
 
-      categoryId = parts[0];
-      productId = parts[1];
+    if (hashVal.includes('-')) {
+      const parts = hashVal.split('-');
+
+      hashVal = parts[0];
+      productIdLocal = parts[1];
     }
 
-    const category = findCategory(categoryId);
-    const product = findProduct(productId);
+    const category = findCategory(hashVal);
+    const product = findProduct(productIdLocal);
 
     if (category) {
-      setTimeout(() => {
-        selectedCategory.value = category;
+      // Ensure the menu aligns with the category
+      if (!selectedMenu.value || selectedMenu.value.id !== category.menu?.id) {
+        selectedMenu.value = findMenu(menuId.value) ?? category.menu ?? selectedMenu.value;
+      }
 
+      selectedCategory.value = category;
+
+      if (product) {
+        selectedProduct.value = product;
+        productId.value = product.id;
+      }
+
+      setTimeout(() => {
         if (selectedMenu.value?.categories?.[0]?.id !== category.id || product) {
           shouldNotScroll.value = 0;
           ignoringScroll.value = false;
           scrollToCategory(category, product);
+        }
+
+        if (isProductPage && product) {
+          isProductOpened.value = true;
         }
       }, 100);
     } else {
@@ -765,14 +796,12 @@
                       @close="isLanguageOpened = false"
                       @switch-language="onSwitchLanguage"/>
 
-      <template v-if="selectedProduct">
-        <ProductDrawer :open="isProductOpened"
-                       :product="selectedProduct"
-                       :currency="restaurant.currency ?? 'uah'"
-                       :establishment="restaurant.establishment ?? 'restaurant'"
-                       @close="onCloseProduct"/>
-      </template>
-    </div>
+      <ProductDrawer :open="isProductOpened"
+                     :product="selectedProduct"
+                     :currency="restaurant.currency ?? 'uah'"
+                     :establishment="restaurant.establishment ?? 'restaurant'"
+                     @close="onCloseProduct"/>
+  </div>
   </BaseLayout>
 </template>
 
