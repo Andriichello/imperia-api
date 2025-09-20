@@ -1,9 +1,10 @@
 <script setup lang="ts">
-  import {X} from "lucide-vue-next";
+  import { X } from "lucide-vue-next";
+  import { onUnmounted, watch } from "vue";
 
   const emits = defineEmits(['close']);
 
-  defineProps({
+  const props = defineProps({
     open: {
       type: Boolean,
       required: true,
@@ -14,10 +15,72 @@
     },
   });
 
+  // Global (per-module) counter to handle multiple drawers
+  let __openDrawerCount = 0;
+  let __savedScrollY = 0;
 
-  function close() {
-    emits('close')
+  function lockBodyScroll(): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    if (__openDrawerCount === 0) {
+      __savedScrollY = window.scrollY || window.pageYOffset || 0;
+      const body = document.body as HTMLBodyElement;
+      body.style.position = 'fixed';
+      body.style.top = `-${__savedScrollY}px`;
+      body.style.left = '0';
+      body.style.right = '0';
+      body.style.width = '100%';
+      body.style.overflow = 'hidden';
+    }
+
+    __openDrawerCount++;
   }
+
+  function unlockBodyScroll(): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    __openDrawerCount = Math.max(0, __openDrawerCount - 1);
+
+    if (__openDrawerCount === 0) {
+      const body = document.body as HTMLBodyElement;
+      body.style.position = '';
+      body.style.top = '';
+      body.style.left = '';
+      body.style.right = '';
+      body.style.width = '';
+      body.style.overflow = '';
+
+      // Restore the previous scroll position
+      window.scrollTo({ top: __savedScrollY });
+    }
+  }
+
+  watch(
+    () => props.open,
+    (isOpen) => {
+      if (isOpen) {
+        lockBodyScroll();
+      } else {
+        unlockBodyScroll();
+      }
+    },
+    { immediate: true }
+  );
+
+  function close(): void {
+    emits('close');
+  }
+
+  onUnmounted(() => {
+    // Ensure we unlock if the component unmounts while open
+    if (props.open) {
+      unlockBodyScroll();
+    }
+  });
 </script>
 
 <template>
