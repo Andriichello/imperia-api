@@ -1,13 +1,10 @@
 <script setup lang="ts">
-  import {Category, Dish, DishCategory, Product} from "@/api";
-  import ProductInList from "@/Components/Menu/ProductInList.vue";
-  import {PropType, ref} from "vue";
+  import {Dish, DishCategory} from "@/api";
+  import {PropType} from "vue";
   import {useI18n} from "vue-i18n";
   import ProductInListRightMedia from "@/Components/Menu/ProductInListRightMedia.vue";
-  import ProductPopup from "@/Components/Menu/ProductPopup.vue";
-  import ProductDrawer from "@/Components/Drawer/ProductDrawer.vue";
 
-  const emits = defineEmits(['switch-category']);
+  const emits = defineEmits(['switch-category', 'open-product']);
 
   const props = defineProps({
     category: {
@@ -35,18 +32,9 @@
 
   const i18n = useI18n();
 
-  const showProductPopup = ref(false);
-  const selectedProduct = ref<Dish | null>(null);
-
-  const handleProductClick = async (product: Dish) => {
-    selectedProduct.value = product;
-    showProductPopup.value = true;
-  };
-
-  const closeProductPopup = () => {
-    showProductPopup.value = false;
-    selectedProduct.value = null;
-  };
+  function onProductClick(product: Dish) {
+    emits('open-product', { product, category: props.category, menu: props.category.menu });
+  }
 </script>
 
 <template>
@@ -78,19 +66,10 @@
                        :preview="true"
                        :currency="currency"
                        :establishment="establishment"
-                       @product-click="handleProductClick"/>
+                       @product-click="onProductClick"/>
 
         <div class="w-full h-[1px] flex flex-col bg-warning-content/25"/>
       </template>
     </div>
-
-    <ProductDrawer
-      v-if="selectedProduct"
-      :product="selectedProduct"
-      :currency="currency"
-      :establishment="establishment"
-      :is-open="showProductPopup"
-      @close="closeProductPopup"
-    />
   </div>
 </template>

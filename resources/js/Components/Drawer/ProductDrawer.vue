@@ -24,7 +24,7 @@ const props = defineProps({
     type: String as PropType<string | null>,
     default: 'restaurant',
   },
-  isOpen: {
+  open: {
     type: Boolean,
     default: false,
   }
@@ -55,16 +55,16 @@ const closePopup = () => {
 </script>
 
 <template>
-  <BaseDrawer :open="isOpen" :padding-top="false" @close="closePopup">
+  <BaseDrawer :open="open" :padding-top="false" @close="closePopup">
     <div class="w-full h-full flex flex-col overflow-auto">
       <template v-if="product.media?.length">
-        <div class="w-full h-65 relative">
+        <div class="w-full max-h-65 h-65 relative z-1">
           <div class="absolute w-full top-0 h-65 border-b-1 border-base-300 overflow-hidden flex flex-col justify-center">
             <DiagonalPattern class="scale-165 opacity-60 text-warning-content/80"
                              :establishment="establishment ?? 'restaurant'"/>
           </div>
 
-          <Splide class="w-full h-65" :options="{
+          <Splide id="product-media" class="w-full max-h-65 h-65" :options="{
                     perPage: 1,
                     perMove: 1,
                     rewind: false,

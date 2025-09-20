@@ -16,6 +16,7 @@
   import {getScheduleInfo, ScheduleInfo} from "@/helpers";
   import {useScrollLock} from "@/composables/useScrollLock";
   import LoadingMenuInList from "@/Components/Menu/LoadingMenuInList.vue";
+  import ProductDrawer from "@/Components/Drawer/ProductDrawer.vue";
 
   const props = defineProps({
     restaurant:  {
@@ -44,6 +45,7 @@
 
   const isSearchOpened = ref(false);
   const isLanguageOpened = ref(false);
+  const isProductOpened = ref(false);
 
   const isSearchWithAutofocus = ref(true);
 
@@ -454,6 +456,7 @@
 
     switchMenu(menu, true);
   }
+
   const onSwitchCategory = (category: DishCategory, menu: DishMenu = selectedMenu.value) => {
     if (mode.value !== 'menu') {
       mode.value = 'menu';
@@ -557,9 +560,8 @@
     });
   }
 
-  const onOpenProduct = (product: Dish, category: DishCategory, menu: DishMenu = null) => {
+  const onOpenProduct = ({product, category, menu}: { product: Dish, category: DishCategory, menu: DishMenu}) => {
     isSearchOpened.value = false;
-    menu = menu ?? findMenu(menuId.value);
 
     menuId.value = menu.id;
     categoryId.value = category.id;
@@ -568,6 +570,8 @@
     selectedMenu.value = menu;
     selectedCategory.value = category;
     selectedProduct.value = product;
+
+    isProductOpened.value = true;
   }
 
   const onSwitchLanguage = (locale: string) => {
@@ -710,7 +714,8 @@
                           :currency="restaurant.currency ?? 'uah'"
                           :establishment="restaurant.establishment ?? 'restaurant'"
                           @switch-menu="onSwitchMenu"
-                          @switch-category="onSwitchCategory"/>
+                          @switch-category="onSwitchCategory"
+                          @open-product="({product, category, menu}) => onOpenProduct({product, category, menu: menu ?? selectedMenu})"/>
             </div>
           </Deferred>
         </div>
@@ -738,6 +743,12 @@
                       :supported_locales="supported_locales"
                       @close="isLanguageOpened = false"
                       @switch-language="onSwitchLanguage"/>
+
+      <ProductDrawer :open="isProductOpened"
+                     :product="selectedProduct"
+                     :currency="restaurant.currency ?? 'uah'"
+                     :establishment="restaurant.establishment ?? 'restaurant'"
+                     @close="isProductOpened = false"/>
     </div>
   </BaseLayout>
 </template>

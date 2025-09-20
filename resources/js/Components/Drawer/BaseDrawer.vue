@@ -41,10 +41,12 @@
 <style scoped>
   .slide-enter-active,
   .slide-leave-active {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
+
   .slide-enter-from,
   .slide-leave-to {
-    transform: translateX(100%);
+    transition: opacity 0.2s cubic-bezier(1, 0, 0.2, 0);
+    opacity: 0;
   }
 </style>

@@ -3,7 +3,7 @@
   import CategoryInList from "@/Components/Menu/CategoryInList.vue";
   import {PropType} from "vue";
 
-  const emits = defineEmits(['switch-menu', 'switch-category']);
+  const emits = defineEmits(['switch-menu', 'switch-category', 'open-product']);
 
   const props = defineProps({
     menu: {
@@ -37,6 +37,10 @@
   const switchCategory = (category: DishCategory) => {
     emits('switch-category', category);
   }
+
+  const openProduct = ({product, category, menu}: { product: Dish, category: DishCategory, menu: DishMenu}) => {
+    emits('open-product', { product, category, menu });
+  }
 </script>
 
 <template>
@@ -57,9 +61,10 @@
                         :products="categoryProducts(menu, category)"
                         :currency="currency"
                         :establishment="establishment"
-                        @switch-category="switchCategory"/>
+                        @switch-category="switchCategory"
+                        @open-product="openProduct"/>
 
-<!--        <div class="w-full h-[1px] bg-base-300"/>-->
+        <div class="w-full h-[1px] bg-base-300"/>
       </template>
     </div>
   </div>
