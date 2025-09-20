@@ -1,11 +1,9 @@
 <script setup lang="ts">
-  import {Category, Product} from "@/api";
-  import ProductInList from "@/Components/Menu/ProductInList.vue";
-  import {PropType} from "vue";
-  import {useI18n} from "vue-i18n";
-  import LoadingProductInList from "@/Components/Menu/LoadingProductInList.vue";
+import {PropType} from "vue";
+import {useI18n} from "vue-i18n";
+import LoadingProductInListRightMedia from "@/Components/Menu/LoadingProductInListRightMedia.vue";
 
-  const props = defineProps({
+const props = defineProps({
     products: {
       type: Array as PropType<{image: boolean}[]>,
       required: true,
@@ -31,21 +29,25 @@
     </div>
 
     <template v-if="!products?.length">
-      <div class="w-full flex flex-col py-2 gap-3">
-        <LoadingProductInList class="border-1 border-warning-content/20"
+      <div class="w-full flex flex-col py-2 gap-2">
+        <LoadingProductInListRightMedia
                               :image="true"
                               :currency="currency"
                               :establishment="establishment"/>
+
+        <div class="w-full h-[1px] flex flex-col bg-warning-content/25"/>
       </div>
     </template>
 
-    <div class="w-full flex flex-col py-2 gap-3"
+    <div class="w-full flex flex-col py-2 gap-2"
          v-else>
       <template v-for="product in products">
-        <LoadingProductInList class="border-1 border-warning-content/20"
+        <LoadingProductInListRightMedia
                               :image="product?.image ?? false"
                               :currency="currency"
                               :establishment="establishment"/>
+
+        <div class="w-full h-[1px] flex flex-col bg-warning-content/25"/>
       </template>
     </div>
   </div>

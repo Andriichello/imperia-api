@@ -7,6 +7,7 @@
   import {Deferred} from "@inertiajs/vue3";
   import LoadingProductInList from "@/Components/Menu/LoadingProductInList.vue";
   import ProductInListRightMedia from "@/Components/Menu/ProductInListRightMedia.vue";
+  import LoadingProductInListRightMedia from "@/Components/Menu/LoadingProductInListRightMedia.vue";
 
   const props = defineProps({
     open: {
@@ -489,7 +490,7 @@
               <h3 class="font-bold text-lg mb-2">{{ i18n.t('search.products') }}</h3>
               <div class="space-y-2">
                 <template v-for="product in [{image: true}, {image: false}]">
-                  <LoadingProductInList :image="product?.image ?? false"
+                  <LoadingProductInListRightMedia :image="product?.image ?? false"
                                         :currency="currency"
                                         :establishment="restaurant.establishment"/>
 
