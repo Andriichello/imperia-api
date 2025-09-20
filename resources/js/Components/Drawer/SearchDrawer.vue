@@ -111,7 +111,7 @@
                       @query-updated="onQueryUpdated"
                       @tag-updated="onTagUpdated"/>
 
-      <div class="w-full flex flex-col px-6 pb-[250px] overflow-auto"
+      <div class="w-full flex flex-col px-3 pb-[250px] overflow-auto"
            v-if="!hasResults && !searchQuery?.length && !tag?.length">
         <template v-for="menu in menus" :key="menu.id">
           <div class="w-full flex flex-col text-start py-3 px-3 cursor-pointer"

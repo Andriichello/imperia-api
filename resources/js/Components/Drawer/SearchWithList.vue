@@ -6,6 +6,7 @@
   import ProductInList from "@/Components/Menu/ProductInList.vue";
   import {Deferred} from "@inertiajs/vue3";
   import LoadingProductInList from "@/Components/Menu/LoadingProductInList.vue";
+  import ProductInListRightMedia from "@/Components/Menu/ProductInListRightMedia.vue";
 
   const props = defineProps({
     open: {
@@ -448,7 +449,7 @@
     </Deferred>
 
     <!-- Search results -->
-    <div v-if="searchQuery || tag?.length" class="overflow-auto pt-2 px-6">
+    <div v-if="searchQuery || tag?.length" class="overflow-auto pt-2 px-3">
       <div v-if="hasResults" class="pb-[250px]">
         <!-- Menus section -->
         <div v-if="filteredMenus.length > 0" class="mb-6">
@@ -468,7 +469,7 @@
         <div v-if="filteredCategories.length > 0" class="mb-6">
           <h3 class="font-bold text-lg mb-2">{{ i18n.t('search.categories') }}</h3>
           <div class="space-y-2">
-            <div class="p-3 hover:bg-warning/10 border-1 border-warning-content/40 rounded-lg cursor-pointer transition-colors"
+            <div class="p-3 hover:bg-warning/10 border-1 border-warning-content/25 rounded-lg cursor-pointer transition-colors"
                  v-for="category in filteredCategories"
                  :key="`category-${category.id}`"
                  @click="openCategory(category)">
@@ -488,10 +489,11 @@
               <h3 class="font-bold text-lg mb-2">{{ i18n.t('search.products') }}</h3>
               <div class="space-y-2">
                 <template v-for="product in [{image: true}, {image: false}]">
-                  <LoadingProductInList class="border-1 border-warning-content/20"
-                                        :image="product?.image ?? false"
+                  <LoadingProductInList :image="product?.image ?? false"
                                         :currency="currency"
                                         :establishment="restaurant.establishment"/>
+
+                  <div class="w-full h-[1px] flex flex-col bg-warning-content/25"/>
                 </template>
               </div>
             </div>
@@ -500,13 +502,15 @@
           <div v-if="filteredProducts.length > 0" class="mb-6">
             <h3 class="font-bold text-lg mb-2">{{ i18n.t('search.products') }}</h3>
             <div class="space-y-2">
-              <ProductInList class="cursor-pointer hover:bg-warning/10 border-1 border-warning-content/40"
-                             v-for="product in filteredProducts"
-                             :key="`product-${product.id}`"
-                             :product="product"
-                             :preview="true"
-                             :currency="currency"
-                             @click="openProduct(product)"/>
+              <template v-for="product in filteredProducts" :key="`product-${product.id}`">
+                <ProductInListRightMedia class="cursor-pointer hover:bg-warning/10"
+                  :product="product"
+                  :preview="true"
+                  :currency="currency"
+                  @click="openProduct(product)"/>
+
+                <div class="w-full h-[1px] my-2 flex flex-col bg-warning-content/25"/>
+              </template>
             </div>
           </div>
         </Deferred>
