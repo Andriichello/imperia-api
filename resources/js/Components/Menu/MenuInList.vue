@@ -7,12 +7,14 @@
 
   const props = defineProps({
     menu: {
-      type: Object as PropType<DishMenu>,
-      required: true,
+      type: Object as PropType<DishMenu | null>,
+      required: false,
+      default: null,
     },
     products: {
-      type: Array as PropType<Dish[]>,
-      required: true,
+      type: Array as PropType<Dish[] | null>,
+      required: false,
+      default: () => [],
     },
     closed: {
       type: Boolean,
@@ -30,7 +32,7 @@
   });
 
   const categoryProducts = (menu: DishMenu, category: DishCategory) =>
-    props.products.filter(
+    (props.products ?? []).filter(
       (p: Dish) => p.category_id === category.id
     )
 
@@ -44,14 +46,14 @@
 </script>
 
 <template>
-  <div class="w-full flex flex-col">
+  <div class="w-full flex flex-col" v-if="menu">
     <div class="w-full flex flex-col">
       <div class="w-full flex flex-col text-center pb-0 px-3 cursor-pointer sticky"
-           :class="{'pt-3': menu.description?.length > 0}"
+           :class="{'pt-3': menu?.description?.length > 0}"
            @click="emits('switch-menu', menu)">
         <p class="text-md font-light opacity-80"
-           v-if="menu.description?.length > 0">
-          {{ menu.description }}
+           v-if="menu?.description?.length > 0">
+          {{ menu?.description }}
         </p>
       </div>
 

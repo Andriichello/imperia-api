@@ -17,6 +17,7 @@
   import {useScrollLock} from "@/composables/useScrollLock";
   import LoadingMenuInList from "@/Components/Menu/LoadingMenuInList.vue";
   import ProductDrawer from "@/Components/Drawer/ProductDrawer.vue";
+  import LoadingProductInListRightMedia from "@/Components/Menu/LoadingProductInListRightMedia.vue";
 
   const props = defineProps({
     restaurant:  {
@@ -88,7 +89,19 @@
   const scheduleExpanded = ref(false);
 
   function resolveRestaurantId() {
-    const match = window.location.pathname.match(/\/inertia\/([^\/]+)\/?/);
+    // Match first segment as restaurant id, supporting optional locale and optional "/inertia" prefix
+    // Examples:
+    // /123 -> 123
+    // /123/menu/5 -> 123
+    // /en/inertia/123 -> 123
+    // /en/inertia/123/menu/5 -> 123
+    const path = window.location.pathname;
+    const inertiaIndex = path.indexOf('/inertia/');
+    let working = path;
+    if (inertiaIndex !== -1) {
+      working = path.substring(inertiaIndex + '/inertia'.length);
+    }
+    const match = working.match(/^\/(\d+)/);
     return match ? parseInt(match[1]) : null;
   }
 
@@ -197,30 +210,74 @@
   const selectedCategory = ref<DishCategory | null>();
   const selectedProduct = ref<Dish | null>();
 
-  const switchMenu = (menu: DishMenu, force: boolean = false) => {
+  // Navigation & History helpers
+  type HistoryAction = 'push' | 'replace';
+
+  const navigationLock = ref(false);
+
+  function getBasePath(): string {
+    return window.location.pathname.split('/menu/')[0];
+  }
+
+  function buildUrl(mId: number | null, cId: number | null, pId: number | null, isPage: boolean): string {
+    const base = getBasePath();
+    if (!mId) {
+      return base; // restaurant mode
+    }
+    let url = `${base}/menu/${mId}`;
+    if (cId) {
+      url += `#${cId}`;
+      if (pId) {
+        url += `-${pId}`;
+        if (isPage) {
+          url += `-page`;
+        }
+      }
+    }
+    return url;
+  }
+
+  function setHistory(action: HistoryAction, state: any): void {
+    const fn = action === 'push' ? window.history.pushState : window.history.replaceState;
+    try {
+      fn.call(window.history, state, '', buildUrl(state.menuId ?? null, state.categoryId ?? null, state.productId ?? null, !!state.productPage));
+    } catch (_) {
+      // Fallback to replaceState without URL change if something goes wrong
+      window.history.replaceState(state, '');
+    }
+  }
+
+  const updateHistoryScroll = () => {
+    const current = window.history.state || {};
+    const next = { ...current, scrollY: window.scrollY };
+    window.history.replaceState(next, '');
+  };
+
+  const switchMenu = (menu: DishMenu, historyAction: HistoryAction = 'replace') => {
     // Only update if it's a different menu
-    if (force || menu.id !== selectedMenu.value?.id) {
-      const basePath = window.location.pathname.split('/menu/')[0];
-
-      // Update the URL in the browser without a page reload
-      router.replace({
-        url: `${basePath}/menu/${menu.id}`,
-        preserveState: true,
-      });
-
+    if (historyAction === 'push' || menu.id !== selectedMenu.value?.id) {
       ignoringScroll.value = true;
 
       window.scrollTo({top: 0, behavior: 'smooth'});
 
       // Update your component's state locally
-      // This is needed since we're not hitting the backend
-      // You'd need to track the selected menu ID locally
       menuId.value = menu.id;
       selectedMenu.value = menu;
       categoryId.value = null;
       selectedCategory.value = null;
       productId.value = null;
       selectedProduct.value = null;
+
+      // Update history
+      setHistory(historyAction, {
+        mode: 'menu',
+        restaurantId: restaurantId.value ?? resolveRestaurantId(),
+        menuId: menu.id,
+        categoryId: null,
+        productId: null,
+        productPage: false,
+        scrollY: 0,
+      });
 
       const idToCheck = ignoringScrollId.value++;
 
@@ -232,23 +289,25 @@
     }
   };
 
-  const switchCategory = (category: DishCategory, product: Dish | null = null) => {
-    // Only update if it's a different menu
-    if (category.id !== selectedCategory.value?.id) {
-      // Update the URL in the browser without a page reload
-      router.replace({
-        url: window.location.pathname + '#' + category.id + (product ? '-' + product.id : ''),
-        preserveState: true,
-        preserveScroll: true,
-      });
-
+  const switchCategory = (category: DishCategory, product: Dish | null = null, historyAction: HistoryAction = 'replace') => {
+    // Only update if it's a different category or we explicitly want to push
+    if (historyAction === 'push' || category.id !== selectedCategory.value?.id || (product?.id !== selectedProduct.value?.id)) {
       // Update your component's state locally
-      // This is needed since we're not hitting the backend
-      // You'd need to track the selected menu ID locally
       categoryId.value = category.id;
       selectedCategory.value = category;
-      productId.value = product?.id;
-      selectedProduct.value = product;
+      productId.value = product?.id ?? null;
+      selectedProduct.value = product ?? null;
+
+      // Update the URL in the browser without a page reload
+      setHistory(historyAction, {
+        mode: 'menu',
+        restaurantId: restaurantId.value ?? resolveRestaurantId(),
+        menuId: menuId.value ?? selectedMenu.value?.id ?? null,
+        categoryId: category.id,
+        productId: product?.id ?? null,
+        productPage: false,
+        scrollY: window.scrollY,
+      });
     }
   };
 
@@ -389,12 +448,17 @@
         shouldNotScroll.value = Date.now();
 
         // select a category and scroll to it...
-        switchCategory(category);
+        switchCategory(category, null, 'replace');
         break;
       }
     }
 
     lastScrollPosition.value = scrollPosition;
+
+    // keep current scroll in history for restoration
+    if (!ignoringScroll.value) {
+      updateHistoryScroll();
+    }
   };
 
   const scrollToCategory = (category: DishCategory, product: Dish | null = null) => {
@@ -460,7 +524,7 @@
 
     isSearchOpened.value = false;
 
-    switchMenu(menu, true);
+    switchMenu(menu, 'push');
   }
 
   const onSwitchCategory = (category: DishCategory, menu: DishMenu = selectedMenu.value) => {
@@ -471,11 +535,11 @@
     isSearchOpened.value = false;
 
     if (menu.id !== selectedMenu.value?.id) {
-      switchMenu(menu);
+      switchMenu(menu, 'replace');
     }
 
     setTimeout(() => {
-      switchCategory(category);
+      switchCategory(category, null, 'push');
       scrollToCategory(category);
     }, 200);
   }
@@ -488,11 +552,11 @@
     isSearchOpened.value = false;
 
     if (menu.id !== selectedMenu.value?.id) {
-      switchMenu(menu);
+      switchMenu(menu, 'replace');
     }
 
     setTimeout(() => {
-      switchCategory(category, product);
+      switchCategory(category, product, 'push');
       scrollToCategory(category, product);
     }, 200);
 
@@ -504,9 +568,21 @@
   function onBackFromMenu() {
     mode.value = 'restaurant';
 
-    router.replace({
-      url: window.location.pathname.split('/menu/')[0],
-      preserveState: true,
+    // Clear selections
+    categoryId.value = null;
+    selectedCategory.value = null;
+    productId.value = null;
+    selectedProduct.value = null;
+
+    // Push restaurant state into history
+    setHistory('push', {
+      mode: 'restaurant',
+      restaurantId: restaurantId.value ?? resolveRestaurantId(),
+      menuId: null,
+      categoryId: null,
+      productId: null,
+      productPage: false,
+      scrollY: 0,
     });
   }
 
@@ -537,18 +613,7 @@
     isSearchOpened.value = false;
     mode.value = 'menu';
 
-    menuId.value = menu.id;
-    categoryId.value = null;
-    productId.value = null;
-
-    selectedMenu.value = menu;
-    selectedCategory.value = null;
-    selectedProduct.value = null;
-
-    router.replace({
-      url: window.location.pathname.split('/menu/')[0] + `/menu/${menu.id}`,
-      preserveState: true,
-    });
+    switchMenu(menu, 'push');
   }
 
   const onOpenCategory = (category: DishCategory, menu: DishMenu = null) => {
@@ -556,33 +621,17 @@
 
     menu = menu ?? findMenu(menuId.value);
 
-    menuId.value = menu.id;
-    categoryId.value = category.id;
-    productId.value = null;
+    if (menu && menu.id !== selectedMenu.value?.id) {
+      switchMenu(menu, 'replace');
+    }
 
-    selectedMenu.value = menu;
-    selectedCategory.value = category;
-    selectedProduct.value = null;
-
-    router.replace({
-      url: window.location.pathname.split('/menu/')[0] + `/menu/${menu.id}`,
-      preserveState: true,
-    });
+    switchCategory(category, null, 'push');
   }
 
   const onOpenProduct = ({product, category, menu}: { product: Dish, category: DishCategory, menu: DishMenu}) => {
     isSearchOpened.value = false;
 
-    // Only update if it's a different menu
-    if (product.id !== selectedProduct.value?.id) {
-      // Update the URL in the browser without a page reload
-      router.replace({
-        url: window.location.pathname + '#' + category.id + '-' + product.id + '-page',
-        preserveState: true,
-        preserveScroll: true,
-      });
-    }
-
+    // Update selection
     menuId.value = menu.id;
     categoryId.value = category.id;
     productId.value = product.id;
@@ -591,18 +640,84 @@
     selectedCategory.value = category;
     selectedProduct.value = product;
 
+    // Ensure we have a product state (#categoryId-productId) before pushing the page state
+    const hash = window.location.hash || '';
+    const currentCategoryId = resolveCategoryId();
+    const currentProductId = resolveProductId();
+    const isCurrentlyPage = hash.includes('-page');
+
+    // If we are not already on the product-only state for this product, push it
+    if (!(currentCategoryId === category.id && currentProductId === product.id && !isCurrentlyPage)) {
+      setHistory('push', {
+        mode: 'menu',
+        restaurantId: restaurantId.value ?? resolveRestaurantId(),
+        menuId: menu.id,
+        categoryId: category.id,
+        productId: product.id,
+        productPage: false,
+        scrollY: window.scrollY,
+      });
+    }
+
+    // Now push product page state into history (adds -page hash)
+    if (!(currentCategoryId === category.id && currentProductId === product.id && isCurrentlyPage)) {
+      setHistory('push', {
+        mode: 'menu',
+        restaurantId: restaurantId.value ?? resolveRestaurantId(),
+        menuId: menu.id,
+        categoryId: category.id,
+        productId: product.id,
+        productPage: true,
+        scrollY: window.scrollY,
+      });
+    }
+
     isProductOpened.value = true;
   }
 
   const onCloseProduct = () => {
+    // Close the drawer without triggering a browser back navigation to avoid page reload
     isProductOpened.value = false;
 
-    // Update the URL in the browser without a page reload
-    router.replace({
-      url: window.location.pathname + '#' + selectedCategory.value.id,
-      preserveState: true,
-      preserveScroll: true,
-    });
+    const rId = restaurantId.value ?? resolveRestaurantId();
+    const mId = menuId.value ?? selectedMenu.value?.id ?? null;
+    const cId = categoryId.value ?? selectedCategory.value?.id ?? null;
+    const pId = productId.value ?? selectedProduct.value?.id ?? null;
+
+    if (mId && cId) {
+      // Replace current URL to product-only state (#categoryId-productId) by removing the "-page" suffix
+      setHistory('replace', {
+        mode: 'menu',
+        restaurantId: rId,
+        menuId: mId,
+        categoryId: cId,
+        productId: pId ?? null,
+        productPage: false,
+        scrollY: window.scrollY,
+      });
+    } else if (mId) {
+      // Fallback to menu top if category is missing
+      setHistory('replace', {
+        mode: 'menu',
+        restaurantId: rId,
+        menuId: mId,
+        categoryId: null,
+        productId: null,
+        productPage: false,
+        scrollY: window.scrollY,
+      });
+    } else {
+      // Fallback to restaurant mode
+      setHistory('replace', {
+        mode: 'restaurant',
+        restaurantId: rId,
+        menuId: null,
+        categoryId: null,
+        productId: null,
+        productPage: false,
+        scrollY: window.scrollY,
+      });
+    }
   }
 
   const onSwitchLanguage = (locale: string) => {
@@ -624,10 +739,87 @@
   }
 
 
+  function applyStateFromUrl(state: any = window.history.state) {
+    navigationLock.value = true;
+
+    // Parse IDs from URL
+    resolveAllIds();
+
+    // Determine mode from path
+    mode.value = window.location.pathname.includes('/menu') ? 'menu' : 'restaurant';
+
+    // Ensure menu aligns with category if needed
+    if (!selectedMenu.value && menuId.value) {
+      selectedMenu.value = findMenu(menuId.value) ?? selectedMenu.value;
+    }
+    if (!selectedMenu.value && selectedCategory.value?.menu?.id) {
+      selectedMenu.value = findMenu(selectedCategory.value.menu.id) ?? selectedMenu.value;
+    }
+
+    // Drawer state based on hash suffix
+    const hash = window.location.hash || '';
+    const isPage = hash.includes('-page');
+    if (isPage && selectedProduct.value) {
+      isProductOpened.value = true;
+    } else {
+      isProductOpened.value = false;
+    }
+
+    // Restore scroll position
+    const desiredY = typeof state?.scrollY === 'number' ? state.scrollY : null;
+    const category = selectedCategory.value ?? (categoryId.value ? findCategory(categoryId.value) : null);
+
+    const finish = () => {
+      navigationLock.value = false;
+    };
+
+    if (desiredY !== null) {
+      ignoringScroll.value = true;
+      window.scrollTo({ top: desiredY });
+      const idToCheck = ignoringScrollId.value++;
+      setTimeout(() => {
+        if (idToCheck === (ignoringScrollId.value - 1)) {
+          ignoringScroll.value = false;
+        }
+        finish();
+      }, 100);
+      return;
+    }
+
+    if (category) {
+      shouldNotScroll.value = 0;
+      ignoringScroll.value = false;
+      scrollToCategory(category, selectedProduct.value ?? null);
+      setTimeout(finish, 100);
+    } else {
+      setTimeout(() => { goToTop(); finish(); }, 100);
+    }
+  }
+
+  function onPopState(e: PopStateEvent) {
+    // Close overlay drawers on browser navigation
+    isSearchOpened.value = false;
+    isLanguageOpened.value = false;
+    applyStateFromUrl(e.state);
+  }
+
   onMounted(() => {
     window.addEventListener('scroll', onScroll);
+    window.addEventListener('popstate', onPopState);
 
     resolveAllIds();
+
+    // Initialize the history state for the current entry
+    const initialState = {
+      mode: window.location.pathname.includes('/menu') ? 'menu' : 'restaurant',
+      restaurantId: restaurantId.value ?? resolveRestaurantId(),
+      menuId: menuId.value ?? selectedMenu.value?.id ?? null,
+      categoryId: categoryId.value ?? selectedCategory.value?.id ?? null,
+      productId: productId.value ?? selectedProduct.value?.id ?? null,
+      productPage: (window.location.hash || '').includes('-page'),
+      scrollY: window.scrollY,
+    };
+    window.history.replaceState(initialState, '', buildUrl(initialState.menuId, initialState.categoryId, initialState.productId, initialState.productPage));
 
     // Open Product drawer automatically if the URL hash targets a product page
     const hash = window.location.hash || '';
@@ -638,6 +830,7 @@
 
   onUnmounted(() => {
     window.removeEventListener('scroll', onScroll);
+    window.removeEventListener('popstate', onPopState);
   });
 
   watch(() => props.products, (newValue, oldValue) => {
@@ -797,8 +990,8 @@
             </div>
 
             <div class="w-full flex flex-col pb-[250px]">
-              <MenuInList :menu="selectedMenu"
-                          :products="products"
+              <MenuInList :menu="selectedMenu ?? null"
+                          :products="products ?? []"
                           :closed="false"
                           :currency="restaurant.currency ?? 'uah'"
                           :establishment="restaurant.establishment ?? 'restaurant'"
