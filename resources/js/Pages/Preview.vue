@@ -369,7 +369,12 @@
     }
 
     if (ignoringScroll.value) {
+      // Ignore programmatic scrolls (e.g., closing drawers, auto scrolls)
       lastScrollPosition.value = scrollPosition;
+      continuousScroll.value = 0;
+      continuousScrollAt.value = null;
+      showGoToTop.value = false;
+      return;
     }
 
     const isScrollingUp = (lastScrollPosition.value - scrollPosition) > 0;
@@ -919,10 +924,16 @@
   });
 
   // When product drawer closes, BaseDrawer restores scroll position which can trigger onScroll.
-  // Pause auto-selection briefly when it closes.
+  // Pause auto-selection briefly when it closes and reset tracking.
   watch(() => isProductOpened.value, (newValue, oldValue) => {
     if (oldValue === true && newValue === false) {
+      // Short-circuit onScroll and reset scroll tracking so Go To Top doesn't flicker
       ignoringScroll.value = true;
+      lastScrollPosition.value = window.pageYOffset || document.documentElement.scrollTop || 0;
+      continuousScroll.value = 0;
+      continuousScrollAt.value = null;
+      showGoToTop.value = false;
+
       const idToCheck = ignoringScrollId.value++;
       setTimeout(() => {
         if (idToCheck === (ignoringScrollId.value - 1)) {
