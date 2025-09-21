@@ -693,12 +693,48 @@
   watch(() => isSearchOpened.value, (newValue, oldValue) => {
     if (oldValue !== newValue) {
       toggleScroll();
+
+      // If closing the drawer, ignore scroll events briefly to prevent auto-selection
+      if (oldValue === true && newValue === false) {
+        ignoringScroll.value = true;
+        const idToCheck = ignoringScrollId.value++;
+        setTimeout(() => {
+          if (idToCheck === (ignoringScrollId.value - 1)) {
+            ignoringScroll.value = false;
+          }
+        }, 500);
+      }
     }
   });
 
   watch(() => isLanguageOpened.value, (newValue, oldValue) => {
     if (oldValue !== newValue) {
       toggleScroll();
+
+      // If closing the drawer, ignore scroll events briefly to prevent auto-selection
+      if (oldValue === true && newValue === false) {
+        ignoringScroll.value = true;
+        const idToCheck = ignoringScrollId.value++;
+        setTimeout(() => {
+          if (idToCheck === (ignoringScrollId.value - 1)) {
+            ignoringScroll.value = false;
+          }
+        }, 500);
+      }
+    }
+  });
+
+  // When product drawer closes, BaseDrawer restores scroll position which can trigger onScroll.
+  // Pause auto-selection briefly when it closes.
+  watch(() => isProductOpened.value, (newValue, oldValue) => {
+    if (oldValue === true && newValue === false) {
+      ignoringScroll.value = true;
+      const idToCheck = ignoringScrollId.value++;
+      setTimeout(() => {
+        if (idToCheck === (ignoringScrollId.value - 1)) {
+          ignoringScroll.value = false;
+        }
+      }, 500);
     }
   });
 </script>

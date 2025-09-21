@@ -63,8 +63,6 @@
                         :establishment="establishment"
                         @switch-category="switchCategory"
                         @open-product="openProduct"/>
-
-        <div class="w-full h-[1px] bg-base-300"/>
       </template>
     </div>
   </div>
