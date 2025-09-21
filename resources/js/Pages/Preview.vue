@@ -495,6 +495,10 @@
       switchCategory(category, product);
       scrollToCategory(category, product);
     }, 200);
+
+    setTimeout(() => {
+      onOpenProduct({product, category, menu});
+    }, 500)
   }
 
   function onBackFromMenu() {
@@ -567,13 +571,10 @@
   }
 
   const onOpenProduct = ({product, category, menu}: { product: Dish, category: DishCategory, menu: DishMenu}) => {
-    console.log('Preview.onOpenProduct', product, category, menu);
     isSearchOpened.value = false;
 
     // Only update if it's a different menu
     if (product.id !== selectedProduct.value?.id) {
-      console.log('url: ', window.location.pathname + '#' + category.id + '-' + product.id + '-page')
-
       // Update the URL in the browser without a page reload
       router.replace({
         url: window.location.pathname + '#' + category.id + '-' + product.id + '-page',
