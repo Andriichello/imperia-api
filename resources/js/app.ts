@@ -1,37 +1,35 @@
-import {createApp, h} from 'vue';
-import {createInertiaApp} from '@inertiajs/vue3';
+import {createApp} from 'vue';
+import {createPinia} from 'pinia';
 import VueSplide from '@splidejs/vue-splide';
-import WelcomePage from '@/Pages/Welcome.vue';
-import PreviewPage from "@/Pages/Preview.vue";
 import setupI18n from '@/i18n';
-import { setI18n } from '@/i18n/utils';
+import {setI18n, setRouter as setI18nRouter} from '@/i18n/utils';
+import {createWebRouter} from '@/router';
+import {useAppStore} from '@/stores/app';
+import App from "@/App.vue";
 
-// Map your pages
-const pages: Record<string, any> = {
-  'Welcome': WelcomePage,
-  'Preview': PreviewPage,
-  // Add other pages here as needed
-}
+const element = document.getElementById('app');
+const props = element ? JSON.parse(element.dataset.props || '{}') : {};
 
-createInertiaApp({
-  resolve: (name: string) => {
-    return pages[name];
-  },
-  setup({ el, App, props, plugin }) {
-    // Get the locale from Inertia props
-    const locale = props.initialPage.props.locale || 'en';
+// Create app
+const app = createApp(App);
+app.use(VueSplide);
+// Create Pinia
+const pinia = createPinia();
+app.use(pinia);
 
-    // Create the i18n instance
-    const i18n = setupI18n(locale as string);
+// Hydrate the store with Laravel props
+const appStore = useAppStore(pinia);
+appStore.hydrate(props);
 
-    // Set the global i18n instance for use in non-component files
-    setI18n(i18n);
+// Setup i18n
+const i18n = setupI18n(props.locale || 'en');
+setI18n(i18n);
+// @ts-ignore
+app.use(i18n);
 
-    createApp({ render: () => h(App, props) })
-      .use(plugin)
-      .use(VueSplide)
-      // @ts-ignore
-      .use(i18n)
-      .mount(el)
-  },
-})
+// Create router
+const router = createWebRouter();
+app.use(router);
+setI18nRouter(router);
+
+app.mount('#app');
