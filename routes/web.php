@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Web\PreviewController;
+use App\Http\Controllers\Web\WelcomeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +15,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [WelcomeController::class, 'index'])
+    ->name('welcome');
+
+Route::get('/{restaurant_id}', [PreviewController::class, 'show'])
+    ->name('restaurant.preview');
+
+Route::get('/{restaurant_id}/menu/{menu_id?}', [PreviewController::class, 'show'])
+    ->name('menu.preview');

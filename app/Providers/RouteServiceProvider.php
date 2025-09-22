@@ -41,6 +41,8 @@ class RouteServiceProvider extends ServiceProvider
 
             Route::middleware('web')
                 ->namespace($this->namespace)
+                ->prefix('/{locale}/web')
+                ->name('web.')
                 ->group(base_path('routes/web.php'));
 
             Route::middleware(['web', 'inertia'])
@@ -50,6 +52,15 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(base_path('routes/inertia.php'));
 
             Route::fallback(function (Request $request) {
+                if (Str::startsWith($request->path(), 'web')) {
+                    $locale = $request->route('locale');
+                    $resolvedLocale = SetLocaleFromUrl::getLocaleFromUrl($request);
+
+                    if ($locale !== $resolvedLocale) {
+                        return redirect('/' . $resolvedLocale . '/' . $request->path());
+                    }
+                }
+
                 if (Str::startsWith($request->path(), 'inertia')) {
                     $locale = $request->route('locale');
                     $resolvedLocale = SetLocaleFromUrl::getLocaleFromUrl($request);
