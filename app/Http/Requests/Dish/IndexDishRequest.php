@@ -46,6 +46,12 @@ class IndexDishRequest extends IndexRequest
                 AllowedFilter::partial('title'),
                 AllowedFilter::custom('ids', new InFilter('id')),
                 AllowedFilter::exact('menu_id'),
+                AllowedFilter::custom('menu_ids', new InFilter('menu_id')),
+                AllowedFilter::callback('restaurant_id', function ($query, $value) {
+                    $query->whereHas('menu', function ($q) use ($value) {
+                        $q->where('restaurant_id', $value);
+                    });
+                }),
                 AllowedFilter::exact('category_id'),
             ]
         );
