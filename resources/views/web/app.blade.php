@@ -26,7 +26,7 @@
 
   <body data-theme="light">
     <div id="app" data-props='@json($props)'>
-      {{-- Content here... --}}
+      <!-- App Content -->
     </div>
   </body>
 

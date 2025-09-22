@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import {ref, PropType, onMounted, onUnmounted, watch, computed} from "vue";
   import {DishCategory, DishMenu, Dish, Restaurant} from "@/api";
-  import {Deferred, router} from "@inertiajs/vue3";
+  import Deferred from "@/Components/Deferred.vue";
   import NavBar from "@/Components/Base/NavBar.vue";
   import SearchDrawer from "@/Components/Drawer/SearchDrawer.vue";
   import LanguageDrawer from "@/Components/Drawer/LanguageDrawer.vue";

@@ -37,7 +37,7 @@ const handleProductClick = () => {
 
 const media = computed<Media[]>(() => {
   return props.product.media.map((m: Media) => {
-    const webp = m?.variants.find((v: Media) => v.extension === 'webp');
+    const webp = m?.variants?.find((v: Media) => v.extension === 'webp');
     return webp ?? m;
   })
 });

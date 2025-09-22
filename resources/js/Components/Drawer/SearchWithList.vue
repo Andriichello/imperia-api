@@ -4,7 +4,7 @@
   import {Droplet, DropletOff, Dumbbell, Flame, Leaf, Milk, MilkOff, Salad, Search, Vegan} from "lucide-vue-next";
   import {useI18n} from "vue-i18n";
   import ProductInList from "@/Components/Menu/ProductInList.vue";
-  import {Deferred} from "@inertiajs/vue3";
+  import Deferred from "@/Components/Deferred.vue";
   import LoadingProductInList from "@/Components/Menu/LoadingProductInList.vue";
   import ProductInListRightMedia from "@/Components/Menu/ProductInListRightMedia.vue";
   import LoadingProductInListRightMedia from "@/Components/Menu/LoadingProductInListRightMedia.vue";

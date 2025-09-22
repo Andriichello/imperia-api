@@ -32,7 +32,7 @@
 
   const media = computed<Media[]>(() => {
     return props.restaurant.media.map((m: Media) => {
-      const webp = m?.variants.find((v: Media) => v.extension === 'webp');
+      const webp = m?.variants?.find((v: Media) => v.extension === 'webp');
       return webp ?? m;
     })
   });
