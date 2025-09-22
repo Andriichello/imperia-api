@@ -65,7 +65,7 @@ export const storeMedia = <TData = AxiosResponse<StoreMediaResponse>>(
     storeMediaBody.metadata !== undefined &&
     storeMediaBody.metadata !== null
   ) {
-    formData.append(`metadata`, storeMediaBody.metadata);
+    formData.append(`metadata`, JSON.stringify(storeMediaBody.metadata));
   }
 
   if (storeMediaBody.file !== undefined) {
