@@ -3,17 +3,18 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Web\Traits\SharesPropsTrait;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
 
 class WelcomeController extends Controller
 {
-    public function index(): View
+    use SharesPropsTrait;
+
+    public function index(Request $request): View
     {
         return view('web.welcome', [
-            'props' => [
-                'initialPath' => request()->getPathInfo(),
-                'query' => request()->query(),
-            ],
+            ...$this->getSharedProps($request),
         ]);
     }
 }

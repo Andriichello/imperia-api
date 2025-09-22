@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Web\Traits\LoadsAndCachesTrait;
+use App\Http\Controllers\Web\Traits\SharesPropsTrait;
 use App\Http\Resources\Dish\DishMenuCollection;
 use App\Http\Resources\Restaurant\RestaurantResource;
 use App\Models\Menu;
@@ -13,6 +14,7 @@ use Illuminate\Http\Request;
 
 class PreviewController extends Controller
 {
+    use SharesPropsTrait;
     use LoadsAndCachesTrait;
 
     /**
@@ -45,7 +47,7 @@ class PreviewController extends Controller
 
                 return redirect()
                     ->route(
-                        'web.menu.preview',
+                        'web.temp',
                         [
                             'locale' => $request->route('locale'),
                             'restaurant_id' => $request->route('restaurant_id'),
@@ -62,7 +64,8 @@ class PreviewController extends Controller
             }
         }
 
-        return view('web.restaurant.preview', [
+        return view('web.temp', [
+            ...$this->getSharedProps($request),
             'restaurant' => new RestaurantResource($restaurant),
             'menus' => new DishMenuCollection($menus),
         ]);
