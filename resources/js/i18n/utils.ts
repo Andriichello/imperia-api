@@ -68,22 +68,26 @@ export function t(key: string, params = {}) {
 export function switchLanguage(i18n, locale: string, reload: boolean = false): void {
   const { locale: currentLocale } = i18n;
 
-  // Update the i18n locale
+  // Update the i18n locale immediately
   currentLocale.value = locale;
 
-  if (reload && globalRouter) {
-    // Get the current route
+  // When reloading/navigating between locale-prefixed bases like
+  // "/en/web/..." -> "/uk/web/...", we must not use the Vue Router,
+  // because the router's base is set to the current locale and would
+  // prefix the path again (causing e.g. "/en/web/uk/...\").
+  if (reload) {
+    const { pathname, search, hash } = window.location;
+    // Replace the very first path segment (the locale)
+    const newPathname = pathname.replace(/^\/([^\/]+)/, `/${locale}`);
+    const newUrl = `${newPathname}${search || ''}${hash || ''}`;
+    window.location.replace(newUrl);
+    return;
+  }
+
+  // SPA-only path update (when not reloading)
+  if (globalRouter) {
     const currentRoute = globalRouter.currentRoute.value;
-
-    // Replace the locale in the path
-    const currentPath = currentRoute.fullPath;
-    const newPath = currentPath.replace(/^\/([^\/]+)/, `/${locale}`);
-
-    // Navigate to the new URL using Vue Router
-    globalRouter.replace({
-      path: newPath,
-      query: currentRoute.query,
-      hash: currentRoute.hash
-    });
+    const newPath = currentRoute.fullPath.replace(/^\/([^\/]+)/, `/${locale}`);
+    globalRouter.replace({ path: newPath, query: currentRoute.query, hash: currentRoute.hash });
   }
 }

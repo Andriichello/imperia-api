@@ -35,7 +35,7 @@ trait SharesPropsTrait
         }
 
         if ($key === 'locale') {
-            return config('app.locale');
+            return $request->route('locale') ?? config('app.locale');
         }
 
         if ($key === 'supported_locales') {
