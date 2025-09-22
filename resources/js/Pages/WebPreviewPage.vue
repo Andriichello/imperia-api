@@ -472,20 +472,26 @@
             for (let i = 0; i < children.length; i++) {
               const el = children[i] as HTMLElement
 
+              if (i !== 0) {
+                offset += 4
+              }
+
               if (el.attributes.getNamedItem('id')?.value === 'product-' + product.id) {
                 break
               }
 
-              offset += el.clientHeight + 12
+              offset += el.clientHeight + 4
             }
 
             top += offset
+
+            console.log({ top, offset, productDivider })
           }
         }
       }
 
       window.scrollTo({
-        top: top + window.pageYOffset - stickyHeight + 4,
+        top: top + window.pageYOffset - stickyHeight - 10,
         behavior: 'smooth'
       })
 
@@ -543,10 +549,6 @@
       switchCategory(category, product, 'push')
       scrollToCategory(category, product)
     }, 200)
-
-    setTimeout(() => {
-      onOpenProduct({product, category, menu})
-    }, 500)
   }
 
   function onBackFromMenu() {
