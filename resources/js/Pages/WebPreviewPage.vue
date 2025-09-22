@@ -19,7 +19,7 @@
   import ProductDrawer from '@/Components/Drawer/ProductDrawer.vue'
   import LoadingProductInListRightMedia from '@/Components/Menu/LoadingProductInListRightMedia.vue'
   import {useAppStore} from '@/stores/app'
-  import {indexDishes} from '@/api/services/dish-dishes'
+  import {usePreviewStore} from '@/stores/preview'
 
   // Stores & shared props from Blade
   const app = useAppStore()
@@ -30,8 +30,10 @@
 
   const i18n = useI18n();
 
-  // Local state
-  const products = ref<Dish[] | null>(null)
+  // Preview store (products)
+  const preview = usePreviewStore()
+  const products = computed<Dish[] | null>(() => preview.products)
+  const loadingProducts = computed(() => preview.loading)
 
   const isSearchOpened = ref(false)
   const isLanguageOpened = ref(false)
@@ -263,8 +265,6 @@
         }
       }, 200)
 
-      // Load products for the newly selected menu
-      void loadProducts()
     }
   }
 
@@ -724,30 +724,6 @@
     }
   }
 
-  // Products loading
-  const loadingProducts = ref(false)
-  async function loadProducts() {
-    if (!restaurantId.value) {
-      restaurantId.value = resolveRestaurantId()
-    }
-    loadingProducts.value = true
-    try {
-      const params: any = {
-        include: 'category,variants,media',
-        sort: '-popularity',
-        'page[size]': 500,
-      }
-      if (menuId.value) {
-        params['filter[menu_id]'] = String(menuId.value)
-      } else if (restaurantId.value) {
-        params['filter[restaurant_id]'] = String(restaurantId.value)
-      }
-      const resp = await indexDishes(params)
-      products.value = resp.data.data
-    } finally {
-      loadingProducts.value = false
-    }
-  }
 
   function applyStateFromUrl(state: any = window.history.state) {
     navigationLock.value = true
@@ -831,8 +807,11 @@
     }
     window.history.replaceState(initialState, '', buildUrl(initialState.menuId, initialState.categoryId, initialState.productId, initialState.productPage))
 
-    // Load products initially
-    await loadProducts()
+    // Load all products for all menus initially via store
+    const allMenuIds = (menus.value || []).map((m: any) => Number(m.id)).filter((id: any) => Number.isFinite(id)) as number[]
+    const rId = restaurantId.value ?? resolveRestaurantId()
+    preview.setContext(rId as number | null, null, allMenuIds)
+    await preview.loadProducts({ restaurantId: rId as number | null, menuIds: allMenuIds })
 
     // Open Product drawer automatically if the URL hash targets a product page
     const hash = window.location.hash || ''
@@ -952,12 +931,6 @@
     }
   })
 
-  // Reload products when menu changes
-  watch(menuId, async (n, o) => {
-    if (n !== o) {
-      await loadProducts()
-    }
-  })
 </script>
 
 <template>
