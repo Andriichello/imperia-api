@@ -1631,6 +1631,16 @@
                         "example": "Mojito"
                     },
                     {
+                        "name": "filter[restaurant_id]",
+                        "in": "query",
+                        "description": "Restaurant ID to filter dishes by.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1"
+                    },
+                    {
                         "name": "filter[menu_id]",
                         "in": "query",
                         "description": "Menu ID to filter dishes by.",
@@ -1639,6 +1649,16 @@
                             "type": "string"
                         },
                         "example": "1"
+                    },
+                    {
+                        "name": "filter[menu_ids]",
+                        "in": "query",
+                        "description": "Coma-separated list of menu ids.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "1,2,3"
                     },
                     {
                         "name": "filter[category_id]",
