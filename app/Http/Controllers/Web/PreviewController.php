@@ -47,7 +47,7 @@ class PreviewController extends Controller
 
                 return redirect()
                     ->route(
-                        'web.temp',
+                        'web.app',
                         [
                             'locale' => $request->route('locale'),
                             'restaurant_id' => $request->route('restaurant_id'),
@@ -64,7 +64,7 @@ class PreviewController extends Controller
             }
         }
 
-        return view('web.temp', [
+        return view('web.app', [
             ...$this->getSharedProps($request),
             'restaurant' => new RestaurantResource($restaurant),
             'menus' => new DishMenuCollection($menus),
