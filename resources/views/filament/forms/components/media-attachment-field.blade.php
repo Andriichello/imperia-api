@@ -37,28 +37,34 @@
         </template>
         <template x-if="modelId">
             <div class="w-full">
-                <div class="border border-gray-200 rounded p-3 bg-white">
-                    <div class="flex items-center justify-between">
+                <div class="border border-gray-200 rounded p-2 bg-white">
+                    <div class="flex items-center justify-between gap-2 mb-2">
                         <div>
-                            <input type="file" :multiple="multiple" @change="onFileChange($event)" :accept="accepted.join(',')" />
+                            <input type="file" :multiple="multiple" @change="onFileChange($event)" :accept="accepted.join(',')" class="text-sm" />
                         </div>
-                        <div class="text-sm text-gray-500" x-text="infoText()"></div>
                     </div>
-                    <div class="mt-3 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                  <div class="flex items-center justify-end gap-2 mb-2">
+                    <div class="text-xs text-gray-500" x-text="infoText()"></div>
+                  </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
                         <template x-for="(m, idx) in media" :key="m.id">
-                            <div class="border rounded p-2 bg-gray-50 flex flex-col gap-2">
+                            <div class="border border-gray-200 dark:border-gray-600 rounded p-1.5 bg-gray-50 dark:bg-gray-700 flex flex-col cursor-move"
+                                 draggable="true"
+                                 @dragstart="dragStart(idx, $event)"
+                                 @dragover.prevent="dragOver(idx, $event)"
+                                 @drop.prevent="drop(idx, $event)"
+                                 @dragend="dragEnd($event)"
+                                 :class="{ 'opacity-50': draggingIndex === idx, 'ring-2 ring-blue-400': dragOverIndex === idx }">
                                 <template x-if="preview && isImage(m)">
-                                    <img :src="m.url" alt="" class="w-full h-24 object-cover rounded" />
+                                    <div class="w-full aspect-square flex items-center justify-center bg-gray-100 rounded overflow-hidden mb-1.5 pointer-events-none">
+                                        <img :src="m.url" alt="" class="max-w-full max-h-full object-contain" />
+                                    </div>
                                 </template>
                                 <template x-if="!isImage(m)">
-                                    <div class="text-xs break-all" x-text="m.name"></div>
+                                    <div class="text-xs break-all mb-1.5 pointer-events-none" x-text="m.name"></div>
                                 </template>
-                                <div class="flex items-center justify-between text-xs">
-                                    <button type="button" class="text-red-600 hover:underline" @click="remove(idx)">Remove</button>
-                                    <div class="flex gap-1">
-                                        <button type="button" class="px-1 border rounded" @click="move(idx, -1)">↑</button>
-                                        <button type="button" class="px-1 border rounded" @click="move(idx, 1)">↓</button>
-                                    </div>
+                                <div class="mt-auto flex items-center justify-center gap-1">
+                                    <button type="button" class="text-red-600 hover:bg-red-50 px-2 py-1 rounded text-xs font-medium transition" @click="remove(idx)">Remove</button>
                                 </div>
                             </div>
                         </template>
@@ -66,6 +72,30 @@
                 </div>
             </div>
         </template>
+    </div>
+
+    <!-- Remove Confirmation Modal -->
+    <div x-show="showRemoveModal"
+         x-cloak
+         @click.self="cancelRemove()"
+         class="fixed inset-0 z-50 flex items-center justify-center"
+         style="background-color: rgba(0, 0, 0, 0.75);">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full mx-4 p-6">
+            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Remove Media</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-200 mb-6">Are you sure you want to remove this media? This action cannot be undone.</p>
+            <div class="flex justify-end gap-3">
+                <button type="button"
+                        @click="cancelRemove()"
+                        class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-500 transition">
+                    Cancel
+                </button>
+                <button type="button"
+                        @click="remove()"
+                        class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition">
+                    Remove
+                </button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -82,6 +112,10 @@
                 media: [],
                 loading: false,
                 errors: [],
+                draggingIndex: null,
+                dragOverIndex: null,
+                showRemoveModal: false,
+                itemToRemove: null,
 
                 csrfToken() {
                     const el = document.querySelector('meta[name="csrf-token"]');
@@ -203,18 +237,49 @@
                     }
                 },
 
-                remove(idx) {
-                    this.media.splice(idx, 1);
-                    this.sync();
+                confirmRemove(idx) {
+                    this.itemToRemove = idx;
+                    this.showRemoveModal = true;
                 },
 
-                move(idx, dir) {
-                    const ni = idx + dir;
-                    if (ni < 0 || ni >= this.media.length) { return; }
-                    const temp = this.media[idx];
-                    this.media[idx] = this.media[ni];
-                    this.media[ni] = temp;
-                    this.sync();
+                remove() {
+                    if (this.itemToRemove !== null) {
+                        this.media.splice(this.itemToRemove, 1);
+                        this.sync();
+                    }
+                    this.showRemoveModal = false;
+                    this.itemToRemove = null;
+                },
+
+                cancelRemove() {
+                    this.showRemoveModal = false;
+                    this.itemToRemove = null;
+                },
+
+                dragStart(idx, e) {
+                    this.draggingIndex = idx;
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/html', e.target);
+                },
+
+                dragOver(idx, e) {
+                    this.dragOverIndex = idx;
+                    e.dataTransfer.dropEffect = 'move';
+                },
+
+                drop(idx, e) {
+                    if (this.draggingIndex !== null && this.draggingIndex !== idx) {
+                        const draggedItem = this.media[this.draggingIndex];
+                        this.media.splice(this.draggingIndex, 1);
+                        this.media.splice(idx, 0, draggedItem);
+                        this.sync();
+                    }
+                    this.dragOverIndex = null;
+                },
+
+                dragEnd(e) {
+                    this.draggingIndex = null;
+                    this.dragOverIndex = null;
                 },
             }
         }
