@@ -116,11 +116,11 @@ return [
 
         'scanOptions' => [
             /**
-             * analyser: defaults to \OpenApi\StaticAnalyser .
+             * analyser: doc-block annotations need \App\OpenApi\TokenAnalyser (swagger-php 5+ has no TokenAnalyser).
              *
              * @see \OpenApi\scan
              */
-            'analyser' => new \OpenApi\Analysers\TokenAnalyser(),
+            'analyser' => new \App\OpenApi\TokenAnalyser(),
 
             /**
              * analysis: defaults to a new \OpenApi\Analysis .

@@ -8478,10 +8478,10 @@
                     },
                     "state": {
                         "type": "string",
+                        "example": "new",
                         "enum": [
                             "new"
-                        ],
-                        "example": "new"
+                        ]
                     },
                     "creator_id": {
                         "description": "Id of the user, who created banquet.",
@@ -8510,12 +8510,12 @@
                     },
                     "advance_amount_payment_method": {
                         "type": "string",
+                        "example": "card",
+                        "nullable": true,
                         "enum": [
                             "card",
                             "cash"
-                        ],
-                        "example": "card",
-                        "nullable": true
+                        ]
                     },
                     "is_birthday_club": {
                         "type": "boolean",
@@ -8641,12 +8641,12 @@
                     },
                     "advance_amount_payment_method": {
                         "type": "string",
+                        "example": "card",
+                        "nullable": true,
                         "enum": [
                             "card",
                             "cash"
-                        ],
-                        "example": "card",
-                        "nullable": true
+                        ]
                     },
                     "is_birthday_club": {
                         "type": "boolean",
@@ -8804,12 +8804,12 @@
             "DeletedParameter": {
                 "description": "Query parameter, which determines if soft-deleted records should be\n    fetched from database. Available relations: `only`, `with` and `without`, which is a default one.",
                 "type": "string",
+                "example": "without",
                 "enum": [
                     "only",
                     "with",
                     "without"
-                ],
-                "example": "without"
+                ]
             },
             "StoreCustomerRequest": {
                 "description": "Store customer request. `email` or `phone`\n           must be specified.",
@@ -8957,6 +8957,7 @@
                     },
                     "weight_unit": {
                         "type": "string",
+                        "example": "g",
                         "enum": [
                             "g",
                             "kg",
@@ -8964,8 +8965,7 @@
                             "l",
                             "cm",
                             "pc"
-                        ],
-                        "example": "g"
+                        ]
                     },
                     "calories": {
                         "type": "integer",
@@ -9031,6 +9031,7 @@
                     },
                     "weight_unit": {
                         "type": "string",
+                        "example": "g",
                         "enum": [
                             "g",
                             "kg",
@@ -9038,8 +9039,7 @@
                             "l",
                             "cm",
                             "pc"
-                        ],
-                        "example": "g"
+                        ]
                     },
                     "calories": {
                         "type": "integer",
@@ -9081,13 +9081,13 @@
                     },
                     "relation": {
                         "type": "string",
+                        "nullable": true,
                         "enum": [
                             "child",
                             "parent",
                             "grandparent",
                             "partner"
-                        ],
-                        "nullable": true
+                        ]
                     },
                     "birthdate": {
                         "type": "string",
@@ -9140,11 +9140,11 @@
                     },
                     "endpoint": {
                         "type": "string",
+                        "example": "pdfMultiple",
                         "enum": [
                             "pdfMultiple",
                             "viewMultiple"
-                        ],
-                        "example": "pdfMultiple"
+                        ]
                     }
                 },
                 "type": "object"
@@ -9154,11 +9154,11 @@
                 "properties": {
                     "endpoint": {
                         "type": "string",
+                        "example": "pdf",
                         "enum": [
                             "pdf",
                             "view"
-                        ],
-                        "example": "pdf"
+                        ]
                     }
                 },
                 "type": "object"
@@ -9168,11 +9168,11 @@
                 "properties": {
                     "endpoint": {
                         "type": "string",
+                        "example": "pdfThroughBanquet",
                         "enum": [
                             "pdfThroughBanquet",
                             "viewThroughBanquet"
-                        ],
-                        "example": "pdfThroughBanquet"
+                        ]
                     }
                 },
                 "type": "object"
@@ -9251,11 +9251,11 @@
                     },
                     "disk": {
                         "type": "string",
+                        "example": "public",
                         "enum": [
                             "public",
                             "uploads"
-                        ],
-                        "example": "public"
+                        ]
                     },
                     "folder": {
                         "description": "Must start and end with the `/`.",
@@ -9442,10 +9442,10 @@
                     },
                     "channel": {
                         "type": "string",
+                        "example": "default",
                         "enum": [
                             "default"
-                        ],
-                        "example": "default"
+                        ]
                     },
                     "send_at": {
                         "description": "Date and time when notification should be sent. Only future values are acceptable.",
@@ -9495,24 +9495,24 @@
                     },
                     "kind": {
                         "type": "string",
+                        "example": "delivery",
+                        "nullable": true,
                         "enum": [
                             "delivery",
                             "banquet"
-                        ],
-                        "example": "delivery",
-                        "nullable": true
+                        ]
                     },
                     "state": {
                         "type": "string",
+                        "example": "new",
+                        "nullable": true,
                         "enum": [
                             "new",
                             "confirmed",
                             "postponed",
                             "cancelled",
                             "completed"
-                        ],
-                        "example": "new",
-                        "nullable": true
+                        ]
                     },
                     "recipient": {
                         "type": "string",
@@ -9727,24 +9727,24 @@
                     },
                     "kind": {
                         "type": "string",
+                        "example": "delivery",
+                        "nullable": true,
                         "enum": [
                             "delivery",
                             "banquet"
-                        ],
-                        "example": "delivery",
-                        "nullable": true
+                        ]
                     },
                     "state": {
                         "type": "string",
+                        "example": "new",
+                        "nullable": true,
                         "enum": [
                             "new",
                             "confirmed",
                             "postponed",
                             "cancelled",
                             "completed"
-                        ],
-                        "example": "new",
-                        "nullable": true
+                        ]
                     },
                     "recipient": {
                         "type": "string",
@@ -9851,6 +9851,7 @@
                     },
                     "weight_unit": {
                         "type": "string",
+                        "example": "g",
                         "enum": [
                             "g",
                             "kg",
@@ -9858,8 +9859,7 @@
                             "l",
                             "cm",
                             "pc"
-                        ],
-                        "example": "g"
+                        ]
                     },
                     "archived": {
                         "type": "boolean",
@@ -9910,15 +9910,15 @@
                     },
                     "hotness": {
                         "type": "string",
+                        "example": "Medium",
+                        "nullable": true,
                         "enum": [
                             "Unknown",
                             "Low",
                             "Medium",
                             "High",
                             "Ultra"
-                        ],
-                        "example": "Medium",
-                        "nullable": true
+                        ]
                     }
                 },
                 "type": "object"
@@ -9957,6 +9957,7 @@
                     },
                     "weight_unit": {
                         "type": "string",
+                        "example": "g",
                         "enum": [
                             "g",
                             "kg",
@@ -9964,8 +9965,7 @@
                             "l",
                             "cm",
                             "pc"
-                        ],
-                        "example": "g"
+                        ]
                     },
                     "archived": {
                         "type": "boolean",
@@ -10016,15 +10016,15 @@
                     },
                     "hotness": {
                         "type": "string",
+                        "example": "Medium",
+                        "nullable": true,
                         "enum": [
                             "Unknown",
                             "Low",
                             "Medium",
                             "High",
                             "Ultra"
-                        ],
-                        "example": "Medium",
-                        "nullable": true
+                        ]
                     }
                 },
                 "type": "object"
@@ -10042,6 +10042,7 @@
                 "properties": {
                     "weekday": {
                         "type": "string",
+                        "example": "monday",
                         "enum": [
                             "monday",
                             "tuesday",
@@ -10050,8 +10051,7 @@
                             "friday",
                             "saturday",
                             "sunday"
-                        ],
-                        "example": "monday"
+                        ]
                     },
                     "beg_hour": {
                         "description": "Start hour of the day [0 ; 23].",
@@ -10380,28 +10380,28 @@
                     },
                     "state": {
                         "type": "string",
+                        "example": "new",
                         "enum": [
                             "new",
                             "confirmed",
                             "postponed",
                             "cancelled",
                             "completed"
-                        ],
-                        "example": "new"
+                        ]
                     },
                     "available_states": {
                         "description": "List of states, to which banquet may be transferred.",
                         "type": "array",
                         "items": {
                             "type": "string",
+                            "example": "new",
                             "enum": [
                                 "draft",
                                 "new",
                                 "processing",
                                 "completed",
                                 "cancelled"
-                            ],
-                            "example": "new"
+                            ]
                         }
                     },
                     "is_editable": {
@@ -11815,24 +11815,24 @@
                     },
                     "kind": {
                         "type": "string",
+                        "example": "delivery",
+                        "nullable": true,
                         "enum": [
                             "delivery",
                             "banquet"
-                        ],
-                        "example": "delivery",
-                        "nullable": true
+                        ]
                     },
                     "state": {
                         "type": "string",
+                        "example": "new",
+                        "nullable": true,
                         "enum": [
                             "new",
                             "confirmed",
                             "postponed",
                             "cancelled",
                             "completed"
-                        ],
-                        "example": "new",
-                        "nullable": true
+                        ]
                     },
                     "recipient": {
                         "type": "string",
@@ -11969,15 +11969,15 @@
                     },
                     "weight_unit": {
                         "type": "string",
+                        "example": "g",
+                        "nullable": true,
                         "enum": [
                             "g",
                             "kg",
                             "ml",
                             "l",
                             "cm"
-                        ],
-                        "example": "g",
-                        "nullable": true
+                        ]
                     },
                     "badge": {
                         "type": "string",
@@ -12030,15 +12030,15 @@
                     },
                     "hotness": {
                         "type": "string",
+                        "example": "Medium",
+                        "nullable": true,
                         "enum": [
                             "Unknown",
                             "Low",
                             "Medium",
                             "High",
                             "Ultra"
-                        ],
-                        "example": "Medium",
-                        "nullable": true
+                        ]
                     },
                     "variants": {
                         "type": "array",
@@ -12140,14 +12140,14 @@
                     },
                     "weight_unit": {
                         "type": "string",
+                        "example": "g",
                         "enum": [
                             "g",
                             "kg",
                             "ml",
                             "l",
                             "cm"
-                        ],
-                        "example": "g"
+                        ]
                     },
                     "alterations": {
                         "type": "array",
@@ -12477,6 +12477,7 @@
                     },
                     "weekday": {
                         "type": "string",
+                        "example": "monday",
                         "enum": [
                             "monday",
                             "tuesday",
@@ -12485,8 +12486,7 @@
                             "friday",
                             "saturday",
                             "sunday"
-                        ],
-                        "example": "monday"
+                        ]
                     },
                     "beg_hour": {
                         "description": "Start hour of the day [0 ; 23].",
@@ -12944,12 +12944,12 @@
             "ArchivedParameter": {
                 "description": "Query parameter, which determines if archived records should be\n    fetched from database. Available relations: `only`, `with` and `without`, which is a default one.",
                 "type": "string",
+                "example": "without",
                 "enum": [
                     "only",
                     "with",
                     "without"
-                ],
-                "example": "without"
+                ]
             }
         },
         "securitySchemes": {
