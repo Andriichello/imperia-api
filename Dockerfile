@@ -19,10 +19,10 @@ RUN export LANG=C.UTF-8 \
     && apt-get install --yes --allow-unauthenticated --no-install-recommends \
         nginx supervisor \
         wget git unzip curl nano dos2unix \
-        php8.3 php8.3-cli php8.3-fpm \
-        php8.3-intl php8.3-xml php8.3-zip php8.3-curl \
-        php8.3-http php8.3-raphf php8.3-gd \
-        php8.3-mbstring php8.3-memcached php8.3-mysql \
+        php8.4 php8.4-cli php8.4-fpm \
+        php8.4-intl php8.4-xml php8.4-zip php8.4-curl \
+        php8.4-http php8.4-raphf php8.4-gd \
+        php8.4-mbstring php8.4-memcached php8.4-mysql \
         mysql-client \
         openssh-client \
         python3-pip \
@@ -34,7 +34,7 @@ RUN export LANG=C.UTF-8 \
 # Install nvm and setup npm
 RUN mkdir /usr/local/nvm
 ENV NVM_DIR /usr/local/nvm
-ENV NODE_VERSION 22.14.0
+ENV NODE_VERSION 22.23.3
 RUN curl https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash \
     && . $NVM_DIR/nvm.sh \
     && nvm install $NODE_VERSION \
