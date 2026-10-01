@@ -31,7 +31,7 @@ RUN export LANG=C.UTF-8 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Install nvm and setup npm
+# Install nvm and setup Node
 RUN mkdir /usr/local/nvm
 ENV NVM_DIR /usr/local/nvm
 ENV NODE_VERSION 22.23.3
@@ -43,6 +43,10 @@ RUN curl https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash 
 
 ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+
+# Set up pnpm through corepack, in the version from package.json's "packageManager"
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT 0
+RUN corepack enable
 
 # Apply the filesystem overlay, which mainly provides scripts in /opt.
 COPY resources/docker /
@@ -72,8 +76,8 @@ RUN curl -sS https://getcomposer.org/installer -o /tmp/composer-setup.php \
     && php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer \
     && composer install -o -n --no-dev
 
-RUN npm ci --audit false \
-    && npm run prod \
+RUN pnpm install --frozen-lockfile \
+    && pnpm run prod \
     && php artisan vendor:publish --force --tag=livewire:assets
 
 # Expose HTTP and HTTPS ports.

@@ -1,0 +1,11 @@
+allowBuilds:
+  # usage analytics only (pulled in by orval's Stoplight linter)
+  '@scarf/scarf': false
+  # installs the platform binary (orval, vite)
+  esbuild: true
+  # picks the Vue 3 build (pinia)
+  vue-demi: true
+
+overrides:
+  # laravel-mix 6 breaks on newer webpack (also pinned as a direct dev dependency)
+  webpack: ~5.105.4

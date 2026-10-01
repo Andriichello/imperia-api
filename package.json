@@ -1,23 +1,14 @@
 {
     "private": true,
+    "packageManager": "pnpm@11.21.0",
     "scripts": {
-        "dev": "npm run development",
+        "dev": "pnpm run development",
         "development": "mix",
         "watch": "mix watch",
         "watch-poll": "mix watch -- --watch-options-poll=1000",
         "hot": "mix watch --hot",
-        "prod": "npm run production",
-        "production": "mix --production",
-        "build-marketplace": "cd nova-components/Marketplace && npm run dev",
-        "build-marketplace-prod": "cd nova-components/Marketplace && npm run prod",
-        "build-columns-card": "cd nova-components/ColumnsCard && npm run dev",
-        "build-columns-card-prod": "cd nova-components/ColumnsCard && npm run prod",
-        "build-media": "cd nova-components/Media && npm run dev",
-        "build-media-prod": "cd nova-components/Media && npm run prod",
-        "build-MediaTool": "cd nova-components/MediaTool && npm run dev",
-        "build-MediaTool-prod": "cd nova-components/MediaTool && npm run prod",
-        "build-metrics": "cd nova-components/Metrics && npm run dev",
-        "build-metrics-prod": "cd nova-components/Metrics && npm run prod"
+        "prod": "pnpm run production",
+        "production": "mix --production"
     },
     "engines": {
         "node": ">=22"
@@ -39,7 +30,9 @@
         "ts-loader": "^9.5.2",
         "typescript": "^5.8.3",
         "vue-loader": "^16.8.3",
-        "vue-tsc": "^2.2.10"
+        "vue-tsc": "^2.2.10",
+        "webpack": "~5.105.4",
+        "webpack-cli": "^4.10.0"
     },
     "dependencies": {
         "@inertiajs/vue3": "^2.0.8",
@@ -53,8 +46,5 @@
         "vue": "^3.5.13",
         "vue-i18n": "^11.4.12",
         "vue-router": "^4.4.5"
-    },
-    "overrides": {
-        "webpack": "~5.105.4"
     }
 }

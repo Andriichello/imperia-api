@@ -1,0 +1,2 @@
+# The image installs its own dependencies (local pnpm node_modules link to the host store)
+node_modules
