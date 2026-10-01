@@ -2,9 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\Banquet;
 use App\Models\Morphs\Comment;
-use App\Models\Orders\Order;
 use App\Models\User;
 use App\Policies\Base\CrudPolicy;
 use Illuminate\Database\Eloquent\Model;
@@ -60,14 +58,6 @@ class CommentPolicy extends CrudPolicy
      */
     public function hasEditRights(User $user, Comment $comment): bool
     {
-        $target = $comment->commentable;
-        if ($target instanceof Order && !$target->canBeEditedBy($user)) {
-            return false;
-        }
-        if ($target instanceof Banquet && !$target->canBeEditedBy($user)) {
-            return false;
-        }
-
         if ($user->isStaff()) {
             return true;
         }

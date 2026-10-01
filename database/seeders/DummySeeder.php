@@ -2,23 +2,16 @@
 
 namespace Database\Seeders;
 
-use App\Enums\FamilyRelation;
 use App\Enums\UserRole;
 use App\Enums\Weekday;
 use App\Enums\WeightUnit;
-use App\Models\Customer;
-use App\Models\FamilyMember;
 use App\Models\Holiday;
 use App\Models\DishMenu;
 use App\Models\DishCategory;
 use App\Models\Dish;
 use App\Models\DishVariant;
-use App\Models\Morphs\Category;
 use App\Models\Restaurant;
 use App\Models\Schedule;
-use App\Models\Service;
-use App\Models\Space;
-use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -40,11 +33,7 @@ class DummySeeder extends Seeder
         $this->seedSchedules();
         $this->seedHolidays();
         $this->seedUsers();
-        $this->seedCustomers();
-        $this->seedTickets();
         $this->seedProducts();
-        $this->seedServices();
-        $this->seedSpaces();
     }
 
     /**
@@ -83,6 +72,7 @@ class DummySeeder extends Seeder
     public function seedSchedules(): void
     {
         Restaurant::query()
+            // @phpstan-ignore-next-line
             ->each(function (Restaurant $restaurant) {
                 foreach (Weekday::getValues() as $weekday) {
                     Schedule::factory()
@@ -109,6 +99,7 @@ class DummySeeder extends Seeder
         ];
 
         Restaurant::query()
+            // @phpstan-ignore-next-line
             ->each(function (Restaurant $restaurant) use ($dates) {
                 foreach ($dates as $date) {
                     Holiday::factory()
@@ -127,6 +118,7 @@ class DummySeeder extends Seeder
     public function seedUsers(): void
     {
         Restaurant::query()
+            // @phpstan-ignore-next-line
             ->each(function (Restaurant $restaurant) {
                 User::factory()
                     ->withRole(UserRole::Admin())
@@ -153,235 +145,6 @@ class DummySeeder extends Seeder
                         ])
                     ]);
             });
-    }
-
-    /**
-     * Seed customers.
-     *
-     * @return void
-     */
-    public function seedCustomers(): void
-    {
-        User::factory()
-            ->withCustomer(
-                [
-                    'name' => $name = 'Customer',
-                    'surname' => $surname = 'Customers',
-                    'email' => $email = 'customer@email.com',
-                    'phone' => '+380501111111',
-                    'birthdate' => '1987-06-05',
-                ]
-            )->create(
-                [
-                    'name' => "$name $surname",
-                    'email' => $email,
-                ]
-            );
-
-        $john = User::factory()
-            ->withCustomer(
-                [
-                    'name' => $name = 'John',
-                    'surname' => $surname = 'Doe',
-                    'email' => $email = 'john.doe@email.com',
-                    'phone' => '+380502222222',
-                    'birthdate' => '1986-01-26',
-                ]
-            )->create(
-                [
-                    'name' => "$name $surname",
-                    'email' => $email,
-                ]
-            );
-
-        $john->customer->attachComments(
-            'This is the first test customer.',
-            'John Doe is a typical fake name.',
-        );
-        FamilyMember::factory()
-            ->withRelative($john->customer, FamilyRelation::Child())
-            ->create([
-                'name' => 'Jenny Doe',
-                'birthdate' => '2010-07-03',
-            ]);
-        FamilyMember::factory()
-            ->withRelative($john->customer, FamilyRelation::Child())
-            ->create([
-                'name' => 'Tommy Doe',
-                'birthdate' => '2013-07-03',
-            ]);
-
-        $richard = Customer::factory()
-            ->create(
-                [
-                    'name' => 'Richard',
-                    'surname' => 'Jefferson',
-                    'email' => 'richard.jefferson@email.com',
-                    'phone' => '+380503333333',
-                    'birthdate' => '1973-08-03',
-                ]
-            );
-
-        $richard->attachComments('He played in NBA for Cleveland Cavaliers.');
-    }
-
-    /**
-     * Seed tickets.
-     *
-     * @return void
-     */
-    public function seedTickets(): void
-    {
-        $workdayCategory = Category::factory()
-            ->create([
-                'slug' => 'work-day-tickets',
-                'target' => slugClass(Ticket::class),
-                'title' => 'Work Day Tickets',
-                'description' => 'Tickets that are available from Monday to Thursday.',
-            ]);
-
-        $ticket = Ticket::factory()
-            ->create([
-                'title' => 'Child workday ticket',
-                'description' => 'Tickets that are available for customers younger than 14 years.',
-                'price' => 50,
-            ]);
-        $ticket->attachCategories($workdayCategory);
-
-        $ticket = Ticket::factory()
-            ->create([
-                'title' => 'Adult workday ticket',
-                'description' => 'Tickets that are available for customers older than 14 years.',
-                'price' => 75,
-            ]);
-        $ticket->attachCategories($workdayCategory);
-
-        $weekendCategory = Category::factory()
-            ->create([
-                'slug' => 'weekend-tickets',
-                'target' => slugClass(Ticket::class),
-                'title' => 'Weekend Tickets',
-                'description' => 'Tickets that are available from Friday to Sunday.',
-            ]);
-
-        $ticket = Ticket::factory()
-            ->create([
-                'title' => 'Child weekend ticket',
-                'description' => 'Tickets that are available for customers younger than 14 years.',
-                'price' => 80,
-            ]);
-        $ticket->attachCategories($weekendCategory);
-
-        $ticket = Ticket::factory()
-            ->create([
-                'title' => 'Adult weekend ticket',
-                'description' => 'Tickets that are available for customers older than 14 years.',
-                'price' => 100,
-            ]);
-        $ticket->attachCategories($weekendCategory);
-    }
-
-    /**
-     * Seed services.
-     *
-     * @return void
-     */
-    public function seedServices(): void
-    {
-        $indoorsCategory = Category::factory()
-            ->create([
-                'slug' => 'indoors',
-                'target' => slugClass(Service::class),
-                'title' => 'Indoors',
-                'description' => null,
-            ]);
-
-        $service = Service::factory()
-            ->create([
-                'title' => 'Clown Show',
-                'once_paid_price' => 300,
-                'hourly_paid_price' => 200,
-            ]);
-        $service->attachCategories($indoorsCategory);
-
-        $service = Service::factory()
-            ->create([
-                'title' => 'Fruits Carving',
-                'once_paid_price' => 1000,
-            ]);
-        $service->attachCategories($indoorsCategory);
-
-        $outdoorsCategory = Category::factory()
-            ->create([
-                'slug' => 'outdoors',
-                'target' => slugClass(Service::class),
-                'title' => 'Outdoors',
-                'description' => null,
-            ]);
-
-        $service = Service::factory()
-            ->create([
-                'title' => 'Fire Show',
-                'once_paid_price' => 1200,
-                'hourly_paid_price' => 600,
-            ]);
-        $service->attachCategories($outdoorsCategory);
-
-        $service = Service::factory()
-            ->create([
-                'title' => 'Magic Show',
-                'once_paid_price' => 1000,
-                'hourly_paid_price' => 500,
-            ]);
-        $service->attachCategories($outdoorsCategory);
-    }
-
-    /**
-     * Seed spaces.
-     *
-     * @return void
-     */
-    public function seedSpaces(): void
-    {
-        $roomsCategory = Category::factory()
-            ->create([
-                'slug' => 'rooms',
-                'target' => slugClass(Space::class),
-                'title' => 'Rooms',
-                'description' => null,
-            ]);
-
-        $tablesCategory = Category::factory()
-            ->create([
-                'slug' => 'tables',
-                'target' => slugClass(Space::class),
-                'title' => 'Tables',
-                'description' => null,
-            ]);
-
-        for ($i = 1; $i <= 2; $i++) {
-            for ($j = 1; $j <= 5; $j++) {
-                $table = Space::factory()
-                    ->create([
-                        'title' => "Table #$j($i)",
-                        'floor' => $i,
-                        'number' => $j,
-                        'price' => 0.0,
-                    ]);
-                $table->attachCategories($tablesCategory);
-
-                if ($j <= 3) {
-                    $room = Space::factory()
-                        ->create([
-                            'title' => "Room #$j($i)",
-                            'floor' => $i,
-                            'number' => $j,
-                            'price' => rand(1, 10) * 10,
-                        ]);
-                    $room->attachCategories($roomsCategory);
-                }
-            }
-        }
     }
 
     /**

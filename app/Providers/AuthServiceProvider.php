@@ -18,28 +18,19 @@ class AuthServiceProvider extends ServiceProvider
     /**
      * The policy mappings for the application.
      *
-     * @var array
+     * @var array<class-string, class-string>
      */
     protected $policies = [
         /** People */
         Models\User::class => Policies\UserPolicy::class,
-        Models\Customer::class => Policies\CustomerPolicy::class,
-        Models\FamilyMember::class => Policies\FamilyMemberPolicy::class,
-        /** Orders */
-        Models\Banquet::class => Policies\BanquetPolicy::class,
-        Models\Orders\Order::class => Policies\OrderPolicy::class,
         /** Items */
         Models\Menu::class => Policies\MenuPolicy::class,
         Models\Product::class => Policies\ProductPolicy::class,
         Models\ProductVariant::class => Policies\ProductVariantPolicy::class,
-        Models\Service::class => Policies\ServicePolicy::class,
-        Models\Space::class => Policies\SpacePolicy::class,
-        Models\Ticket::class => Policies\TicketPolicy::class,
         /** Morphs */
         Morphs\Log::class => Policies\LogPolicy::class,
         Morphs\Category::class => Policies\CategoryPolicy::class,
         Morphs\Comment::class => Policies\CommentPolicy::class,
-        Morphs\Discount::class => Policies\DiscountPolicy::class,
         \Spatie\Permission\Models\Role::class => Policies\RolePolicy::class,
         /** Other */
         Models\Notification::class => Policies\NotificationPolicy::class,

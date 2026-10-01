@@ -37,7 +37,7 @@ class MediaController extends CrudController
     protected string $collectionClass = MediaCollection::class;
 
     /**
-     * BanquetController constructor.
+     * MediaController constructor.
      *
      * @param MediaRepository $repository
      * @param MediaPolicy $policy
@@ -250,7 +250,7 @@ class MediaController extends CrudController
      * ),
      * @OA\Schema(
      *   schema="DestroyMediaResponse",
-     *   description="Delete banquet response object.",
+     *   description="Delete media response object.",
      *   required = {"message"},
      *   @OA\Property(property="message", type="string", example="Deleted"),
      * ),

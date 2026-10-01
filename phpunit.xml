@@ -9,6 +9,10 @@
             <directory suffix="Test.php">./tests/Guards</directory>
         </testsuite>
 
+        <testsuite name="Helpers">
+            <directory suffix="Test.php">./tests/Helpers</directory>
+        </testsuite>
+
         <testsuite name="Http">
             <directory suffix="Test.php">./tests/Http</directory>
         </testsuite>
@@ -23,10 +27,6 @@
 
         <testsuite name="Queries">
             <directory suffix="Test.php">./tests/Queries</directory>
-        </testsuite>
-
-        <testsuite name="Subscribers">
-            <directory suffix="Test.php">./tests/Subscribers</directory>
         </testsuite>
     </testsuites>
 

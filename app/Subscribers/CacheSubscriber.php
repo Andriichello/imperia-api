@@ -10,10 +10,6 @@ use App\Models\Morphs\Category;
 use App\Models\Product;
 use App\Models\Restaurant;
 use App\Models\RestaurantReview;
-use App\Models\Service;
-use App\Models\Space;
-use App\Models\Ticket;
-use App\Models\Waiter;
 use Illuminate\Support\Arr;
 
 /**
@@ -37,29 +33,14 @@ class CacheSubscriber extends BaseSubscriber
             'groups' => ['menus', 'categories', 'products'],
         ],
         Category::class => [
-            'groups' => ['menus', 'categories', 'products', 'services', 'tickets', 'spaces'],
+            'groups' => ['menus', 'categories', 'products'],
         ],
         Product::class => [
             'groups' => ['menus', 'products', 'categories', 'alterations'],
         ],
-        Service::class => [
-            'groups' => ['services', 'categories', 'alterations'],
-        ],
-        Ticket::class => [
-            'groups' => ['tickets', 'categories', 'alterations'],
-        ],
-        Space::class => [
-            'groups' => ['spaces', 'categories', 'alterations'],
-        ],
         Alteration::class => [
-            'groups' => ['alterations', 'menus', 'products', 'services', 'tickets', 'spaces'],
+            'groups' => ['alterations', 'menus', 'products'],
         ],
-        Waiter::class => [
-            'groups' => ['waiters'],
-        ],
-        // Customer::class => [
-        //    'groups' => ['customers'],
-        // ],
     ];
 
     protected function map(): void

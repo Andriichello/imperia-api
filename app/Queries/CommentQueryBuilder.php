@@ -2,18 +2,9 @@
 
 namespace App\Queries;
 
-use App\Models\Banquet;
-use App\Models\Customer;
 use App\Models\Morphs\Comment;
-use App\Models\Orders\Order;
-use App\Models\Orders\ProductOrderField;
-use App\Models\Orders\ServiceOrderField;
-use App\Models\Orders\SpaceOrderField;
-use App\Models\Orders\TicketOrderField;
 use App\Models\User;
-use App\Models\FamilyMember;
 use App\Providers\MorphServiceProvider;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class CommentQueryBuilder.
@@ -54,154 +45,7 @@ class CommentQueryBuilder extends BaseQueryBuilder
      */
     public function asForCustomer(User $user): static
     {
-        $this->notForClasses(User::class, Customer::class, FamilyMember::class);
-
-//        $banquets = $user->banquets()
-//            ->pluck('id')
-//            ->all();
-//
-//        $this->whereWrapped(function (CommentQueryBuilder $query) use ($banquets) {
-//            $query->fromBanquets(...$banquets);
-//        });
-
-        return $this;
-    }
-
-    /**
-     * Include only comments from given banquets.
-     *
-     * @param Banquet|int ...$banquets
-     *
-     * @return static
-     */
-    public function fromBanquets(Banquet|int ...$banquets): static
-    {
-        $ids = $this->extract('id', ...$banquets);
-
-        $this->whereWrapped(function (CommentQueryBuilder $query) use ($ids) {
-            $query->forClasses(Banquet::class)
-                ->whereCommentableId($ids);
-        });
-
-        if (!empty($ids)) {
-            $orders = Order::query()
-                ->whereIn('banquet_id', $ids)
-                ->pluck('id')
-                ->all();
-
-            $this->orFromOrders(...$orders);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param Banquet|int ...$banquets
-     *
-     * @return static
-     */
-    public function orFromBanquets(Banquet|int ...$banquets): static
-    {
-        $this->orWhereWrapped(function (CommentQueryBuilder $query) use ($banquets) {
-            $query->fromBanquets(...$banquets);
-        });
-
-        return $this;
-    }
-
-    /**
-     * Include only comments from given orders.
-     *
-     * @param Order|int ...$orders
-     *
-     * @return static
-     */
-    public function fromOrders(Order|int ...$orders): static
-    {
-        $ids = $this->extract('id', ...$orders);
-
-        $this->whereWrapped(function (CommentQueryBuilder $query) use ($ids) {
-            $query->forClasses(Order::class)
-                ->whereCommentableId($ids);
-        });
-
-        if (!empty($ids)) {
-            $products = ProductOrderField::query()
-                ->whereIn('order_id', $ids)
-                ->pluck('id')
-                ->all();
-
-            $this->orFromOrderFields(ProductOrderField::class, ...$products);
-
-            $tickets = TicketOrderField::query()
-                ->whereIn('order_id', $ids)
-                ->pluck('id')
-                ->all();
-
-            $this->orFromOrderFields(TicketOrderField::class, ...$tickets);
-
-            $spaces = SpaceOrderField::query()
-                ->whereIn('order_id', $ids)
-                ->pluck('id')
-                ->all();
-
-            $this->orFromOrderFields(SpaceOrderField::class, ...$spaces);
-
-            $services = ServiceOrderField::query()
-                ->whereIn('order_id', $ids)
-                ->pluck('id')
-                ->all();
-
-            $this->orFromOrderFields(ServiceOrderField::class, ...$services);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param Order|int ...$orders
-     *
-     * @return static
-     */
-    public function orFromOrders(Order|int ...$orders): static
-    {
-        $this->orWhereWrapped(function (CommentQueryBuilder $query) use ($orders) {
-            $query->fromOrders(...$orders);
-        });
-
-        return $this;
-    }
-
-    /**
-     * Include only comments for given order fields.
-     *
-     * @param string $class
-     * @param Model|int ...$fields
-     *
-     * @return static
-     */
-    public function fromOrderFields(string $class, Model|int ...$fields): static
-    {
-        $ids = $this->extract('id', ...$fields);
-
-        $this->whereWrapped(function (CommentQueryBuilder $query) use ($class, $ids) {
-            $query->forClasses($class)->whereCommentableId($ids);
-        });
-
-        return $this;
-    }
-
-    /**
-     * @param string $class
-     * @param Model|int ...$fields
-     *
-     * @return static
-     */
-    public function orFromOrderFields(string $class, Model|int ...$fields): static
-    {
-        $this->orWhereWrapped(function (CommentQueryBuilder $query) use ($class, $fields) {
-            $query->fromOrderFields($class, ...$fields);
-        });
+        $this->notForClasses(User::class);
 
         return $this;
     }

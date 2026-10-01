@@ -2,44 +2,29 @@
 
 namespace App\Providers;
 
-use App\Models\Banquet;
-use App\Models\Customer;
 use App\Models\Dish;
 use App\Models\DishCategory;
 use App\Models\DishMenu;
 use App\Models\DishVariant;
-use App\Models\FamilyMember;
 use App\Models\Holiday;
 use App\Models\Menu;
 use App\Models\Morphs\Categorizable;
 use App\Models\Morphs\Category;
 use App\Models\Morphs\Comment;
-use App\Models\Morphs\Discount;
-use App\Models\Morphs\Discountable;
 use App\Models\Morphs\Log;
 use App\Models\Morphs\Period;
 use App\Models\Morphs\Periodical;
-use App\Models\Orders\Order;
-use App\Models\Orders\ProductOrderField;
-use App\Models\Orders\ServiceOrderField;
-use App\Models\Orders\SpaceOrderField;
-use App\Models\Orders\TicketOrderField;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Restaurant;
 use App\Models\RestaurantReview;
 use App\Models\Schedule;
-use App\Models\Service;
-use App\Models\Space;
-use App\Models\Ticket;
 use App\Models\User;
-use App\Models\Waiter;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 use Tests\Models\Stubs\BaseStub;
 use Tests\Models\Stubs\CategorizableStub;
 use Tests\Models\Stubs\CommentableStub;
-use Tests\Models\Stubs\DiscountableStub;
 use Tests\Models\Stubs\LoggableStub;
 use Tests\Models\Stubs\PeriodicalStub;
 use Tests\Models\Stubs\TaggableStub;
@@ -57,9 +42,6 @@ class MorphServiceProvider extends ServiceProvider
     protected static array $models = [
         /** People */
         User::class,
-        Customer::class,
-        FamilyMember::class,
-        Waiter::class,
         /** Restaurants */
         Restaurant::class,
         Schedule::class,
@@ -67,34 +49,20 @@ class MorphServiceProvider extends ServiceProvider
         RestaurantReview::class,
         /** Items */
         Menu::class,
-        Space::class,
-        Ticket::class,
-        Service::class,
         Product::class,
         /** Items (additional) */
         ProductVariant::class,
-        /** Banquet */
-        Banquet::class,
-        /** Orders */
-        Order::class,
-        SpaceOrderField::class,
-        TicketOrderField::class,
-        ServiceOrderField::class,
-        ProductOrderField::class,
         /** Morphs */
         Log::class,
         Comment::class,
         Category::class,
         Categorizable::class,
-        Discount::class,
-        Discountable::class,
         Period::class,
         Periodical::class,
         /** Stubs */
         BaseStub::class,
         CategorizableStub::class,
         CommentableStub::class,
-        DiscountableStub::class,
         LoggableStub::class,
         PeriodicalStub::class,
         TaggableStub::class,

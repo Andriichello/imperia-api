@@ -7,16 +7,6 @@ namespace App\Http\Requests\User;
  */
 class MeUserRequest extends ShowUserRequest
 {
-    public function getAllowedIncludes(): array
-    {
-        return array_merge(
-            parent::getAllowedIncludes(),
-            [
-                'customer',
-            ]
-        );
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *

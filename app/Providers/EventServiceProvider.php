@@ -2,10 +2,7 @@
 
 namespace App\Providers;
 
-use App\Subscribers\BanquetSubscriber;
 use App\Subscribers\CacheSubscriber;
-use App\Subscribers\OrderSubscriber;
-use App\Subscribers\UserSubscriber;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 /**
@@ -16,7 +13,7 @@ class EventServiceProvider extends ServiceProvider
     /**
      * The event listener mappings for the application.
      *
-     * @var array
+     * @var array<string, array<int, string>>
      */
     protected $listen = [];
 
@@ -26,9 +23,6 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $subscribe = [
-        UserSubscriber::class,
-        OrderSubscriber::class,
-        BanquetSubscriber::class,
         CacheSubscriber::class,
     ];
 

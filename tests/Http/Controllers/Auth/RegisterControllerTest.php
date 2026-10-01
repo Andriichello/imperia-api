@@ -2,7 +2,7 @@
 
 namespace Tests\Http\Controllers\Auth;
 
-use App\Models\Customer;
+use App\Enums\UserRole;
 use App\Models\User;
 use Tests\RegisteringTestCase;
 
@@ -38,13 +38,8 @@ class RegisterControllerTest extends RegisteringTestCase
         /** @var User $user */
         $user = User::query()->findOrFail($response->json('data.id'));
 
-        $this->assertNotEmpty($user->customer);
-
         $this->assertEquals($name . ' ' . $surname, $user->name);
-        $this->assertEquals($name . ' ' . $surname, $user->customer->fullName);
-
-        $this->assertStringContainsString($user->customer->name, $name);
-        $this->assertStringContainsString($user->customer->surname, $surname);
+        $this->assertTrue($user->hasRole(UserRole::Customer));
     }
 
     /**
@@ -72,17 +67,14 @@ class RegisterControllerTest extends RegisteringTestCase
     }
 
     /**
-     * Test register for already attached customer.
+     * Test register with an email that is already taken.
      *
      * @return void
      */
-    public function testRegisterForAttachedCustomer()
+    public function testRegisterWithTakenEmail()
     {
-        $user = User::factory()
-            ->create(['email' => 'one@email.com']);
-
-        Customer::factory()
-            ->create(['email' => 'two@email.com', 'user_id' => $user->id]);
+        User::factory()
+            ->create(['email' => 'two@email.com']);
 
         $response = $this->postJson(
             '/api/register',

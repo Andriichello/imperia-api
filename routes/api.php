@@ -3,31 +3,21 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Model\BanquetController;
 use App\Http\Controllers\Model\CategoryController;
 use App\Http\Controllers\Model\CommentController;
-use App\Http\Controllers\Model\CustomerController;
 use App\Http\Controllers\Model\DishCategoryController;
 use App\Http\Controllers\Model\DishController;
 use App\Http\Controllers\Model\DishMenuController;
 use App\Http\Controllers\Model\DishVariantController;
-use App\Http\Controllers\Model\FamilyMemberController;
 use App\Http\Controllers\Model\MediaController;
 use App\Http\Controllers\Model\MenuController;
 use App\Http\Controllers\Model\ModelMediaController;
 use App\Http\Controllers\Model\NotificationController;
-use App\Http\Controllers\Model\OrderController;
 use App\Http\Controllers\Model\ProductController;
 use App\Http\Controllers\Model\RestaurantController;
 use App\Http\Controllers\Model\RestaurantReviewController;
-use App\Http\Controllers\Model\ServiceController;
-use App\Http\Controllers\Model\SpaceController;
 use App\Http\Controllers\Model\TagController;
-use App\Http\Controllers\Model\TicketController;
 use App\Http\Controllers\Model\UserController;
-use App\Http\Controllers\Model\WaiterController;
-use App\Http\Controllers\Other\InvoiceController;
-use App\Http\Controllers\Other\MetricsController;
 use App\Http\Controllers\Other\QueueController;
 use App\Http\Controllers\Other\StatusController;
 use App\Http\Responses\ApiResponse;
@@ -88,24 +78,6 @@ Route::group(['as' => 'api.'], function () {
         ->parameters(['products' => 'id'])
         ->middleware('cached:products');
 
-    Route::apiResource('tickets', TicketController::class)
-        ->only('index', 'show')
-        ->parameters(['tickets' => 'id'])
-        ->middleware('cached:tickets');
-
-    Route::apiResource('services', ServiceController::class)
-        ->only('index', 'show')
-        ->parameters(['services' => 'id'])
-        ->middleware('cached:services');
-
-    Route::get('/spaces/reservations', [SpaceController::class, 'reservations'])
-        ->name('spaces.reservations')
-        ->middleware('cached:spaces');
-    Route::apiResource('spaces', SpaceController::class)
-        ->only('index', 'show')
-        ->parameters(['spaces' => 'id'])
-        ->middleware('cached:spaces');
-
     Route::apiResource('tags', TagController::class)
         ->only('index', 'show')
         ->parameters(['tags' => 'id'])
@@ -133,11 +105,6 @@ Route::group(['as' => 'api.'], function () {
         ->only('index', 'show', 'store')
         ->parameters(['restaurant-reviews' => 'id'])
         ->middleware('cached:restaurants');
-
-    Route::apiResource('waiters', WaiterController::class)
-        ->only('index', 'show')
-        ->parameters(['waiters' => 'id'])
-        ->middleware('cached:waiters');
 });
 
 Route::group(['middleware' => ['auth:signature,sanctum'], 'as' => 'api.'], function () {
@@ -145,38 +112,6 @@ Route::group(['middleware' => ['auth:signature,sanctum'], 'as' => 'api.'], funct
         ->name('queue.backup');
     Route::post('queue/alterations/perform', [QueueController::class, 'performAlternations'])
         ->name('queue.alterations.perform');
-
-    Route::get('metrics/full', [MetricsController::class, 'full']);
-
-    Route::get('/orders/{id}/invoice', [InvoiceController::class, 'view'])
-        ->name('orders.invoice');
-    Route::get('/orders/{id}/invoice/pdf', [InvoiceController::class, 'pdf'])
-        ->name('orders.invoice-pdf');
-
-    Route::get('/orders/invoice', [InvoiceController::class, 'viewMultiple'])
-        ->name('orders.invoice.multiple');
-    Route::get('/orders/invoice/pdf', [InvoiceController::class, 'pdfMultiple'])
-        ->name('orders.invoice-pdf.multiple');
-
-    Route::get('/banquets/{id}/invoice', [InvoiceController::class, 'viewThroughBanquet'])
-        ->name('banquets.invoice');
-    Route::get('/banquets/{id}/invoice/pdf', [InvoiceController::class, 'pdfThroughBanquet'])
-        ->name('banquets.invoice-pdf');
-
-    Route::get('/banquets/invoice', [InvoiceController::class, 'viewMultiple'])
-        ->name('banquets.invoice.multiple');
-    Route::get('/banquets/invoice/pdf', [InvoiceController::class, 'pdfMultiple'])
-        ->name('banquets.invoice-pdf.multiple');
-
-    Route::post('/orders/{id}/invoice/url', [InvoiceController::class, 'generateUrl'])
-        ->name('orders.invoice-url');
-    Route::post('/banquets/{id}/invoice/url', [InvoiceController::class, 'generateUrl'])
-        ->name('banquets.invoice-url');
-
-    Route::post('/orders/invoice/url', [InvoiceController::class, 'generateMultipleUrl'])
-        ->name('orders.invoice-url.multiple');
-    Route::post('/banquets/invoice/url', [InvoiceController::class, 'generateMultipleUrl'])
-        ->name('banquets.invoice-url.multiple');
 });
 
 Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
@@ -212,34 +147,9 @@ Route::group(['middleware' => 'auth:sanctum', 'as' => 'api.'], function () {
         ->only('index', 'show', 'store', 'update', 'destroy')
         ->parameters(['notifications' => 'id']);
 
-    Route::post('/customers/{id}/restore', [CustomerController::class, 'restore'])->name('customers.restore');
-    Route::apiResource('customers', CustomerController::class)
-        ->only('index', 'show', 'store', 'update', 'destroy')
-        ->parameters(['customers' => 'id'])
-        ->middleware('cached:customers');
-
-    Route::apiResource('family-members', FamilyMemberController::class)
-        ->only('index', 'show', 'store', 'update', 'destroy')
-        ->parameters(['family-members' => 'id']);
-
-    Route::apiResource('waiters', WaiterController::class)
-        ->only('store', 'update', 'destroy')
-        ->parameters(['waiters' => 'id']);
-
     Route::apiResource('comments', CommentController::class)
         ->only('index', 'show', 'store', 'update', 'destroy')
         ->parameters(['comments' => 'id']);
-
-    Route::post('/orders/{id}/restore', [OrderController::class, 'restore'])->name('orders.restore');
-    Route::apiResource('orders', OrderController::class)
-        ->only('index', 'show', 'store', 'update', 'destroy')
-        ->parameters(['orders' => 'id']);
-
-    Route::get('/banquets/{id}/order', [OrderController::class, 'showByBanquetId']);
-    Route::post('/banquets/{id}/restore', [BanquetController::class, 'restore'])->name('banquets.restore');
-    Route::apiResource('banquets', BanquetController::class)
-        ->only('index', 'show', 'store', 'update', 'destroy')
-        ->parameters(['banquets' => 'id']);
 });
 
 Route::group(['middleware' => ['web', 'auth:sanctum,web'], 'as' => 'api.'], function () {

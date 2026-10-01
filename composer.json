@@ -27,7 +27,6 @@
         "laravel/sanctum": "^4.0",
         "laravel/scout": "^10.15",
         "laravel/tinker": "^2.10",
-        "laraveldaily/laravel-invoices": "^4.0",
         "league/flysystem-aws-s3-v3": "^3.29",
         "masbug/flysystem-google-drive-ext": "^2.4",
         "spatie/laravel-google-cloud-storage": "^2.3",

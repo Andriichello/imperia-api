@@ -8,9 +8,6 @@ use App\Models\Morphs\Category;
 use App\Models\Morphs\Media;
 use App\Models\Morphs\Mediable;
 use App\Models\Product;
-use App\Models\Service;
-use App\Models\Space;
-use App\Models\Ticket;
 use App\Queries\MediaQueryBuilder;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Arr;
@@ -32,10 +29,7 @@ trait MediableTrait
     protected static array $defaultMediaMap = [
         Menu::class => '/media/defaults/menu.svg',
         Category::class => '/media/defaults/category.svg',
-        Space::class => '/media/defaults/table.svg',
-        Ticket::class => '/media/defaults/ticket.svg',
         Product::class => '/media/defaults/dish.svg',
-        Service::class => '/media/defaults/action.svg',
     ];
 
     /**
@@ -144,7 +138,7 @@ trait MediableTrait
      *
      * @param Media|int ...$media
      *
-     * @return void
+     * @return static
      */
     public function setMedia(Media|int ...$media): static
     {

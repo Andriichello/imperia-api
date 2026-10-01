@@ -15,7 +15,6 @@ use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -29,7 +28,6 @@ use Spatie\Permission\Traits\HasRoles;
  *
  * @property int $id
  * @property int|null $restaurant_id
- * @property int|null $customer_id
  * @property string $type
  * @property string $name
  * @property string $email
@@ -44,8 +42,6 @@ use Spatie\Permission\Traits\HasRoles;
  * @property array<int> $restaurants
  *
  * @property Restaurant|null $restaurant
- * @property Customer|null $customer
- * @property Banquet[]|Collection $banquets
  * @property Notification[]|Collection $inbounds
  * @property Notification[]|Collection $outbounds
  *
@@ -110,8 +106,6 @@ class User extends Authenticatable implements SoftDeletableInterface, FilamentUs
      */
     protected $relations = [
         'restaurant',
-        'customer',
-        'banquets',
         'inbounds',
         'outbounds',
     ];
@@ -124,26 +118,6 @@ class User extends Authenticatable implements SoftDeletableInterface, FilamentUs
     public function restaurant(): BelongsTo
     {
         return $this->belongsTo(Restaurant::class);
-    }
-
-    /**
-     * Customer associated with the model.
-     *
-     * @return HasOne
-     */
-    public function customer(): HasOne
-    {
-        return $this->hasOne(Customer::class, 'user_id', 'id');
-    }
-
-    /**
-     * Banquets associated with the model.
-     *
-     * @return HasMany
-     */
-    public function banquets(): HasMany
-    {
-        return $this->hasMany(Banquet::class, 'creator_id', 'id');
     }
 
     /**
@@ -186,16 +160,6 @@ class User extends Authenticatable implements SoftDeletableInterface, FilamentUs
     public function getTypeAttribute(): string
     {
         return slugClass(static::class);
-    }
-
-    /**
-     * Accessor for the related customer id.
-     *
-     * @return int|null
-     */
-    public function getCustomerIdAttribute(): ?int
-    {
-        return $this->customer?->id;
     }
 
     /**
@@ -268,9 +232,7 @@ class User extends Authenticatable implements SoftDeletableInterface, FilamentUs
      */
     public function isCustomer(): bool
     {
-        return $this->hasRole(UserRole::Customer)
-            /** @phpstan-ignore-next-line */
-            && $this->customer()->exists();
+        return $this->hasRole(UserRole::Customer);
     }
 
     /**

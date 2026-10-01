@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Models\Interfaces\MediableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Morphs\Category;
-use App\Models\Morphs\Tip;
 use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use App\Queries\RestaurantQueryBuilder;
@@ -46,19 +45,13 @@ use Illuminate\Support\Collection;
  * @property string|null $establishment
  * @property string[]|null $notes
  *
- * @property Banquet[]|Collection $banquets
  * @property Menu[]|Collection $menus
- * @property Space[]|Collection $spaces
- * @property Service[]|Collection $services
- * @property Ticket[]|Collection $tickets
  * @property Product[]|Collection $products
  * @property Category[]|Collection $categories
  * @property Schedule[]|Collection $schedules
  * @property Holiday[]|Collection $holidays
  * @property Holiday[]|Collection $relevantHolidays
  * @property RestaurantReview[]|Collection $reviews
- * @property Waiter[]|Collection $waiters
- * @property Tip[]|Collection $tips
  *
  * @property DishMenu[]|Collection $dishMenus
  * @property DishCategory[]|Collection $dishCategories
@@ -79,7 +72,7 @@ class Restaurant extends BaseModel implements
     /**
      * The model's attributes.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $attributes = [
         'metadata' => '{}',
@@ -135,33 +128,17 @@ class Restaurant extends BaseModel implements
      * @var array
      */
     protected $relations = [
-        'banquets',
         'menus',
         'products',
-        'spaces',
-        'tickets',
-        'services',
         'categories',
         'schedules',
         'holidays',
         'relevantHolidays',
         'reviews',
-        'waiters',
-        'tips',
         'dishMenus',
         'dishCategories',
         'dishes',
     ];
-
-    /**
-     * Banquets associated with the model.
-     *
-     * @return HasMany
-     */
-    public function banquets(): HasMany
-    {
-        return $this->hasMany(Banquet::class, 'restaurant_id', 'id');
-    }
 
     /**
      * Menus associated with the model.
@@ -181,36 +158,6 @@ class Restaurant extends BaseModel implements
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
-    }
-
-    /**
-     * Spaces associated with the model.
-     *
-     * @return HasMany
-     */
-    public function spaces(): HasMany
-    {
-        return $this->hasMany(Space::class);
-    }
-
-    /**
-     * Tickets associated with the model.
-     *
-     * @return HasMany
-     */
-    public function tickets(): HasMany
-    {
-        return $this->hasMany(Ticket::class);
-    }
-
-    /**
-     * Services associated with the model.
-     *
-     * @return HasMany
-     */
-    public function services(): HasMany
-    {
-        return $this->hasMany(Service::class);
     }
 
     /**
@@ -269,26 +216,6 @@ class Restaurant extends BaseModel implements
         /** @phpstan-ignore-next-line */
         return $this->hasMany(RestaurantReview::class, 'restaurant_id', 'id')
             ->orderByDesc('created_at');
-    }
-
-    /**
-     * Waiters associated with the model.
-     *
-     * @return HasMany
-     */
-    public function waiters(): HasMany
-    {
-        return $this->hasMany(Waiter::class, 'restaurant_id', 'id');
-    }
-
-    /**
-     * Tips associated with the model (by the `restaurant_id`).
-     *
-     * @return HasMany
-     */
-    public function tips(): HasMany
-    {
-        return $this->hasMany(Tip::class, 'restaurant_id', 'id');
     }
 
     /**

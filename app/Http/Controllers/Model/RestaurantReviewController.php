@@ -101,7 +101,7 @@ class RestaurantReviewController extends CrudController
      * ),
      * @OA\Post(
      *   path="/api/restaurant-reviews",
-     *   summary="Store banquet.",
+     *   summary="Store restaurant review.",
      *   operationId="storeRestaurantReview",
      *   security={{"bearerAuth": {}}},
      *   tags={"restaurant-reviews"},
