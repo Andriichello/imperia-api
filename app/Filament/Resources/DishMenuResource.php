@@ -4,10 +4,12 @@ namespace App\Filament\Resources;
 
 use App\Filament\BaseResource;
 use App\Filament\RelationManagers\AlterationsRelationManager;
+use App\Filament\Filters\LiveFilter;
 use App\Filament\Filters\TrashedFilter;
 use App\Filament\Fields\RestaurantSelect;
 use App\Filament\Resources\DishMenuResource\Pages;
 use App\Filament\Tables\AlterationsTable;
+use App\Filament\Tables\Columns\LiveColumn;
 use App\Models\DishMenu;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -80,20 +82,14 @@ class DishMenuResource extends BaseResource
                     ->searchable(query: function (Builder $query, string $search): Builder {
                         return $query->where('dish_menus.title', 'like', "%{$search}%");
                     }),
-                Tables\Columns\IconColumn::make('archived')
-                    ->label('Live')
-                    ->alignCenter()
-                    ->boolean()
-                    ->trueIcon('heroicon-o-x-circle')
-                    ->trueColor('danger')
-                    ->falseIcon('heroicon-o-check-circle')
-                    ->falseColor('success'),
+                LiveColumn::make(),
                 AlterationsTable::scheduledColumn(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
             ])
             ->filters([
+                LiveFilter::make(),
                 TrashedFilter::make(),
             ])
             ->actions([

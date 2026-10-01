@@ -75,4 +75,77 @@ class ProductFlag extends Enum
     public const WithEggs = 'alg-eggs';
     public const WithSeeds = 'alg-seeds';
     public const WithMilk = 'alg-milk';
+
+    /**
+     * Diet and nutrition tags with their labels.
+     *
+     * @return array<string, string>
+     */
+    public static function getTagLabels(): array
+    {
+        return [
+            self::Vegan => 'Vegan',
+            self::Vegetarian => 'Vegetarian',
+            self::LactoseFree => 'Lactose-free',
+            self::DairyFree => 'Dairy-free',
+            self::PlantMilk => 'Plant milk',
+            self::LowCalorie => 'Low-calorie',
+            self::HighCalorie => 'High-calorie',
+            self::HighProtein => 'High-protein',
+            self::LowFat => 'Low-fat',
+            self::HighFat => 'High-fat',
+        ];
+    }
+
+    /**
+     * Hotness levels with their labels (the same words as on the website).
+     *
+     * @return array<string, string>
+     */
+    public static function getHotnessLabels(): array
+    {
+        return [
+            self::Hotness => 'Spicy (level not set)',
+            self::LowHotness => 'Mild',
+            self::MediumHotness => 'Medium',
+            self::HighHotness => 'Spicy',
+            self::ExtremeHotness => 'Extra spicy',
+        ];
+    }
+
+    /**
+     * Allergens with their labels.
+     *
+     * @return array<string, string>
+     */
+    public static function getAllergenLabels(): array
+    {
+        return [
+            self::WithMilk => 'Milk',
+            self::WithEggs => 'Eggs',
+            self::WithWheat => 'Wheat',
+            self::WithNuts => 'Nuts',
+            self::WithPeanuts => 'Peanuts',
+            self::WithSoy => 'Soy',
+            self::WithFish => 'Fish',
+            self::WithShellfish => 'Shellfish',
+            self::WithCelery => 'Celery',
+            self::WithSesame => 'Sesame',
+            self::WithSeeds => 'Seeds',
+        ];
+    }
+
+    /**
+     * All flags with their labels.
+     *
+     * @return array<string, string>
+     */
+    public static function getLabels(): array
+    {
+        return array_merge(
+            static::getTagLabels(),
+            static::getHotnessLabels(),
+            static::getAllergenLabels(),
+        );
+    }
 }

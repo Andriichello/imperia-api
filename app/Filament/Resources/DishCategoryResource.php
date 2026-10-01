@@ -4,9 +4,11 @@ namespace App\Filament\Resources;
 
 use App\Filament\BaseResource;
 use App\Filament\RelationManagers\AlterationsRelationManager;
+use App\Filament\Filters\LiveFilter;
 use App\Filament\Filters\TrashedFilter;
 use App\Filament\Resources\DishCategoryResource\Pages;
 use App\Filament\Tables\AlterationsTable;
+use App\Filament\Tables\Columns\LiveColumn;
 use App\Models\DishCategory;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -83,20 +85,14 @@ class DishCategoryResource extends BaseResource
                     ->searchable(query: function (Builder $query, string $search): Builder {
                         return $query->where('dish_categories.title', 'like', "%{$search}%");
                     }),
-                Tables\Columns\IconColumn::make('archived')
-                    ->label('Live')
-                    ->alignCenter()
-                    ->boolean()
-                    ->trueIcon('heroicon-o-x-circle')
-                    ->trueColor('danger')
-                    ->falseIcon('heroicon-o-check-circle')
-                    ->falseColor('success'),
+                LiveColumn::make(),
                 AlterationsTable::scheduledColumn(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
             ])
             ->filters([
+                LiveFilter::make(),
                 TrashedFilter::make(),
             ])
             ->actions([

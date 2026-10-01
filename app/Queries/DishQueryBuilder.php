@@ -8,6 +8,7 @@ use App\Models\Restaurant;
 use App\Models\User;
 use App\Queries\Interfaces\ArchivableInterface;
 use App\Queries\Traits\Archivable;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Class DishQueryBuilder.
@@ -53,6 +54,28 @@ class DishQueryBuilder extends BaseQueryBuilder implements
 
         if (!empty($ids)) {
             $this->whereIn($this->model->getTable() . '.menu_id', $ids);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Dishes, which have any of the given flags.
+     *
+     * @param string ...$flags
+     *
+     * @return static
+     */
+    public function withAnyOfFlags(string ...$flags): static
+    {
+        if (!empty($flags)) {
+            $column = $this->model->getTable() . '.metadata->flags';
+
+            $this->where(function (Builder $query) use ($column, $flags) {
+                foreach ($flags as $flag) {
+                    $query->orWhereJsonContains($column, $flag);
+                }
+            });
         }
 
         return $this;

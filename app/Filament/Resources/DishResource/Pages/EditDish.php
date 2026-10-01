@@ -13,6 +13,7 @@ class EditDish extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            DishResource::duplicateAction(Actions\Action::class),
             Actions\DeleteAction::make(),
             Actions\RestoreAction::make(),
         ];

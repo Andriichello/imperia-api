@@ -100,7 +100,7 @@ class ScheduledChangesTest extends FilamentTestCase
             ->callTableAction('schedule', data: [
                 'perform_at' => '2030-01-07 09:00',
                 'price' => '120',
-                'flags' => ['vegetarian', 'alg-celery'],
+                'flag_allergens' => ['alg-celery'],
             ])
             ->assertHasNoTableActionErrors()
             ->assertNotified('The change was scheduled');
@@ -116,6 +116,13 @@ class ScheduledChangesTest extends FilamentTestCase
         $this->assertSame('2030-01-07 07:00:00', $alteration->perform_at->toDateTimeString());
         $this->assertSame($this->restaurant->id, $alteration->restaurant_id);
         $this->assertSame($this->dish->getMorphClass(), $alteration->alterable_type);
+
+        // flags are listed with their labels (the json column orders the keys)
+        $this->dishChanges()
+            ->assertTableColumnStateSet('changes', [
+                'Flags: Vegetarian, Celery (now: Vegetarian)',
+                'Price: 120 (now: 100)',
+            ], $alteration);
     }
 
     /**
@@ -135,6 +142,9 @@ class ScheduledChangesTest extends FilamentTestCase
                 'title' => 'Borscht',
                 'price' => 100,
                 'flags' => ['vegetarian'],
+                'flag_tags' => ['vegetarian'],
+                'flag_hotness' => null,
+                'flag_allergens' => [],
                 // shown in the restaurant's timezone
                 'perform_at' => $monday->format('Y-m-d H:i'),
             ]);

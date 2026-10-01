@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tables;
 
+use App\Enums\ProductFlag;
 use App\Filament\Resources\DishCategoryResource;
 use App\Filament\Resources\DishMenuResource;
 use App\Filament\Resources\DishResource;
@@ -15,6 +16,7 @@ use App\Models\Morphs\Alteration;
 use App\Models\Restaurant;
 use Carbon\Carbon;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Section;
 use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -339,6 +341,7 @@ class AlterationsTable
 
     /**
      * Current values of the owner record's alterable fields.
+     * Fields, which aren't saved (e.g. the separate inputs of flags), are skipped.
      *
      * @param RelationManager $livewire
      *
@@ -350,6 +353,10 @@ class AlterationsTable
         $values = [];
 
         foreach (static::getAlterableFields($livewire) as $field) {
+            if (!$field instanceof Field || !$field->isDehydrated()) {
+                continue;
+            }
+
             $name = $field->getName();
             $values[$name] = $record->getAttribute($name);
         }
@@ -443,6 +450,10 @@ class AlterationsTable
     protected static function formatValue(string $key, mixed $value): string
     {
         $value = static::normalizeValue($key, $value);
+
+        if ($key === 'flags' && is_array($value)) {
+            $value = array_map(fn ($flag) => ProductFlag::getLabels()[$flag] ?? $flag, $value);
+        }
 
         return match (true) {
             is_bool($value) => $value ? 'Yes' : 'No',

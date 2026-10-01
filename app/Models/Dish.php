@@ -158,6 +158,7 @@ class Dish extends BaseModel implements
 
     /**
      * Get the variants associated with the model.
+     * Deleted variants are never included, not even when deleted dishes are requested.
      *
      * @return HasMany
      */
@@ -166,7 +167,22 @@ class Dish extends BaseModel implements
         // @phpstan-ignore-next-line
         return $this->hasMany(DishVariant::class, 'dish_id')
             ->orderBy('price')
-            ->withoutGlobalScopes([SoftDeletableScope::class]);
+            ->withoutGlobalScopes([SoftDeletableScope::class])
+            ->whereNull('dish_variants.deleted_at');
+    }
+
+    /**
+     * Get all variants associated with the model, including archived and deleted ones.
+     * Used by the admin panel, which filters them itself.
+     *
+     * @return HasMany
+     */
+    public function allVariants(): HasMany
+    {
+        // @phpstan-ignore-next-line
+        return $this->hasMany(DishVariant::class, 'dish_id')
+            ->orderBy('price')
+            ->withoutGlobalScopes([ArchivedScope::class, SoftDeletableScope::class]);
     }
 
     /**
