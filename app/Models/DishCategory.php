@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\AlterableInterface;
 use App\Models\Interfaces\MediableInterface;
 use App\Models\Scopes\ArchivedScope;
 use App\Models\Scopes\SoftDeletableScope;
+use App\Models\Traits\AlterableTrait;
 use App\Models\Traits\ArchivableTrait;
 use App\Models\Traits\MediableTrait;
 use App\Queries\DishCategoryQueryBuilder;
@@ -34,11 +36,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static DishCategoryFactory factory(...$parameters)
  */
 class DishCategory extends BaseModel implements
-    MediableInterface
+    MediableInterface,
+    AlterableInterface
 {
     use HasFactory;
     use ArchivableTrait;
     use MediableTrait;
+    use AlterableTrait;
 
     /**
      * The attributes that are mass assignable.

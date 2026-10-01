@@ -4,12 +4,13 @@ namespace Database\Factories\Morphs;
 
 use App\Models\BaseModel;
 use App\Models\Morphs\Alteration;
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 /**
- * Class ChangeFactory.
+ * Class AlterationFactory.
  *
  * @method Alteration|Collection create($attributes = [], ?Model $parent = null)
  */
@@ -18,7 +19,7 @@ class AlterationFactory extends Factory
     /**
      * The name of the factory's corresponding model.
      *
-     * @var string|null
+     * @var class-string<\Illuminate\Database\Eloquent\Model>
      */
     protected $model = Alteration::class;
 
@@ -30,7 +31,7 @@ class AlterationFactory extends Factory
     public function definition(): array
     {
         return [
-            'values' => '{"key":"value"}',
+            'metadata' => '{}',
         ];
     }
 
@@ -45,7 +46,7 @@ class AlterationFactory extends Factory
     {
         return $this->state(
             function (array $attributes) use ($values) {
-                $attributes['values'] = json_encode($values);
+                $attributes['metadata'] = json_encode($values);
                 return $attributes;
             }
         );
@@ -63,9 +64,21 @@ class AlterationFactory extends Factory
         return $this->state(
             function (array $attributes) use ($model) {
                 $attributes['alterable_id'] = $model->id;
-                $attributes['alterable_type'] = $model->type;
+                $attributes['alterable_type'] = $model->getMorphClass();
                 return $attributes;
             }
         );
+    }
+
+    /**
+     * Indicate when the alteration should be performed.
+     *
+     * @param DateTimeInterface|null $date
+     *
+     * @return static
+     */
+    public function performAt(?DateTimeInterface $date): static
+    {
+        return $this->state(['perform_at' => $date]);
     }
 }

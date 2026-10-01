@@ -18,6 +18,7 @@ use Illuminate\Database\Query\Builder as DatabaseBuilder;
 /**
  * Class Alteration.
  *
+ * @property int|null $restaurant_id
  * @property string|null $metadata
  * @property int $alterable_id
  * @property string $alterable_type
@@ -41,7 +42,7 @@ class Alteration extends BaseModel
     /**
      * The model's attributes.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $attributes = [
         'metadata' => '{}',
@@ -53,6 +54,7 @@ class Alteration extends BaseModel
      * @var array<int, string>
      */
     protected $fillable = [
+        'restaurant_id',
         'metadata',
         'alterable_id',
         'alterable_type',
@@ -158,6 +160,18 @@ class Alteration extends BaseModel
      */
     public function getRestaurantId(): ?int
     {
-        return data_get($this->alterable, 'restaurant_id');
+        return $this->restaurant_id ?? $this->alterable?->getRestaurantId();
+    }
+
+    /**
+     * Perform any actions required after the model boots.
+     *
+     * @return void
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (Alteration $alteration) {
+            $alteration->restaurant_id ??= $alteration->getRestaurantId();
+        });
     }
 }

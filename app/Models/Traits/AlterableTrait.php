@@ -119,6 +119,7 @@ trait AlterableTrait
         // @phpstan-ignore-next-line
         return $this->alterations()
             ->whereNull('performed_at')
+            ->whereNull('failed_at')
             ->where($shouldBePerformed)
             ->exists();
     }

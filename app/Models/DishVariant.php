@@ -2,9 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\AlterableInterface;
+use App\Models\Interfaces\ArchivableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Scopes\ArchivedScope;
 use App\Models\Scopes\SoftDeletableScope;
+use App\Models\Traits\AlterableTrait;
+use App\Models\Traits\ArchivableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use App\Queries\DishVariantQueryBuilder;
 use Carbon\Carbon;
@@ -22,6 +26,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $weight_unit
  * @property integer|null $calories
  * @property integer|null $preparation_time
+ * @property bool $archived
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
@@ -32,10 +37,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static DishVariantFactory factory(...$parameters)
  */
 class DishVariant extends BaseModel implements
-    SoftDeletableInterface
+    SoftDeletableInterface,
+    ArchivableInterface,
+    AlterableInterface
 {
     use HasFactory;
     use SoftDeletableTrait;
+    use ArchivableTrait;
+    use AlterableTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -49,6 +58,7 @@ class DishVariant extends BaseModel implements
         'weight_unit',
         'calories',
         'preparation_time',
+        'archived',
     ];
 
     /**

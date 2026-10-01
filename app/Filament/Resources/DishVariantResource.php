@@ -10,6 +10,7 @@ use App\Models\DishVariant;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -52,6 +53,8 @@ class DishVariantResource extends BaseResource
                     ->label('Preparation Time (minutes)')
                     ->numeric()
                     ->nullable(),
+                Toggle::make('archived')
+                    ->default(false),
             ]);
     }
 
@@ -84,6 +87,14 @@ class DishVariantResource extends BaseResource
                     ->label('Prep Time (min)')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\IconColumn::make('archived')
+                    ->label('Live')
+                    ->alignCenter()
+                    ->boolean()
+                    ->trueIcon('heroicon-o-x-circle')
+                    ->trueColor('danger')
+                    ->falseIcon('heroicon-o-check-circle')
+                    ->falseColor('success'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),

@@ -110,7 +110,8 @@ class AlterationQueryBuilder extends BaseQueryBuilder
 
     /**
      * Include only alterations, which should be performed
-     * based on the `perform_at` column value.
+     * based on the `perform_at` column value. Failed ones are
+     * skipped, so they aren't retried on every run.
      *
      * @return static
      */
@@ -122,6 +123,7 @@ class AlterationQueryBuilder extends BaseQueryBuilder
         };
 
         $this->thatHaveNotBeenPerformed()
+            ->whereNull('failed_at')
             ->where($shouldBePerformed);
 
         return $this;

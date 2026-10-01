@@ -31,6 +31,7 @@ class DishVariantResource extends JsonResource
             'weight_unit' => $this->weight_unit,
             'calories' => $this->calories,
             'preparation_time' => $this->preparation_time,
+            'archived' => $this->archived,
         ];
     }
 
@@ -39,7 +40,7 @@ class DishVariantResource extends JsonResource
      *   schema="DishVariant",
      *   description="Dish variant resource object",
      *   required = {"id", "dish_id", "type",
-     *     "price", "weight", "weight_unit", "calories", "preparation_time"},
+     *     "price", "weight", "weight_unit", "calories", "preparation_time", "archived"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="dish_id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="dish-variants"),
@@ -48,6 +49,7 @@ class DishVariantResource extends JsonResource
      *   @OA\Property(property="weight_unit", type="string", nullable=true, example="g"),
      *   @OA\Property(property="calories", type="integer", nullable=true, example=500),
      *   @OA\Property(property="preparation_time", type="integer", nullable=true, example=30),
+     *   @OA\Property(property="archived", type="boolean", example=false),
      * )
      */
 }

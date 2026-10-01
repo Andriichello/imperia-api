@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\AlterableInterface;
 use App\Models\Interfaces\ArchivableInterface;
 use App\Models\Interfaces\FlaggableInterface;
 use App\Models\Interfaces\LoggableInterface;
@@ -9,6 +10,7 @@ use App\Models\Interfaces\MediableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Scopes\ArchivedScope;
 use App\Models\Scopes\SoftDeletableScope;
+use App\Models\Traits\AlterableTrait;
 use App\Models\Traits\ArchivableTrait;
 use App\Models\Traits\FlaggableTrait;
 use App\Models\Traits\LoggableTrait;
@@ -56,7 +58,8 @@ class Dish extends BaseModel implements
     ArchivableInterface,
     LoggableInterface,
     MediableInterface,
-    FlaggableInterface
+    FlaggableInterface,
+    AlterableInterface
 {
     use HasFactory;
     use SoftDeletableTrait;
@@ -64,6 +67,7 @@ class Dish extends BaseModel implements
     use LoggableTrait;
     use MediableTrait;
     use FlaggableTrait;
+    use AlterableTrait;
 
     /**
      * The attributes that are mass assignable.

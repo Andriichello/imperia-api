@@ -7,6 +7,8 @@ use App\Models\DishMenu;
 use App\Models\DishVariant;
 use App\Models\Restaurant;
 use App\Models\User;
+use App\Queries\Interfaces\ArchivableInterface;
+use App\Queries\Traits\Archivable;
 
 /**
  * Class DishVariantQueryBuilder.
@@ -18,8 +20,11 @@ use App\Models\User;
  * @method $this where($column, $operator = null, $value = null, $boolean = 'and')
  * @method $this orWhere($column, $operator = null, $value = null)
  */
-class DishVariantQueryBuilder extends BaseQueryBuilder
+class DishVariantQueryBuilder extends BaseQueryBuilder implements
+    ArchivableInterface
 {
+    use Archivable;
+
     /**
      * Apply index query conditions.
      *

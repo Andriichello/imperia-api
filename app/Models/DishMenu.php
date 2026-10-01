@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\AlterableInterface;
 use App\Models\Interfaces\ArchivableInterface;
 use App\Models\Interfaces\MediableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
+use App\Models\Traits\AlterableTrait;
 use App\Models\Traits\ArchivableTrait;
 use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
@@ -41,12 +43,14 @@ use Illuminate\Support\Collection;
 class DishMenu extends BaseModel implements
     ArchivableInterface,
     SoftDeletableInterface,
-    MediableInterface
+    MediableInterface,
+    AlterableInterface
 {
     use HasFactory;
     use SoftDeletableTrait;
     use ArchivableTrait;
     use MediableTrait;
+    use AlterableTrait;
 
     /**
      * The table associated with the model.
