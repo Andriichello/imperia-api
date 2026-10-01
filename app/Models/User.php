@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\UserRole;
+use App\Models\Interfaces\JsonFieldInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Traits\JsonFieldTrait;
 use App\Models\Traits\SoftDeletableTrait;
@@ -48,7 +49,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static UserQueryBuilder query()
  * @method static UserFactory factory(...$parameters)
  */
-class User extends Authenticatable implements SoftDeletableInterface, FilamentUser
+class User extends Authenticatable implements SoftDeletableInterface, JsonFieldInterface, FilamentUser
 {
     use StaticMethodsAccess;
     use SoftDeletableTrait;

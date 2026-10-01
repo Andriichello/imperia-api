@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Interfaces\AlterableInterface;
+use App\Models\Interfaces\ArchivableInterface;
 use App\Models\Interfaces\MediableInterface;
 use App\Models\Scopes\ArchivedScope;
 use App\Models\Scopes\SoftDeletableScope;
@@ -36,6 +37,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static DishCategoryFactory factory(...$parameters)
  */
 class DishCategory extends BaseModel implements
+    ArchivableInterface,
     MediableInterface,
     AlterableInterface
 {

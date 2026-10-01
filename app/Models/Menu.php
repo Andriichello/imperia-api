@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Http\Filters\RestaurantsFilter;
 use App\Models\Interfaces\ArchivableInterface;
+use App\Models\Interfaces\CategorizableInterface;
 use App\Models\Interfaces\MediableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Morphs\Category;
@@ -47,7 +48,8 @@ use Illuminate\Support\Collection;
 class Menu extends BaseModel implements
     ArchivableInterface,
     SoftDeletableInterface,
-    MediableInterface
+    MediableInterface,
+    CategorizableInterface
 {
     use HasFactory;
     use SoftDeletableTrait;

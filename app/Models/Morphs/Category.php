@@ -3,6 +3,7 @@
 namespace App\Models\Morphs;
 
 use App\Models\BaseModel;
+use App\Models\Interfaces\ArchivableInterface;
 use App\Models\Interfaces\MediableInterface;
 use App\Models\Interfaces\TaggableInterface;
 use App\Models\Restaurant;
@@ -39,6 +40,7 @@ use Illuminate\Support\Collection;
  * @method static CategoryFactory factory(...$parameters)
  */
 class Category extends BaseModel implements
+    ArchivableInterface,
     MediableInterface,
     TaggableInterface
 {
