@@ -8,3 +8,6 @@ parameters:
 	excludePaths:
 	    - database/migrations/*
 	    - nova/*
+	ignoreErrors:
+	    # Filament's testing helpers (fillForm, assertCanSeeTableRecords, ...) are Livewire `Testable` macros
+	    - '#^Call to an undefined method Livewire\\Features\\SupportTesting\\Testable::#'

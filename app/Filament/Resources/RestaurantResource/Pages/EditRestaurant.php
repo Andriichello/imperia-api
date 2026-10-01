@@ -14,6 +14,7 @@ class EditRestaurant extends EditRecord
     {
         return [
             Actions\DeleteAction::make(),
+            Actions\RestoreAction::make(),
         ];
     }
 }

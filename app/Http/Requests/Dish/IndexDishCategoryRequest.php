@@ -44,7 +44,6 @@ class IndexDishCategoryRequest extends IndexRequest
                 AllowedFilter::partial('title'),
                 AllowedFilter::custom('ids', new InFilter('id')),
                 AllowedFilter::exact('menu_id'),
-                AllowedFilter::exact('target'),
             ]
         );
     }

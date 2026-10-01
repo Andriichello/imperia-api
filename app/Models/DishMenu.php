@@ -6,6 +6,7 @@ use App\Models\Interfaces\AlterableInterface;
 use App\Models\Interfaces\ArchivableInterface;
 use App\Models\Interfaces\MediableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
+use App\Models\Scopes\ArchivedScope;
 use App\Models\Traits\AlterableTrait;
 use App\Models\Traits\ArchivableTrait;
 use App\Models\Traits\MediableTrait;
@@ -80,8 +81,8 @@ class DishMenu extends BaseModel implements
      * @var array
      */
     protected array $cascadeDeletes = [
-        'dishes',
-        'categories',
+        'allDishes',
+        'allCategories',
     ];
 
     /**
@@ -123,6 +124,32 @@ class DishMenu extends BaseModel implements
     public function categories(): HasMany
     {
         return $this->hasMany(DishCategory::class, 'menu_id');
+    }
+
+    /**
+     * Get all dishes associated with the model, including archived ones.
+     * Used for cascading deletes and restores.
+     *
+     * @return HasMany
+     */
+    public function allDishes(): HasMany
+    {
+        // @phpstan-ignore-next-line
+        return $this->dishes()
+            ->withoutGlobalScope(ArchivedScope::class);
+    }
+
+    /**
+     * Get all categories associated with the model, including archived ones.
+     * Used for cascading deletes and restores.
+     *
+     * @return HasMany
+     */
+    public function allCategories(): HasMany
+    {
+        // @phpstan-ignore-next-line
+        return $this->categories()
+            ->withoutGlobalScope(ArchivedScope::class);
     }
 
     /**

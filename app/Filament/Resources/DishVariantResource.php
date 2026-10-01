@@ -4,10 +4,9 @@ namespace App\Filament\Resources;
 
 use App\Enums\WeightUnit;
 use App\Filament\BaseResource;
+use App\Filament\Filters\TrashedFilter;
 use App\Filament\Resources\DishVariantResource\Pages;
-use App\Models\Dish;
 use App\Models\DishVariant;
-use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -36,11 +35,13 @@ class DishVariantResource extends BaseResource
             ->schema([
                 Select::make('dish_id')
                     ->label('Dish')
-                    ->options(Dish::all()->pluck('title', 'id'))
+                    ->options(fn () => DishResource::getSelectOptions())
+                    ->in(fn () => array_keys(DishResource::getSelectOptions()))
                     ->required()
                     ->searchable(),
                 TextInput::make('price')
                     ->numeric()
+                    ->minValue(0)
                     ->required(),
                 TextInput::make('weight')
                     ->maxLength(255),
@@ -48,10 +49,12 @@ class DishVariantResource extends BaseResource
                     ->options(array_flip(WeightUnit::getMap())),
                 TextInput::make('calories')
                     ->numeric()
+                    ->minValue(0)
                     ->nullable(),
                 TextInput::make('preparation_time')
                     ->label('Preparation Time (minutes)')
                     ->numeric()
+                    ->minValue(0)
                     ->nullable(),
                 Toggle::make('archived')
                     ->default(false),
@@ -60,17 +63,15 @@ class DishVariantResource extends BaseResource
 
     public static function table(Table $table): Table
     {
-        /** @var User|null $user */
-        $user = request()->user();
-
         return $table
+            ->modifyQueryUsing(fn (Builder $query) => $query->with('dish.menu.restaurant'))
             ->columns([
                 Tables\Columns\TextColumn::make('id')->sortable(),
                 Tables\Columns\TextColumn::make('dish.title')
                     ->label('Dish')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('price')
-                    ->money($user?->restaurant?->currency ?? 'UAH')
+                    ->money(fn (DishVariant $record): string => $record->dish->menu->restaurant->currency ?: 'UAH')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('weight')
                     ->searchable(query: function (Builder $query, string $search): Builder {
@@ -100,14 +101,16 @@ class DishVariantResource extends BaseResource
                     ->sortable(),
             ])
             ->filters([
-                //
+                TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }

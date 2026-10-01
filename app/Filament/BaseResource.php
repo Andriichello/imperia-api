@@ -2,30 +2,48 @@
 
 namespace App\Filament;
 
+use App\Models\Scopes\ArchivedScope;
+use App\Models\Scopes\SoftDeletableScope;
 use App\Queries\BaseQueryBuilder;
 use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class BaseResource.
  */
 abstract class BaseResource extends Resource
 {
+    /**
+     * Archived records stay visible to admins, soft-deleted ones
+     * only show up through the trashed filter.
+     *
+     * @return BaseQueryBuilder
+     */
     public static function getEloquentQuery(): BaseQueryBuilder
     {
         /** @var BaseQueryBuilder $query */
         $query = parent::getEloquentQuery();
 
-        return $query->withoutGlobalScopes()
+        return $query->withoutGlobalScope(ArchivedScope::class)
             ->index(request()->user());
     }
 
-    public static function getGlobalSearchEloquentQuery(): BaseQueryBuilder
+    /**
+     * Resolve the record for record pages (e.g. edit). Soft-deleted
+     * records can still be opened, so they can be restored.
+     *
+     * @param int|string $key
+     *
+     * @return Model|null
+     */
+    public static function resolveRecordRouteBinding(int|string $key): ?Model
     {
-        /** @var BaseQueryBuilder $query */
-        $query = parent::getGlobalSearchEloquentQuery();
+        $query = static::getEloquentQuery()
+            ->withoutGlobalScope(SoftDeletableScope::class);
 
-        return $query->withoutGlobalScopes()
-            ->index(request()->user());
+        return app(static::getModel())
+            ->resolveRouteBindingQuery($query, $key, static::getRecordRouteKeyName())
+            ->first();
     }
 
     public static function getRecordRouteKeyName(): ?string

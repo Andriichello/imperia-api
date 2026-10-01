@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\BaseResource;
+use App\Filament\Filters\TrashedFilter;
 use App\Filament\Resources\RestaurantResource\Pages;
 use App\Models\Restaurant;
 use App\Filament\Forms\Components\MediaAttachmentField;
@@ -13,7 +14,6 @@ use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Collection;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class RestaurantResource.
@@ -122,14 +122,16 @@ class RestaurantResource extends BaseResource
                     ->sortable(),
             ])
             ->filters([
-                //
+                TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }

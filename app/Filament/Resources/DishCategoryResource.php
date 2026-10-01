@@ -3,9 +3,9 @@
 namespace App\Filament\Resources;
 
 use App\Filament\BaseResource;
+use App\Filament\Filters\TrashedFilter;
 use App\Filament\Resources\DishCategoryResource\Pages;
 use App\Models\DishCategory;
-use App\Models\DishMenu;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -36,7 +36,8 @@ class DishCategoryResource extends BaseResource
             ->schema([
                 Select::make('menu_id')
                     ->label('Menu')
-                    ->options(DishMenu::all()->pluck('title', 'id'))
+                    ->options(fn () => DishMenuResource::getSelectOptions())
+                    ->in(fn () => array_keys(DishMenuResource::getSelectOptions()))
                     ->required()
                     ->searchable(),
                 TextInput::make('slug')
@@ -80,14 +81,16 @@ class DishCategoryResource extends BaseResource
                     ->sortable(),
             ])
             ->filters([
-                //
+                TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }
@@ -97,6 +100,29 @@ class DishCategoryResource extends BaseResource
         return [
             //
         ];
+    }
+
+    /**
+     * Categories of the given menu, archived ones included.
+     *
+     * @param int|null $menuId
+     *
+     * @return array<int, string>
+     */
+    public static function getSelectOptions(?int $menuId): array
+    {
+        if (!$menuId) {
+            return [];
+        }
+
+        return static::getEloquentQuery()
+            ->where('dish_categories.menu_id', $menuId)
+            ->orderBy('dish_categories.title')
+            ->get()
+            // @phpstan-ignore-next-line
+            ->mapWithKeys(function (DishCategory $category) {
+                return [$category->id => $category->title . ($category->archived ? ' (archived)' : '')];
+            })->all();
     }
 
     public static function getPages(): array

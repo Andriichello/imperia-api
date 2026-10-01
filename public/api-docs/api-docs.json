@@ -5991,7 +5991,6 @@
                     "menu_id",
                     "type",
                     "slug",
-                    "target",
                     "title",
                     "description",
                     "archived",
@@ -6014,11 +6013,6 @@
                     "slug": {
                         "type": "string",
                         "example": "appetizers",
-                        "nullable": true
-                    },
-                    "target": {
-                        "type": "string",
-                        "example": "dishes",
                         "nullable": true
                     },
                     "title": {

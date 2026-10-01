@@ -3,9 +3,9 @@
 namespace App\Filament\Resources;
 
 use App\Filament\BaseResource;
+use App\Filament\Filters\TrashedFilter;
 use App\Filament\Fields\RestaurantSelect;
 use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
@@ -28,7 +28,7 @@ class UserResource extends BaseResource
     public static function form(Form $form): Form
     {
         /** @var User|null $user */
-        $user = auth()->user();
+        $user = request()->user();
 
         return $form
             ->schema([
@@ -72,14 +72,16 @@ class UserResource extends BaseResource
                     ->boolean(),
             ])
             ->filters([
-                //
+                TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }

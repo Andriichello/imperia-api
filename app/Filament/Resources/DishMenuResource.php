@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\BaseResource;
+use App\Filament\Filters\TrashedFilter;
 use App\Filament\Fields\RestaurantSelect;
 use App\Filament\Resources\DishMenuResource\Pages;
 use App\Models\DishMenu;
@@ -77,14 +78,16 @@ class DishMenuResource extends BaseResource
                     ->sortable(),
             ])
             ->filters([
-                //
+                TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }
@@ -94,6 +97,31 @@ class DishMenuResource extends BaseResource
         return [
             //
         ];
+    }
+
+    /**
+     * Menus the current user can pick in other forms, archived ones included.
+     * The restaurant is prefixed when menus of several restaurants are listed.
+     *
+     * @return array<int, string>
+     */
+    public static function getSelectOptions(): array
+    {
+        $menus = static::getEloquentQuery()
+            ->with('restaurant')
+            ->orderBy('dish_menus.title')
+            ->get();
+
+        $withRestaurant = $menus->pluck('restaurant_id')->unique()->count() > 1;
+
+        // @phpstan-ignore-next-line
+        return $menus->mapWithKeys(function (DishMenu $menu) use ($withRestaurant) {
+            $label = $withRestaurant
+                ? $menu->restaurant->name . ' · ' . $menu->title
+                : $menu->title;
+
+            return [$menu->id => $label . ($menu->archived ? ' (archived)' : '')];
+        })->all();
     }
 
     public static function getPages(): array

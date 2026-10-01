@@ -5,11 +5,13 @@ namespace App\Models;
 use App\Models\Interfaces\AlterableInterface;
 use App\Models\Interfaces\ArchivableInterface;
 use App\Models\Interfaces\MediableInterface;
+use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Scopes\ArchivedScope;
 use App\Models\Scopes\SoftDeletableScope;
 use App\Models\Traits\AlterableTrait;
 use App\Models\Traits\ArchivableTrait;
 use App\Models\Traits\MediableTrait;
+use App\Models\Traits\SoftDeletableTrait;
 use App\Queries\DishCategoryQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\DishCategoryFactory;
@@ -22,7 +24,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @property int $menu_id
  * @property string $slug
- * @property string|null $target
  * @property string $title
  * @property string|null $description
  * @property bool|null $archived
@@ -30,6 +31,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $metadata
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
  *
  * @property DishMenu $menu
  *
@@ -39,9 +41,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class DishCategory extends BaseModel implements
     ArchivableInterface,
     MediableInterface,
-    AlterableInterface
+    AlterableInterface,
+    SoftDeletableInterface
 {
     use HasFactory;
+    use SoftDeletableTrait;
     use ArchivableTrait;
     use MediableTrait;
     use AlterableTrait;
@@ -54,7 +58,6 @@ class DishCategory extends BaseModel implements
     protected $fillable = [
         'menu_id',
         'slug',
-        'target',
         'title',
         'description',
         'archived',

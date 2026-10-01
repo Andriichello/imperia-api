@@ -5,11 +5,9 @@ namespace App\Filament\Resources;
 use App\Enums\ProductFlag;
 use App\Enums\WeightUnit;
 use App\Filament\BaseResource;
+use App\Filament\Filters\TrashedFilter;
 use App\Filament\Resources\DishResource\Pages;
 use App\Models\Dish;
-use App\Models\DishCategory;
-use App\Models\DishMenu;
-use App\Models\User;
 use App\Filament\Forms\Components\MediaAttachmentField;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -48,24 +46,18 @@ class DishResource extends BaseResource
             ->schema([
                 Select::make('menu_id')
                     ->label('Menu')
-                    ->options(DishMenu::all()->pluck('title', 'id'))
+                    ->options(fn () => DishMenuResource::getSelectOptions())
+                    ->in(fn () => array_keys(DishMenuResource::getSelectOptions()))
                     ->required()
                     ->searchable()
                     ->live()
                     ->afterStateUpdated(fn (callable $set) => $set('category_id', null)),
                 Select::make('category_id')
                     ->label('Category')
-                    ->options(function (callable $get) {
-                        $menuId = $get('menu_id');
-
-                        if (!$menuId) {
-                            return [];
-                        }
-
-                        return DishCategory::query()
-                            ->where('menu_id', $menuId)
-                            ->pluck('title', 'id');
-                    })
+                    ->options(fn (callable $get) => DishCategoryResource::getSelectOptions((int) $get('menu_id')))
+                    ->in(fn (callable $get) => array_keys(
+                        DishCategoryResource::getSelectOptions((int) $get('menu_id'))
+                    ))
                     ->searchable(),
                 TextInput::make('slug')
                     ->maxLength(255),
@@ -77,19 +69,22 @@ class DishResource extends BaseResource
                     ->columnSpanFull(),
                 TextInput::make('price')
                     ->numeric()
+                    ->minValue(0)
                     ->required(),
                 TextInput::make('weight')
                     ->maxLength(255),
                 Select::make('weight_unit')
                     ->options(array_flip(WeightUnit::getMap())),
                 TextInput::make('badge')
-                    ->maxLength(255),
+                    ->maxLength(25),
                 TextInput::make('calories')
                     ->numeric()
+                    ->minValue(0)
                     ->nullable(),
                 TextInput::make('preparation_time')
                     ->label('Preparation Time (minutes)')
                     ->numeric()
+                    ->minValue(0)
                     ->nullable(),
                 Toggle::make('archived')
                     ->default(false),
@@ -114,10 +109,8 @@ class DishResource extends BaseResource
 
     public static function table(Table $table): Table
     {
-        /** @var User|null $user */
-        $user = request()->user();
-
         return $table
+            ->modifyQueryUsing(fn (Builder $query) => $query->with('menu.restaurant'))
             ->columns([
                 Tables\Columns\TextColumn::make('id')->sortable(),
                 Tables\Columns\TextColumn::make('menu.title')
@@ -139,7 +132,7 @@ class DishResource extends BaseResource
                         return $query->where('dishes.title', 'like', "%{$search}%");
                     }),
                 Tables\Columns\TextColumn::make('price')
-                    ->money($user?->restaurant?->currency ?? 'UAH')
+                    ->money(fn (Dish $record): string => $record->menu->restaurant->currency ?: 'UAH')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('weight')
                     ->searchable(query: function (Builder $query, string $search): Builder {
@@ -158,14 +151,16 @@ class DishResource extends BaseResource
                     ->sortable(),
             ])
             ->filters([
-                //
+                TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }
@@ -175,6 +170,33 @@ class DishResource extends BaseResource
         return [
             //
         ];
+    }
+
+    /**
+     * Dishes the current user can pick in other forms, archived ones included.
+     * Labelled with their menu (and restaurant, when several are listed).
+     *
+     * @return array<int, string>
+     */
+    public static function getSelectOptions(): array
+    {
+        $dishes = static::getEloquentQuery()
+            ->with('menu.restaurant')
+            ->orderBy('dishes.title')
+            ->get();
+
+        $withRestaurant = $dishes->pluck('menu.restaurant_id')->unique()->count() > 1;
+
+        // @phpstan-ignore-next-line
+        return $dishes->mapWithKeys(function (Dish $dish) use ($withRestaurant) {
+            $parts = array_filter([
+                $withRestaurant ? $dish->menu->restaurant->name : null,
+                $dish->menu->title,
+                $dish->title,
+            ]);
+
+            return [$dish->id => implode(' · ', $parts) . ($dish->archived ? ' (archived)' : '')];
+        })->all();
     }
 
     public static function getPages(): array
