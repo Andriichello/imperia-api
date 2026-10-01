@@ -26,7 +26,7 @@ class WaiterQueryBuilder extends BaseQueryBuilder
      * @return static
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function index(User $user = null): static
+    public function index(?User $user = null): static
     {
         $query = parent::index($user);
 

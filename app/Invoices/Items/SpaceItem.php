@@ -30,7 +30,7 @@ class SpaceItem extends InvoiceItem
      * @return static
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public static function make($title, SpaceOrderField $field = null): static
+    public static function make($title, ?SpaceOrderField $field = null): static
     {
         // @phpstan-ignore-next-line
         $item = new static();

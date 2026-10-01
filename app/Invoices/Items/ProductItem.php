@@ -29,7 +29,7 @@ class ProductItem extends InvoiceItem
      * @return static
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public static function make($title, ProductOrderField $field = null): static
+    public static function make($title, ?ProductOrderField $field = null): static
     {
         // @phpstan-ignore-next-line
         $item = new static();
@@ -72,7 +72,7 @@ class ProductItem extends InvoiceItem
 
     public function getMenus(): ?Collection
     {
-        return $this->field?->product?->menus;
+        return $this->field->product->menus;
     }
 
     /**

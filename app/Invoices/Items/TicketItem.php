@@ -29,7 +29,7 @@ class TicketItem extends InvoiceItem
      * @return static
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public static function make($title, TicketOrderField $field = null): static
+    public static function make($title, ?TicketOrderField $field = null): static
     {
         // @phpstan-ignore-next-line
         $item = new static();

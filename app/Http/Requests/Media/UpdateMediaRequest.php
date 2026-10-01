@@ -26,7 +26,7 @@ class UpdateMediaRequest extends UpdateRequest
                 'file' => [
                     'sometimes',
                     'file',
-                    'image',
+                    'image:allow_svg',
                     'max:' . config('media.max_size'),
                 ],
                 'name' => [

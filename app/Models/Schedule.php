@@ -101,7 +101,7 @@ class Schedule extends BaseModel implements
             return null;
         }
 
-        return $closest->diffInMinutes();
+        return (int) abs($closest->diffInMinutes());
     }
 
     /**
@@ -118,7 +118,7 @@ class Schedule extends BaseModel implements
             $closest->addDay();
         }
 
-        return $closest->diffInMinutes();
+        return (int) abs($closest->diffInMinutes());
     }
 
     /**

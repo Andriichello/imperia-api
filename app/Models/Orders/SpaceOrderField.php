@@ -137,7 +137,7 @@ class SpaceOrderField extends BaseModel implements
         $beg = $this->start_at;
         $end = $this->end_at;
 
-        return $beg && $end ? $end->diffInMinutes($beg) : 0;
+        return $beg && $end ? (int) abs($end->diffInMinutes($beg)) : 0;
     }
 
     /**

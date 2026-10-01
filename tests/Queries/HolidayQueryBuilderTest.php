@@ -4,6 +4,7 @@ namespace Tests\Queries;
 
 use App\Models\Holiday;
 use Carbon\CarbonInterface;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Tests\TestCase;
 
@@ -43,12 +44,12 @@ class HolidayQueryBuilderTest extends TestCase
     /**
      * @return array
      */
-    public function relevantDates(): array
+    public static function relevantDates(): array
     {
         return [
-            [now()->setTime(0, 0)],
-            [now()->addWeek()->setTime(0, 0)],
-            [now()->addYear()->setTime(0, 0)],
+            [Carbon::now()->setTime(0, 0)],
+            [Carbon::now()->addWeek()->setTime(0, 0)],
+            [Carbon::now()->addYear()->setTime(0, 0)],
         ];
     }
 
