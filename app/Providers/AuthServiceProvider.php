@@ -29,6 +29,7 @@ class AuthServiceProvider extends ServiceProvider
         Models\ProductVariant::class => Policies\ProductVariantPolicy::class,
         /** Morphs */
         Morphs\Log::class => Policies\LogPolicy::class,
+        Morphs\Alteration::class => Policies\AlterationPolicy::class,
         Morphs\Category::class => Policies\CategoryPolicy::class,
         Morphs\Comment::class => Policies\CommentPolicy::class,
         \Spatie\Permission\Models\Role::class => Policies\RolePolicy::class,

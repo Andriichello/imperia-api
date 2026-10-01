@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
+use RuntimeException;
+use Throwable;
 
 /**
  * Class Alteration.
@@ -38,6 +40,27 @@ use Illuminate\Database\Query\Builder as DatabaseBuilder;
 class Alteration extends BaseModel
 {
     use HasFactory;
+
+    /**
+     * Status of an alteration, which is waiting for its `perform_at` date.
+     */
+    public const STATUS_SCHEDULED = 'scheduled';
+
+    /**
+     * Status of an alteration, which should already be performed,
+     * but is waiting for the job to run.
+     */
+    public const STATUS_DUE = 'due';
+
+    /**
+     * Status of a performed alteration.
+     */
+    public const STATUS_DONE = 'done';
+
+    /**
+     * Status of an alteration, which failed to be performed.
+     */
+    public const STATUS_FAILED = 'failed';
 
     /**
      * The model's attributes.
@@ -168,6 +191,68 @@ class Alteration extends BaseModel
      *
      * @return void
      */
+    /**
+     * Get the alteration's status (one of the `STATUS_*` constants).
+     *
+     * @return string
+     */
+    public function getStatus(): string
+    {
+        if ($this->performed_at) {
+            return static::STATUS_DONE;
+        }
+
+        if ($this->failed_at) {
+            return static::STATUS_FAILED;
+        }
+
+        if ($this->perform_at && $this->perform_at->isFuture()) {
+            return static::STATUS_SCHEDULED;
+        }
+
+        return static::STATUS_DUE;
+    }
+
+    /**
+     * Apply the alteration's attributes to the altered model and mark it performed.
+     *
+     * @return void
+     * @throws RuntimeException
+     */
+    public function perform(): void
+    {
+        $alterable = $this->alterable;
+
+        if (!$alterable) {
+            throw new RuntimeException(
+                "Model {$this->alterable_type} #{$this->alterable_id} doesn't exist."
+            );
+        }
+
+        $alterable->fill($this->getJson('metadata'));
+        $alterable->save();
+
+        $this->performed_at = Carbon::now();
+        $this->failed_at = null;
+        $this->exception = null;
+        $this->save();
+    }
+
+    /**
+     * Mark the alteration as failed, so it isn't performed again automatically.
+     *
+     * @param Throwable $throwable
+     *
+     * @return void
+     */
+    public function markAsFailed(Throwable $throwable): void
+    {
+        $this->performed_at = null;
+        $this->failed_at = Carbon::now();
+        $this->exception = (string) $throwable;
+        $this->save();
+    }
+
     protected static function booted(): void
     {
         static::creating(function (Alteration $alteration) {

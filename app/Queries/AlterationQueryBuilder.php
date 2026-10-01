@@ -29,11 +29,15 @@ class AlterationQueryBuilder extends BaseQueryBuilder
      */
     public function index(?User $user = null): static
     {
-        if ($user->isStaff()) {
-            return $this;
+        if (!$user?->isStaff()) {
+            return $this->where('id', -1);
         }
 
-        return $this->where('id', -1);
+        if ($user->restaurant_id) {
+            $this->where('alterations.restaurant_id', $user->restaurant_id);
+        }
+
+        return $this;
     }
 
     /**
@@ -104,6 +108,29 @@ class AlterationQueryBuilder extends BaseQueryBuilder
     public function thatHaveNotBeenPerformed(): static
     {
         $this->whereNull('performed_at');
+
+        return $this;
+    }
+
+    /**
+     * Include only alterations with the given status (see `Alteration::STATUS_*`).
+     *
+     * @param string $status
+     *
+     * @return static
+     */
+    public function withStatus(string $status): static
+    {
+        match ($status) {
+            Alteration::STATUS_DONE => $this->whereNotNull('performed_at'),
+            Alteration::STATUS_FAILED => $this->whereNull('performed_at')
+                ->whereNotNull('failed_at'),
+            Alteration::STATUS_SCHEDULED => $this->whereNull('performed_at')
+                ->whereNull('failed_at')
+                ->where('perform_at', '>', now()),
+            Alteration::STATUS_DUE => $this->thatShouldBePerformed(),
+            default => null,
+        };
 
         return $this;
     }

@@ -3,8 +3,10 @@
 namespace App\Filament\Resources;
 
 use App\Filament\BaseResource;
+use App\Filament\RelationManagers\AlterationsRelationManager;
 use App\Filament\Filters\TrashedFilter;
 use App\Filament\Resources\DishCategoryResource\Pages;
+use App\Filament\Tables\AlterationsTable;
 use App\Models\DishCategory;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -42,23 +44,36 @@ class DishCategoryResource extends BaseResource
                     ->searchable(),
                 TextInput::make('slug')
                     ->maxLength(255),
-                TextInput::make('title')
-                    ->required()
-                    ->maxLength(255),
-                Textarea::make('description')
-                    ->maxLength(1020)
-                    ->columnSpanFull(),
-                Toggle::make('archived')
-                    ->default(false),
-                TextInput::make('popularity')
-                    ->numeric()
-                    ->nullable(),
+                ...static::getAlterableFields(),
             ]);
+    }
+
+    /**
+     * Fields that can also be changed in advance, through a scheduled change (alteration).
+     *
+     * @return array
+     */
+    public static function getAlterableFields(): array
+    {
+        return [
+            TextInput::make('title')
+                ->required()
+                ->maxLength(255),
+            Textarea::make('description')
+                ->maxLength(1020)
+                ->columnSpanFull(),
+            Toggle::make('archived')
+                ->default(false),
+            TextInput::make('popularity')
+                ->numeric()
+                ->nullable(),
+        ];
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query) => AlterationsTable::withScheduledChangesCount($query))
             ->columns([
                 Tables\Columns\TextColumn::make('id')->sortable(),
                 Tables\Columns\TextColumn::make('menu.title')
@@ -76,6 +91,7 @@ class DishCategoryResource extends BaseResource
                     ->trueColor('danger')
                     ->falseIcon('heroicon-o-check-circle')
                     ->falseColor('success'),
+                AlterationsTable::scheduledColumn(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
@@ -98,7 +114,7 @@ class DishCategoryResource extends BaseResource
     public static function getRelations(): array
     {
         return [
-            //
+            AlterationsRelationManager::class,
         ];
     }
 

@@ -4,8 +4,10 @@ namespace App\Filament\Resources;
 
 use App\Enums\WeightUnit;
 use App\Filament\BaseResource;
+use App\Filament\RelationManagers\AlterationsRelationManager;
 use App\Filament\Filters\TrashedFilter;
 use App\Filament\Resources\DishVariantResource\Pages;
+use App\Filament\Tables\AlterationsTable;
 use App\Models\DishVariant;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -39,32 +41,46 @@ class DishVariantResource extends BaseResource
                     ->in(fn () => array_keys(DishResource::getSelectOptions()))
                     ->required()
                     ->searchable(),
-                TextInput::make('price')
-                    ->numeric()
-                    ->minValue(0)
-                    ->required(),
-                TextInput::make('weight')
-                    ->maxLength(255),
-                Select::make('weight_unit')
-                    ->options(array_flip(WeightUnit::getMap())),
-                TextInput::make('calories')
-                    ->numeric()
-                    ->minValue(0)
-                    ->nullable(),
-                TextInput::make('preparation_time')
-                    ->label('Preparation Time (minutes)')
-                    ->numeric()
-                    ->minValue(0)
-                    ->nullable(),
-                Toggle::make('archived')
-                    ->default(false),
+                ...static::getAlterableFields(),
             ]);
+    }
+
+    /**
+     * Fields that can also be changed in advance, through a scheduled change (alteration).
+     *
+     * @return array
+     */
+    public static function getAlterableFields(): array
+    {
+        return [
+            TextInput::make('price')
+                ->numeric()
+                ->minValue(0)
+                ->required(),
+            TextInput::make('weight')
+                ->maxLength(255),
+            Select::make('weight_unit')
+                ->options(array_flip(WeightUnit::getMap())),
+            TextInput::make('calories')
+                ->numeric()
+                ->minValue(0)
+                ->nullable(),
+            TextInput::make('preparation_time')
+                ->label('Preparation Time (minutes)')
+                ->numeric()
+                ->minValue(0)
+                ->nullable(),
+            Toggle::make('archived')
+                ->default(false),
+        ];
     }
 
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => $query->with('dish.menu.restaurant'))
+            ->modifyQueryUsing(fn (Builder $query) => AlterationsTable::withScheduledChangesCount(
+                $query->with('dish.menu.restaurant')
+            ))
             ->columns([
                 Tables\Columns\TextColumn::make('id')->sortable(),
                 Tables\Columns\TextColumn::make('dish.title')
@@ -96,6 +112,7 @@ class DishVariantResource extends BaseResource
                     ->trueColor('danger')
                     ->falseIcon('heroicon-o-check-circle')
                     ->falseColor('success'),
+                AlterationsTable::scheduledColumn(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
@@ -118,7 +135,7 @@ class DishVariantResource extends BaseResource
     public static function getRelations(): array
     {
         return [
-            //
+            AlterationsRelationManager::class,
         ];
     }
 

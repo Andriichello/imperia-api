@@ -5,8 +5,10 @@ namespace App\Filament\Resources;
 use App\Enums\ProductFlag;
 use App\Enums\WeightUnit;
 use App\Filament\BaseResource;
+use App\Filament\RelationManagers\AlterationsRelationManager;
 use App\Filament\Filters\TrashedFilter;
 use App\Filament\Resources\DishResource\Pages;
+use App\Filament\Tables\AlterationsTable;
 use App\Models\Dish;
 use App\Filament\Forms\Components\MediaAttachmentField;
 use Filament\Forms\Components\Select;
@@ -36,12 +38,6 @@ class DishResource extends BaseResource
 
     public static function form(Form $form): Form
     {
-        $flags = [];
-
-        foreach (ProductFlag::getMap() as $flag) {
-            $flags[$flag] = $flag;
-        }
-
         return $form
             ->schema([
                 Select::make('menu_id')
@@ -61,40 +57,7 @@ class DishResource extends BaseResource
                     ->searchable(),
                 TextInput::make('slug')
                     ->maxLength(255),
-                TextInput::make('title')
-                    ->required()
-                    ->maxLength(255),
-                Textarea::make('description')
-                    ->maxLength(1020)
-                    ->columnSpanFull(),
-                TextInput::make('price')
-                    ->numeric()
-                    ->minValue(0)
-                    ->required(),
-                TextInput::make('weight')
-                    ->maxLength(255),
-                Select::make('weight_unit')
-                    ->options(array_flip(WeightUnit::getMap())),
-                TextInput::make('badge')
-                    ->maxLength(25),
-                TextInput::make('calories')
-                    ->numeric()
-                    ->minValue(0)
-                    ->nullable(),
-                TextInput::make('preparation_time')
-                    ->label('Preparation Time (minutes)')
-                    ->numeric()
-                    ->minValue(0)
-                    ->nullable(),
-                Toggle::make('archived')
-                    ->default(false),
-                TextInput::make('popularity')
-                    ->numeric()
-                    ->nullable(),
-                Select::make('flags')
-                    ->multiple()
-                    ->searchable()
-                    ->options($flags),
+                ...static::getAlterableFields(),
                 MediaAttachmentField::make('media')
                     ->label('Dish Images')
                     ->modelType('dishes')
@@ -107,10 +70,63 @@ class DishResource extends BaseResource
             ]);
     }
 
+    /**
+     * Fields that can also be changed in advance, through a scheduled change (alteration).
+     *
+     * @return array
+     */
+    public static function getAlterableFields(): array
+    {
+        $flags = [];
+
+        foreach (ProductFlag::getMap() as $flag) {
+            $flags[$flag] = $flag;
+        }
+
+        return [
+            TextInput::make('title')
+                ->required()
+                ->maxLength(255),
+            Textarea::make('description')
+                ->maxLength(1020)
+                ->columnSpanFull(),
+            TextInput::make('price')
+                ->numeric()
+                ->minValue(0)
+                ->required(),
+            TextInput::make('weight')
+                ->maxLength(255),
+            Select::make('weight_unit')
+                ->options(array_flip(WeightUnit::getMap())),
+            TextInput::make('badge')
+                ->maxLength(25),
+            TextInput::make('calories')
+                ->numeric()
+                ->minValue(0)
+                ->nullable(),
+            TextInput::make('preparation_time')
+                ->label('Preparation Time (minutes)')
+                ->numeric()
+                ->minValue(0)
+                ->nullable(),
+            Toggle::make('archived')
+                ->default(false),
+            TextInput::make('popularity')
+                ->numeric()
+                ->nullable(),
+            Select::make('flags')
+                ->multiple()
+                ->searchable()
+                ->options($flags),
+        ];
+    }
+
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => $query->with('menu.restaurant'))
+            ->modifyQueryUsing(fn (Builder $query) => AlterationsTable::withScheduledChangesCount(
+                $query->with('menu.restaurant')
+            ))
             ->columns([
                 Tables\Columns\TextColumn::make('id')->sortable(),
                 Tables\Columns\TextColumn::make('menu.title')
@@ -146,6 +162,7 @@ class DishResource extends BaseResource
                     ->trueColor('danger')
                     ->falseIcon('heroicon-o-check-circle')
                     ->falseColor('success'),
+                AlterationsTable::scheduledColumn(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
@@ -168,7 +185,7 @@ class DishResource extends BaseResource
     public static function getRelations(): array
     {
         return [
-            //
+            AlterationsRelationManager::class,
         ];
     }
 
