@@ -2,6 +2,8 @@ const mix = require('laravel-mix');
 const path = require('path');
 
 mix.ts('resources/js/app.ts', 'public/js')
+  // the page editor of the admin panel
+  .ts('resources/js/editor.ts', 'public/js')
   .vue({
     version: 3,
     options: {
@@ -11,6 +13,7 @@ mix.ts('resources/js/app.ts', 'public/js')
     }
   })
   .postCss('resources/css/app.css', 'public/css')
+  .postCss('resources/css/editor.css', 'public/css')
   .webpackConfig({
     resolve: {
       alias: {

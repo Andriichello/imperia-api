@@ -1,0 +1,105 @@
+{
+  "editor": {
+    "title": "Page editor",
+    "top": {
+      "home": "Admin panel",
+      "switch_restaurant": "Switch restaurant",
+      "page": "Page in the preview",
+      "restaurant_page": "Restaurant page",
+      "menu_page": "Menu page · {menu}",
+      "mode": "Preview mode",
+      "select": "Select",
+      "browse": "Browse",
+      "preview_in": "Preview in",
+      "preview_language": "Language of the preview",
+      "brand_colors": "Brand colors",
+      "view_site": "View site",
+      "account": "Account",
+      "admin_panel": "Admin panel",
+      "sign_out": "Sign out"
+    },
+    "structure": {
+      "title": "Page structure",
+      "help": "Click a part of the page on the right, or pick it here.",
+      "restaurant_page": "Restaurant page",
+      "menus": "Menus",
+      "appearance": "Appearance",
+      "photos_count": "No photos | {count} photo | {count} photos",
+      "details_meta": "Name, type, contacts",
+      "notes_count": "No notes | {count} note | {count} notes",
+      "menus_count": "No menus | {count} menu | {count} menus",
+      "categories_count": "No categories | {count} category | {count} categories",
+      "dishes_count": "No dishes | {count} dish | {count} dishes",
+      "show_categories": "Show categories of {menu}",
+      "hide_categories": "Hide categories of {menu}",
+      "hidden": "Hidden from guests",
+      "no_menus": "No menus yet",
+      "custom_colors": "Custom"
+    },
+    "status": {
+      "open": "Open now",
+      "closed": "Closed now",
+      "temporarily_closed": "Temporarily closed"
+    },
+    "sections": {
+      "photos": "Photos",
+      "details": "Restaurant details",
+      "contact": "Contacts",
+      "notes": "Notes",
+      "menus": "Menus",
+      "menu-tabs": "Menus",
+      "hours": "Working hours",
+      "brand": "Brand colors",
+      "menu": "Menu",
+      "category": "Category",
+      "dish": "Dish"
+    },
+    "subtitles": {
+      "photos": "Shown at the top of your restaurant page as a slideshow.",
+      "details": "Shown under the photos and at the bottom of your page.",
+      "notes": "Short messages under your restaurant name.",
+      "menus": "Each menu is a tab on your menu page. Drag to change the order.",
+      "hours": "Used for the Open / Closed status and the weekly schedule.",
+      "brand": "Used for buttons, tabs and highlights on every page.",
+      "menu": "A tab on your menu page.",
+      "category": "Category in {menu}",
+      "dish": "Dish in {category}"
+    },
+    "panel": {
+      "page_structure": "Page structure",
+      "breadcrumb": "Breadcrumb",
+      "close": "Close panel",
+      "more_actions": "More actions for {name}",
+      "content_language": "Content language",
+      "default": "Default",
+      "missing": "{count} missing",
+      "complete": "Complete",
+      "unsaved": "Unsaved changes",
+      "saved": "All changes saved",
+      "saving": "Saving…",
+      "discard": "Discard",
+      "save": "Save changes",
+      "not_found": "This part isn't there anymore.",
+      "next_step": "Editing of this part comes in the next step of the editor."
+    },
+    "preview": {
+      "title": "Preview of your public page",
+      "hint_select": "Select mode: click any part of the page to edit it",
+      "hint_browse": "Browse mode: the page works like your public site",
+      "hint_alt": "Browsing — release Alt to select",
+      "hint_editing": "Editing: {name} · click another part of the page to switch",
+      "hint_hidden": "Editing: {name} · hidden from guests, so it isn't on the page",
+      "item": "{kind} “{name}”",
+      "click_to_edit": "{label} · click to edit"
+    },
+    "brand": {
+      "presets": {
+        "green": "Green",
+        "light_green": "Light green",
+        "blue": "Blue",
+        "nude": "Nude",
+        "purple": "Purple"
+      }
+    }
+  }
+}

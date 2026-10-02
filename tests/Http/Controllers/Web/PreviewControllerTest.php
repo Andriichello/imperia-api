@@ -205,4 +205,20 @@ class PreviewControllerTest extends TestCase
         $this->get($this->menuUrl())
             ->assertRedirect($this->restaurantUrl());
     }
+
+    /**
+     * Test that redirects keep the query, so the editor's preview stays one (`?editor=1`).
+     *
+     * @return void
+     */
+    public function testRedirectsKeepTheQuery()
+    {
+        $this->get($this->menuUrl() . '?editor=1')
+            ->assertRedirect($this->restaurantUrl() . '?editor=1');
+
+        $menu = $this->createMenu();
+
+        $this->get($this->menuUrl() . '?editor=1&archived=with')
+            ->assertRedirect($this->menuUrl($menu->id) . '?editor=1');
+    }
 }

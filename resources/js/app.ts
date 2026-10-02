@@ -5,6 +5,7 @@ import setupI18n from '@/i18n';
 import {setI18n} from '@/i18n/utils';
 import {createWebRouter} from '@/router';
 import {useAppStore} from '@/stores/app';
+import {isEditorPreview} from '@/editor/editKey';
 import App from "@/App.vue";
 
 const element = document.getElementById('app');
@@ -30,3 +31,9 @@ app.use(i18n);
 app.use(createWebRouter());
 
 app.mount('#app');
+
+// In the editor's preview, connect to the editor (a chunk of its own, guests never load it)
+if (isEditorPreview) {
+  import(/* webpackChunkName: "editor-preview" */ '@/editor/previewBridge')
+    .then(({installPreviewBridge}) => installPreviewBridge(pinia));
+}

@@ -13,6 +13,7 @@
   import {DishMenu, Media, Restaurant} from "@/api";
   import Schedule from "@/Components/Restaurant/Schedule.vue";
   import {getScheduleInfo, ScheduleInfo, time} from "@/helpers";
+  import {editKey} from "@/editor/editKey";
   import { useI18n } from 'vue-i18n';
 
   const props = defineProps({
@@ -147,6 +148,7 @@
   <div class="w-full h-full min-h-screen max-w-screen flex flex-col justify-start items-center bg-base-200/80 pb-21">
     <div class="w-full max-w-md flex flex-col justify-start items-center relative">
       <Splide class="w-full h-75" :options="slideOptions"
+              v-bind="editKey('photos')"
               v-if="media?.length > 0">
         <SplideSlide v-for="(m, index) in media ?? []" :key="m.id">
           <img class="w-full h-75 object-cover object-center"
@@ -156,10 +158,12 @@
       </Splide>
 
       <div class="w-full h-75"
+           v-bind="editKey('photos')"
            v-else>
       </div>
 
-      <div class="w-full pt-3 pb-1 px-3 text-center">
+      <div class="w-full pt-3 pb-1 px-3 text-center"
+           v-bind="editKey('details')">
         <h1 class="text-2xl font-bold">
           {{ restaurant!.name }}
         </h1>
@@ -170,6 +174,7 @@
       </div>
 
       <div class="w-full pt-1 pb-3 px-3 pr-6 chat chat-start flex flex-col gap-1.5 translate-x-0.5"
+           v-bind="editKey('notes')"
            v-if="restaurant!.notes!?.length > 0">
         <!-- The corner the tail comes out of stays square -->
         <p class="w-full chat-bubble bg-primary/15 text-primary-content rounded-xl rounded-es-none"
@@ -178,7 +183,8 @@
         </p>
       </div>
 
-      <div class="w-full flex flex-col grow pt-2 pb-3 px-3 gap-2">
+      <div class="w-full flex flex-col grow pt-2 pb-3 px-3 gap-2"
+           v-bind="editKey('menus')">
         <template v-if="menus!.length > 0">
           <button type="button"
                   class="w-full flex items-center justify-center py-3 pr-3 pl-5 bg-base-100 border-2 border-base-300 rounded text-start cursor-pointer"
@@ -208,6 +214,7 @@
 
       <div class="w-full flex flex-col grow mt-3 pb-3 gap-3 bg-base-200">
         <div class="w-full flex flex-col gap-1"
+             v-bind="editKey('hours')"
              v-if="scheduleStatus">
           <div class="w-full h-px bg-base-300"/>
 
@@ -252,6 +259,7 @@
         </div>
 
         <div class="w-full flex justify-start items-start gap-3 px-3"
+             v-bind="editKey('contact')"
              v-if="restaurant!.phone?.length">
           <div class="size-12 min-w-12 flex justify-center items-center bg-primary/15 border border-primary/60 text-primary-content rounded">
             <Phone class="size-6"/>
@@ -275,6 +283,7 @@
         </div>
 
         <div class="w-full flex justify-start items-start gap-3 px-3"
+             v-bind="editKey('contact')"
              v-if="restaurant!.full_address?.length">
           <div class="size-12 min-w-12 flex justify-center items-center bg-primary/15 border border-primary/60 text-primary-content rounded">
             <MapPin class="size-6"/>

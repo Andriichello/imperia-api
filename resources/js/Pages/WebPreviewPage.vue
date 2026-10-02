@@ -17,6 +17,7 @@
   import ProductDrawer from '@/Components/Drawer/ProductDrawer.vue'
   import {useAppStore} from '@/stores/app'
   import {usePreviewStore} from '@/stores/preview'
+  import {editKey} from '@/editor/editKey'
 
   // Stores & shared props from Blade
   const app = useAppStore()
@@ -172,10 +173,12 @@
 
   function buildUrl(mId: number | null, cId: number | null, pId: number | null, isPage: boolean): string {
     const base = getBasePath()
+    // the query stays (e.g. `?editor=1` of the editor's preview)
+    const query = window.location.search
     if (!mId) {
-      return base // restaurant mode
+      return base + query // restaurant mode
     }
-    let url = `${base}/menu/${mId}`
+    let url = `${base}/menu/${mId}${query}`
     if (cId) {
       url += `#${cId}`
       if (pId) {
@@ -853,6 +856,7 @@
           </div>
 
           <div class="w-full sticky top-0 z-10 bg-base-100 border-y border-base-300"
+               v-bind="editKey('menu-tabs')"
                ref="stickyRef"
                :class="{'shadow-md': scrolledToSticky}"
                v-if="products || !productsFailed">

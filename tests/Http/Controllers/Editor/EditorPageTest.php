@@ -1,0 +1,138 @@
+<?php
+
+namespace Tests\Http\Controllers\Editor;
+
+use App\Enums\UserRole;
+use App\Models\DishMenu;
+use App\Models\Restaurant;
+use App\Models\User;
+use Illuminate\Testing\TestResponse;
+
+/**
+ * Class EditorPageTest.
+ *
+ * The editor's page, which is a page of the admin panel.
+ */
+class EditorPageTest extends EditorTestCase
+{
+    /**
+     * Set up the test.
+     *
+     * @return void
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // the page's scripts and styles aren't built for tests
+        $this->withoutMix();
+    }
+
+    /**
+     * Open the editor of the restaurant as the user (signed in to the admin panel).
+     *
+     * @param User|null $user
+     * @param int|null $id
+     *
+     * @return TestResponse
+     */
+    protected function openEditor(?User $user, ?int $id = null): TestResponse
+    {
+        if ($user) {
+            $this->signIn($user);
+        }
+
+        return $this->get(route('filament.admin.editor', ['id' => $id ?? $this->restaurant->id]));
+    }
+
+    /**
+     * Sign in to the admin panel as the user, instead of the one, who was signed in before
+     * (the panel signs out a user, whose password differs from the one in the session).
+     *
+     * @param User $user
+     *
+     * @return static
+     */
+    protected function signIn(User $user): static
+    {
+        $this->flushSession();
+
+        return $this->actingAs($user, 'web');
+    }
+
+    /**
+     * Test that the restaurant's admin gets the editor with everything of the restaurant.
+     *
+     * @return void
+     */
+    public function testAdminOpensTheEditor()
+    {
+        $menu = DishMenu::factory()->withRestaurant($this->restaurant)->create(['is_hidden' => true]);
+        Restaurant::factory()->create();
+
+        $response = $this->openEditor($this->admin)
+            ->assertOk()
+            ->assertViewIs('editor.app')
+            ->assertSee('<title>Smak · Page editor</title>', false);
+
+        $props = $response->viewData('props');
+
+        $this->assertSame('en', $props['locale']);
+        $this->assertSame($this->restaurant->id, $props['restaurant']->resolve()['id']);
+        $this->assertSame([$menu->id], collect($props['restaurant']->resolve()['menus'])->pluck('id')->all());
+        $this->assertSame([$this->restaurant->id], $props['restaurants']->pluck('id')->all());
+        $this->assertSame($this->admin->email, $props['user']['email']);
+    }
+
+    /**
+     * Test that guests are sent to the admin's login, others can't open the editor.
+     *
+     * @return void
+     */
+    public function testOnlyAdminsOfTheRestaurantOpenTheEditor()
+    {
+        // users are created first: the panel's requests switch the default guard to its one
+        $others = [
+            $this->user(UserRole::Admin, Restaurant::factory()->create()),
+            $this->user(UserRole::Manager, $this->restaurant),
+            $this->user(UserRole::Customer),
+        ];
+
+        $this->openEditor(null)
+            ->assertRedirect(route('filament.admin.auth.login'));
+
+        foreach ($others as $user) {
+            $this->openEditor($user)->assertForbidden();
+        }
+
+        $this->openEditor($this->admin, 999)->assertNotFound();
+    }
+
+    /**
+     * Test that the editor without a restaurant opens the user's one, or the first one.
+     *
+     * @return void
+     */
+    public function testEditorOpensTheUsersRestaurant()
+    {
+        $other = Restaurant::factory()->create();
+        $otherAdmin = $this->user(UserRole::Admin, $other);
+        $superAdmin = $this->user(UserRole::Admin);
+        $manager = $this->user(UserRole::Manager, $other);
+
+        $this->signIn($otherAdmin)
+            ->get(route('filament.admin.editor.index'))
+            ->assertRedirect(route('filament.admin.editor', ['id' => $other->id]));
+
+        $this->signIn($superAdmin)
+            ->get(route('filament.admin.editor.index'))
+            ->assertRedirect(route('filament.admin.editor', ['id' => $this->restaurant->id]));
+
+        $this->get(route('filament.admin.editor', ['id' => $other->id]))
+            ->assertOk();
+
+        $this->signIn($manager)
+            ->get(route('filament.admin.editor.index'))
+            ->assertForbidden();
+    }
+}

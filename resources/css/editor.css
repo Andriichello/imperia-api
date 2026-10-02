@@ -1,0 +1,188 @@
+@import "tailwindcss";
+
+/*
+ * The page editor: a neutral look (zinc, with blue for what's selected) of its own,
+ * so the restaurant's brand colors never mix with it. No daisyUI here.
+ */
+
+@layer base {
+  html, body, #editor {
+    height: 100%;
+  }
+
+  body {
+    background: var(--color-zinc-100);
+    color: var(--color-zinc-900);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 14px;
+    line-height: 20px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  button:not(:disabled), [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+@layer components {
+  /* Field label: 13/18, 600 */
+  .e-label {
+    font-size: 13px;
+    line-height: 18px;
+    font-weight: 600;
+    color: var(--color-zinc-700);
+  }
+
+  /* Help under fields: 12/16 */
+  .e-help {
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--color-zinc-500);
+  }
+
+  /* Section heading: 12/16, 600, uppercase */
+  .e-section {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-zinc-500);
+  }
+
+  .e-input {
+    width: 100%;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid var(--color-zinc-300);
+    border-radius: 6px;
+    background: #ffffff;
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--color-zinc-900);
+    outline: none;
+  }
+
+  .e-input:focus {
+    border-color: var(--color-blue-600);
+    box-shadow: 0 0 0 3px rgb(37 99 235 / 0.15);
+  }
+
+  .e-input::placeholder {
+    color: var(--color-zinc-400);
+  }
+
+  textarea.e-input {
+    height: auto;
+    padding: 9px 12px;
+    resize: none;
+    display: block;
+  }
+
+  .e-btn {
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .e-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  .e-btn-primary {
+    background: var(--color-zinc-900);
+    color: #ffffff;
+  }
+
+  .e-btn-secondary {
+    border: 1px solid var(--color-zinc-300);
+    background: #ffffff;
+    color: var(--color-zinc-900);
+  }
+
+  .e-btn-secondary:not(:disabled):hover {
+    background: var(--color-zinc-50);
+  }
+
+  /* Icon button: 32 × 32 */
+  .e-icon-btn {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    color: var(--color-zinc-600);
+  }
+
+  .e-icon-btn:hover {
+    background: var(--color-zinc-100);
+    color: var(--color-zinc-900);
+  }
+
+  /* Pill: 22px, 12px 600 */
+  .e-pill {
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .e-pill-sm {
+    height: 18px;
+    padding: 0 6px;
+    font-size: 11px;
+  }
+
+  /* Dropdown menu: 220px, 36px items */
+  .e-dropdown {
+    min-width: 220px;
+    padding: 4px;
+    border: 1px solid var(--color-zinc-200);
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 12px 32px -8px rgb(24 24 27 / 0.25);
+  }
+
+  .e-dropdown-item {
+    width: 100%;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 10px;
+    border-radius: 6px;
+    text-align: start;
+    color: var(--color-zinc-900);
+  }
+
+  .e-dropdown-item:hover, .e-dropdown-item:focus-visible {
+    background: var(--color-zinc-100);
+    outline: none;
+  }
+
+  .e-dropdown-item[aria-current="true"] {
+    font-weight: 600;
+  }
+
+  /* Visible keyboard focus everywhere in the editor */
+  .e-focus:focus-visible, .e-btn:focus-visible, .e-icon-btn:focus-visible {
+    outline: 2px solid var(--color-blue-600);
+    outline-offset: 1px;
+  }
+}

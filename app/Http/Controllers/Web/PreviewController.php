@@ -48,7 +48,9 @@ class PreviewController extends Controller
         $menus = $this->loadAndCacheMenus($restaurant);
 
         if ($request->routeIs('web.menu.preview')) {
+            // the query is kept (e.g. `?editor=1` of the editor's preview)
             $parameters = [
+                ...$request->query(),
                 'locale' => $request->route('locale'),
                 'restaurant_id' => $request->route('restaurant_id'),
             ];

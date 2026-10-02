@@ -7,8 +7,10 @@ use App\Models\RestaurantNote;
 use App\Models\Schedule;
 use App\Models\ScheduleException;
 use App\Models\Scopes\ArchivedScope;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -18,6 +20,32 @@ use Illuminate\Support\Facades\DB;
  */
 class RestaurantEditorRepository extends EditorRepository
 {
+    /**
+     * Restaurants the user can edit (the editor's restaurant switcher).
+     *
+     * @param User $user
+     *
+     * @return Collection<int, array>
+     */
+    public function editableBy(User $user): Collection
+    {
+        /** @var Collection<int, Restaurant> $restaurants */
+        $restaurants = Restaurant::query()
+            ->orderBy('id')
+            ->get();
+
+        return $restaurants
+            ->filter(fn (Restaurant $restaurant) => $user->can('update', $restaurant))
+            ->map(fn (Restaurant $restaurant) => [
+                'id' => $restaurant->id,
+                'slug' => $restaurant->slug,
+                'name' => $restaurant->name,
+                'default_locale' => $restaurant->getDefaultLocale(),
+            ])
+            ->values()
+            ->toBase();
+    }
+
     /**
      * Load everything of the restaurant the editor shows: its notes, photos, hours and
      * menus with their categories and dishes (hidden and archived ones included).

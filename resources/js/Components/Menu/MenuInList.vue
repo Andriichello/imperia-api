@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import {DishMenu, Dish, DishCategory} from "@/api";
   import CategoryInList from "@/Components/Menu/CategoryInList.vue";
+  import {editKey} from "@/editor/editKey";
   import {PropType} from "vue";
 
   const emits = defineEmits(['switch-menu', 'switch-category', 'open-product']);
@@ -52,6 +53,7 @@
            :class="{'pt-3': menu?.description?.length > 0}"
            @click="emits('switch-menu', menu)">
         <p class="text-[15px]/[22px] text-base-content/65"
+           v-bind="editKey('menu:' + menu.id)"
            v-if="menu?.description?.length > 0">
           {{ menu?.description }}
         </p>

@@ -13,7 +13,6 @@ use App\Http\Resources\Editor\EditorRestaurantResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Restaurant;
 use App\Repositories\Editor\RestaurantEditorRepository;
-use Illuminate\Support\Collection;
 use OpenApi\Annotations as OA;
 
 /**
@@ -43,22 +42,7 @@ class RestaurantEditorController extends Controller
      */
     public function index(IndexRestaurantsRequest $request): ApiResponse
     {
-        $user = $request->user();
-
-        /** @var Collection<int, Restaurant> $restaurants */
-        $restaurants = Restaurant::query()
-            ->orderBy('id')
-            ->get();
-
-        $data = $restaurants
-            ->filter(fn (Restaurant $restaurant) => $user->can('update', $restaurant))
-            ->map(fn (Restaurant $restaurant) => [
-                'id' => $restaurant->id,
-                'slug' => $restaurant->slug,
-                'name' => $restaurant->name,
-                'default_locale' => $restaurant->getDefaultLocale(),
-            ])
-            ->values();
+        $data = $this->repository->editableBy($request->user());
 
         return ApiResponse::make(compact('data'));
     }

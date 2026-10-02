@@ -3,6 +3,7 @@
   import {PropType} from "vue";
   import {useI18n} from "vue-i18n";
   import ProductInListRightMedia from "@/Components/Menu/ProductInListRightMedia.vue";
+  import {editKey} from "@/editor/editKey";
 
   const emits = defineEmits(['switch-category', 'open-product']);
 
@@ -41,6 +42,7 @@
   <section class="w-full flex flex-col px-2 mt-4"
            :id="'category-' + category.id">
     <div class="w-full flex flex-col text-center py-2.5 px-3 bg-primary/20 border border-primary/60 rounded-t-xl cursor-pointer"
+         v-bind="editKey('category:' + category.id)"
          @click="emits('switch-category', category)">
       <h2 class="text-[22px]/[30px] font-semibold text-primary-content">
         {{ category.title }}
@@ -62,6 +64,7 @@
          v-else>
       <template v-for="product in products" :key="product.id">
         <ProductInListRightMedia class="cursor-pointer"
+                       v-bind="editKey('dish:' + product.id)"
                        :product="product"
                        :preview="true"
                        :currency="currency"

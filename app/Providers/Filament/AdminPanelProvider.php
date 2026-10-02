@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Http\Controllers\Editor\EditorPageController;
 use App\Http\Middleware\UseDefaultContentLocale;
 use App\Http\Middleware\UsePanelAuthGuard;
 use Filament\Forms\Components\DateTimePicker;
@@ -9,6 +10,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -20,6 +22,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Route;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 /**
@@ -73,6 +76,21 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
+            ])
+            // the editor of the public page is a Vue app of its own, signed in like the panel
+            ->authenticatedRoutes(function () {
+                Route::get('/editor', [EditorPageController::class, 'index'])
+                    ->name('editor.index');
+                Route::get('/editor/{id}', [EditorPageController::class, 'show'])
+                    ->whereNumber('id')
+                    ->name('editor');
+            })
+            ->navigationItems([
+                NavigationItem::make('Page editor')
+                    ->icon('heroicon-o-paint-brush')
+                    ->url(fn () => route('filament.admin.editor.index'))
+                    ->visible(fn () => (bool) request()->user()?->isAdmin())
+                    ->sort(-1),
             ])
             ->middleware([
                 // first, so that the session middleware uses the panel's guard

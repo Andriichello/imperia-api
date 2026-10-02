@@ -24,7 +24,11 @@ function ukrainianPlural(choice: number, choicesLength: number): number {
   return 2;
 }
 
-export default function setupI18n(locale: string) {
+/**
+ * @param locale
+ * @param extra Messages of another app on top of the public site's ones (e.g. the editor's), by locale
+ */
+export default function setupI18n(locale: string, extra: Record<string, object> = {}) {
   return createI18n({
     legacy: false, // Use Composition API
     globalInjection: true, // Make $t, $d, etc. available in templates
@@ -34,8 +38,8 @@ export default function setupI18n(locale: string) {
       uk: ukrainianPlural,
     },
     messages: {
-      en,
-      uk
+      en: {...en, ...extra.en},
+      uk: {...uk, ...extra.uk},
     }
   });
 }
