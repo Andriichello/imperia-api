@@ -213,6 +213,30 @@ class SchedulesRelationManagerTest extends FilamentTestCase
     }
 
     /**
+     * Test that the "Open" toggle in the table closes and opens a day.
+     *
+     * @return void
+     */
+    public function testOpenToggleClosesAndOpensTheDay()
+    {
+        $monday = $this->schedule('monday');
+
+        $this->actingAsStaff(UserRole::Admin, $this->restaurant);
+
+        $this->hours()
+            ->assertTableColumnStateSet('archived', true, $monday->getKey())
+            ->call('updateTableColumnState', 'archived', (string) $monday->getKey(), false);
+
+        $this->assertTrue((bool) $monday->fresh()->archived);
+
+        $this->hours()
+            ->assertTableColumnStateSet('archived', false, $monday->getKey())
+            ->call('updateTableColumnState', 'archived', (string) $monday->getKey(), true);
+
+        $this->assertFalse((bool) $monday->fresh()->archived);
+    }
+
+    /**
      * Test that managers can only see the hours.
      *
      * @return void

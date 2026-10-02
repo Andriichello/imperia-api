@@ -217,6 +217,7 @@ export interface ScheduleInfo {
   active: (ScheduleCalculations & Schedule) | null,
   relevant: (ScheduleCalculations & Schedule) | null,
   upcoming: (ScheduleCalculations & Schedule)[],
+  // Days with hours, from Monday to Sunday, closed ones (archived) included
   schedules: Schedule[],
   timeBeforeOrUntil: string | '-',
 }
@@ -270,7 +271,7 @@ export function getScheduleInfo(restaurant: Restaurant): ScheduleInfo {
     active,
     relevant,
     upcoming,
-    schedules,
+    schedules: sortSchedules(restaurant.schedules ?? []),
     timeBeforeOrUntil: timeBeforeOrUntil(),
   } as ScheduleInfo;
 }

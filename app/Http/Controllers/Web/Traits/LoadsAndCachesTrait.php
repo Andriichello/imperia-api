@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web\Traits;
 
 use App\Helpers\RestaurantHelper;
+use App\Helpers\WebCacheHelper;
 use App\Models\Dish;
 use App\Models\DishMenu;
 use App\Models\Menu;
@@ -29,7 +30,7 @@ trait LoadsAndCachesTrait
             return null;
         }
 
-        $key = 'web_restaurant_' . $idOrSlug;
+        $key = WebCacheHelper::restaurantKey($idOrSlug);
         $callback = fn() => RestaurantHelper::find($idOrSlug)
             ?->load(['media', 'schedules']);
 
@@ -46,7 +47,7 @@ trait LoadsAndCachesTrait
      */
     protected function loadAndCacheMenus(Restaurant $restaurant, int $ttl = 120): Collection
     {
-        $key = 'web_menus_for_' . $restaurant->id;
+        $key = WebCacheHelper::menusKey($restaurant->id);
         $callback = fn() => $restaurant->dishMenus
             ->sortByDesc('popularity')
             ->each(fn($menu) => $menu->load(['categories', 'media', 'media.variants']))

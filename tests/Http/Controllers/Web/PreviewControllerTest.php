@@ -2,8 +2,11 @@
 
 namespace Tests\Http\Controllers\Web;
 
+use App\Models\DishCategory;
 use App\Models\DishMenu;
 use App\Models\Restaurant;
+use App\Models\Schedule;
+use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
 /**
@@ -134,6 +137,62 @@ class PreviewControllerTest extends TestCase
             $this->get($this->menuUrl($menuId))
                 ->assertRedirect($this->restaurantUrl());
         }
+    }
+
+    /**
+     * Get the restaurant page (it caches the restaurant and its menus).
+     *
+     * @param string|null $idOrSlug
+     *
+     * @return TestResponse
+     */
+    protected function getRestaurantPage(?string $idOrSlug = null): TestResponse
+    {
+        return $this->get(route('web.restaurant.preview', [
+            'locale' => 'en',
+            'restaurant_id' => $idOrSlug ?? $this->restaurant->id,
+        ]))->assertOk();
+    }
+
+    /**
+     * Test that changes of the restaurant, its hours, menus and categories are
+     * shown right away, without waiting for the cached page to expire.
+     *
+     * @return void
+     */
+    public function testChangesAreShownWithoutWaitingForTheCache()
+    {
+        $schedule = Schedule::factory()
+            ->withRestaurant($this->restaurant)
+            ->withWeekday('monday')
+            ->create(['archived' => false]);
+        $menu = $this->createMenu();
+
+        // a day is closed
+        $this->getRestaurantPage();
+        $schedule->update(['archived' => true]);
+
+        $restaurant = $this->getRestaurantPage()->viewData('restaurant')->resource;
+        $this->assertTrue((bool) $restaurant->schedules->first()->archived);
+
+        // a menu is renamed
+        $menu->update(['title' => 'Renamed']);
+
+        $menus = $this->getRestaurantPage()->viewData('menus')->collection;
+        $this->assertSame('Renamed', $menus->first()->resource->title);
+
+        // a category is added
+        DishCategory::factory()->withMenu($menu)->create(['title' => 'Added']);
+
+        $menus = $this->getRestaurantPage()->viewData('menus')->collection;
+        $this->assertSame(['Added'], $menus->first()->resource->categories->pluck('title')->all());
+
+        // the restaurant is renamed (its page is cached by slug too)
+        $this->getRestaurantPage(strtoupper($this->restaurant->slug));
+        $this->restaurant->update(['name' => 'Renamed']);
+
+        $restaurant = $this->getRestaurantPage($this->restaurant->slug)->viewData('restaurant')->resource;
+        $this->assertSame('Renamed', $restaurant->name);
     }
 
     /**

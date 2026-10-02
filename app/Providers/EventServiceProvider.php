@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Subscribers\CacheSubscriber;
+use App\Subscribers\WebCacheSubscriber;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 /**
@@ -24,6 +25,7 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $subscribe = [
         CacheSubscriber::class,
+        WebCacheSubscriber::class,
     ];
 
     /**
