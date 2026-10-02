@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Enums\WeightUnit;
+use App\Filament\Actions\SchedulePriceChangeBulkAction;
 use App\Filament\BaseResource;
 use App\Filament\RelationManagers\AlterationsRelationManager;
 use App\Filament\Filters\LiveFilter;
@@ -31,6 +32,8 @@ class DishVariantResource extends BaseResource
     protected static ?string $navigationIcon = 'heroicon-o-adjustments-horizontal';
 
     protected static ?string $navigationGroup = 'Dish Management';
+
+    protected static ?int $navigationSort = 4;
     protected static ?string $modelLabel = 'Variant';
 
     public static function form(Form $form): Form
@@ -122,6 +125,7 @@ class DishVariantResource extends BaseResource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    SchedulePriceChangeBulkAction::make(),
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),

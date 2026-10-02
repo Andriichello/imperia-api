@@ -32,6 +32,8 @@ class DishCategoryResource extends BaseResource
 
     protected static ?string $navigationGroup = 'Dish Management';
 
+    protected static ?int $navigationSort = 2;
+
     protected static ?string $modelLabel = 'Category';
 
     public static function form(Form $form): Form
@@ -68,7 +70,8 @@ class DishCategoryResource extends BaseResource
                 ->default(false),
             TextInput::make('popularity')
                 ->numeric()
-                ->nullable(),
+                ->nullable()
+                ->helperText('Higher numbers come first on the website. The list can also be reordered by dragging.'),
         ];
     }
 
@@ -76,6 +79,7 @@ class DishCategoryResource extends BaseResource
     {
         return $table
             ->modifyQueryUsing(fn (Builder $query) => AlterationsTable::withScheduledChangesCount($query))
+            ->reorderable('popularity')
             ->columns([
                 Tables\Columns\TextColumn::make('id')->sortable(),
                 Tables\Columns\TextColumn::make('menu.title')
@@ -135,6 +139,29 @@ class DishCategoryResource extends BaseResource
             ->mapWithKeys(function (DishCategory $category) {
                 return [$category->id => $category->title . ($category->archived ? ' (archived)' : '')];
             })->all();
+    }
+
+    /**
+     * Categories the current user can pick, archived ones included, grouped by their menu.
+     *
+     * @return array<string, array<int, string>>
+     */
+    public static function getGroupedSelectOptions(): array
+    {
+        $menus = DishMenuResource::getSelectOptions();
+        $groups = [];
+
+        static::getEloquentQuery()
+            ->whereIn('dish_categories.menu_id', array_keys($menus))
+            ->orderBy('dish_categories.title')
+            ->get()
+            // @phpstan-ignore-next-line
+            ->each(function (DishCategory $category) use ($menus, &$groups) {
+                $groups[$menus[$category->menu_id]][$category->id] = $category->title
+                    . ($category->archived ? ' (archived)' : '');
+            });
+
+        return $groups;
     }
 
     public static function getPages(): array

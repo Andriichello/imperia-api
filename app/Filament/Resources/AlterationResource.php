@@ -5,7 +5,6 @@ namespace App\Filament\Resources;
 use App\Filament\BaseResource;
 use App\Filament\Resources\AlterationResource\Pages;
 use App\Filament\Tables\AlterationsTable;
-use App\Models\DishVariant;
 use App\Models\Morphs\Alteration;
 use App\Queries\AlterationQueryBuilder;
 use App\Queries\BaseQueryBuilder;
@@ -13,7 +12,6 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * Class AlterationResource.
@@ -30,6 +28,8 @@ class AlterationResource extends BaseResource
     protected static ?string $navigationIcon = 'heroicon-o-clock';
 
     protected static ?string $navigationGroup = 'Dish Management';
+
+    protected static ?int $navigationSort = 5;
 
     protected static ?string $modelLabel = 'Scheduled change';
 
@@ -62,12 +62,7 @@ class AlterationResource extends BaseResource
         }
 
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => $query->with([
-                'restaurant',
-                'alterable' => function (MorphTo $morphTo) {
-                    $morphTo->morphWith([DishVariant::class => ['dish']]);
-                },
-            ]))
+            ->modifyQueryUsing(fn (Builder $query) => AlterationsTable::withSubjects($query))
             ->columns([
                 ...AlterationsTable::subjectColumns(),
                 ...AlterationsTable::columns(),

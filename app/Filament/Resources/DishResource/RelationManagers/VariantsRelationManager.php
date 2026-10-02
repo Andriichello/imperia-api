@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\DishResource\RelationManagers;
 
+use App\Filament\Actions\SchedulePriceChangeBulkAction;
 use App\Filament\Filters\TrashedFilter;
 use App\Filament\Resources\DishVariantResource;
 use App\Filament\Tables\AlterationsTable;
@@ -110,6 +111,7 @@ class VariantsRelationManager extends RelationManager
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    SchedulePriceChangeBulkAction::make(),
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),

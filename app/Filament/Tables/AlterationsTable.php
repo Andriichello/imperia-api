@@ -26,6 +26,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Throwable;
@@ -92,7 +93,7 @@ class AlterationsTable
             TextColumn::make('perform_at')
                 ->label('When')
                 ->dateTime('d M Y, H:i')
-                ->timezone(fn (Alteration $record) => $record->restaurant?->timezone)
+                ->timezone(fn (Alteration $record) => $record->restaurant?->timezone ?: null)
                 ->placeholder('As soon as possible')
                 ->sortable(),
             TextColumn::make('status')
@@ -111,7 +112,7 @@ class AlterationsTable
             TextColumn::make('performed_at')
                 ->label('Performed')
                 ->dateTime('d M Y, H:i')
-                ->timezone(fn (Alteration $record) => $record->restaurant?->timezone)
+                ->timezone(fn (Alteration $record) => $record->restaurant?->timezone ?: null)
                 ->placeholder('—')
                 ->toggleable(isToggledHiddenByDefault: true),
         ];
@@ -213,6 +214,23 @@ class AlterationsTable
                     ->success()
                     ->send();
             });
+    }
+
+    /**
+     * Eager load what the subject and change columns need.
+     *
+     * @param Builder $query
+     *
+     * @return Builder
+     */
+    public static function withSubjects(Builder $query): Builder
+    {
+        return $query->with([
+            'restaurant',
+            'alterable' => function (MorphTo $morphTo) {
+                $morphTo->morphWith([DishVariant::class => ['dish']]);
+            },
+        ]);
     }
 
     /**
@@ -470,7 +488,7 @@ class AlterationsTable
      *
      * @return string
      */
-    protected static function getTimezone(Model $record): string
+    public static function getTimezone(Model $record): string
     {
         $restaurantId = $record instanceof BaseModel ? $record->getRestaurantId() : null;
         $restaurant = $restaurantId ? Restaurant::query()->find($restaurantId) : null;

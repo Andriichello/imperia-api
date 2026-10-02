@@ -3,6 +3,7 @@
 namespace Tests\Filament;
 
 use App\Enums\UserRole;
+use App\Filament\Resources\DishCategoryResource;
 use App\Filament\Resources\DishResource\Pages\CreateDish;
 use App\Filament\Resources\DishResource\Pages\EditDish;
 use App\Filament\Resources\DishResource\Pages\ListDishes;
@@ -181,6 +182,30 @@ class DishPageTest extends FilamentTestCase
             ->filterTable('live', false)
             ->assertCanSeeTableRecords([$salad])
             ->assertCanNotSeeTableRecords([$soup, $steak]);
+    }
+
+    /**
+     * Test that dishes can be filtered by category, picked from the categories grouped by menu.
+     *
+     * @return void
+     */
+    public function testDishesCanBeFilteredByCategory()
+    {
+        $salads = DishCategory::factory()->withMenu($this->menu)->create(['title' => 'Salads']);
+        $soup = Dish::factory()->withMenu($this->menu)->withCategory($this->category)->create();
+        $salad = Dish::factory()->withMenu($this->menu)->withCategory($salads)->create();
+
+        $this->actingAsStaff(UserRole::Admin, $this->restaurant);
+
+        $this->assertSame(
+            ['Kitchen' => [$salads->id => 'Salads', $this->category->id => 'Soups']],
+            DishCategoryResource::getGroupedSelectOptions()
+        );
+
+        Livewire::test(ListDishes::class)
+            ->filterTable('category', $salads->id)
+            ->assertCanSeeTableRecords([$salad])
+            ->assertCanNotSeeTableRecords([$soup]);
     }
 
     /**

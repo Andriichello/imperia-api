@@ -32,6 +32,8 @@ class DishMenuResource extends BaseResource
 
     protected static ?string $navigationGroup = 'Dish Management';
 
+    protected static ?int $navigationSort = 1;
+
     protected static ?string $modelLabel = 'Menu';
 
 
@@ -65,7 +67,8 @@ class DishMenuResource extends BaseResource
                 ->default(false),
             TextInput::make('popularity')
                 ->numeric()
-                ->nullable(),
+                ->nullable()
+                ->helperText('Higher numbers come first on the website. The list can also be reordered by dragging.'),
         ];
     }
 
@@ -73,6 +76,7 @@ class DishMenuResource extends BaseResource
     {
         return $table
             ->modifyQueryUsing(fn (Builder $query) => AlterationsTable::withScheduledChangesCount($query))
+            ->reorderable('popularity')
             ->columns([
                 Tables\Columns\TextColumn::make('id')->sortable(),
                 Tables\Columns\TextColumn::make('restaurant.name')

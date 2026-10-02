@@ -2,12 +2,15 @@
 
 namespace App\Filament\Resources\DishCategoryResource\Pages;
 
+use App\Filament\Concerns\ReordersByPopularity;
 use App\Filament\Resources\DishCategoryResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
 class ListDishCategories extends ListRecords
 {
+    use ReordersByPopularity;
+
     protected static string $resource = DishCategoryResource::class;
 
     protected function getHeaderActions(): array

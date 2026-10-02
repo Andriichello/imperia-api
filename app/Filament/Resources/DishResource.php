@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Enums\ProductFlag;
 use App\Enums\WeightUnit;
+use App\Filament\Actions\SchedulePriceChangeBulkAction;
 use App\Filament\BaseResource;
 use App\Filament\Fields\FlagFields;
 use App\Filament\RelationManagers\AlterationsRelationManager;
@@ -43,6 +44,8 @@ class DishResource extends BaseResource
     protected static ?string $navigationIcon = 'heroicon-o-cake';
 
     protected static ?string $navigationGroup = 'Dish Management';
+
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $modelLabel = 'Dish';
 
@@ -130,7 +133,8 @@ class DishResource extends BaseResource
                 ->default(false),
             TextInput::make('popularity')
                 ->numeric()
-                ->nullable(),
+                ->nullable()
+                ->helperText('Higher numbers come first on the website. The list can also be reordered by dragging.'),
             ...FlagFields::make(),
         ];
     }
@@ -141,6 +145,7 @@ class DishResource extends BaseResource
             ->modifyQueryUsing(fn (Builder $query) => AlterationsTable::withScheduledChangesCount(
                 $query->with('menu.restaurant')
             ))
+            ->reorderable('popularity')
             ->columns([
                 Tables\Columns\TextColumn::make('id')->sortable(),
                 Tables\Columns\TextColumn::make('menu.title')
@@ -187,6 +192,10 @@ class DishResource extends BaseResource
                     ->attribute('dishes.menu_id')
                     ->options(fn () => DishMenuResource::getSelectOptions())
                     ->searchable(),
+                Tables\Filters\SelectFilter::make('category')
+                    ->attribute('dishes.category_id')
+                    ->options(fn () => DishCategoryResource::getGroupedSelectOptions())
+                    ->searchable(),
                 Tables\Filters\SelectFilter::make('flags')
                     ->label('Tags & allergens')
                     ->multiple()
@@ -209,6 +218,7 @@ class DishResource extends BaseResource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    SchedulePriceChangeBulkAction::make(),
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
