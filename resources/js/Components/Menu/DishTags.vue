@@ -3,9 +3,12 @@
   import {useI18n} from "vue-i18n";
   import {getDishTags} from "@/flags";
 
-  const props = defineProps<{
+  const props = withDefaults(defineProps<{
     flags?: string[] | null,
-  }>();
+    iconClass?: string,
+  }>(), {
+    iconClass: 'size-3.5',
+  });
 
   const i18n = useI18n();
 
@@ -13,13 +16,12 @@
 </script>
 
 <template>
-  <div class="flex flex-wrap gap-x-3 gap-y-0.5 normal-case text-base-content/60 opacity-70">
-    <div class="flex flex-row justify-center items-center gap-1"
-         v-for="tag in tags" :key="tag.key">
-      <component :is="tag.icon" class="w-4 h-4"/>
-      <p class="font-semibold pt-0.5">
-        {{ i18n.t(tag.label) }}
-      </p>
-    </div>
+  <div class="flex flex-wrap items-center gap-x-3 gap-y-0.5 font-semibold text-primary-content"
+       v-if="tags.length">
+    <span class="flex items-center gap-1"
+          v-for="tag in tags" :key="tag.key">
+      <component :is="tag.icon" class="shrink-0" :class="iconClass"/>
+      {{ i18n.t(tag.label) }}
+    </span>
   </div>
 </template>

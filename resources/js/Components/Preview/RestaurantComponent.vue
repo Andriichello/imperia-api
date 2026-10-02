@@ -51,6 +51,59 @@
     () => getScheduleInfo(props.restaurant)
   );
 
+  /** Colors of the working hours status: dot and state word. */
+  const STATUS_TONES = {
+    open: {dot: 'bg-green-600', text: 'text-green-700'},
+    soon: {dot: 'bg-yellow-600', text: 'text-yellow-800'},
+    closed: {dot: 'bg-red-600', text: 'text-red-700'},
+  };
+
+  /** Working hours status: "● Open · until 23:00", with a line of details in the last hour. */
+  const scheduleStatus = computed(() => {
+    const {state, relevant, minutesLeft, opensToday} = scheduleInfo.value;
+
+    if (!relevant) {
+      return null;
+    }
+
+    const closesAt = time(relevant.end_hour, relevant.end_minute);
+    const opensAt = time(relevant.beg_hour, relevant.beg_minute);
+    const minutes = minutesLeft ?? 0;
+
+    switch (state) {
+      case 'open':
+        return {
+          tone: STATUS_TONES.open,
+          label: i18n.t('restaurant.open'),
+          detail: i18n.t('schedule.until', {time: closesAt}),
+          note: null,
+        };
+      case 'closing_soon':
+        return {
+          tone: STATUS_TONES.soon,
+          label: i18n.t('schedule.closing_soon'),
+          detail: closesAt,
+          note: i18n.t('schedule.closes_in', {count: minutes}, minutes),
+        };
+      case 'opens_soon':
+        return {
+          tone: STATUS_TONES.soon,
+          label: i18n.t('schedule.opens_soon'),
+          detail: opensAt,
+          note: i18n.t('schedule.opens_in', {count: minutes}, minutes),
+        };
+      default:
+        return {
+          tone: STATUS_TONES.closed,
+          label: i18n.t('restaurant.closed'),
+          detail: opensToday
+            ? i18n.t('schedule.opens_at', {time: opensAt})
+            : i18n.t('schedule.opens_day_at', {day: i18n.t('schedule.short.' + relevant.weekday), time: opensAt}),
+          note: null,
+        };
+    }
+  });
+
   const getEstablishmentTitle = computed(() => {
     const establishment = props.restaurant?.establishment?.toLowerCase();
 
@@ -91,7 +144,7 @@
 </script>
 
 <template>
-  <div class="w-full h-full min-h-screen max-w-screen flex flex-col justify-start items-center bg-base-200/80 pb-20">
+  <div class="w-full h-full min-h-screen max-w-screen flex flex-col justify-start items-center bg-base-200/80 pb-21">
     <div class="w-full max-w-md flex flex-col justify-start items-center relative">
       <Splide class="w-full h-75" :options="slideOptions"
               v-if="media?.length > 0">
@@ -107,136 +160,141 @@
       </div>
 
       <div class="w-full pt-3 pb-1 px-3 text-center">
-        <h3 class="text-2xl font-bold">
+        <h1 class="text-2xl font-bold">
           {{ restaurant!.name }}
-        </h3>
+        </h1>
 
-        <p class="text-md -translate-y-0.5 opacity-70">
+        <p class="text-base/6 text-base-content/65">
           {{ getEstablishmentTitle }}
         </p>
       </div>
+
       <div class="w-full pt-1 pb-3 px-3 pr-6 chat chat-start flex flex-col gap-1.5 translate-x-0.5"
            v-if="restaurant!.notes!?.length > 0">
-        <template v-for="(note, index) in restaurant!.notes" :key="index">
-          <p class="w-full chat-bubble bg-warning/15 text-warning-content rounded-xl">
-            {{ note }}
-          </p>
-        </template>
+        <!-- The corner the tail comes out of stays square -->
+        <p class="w-full chat-bubble bg-primary/15 text-primary-content rounded-xl rounded-es-none"
+           v-for="(note, index) in restaurant!.notes" :key="index">
+          {{ note }}
+        </p>
       </div>
 
       <div class="w-full flex flex-col grow pt-2 pb-3 px-3 gap-2">
-        <div class="w-full flex flex-col grow gap-2">
-          <template v-if="menus!.length > 0">
-            <div class="w-full flex items-center justify-center pl-5 pr-3 py-3 bg-base-200/40 border-2 border-base-300 rounded cursor-pointer"
-                 @click="emits('open-menu', menu)"
-                 v-for="menu in menus" :key="menu.id">
-              <div class="w-full flex flex-col">
-                <h3 class="text-xl font-bold">
-                  {{ menu.title }}
-                </h3>
+        <template v-if="menus!.length > 0">
+          <button type="button"
+                  class="w-full flex items-center justify-center py-3 pr-3 pl-5 bg-base-100 border-2 border-base-300 rounded text-start cursor-pointer"
+                  @click="emits('open-menu', menu)"
+                  v-for="menu in menus" :key="menu.id">
+            <span class="w-full flex flex-col">
+              <span class="text-xl/7 font-bold">
+                {{ menu.title }}
+              </span>
 
-                <p class="text-md -translate-y-0.5 opacity-70"
-                   v-if="menu.description?.length">
-                  {{ menu.description }}
-                </p>
-              </div>
+              <span class="text-base/6 text-base-content/65"
+                    v-if="menu.description?.length">
+                {{ menu.description }}
+              </span>
+            </span>
 
-              <ChevronRight class="w-8 h-8"/>
-            </div>
-          </template>
+            <ChevronRight class="size-7 shrink-0 text-primary-content"/>
+          </button>
+        </template>
 
-          <div class="w-full flex items-center justify-center px-3 py-3" v-else>
-            <h3 class="text-xl font-bold text-center opacity-70">
-              {{ i18n.t('restaurant.no_menus') }}
-            </h3>
-          </div>
+        <div class="w-full flex items-center justify-center px-3 py-3" v-else>
+          <h3 class="text-xl font-bold text-center text-base-content/65">
+            {{ i18n.t('restaurant.no_menus') }}
+          </h3>
         </div>
       </div>
 
-      <div class="w-full flex flex-col grow mt-3 pb-3 gap-1 bg-base-200">
-        <div class="w-full flex flex-col gap-3">
-          <div class="w-full flex flex-col gap-1"
-               v-if="scheduleInfo.relevant">
-            <div class="w-full h-[1px] bg-base-300"/>
+      <div class="w-full flex flex-col grow mt-3 pb-3 gap-3 bg-base-200">
+        <div class="w-full flex flex-col gap-1"
+             v-if="scheduleStatus">
+          <div class="w-full h-px bg-base-300"/>
 
-            <div class="w-full flex flex-col justify-start items-start py-2 px-3">
-              <div class="w-full flex justify-start items-start gap-3 cursor-pointer"
-                   @click="scheduleExpanded = !scheduleExpanded">
-                <div class="w-12 min-w-12 h-12 flex justify-center items-center  bg-warning/15 border-1 border-warning/40 text-warning-content rounded">
-                  <CalendarClock class="w-6 h-6"/>
-                </div>
+          <div class="w-full flex flex-col justify-start items-start py-2 px-3">
+            <button type="button"
+                    class="w-full flex justify-start items-start gap-3 text-start cursor-pointer"
+                    :aria-expanded="scheduleExpanded"
+                    @click="scheduleExpanded = !scheduleExpanded">
+              <span class="size-12 min-w-12 flex justify-center items-center bg-primary/15 border border-primary/40 text-primary-content rounded">
+                <CalendarClock class="size-6"/>
+              </span>
 
-                <div class="flex grow flex-col justify-center items-start">
-                  <h3 class="text-sm font-semibold text-base-content/50 translate-y-0.5">
-                    {{ i18n.t('restaurant.working_hours') }}
-                  </h3>
-                  <p class="text-md text-base-content/90 font-semibold">
-                    {{ time(scheduleInfo.relevant.beg_hour, scheduleInfo.relevant.beg_minute) }} -
-                    {{ time(scheduleInfo.relevant.end_hour, scheduleInfo.relevant.end_minute) }}
-                  </p>
-                </div>
+              <span class="grow min-h-12 flex flex-col justify-center items-start">
+                <span class="text-sm/5 font-semibold text-base-content/65">
+                  {{ i18n.t('restaurant.working_hours') }}
+                </span>
 
-                <div class="w-12 min-w-12 h-12 flex justify-center items-center mr-1.5 text-base-content/60">
-                  <ChevronUp class="w-6 h-6" v-if="scheduleExpanded"/>
-                  <ChevronDown class="w-6 h-6" v-else/>
-                </div>
-              </div>
+                <span class="flex flex-wrap items-center gap-x-1.5 text-base/6 font-semibold">
+                  <span class="size-2 shrink-0 rounded-full" :class="scheduleStatus.tone.dot" aria-hidden="true"/>
+                  <span :class="scheduleStatus.tone.text">{{ scheduleStatus.label }}</span>
+                  <span class="text-base-content/72">· {{ scheduleStatus.detail }}</span>
+                </span>
 
-              <p class="w-full font-mono text-md cursor-pointer pl-15 pt-2"
-                 :class="{'text-green-600': scheduleInfo.status === 'Open', 'text-red-600': scheduleInfo.status === 'Closed'}"
-                 @click="scheduleExpanded = !scheduleExpanded">
-                <span class="font-semibold">{{ scheduleInfo.status === 'Open' ? i18n.t('restaurant.open') : i18n.t('restaurant.closed') }}:</span> {{ scheduleInfo.timeBeforeOrUntil }} {{ scheduleInfo.status === 'Open' ? i18n.t('restaurant.until_closing') : i18n.t('restaurant.until_opening') }}
-              </p>
+                <span class="text-sm/5 text-base-content/72"
+                      v-if="scheduleStatus.note">
+                  {{ scheduleStatus.note }}
+                </span>
+              </span>
 
-              <Schedule class="w-full"
-                        v-if="scheduleExpanded"
-                        :info="scheduleInfo"/>
-            </div>
-
-            <div class="w-full h-[1px] bg-base-300"/>
-          </div>
-
-          <div class="w-full flex justify-start items-start gap-3 px-3"
-               v-if="restaurant!.phone?.length">
-            <div class="w-12 min-w-12 h-12 flex justify-center items-center bg-warning/15 border-1 border-warning/60 text-warning-content rounded">
-              <Phone class="w-6 h-6"/>
-            </div>
-
-            <div class="w-full flex flex-col justify-center items-start">
-              <h3 class="text-sm font-semibold text-base-content/50 translate-y-0.5">
-                {{ i18n.t('restaurant.phone') }}
-              </h3>
-              <p class="text-md text-base-content/90 font-semibold">
-                {{ restaurant!.phone }}
-              </p>
-            </div>
-
-            <button class="w-13 min-w-13 h-12 flex justify-center items-center rounded text-base-content/60 cursor-pointer pr-1"
-                    @click="copyToClipboard(restaurant!.phone)">
-              <Copy class="w-6 h-6"/>
+              <span class="size-12 min-w-12 mr-1.5 flex justify-center items-center text-base-content/65">
+                <ChevronUp class="size-6" v-if="scheduleExpanded"/>
+                <ChevronDown class="size-6" v-else/>
+              </span>
             </button>
+
+            <Schedule class="mt-1"
+                      v-if="scheduleExpanded"
+                      :info="scheduleInfo"/>
           </div>
 
-          <div class="w-full flex justify-start items-start gap-3 px-3"
-               v-if="restaurant!.full_address?.length">
-            <div class="w-12 min-w-12 h-12 flex justify-center items-center bg-warning/15 border-1 border-warning/60 text-warning-content rounded">
-              <MapPin class="w-6 h-6"/>
-            </div>
+          <div class="w-full h-px bg-base-300"/>
+        </div>
 
-            <div class="w-full flex flex-col justify-start items-start">
-              <h3 class="text-sm font-semibold text-base-content/50">
-                {{ i18n.t('restaurant.location') }}
-              </h3>
-              <p class="text-md text-base-content/90 font-semibold">
-                {{ restaurant!.full_address }}
-              </p>
-            </div>
-
-            <button class="w-13 min-w-13 h-12 flex justify-center items-center rounded text-base-content/60 cursor-pointer pr-1"
-                    @click="copyToClipboard(restaurant!.full_address)">
-              <Copy class="w-6 h-6"/>
-            </button>
+        <div class="w-full flex justify-start items-start gap-3 px-3"
+             v-if="restaurant!.phone?.length">
+          <div class="size-12 min-w-12 flex justify-center items-center bg-primary/15 border border-primary/60 text-primary-content rounded">
+            <Phone class="size-6"/>
           </div>
+
+          <div class="w-full flex flex-col justify-center items-start">
+            <h3 class="text-sm/5 font-semibold text-base-content/65 translate-y-0.5">
+              {{ i18n.t('restaurant.phone') }}
+            </h3>
+            <p class="text-base/6 font-semibold">
+              {{ restaurant!.phone }}
+            </p>
+          </div>
+
+          <button type="button"
+                  class="w-13 min-w-13 h-12 flex justify-center items-center rounded text-base-content/65 cursor-pointer pr-1"
+                  :aria-label="i18n.t('restaurant.copy_phone')"
+                  @click="copyToClipboard(restaurant!.phone)">
+            <Copy class="size-6"/>
+          </button>
+        </div>
+
+        <div class="w-full flex justify-start items-start gap-3 px-3"
+             v-if="restaurant!.full_address?.length">
+          <div class="size-12 min-w-12 flex justify-center items-center bg-primary/15 border border-primary/60 text-primary-content rounded">
+            <MapPin class="size-6"/>
+          </div>
+
+          <div class="w-full flex flex-col justify-start items-start">
+            <h3 class="text-sm/5 font-semibold text-base-content/65">
+              {{ i18n.t('restaurant.location') }}
+            </h3>
+            <p class="text-base/6 font-semibold">
+              {{ restaurant!.full_address }}
+            </p>
+          </div>
+
+          <button type="button"
+                  class="w-13 min-w-13 h-12 flex justify-center items-center rounded text-base-content/65 cursor-pointer pr-1"
+                  :aria-label="i18n.t('restaurant.copy_address')"
+                  @click="copyToClipboard(restaurant!.full_address)">
+            <Copy class="size-6"/>
+          </button>
         </div>
       </div>
     </div>

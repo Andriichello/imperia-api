@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import BaseDrawer from "@/Components/Drawer/BaseDrawer.vue";
-  import { ref, watch, PropType, nextTick } from "vue";
+  import { computed, ref, watch, PropType, nextTick } from "vue";
   import { Restaurant, DishCategory, DishMenu, Dish } from "@/api";
   import SearchWithList from "@/Components/Drawer/SearchWithList.vue";
 
@@ -45,11 +45,15 @@
   const searchInputRef = ref<HTMLInputElement | null>(null);
   const hasResults = ref(false);
   const searchQuery = ref("");
-  const tag = ref(null);
+  // A filter is selected, or the filters are open
+  const filtering = ref(false);
+
+  // The menus and their categories are listed until something is searched for
+  const browsing = computed(() => !hasResults.value && !searchQuery.value?.length && !filtering.value);
 
   function close() {
     searchQuery.value = "";
-    tag.value = null;
+    filtering.value = false;
     hasResults.value = false;
     emits('close');
   }
@@ -78,8 +82,8 @@
     emits('query-updated', query);
   }
 
-  function onTagUpdated(val: string|null) {
-    tag.value = val;
+  function onFilteringChanged(val: boolean) {
+    filtering.value = val;
   }
 
   watch(() => props.open, (newVal, oldVal) => {
@@ -96,7 +100,8 @@
               @close="close">
 
     <div class="w-full h-full flex flex-col">
-      <SearchWithList class="max-h-full"
+      <SearchWithList class="min-h-0"
+                      :class="{'flex-1': !browsing}"
                       :open="open"
                       :restaurant="restaurant"
                       :menus="menus"
@@ -109,32 +114,30 @@
                       @open-category="openCategory"
                       @open-product="openProduct"
                       @query-updated="onQueryUpdated"
-                      @tag-updated="onTagUpdated"/>
+                      @filtering-changed="onFilteringChanged"/>
 
-      <div class="w-full flex flex-col px-3 pb-[250px] overflow-auto"
-           v-if="!hasResults && !searchQuery?.length && !tag?.length">
+      <div class="w-full flex-1 min-h-0 flex flex-col pt-1 px-3 pb-[250px] overflow-auto"
+           v-if="browsing">
         <template v-for="menu in menus" :key="menu.id">
-          <div class="w-full flex flex-col text-start py-3 px-3 cursor-pointer"
+          <div class="w-full flex flex-col text-start p-3 cursor-pointer"
                @click="openMenu(menu)">
-            <h3 class="text-xl font-bold">
+            <h3 class="text-xl/7 font-bold">
               {{ menu.title }}
             </h3>
-            <p class="text-md font-light opacity-80"
+            <p class="text-[15px]/[22px] text-base-content/65"
                v-if="menu.description?.length">
               {{ menu.description }}
             </p>
           </div>
 
-          <div class="w-full h-[1px] bg-base-300"/>
-
           <div class="w-full flex flex-col pl-5">
             <template v-for="category in menu.categories" :key="category.id">
-              <div class="w-full flex flex-col text-start py-3 px-3 cursor-pointer"
+              <div class="w-full min-h-12 flex flex-col justify-center text-start py-2.5 px-3 cursor-pointer"
                    @click="openCategory(category, menu)">
-                <h3 class="text-lg font-bold">
+                <h4 class="text-[17px]/[26px] font-semibold">
                   {{ category.title }}
-                </h3>
-                <p class="text-md font-light opacity-80"
+                </h4>
+                <p class="text-[15px]/[22px] text-base-content/65"
                    v-if="category!.description?.length">
                   {{ category.description }}
                 </p>
@@ -142,7 +145,7 @@
             </template>
           </div>
 
-          <div class="w-full h-[1px] bg-base-300"/>
+          <div class="w-full h-px shrink-0 bg-base-300"/>
         </template>
       </div>
     </div>

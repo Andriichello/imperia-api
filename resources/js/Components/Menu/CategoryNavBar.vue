@@ -37,21 +37,19 @@
 </script>
 
 <template>
-  <div class="w-full flex flex-col justify-center"
+  <div class="w-full flex gap-2 pt-1.5 px-2 pb-2.5 overflow-x-auto overflow-y-hidden no-scrollbar"
+       ref="scrollRef"
        v-if="categories && categories.length">
-    <div class="w-full flex justify-start items-start">
-      <div class="max-w-full flex justify-start items-start gap-2 p-2 pt-1 pb-2 transition-all duration-200 overflow-x-auto overflow-y-hidden no-scrollbar"
-           ref="scrollRef"
-           style="scrollbar-gutter: stable;">
-        <template v-for="c in categories" :key="c.id">
-          <button class="btn btn-sm text-[14px] normal-case"
-                  :id="`category-${c.id}-button`"
-                  :class="{'btn-ghost':  selected?.id !== c.id, 'btn-warning bg-warning/20 border-warning/40': selected?.id === c.id}"
-                  @click="emits('switch-category', c)">
-            {{ c.title }}
-          </button>
-        </template>
-      </div>
-    </div>
+    <button type="button"
+            class="h-9 shrink-0 inline-flex items-center px-3.5 rounded-lg border text-[15px] font-semibold whitespace-nowrap cursor-pointer"
+            :class="selected?.id === c.id
+              ? 'border-primary/40 bg-primary/20 text-primary-content'
+              : 'border-zinc-200 bg-base-100 text-base-content'"
+            :aria-current="selected?.id === c.id ? 'true' : undefined"
+            :id="`category-${c.id}-button`"
+            v-for="c in categories" :key="c.id"
+            @click="emits('switch-category', c)">
+      {{ c.title }}
+    </button>
   </div>
 </template>

@@ -2,6 +2,7 @@
   import {DishMenu} from "@/api";
   import {Ellipsis} from "lucide-vue-next";
   import {ref, watch, PropType, nextTick} from "vue";
+  import {useI18n} from "vue-i18n";
 
   const emits = defineEmits(['switch-menu', 'open-drawer']);
 
@@ -19,6 +20,8 @@
       default: true,
     }
   });
+
+  const i18n = useI18n();
 
   const scrollRef = ref<HTMLElement | null>(null);
 
@@ -42,29 +45,27 @@
 </script>
 
 <template>
-  <div class="w-full flex flex-col justify-center"
+  <div class="w-full flex items-stretch"
        v-if="menus && menus.length">
-    <div class="w-full flex justify-between items-start overflow-x-hidden">
-      <div class="max-w-full flex justify-start items-start gap-3 pl-2 pr-4 pt-1 pb-0 transition-all duration-200 overflow-x-auto overflow-y-hidden no-scrollbar"
-           ref="scrollRef"
-           style="scrollbar-gutter: stable;">
-        <template v-for="m in menus" :key="m.id">
-          <h2 class="font-bold text-lg normal-case py-1.5 pt-1 px-1 whitespace-nowrap cursor-pointer"
-              :class="{'opacity-50': selected?.id !== m.id}"
-                  :id="`menu-${m.id}-button`"
-                  @click="emits('switch-menu', m)">
-            {{ m.title }}
-          </h2>
-        </template>
-      </div>
-
-      <div class="w-fit pl-0 p-2 pt-1.5 pb-1 bg-base-100"
-           v-if="navigation"
-           @click="emits('open-drawer')">
-        <div class="btn btn-sm flex justify-center items-center normal-case rounded bg-base-100">
-          <Ellipsis class="w-5 h-5 text-base-content/80"/>
-        </div>
-      </div>
+    <div class="flex-1 min-w-0 flex items-stretch gap-1 pt-1 px-2 overflow-x-auto overflow-y-hidden no-scrollbar"
+         ref="scrollRef">
+      <button type="button"
+              class="h-9 shrink-0 px-1.5 text-lg font-bold whitespace-nowrap cursor-pointer"
+              :class="selected?.id === m.id ? 'text-primary-content' : 'text-base-content/65'"
+              :aria-current="selected?.id === m.id ? 'true' : undefined"
+              :id="`menu-${m.id}-button`"
+              v-for="m in menus" :key="m.id"
+              @click="emits('switch-menu', m)">
+        {{ m.title }}
+      </button>
     </div>
+
+    <button type="button"
+            class="size-11 shrink-0 self-center -my-0.5 mr-1 flex items-center justify-center text-base-content cursor-pointer"
+            :aria-label="i18n.t('nav.browse')"
+            v-if="navigation"
+            @click="emits('open-drawer')">
+      <Ellipsis class="size-6"/>
+    </button>
   </div>
 </template>

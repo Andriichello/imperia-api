@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import {Dish, DishVariant, Media} from "@/api";
+import {Dish, Media} from "@/api";
 import {Splide, SplideSlide} from "@splidejs/vue-splide";
 import {ref, computed, PropType} from "vue";
-import {priceFormatted, weightUnitFormatted} from "@/helpers";
+import {DishSize, getDishSizes, priceFormatted, sizeWeightFormatted} from "@/helpers";
 import DiagonalPattern from "@/Components/Base/DiagonalPattern.vue";
 import {Timer, Flame, TriangleAlert} from "lucide-vue-next";
 import DishTags from "@/Components/Menu/DishTags.vue";
-import {getAllergens} from "@/flags";
+import {getAllergenLabel, getAllergens, getDishTags} from "@/flags";
 import { useI18n } from "vue-i18n";
 
 const i18n = useI18n();
@@ -28,7 +28,12 @@ const props = defineProps({
   preview: {
     type: Boolean as PropType<boolean>,
     default: false,
-  }
+  },
+  // Without side padding, for lists that pad their rows themselves
+  flush: {
+    type: Boolean as PropType<boolean>,
+    default: false,
+  },
 });
 
 const emit = defineEmits(['productClick']);
@@ -38,211 +43,128 @@ const handleProductClick = () => {
 };
 
 const media = computed<Media[]>(() => {
-  return props.product.media.map((m: Media) => {
+  return (props.product.media ?? []).map((m: Media) => {
     const webp = m?.variants?.find((v: Media) => v.extension === 'webp');
     return webp ?? m;
   })
 });
 
-const variants = computed<Partial<DishVariant>[]>(() => {
-  if (!props.product.variants || !props.product.variants.length) {
-    return null;
-  }
+const sizes = computed<DishSize[]>(() => getDishSizes(props.product));
 
-  const variants = [...props.product.variants];
-  const base = {
-    id: null,
-    type: 'variants',
-    dish_id: props.product.id,
-    price: props.product.price,
-    weight: props.product.weight,
-    weight_unit: props.product.weight_unit,
-    calories: props.product.calories,
-    preparation_time: props.product.preparation_time,
-    archived: false,
-  };
+const selectedSize = ref<DishSize>(sizes.value[0]);
 
-  variants.push(base);
-
-  return variants.sort((v1, v2) => {
-    if (v1.price < v2.price) {
-      return -1;
-    }
-    if (v1.price > v2.price) {
-      return 1;
-    }
-    return 0;
-  });
-});
-
-const selectedVariant = ref<Partial<DishVariant> | null>(
-  variants.value?.find((_) => true)
+const price = computed(
+  () => priceFormatted(selectedSize.value.price, props.currency?.toLowerCase() ?? 'uah')
 );
 
-const weight = computed(() => {
-  let weight: number | string = props.product!.weight;
-  let unit: string = props.product!.weight_unit;
+const hasTags = computed<boolean>(() => getDishTags(props.product.flags).length > 0);
 
-  if (selectedVariant.value) {
-    weight = selectedVariant.value?.weight;
-    unit = selectedVariant.value?.weight_unit;
-  }
-
-  unit = unit ? weightUnitFormatted(unit) : '';
-  weight = weight ?? '';
-
-  return weight + ' ' + unit;
-});
-
-const price = computed(() => {
-  let price = props.product!.price;
-
-  if (selectedVariant.value) {
-    price = selectedVariant.value?.price;
-  }
-
-  return priceFormatted(price, props.currency?.toLowerCase() ?? 'uah');
-});
-
-const calories = computed(() => {
-  if (selectedVariant.value?.id) {
-    return selectedVariant.value?.calories;
-  }
-
-  return props.product!.calories;
-});
-
-const preparationTime = computed(() => {
-  if (selectedVariant.value?.id) {
-    return selectedVariant.value?.preparation_time;
-  }
-
-  return props.product!.preparation_time;
-});
-
-const allergens = computed(() => getAllergens(props.product.flags));
-
-const variantWeight = (variant: Partial<DishVariant>) => {
-  return variant.weight + ' '
-    + (weightUnitFormatted((variant?.id ? variant.weight_unit : props.product!.weight_unit) ?? ''));
-};
-
-const selectVariant = (variant: Partial<DishVariant> | null) => {
-  selectedVariant.value = variant;
-};
+const allergenNames = computed<string>(
+  () => getAllergens(props.product.flags).map((flag) => i18n.t(getAllergenLabel(flag))).join(', ')
+);
 </script>
 
 <template>
-  <div class="w-full flex flex-col rounded"
+  <div class="w-full flex flex-col text-start"
+       :class="{'mt-2': product.badge?.length}"
        :id="'product-' + product.id"
        @click="handleProductClick">
 
-    <div class="w-full text-warning-content/80 bg-warning/10 opacity-80 border-none select-none rounded-none py-2 px-2 font-semibold text-md text-start"
-         v-if="product!.badge?.length">
+    <div class="w-full p-2 bg-primary/10 text-primary-content text-base/6 font-semibold select-none"
+         v-if="product.badge?.length">
       {{ product.badge }}
     </div>
 
-    <div class="card-body px-2 pb-3 py-3 min-h-[100px] rounded text-start relative">
-      <div class="flex justify-between items-start gap-1">
-        <div class="flex flex-col justify-start items-start gap-2">
-          <div class="flex justify-between items-center">
-            <div class="grow flex flex-col justify-center items-start card-title gap-0">
-              <h2 class="grow line-clamp-2 text-ellipsis flex justify-start items-center text-xl">
-                {{ product.title }}
-              </h2>
-            </div>
-          </div>
+    <div class="flex flex-col gap-2.5"
+         :class="flush ? 'pt-3 pb-3.5' : 'px-2 py-3.5'">
+      <div class="flex items-start gap-3">
+        <div class="flex-1 min-w-0 flex flex-col gap-1.5">
+          <h3 class="text-lg/[26px] font-semibold line-clamp-3">
+            {{ product.title }}
+          </h3>
 
-          <div class="flex-grow">
-            <p class="opacity-80 text-[16px] line-clamp-3">
-              {{ product.description }}
-            </p>
-          </div>
+          <p class="text-[15px]/[22px] text-base-content/72 line-clamp-3"
+             v-if="product.description?.length">
+            {{ product.description }}
+          </p>
         </div>
 
-        <template v-if="product.media?.length">
-          <div class="w-40 h-30 rounded relative translate-x-1 -translate-y-1">
-            <div class="absolute w-full top-0 h-30 border-b-1 border-base-300 overflow-hidden flex flex-col justify-center rounded-t">
-              <DiagonalPattern class="scale-165 opacity-60 text-warning-content/80"
-                               :establishment="establishment ?? 'restaurant'"/>
-            </div>
-
-            <Splide class="w-40 h-30 rounded" :options="{
-                    perPage: 1,
-                    perMove: 1,
-                    rewind: false,
-                    rewindByDrag: false,
-                    drag: false,
-                    arrows: false,
-                    pagination: !preview,
-                  }">
-              <SplideSlide v-for="(m, index) in (preview ? [media[0]] : media)" :key="m.id">
-                <img class="w-full h-30 object-cover object-center rounded border-none"
-                     :src="media[0].url" alt=""
-                     :loading="index === 0 ? 'eager' : 'lazy'"/>
-              </SplideSlide>
-            </Splide>
+        <div class="size-28 shrink-0 relative rounded-lg overflow-hidden border border-base-300 bg-base-200/20"
+             v-if="media.length">
+          <div class="absolute inset-0 overflow-hidden flex flex-col justify-center">
+            <DiagonalPattern class="scale-165 text-primary-content/50"
+                             :establishment="establishment ?? 'restaurant'"/>
           </div>
-        </template>
+
+          <Splide class="size-full" :options="{
+                  perPage: 1,
+                  perMove: 1,
+                  rewind: false,
+                  rewindByDrag: false,
+                  drag: false,
+                  arrows: false,
+                  pagination: !preview,
+                }">
+            <SplideSlide v-for="(m, index) in (preview ? [media[0]] : media)" :key="m.id">
+              <img class="w-full h-28 object-cover object-center"
+                   :src="m.url" alt=""
+                   :loading="index === 0 ? 'eager' : 'lazy'"/>
+            </SplideSlide>
+          </Splide>
+        </div>
       </div>
 
-      <div class="card-actions justify-between items-end gap-0">
-        <div class="w-full flex flex-wrap gap-x-3 gap-y-0.5 normal-case text-[12px] text-base-content/60">
-          <div v-if="preparationTime" class="flex flex-row justify-center items-center gap-1 opacity-70">
-            <Timer class="w-4 h-4"/>
-            <p class="font-semibold pt-0.5">
-              {{ i18n.t('badges.time', { minutes: preparationTime }) }}
-            </p>
-          </div>
+      <div class="flex flex-col gap-1"
+           v-if="selectedSize.preparation_time || selectedSize.calories || hasTags || allergenNames.length">
+        <div class="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[13px]/5 text-base-content/65"
+             v-if="selectedSize.preparation_time || selectedSize.calories">
+          <span class="flex items-center gap-1"
+                v-if="selectedSize.preparation_time">
+            <Timer class="size-3.5 shrink-0"/>
+            {{ i18n.t('badges.time', { minutes: selectedSize.preparation_time }) }}
+          </span>
 
-          <div v-if="calories" class="flex flex-row justify-center items-center gap-1 opacity-70">
-            <Flame class="w-4 h-4"/>
-            <p class="font-semibold pt-0.5">
-              {{ i18n.t('badges.calories', { calories: calories }) }}
-            </p>
-          </div>
-
-          <div class="grow flex flex-row justify-end "
-               v-if="allergens.length > 0">
-            <!-- Allergens - Combined Badge -->
-            <div class="flex flex-row justify-center items-center gap-1 cursor-pointer text-orange-600/75 border-1 border-dashed border-orange-600/75 pl-1 pr-2 rounded-sm translate-x-1">
-                <TriangleAlert class="w-4 h-4"/>
-                <p class="font-semibold pt-0.5">
-                  {{ i18n.t('badges.allergens') }}
-                </p>
-              </div>
-          </div>
+          <span class="flex items-center gap-1"
+                v-if="selectedSize.calories">
+            <Flame class="size-3.5 shrink-0"/>
+            {{ i18n.t('badges.calories', { calories: selectedSize.calories }) }}
+          </span>
         </div>
 
-        <DishTags class="text-[12px] mt-1" :flags="product.flags"/>
+        <DishTags class="text-[13px]/5" :flags="product.flags"/>
+
+        <div class="flex items-start gap-1 text-[13px]/5 font-semibold text-orange-700"
+             v-if="allergenNames.length">
+          <TriangleAlert class="size-3.5 shrink-0 mt-[3px]"/>
+          <span>{{ allergenNames }}</span>
+        </div>
       </div>
 
-      <div class="card-actions justify-between items-end">
-        <div class="flex gap-1">
-          <template v-if="variants?.length">
-            <template v-for="v in variants" :key="v.id">
-              <button class="btn btn-sm normal-case text-[14px] px-2 py-2"
-                      :class="{'btn-warning bg-warning/20 border-warning/40': selectedVariant?.id === v.id, 'btn-outline border-dashed text-base-content/75 border-base-content/40': selectedVariant?.id !== v.id}"
-                      @click.stop="selectVariant(v)">
-                {{ variantWeight(v) }}
-              </button>
-            </template>
-          </template>
-
-          <template v-else>
-            <div class="p-0 justify-end">
-              <span class="font-bold text-[16px]">
-                {{ weight }}
-              </span>
-            </div>
-          </template>
+      <div class="flex justify-between gap-2"
+           :class="sizes.length > 1 ? 'items-end' : 'items-center'">
+        <div class="flex flex-wrap gap-1.5 min-w-0"
+             v-if="sizes.length > 1">
+          <button type="button"
+                  class="h-10 px-3 rounded border text-sm font-semibold whitespace-nowrap cursor-pointer"
+                  :class="selectedSize.id === size.id
+                    ? 'bg-primary/20 border-primary/40 text-primary-content'
+                    : 'border-dashed border-base-content/40 text-base-content/75'"
+                  :aria-pressed="selectedSize.id === size.id"
+                  v-for="size in sizes" :key="size.id ?? 'base'"
+                  @click.stop="selectedSize = size">
+            {{ sizeWeightFormatted(size) }}
+          </button>
         </div>
 
-        <div class="p-0 justify-end">
-          <h2 class="card-title text-xl grow">
-            {{ price }}
-          </h2>
-        </div>
+        <span class="text-base/6 font-bold"
+              v-else-if="sizeWeightFormatted(selectedSize)">
+          {{ sizeWeightFormatted(selectedSize) }}
+        </span>
+
+        <span class="ml-auto text-xl/7 font-bold whitespace-nowrap"
+              :class="{'pb-1.5': sizes.length > 1}">
+          {{ price }}
+        </span>
       </div>
     </div>
   </div>

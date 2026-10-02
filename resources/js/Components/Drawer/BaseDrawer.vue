@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import { X } from "lucide-vue-next";
+  import { useI18n } from "vue-i18n";
   import { useScrollLock } from "@/composables/useScrollLock";
 
   const emits = defineEmits(['close']);
@@ -15,6 +16,8 @@
     },
   });
 
+  const i18n = useI18n();
+
   // The page doesn't scroll while the drawer is open
   useScrollLock(() => props.open);
 
@@ -29,10 +32,12 @@
          v-if="open"
          @click.self="close">
       <div class="bg-base-100 w-full max-w-md h-full max-h-full shadow-lg transition-transform transform translate-x-0 relative"
-           :class="{'pt-12': paddingTop}">
-        <button class="absolute top-1.5 right-2 z-51 btn btn-sm h-9 bg-base-100"
+           :class="{'pt-15': paddingTop}">
+        <button type="button"
+                class="absolute top-2 right-2 z-51 size-11 flex items-center justify-center rounded border border-[#e8e8e8] bg-base-100 text-base-content cursor-pointer"
+                :aria-label="i18n.t('drawer.close')"
                 @click="close">
-          <X class="w-5 h-5 text-base-content/80"/>
+          <X class="size-[22px]"/>
         </button>
 
         <slot/>

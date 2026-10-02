@@ -11,16 +11,16 @@
 </script>
 
 <template>
-  <div class="w-full flex flex-col px-2">
-    <div class="skeleton w-full flex flex-col text-center p-2 bg-warning/15 border-1 border-warning/40 text-warning-content rounded-b-none rounded-t-xl mt-4 cursor-pointer">
-      <h3 class="h-[28px]"/>
+  <div class="w-full flex flex-col px-2 mt-4">
+    <div class="skeleton w-full flex flex-col py-2.5 px-3 bg-primary/15 border border-primary/40 rounded-b-none rounded-t-xl">
+      <h3 class="h-[30px]"/>
     </div>
 
-    <div class="w-full flex flex-col py-2 gap-2">
+    <div class="w-full flex flex-col">
       <template v-for="n in count" :key="n">
         <LoadingProductInListRightMedia/>
 
-        <div class="w-full h-[1px] flex flex-col bg-warning-content/25"/>
+        <div class="h-px mx-2 bg-[#e8e8e8]"/>
       </template>
     </div>
   </div>

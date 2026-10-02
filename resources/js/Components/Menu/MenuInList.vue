@@ -48,18 +48,21 @@
 <template>
   <div class="w-full flex flex-col" v-if="menu">
     <div class="w-full flex flex-col">
-      <div class="w-full flex flex-col text-center pb-0 px-3 cursor-pointer sticky"
+      <div class="w-full flex flex-col text-center pb-0 px-4 cursor-pointer sticky"
            :class="{'pt-3': menu?.description?.length > 0}"
            @click="emits('switch-menu', menu)">
-        <p class="text-md font-light opacity-80"
+        <p class="text-[15px]/[22px] text-base-content/65"
            v-if="menu?.description?.length > 0">
           {{ menu?.description }}
         </p>
       </div>
 
-      <template v-for="category in menu.categories" :key="category.id"
+      <!-- The last category fills the screen below the sticky menus (92px tall, plus a 10px gap),
+           down to the bottom padding of the page (10vh), so it can be scrolled up under them -->
+      <template v-for="(category, index) in menu.categories" :key="category.id"
                 v-if="!closed">
-        <CategoryInList :category="category"
+        <CategoryInList :class="{'min-h-[calc(100dvh-102px-10vh)]': index === menu.categories.length - 1}"
+                        :category="category"
                         :products="categoryProducts(menu, category)"
                         :currency="currency"
                         :establishment="establishment"

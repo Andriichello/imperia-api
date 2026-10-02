@@ -2,7 +2,7 @@
 import { Dish, Media } from "@/api";
 import { Splide, SplideSlide } from "@splidejs/vue-splide";
 import { computed, PropType } from "vue";
-import { priceFormatted, weightUnitFormatted } from "@/helpers";
+import { DishSize, getDishSizes, priceFormatted, sizeWeightFormatted } from "@/helpers";
 import DiagonalPattern from "@/Components/Base/DiagonalPattern.vue";
 import { Timer, Flame, TriangleAlert } from "lucide-vue-next";
 import DishTags from "@/Components/Menu/DishTags.vue";
@@ -44,6 +44,9 @@ const media = computed<Media[]>(() => {
 
 const allergens = computed<string[]>(() => getAllergens(props.product?.flags));
 
+// In the same order as in the list
+const sizes = computed<DishSize[]>(() => props.product ? getDishSizes(props.product) : []);
+
 const closePopup = () => {
   emit('close');
 };
@@ -53,211 +56,137 @@ const closePopup = () => {
   <BaseDrawer :open="open" :padding-top="false" @close="closePopup">
     <div class="w-full h-full flex flex-col overflow-auto">
       <template v-if="product">
-      <template v-if="product.media?.length">
-        <div class="w-full max-h-65 h-65 relative z-1">
-          <div class="absolute w-full top-0 h-65 border-b-1 border-base-300 overflow-hidden flex flex-col justify-center">
-            <DiagonalPattern class="scale-165 opacity-60 text-warning-content/80"
+        <div class="w-full h-65 shrink-0 relative overflow-hidden border-b border-base-300"
+             v-if="media.length">
+          <div class="absolute inset-0 overflow-hidden flex flex-col justify-center">
+            <DiagonalPattern class="scale-165 text-primary-content/50"
                              :establishment="establishment ?? 'restaurant'"/>
           </div>
 
-          <Splide id="product-media" class="w-full max-h-65 h-65" :options="{
+          <Splide id="product-media" class="w-full h-65" :options="{
                     perPage: 1,
                     perMove: 1,
                     rewind: false,
                     rewindByDrag: false,
-                    drag: Number(media!.length) > 1,
-                    arrows: !(Number(media!.length)<=1),
-                    pagination: Number(media!.length) > 1,
+                    drag: media.length > 1,
+                    arrows: media.length > 1,
+                    pagination: media.length > 1,
                   }">
             <SplideSlide v-for="(m, index) in media" :key="m.id">
-              <img class="w-full h-65 object-cover object-center border-none"
+              <img class="w-full h-65 object-cover object-center"
                    :src="m.url" alt=""
                    :loading="index === 0 ? 'eager' : 'lazy'"/>
             </SplideSlide>
           </Splide>
         </div>
-      </template>
 
-      <div class="w-full h-12 relative"
-           v-else-if="!product!.badge?.length">
-        <div class="absolute w-full top-0 h-12 border-b-1 border-base-300 overflow-hidden flex flex-col justify-center">
-        <DiagonalPattern class="scale-165 opacity-60 text-warning-content/80"
-                         :establishment="establishment ?? 'restaurant'"/>
-      </div>
-    </div>
-
-      <div class="w-full text-warning-content/80 bg-warning/10 opacity-80 border-none select-none rounded-none py-3 px-2 pr-16 font-semibold text-md text-start"
-           v-if="product!.badge?.length">
-        {{ product.badge }}
-      </div>
-
-      <!-- Scrollable content area -->
-      <div class="flex-1 pb-20">
-        <div class="card-body px-4 pb-3 pt-4 rounded text-start relative">
-          <div class="flex justify-between items-start gap-1">
-            <div class="flex flex-col justify-start items-start gap-2">
-              <div class="flex justify-between items-center">
-                <div class="grow flex flex-col justify-center items-start card-title gap-0">
-                  <h2 class="grow line-clamp-2 text-ellipsis flex justify-start items-center text-xl">
-                    {{ product.title }}
-                  </h2>
-                </div>
-              </div>
-
-              <div class="flex-grow">
-                <p class="opacity-80 text-[16px]">
-                  {{ product.description }}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="flex flex-col gap-1 px-6 py-1">
-          <!-- Tags and Flags -->
-          <div class="flex justify-between items-end gap-0">
-            <DishTags class="text-[14px]" :flags="product.flags"/>
-          </div>
-
-          <!-- Price and Variants -->
-          <div class="mb-4 mt-2">
-            <h4 class="font-semibold text-lg mb-3">{{ i18n.t('product.variants') }}</h4>
-
-            <!-- Base price -->
-            <div class="w-full flex flex-col justify-start items-center py-2 px-3 rounded mb-2 btn-outline border border-dashed text-base-content/75 border-base-content/40">
-              <div class="w-full flex justify-between items-center">
-                <div class="flex items-center gap-2">
-                  <span class="font-semibold text-lg">{{ product.weight }} {{ weightUnitFormatted(product.weight_unit ?? '') }}</span>
-                </div>
-                <span class="font-bold text-xl">{{ priceFormatted(product.price, currency?.toLowerCase() ?? 'uah') }}</span>
-              </div>
-
-              <!-- Nutrition and timing info -->
-              <div class="w-full flex justify-start gap-4 opacity-80 text-[16px]" v-if="product.preparation_time || product.calories">
-                <div v-if="product.preparation_time" class="flex items-center gap-2">
-                  <Timer class="w-4 h-4 text-gray-600" />
-                  <span class="text-md">{{ i18n.t('badges.time', { minutes: product.preparation_time }) }}</span>
-                </div>
-
-                <div v-if="product.calories" class="flex items-center gap-2">
-                  <Flame class="w-4 h-4 text-gray-600" />
-                  <span class="text-md">{{ i18n.t('badges.calories', { calories: product.calories }) }}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Variants -->
-            <div v-if="product.variants?.length" class="space-y-2">
-              <div v-for="variant in product.variants" :key="variant.id" class="w-full flex flex-col justify-start items-center py-2 px-3 rounded mb-2 btn-outline border border-dashed text-base-content/75 border-base-content/40">
-                <div class="w-full flex justify-between items-center">
-                  <div class="flex items-center gap-2">
-                    <span class="font-semibold text-lg">{{ variant.weight }} {{ weightUnitFormatted(variant.weight_unit ?? '') }}</span>
-                  </div>
-                  <span class="font-bold text-xl">{{ priceFormatted(variant.price, currency?.toLowerCase() ?? 'uah') }}</span>
-                </div>
-
-                <!-- Nutrition and timing info -->
-                <div class="w-full flex justify-start gap-4 opacity-80 text-[16px]" v-if="variant.preparation_time || variant.calories">
-                  <div v-if="variant.preparation_time" class="flex items-center gap-2">
-                    <Timer class="w-4 h-4 text-gray-600" />
-                    <span class="text-md">{{ i18n.t('badges.time', { minutes: variant.preparation_time }) }}</span>
-                  </div>
-
-                  <div v-if="variant.calories" class="flex items-center gap-2">
-                    <Flame class="w-4 h-4 text-gray-600" />
-                    <span class="text-md">{{ i18n.t('badges.calories', { calories: variant.calories }) }}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Content -->
-        <div class="px-6">
-          <!-- Tags and Flags -->
-          <div class="mb-6">
-            <!-- Allergens -->
-            <div v-if="allergens.length > 0" class="mb-4">
-              <h4 class="font-semibold text-lg mb-2 text-orange-600/75">{{ i18n.t('badges.allergens') }}</h4>
-              <div class="flex flex-wrap gap-2">
-                <div v-for="allergen in allergens" :key="allergen" class="flex items-center gap-1 text-orange-600/75 border border-dashed border-orange-600/75 px-2 py-1 rounded-sm">
-                  <TriangleAlert class="w-4 h-4" />
-                  <span class="text-sm font-semibold">{{ i18n.t(getAllergenLabel(allergen)) }}</span>
-                </div>
-              </div>
-            </div>
-
-
-          </div>
-
-
-        </div>
-      </div>
-      </template>
-      <template v-else>
-        <!-- Skeleton preloader while product is null -->
-        <div class="w-full max-h-65 h-65 relative z-1">
-          <div class="absolute w-full top-0 h-65 border-b-1 border-base-300 overflow-hidden flex flex-col justify-center">
-            <DiagonalPattern class="scale-165 opacity-60 text-warning-content/80"
+        <!-- Without photos: a strip under the close button -->
+        <div class="w-full h-15 shrink-0 relative overflow-hidden border-b border-base-300"
+             v-else>
+          <div class="absolute inset-0 overflow-hidden flex flex-col justify-center">
+            <DiagonalPattern class="scale-165 text-primary-content/50"
                              :establishment="establishment ?? 'restaurant'"/>
           </div>
         </div>
 
-        <div class="w-full text-warning-content/80 bg-warning/10 opacity-80 border-none select-none rounded-none py-3 px-2 pr-16 font-semibold text-md text-start">
-          <div class="h-5 w-40 bg-base-300/70 rounded animate-pulse"></div>
+        <div class="w-full shrink-0 px-5 py-2.5 bg-primary/10 text-primary-content text-base/6 font-semibold"
+             v-if="product.badge?.length">
+          {{ product.badge }}
         </div>
 
-        <div class="flex-1 pb-20">
-          <div class="card-body px-4 pb-3 pt-4 rounded text-start relative">
-            <div class="flex justify-between items-start gap-1">
-              <div class="flex flex-col justify-start items-start gap-2 w-full">
-                <div class="h-7 w-3/4 bg-base-300/70 rounded animate-pulse"></div>
-                <div class="space-y-2 w-full">
-                  <div class="h-4 w-full bg-base-300/50 rounded animate-pulse"></div>
-                  <div class="h-4 w-5/6 bg-base-300/50 rounded animate-pulse"></div>
-                </div>
-              </div>
+        <div class="flex flex-col gap-5 pt-4 px-5 pb-20">
+          <div class="flex flex-col items-start gap-2">
+            <h2 class="text-[22px]/[30px] font-semibold">
+              {{ product.title }}
+            </h2>
+
+            <p class="text-base/6 text-base-content/72"
+               v-if="product.description?.length">
+              {{ product.description }}
+            </p>
+
+            <DishTags class="text-sm/5" icon-class="size-4" :flags="product.flags"/>
+          </div>
+
+          <div class="flex flex-col gap-2 p-3 rounded-lg bg-orange-700/6 border border-orange-700/25"
+               v-if="allergens.length">
+            <h3 class="flex items-center gap-1.5 text-base/6 font-semibold text-orange-700">
+              <TriangleAlert class="size-[18px] shrink-0"/>
+              {{ i18n.t('product.contains_allergens') }}
+            </h3>
+
+            <div class="flex flex-wrap gap-2">
+              <span class="px-2.5 py-1 rounded bg-base-100 border border-orange-700/35 text-orange-700 text-sm/5 font-semibold"
+                    v-for="allergen in allergens" :key="allergen">
+                {{ i18n.t(getAllergenLabel(allergen)) }}
+              </span>
             </div>
           </div>
 
-          <div class="flex flex-col gap-1 px-6 py-1">
-            <div class="flex flex-wrap gap-x-3 gap-y-2 opacity-70">
-              <div class="h-5 w-24 bg-base-300/60 rounded animate-pulse"></div>
-              <div class="h-5 w-16 bg-base-300/60 rounded animate-pulse"></div>
-              <div class="h-5 w-20 bg-base-300/60 rounded animate-pulse"></div>
-            </div>
+          <div class="flex flex-col gap-2">
+            <h3 class="text-lg/7 font-semibold">
+              {{ i18n.t('product.sizes') }}
+            </h3>
 
-            <div class="mb-4 mt-4">
-              <div class="h-6 w-40 bg-base-300/70 rounded mb-3 animate-pulse"></div>
-              <div class="w-full flex flex-col gap-2">
-                <div class="w-full py-3 px-3 rounded mb-2 btn-outline border border-dashed text-base-content/75 border-base-content/40">
-                  <div class="w-full flex justify-between items-center">
-                    <div class="h-5 w-32 bg-base-300/60 rounded animate-pulse"></div>
-                    <div class="h-6 w-20 bg-base-300/60 rounded animate-pulse"></div>
-                  </div>
-                  <div class="w-full flex justify-start gap-4 mt-2">
-                    <div class="h-4 w-24 bg-base-300/50 rounded animate-pulse"></div>
-                    <div class="h-4 w-28 bg-base-300/50 rounded animate-pulse"></div>
-                  </div>
-                </div>
-                <div class="w-full py-3 px-3 rounded btn-outline border border-dashed text-base-content/75 border-base-content/40">
-                  <div class="w-full flex justify-between items-center">
-                    <div class="h-5 w-28 bg-base-300/60 rounded animate-pulse"></div>
-                    <div class="h-6 w-16 bg-base-300/60 rounded animate-pulse"></div>
-                  </div>
-                </div>
+            <div class="flex items-center justify-between gap-3 px-3.5 py-3 rounded-lg border border-zinc-200"
+                 v-for="size in sizes" :key="size.id ?? 'base'">
+              <div class="flex flex-col gap-0.5">
+                <span class="text-[17px]/6 font-semibold"
+                      v-if="sizeWeightFormatted(size)">
+                  {{ sizeWeightFormatted(size) }}
+                </span>
+
+                <span class="flex flex-wrap items-center gap-x-3 text-sm/5 text-base-content/65"
+                      v-if="size.preparation_time || size.calories">
+                  <span class="flex items-center gap-1"
+                        v-if="size.preparation_time">
+                    <Timer class="size-3.5 shrink-0"/>
+                    {{ i18n.t('badges.time', { minutes: size.preparation_time }) }}
+                  </span>
+
+                  <span class="flex items-center gap-1"
+                        v-if="size.calories">
+                    <Flame class="size-3.5 shrink-0"/>
+                    {{ i18n.t('badges.calories', { calories: size.calories }) }}
+                  </span>
+                </span>
               </div>
+
+              <span class="text-xl/7 font-bold whitespace-nowrap">
+                {{ priceFormatted(size.price, currency?.toLowerCase() ?? 'uah') }}
+              </span>
             </div>
           </div>
+        </div>
+      </template>
 
-          <div class="px-6">
-            <div class="mb-6">
-              <div class="h-6 w-36 bg-base-300/70 rounded mb-2 animate-pulse"></div>
-              <div class="flex flex-wrap gap-2">
-                <div class="h-6 w-24 bg-orange-300/40 rounded animate-pulse"></div>
-                <div class="h-6 w-20 bg-orange-300/40 rounded animate-pulse"></div>
+      <template v-else>
+        <!-- Skeleton while the dish is loading -->
+        <div class="w-full h-65 shrink-0 relative overflow-hidden border-b border-base-300">
+          <div class="absolute inset-0 overflow-hidden flex flex-col justify-center">
+            <DiagonalPattern class="scale-165 text-primary-content/50"
+                             :establishment="establishment ?? 'restaurant'"/>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-5 pt-4 px-5 pb-20">
+          <div class="flex flex-col gap-2">
+            <div class="h-7 w-3/4 bg-base-300/70 rounded animate-pulse"></div>
+            <div class="h-4 w-full bg-base-300/50 rounded animate-pulse"></div>
+            <div class="h-4 w-5/6 bg-base-300/50 rounded animate-pulse"></div>
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <div class="h-6 w-24 bg-base-300/70 rounded animate-pulse"></div>
+
+            <div class="flex items-center justify-between gap-3 px-3.5 py-3 rounded-lg border border-zinc-200"
+                 v-for="n in 2" :key="n">
+              <div class="flex flex-col gap-1.5">
+                <div class="h-5 w-20 bg-base-300/60 rounded animate-pulse"></div>
+                <div class="h-4 w-32 bg-base-300/50 rounded animate-pulse"></div>
               </div>
+
+              <div class="h-6 w-16 bg-base-300/60 rounded animate-pulse"></div>
             </div>
           </div>
         </div>

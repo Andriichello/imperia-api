@@ -20,6 +20,34 @@ html, body {
   display: none;  /* Safari and Chrome */
 }
 
+/* Photo carousels: 44px arrows, dots without transparency */
+.splide__arrow {
+  width: 44px;
+  height: 44px;
+  opacity: 0.8;
+}
+
+.splide__arrow svg {
+  width: 20px;
+  height: 20px;
+}
+
+.splide__arrow--prev {
+  left: 12px;
+}
+
+.splide__arrow--next {
+  right: 12px;
+}
+
+.splide__pagination__page {
+  opacity: 1;
+}
+
+.splide__pagination__page.is-active {
+  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.15);
+}
+
 /* Blue */
 /*--color-warning: #6db0bb;*/
 /*--color-warning-content: #295a5a;*/
@@ -46,6 +74,10 @@ body {
 
   --color-warning: #3bb517;
   --color-warning-content: #284625;
+
+  /* The brand color of the public site is the same: tints of primary with primary-content text */
+  --color-primary: var(--color-warning);
+  --color-primary-content: var(--color-warning-content);
 
   /*--color-warning: #6db0bb;*/
   /*--color-warning-content: #295a5a;*/

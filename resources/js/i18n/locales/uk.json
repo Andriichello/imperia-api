@@ -11,13 +11,13 @@
     "pizzeria_title": "Піцерія",
     "bar_title": "Бар",
     "no_menus": "На жаль, зараз немає доступних меню",
-    "working_hours": "Години роботи:",
+    "working_hours": "Години роботи",
     "open": "Відчинено",
     "closed": "Зачинено",
-    "until_closing": "до закриття",
-    "until_opening": "до відкриття",
-    "phone": "Телефон:",
-    "location": "Адреса:"
+    "phone": "Телефон",
+    "location": "Адреса",
+    "copy_phone": "Скопіювати номер телефону",
+    "copy_address": "Скопіювати адресу"
   },
   "menu": {
     "title": "Меню",
@@ -33,7 +33,24 @@
     "products": "Страви",
     "no_results": "Нічого не знайдено",
     "start_typing": "Почніть вводити текст для пошуку меню, категорій, страв...",
-    "clear_query": "Очистити пошук"
+    "clear_query": "Очистити пошук",
+    "label": "Пошук у меню",
+    "filter_banner": "Фільтр за дієтою, гостротою чи інгредієнтами",
+    "filters": "Фільтри",
+    "clear_all": "Очистити все",
+    "edit_filters": "Змінити фільтри",
+    "remove_filter": "Прибрати фільтр: {name}",
+    "diet": "Дієта",
+    "spiciness": "Гострота",
+    "spicy": "Гостре",
+    "not_spicy": "Не гостре",
+    "exclude_ingredients": "Виключити інгредієнти",
+    "without": "Без: {name}",
+    "show_dishes": "Показати {count} страву | Показати {count} страви | Показати {count} страв",
+    "no_matching_dishes": "Немає страв за цими фільтрами",
+    "dishes_count": "{count} страва | {count} страви | {count} страв",
+    "hidden_contains": "Приховано {count} страву, бо містить: {names} | Приховано {count} страви, бо містять: {names} | Приховано {count} страв, бо містять: {names}",
+    "show": "Показати"
   },
   "languages": {
     "title": "Мови",
@@ -52,17 +69,29 @@
     "time_until_opening": "{time} до відкриття"
   },
   "schedule": {
-    "hour_short": "год",
-    "minute_short": "хв",
-    "T_until_closing": "{time}",
-    "T_before_opening": "{time}",
     "monday": "Понеділок",
     "tuesday": "Вівторок",
     "wednesday": "Середа",
     "thursday": "Четвер",
     "friday": "П'ятниця",
     "saturday": "Субота",
-    "sunday": "Неділя"
+    "sunday": "Неділя",
+    "until": "до {time}",
+    "closing_soon": "Скоро зачиняється",
+    "opens_soon": "Скоро відчиняється",
+    "closes_in": "Зачиниться через {count} хвилину | Зачиниться через {count} хвилини | Зачиниться через {count} хвилин",
+    "opens_in": "Відчиниться через {count} хвилину | Відчиниться через {count} хвилини | Відчиниться через {count} хвилин",
+    "opens_at": "відчиниться о {time}",
+    "opens_day_at": "відчиниться {day} о {time}",
+    "short": {
+      "monday": "пн",
+      "tuesday": "вт",
+      "wednesday": "ср",
+      "thursday": "чт",
+      "friday": "пт",
+      "saturday": "сб",
+      "sunday": "нд"
+    }
   },
   "weight_unit": {
     "g": "г",
@@ -110,7 +139,6 @@
     "peanuts": "Арахіс",
     "seeds": "Насіння",
     "milk": "Молоко",
-    "allergens": "Алергени",
     "hotness": {
       "Unknown": "",
       "Low": "(трохи)",
@@ -120,7 +148,17 @@
     }
   },
   "product": {
-    "variants": "Розміри",
-    "no_media": "Немає зображень"
+    "no_media": "Немає зображень",
+    "sizes": "Розміри",
+    "contains_allergens": "Містить алергени"
+  },
+  "drawer": {
+    "close": "Закрити"
+  },
+  "nav": {
+    "back": "Назад до закладу",
+    "language": "Мова: {name}",
+    "search": "Пошук",
+    "browse": "Меню та категорії"
   }
 }

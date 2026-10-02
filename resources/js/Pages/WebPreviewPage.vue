@@ -277,6 +277,9 @@
   const showGoToTop = ref(false)
   const isGoingToTop = ref(false)
 
+  // Height of the nav row (back, language, search) above the menus and categories
+  const NAV_HEIGHT = 60
+
   const goToTop = () => {
     showGoToTop.value = false
     ignoringScroll.value = true
@@ -304,7 +307,7 @@
     // Get the current scroll position
     const scrollPosition = window.pageYOffset || document.documentElement.scrollTop
 
-    if (scrollPosition > 48) {
+    if (scrollPosition > NAV_HEIGHT) {
       if (!scrolledToSticky.value) {
         scrolledToSticky.value = true
         showGoToTop.value = false
@@ -428,37 +431,10 @@
 
       const stickyHeight = stickyRef.value?.clientHeight ?? 96
 
-      let productDivider: HTMLElement | null = null
+      const productElement = product ? document.getElementById('product-' + product.id) : null
 
-      if (product) {
-        top += (divider.children[0]?.clientHeight ?? 0) + 12
-
-        const productsContainer = document.getElementById('category-' + category.id + '-products')
-
-        if (productsContainer) {
-          productDivider = document.getElementById('product-' + product.id) as HTMLElement
-
-          if (productDivider) {
-            let offset = 0
-            const children = productsContainer.children
-
-            for (let i = 0; i < children.length; i++) {
-              const el = children[i] as HTMLElement
-
-              if (i !== 0) {
-                offset += 4
-              }
-
-              if (el.attributes.getNamedItem('id')?.value === 'product-' + product.id) {
-                break
-              }
-
-              offset += el.clientHeight + 4
-            }
-
-            top += offset
-          }
-        }
+      if (productElement) {
+        top = productElement.getBoundingClientRect().top
       }
 
       window.scrollTo({
@@ -857,7 +833,7 @@
     <div class="w-full max-w-md flex flex-col justify-center items-center">
       <template v-if="mode === 'restaurant'">
         <div class="w-full max-w-md absolute top-0 h-75 bg-base-200/20 border-b-1 border-base-300 overflow-hidden flex flex-col justify-center">
-          <DiagonalPattern class="scale-165 opacity-60 text-warning-content/80"
+          <DiagonalPattern class="scale-165 text-primary-content/50"
                            :establishment="restaurant?.establishment ?? 'restaurant'"/>
         </div>
 
@@ -867,9 +843,47 @@
       </template>
 
       <template v-else>
-        <div class="h-13"/>
-
         <div class="w-full max-w-md flex flex-col justify-start items-center relative">
+          <!-- Nav row at the top of the page; only the menus and categories stick -->
+          <div class="w-full p-2">
+            <NavBar :back="true"
+                    @on-back="onBackFromMenu"
+                    @on-search="onOpenSearch"
+                    @on-language="onOpenLanguage"/>
+          </div>
+
+          <div class="w-full sticky top-0 z-10 bg-base-100 border-y border-base-300"
+               ref="stickyRef"
+               :class="{'shadow-md': scrolledToSticky}"
+               v-if="products || !productsFailed">
+            <Deferred :data="products">
+              <template #fallback>
+                <div class="w-full min-h-[92px] flex flex-col justify-center items-center">
+                  <div class="loading loading-dots loading-lg text-primary/40"/>
+                </div>
+              </template>
+
+              <MenuNavBar class="w-full"
+                          :menus="menus"
+                          :selected="selectedMenu"
+                          @switch-menu="onSwitchMenu"
+                          @open-drawer="isSearchWithAutofocus = false; isSearchOpened = true;"/>
+
+              <CategoryNavBar class="w-full"
+                              :categories="selectedMenu?.categories ?? []"
+                              :selected="selectedCategory"
+                              @switch-category="onSwitchCategory"/>
+
+              <transition name="go-to-top">
+                <button class="text-sm px-2 py-1 font-semibold rounded-sm flex justify-center items-center absolute left-[50%] translate-x-[-50%] top-full mt-2 z-10 backdrop-blur-sm bg-neutral/35 text-white border-none uppercase cursor-pointer"
+                        v-if="showGoToTop && !isGoingToTop && scrolledToSticky"
+                        @click="goToTop">
+                  {{ i18n.t('menu.go_to_top') }}
+                </button>
+              </transition>
+            </Deferred>
+          </div>
+
           <!-- Menus list -->
           <Deferred :data="products">
             <template #fallback>
@@ -885,40 +899,10 @@
                 </button>
               </div>
 
-              <template v-else>
-                <div class="w-full min-h-[88px] flex flex-col justify-center items-center sticky top-0 bg-base-100 z-10 border-1 border-base-300"
-                     :class="{'shadow-md': scrolledToSticky}">
-                  <div class="loading loading-dots loading-lg text-warning/40"/>
-                </div>
-
-                <LoadingMenuInList/>
-              </template>
+              <LoadingMenuInList v-else/>
             </template>
 
-            <div class="w-full sticky top-0 bg-base-100 z-10 border-1 border-base-300"
-                 ref="stickyRef"
-                 :class="{'shadow-md': scrolledToSticky}">
-              <MenuNavBar class="w-full"
-                          :menus="menus"
-                          :selected="selectedMenu"
-                          @switch-menu="onSwitchMenu"
-                          @open-drawer="isSearchWithAutofocus = false; isSearchOpened = true;"/>
-
-              <CategoryNavBar class="w-full"
-                              :categories="selectedMenu?.categories ?? []"
-                              :selected="selectedCategory"
-                              @switch-category="onSwitchCategory"/>
-
-              <transition name="go-to-top">
-                <button class="text-sm px-2 py-1 font-semibold rounded-sm flex justify-center items-center absolute left-[50%] translate-x-[-50%] top-[96px] z-10 backdrop-blur-sm bg-neutral/35 text-white border-none uppercase cursor-pointer"
-                        v-if="showGoToTop && !isGoingToTop && scrolledToSticky"
-                        @click="goToTop">
-                  {{ i18n.t('menu.go_to_top') }}
-                </button>
-              </transition>
-            </div>
-
-            <div class="w-full flex flex-col pb-[250px]">
+            <div class="w-full flex flex-col">
               <MenuInList :menu="selectedMenu ?? null"
                           :products="products ?? []"
                           :closed="false"
@@ -932,10 +916,9 @@
         </div>
       </template>
 
-      <div class="min-h-13 w-full max-w-md absolute top-0 p-2">
-        <NavBar :back="mode === 'menu'"
-                @on-back="onBackFromMenu"
-                @on-search="onOpenSearch"
+      <div class="min-h-13 w-full max-w-md absolute top-0 p-2"
+           v-if="mode === 'restaurant'">
+        <NavBar @on-search="onOpenSearch"
                 @on-language="onOpenLanguage"/>
       </div>
 

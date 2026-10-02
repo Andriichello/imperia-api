@@ -38,14 +38,14 @@
 </script>
 
 <template>
-  <div class="w-full flex flex-col px-2"
-       :id="'category-' + category.id">
-    <div class="w-full flex flex-col text-center p-2 bg-warning/20 border-1 border-warning/60 text-warning-content rounded-t-xl mt-4 cursor-pointer"
+  <section class="w-full flex flex-col px-2 mt-4"
+           :id="'category-' + category.id">
+    <div class="w-full flex flex-col text-center py-2.5 px-3 bg-primary/20 border border-primary/60 rounded-t-xl cursor-pointer"
          @click="emits('switch-category', category)">
-      <h3 class="text-xl">
+      <h2 class="text-[22px]/[30px] font-semibold text-primary-content">
         {{ category.title }}
-      </h3>
-      <p class="text-md font-light opacity-80"
+      </h2>
+      <p class="text-[15px]/[22px] text-base-content/65"
          v-if="category.description?.length">
         {{ category.description }}
       </p>
@@ -53,11 +53,11 @@
 
     <template v-if="!products!.length">
       <div class="w-full flex flex-col text-center p-2">
-        <h3 class="text-md text-light">{{ i18n.t('menu.empty_category') }}</h3>
+        <p class="text-[15px]/[22px] text-base-content/65">{{ i18n.t('menu.empty_category') }}</p>
       </div>
     </template>
 
-    <div class="w-full flex flex-col py-2 gap-2"
+    <div class="w-full flex flex-col"
          :id="'category-' + category.id + '-products'"
          v-else>
       <template v-for="product in products" :key="product.id">
@@ -68,8 +68,8 @@
                        :establishment="establishment"
                        @product-click="onProductClick"/>
 
-        <div class="w-full h-[1px] flex flex-col bg-warning-content/25"/>
+        <div class="h-px mx-2 bg-[#e8e8e8]"/>
       </template>
     </div>
-  </div>
+  </section>
 </template>

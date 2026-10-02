@@ -1,5 +1,5 @@
 import {DateTime} from "luxon";
-import {Restaurant, Schedule, ScheduleWeekday} from "@/api";
+import {Dish, DishVariant, Restaurant, Schedule, ScheduleWeekday} from "@/api";
 import { t } from "@/i18n/utils";
 
 export function priceFormatted(price: number | null, currencyCode: string = 'uah'): string | null {
@@ -24,6 +24,33 @@ export function priceFormatted(price: number | null, currencyCode: string = 'uah
 export function weightUnitFormatted(unit: string): string {
     // Get the weight unit from translations, default to the unit code if not available
     return t(`weight_unit.${unit.toLowerCase()}`) || unit;
+}
+
+/** One size of a dish: the dish itself (id is null) or one of its variants. */
+export type DishSize = Pick<DishVariant, 'price' | 'weight' | 'weight_unit' | 'calories' | 'preparation_time'>
+  & {id: number | null};
+
+/** Sizes of a dish, the dish itself included, from the cheapest. */
+export function getDishSizes(dish: Dish): DishSize[] {
+    const base: DishSize = {
+        id: null,
+        price: dish.price,
+        weight: dish.weight,
+        weight_unit: dish.weight_unit,
+        calories: dish.calories,
+        preparation_time: dish.preparation_time,
+    };
+
+    return [base, ...(dish.variants ?? [])].sort((a, b) => a.price - b.price);
+}
+
+/** Weight of a dish size with its unit, e.g. "300 g", or an empty string. */
+export function sizeWeightFormatted(size: DishSize): string {
+    if (size.weight === null || size.weight === undefined || size.weight === '') {
+        return '';
+    }
+
+    return `${size.weight} ${size.weight_unit ? weightUnitFormatted(size.weight_unit) : ''}`.trim();
 }
 
 export function sortSchedules(items: Schedule[]): Schedule[] {
@@ -119,14 +146,24 @@ export interface ScheduleCalculations {
   closestEndDate: DateTime,
 }
 
+/** Minutes before closing or opening that count as closing or opening soon. */
+export const SOON_MINUTES = 60;
+
+export type ScheduleState = 'open' | 'closing_soon' | 'opens_soon' | 'closed';
+
 export interface ScheduleInfo {
-  status: 'Open' | 'Closed',
+  state: ScheduleState,
   active: (ScheduleCalculations & Schedule) | null,
   relevant: (ScheduleCalculations & Schedule) | null,
   upcoming: (ScheduleCalculations & Schedule)[],
   // Days with hours, from Monday to Sunday, closed ones (archived) included
   schedules: Schedule[],
-  timeBeforeOrUntil: string | '-',
+  // Weekday of the restaurant's current date
+  today: ScheduleWeekday,
+  // Closed now, opens later today
+  opensToday: boolean,
+  // Minutes until closing (when open) or opening (when closed), rounded up
+  minutesLeft: number | null,
 }
 
 export function getScheduleInfo(restaurant: Restaurant): ScheduleInfo {
@@ -140,45 +177,25 @@ export function getScheduleInfo(restaurant: Restaurant): ScheduleInfo {
   const active = relevant && relevant.closestBegDate <= now && now < relevant.closestEndDate
     ? relevant : null;
 
-  const status = !!active ? 'Open' : 'Closed';
+  const minutesLeft = relevant
+    ? Math.ceil((active ? relevant.closestEndDate : relevant.closestBegDate).diff(now, 'minutes').minutes)
+    : null;
 
-  const duration = (until: DateTime) => {
-    const minutes = Math.trunc(until.diff(now, 'minutes').minutes);
-    const hours = Math.trunc(minutes / 60);
+  let state: ScheduleState = active ? 'open' : 'closed';
 
-    let time = '';
-
-    if (hours > 0) {
-      time += hours + t('schedule.hour_short');
-    }
-
-    if (minutes % 60 > 0) {
-      if (hours > 0) {
-        time += ' ';
-      }
-
-      time += (minutes % 60) + t('schedule.minute_short');
-    }
-
-    return time;
-  };
-
-  const timeBeforeOrUntil = () => {
-    if (!relevant) {
-      return '-';
-    }
-
-    return active
-      ? t('schedule.T_until_closing', { time: duration(relevant.closestEndDate) })
-      : t('schedule.T_before_opening', { time: duration(relevant.closestBegDate) });
-  };
+  if (minutesLeft !== null && minutesLeft <= SOON_MINUTES) {
+    state = active ? 'closing_soon' : 'opens_soon';
+  }
 
   return {
-    status,
+    state,
     active,
     relevant,
     upcoming,
     schedules: sortSchedules(restaurant.schedules ?? []),
-    timeBeforeOrUntil: timeBeforeOrUntil(),
-  } as ScheduleInfo;
+    // Luxon's weekdays go from 1 (Monday) to 7 (Sunday)
+    today: Object.values(ScheduleWeekday)[now.weekday - 1],
+    opensToday: !!relevant && !active && relevant.closestBegDate.hasSame(now, 'day'),
+    minutesLeft,
+  };
 }

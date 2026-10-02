@@ -11,13 +11,13 @@
     "pizzeria_title": "Pizzeria",
     "bar_title": "Bar",
     "no_menus": "Unfortunately, there are no menus available now",
-    "working_hours": "Working hours:",
+    "working_hours": "Working hours",
     "open": "Open",
     "closed": "Closed",
-    "until_closing": "until closing",
-    "until_opening": "until opening",
-    "phone": "Phone:",
-    "location": "Location:"
+    "phone": "Phone",
+    "location": "Location",
+    "copy_phone": "Copy phone number",
+    "copy_address": "Copy address"
   },
   "menu": {
     "title": "Menu",
@@ -33,7 +33,24 @@
     "products": "Dishes",
     "no_results": "No results found",
     "start_typing": "Start typing to search for menus, categories, dishes...",
-    "clear_query": "Clear search"
+    "clear_query": "Clear search",
+    "label": "Search the menu",
+    "filter_banner": "Filter by diet, spiciness or ingredients",
+    "filters": "Filters",
+    "clear_all": "Clear all",
+    "edit_filters": "Edit filters",
+    "remove_filter": "Remove filter: {name}",
+    "diet": "Diet",
+    "spiciness": "Spiciness",
+    "spicy": "Spicy",
+    "not_spicy": "Not spicy",
+    "exclude_ingredients": "Exclude ingredients",
+    "without": "No {name}",
+    "show_dishes": "Show {count} dish | Show {count} dishes",
+    "no_matching_dishes": "No dishes match these filters",
+    "dishes_count": "{count} dish | {count} dishes",
+    "hidden_contains": "{count} dish hidden because it contains {names} | {count} dishes hidden because they contain {names}",
+    "show": "Show"
   },
   "languages": {
     "title": "Languages",
@@ -52,17 +69,29 @@
     "time_until_opening": "{time} until opening"
   },
   "schedule": {
-    "hour_short": "h",
-    "minute_short": "m",
-    "T_until_closing": "{time}",
-    "T_before_opening": "{time}",
     "monday": "Monday",
     "tuesday": "Tuesday",
     "wednesday": "Wednesday",
     "thursday": "Thursday",
     "friday": "Friday",
     "saturday": "Saturday",
-    "sunday": "Sunday"
+    "sunday": "Sunday",
+    "until": "until {time}",
+    "closing_soon": "Closing soon",
+    "opens_soon": "Opens soon",
+    "closes_in": "Closes in {count} minute | Closes in {count} minutes",
+    "opens_in": "Opens in {count} minute | Opens in {count} minutes",
+    "opens_at": "opens at {time}",
+    "opens_day_at": "opens {day} {time}",
+    "short": {
+      "monday": "Mon",
+      "tuesday": "Tue",
+      "wednesday": "Wed",
+      "thursday": "Thu",
+      "friday": "Fri",
+      "saturday": "Sat",
+      "sunday": "Sun"
+    }
   },
   "weight_unit": {
     "g": "g",
@@ -110,7 +139,6 @@
     "peanuts": "Peanuts",
     "seeds": "Seeds",
     "milk": "Milk",
-    "allergens": "Allergens",
     "hotness": {
       "Unknown": "",
       "Low": "(mild)",
@@ -120,7 +148,17 @@
     }
   },
   "product": {
-    "variants": "Variants",
-    "no_media": "No media"
+    "no_media": "No media",
+    "sizes": "Sizes",
+    "contains_allergens": "Contains allergens"
+  },
+  "drawer": {
+    "close": "Close"
+  },
+  "nav": {
+    "back": "Back to restaurant",
+    "language": "Language: {name}",
+    "search": "Search",
+    "browse": "Menus and categories"
   }
 }

@@ -60,6 +60,21 @@ export function getDishTags(flags: string[] | null | undefined): DishTag[] {
       : tag);
 }
 
+/** Allergen flags in the order they are listed in. */
+export const ALLERGENS: string[] = [
+  'alg-wheat',
+  'alg-milk',
+  'alg-eggs',
+  'alg-nuts',
+  'alg-peanuts',
+  'alg-sesame',
+  'alg-soy',
+  'alg-fish',
+  'alg-shellfish',
+  'alg-celery',
+  'alg-seeds',
+];
+
 /** Allergen flags (`alg-…`) of a dish. */
 export function getAllergens(flags: string[] | null | undefined): string[] {
   return (flags ?? []).filter((flag) => flag.startsWith('alg-'));
