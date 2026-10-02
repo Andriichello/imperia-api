@@ -3,6 +3,7 @@
   import { computed, ref, watch, PropType, nextTick } from "vue";
   import { Restaurant, DishCategory, DishMenu, Dish } from "@/api";
   import SearchWithList from "@/Components/Drawer/SearchWithList.vue";
+  import LanguageButton from "@/Components/Base/LanguageButton.vue";
 
   const props = defineProps({
     open: {
@@ -40,7 +41,7 @@
     },
   });
 
-  const emits = defineEmits(['close', 'open-menu', 'open-category', 'open-product', 'query-updated']);
+  const emits = defineEmits(['close', 'open-menu', 'open-category', 'open-product', 'open-language', 'query-updated']);
 
   const searchInputRef = ref<HTMLInputElement | null>(null);
   const hasResults = ref(false);
@@ -98,6 +99,9 @@
 <template>
   <BaseDrawer :open="open"
               @close="close">
+    <template #actions>
+      <LanguageButton @click="emits('open-language')"/>
+    </template>
 
     <div class="w-full h-full flex flex-col">
       <SearchWithList class="min-h-0"
@@ -116,37 +120,40 @@
                       @query-updated="onQueryUpdated"
                       @filtering-changed="onFilteringChanged"/>
 
-      <div class="w-full flex-1 min-h-0 flex flex-col pt-1 px-3 pb-[250px] overflow-auto"
+      <!-- The padding is inside, so it doesn't make the list taller than the space left for it -->
+      <div class="w-full flex-1 min-h-0 overflow-auto"
            v-if="browsing">
-        <template v-for="menu in menus" :key="menu.id">
-          <div class="w-full flex flex-col text-start p-3 cursor-pointer"
-               @click="openMenu(menu)">
-            <h3 class="text-xl/7 font-bold">
-              {{ menu.title }}
-            </h3>
-            <p class="text-[15px]/[22px] text-base-content/65"
-               v-if="menu.description?.length">
-              {{ menu.description }}
-            </p>
-          </div>
+        <div class="w-full flex flex-col pt-1 px-3 pb-[250px]">
+          <template v-for="menu in menus" :key="menu.id">
+            <div class="w-full flex flex-col text-start p-3 cursor-pointer"
+                 @click="openMenu(menu)">
+              <h3 class="text-xl/7 font-bold">
+                {{ menu.title }}
+              </h3>
+              <p class="text-[15px]/[22px] text-base-content/65"
+                 v-if="menu.description?.length">
+                {{ menu.description }}
+              </p>
+            </div>
 
-          <div class="w-full flex flex-col pl-5">
-            <template v-for="category in menu.categories" :key="category.id">
-              <div class="w-full min-h-12 flex flex-col justify-center text-start py-2.5 px-3 cursor-pointer"
-                   @click="openCategory(category, menu)">
-                <h4 class="text-[17px]/[26px] font-semibold">
-                  {{ category.title }}
-                </h4>
-                <p class="text-[15px]/[22px] text-base-content/65"
-                   v-if="category!.description?.length">
-                  {{ category.description }}
-                </p>
-              </div>
-            </template>
-          </div>
+            <div class="w-full flex flex-col pl-5">
+              <template v-for="category in menu.categories" :key="category.id">
+                <div class="w-full min-h-12 flex flex-col justify-center text-start py-2.5 px-3 cursor-pointer"
+                     @click="openCategory(category, menu)">
+                  <h4 class="text-[17px]/[26px] font-semibold">
+                    {{ category.title }}
+                  </h4>
+                  <p class="text-[15px]/[22px] text-base-content/65"
+                     v-if="category!.description?.length">
+                    {{ category.description }}
+                  </p>
+                </div>
+              </template>
+            </div>
 
-          <div class="w-full h-px shrink-0 bg-base-300"/>
-        </template>
+            <div class="w-full h-px shrink-0 bg-base-300"/>
+          </template>
+        </div>
       </div>
     </div>
   </BaseDrawer>

@@ -104,23 +104,6 @@ const closePopup = () => {
                v-if="product.description?.length">
               {{ product.description }}
             </p>
-
-            <DishTags class="text-sm/5" icon-class="size-4" :flags="product.flags"/>
-          </div>
-
-          <div class="flex flex-col gap-2 p-3 rounded-lg bg-orange-700/6 border border-orange-700/25"
-               v-if="allergens.length">
-            <h3 class="flex items-center gap-1.5 text-base/6 font-semibold text-orange-700">
-              <TriangleAlert class="size-[18px] shrink-0"/>
-              {{ i18n.t('product.contains_allergens') }}
-            </h3>
-
-            <div class="flex flex-wrap gap-2">
-              <span class="px-2.5 py-1 rounded bg-base-100 border border-orange-700/35 text-orange-700 text-sm/5 font-semibold"
-                    v-for="allergen in allergens" :key="allergen">
-                {{ i18n.t(getAllergenLabel(allergen)) }}
-              </span>
-            </div>
           </div>
 
           <div class="flex flex-col gap-2">
@@ -154,6 +137,23 @@ const closePopup = () => {
 
               <span class="text-xl/7 font-bold whitespace-nowrap">
                 {{ priceFormatted(size.price, currency?.toLowerCase() ?? 'uah') }}
+              </span>
+            </div>
+          </div>
+
+          <DishTags class="text-sm/5" icon-class="size-4" :flags="product.flags"/>
+
+          <div class="flex flex-col gap-1.5 p-2.5 rounded-lg bg-orange-700/6 border border-orange-700/25"
+               v-if="allergens.length">
+            <h3 class="flex items-center gap-1 text-sm/5 font-semibold text-orange-700">
+              <TriangleAlert class="size-4 shrink-0"/>
+              {{ i18n.t('product.contains_allergens') }}
+            </h3>
+
+            <div class="flex flex-wrap gap-1.5">
+              <span class="px-2 py-0.5 rounded bg-base-100 border border-orange-700/35 text-orange-700 text-[13px]/5 font-semibold"
+                    v-for="allergen in allergens" :key="allergen">
+                {{ i18n.t(getAllergenLabel(allergen)) }}
               </span>
             </div>
           </div>

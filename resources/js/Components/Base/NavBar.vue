@@ -1,7 +1,8 @@
 <script setup lang="ts">
-  import {ChevronLeft, Search, Languages} from "lucide-vue-next";
+  import {ChevronLeft, Search} from "lucide-vue-next";
   import {PropType} from "vue";
   import {useI18n} from "vue-i18n";
+  import LanguageButton from "@/Components/Base/LanguageButton.vue";
 
   const props = defineProps({
     back: {
@@ -28,13 +29,7 @@
     </div>
 
     <div class="flex gap-2">
-      <button type="button"
-              class="h-11 inline-flex items-center justify-center gap-1.5 px-3 rounded border border-[#e8e8e8] bg-base-100 text-base-content text-sm font-semibold cursor-pointer"
-              :aria-label="i18n.t('nav.language', {name: i18n.t('languages.names.' + i18n.locale.value)})"
-              @click="emits('on-language')">
-        <Languages class="size-5"/>
-        <span>{{ i18n.locale.value.toUpperCase() }}</span>
-      </button>
+      <LanguageButton @click="emits('on-language')"/>
 
       <button type="button"
               class="size-11 flex items-center justify-center rounded border border-[#e8e8e8] bg-base-100 text-base-content cursor-pointer"

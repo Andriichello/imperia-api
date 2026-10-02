@@ -930,7 +930,8 @@
                     @close="isSearchOpened = false"
                     @open-menu="onSwitchMenu"
                     @open-category="onSwitchCategory"
-                    @open-product="onSwitchProduct"/>
+                    @open-product="onSwitchProduct"
+                    @open-language="onOpenLanguage"/>
 
       <LanguageDrawer :open="isLanguageOpened"
                       :locale="locale"

@@ -44,7 +44,6 @@
           </template>
 
           <td class="p-2 text-end text-base/6"
-              :class="{'text-red-700': weekday === info.today}"
               colspan="2"
               v-else>
             {{ i18n.t('restaurant.closed') }}
