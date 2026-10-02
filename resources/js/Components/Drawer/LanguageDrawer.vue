@@ -1,7 +1,6 @@
 <script setup lang="ts">
   import BaseDrawer from "@/Components/Drawer/BaseDrawer.vue";
   import {PropType, ref, watch} from "vue";
-  import { switchLanguage } from "@/i18n/utils";
 
   const props = defineProps({
     open: {

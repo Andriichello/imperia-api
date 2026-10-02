@@ -4,7 +4,9 @@ import {Splide, SplideSlide} from "@splidejs/vue-splide";
 import {ref, computed, PropType} from "vue";
 import {priceFormatted, weightUnitFormatted} from "@/helpers";
 import DiagonalPattern from "@/Components/Base/DiagonalPattern.vue";
-import {Timer, Flame, Vegan, Leaf, Salad, Milk, Droplet, DropletOff, Dumbbell, MilkOff, TriangleAlert } from "lucide-vue-next";
+import {Timer, Flame, TriangleAlert} from "lucide-vue-next";
+import DishTags from "@/Components/Menu/DishTags.vue";
+import {getAllergens} from "@/flags";
 import { useI18n } from "vue-i18n";
 
 const i18n = useI18n();
@@ -118,16 +120,7 @@ const preparationTime = computed(() => {
   return props.product!.preparation_time;
 });
 
-const allergens = computed(() => {
-  if (!props.product.flags) return [];
-  return props.product.flags.filter(flag => flag.startsWith('alg-'));
-});
-
-const getAllergenTranslation = (allergen: string) => {
-  // Remove 'alg-' prefix to get the allergen name
-  const allergenName = allergen.replace('alg-', '');
-  return i18n.t(`badges.${allergenName}`);
-};
+const allergens = computed(() => getAllergens(props.product.flags));
 
 const variantWeight = (variant: Partial<DishVariant>) => {
   return variant.weight + ' '
@@ -221,102 +214,7 @@ const selectVariant = (variant: Partial<DishVariant> | null) => {
           </div>
         </div>
 
-        <div class="flex flex-wrap gap-x-3 gap-y-0.5 normal-case text-[12px] text-base-content/60 opacity-70 mt-1">
-          <div v-if="product.flags?.includes('vegan')" class="flex flex-row justify-center items-center gap-1">
-            <Vegan class="w-4 h-4"/>
-            <p class="font-semibold pt-0.5">
-              {{ i18n.t('badges.vegan') }}
-            </p>
-          </div>
-
-          <div v-if="product.flags?.includes('low-calorie')" class="flex flex-row justify-center items-center gap-1">
-            <Salad class="w-4 h-4"/>
-            <p class="font-semibold pt-0.5">
-              {{ i18n.t('badges.low_calorie') }}
-            </p>
-          </div>
-
-          <div v-if="product.flags?.includes('vegetarian')" class="flex flex-row justify-center items-center gap-1">
-            <Leaf class="w-4 h-4"/>
-            <p class="font-semibold pt-0.5">
-              {{ i18n.t('badges.vegetarian') }}
-            </p>
-          </div>
-
-          <div v-if="product.flags?.find((flag: string) => flag?.endsWith('hotness'))" class="flex flex-row justify-center items-center gap-1">
-            <Flame class="w-4 h-4"/>
-            <p class="font-semibold pt-0.5">
-              <template v-if="product.flags?.includes('extreme-hotness')">
-                {{ i18n.t('badges.extreme_hot') }}
-              </template>
-              <template v-else-if="product.flags?.includes('high-hotness')">
-                {{ i18n.t('badges.high_hot') }}
-              </template>
-              <template v-else-if="product.flags?.includes('medium-hotness')">
-                {{ i18n.t('badges.medium_hot') }}
-              </template>
-              <template v-else-if="product.flags?.includes('low-hotness')">
-                {{ i18n.t('badges.low_hot') }}
-              </template>
-              <template v-else>
-                {{ i18n.t('badges.hot') }}
-              </template>
-            </p>
-          </div>
-
-          <!-- Lactose related -->
-          <div v-if="product.flags?.includes('lactose-free')" class="flex flex-row justify-center items-center gap-1">
-            <Milk class="w-4 h-4"/>
-            <p class="font-semibold pt-0.5">
-              {{ i18n.t('badges.lactose_free') }}
-            </p>
-          </div>
-
-          <div v-if="product.flags?.includes('dairy-free')" class="flex flex-row justify-center items-center gap-1">
-            <MilkOff class="w-4 h-4"/>
-            <p class="font-semibold pt-0.5">
-              {{ i18n.t('badges.dairy_free') }}
-            </p>
-          </div>
-
-          <div v-if="product.flags?.includes('plant-milk')" class="flex flex-row justify-center items-center gap-1">
-            <Milk class="w-4 h-4"/>
-            <p class="font-semibold pt-0.5">
-              {{ i18n.t('badges.plant_milk') }}
-            </p>
-          </div>
-
-          <!-- Calorie related -->
-          <div v-if="product.flags?.includes('high-calorie')" class="flex flex-row justify-center items-center gap-1">
-            <Flame class="w-4 h-4"/>
-            <p class="font-semibold pt-0.5">
-              {{ i18n.t('badges.high_calorie') }}
-            </p>
-          </div>
-
-          <!-- Protein related -->
-          <div v-if="product.flags?.includes('high-protein')" class="flex flex-row justify-center items-center gap-1">
-            <Dumbbell class="w-4 h-4"/>
-            <p class="font-semibold pt-0.5">
-              {{ i18n.t('badges.high_protein') }}
-            </p>
-          </div>
-
-          <!-- Fat related -->
-          <div v-if="product.flags?.includes('low-fat')" class="flex flex-row justify-center items-center gap-1">
-            <DropletOff class="w-4 h-4"/>
-            <p class="font-semibold pt-0.5">
-              {{ i18n.t('badges.low_fat') }}
-            </p>
-          </div>
-
-          <div v-if="product.flags?.includes('high-fat')" class="flex flex-row justify-center items-center gap-1">
-            <Droplet class="w-4 h-4"/>
-            <p class="font-semibold pt-0.5">
-              {{ i18n.t('badges.high_fat') }}
-            </p>
-          </div>
-        </div>
+        <DishTags class="text-[12px] mt-1" :flags="product.flags"/>
       </div>
 
       <div class="card-actions justify-between items-end">

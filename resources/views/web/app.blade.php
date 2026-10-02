@@ -13,8 +13,6 @@
     @php
       $props = [
           // shared props
-          "auth" => $auth ?? null,
-          "flash" => $flash ?? null,
           "locale" => $locale ?? null,
           "supported_locales" => $supported_locales ?? null,
           // specific props

@@ -7,13 +7,10 @@ use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\ForceJsonOnApi;
 use App\Http\Middleware\HandleCached;
-use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\RedirectIfAuthenticated;
-use App\Http\Middleware\SetLocaleFromUrl;
 use App\Http\Middleware\TrimStrings;
 use App\Http\Middleware\VerifyCsrfToken;
-use App\Http\Middleware\WithoutDataWrapping;
 use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
 use Illuminate\Auth\Middleware\Authorize;
 use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
@@ -71,12 +68,6 @@ class Kernel extends HttpKernel
             ShareErrorsFromSession::class,
             VerifyCsrfToken::class,
             SubstituteBindings::class,
-        ],
-
-        'inertia' => [
-            SetLocaleFromUrl::class,
-            WithoutDataWrapping::class,
-            HandleInertiaRequests::class,
         ],
 
         'api' => [

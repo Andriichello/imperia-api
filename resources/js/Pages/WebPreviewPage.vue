@@ -13,17 +13,14 @@
   import MenuInList from '@/Components/Menu/MenuInList.vue'
   import MenuNavBar from '@/Components/Menu/MenuNavBar.vue'
   import CategoryNavBar from '@/Components/Menu/CategoryNavBar.vue'
-  import {getScheduleInfo, ScheduleInfo} from '@/helpers'
-  import {useScrollLock} from '@/composables/useScrollLock'
   import LoadingMenuInList from '@/Components/Menu/LoadingMenuInList.vue'
   import ProductDrawer from '@/Components/Drawer/ProductDrawer.vue'
-  import LoadingProductInListRightMedia from '@/Components/Menu/LoadingProductInListRightMedia.vue'
   import {useAppStore} from '@/stores/app'
   import {usePreviewStore} from '@/stores/preview'
 
   // Stores & shared props from Blade
   const app = useAppStore()
-  const restaurant = computed<Restaurant>(() => app.restaurant as unknown as Restaurant)
+  const restaurant = computed<Restaurant>(() => app.restaurant as Restaurant)
   const menus = computed<DishMenu[]>(() => app.menus || [])
   const locale = computed(() => app.locale)
   const supported_locales = computed(() => app.supported_locales)
@@ -32,7 +29,6 @@
 
   // Preview store (products)
   const preview = usePreviewStore()
-  const loadingProducts = computed(() => preview.loading)
   const productsFailed = computed(() => preview.error)
 
   // Dishes are shown only in a visible category of a visible menu, so the
@@ -55,40 +51,6 @@
   const isSearchWithAutofocus = ref(true)
 
   const mode = ref<string>(window.location.pathname.includes('/menu') ? 'menu' : 'restaurant')
-
-  const scheduleInfo = computed<ScheduleInfo>(() => getScheduleInfo(restaurant.value))
-
-  const getEstablishmentTitle = computed(() => {
-    const establishment = restaurant.value?.establishment?.toLowerCase()
-
-    if (!establishment) {
-      return i18n.t('restaurant.title')
-    }
-
-    if (establishment.includes('café') || establishment.includes('cafe')) {
-      return i18n.t('restaurant.cafe_title')
-    }
-
-    if (establishment.includes('bakery')) {
-      return i18n.t('restaurant.bakery_title')
-    }
-
-    if (establishment.includes('bistro')) {
-      return i18n.t('restaurant.bistro_title')
-    }
-
-    if (establishment.includes('pizzeria')) {
-      return i18n.t('restaurant.pizzeria_title')
-    }
-
-    if (establishment.includes('bar')) {
-      return i18n.t('restaurant.bar_title')
-    }
-
-    return i18n.t('restaurant.title')
-  })
-
-  const scheduleExpanded = ref(false)
 
   // Resolve ids from URL within the /{locale}/web base
   function resolveRestaurantId() {
@@ -203,8 +165,6 @@
 
   // Navigation & History helpers
   type HistoryAction = 'push' | 'replace'
-
-  const navigationLock = ref(false)
 
   function getBasePath(): string {
     return window.location.pathname.split('/menu/')[0]
@@ -497,8 +457,6 @@
             }
 
             top += offset
-
-            console.log({ top, offset, productDivider })
           }
         }
       }
@@ -583,18 +541,6 @@
       productPage: false,
       scrollY: 0,
     })
-  }
-
-  function onOpenPhone(phone: string | null) {
-    if (window && phone?.length > 0) {
-      window.open(`tel:${phone}`, '_blank')
-    }
-  }
-
-  function onOpenAddress(address: string | null) {
-    if (window && address?.length > 0) {
-      window.open(`https://www.google.com/maps/search/?api=1&query=${address}`, '_blank')
-    }
   }
 
   // Methods for Drawers
@@ -724,27 +670,10 @@
   }
 
   const onSwitchLanguage = (l: string) => {
-    switchLanguage(i18n, l, true)
+    switchLanguage(i18n, l)
   }
-
-  const { disableScroll, enableScroll } = useScrollLock()
-
-  const isScrollDisabled = ref(false)
-
-  function toggleScroll() {
-    if (!isScrollDisabled.value) {
-      disableScroll(document.documentElement)
-      isScrollDisabled.value = true
-    } else {
-      enableScroll()
-      isScrollDisabled.value = false
-    }
-  }
-
 
   function applyStateFromUrl(state: any = window.history.state) {
-    navigationLock.value = true
-
     // Parse IDs from URL
     resolveAllIds()
 
@@ -772,10 +701,6 @@
     const desiredY = typeof state?.scrollY === 'number' ? state.scrollY : null
     const category = selectedCategory.value ?? (categoryId.value ? findCategory(categoryId.value) : null)
 
-    const finish = () => {
-      navigationLock.value = false
-    }
-
     if (desiredY !== null) {
       ignoringScroll.value = true
       window.scrollTo({ top: desiredY })
@@ -784,7 +709,6 @@
         if (idToCheck === (ignoringScrollId.value - 1)) {
           ignoringScroll.value = false
         }
-        finish()
       }, 100)
       return
     }
@@ -793,9 +717,8 @@
       shouldNotScroll.value = 0
       ignoringScroll.value = false
       scrollToCategory(category, selectedProduct.value ?? null)
-      setTimeout(finish, 100)
     } else {
-      setTimeout(() => { goToTop(); finish(); }, 100)
+      setTimeout(goToTop, 100)
     }
   }
 
@@ -866,21 +789,21 @@
     if (category) {
       // Ensure the menu aligns with the category
       if (!selectedMenu.value || selectedMenu.value.id !== category.menu?.id) {
-        selectedMenu.value = findMenu(menuId.value) ?? (category as any).menu ?? selectedMenu.value
+        selectedMenu.value = findMenu(menuId.value) ?? category.menu ?? selectedMenu.value
       }
 
       selectedCategory.value = category
 
       if (product) {
         selectedProduct.value = product
-        productId.value = (product as any).id
+        productId.value = product.id
       }
 
       setTimeout(() => {
-        if (selectedMenu.value?.categories?.[0]?.id !== (category as any).id || product) {
+        if (selectedMenu.value?.categories?.[0]?.id !== category.id || product) {
           shouldNotScroll.value = 0
           ignoringScroll.value = false
-          scrollToCategory(category as any, product as any)
+          scrollToCategory(category, product)
         }
 
         if (isProductPage && product) {
@@ -894,37 +817,16 @@
     }
   })
 
-  watch(() => isSearchOpened.value, (newValue, oldValue) => {
-    if (oldValue !== newValue) {
-      toggleScroll()
-
-      // If closing the drawer, ignore scroll events briefly to prevent auto-selection
-      if (oldValue === true && newValue === false) {
-        ignoringScroll.value = true
-        const idToCheck = ignoringScrollId.value++
-        setTimeout(() => {
-          if (idToCheck === (ignoringScrollId.value - 1)) {
-            ignoringScroll.value = false
-          }
-        }, 500)
-      }
-    }
-  })
-
-  watch(() => isLanguageOpened.value, (newValue, oldValue) => {
-    if (oldValue !== newValue) {
-      toggleScroll()
-
-      // If closing the drawer, ignore scroll events briefly to prevent auto-selection
-      if (oldValue === true && newValue === false) {
-        ignoringScroll.value = true
-        const idToCheck = ignoringScrollId.value++
-        setTimeout(() => {
-          if (idToCheck === (ignoringScrollId.value - 1)) {
-            ignoringScroll.value = false
-          }
-        }, 500)
-      }
+  // When the search or language drawer closes, ignore scroll events briefly to prevent auto-selection
+  watch(() => isSearchOpened.value || isLanguageOpened.value, (isOpen, wasOpen) => {
+    if (wasOpen && !isOpen) {
+      ignoringScroll.value = true
+      const idToCheck = ignoringScrollId.value++
+      setTimeout(() => {
+        if (idToCheck === (ignoringScrollId.value - 1)) {
+          ignoringScroll.value = false
+        }
+      }, 500)
     }
   })
 
@@ -959,11 +861,9 @@
                            :establishment="restaurant?.establishment ?? 'restaurant'"/>
         </div>
 
-        <RestaurantComponent :restaurant="restaurant as any"
-                             :menus="menus as any"
-                             @open-menu="onOpenMenu"
-                             @openPhone="onOpenPhone"
-                             @open-address="onOpenAddress"/>
+        <RestaurantComponent :restaurant="restaurant"
+                             :menus="menus"
+                             @open-menu="onOpenMenu"/>
       </template>
 
       <template v-else>
@@ -991,9 +891,7 @@
                   <div class="loading loading-dots loading-lg text-warning/40"/>
                 </div>
 
-                <LoadingMenuInList :products="[{image: true}, {image: false}]"
-                                   :establishment="restaurant?.establishment ?? 'restaurant'"
-                                   :currency="restaurant?.currency ?? 'uah'"/>
+                <LoadingMenuInList/>
               </template>
             </template>
 
@@ -1001,14 +899,14 @@
                  ref="stickyRef"
                  :class="{'shadow-md': scrolledToSticky}">
               <MenuNavBar class="w-full"
-                          :menus="menus as any"
-                          :selected="selectedMenu as any"
+                          :menus="menus"
+                          :selected="selectedMenu"
                           @switch-menu="onSwitchMenu"
                           @open-drawer="isSearchWithAutofocus = false; isSearchOpened = true;"/>
 
               <CategoryNavBar class="w-full"
                               :categories="selectedMenu?.categories ?? []"
-                              :selected="selectedCategory as any"
+                              :selected="selectedCategory"
                               @switch-category="onSwitchCategory"/>
 
               <transition name="go-to-top">
@@ -1021,14 +919,14 @@
             </div>
 
             <div class="w-full flex flex-col pb-[250px]">
-              <MenuInList :menu="(selectedMenu ?? null) as any"
-                          :products="(products ?? []) as any"
+              <MenuInList :menu="selectedMenu ?? null"
+                          :products="products ?? []"
                           :closed="false"
                           :currency="restaurant?.currency ?? 'uah'"
                           :establishment="restaurant?.establishment ?? 'restaurant'"
                           @switch-menu="onSwitchMenu"
                           @switch-category="onSwitchCategory"
-                          @open-product="({product, category, menu}) => onOpenProduct({product, category, menu: menu ?? (selectedMenu as any)})"/>
+                          @open-product="({product, category, menu}) => onOpenProduct({product, category, menu: menu ?? selectedMenu})"/>
             </div>
           </Deferred>
         </div>
@@ -1042,9 +940,9 @@
       </div>
 
       <SearchDrawer :open="isSearchOpened"
-                    :restaurant="restaurant as any"
-                    :menus="menus as any"
-                    :products="products as any"
+                    :restaurant="restaurant"
+                    :menus="menus"
+                    :products="products"
                     :with-autofocus="isSearchWithAutofocus"
                     @close="isSearchOpened = false"
                     @open-menu="onSwitchMenu"
@@ -1052,13 +950,13 @@
                     @open-product="onSwitchProduct"/>
 
       <LanguageDrawer :open="isLanguageOpened"
-                      :locale="(locale as any)"
-                      :supported_locales="(supported_locales as any)"
+                      :locale="locale"
+                      :supported_locales="supported_locales"
                       @close="isLanguageOpened = false"
                       @switch-language="onSwitchLanguage"/>
 
       <ProductDrawer :open="isProductOpened"
-                     :product="(selectedProduct as any)"
+                     :product="selectedProduct"
                      :currency="restaurant?.currency ?? 'uah'"
                      :establishment="restaurant?.establishment ?? 'restaurant'"
                      @close="onCloseProduct"/>

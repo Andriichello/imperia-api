@@ -1,14 +1,5 @@
 <script setup lang="ts">
-import { PropType } from "vue";
-import DiagonalPattern from "@/Components/Base/DiagonalPattern.vue";
 import { Timer, Flame } from "lucide-vue-next";
-
-const props = defineProps({
-  establishment: {
-    type: String as PropType<string | null>,
-    default: "restaurant",
-  },
-});
 </script>
 
 <template>

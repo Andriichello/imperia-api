@@ -10,6 +10,16 @@ html, body {
   overscroll-behavior: none;
 }
 
+/* Horizontal lists that scroll without a visible scrollbar */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
+}
+
 /* Blue */
 /*--color-warning: #6db0bb;*/
 /*--color-warning-content: #295a5a;*/

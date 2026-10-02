@@ -1,59 +1,71 @@
-import { ref } from 'vue'
+import { onUnmounted, watch } from 'vue'
 
-export function useScrollLock() {
-  // Store the scroll position
-  const scrollPosition = ref(0)
+/**
+ * Page scroll lock shared by the drawers: the page doesn't scroll while any of
+ * them is open, and gets back to the same position when the last one closes.
+ */
 
-  // Store the target element reference
-  let targetElement: HTMLElement | null = null
+let lockCount = 0
+let savedScrollY = 0
 
-  // Function to disable scrolling
-  const disableScroll = (element: HTMLElement) => {
-    targetElement = element
+function lockScroll(): void {
+  if (lockCount === 0) {
+    savedScrollY = window.scrollY
+    Object.assign(document.body.style, {
+      position: 'fixed',
+      top: `-${savedScrollY}px`,
+      left: '0',
+      right: '0',
+      width: '100%',
+      overflow: 'hidden',
+    })
+  }
 
-    // Store current scroll position before disabling
-    scrollPosition.value = element.scrollTop
+  lockCount++
+}
 
-    // Apply styles to disable scrolling
-    const originalStyles = {
-      overflow: element.style.overflow,
-      position: element.style.position,
-      height: element.style.height,
+function unlockScroll(): void {
+  if (lockCount === 0) {
+    return
+  }
+
+  lockCount--
+
+  if (lockCount === 0) {
+    Object.assign(document.body.style, {
+      position: '',
+      top: '',
+      left: '',
+      right: '',
+      width: '',
+      overflow: '',
+    })
+
+    // Restore the previous scroll position
+    window.scrollTo({ top: savedScrollY })
+  }
+}
+
+/**
+ * Lock the page scroll while `isLocked` returns true (and unlock it on unmount).
+ *
+ * @param isLocked Getter, e.g. `() => props.open`
+ */
+export function useScrollLock(isLocked: () => boolean): void {
+  let locked = false
+
+  const update = (lock: boolean) => {
+    if (lock && !locked) {
+      lockScroll()
     }
 
-    // Store original styles on the element for later restoration
-    element.dataset.originalStyles = JSON.stringify(originalStyles)
-
-    // Disable scrolling
-    element.style.overflow = 'hidden'
-    element.style.position = 'relative'
-    element.style.height = `${element.offsetHeight}px`
-  }
-
-  // Function to enable scrolling again
-  const enableScroll = () => {
-    if (!targetElement) return
-
-    // Restore original styles
-    if (targetElement.dataset.originalStyles) {
-      const originalStyles = JSON.parse(targetElement.dataset.originalStyles)
-      Object.entries(originalStyles).forEach(([key, value]) => {
-        // @ts-ignore - dynamic property assignment
-        targetElement!.style[key] = value as string
-      })
-      delete targetElement.dataset.originalStyles
+    if (!lock && locked) {
+      unlockScroll()
     }
 
-    // Restore scroll position
-    targetElement.scrollTop = scrollPosition.value
-
-    // Clear the reference
-    targetElement = null
+    locked = lock
   }
 
-  return {
-    disableScroll,
-    enableScroll,
-    scrollPosition
-  }
+  watch(isLocked, update, { immediate: true })
+  onUnmounted(() => update(false))
 }

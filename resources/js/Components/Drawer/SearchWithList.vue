@@ -1,13 +1,12 @@
 <script setup lang="ts">
   import {computed, onUnmounted, PropType, ref, watch} from "vue";
   import {Dish, DishCategory, DishMenu, Restaurant} from "@/api";
-  import {Droplet, DropletOff, Dumbbell, Flame, Leaf, Milk, MilkOff, Salad, Search, Vegan} from "lucide-vue-next";
+  import {Flame, Leaf, Salad, Search} from "lucide-vue-next";
   import {useI18n} from "vue-i18n";
-  import ProductInList from "@/Components/Menu/ProductInList.vue";
   import Deferred from "@/Components/Deferred.vue";
-  import LoadingProductInList from "@/Components/Menu/LoadingProductInList.vue";
   import ProductInListRightMedia from "@/Components/Menu/ProductInListRightMedia.vue";
   import LoadingProductInListRightMedia from "@/Components/Menu/LoadingProductInListRightMedia.vue";
+  import {DISH_TAGS, type DishTag, matchesTag} from "@/flags";
 
   const props = defineProps({
     open: {
@@ -50,63 +49,10 @@
 
   const tag = ref<string>(null);
 
-  const hasHotness = computed(() => {
-    return !!props.products?.find((p: Dish) =>
-      p.flags?.includes('hotness') ||
-      p.flags?.includes('low-hotness') ||
-      p.flags?.includes('medium-hotness') ||
-      p.flags?.includes('high-hotness') ||
-      p.flags?.includes('extreme-hotness')
-    );
-  });
-
-  const hasVegan = computed(() => {
-    return !!props.products?.find((p: Dish) => p.flags?.includes('vegan'));
-  });
-
-  const hasVegetarian = computed(() => {
-    if (hasVegan.value) {
-      return true;
-    }
-
-    return !!props.products?.find((p: Dish) => p.flags?.includes('vegetarian'));
-  });
-
-  const hasLowCalorie = computed(() => {
-    return !!props.products?.find((p: Dish) => p.flags?.includes('low_calorie') || p.flags?.includes('low-calorie'));
-  });
-
-  const hasHighCalorie = computed(() => {
-    return !!props.products?.find((p: Dish) => p.flags?.includes('high-calorie'));
-  });
-
-  const hasLactoseFree = computed(() => {
-    return !!props.products?.find((p: Dish) => p.flags?.includes('lactose-free'));
-  });
-
-  const hasDairyFree = computed(() => {
-    return !!props.products?.find((p: Dish) => p.flags?.includes('dairy-free'));
-  });
-
-  const hasPlantMilk = computed(() => {
-    return !!props.products?.find((p: Dish) => p.flags?.includes('plant-milk'));
-  });
-
-  const hasHighProtein = computed(() => {
-    return !!props.products?.find((p: Dish) => p.flags?.includes('high-protein'));
-  });
-
-  const hasLowFat = computed(() => {
-    return !!props.products?.find((p: Dish) => p.flags?.includes('low-fat'));
-  });
-
-  const hasHighFat = computed(() => {
-    return !!props.products?.find((p: Dish) => p.flags?.includes('high-fat'));
-  });
-
-  const hasAllergens = computed(() => {
-    return !!props.products?.find((p: Dish) => p.flags?.some(flag => flag.startsWith('alg-')));
-  });
+  // Tags offered as filters: the ones at least one dish has
+  const availableTags = computed<DishTag[]>(
+    () => DISH_TAGS.filter((t: DishTag) => props.products?.some((p: Dish) => matchesTag(p.flags, t.key)))
+  );
 
   const filteredMenus = computed<DishMenu[]>(() => {
     if (!searchQuery.value?.length || tag.value !== null) {
@@ -148,81 +94,19 @@
     const filtered: Dish[] = [];
 
     props.products?.forEach(product => {
-      const matchesTag = !tag.value?.length || hasTag(product, tag.value);
+      const matchesFilter = !tag.value?.length || matchesTag(product.flags, tag.value);
       const matchesQuery = !searchQuery.value?.length || (
         product.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
         (product.description?.length && product.description.toLowerCase().includes(searchQuery.value.toLowerCase()))
       );
 
-      if ((matchesTag && matchesQuery) && !filtered.includes(product)) {
+      if ((matchesFilter && matchesQuery) && !filtered.includes(product)) {
         filtered.push(product);
       }
     });
 
     return filtered;
   });
-
-  const hasTag = (product: Dish, tag: string): boolean => {
-    // Basic flags
-    if (tag === 'hotness') {
-      return product.flags?.includes('hotness') ||
-             product.flags?.includes('low-hotness') ||
-             product.flags?.includes('medium-hotness') ||
-             product.flags?.includes('high-hotness') ||
-             product.flags?.includes('extreme-hotness') ||
-             false;
-    }
-
-    if (tag === 'low-calorie') {
-      return product.flags?.includes('low_calorie') || product.flags?.includes('low-calorie') || false;
-    }
-
-    if (tag === 'high-calorie') {
-      return product.flags?.includes('high-calorie') || false;
-    }
-
-    if (tag === 'vegetarian') {
-      return product.flags?.includes('vegan') || product.flags?.includes('vegetarian') || false;
-    }
-
-    if (tag === 'vegan') {
-      return product.flags?.includes('vegan') || false;
-    }
-
-    // Lactose related
-    if (tag === 'lactose-free') {
-      return product.flags?.includes('lactose-free') || false;
-    }
-
-    if (tag === 'dairy-free') {
-      return product.flags?.includes('dairy-free') || false;
-    }
-
-    if (tag === 'plant-milk') {
-      return product.flags?.includes('plant-milk') || false;
-    }
-
-    // Protein related
-    if (tag === 'high-protein') {
-      return product.flags?.includes('high-protein') || false;
-    }
-
-    // Fat related
-    if (tag === 'low-fat') {
-      return product.flags?.includes('low-fat') || false;
-    }
-
-    if (tag === 'high-fat') {
-      return product.flags?.includes('high-fat') || false;
-    }
-
-    // Allergens
-    if (tag === 'allergens') {
-      return product.flags?.some(flag => flag.startsWith('alg-')) || false;
-    }
-
-    return false;
-  }
 
   const hasResults = computed(() => {
     return props.products === null ||
@@ -319,131 +203,15 @@
       </template>
 
       <div class="w-fit max-w-full flex justify-start gap-x-2 gap-y-1 normal-case text-[12px] pt-2 pb-1 px-2 overflow-x-auto no-scrollbar min-h-[38px] self-center"
-           v-if="hasHotness || hasLowCalorie || hasHighCalorie || hasVegetarian || hasVegan || hasLactoseFree || hasDairyFree || hasPlantMilk || hasHighProtein || hasLowFat || hasHighFat || hasAllergens">
-        <!-- Hotness -->
+           v-if="availableTags.length">
         <div
           class="rounded-sm border-1 border-dashed border-base-content flex flex-row justify-center items-center gap-1 text-base-content pl-1 pr-2 py-0.5 cursor-pointer"
-          :class="{'opacity-45': tag !== 'hotness', 'bg-warning/30 text-warning-content-80': tag === 'hotness'}"
-          @click="tag === 'hotness' ? tag = null : tag = 'hotness'"
-          v-if="hasHotness">
-          <Flame class="w-4 h-4"/>
+          :class="{'opacity-45': tag !== t.key, 'bg-warning/30 text-warning-content-80': tag === t.key}"
+          @click="tag = tag === t.key ? null : t.key"
+          v-for="t in availableTags" :key="t.key">
+          <component :is="t.icon" class="w-4 h-4"/>
           <p class="font-semibold pt-0.5 whitespace-nowrap">
-            {{ i18n.t('badges.hot') }}
-          </p>
-        </div>
-
-        <!-- Calorie related -->
-        <div
-          class="rounded-sm border-1 border-dashed border-base-content flex flex-row justify-center items-center gap-1 text-base-content pl-1 pr-2 py-0.5 cursor-pointer"
-          :class="{'opacity-45': tag !== 'low-calorie', 'bg-warning/30 text-warning-content-80': tag === 'low-calorie'}"
-          @click="tag === 'low-calorie' ? tag = null : tag = 'low-calorie'"
-          v-if="hasLowCalorie">
-          <Salad class="w-4 h-4"/>
-          <p class="font-semibold pt-0.5 whitespace-nowrap">
-            {{ i18n.t('badges.low_calorie') }}
-          </p>
-        </div>
-
-        <div
-          class="rounded-sm border-1 border-dashed border-base-content flex flex-row justify-center items-center gap-1 text-base-content pl-1 pr-2 py-0.5 cursor-pointer"
-          :class="{'opacity-45': tag !== 'high-calorie', 'bg-warning/30 text-warning-content-80': tag === 'high-calorie'}"
-          @click="tag === 'high-calorie' ? tag = null : tag = 'high-calorie'"
-          v-if="hasHighCalorie">
-          <Flame class="w-4 h-4"/>
-          <p class="font-semibold pt-0.5 whitespace-nowrap">
-            {{ i18n.t('badges.high_calorie') }}
-          </p>
-        </div>
-
-        <!-- Vegetarian/Vegan -->
-        <div
-          class="rounded-sm border-1 border-dashed border-base-content flex flex-row justify-center items-center gap-1 text-base-content pl-1 pr-2 py-0.5 cursor-pointer"
-          :class="{'opacity-45': tag !== 'vegetarian', 'bg-warning/30 text-warning-content-80': tag === 'vegetarian'}"
-          @click="tag === 'vegetarian' ? tag = null : tag = 'vegetarian'"
-          v-if="hasVegan || hasVegetarian">
-          <Leaf class="w-4 h-4"/>
-          <p class="font-semibold pt-0.5 whitespace-nowrap">
-            {{ i18n.t('badges.vegetarian') }}
-          </p>
-        </div>
-
-        <div
-          class="rounded-sm border-1 border-dashed border-base-content flex flex-row justify-center items-center gap-1 text-base-content pl-1 pr-2 py-0.5 cursor-pointer"
-          :class="{'opacity-45': tag !== 'vegan', 'bg-warning/30 text-warning-content-80': tag === 'vegan'}"
-          @click="tag === 'vegan' ? tag = null : tag = 'vegan'"
-          v-if="hasVegan">
-          <Vegan class="w-4 h-4"/>
-          <p class="font-semibold pt-0.5 whitespace-nowrap">
-            {{ i18n.t('badges.vegan') }}
-          </p>
-        </div>
-
-        <!-- Lactose related -->
-        <div
-          class="rounded-sm border-1 border-dashed border-base-content flex flex-row justify-center items-center gap-1 text-base-content pl-1 pr-2 py-0.5 cursor-pointer"
-          :class="{'opacity-45': tag !== 'lactose-free', 'bg-warning/30 text-warning-content-80': tag === 'lactose-free'}"
-          @click="tag === 'lactose-free' ? tag = null : tag = 'lactose-free'"
-          v-if="hasLactoseFree">
-          <Milk class="w-4 h-4"/>
-          <p class="font-semibold pt-0.5 whitespace-nowrap">
-            {{ i18n.t('badges.lactose_free') }}
-          </p>
-        </div>
-
-        <div
-          class="rounded-sm border-1 border-dashed border-base-content flex flex-row justify-center items-center gap-1 text-base-content pl-1 pr-2 py-0.5 cursor-pointer"
-          :class="{'opacity-45': tag !== 'dairy-free', 'bg-warning/30 text-warning-content-80': tag === 'dairy-free'}"
-          @click="tag === 'dairy-free' ? tag = null : tag = 'dairy-free'"
-          v-if="hasDairyFree">
-          <MilkOff class="w-4 h-4"/>
-          <p class="font-semibold pt-0.5 whitespace-nowrap">
-            {{ i18n.t('badges.dairy_free') }}
-          </p>
-        </div>
-
-        <div
-          class="rounded-sm border-1 border-dashed border-base-content flex flex-row justify-center items-center gap-1 text-base-content pl-1 pr-2 py-0.5 cursor-pointer"
-          :class="{'opacity-45': tag !== 'plant-milk', 'bg-warning/30 text-warning-content-80': tag === 'plant-milk'}"
-          @click="tag === 'plant-milk' ? tag = null : tag = 'plant-milk'"
-          v-if="hasPlantMilk">
-          <Milk class="w-4 h-4"/>
-          <p class="font-semibold pt-0.5 whitespace-nowrap">
-            {{ i18n.t('badges.plant_milk') }}
-          </p>
-        </div>
-
-        <!-- Protein related -->
-        <div
-          class="rounded-sm border-1 border-dashed border-base-content flex flex-row justify-center items-center gap-1 text-base-content pl-1 pr-2 py-0.5 cursor-pointer"
-          :class="{'opacity-45': tag !== 'high-protein', 'bg-warning/30 text-warning-content-80': tag === 'high-protein'}"
-          @click="tag === 'high-protein' ? tag = null : tag = 'high-protein'"
-          v-if="hasHighProtein">
-          <Dumbbell class="w-4 h-4"/>
-          <p class="font-semibold pt-0.5 whitespace-nowrap">
-            {{ i18n.t('badges.high_protein') }}
-          </p>
-        </div>
-
-        <!-- Fat related -->
-        <div
-          class="rounded-sm border-1 border-dashed border-base-content flex flex-row justify-center items-center gap-1 text-base-content pl-1 pr-2 py-0.5 cursor-pointer"
-          :class="{'opacity-45': tag !== 'low-fat', 'bg-warning/30 text-warning-content-80': tag === 'low-fat'}"
-          @click="tag === 'low-fat' ? tag = null : tag = 'low-fat'"
-          v-if="hasLowFat">
-          <DropletOff class="w-4 h-4"/>
-          <p class="font-semibold pt-0.5 whitespace-nowrap">
-            {{ i18n.t('badges.low_fat') }}
-          </p>
-        </div>
-
-        <div
-          class="rounded-sm border-1 border-dashed border-base-content flex flex-row justify-center items-center gap-1 text-base-content pl-1 pr-2 py-0.5 cursor-pointer"
-          :class="{'opacity-45': tag !== 'high-fat', 'bg-warning/30 text-warning-content-80': tag === 'high-fat'}"
-          @click="tag === 'high-fat' ? tag = null : tag = 'high-fat'"
-          v-if="hasHighFat">
-          <Droplet class="w-4 h-4"/>
-          <p class="font-semibold pt-0.5 whitespace-nowrap">
-            {{ i18n.t('badges.high_fat') }}
+            {{ i18n.t(t.label) }}
           </p>
         </div>
       </div>
@@ -489,10 +257,8 @@
             <div class="mb-6">
               <h3 class="font-bold text-lg mb-2">{{ i18n.t('search.products') }}</h3>
               <div class="space-y-2">
-                <template v-for="product in [{image: true}, {image: false}]">
-                  <LoadingProductInListRightMedia :image="product?.image ?? false"
-                                        :currency="currency"
-                                        :establishment="restaurant.establishment"/>
+                <template v-for="n in 2" :key="n">
+                  <LoadingProductInListRightMedia/>
 
                   <div class="w-full h-[1px] flex flex-col bg-warning-content/25"/>
                 </template>
@@ -534,15 +300,3 @@
     </div>
   </div>
 </template>
-
-
-<style>
-.no-scrollbar {
-  -ms-overflow-style: none;  /* Internet Explorer 10+ */
-  scrollbar-width: none;  /* Firefox */
-}
-
-.no-scrollbar::-webkit-scrollbar {
-  display: none;  /* Safari and Chrome */
-}
-</style>

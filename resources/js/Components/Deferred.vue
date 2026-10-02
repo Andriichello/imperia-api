@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, defineProps, PropType} from 'vue'
+import {computed, PropType} from 'vue'
 
 /**
  * Lightweight replacement for Inertia's <Deferred>.

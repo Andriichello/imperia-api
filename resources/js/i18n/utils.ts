@@ -1,45 +1,15 @@
-import { Router } from 'vue-router';
+import type { Composer } from 'vue-i18n';
 
 // Global i18n instance for use in non-component files
-let globalI18n = null;
-
-// Global router instance for use in non-component files
-let globalRouter: Router | null = null;
+let globalI18n: Composer | null = null;
 
 /**
  * Set the global i18n instance
  *
- * @param i18n The i18n instance
+ * @param i18n The global composer of the i18n instance
  */
-export function setI18n(i18n) {
+export function setI18n(i18n: Composer) {
   globalI18n = i18n;
-}
-
-/**
- * Set the global router instance
- *
- * @param router The router instance
- */
-export function setRouter(router: Router) {
-  globalRouter = router;
-}
-
-/**
- * Get the global i18n instance
- *
- * @returns The global i18n instance
- */
-export function getI18n() {
-  return globalI18n;
-}
-
-/**
- * Get the global router instance
- *
- * @returns The global router instance
- */
-export function getRouter() {
-  return globalRouter;
 }
 
 /**
@@ -49,9 +19,9 @@ export function getRouter() {
  * @param params The translation parameters
  * @returns The translated string
  */
-export function t(key: string, params = {}) {
+export function t(key: string, params: Record<string, unknown> = {}): string {
   if (globalI18n) {
-    return globalI18n.global.t(key, params);
+    return globalI18n.t(key, params);
   }
 
   // Fallback to the key if i18n is not available
@@ -59,35 +29,17 @@ export function t(key: string, params = {}) {
 }
 
 /**
- * Switch the application language
+ * Switch the application language: reloads the page under the new
+ * locale prefix ("/en/web/..." -> "/uk/web/...").
  *
  * @param i18n The i18n instance
  * @param locale The locale to switch to
- * @param reload Flag to reload the page or navigate with Vue Router
  */
-export function switchLanguage(i18n, locale: string, reload: boolean = false): void {
-  const { locale: currentLocale } = i18n;
-
+export function switchLanguage(i18n: Composer, locale: string): void {
   // Update the i18n locale immediately
-  currentLocale.value = locale;
+  i18n.locale.value = locale;
 
-  // When reloading/navigating between locale-prefixed bases like
-  // "/en/web/..." -> "/uk/web/...", we must not use the Vue Router,
-  // because the router's base is set to the current locale and would
-  // prefix the path again (causing e.g. "/en/web/uk/...\").
-  if (reload) {
-    const { pathname, search, hash } = window.location;
-    // Replace the very first path segment (the locale)
-    const newPathname = pathname.replace(/^\/([^\/]+)/, `/${locale}`);
-    const newUrl = `${newPathname}${search || ''}${hash || ''}`;
-    window.location.replace(newUrl);
-    return;
-  }
-
-  // SPA-only path update (when not reloading)
-  if (globalRouter) {
-    const currentRoute = globalRouter.currentRoute.value;
-    const newPath = currentRoute.fullPath.replace(/^\/([^\/]+)/, `/${locale}`);
-    globalRouter.replace({ path: newPath, query: currentRoute.query, hash: currentRoute.hash });
-  }
+  // Replace the very first path segment (the locale)
+  const { pathname, search, hash } = window.location;
+  window.location.replace(`${pathname.replace(/^\/([^\/]+)/, `/${locale}`)}${search}${hash}`);
 }

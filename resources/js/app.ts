@@ -2,7 +2,7 @@ import {createApp} from 'vue';
 import {createPinia} from 'pinia';
 import VueSplide from '@splidejs/vue-splide';
 import setupI18n from '@/i18n';
-import {setI18n, setRouter as setI18nRouter} from '@/i18n/utils';
+import {setI18n} from '@/i18n/utils';
 import {createWebRouter} from '@/router';
 import {useAppStore} from '@/stores/app';
 import App from "@/App.vue";
@@ -23,13 +23,10 @@ appStore.hydrate(props);
 
 // Setup i18n
 const i18n = setupI18n(props.locale || 'en');
-setI18n(i18n);
-// @ts-ignore
+setI18n(i18n.global);
 app.use(i18n);
 
 // Create router
-const router = createWebRouter();
-app.use(router);
-setI18nRouter(router);
+app.use(createWebRouter());
 
 app.mount('#app');

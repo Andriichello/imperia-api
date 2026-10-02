@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import {computed, PropType} from "vue";
   import {Schedule as ScheduleModel, ScheduleWeekday} from "@/api";
-  import {ScheduleInfo} from "@/helpers";
+  import {ScheduleInfo, time} from "@/helpers";
   import {useI18n} from "vue-i18n";
 
   const props = defineProps({
@@ -12,18 +12,6 @@
   });
 
   const i18n = useI18n();
-
-  const time = (hour: number, minute: number) => {
-    let time = '';
-
-    time += hour < 10 ? '0' + hour : hour;
-
-    time += ':'
-
-    time += minute < 10 ? '0' + minute : minute;
-
-    return time;
-  }
 
   /** Returns a function that checks if a schedule is active. */
   const isActive = (scheduleId: number) =>

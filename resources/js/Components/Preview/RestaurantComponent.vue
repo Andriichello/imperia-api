@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import {computed, onMounted, PropType, ref, watch} from "vue";
+  import {computed, PropType, ref} from "vue";
   import {Splide, SplideSlide} from '@splidejs/vue-splide';
   import {
     Copy,
@@ -10,7 +10,7 @@
     MapPin,
     Phone,
   } from 'lucide-vue-next';
-  import {Media, Menu, Restaurant} from "@/api";
+  import {DishMenu, Media, Restaurant} from "@/api";
   import Schedule from "@/Components/Restaurant/Schedule.vue";
   import {getScheduleInfo, ScheduleInfo, time} from "@/helpers";
   import { useI18n } from 'vue-i18n';
@@ -21,12 +21,12 @@
       required: true,
     },
     menus: {
-      type: Array as PropType<Menu[]>,
+      type: Array as PropType<DishMenu[]>,
       required: true,
     },
   });
 
-  const emits = defineEmits(['open-menu', 'open-phone', 'open-address']);
+  const emits = defineEmits(['open-menu']);
 
   const i18n = useI18n();
 

@@ -12,9 +12,6 @@ importers:
 
   .:
     dependencies:
-      '@inertiajs/vue3':
-        specifier: ^2.0.8
-        version: 2.3.28(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)(vue@3.5.43(typescript@5.9.3))
       '@splidejs/vue-splide':
         specifier: ^0.6.12
         version: 0.6.12
@@ -962,14 +959,6 @@ packages:
   '@gerrit0/mini-shiki@3.23.0':
     resolution: {integrity: sha512-bEMORlG0cqdjVyCEuU0cDQbORWX+kYCeo0kV1lbxF5bt4r7SID2l9bqsxJEM0zndaxpOUT7riCyIVEuqq/Ynxg==}
 
-  '@inertiajs/core@2.3.28':
-    resolution: {integrity: sha512-nznmmAUSPynXVl/1q48rN/pVGeyaFdiDXgzcYpT8ilwj82GWrGvFnH3UsNeqjR81gcqqLMeeia1QST5dTRLi3w==}
-
-  '@inertiajs/vue3@2.3.28':
-    resolution: {integrity: sha512-rPmr2rl9qarP3ImRznUPVjOXHEYNDeEGIC4gBvmPjrkxg0RGuM2HA8hJIeGD5xkqRqNHr0LsTqLjB5H4SuXxbg==}
-    peerDependencies:
-      vue: ^3.0.0
-
   '@intlify/core-base@11.4.12':
     resolution: {integrity: sha512-tvYUWgMJmk+UvLFa7ck8uRQ9m19tTI9B2e01KCAjBV7+HN2zFLnnORvMO85hM1P8DIw4MTvot1ZSBUdoR+F6jA==}
     engines: {node: '>= 22'}
@@ -1496,12 +1485,6 @@ packages:
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
-
-  '@types/lodash-es@4.17.12':
-    resolution: {integrity: sha512-0NgftHUcV4v34VhXm8QBSftKVXtbkBG3ViCjs6+eJ5a6y6Mi/jiFGPc1sC7QK+9BFhWrURE3EOggmWaSxL9OzQ==}
-
-  '@types/lodash@4.17.25':
-    resolution: {integrity: sha512-+K1NIO8I+F9/wNulfVvu23QYd0Pe9/OCqRrim4NoYIf1VoEDL90Ve4ClzpyqBLc7NpGGWRvYNCKZ1BE/Jpf8dQ==}
 
   '@types/luxon@3.7.6':
     resolution: {integrity: sha512-6KSjliQAXK8ZLgFQO4B7iE4Rpf/B3rItzCFuXezBY/XIAGxOdLd7vRNK9/StRPwiS/yJsVbB7HKpW46B8tcEuQ==}
@@ -2983,9 +2966,6 @@ packages:
       webpack: ~5.105.4
       webpack-cli: ^4.9.1
 
-  laravel-precognition@1.0.2:
-    resolution: {integrity: sha512-0H08JDdMWONrL/N314fvsO3FATJwGGlFKGkMF3nNmizVFJaWs17816iM+sX7Rp8d5hUjYCx6WLfsehSKfaTxjg==}
-
   launch-editor@2.14.1:
     resolution: {integrity: sha512-QWBrQsMpH7gPr965dsKD/3cKWiNoTjpATQf++Xq63N6sKRGMwlVXz41O1IZTMfZQgBctD/K5Zt06+/I6pP6+HA==}
 
@@ -3091,9 +3071,6 @@ packages:
   locate-path@5.0.0:
     resolution: {integrity: sha512-t7hw9pI+WvuwNJXwk5zVHpyhIqzg2qTlklJOf0mVxGSbe3Fp2VieZcduNYjaLDoy6p9uGpQEGWG87WpMKlNq8g==}
     engines: {node: '>=8'}
-
-  lodash-es@4.18.1:
-    resolution: {integrity: sha512-J8xewKD/Gk22OZbhpOVSwcs60zhd95ESDwezOFuA3/099925PdHJ7OFHNTGtajL3AlZkykD32HykiMo+BIBI8A==}
 
   lodash.debounce@4.0.8:
     resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
@@ -5492,28 +5469,6 @@ snapshots:
       '@shikijs/vscode-textmate': 10.0.2
     optional: true
 
-  '@inertiajs/core@2.3.28(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)':
-    dependencies:
-      '@types/lodash-es': 4.17.12
-      axios: 1.20.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
-      laravel-precognition: 1.0.2(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
-      lodash-es: 4.18.1
-      qs: 6.16.0
-    transitivePeerDependencies:
-      - debug
-      - supports-color
-
-  '@inertiajs/vue3@2.3.28(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)(vue@3.5.43(typescript@5.9.3))':
-    dependencies:
-      '@inertiajs/core': 2.3.28(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
-      '@types/lodash-es': 4.17.12
-      laravel-precognition: 1.0.2(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
-      lodash-es: 4.18.1
-      vue: 3.5.43(typescript@5.9.3)
-    transitivePeerDependencies:
-      - debug
-      - supports-color
-
   '@intlify/core-base@11.4.12':
     dependencies:
       '@intlify/devtools-types': 11.4.12
@@ -6017,12 +5972,6 @@ snapshots:
       '@types/node': 22.20.4
 
   '@types/json-schema@7.0.15': {}
-
-  '@types/lodash-es@4.17.12':
-    dependencies:
-      '@types/lodash': 4.17.25
-
-  '@types/lodash@4.17.25': {}
 
   '@types/luxon@3.7.6': {}
 
@@ -7849,14 +7798,6 @@ snapshots:
       - uglify-js
       - utf-8-validate
 
-  laravel-precognition@1.0.2(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1):
-    dependencies:
-      axios: 1.20.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
-      lodash-es: 4.18.1
-    transitivePeerDependencies:
-      - debug
-      - supports-color
-
   launch-editor@2.14.1:
     dependencies:
       picocolors: 1.1.1
@@ -7939,8 +7880,6 @@ snapshots:
   locate-path@5.0.0:
     dependencies:
       p-locate: 4.1.0
-
-  lodash-es@4.18.1: {}
 
   lodash.debounce@4.0.8: {}
 
