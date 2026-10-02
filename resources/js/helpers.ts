@@ -160,42 +160,35 @@ export function getUpcomingSchedules(now: DateTime, schedules: Schedule[], timez
     const upcomingSchedules: (Schedule & ScheduleCalculations)[] = [];
 
     schedules.forEach(schedule => {
-        // Find the next occurrence of the schedule's weekday
-        let nextOccurrenceBeg = getNextOccurrence(now, schedule.weekday)
-          .set({hour: schedule.beg_hour, minute: schedule.beg_minute, second: 0, millisecond: 0})
-          .minus({minutes: timezoneOffset}); // Adjust back to UTC
+        // The schedule's weekday this week (today included). A week earlier is checked too,
+        // because yesterday's hours may still be going on after midnight.
+        const day = getNextOccurrence(now, schedule.weekday);
 
-        let nextOccurrenceEnd = getNextOccurrence(now, schedule.weekday)
-          .set({hour: schedule.end_hour, minute: schedule.end_minute, second: 0, millisecond: 0})
-          .minus({minutes: timezoneOffset}); // Adjust back to UTC
+        for (const date of [day.minus({days: 7}), day, day.plus({days: 7})]) {
+            const beg = date
+              .set({hour: schedule.beg_hour, minute: schedule.beg_minute, second: 0, millisecond: 0})
+              .minus({minutes: timezoneOffset}); // Adjust back to UTC
 
-        // Handle cross-date schedules (end time is before start time)
-        if (nextOccurrenceEnd < nextOccurrenceBeg) {
-            nextOccurrenceEnd = nextOccurrenceEnd.plus({days: 1});
-        }
+            let end = date
+              .set({hour: schedule.end_hour, minute: schedule.end_minute, second: 0, millisecond: 0})
+              .minus({minutes: timezoneOffset}); // Adjust back to UTC
 
+            // Closing at or before the opening time means closing after midnight
+            if (end <= beg) {
+                end = end.plus({days: 1});
+            }
 
-        if (nextOccurrenceBeg.toMillis() < now.toMillis()) {
-            if (nextOccurrenceEnd.toMillis() > now.toMillis()) {
+            // The first occurrence that hasn't ended yet
+            if (end > now) {
                 upcomingSchedules.push({
                     ...schedule,
-                    closestBegDate: nextOccurrenceBeg,
-                    closestEndDate: nextOccurrenceEnd,
+                    closestBegDate: beg,
+                    closestEndDate: end,
                 });
 
-                nextOccurrenceBeg = nextOccurrenceBeg.plus({days: 7});
-                nextOccurrenceEnd = nextOccurrenceEnd.plus({days: 7});
-            } else {
-                nextOccurrenceBeg = nextOccurrenceBeg.plus({days: 7});
-                nextOccurrenceEnd = nextOccurrenceEnd.plus({days: 7});
+                break;
             }
         }
-
-        upcomingSchedules.push({
-            ...schedule,
-            closestBegDate: nextOccurrenceBeg,
-            closestEndDate: nextOccurrenceEnd,
-        });
     });
 
     return upcomingSchedules.sort((a, b) => a.closestBegDate.toMillis() - b.closestBegDate.toMillis());
@@ -222,7 +215,7 @@ export interface ScheduleCalculations {
 export interface ScheduleInfo {
   status: 'Open' | 'Closed',
   active: (ScheduleCalculations & Schedule) | null,
-  relevant: ScheduleCalculations & Schedule,
+  relevant: (ScheduleCalculations & Schedule) | null,
   upcoming: (ScheduleCalculations & Schedule)[],
   schedules: Schedule[],
   timeBeforeOrUntil: string | '-',
@@ -230,99 +223,46 @@ export interface ScheduleInfo {
 
 export function getScheduleInfo(restaurant: Restaurant): ScheduleInfo {
   const now = getCurrentUtcWithOffset(restaurant.timezone_offset);
-  const schedules = restaurant.schedules;
-  const timezoneOffset = restaurant.timezone_offset;
+  // Days marked as closed in the admin are archived
+  const schedules = filterAndSortSchedules(restaurant.schedules ?? []);
 
+  // Sorted by opening time, so the one that is open now (if any) comes first
   const upcoming = getUpcomingSchedules(now, schedules, 0);
   const relevant = upcoming[0] ?? null;
-  const active = relevant && relevant.closestBegDate <= now && now <= relevant.closestEndDate
+  const active = relevant && relevant.closestBegDate <= now && now < relevant.closestEndDate
     ? relevant : null;
 
   const status = !!active ? 'Open' : 'Closed';
+
+  const duration = (until: DateTime) => {
+    const minutes = Math.trunc(until.diff(now, 'minutes').minutes);
+    const hours = Math.trunc(minutes / 60);
+
+    let time = '';
+
+    if (hours > 0) {
+      time += hours + t('schedule.hour_short');
+    }
+
+    if (minutes % 60 > 0) {
+      if (hours > 0) {
+        time += ' ';
+      }
+
+      time += (minutes % 60) + t('schedule.minute_short');
+    }
+
+    return time;
+  };
 
   const timeBeforeOrUntil = () => {
     if (!relevant) {
       return '-';
     }
 
-    const beg = relevant.closestBegDate;
-    const end = relevant.closestEndDate;
-
-    if (status === 'Open') {
-      const minutes = Math.trunc(end.diff(now, 'minutes').minutes);
-      const hours = Math.trunc(minutes / 60);
-
-      let time = '';
-
-      if (hours > 0) {
-        // Use translation for hour abbreviation
-        time += hours + t('schedule.hour_short');
-      }
-
-      if (minutes % 60 > 0) {
-        if (hours > 0) {
-          time += ' ';
-        }
-        // Use translation for minute abbreviation
-        time += (minutes % 60) + t('schedule.minute_short');
-      }
-
-      // Use translation for time until closing
-      return t('schedule.T_until_closing', { time });
-    } else if (beg.toMillis() >= now.toMillis()) {
-      const minutes = Math.trunc(beg.diff(now, 'minutes').minutes);
-      const hours = Math.trunc(minutes / 60);
-
-      let time = '';
-
-      if (hours > 0) {
-        // Use translation for hour abbreviation
-        time += hours + t('schedule.hour_short');
-      }
-
-      if (minutes % 60 > 0) {
-        if (hours > 0) {
-          time += ' ';
-        }
-        // Use translation for minute abbreviation
-        time += (minutes % 60) + t('schedule.minute_short');
-      }
-
-      // Use translation for time until opening
-      return t('schedule.T_before_opening', { time });
-    } else {
-      const next = schedules[0];
-
-      let nextBeg: DateTime = DateTime.utc()
-        .set({hour: next.beg_hour, minute: next.beg_minute, second: 0, millisecond: 0})
-        .minus({minutes: timezoneOffset});
-
-      if (next.closest_date) {
-        nextBeg = DateTime.fromJSDate(new Date(next.closest_date))
-          .minus({minutes: timezoneOffset});
-      } else {
-        const weekdays = {
-          monday: 1,
-          tuesday: 2,
-          wednesday: 3,
-          thursday: 4,
-          friday: 5,
-          saturday: 6,
-          sunday: 7,
-        };
-
-        const nextWeekdayNumber = weekdays[next.weekday];
-        while (nextBeg.weekday !== nextWeekdayNumber) {
-          nextBeg = nextBeg.plus({'days': 1});
-        }
-      }
-
-      const minutes = Math.trunc(nextBeg.diff(now, 'minutes').minutes);
-      const hours = Math.trunc(minutes / 60);
-
-      // replaced this.$t("schedule.T_before_opening", {time: this.time(hours, minutes % 60)})
-      return time(hours, minutes % 60);
-    }
+    return active
+      ? t('schedule.T_until_closing', { time: duration(relevant.closestEndDate) })
+      : t('schedule.T_before_opening', { time: duration(relevant.closestBegDate) });
   };
 
   return {
@@ -330,7 +270,7 @@ export function getScheduleInfo(restaurant: Restaurant): ScheduleInfo {
     active,
     relevant,
     upcoming,
-    schedules: filterAndSortSchedules(schedules),
+    schedules,
     timeBeforeOrUntil: timeBeforeOrUntil(),
   } as ScheduleInfo;
 }

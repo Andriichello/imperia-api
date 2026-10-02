@@ -119,8 +119,9 @@
             <h3 class="text-xl font-bold">
               {{ menu.title }}
             </h3>
-            <p class="text-md font-light opacity-80">
-              {{ menu.description?.length ? menu.description : 'menu' }}
+            <p class="text-md font-light opacity-80"
+               v-if="menu.description?.length">
+              {{ menu.description }}
             </p>
           </div>
 

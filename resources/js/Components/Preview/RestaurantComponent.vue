@@ -155,7 +155,8 @@
 
       <div class="w-full flex flex-col grow mt-3 pb-3 gap-1 bg-base-200">
         <div class="w-full flex flex-col gap-3">
-          <div class="w-full flex flex-col gap-1">
+          <div class="w-full flex flex-col gap-1"
+               v-if="scheduleInfo.relevant">
             <div class="w-full h-[1px] bg-base-300"/>
 
             <div class="w-full flex flex-col justify-start items-start py-2 px-3">

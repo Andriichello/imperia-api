@@ -2,6 +2,7 @@
 
 namespace App\Models\Scopes;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
@@ -49,8 +50,12 @@ class ArchivedScope implements Scope
      */
     public function apply(Builder $builder, Model $model): void
     {
-        $archived = request('archived', $this->default);
-        ;
+        $archived = $this->default;
+
+        // Only staff can choose to see archived records, guests always get the default
+        if (request()->has('archived') && $this->isStaff(request()->user())) {
+            $archived = request('archived');
+        }
 
         if ($archived === 'only') {
             $builder->where($model->getTable() . '.' . $this->key, true);
@@ -58,6 +63,18 @@ class ArchivedScope implements Scope
         if ($archived === 'without') {
             $builder->where($model->getTable() . '.' . $this->key, false);
         }
+    }
+
+    /**
+     * Determine if the given user is staff.
+     *
+     * @param mixed $user
+     *
+     * @return bool
+     */
+    protected function isStaff(mixed $user): bool
+    {
+        return $user instanceof User && $user->isStaff();
     }
 
     /**

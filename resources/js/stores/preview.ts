@@ -5,6 +5,7 @@ import { indexDishes } from '@/api/services/dish-dishes'
 interface PreviewState {
   products: Dish[] | null
   loading: boolean
+  error: boolean
   lastRestaurantId: number | null
   lastMenuId: number | null
   lastMenuIds: number[] | null
@@ -29,6 +30,7 @@ export const usePreviewStore = defineStore('preview', {
   state: (): PreviewState => ({
     products: null,
     loading: false,
+    error: false,
     lastRestaurantId: null,
     lastMenuId: null,
     lastMenuIds: null,
@@ -73,6 +75,7 @@ export const usePreviewStore = defineStore('preview', {
       }
 
       this.loading = true
+      this.error = false
       try {
         const params: Record<string, string | number> = {
           include,
@@ -96,6 +99,9 @@ export const usePreviewStore = defineStore('preview', {
         this.lastRestaurantId = restaurantId ?? null
         this.lastMenuId = menuId ?? null
         this.lastMenuIds = hasMenuIds ? [...(menuIds as number[])] : null
+      } catch (e) {
+        // The context is only saved on success, so calling this again retries
+        this.error = true
       } finally {
         this.loading = false
       }

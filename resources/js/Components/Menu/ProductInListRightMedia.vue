@@ -4,7 +4,7 @@ import {Splide, SplideSlide} from "@splidejs/vue-splide";
 import {ref, computed, PropType} from "vue";
 import {priceFormatted, weightUnitFormatted} from "@/helpers";
 import DiagonalPattern from "@/Components/Base/DiagonalPattern.vue";
-import {Timer, Flame, Vegan, Leaf, Nut, EggFried, Salad, Milk, Droplet, DropletOff, Dumbbell, MilkOff, TriangleAlert } from "lucide-vue-next";
+import {Timer, Flame, Vegan, Leaf, Salad, Milk, Droplet, DropletOff, Dumbbell, MilkOff, TriangleAlert } from "lucide-vue-next";
 import { useI18n } from "vue-i18n";
 
 const i18n = useI18n();
@@ -229,7 +229,7 @@ const selectVariant = (variant: Partial<DishVariant> | null) => {
             </p>
           </div>
 
-          <div v-if="product.flags?.includes('low_calorie')" class="flex flex-row justify-center items-center gap-1">
+          <div v-if="product.flags?.includes('low-calorie')" class="flex flex-row justify-center items-center gap-1">
             <Salad class="w-4 h-4"/>
             <p class="font-semibold pt-0.5">
               {{ i18n.t('badges.low_calorie') }}
@@ -240,20 +240,6 @@ const selectVariant = (variant: Partial<DishVariant> | null) => {
             <Leaf class="w-4 h-4"/>
             <p class="font-semibold pt-0.5">
               {{ i18n.t('badges.vegetarian') }}
-            </p>
-          </div>
-
-          <div v-if="product.flags?.includes('nuts')" class="flex flex-row justify-center items-center gap-1">
-            <Nut class="w-4 h-4"/>
-            <p class="font-semibold pt-0.5">
-              {{ i18n.t('badges.nuts') }}
-            </p>
-          </div>
-
-          <div v-if="product.flags?.includes('eggs')" class="flex flex-row justify-center items-center gap-1">
-            <EggFried class="w-4 h-4"/>
-            <p class="font-semibold pt-0.5">
-              {{ i18n.t('badges.eggs') }}
             </p>
           </div>
 

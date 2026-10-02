@@ -7,7 +7,6 @@ use App\Http\Controllers\Web\Traits\LoadsAndCachesTrait;
 use App\Http\Controllers\Web\Traits\SharesPropsTrait;
 use App\Http\Resources\Dish\DishMenuCollection;
 use App\Http\Resources\Restaurant\RestaurantResource;
-use App\Models\Menu;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,7 +17,7 @@ class PreviewController extends Controller
     use LoadsAndCachesTrait;
 
     /**
-     * Returns menu page for UI with Inertia.js.
+     * Returns the restaurant page or one of its menus.
      *
      * @param Request $request
      *
@@ -34,33 +33,22 @@ class PreviewController extends Controller
 
         $menus = $this->loadAndCacheMenus($restaurant);
 
-        if (str_ends_with($request->path(), '/menu')) {
+        if ($request->routeIs('web.menu.preview')) {
+            $parameters = [
+                'locale' => $request->route('locale'),
+                'restaurant_id' => $request->route('restaurant_id'),
+            ];
+
             $menuId = (int)$request->route('menu_id');
 
-            if (empty($menuId)) {
-                /** @var Menu|null $menu */
-                $menu = $menus->first();
-
-                if (!$menu) {
-                    abort(404);
-                }
-
-                return redirect()
-                    ->route(
-                        'web.app',
-                        [
-                            'locale' => $request->route('locale'),
-                            'restaurant_id' => $request->route('restaurant_id'),
-                            'menu_id' => $menu->id,
-                        ]
-                    );
+            // No menu given: open the first one
+            if (!$menuId && $menus->isNotEmpty()) {
+                return redirect()->route('web.menu.preview', [...$parameters, 'menu_id' => $menus->first()->id]);
             }
 
-            /** @var Menu|null $menu */
-            $menu = $menus->where('id', $menuId)->first();
-
-            if (!$menu) {
-                abort(404);
+            // A menu that doesn't exist or is hidden (e.g. an old link): open the restaurant page
+            if (!$menus->contains('id', $menuId)) {
+                return redirect()->route('web.restaurant.preview', $parameters);
             }
         }
 

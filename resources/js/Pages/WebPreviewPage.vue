@@ -32,8 +32,21 @@
 
   // Preview store (products)
   const preview = usePreviewStore()
-  const products = computed<Dish[] | null>(() => preview.products)
   const loadingProducts = computed(() => preview.loading)
+  const productsFailed = computed(() => preview.error)
+
+  // Dishes are shown only in a visible category of a visible menu, so the
+  // ones without a category or in a hidden one are left out (search included)
+  const visibleCategoryIds = computed<Set<number>>(
+    () => new Set(menus.value.flatMap((m: DishMenu) => (m.categories ?? []).map((c: DishCategory) => c.id)))
+  )
+  const products = computed<Dish[] | null>(
+    () => preview.products?.filter((p: Dish) => visibleCategoryIds.value.has(p.category_id as number)) ?? null
+  )
+
+  function reloadProducts() {
+    preview.loadProducts()
+  }
 
   const isSearchOpened = ref(false)
   const isLanguageOpened = ref(false)
@@ -588,6 +601,10 @@
   function onOpenSearch() {
     isSearchOpened.value = true
     isSearchWithAutofocus.value = true
+
+    if (productsFailed.value) {
+      reloadProducts()
+    }
   }
 
   function onOpenLanguage() {
@@ -956,14 +973,28 @@
           <!-- Menus list -->
           <Deferred :data="products">
             <template #fallback>
-              <div class="w-full min-h-[88px] flex flex-col justify-center items-center sticky top-0 bg-base-100 z-10 border-1 border-base-300"
-                   :class="{'shadow-md': scrolledToSticky}">
-                <div class="loading loading-dots loading-lg text-warning/40"/>
+              <div class="w-full flex flex-col justify-center items-center gap-4 px-6 py-16 text-center"
+                   v-if="productsFailed">
+                <p class="text-lg text-base-content/80">
+                  {{ i18n.t('menu.loading_failed') }}
+                </p>
+
+                <button class="btn btn-sm"
+                        @click="reloadProducts">
+                  {{ i18n.t('menu.try_again') }}
+                </button>
               </div>
 
-              <LoadingMenuInList :products="[{image: true}, {image: false}]"
-                                 :establishment="restaurant?.establishment ?? 'restaurant'"
-                                 :currency="restaurant?.currency ?? 'uah'"/>
+              <template v-else>
+                <div class="w-full min-h-[88px] flex flex-col justify-center items-center sticky top-0 bg-base-100 z-10 border-1 border-base-300"
+                     :class="{'shadow-md': scrolledToSticky}">
+                  <div class="loading loading-dots loading-lg text-warning/40"/>
+                </div>
+
+                <LoadingMenuInList :products="[{image: true}, {image: false}]"
+                                   :establishment="restaurant?.establishment ?? 'restaurant'"
+                                   :currency="restaurant?.currency ?? 'uah'"/>
+              </template>
             </template>
 
             <div class="w-full sticky top-0 bg-base-100 z-10 border-1 border-base-300"

@@ -92,6 +92,7 @@ class DishResource extends BaseResource
                 ->in(fn (callable $get) => array_keys(
                     DishCategoryResource::getSelectOptions((int) $get('menu_id'))
                 ))
+                ->helperText("Dishes without a category, or in a hidden one, aren't shown on the website.")
                 ->searchable(),
         ];
     }

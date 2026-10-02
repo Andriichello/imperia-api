@@ -296,7 +296,7 @@
       </div>
     </div>
 
-    <Deferred data="products">
+    <Deferred :data="products">
       <template #fallback>
         <div class="flex flex-wrap justify-center gap-x-2 gap-y-1 normal-case text-[12px] text-base-content/60 pt-2 pb-1 px-2 opacity-60">
           <div class="w-[70px] h-[24px] px-1 flex justify-start items-center skeleton rounded-sm border-1 border-dashed">
@@ -484,7 +484,7 @@
         </div>
 
         <!-- Products section -->
-        <Deferred data="products">
+        <Deferred :data="products">
           <template #fallback>
             <div class="mb-6">
               <h3 class="font-bold text-lg mb-2">{{ i18n.t('search.products') }}</h3>
