@@ -1,5 +1,5 @@
 import {DateTime} from "luxon";
-import {Dish, DishVariant, Restaurant, Schedule, ScheduleWeekday} from "@/api";
+import {Dish, DishVariant, Restaurant, Schedule, ScheduleException, ScheduleWeekday} from "@/api";
 import { t } from "@/i18n/utils";
 
 export function priceFormatted(price: number | null, currencyCode: string = 'uah'): string | null {
@@ -53,79 +53,40 @@ export function sizeWeightFormatted(size: DishSize): string {
     return `${size.weight} ${size.weight_unit ? weightUnitFormatted(size.weight_unit) : ''}`.trim();
 }
 
-export function sortSchedules(items: Schedule[]): Schedule[] {
-    const schedules = [];
+/** Days of the week, from Monday. */
+const WEEKDAYS: ScheduleWeekday[] = Object.values(ScheduleWeekday);
 
-    for (const scheduleWeekdayEnumKey in ScheduleWeekday) {
-        const weekday = ScheduleWeekday[scheduleWeekdayEnumKey as keyof typeof ScheduleWeekday];
-        const schedule = items.find((s) => s.weekday === weekday);
-
-        if (schedule) {
-            schedules.push(schedule);
-        }
-    }
-
-    return schedules;
+/** Hours of a day: closing at or before the opening time means closing after midnight. */
+export interface Interval {
+  beg_hour: number,
+  beg_minute: number,
+  end_hour: number,
+  end_minute: number,
 }
 
-export function filterAndSortSchedules(items: Schedule[]): Schedule[] {
-    return sortSchedules(items.filter((schedule) => !schedule.archived));
+/** A day of the week with its hours (several, with a lunch break), none when it's closed. */
+export interface WeekdayHours {
+  weekday: ScheduleWeekday,
+  intervals: Interval[],
+}
+
+/**
+ * Hours of each day of the week, from Monday, by the opening time.
+ * Days marked as closed in the admin are archived.
+ */
+export function weeklyHours(schedules: Schedule[]): WeekdayHours[] {
+  return WEEKDAYS.map((weekday) => ({
+    weekday,
+    intervals: schedules
+      .filter((schedule) => schedule.weekday === weekday && !schedule.archived)
+      .sort((a, b) => (a.beg_hour * 60 + a.beg_minute) - (b.beg_hour * 60 + b.beg_minute)),
+  }));
 }
 
 export function getCurrentUtcWithOffset(timezoneOffset: number) {
     // Get the current UTC time and apply the timezone offset
     return DateTime.utc()
       .plus({minutes: timezoneOffset});
-}
-
-export function getNextOccurrence(baseDate: DateTime, weekday: string) {
-    // Map weekday name to a number (1 = Monday, 7 = Sunday)
-    const weekdayMap = {
-        monday: 1, tuesday: 2, wednesday: 3, thursday: 4, friday: 5, saturday: 6, sunday: 7,
-    };
-
-    const targetWeekday = weekdayMap[weekday.toLowerCase() as keyof typeof weekdayMap] ?? 0;
-    const daysUntilNext = (targetWeekday + 7 - baseDate.weekday) % 7;
-
-    return baseDate.plus({days: daysUntilNext});
-}
-
-export function getUpcomingSchedules(now: DateTime, schedules: Schedule[], timezoneOffset: number): (Schedule & ScheduleCalculations)[] {
-    const upcomingSchedules: (Schedule & ScheduleCalculations)[] = [];
-
-    schedules.forEach(schedule => {
-        // The schedule's weekday this week (today included). A week earlier is checked too,
-        // because yesterday's hours may still be going on after midnight.
-        const day = getNextOccurrence(now, schedule.weekday);
-
-        for (const date of [day.minus({days: 7}), day, day.plus({days: 7})]) {
-            const beg = date
-              .set({hour: schedule.beg_hour, minute: schedule.beg_minute, second: 0, millisecond: 0})
-              .minus({minutes: timezoneOffset}); // Adjust back to UTC
-
-            let end = date
-              .set({hour: schedule.end_hour, minute: schedule.end_minute, second: 0, millisecond: 0})
-              .minus({minutes: timezoneOffset}); // Adjust back to UTC
-
-            // Closing at or before the opening time means closing after midnight
-            if (end <= beg) {
-                end = end.plus({days: 1});
-            }
-
-            // The first occurrence that hasn't ended yet
-            if (end > now) {
-                upcomingSchedules.push({
-                    ...schedule,
-                    closestBegDate: beg,
-                    closestEndDate: end,
-                });
-
-                break;
-            }
-        }
-    });
-
-    return upcomingSchedules.sort((a, b) => a.closestBegDate.toMillis() - b.closestBegDate.toMillis());
 }
 
 export function time(hour: number, minute: number) {
@@ -141,7 +102,10 @@ export function time(hour: number, minute: number) {
       .replace('MM', minutes);
 }
 
-export interface ScheduleCalculations {
+/** An opening of the restaurant: hours on a date. */
+export interface Opening extends Interval {
+  // of the date it opens on
+  weekday: ScheduleWeekday,
   closestBegDate: DateTime,
   closestEndDate: DateTime,
 }
@@ -149,53 +113,133 @@ export interface ScheduleCalculations {
 /** Minutes before closing or opening that count as closing or opening soon. */
 export const SOON_MINUTES = 60;
 
-export type ScheduleState = 'open' | 'closing_soon' | 'opens_soon' | 'closed';
+/** How many days ahead the next opening is looked for. */
+const DAYS_AHEAD = 14;
+
+/** Special days shown in the schedule: the ones within this many days. */
+const SPECIAL_DAYS_AHEAD = 30;
+
+export type ScheduleState = 'open' | 'closing_soon' | 'opens_soon' | 'closed' | 'temporarily_closed';
 
 export interface ScheduleInfo {
   state: ScheduleState,
-  active: (ScheduleCalculations & Schedule) | null,
-  relevant: (ScheduleCalculations & Schedule) | null,
-  upcoming: (ScheduleCalculations & Schedule)[],
-  // Days with hours, from Monday to Sunday, closed ones (archived) included
-  schedules: Schedule[],
+  // the opening going on now
+  active: Opening | null,
+  // the opening going on now, or the next one
+  relevant: Opening | null,
+  week: WeekdayHours[],
   // Weekday of the restaurant's current date
   today: ScheduleWeekday,
   // Closed now, opens later today
   opensToday: boolean,
   // Minutes until closing (when open) or opening (when closed), rounded up
   minutesLeft: number | null,
+  // The special day of today
+  special: ScheduleException | null,
+  // Special days from today on, which override the weekly hours
+  specials: ScheduleException[],
+  // Temporarily closed till this day (inclusive)
+  closedUntil: string | null,
+}
+
+/**
+ * The special day of the date (a holiday or a short day).
+ */
+export function specialOn(exceptions: ScheduleException[], date: string): ScheduleException | null {
+  return exceptions.find((exception) => exception.starts_on <= date && date <= exception.ends_on) ?? null;
+}
+
+/**
+ * Openings of the restaurant from yesterday (its hours may go on after midnight) on:
+ * the hours of its special days or weekdays, none while it's temporarily closed.
+ */
+function getOpenings(restaurant: Restaurant, now: DateTime): Opening[] {
+  const week = weeklyHours(restaurant.schedules ?? []);
+  const openings: Opening[] = [];
+
+  for (let offset = -1; offset <= DAYS_AHEAD; offset++) {
+    const day = now.startOf('day').plus({days: offset});
+    const date = day.toISODate() as string;
+
+    if (restaurant.closed_until && date <= restaurant.closed_until) {
+      continue;
+    }
+
+    const special = specialOn(restaurant.exceptions ?? [], date);
+    let intervals: Interval[] = week[day.weekday - 1].intervals;
+
+    if (special) {
+      intervals = special.is_closed ? [] : [{
+        beg_hour: special.beg_hour ?? 0,
+        beg_minute: special.beg_minute ?? 0,
+        end_hour: special.end_hour ?? 0,
+        end_minute: special.end_minute ?? 0,
+      }];
+    }
+
+    for (const interval of intervals) {
+      const beg = day.set({hour: interval.beg_hour, minute: interval.beg_minute});
+      let end = day.set({hour: interval.end_hour, minute: interval.end_minute});
+
+      // Closing at or before the opening time means closing after midnight
+      if (end <= beg) {
+        end = end.plus({days: 1});
+      }
+
+      openings.push({
+        beg_hour: interval.beg_hour,
+        beg_minute: interval.beg_minute,
+        end_hour: interval.end_hour,
+        end_minute: interval.end_minute,
+        // Luxon's weekdays go from 1 (Monday) to 7 (Sunday)
+        weekday: WEEKDAYS[day.weekday - 1],
+        closestBegDate: beg,
+        closestEndDate: end,
+      });
+    }
+  }
+
+  return openings.sort((a, b) => a.closestBegDate.toMillis() - b.closestBegDate.toMillis());
 }
 
 export function getScheduleInfo(restaurant: Restaurant): ScheduleInfo {
+  // the restaurant's current date and time (in UTC, shifted by its offset)
   const now = getCurrentUtcWithOffset(restaurant.timezone_offset);
-  // Days marked as closed in the admin are archived
-  const schedules = filterAndSortSchedules(restaurant.schedules ?? []);
+  const today = now.toISODate() as string;
+  const exceptions = restaurant.exceptions ?? [];
 
-  // Sorted by opening time, so the one that is open now (if any) comes first
-  const upcoming = getUpcomingSchedules(now, schedules, 0);
-  const relevant = upcoming[0] ?? null;
-  const active = relevant && relevant.closestBegDate <= now && now < relevant.closestEndDate
-    ? relevant : null;
+  const openings = getOpenings(restaurant, now);
+  const active = openings.find((o) => o.closestBegDate <= now && now < o.closestEndDate) ?? null;
+  const relevant = active ?? openings.find((o) => o.closestBegDate > now) ?? null;
 
   const minutesLeft = relevant
     ? Math.ceil((active ? relevant.closestEndDate : relevant.closestBegDate).diff(now, 'minutes').minutes)
     : null;
 
+  const closedUntil = restaurant.closed_until && today <= restaurant.closed_until
+    ? restaurant.closed_until
+    : null;
+
   let state: ScheduleState = active ? 'open' : 'closed';
 
-  if (minutesLeft !== null && minutesLeft <= SOON_MINUTES) {
+  if (closedUntil) {
+    state = 'temporarily_closed';
+  } else if (minutesLeft !== null && minutesLeft <= SOON_MINUTES) {
     state = active ? 'closing_soon' : 'opens_soon';
   }
+
+  const lastSpecialDay = now.plus({days: SPECIAL_DAYS_AHEAD}).toISODate() as string;
 
   return {
     state,
     active,
     relevant,
-    upcoming,
-    schedules: sortSchedules(restaurant.schedules ?? []),
-    // Luxon's weekdays go from 1 (Monday) to 7 (Sunday)
-    today: Object.values(ScheduleWeekday)[now.weekday - 1],
+    week: weeklyHours(restaurant.schedules ?? []),
+    today: WEEKDAYS[now.weekday - 1],
     opensToday: !!relevant && !active && relevant.closestBegDate.hasSame(now, 'day'),
     minutesLeft,
+    special: specialOn(exceptions, today),
+    specials: exceptions.filter((e) => e.ends_on >= today && e.starts_on <= lastSpecialDay),
+    closedUntil,
   };
 }

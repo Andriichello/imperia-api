@@ -19,10 +19,15 @@
           "restaurant" => $restaurant ?? null,
           "menus" => $menus ?? null,
       ];
+
+      // the restaurant's brand colors instead of the default ones of `app.css`
+      $brand = isset($restaurant) && $restaurant->brand_primary && $restaurant->brand_primary_content
+          ? "--color-warning: {$restaurant->brand_primary}; --color-warning-content: {$restaurant->brand_primary_content};"
+          : null;
     @endphp
   </head>
 
-  <body data-theme="light">
+  <body data-theme="light" @if($brand) style="{{ $brand }}" @endif>
     <div id="app" data-props='@json($props)'>
       <!-- App Content -->
     </div>

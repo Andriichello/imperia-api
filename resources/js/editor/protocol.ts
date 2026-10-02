@@ -1,3 +1,5 @@
+import type {Restaurant} from '@/api'
+
 /**
  * Messages between the editor and the public page in its preview (a same-origin iframe).
  * Both sides accept them only from each other: the same origin, and the frame or its parent.
@@ -10,6 +12,20 @@ export type PreviewMode = 'select' | 'browse'
 export interface PreviewPage {
   page: 'restaurant' | 'menu'
   menuId: number | null
+}
+
+/**
+ * Unsaved changes shown in the preview: values of the public page's data (in its language),
+ * which replace the loaded ones.
+ */
+export interface PreviewPatch {
+  restaurant?: Partial<Restaurant>
+}
+
+/** Brand colors of the public page: the primary one and the one of text on its tints. */
+export interface PreviewBrand {
+  primary: string
+  content: string
 }
 
 /** Attribute of the parts of the public page, which can be selected (see `editKey()`). */
@@ -29,6 +45,8 @@ export type EditorMessage =
   | { type: 'editor:scrollTo', keys: string[] }
   | { type: 'editor:navigate', page: PreviewPage }
   | { type: 'editor:locale', locale: string }
+  | { type: 'editor:draft', patch: PreviewPatch }
+  | { type: 'editor:brand', brand: PreviewBrand }
 
 /** Preview → editor. */
 export type PreviewMessage =

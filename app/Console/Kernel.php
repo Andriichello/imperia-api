@@ -34,6 +34,8 @@ class Kernel extends ConsoleKernel
         $schedule->job(new DispatchNotifications(100))->everyMinute();
         $schedule->job(new DispatchProlongHolidays())->hourly();
         $schedule->job(new PerformAlternations())->everyMinute()->withoutOverlapping();
+        // photos uploaded in the editor, which weren't saved (a day later)
+        $schedule->command('media:prune-unattached --delete')->daily();
     }
 
     /**

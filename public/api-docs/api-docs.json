@@ -1703,6 +1703,77 @@
                 ]
             }
         },
+        "/api/editor/restaurants/{id}/media": {
+            "post": {
+                "tags": [
+                    "editor"
+                ],
+                "summary": "Upload a photo of the restaurant, to be set as one of its or its dishes' photos.",
+                "operationId": "uploadEditorRestaurantPhoto",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the restaurant.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EditorUploadPhotoRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/StoreMediaResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The user can't edit the restaurant."
+                    },
+                    "422": {
+                        "description": "Invalid values.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorsResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/editor/restaurants/{id}/hours": {
             "put": {
                 "tags": [
@@ -7450,6 +7521,19 @@
                 },
                 "type": "object"
             },
+            "EditorUploadPhotoRequest": {
+                "description": "A photo: JPG, PNG or WebP, up to 10 MB.",
+                "required": [
+                    "file"
+                ],
+                "properties": {
+                    "file": {
+                        "type": "string",
+                        "format": "binary"
+                    }
+                },
+                "type": "object"
+            },
             "StoreMediaRequest": {
                 "description": "Store media request",
                 "required": [
@@ -9782,7 +9866,12 @@
                     "establishment",
                     "notes",
                     "media",
-                    "schedules"
+                    "schedules",
+                    "exceptions",
+                    "closed_until",
+                    "closed_reason",
+                    "brand_primary",
+                    "brand_primary_content"
                 ],
                 "properties": {
                     "id": {
@@ -9884,6 +9973,36 @@
                         "items": {
                             "$ref": "#/components/schemas/Schedule"
                         }
+                    },
+                    "exceptions": {
+                        "description": "Special days from yesterday on.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ScheduleException"
+                        }
+                    },
+                    "closed_until": {
+                        "description": "Temporarily closed till this day (inclusive).",
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-10-14",
+                        "nullable": true
+                    },
+                    "closed_reason": {
+                        "type": "string",
+                        "example": "Renovation",
+                        "nullable": true
+                    },
+                    "brand_primary": {
+                        "type": "string",
+                        "example": "#3bb517",
+                        "nullable": true
+                    },
+                    "brand_primary_content": {
+                        "description": "Color of text on tints of the primary one.",
+                        "type": "string",
+                        "example": "#284625",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -9948,6 +10067,66 @@
                         "type": "string",
                         "format": "date-time",
                         "example": "2022-01-12 10:00:00",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ScheduleException": {
+                "description": "Special day (or days), which overrides the weekly hours.",
+                "required": [
+                    "id",
+                    "starts_on",
+                    "ends_on",
+                    "is_closed",
+                    "beg_hour",
+                    "beg_minute",
+                    "end_hour",
+                    "end_minute",
+                    "reason"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "starts_on": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-12-24"
+                    },
+                    "ends_on": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2026-12-24"
+                    },
+                    "is_closed": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "beg_hour": {
+                        "type": "integer",
+                        "example": 10,
+                        "nullable": true
+                    },
+                    "beg_minute": {
+                        "type": "integer",
+                        "example": 0,
+                        "nullable": true
+                    },
+                    "end_hour": {
+                        "type": "integer",
+                        "example": 18,
+                        "nullable": true
+                    },
+                    "end_minute": {
+                        "type": "integer",
+                        "example": 0,
+                        "nullable": true
+                    },
+                    "reason": {
+                        "type": "string",
+                        "example": "Christmas Eve",
                         "nullable": true
                     }
                 },

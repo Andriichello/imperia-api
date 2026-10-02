@@ -4,6 +4,11 @@
   import PageStructure from '@/Components/Editor/PageStructure.vue'
   import SectionPanel from '@/Components/Editor/SectionPanel.vue'
   import PreviewPane from '@/Components/Editor/PreviewPane.vue'
+  import BrandPanel from '@/Components/Editor/Panels/BrandPanel.vue'
+  import DetailsPanel from '@/Components/Editor/Panels/DetailsPanel.vue'
+  import HoursPanel from '@/Components/Editor/Panels/HoursPanel.vue'
+  import NotesPanel from '@/Components/Editor/Panels/NotesPanel.vue'
+  import PhotosPanel from '@/Components/Editor/Panels/PhotosPanel.vue'
   import {useEditorStore} from '@/stores/editor'
 
   /**
@@ -11,6 +16,19 @@
    * on the left, and the preview of the public page.
    */
   const editor = useEditorStore()
+
+  /** Panels of the restaurant page's sections. */
+  const PANELS = {
+    photos: PhotosPanel,
+    details: DetailsPanel,
+    notes: NotesPanel,
+    hours: HoursPanel,
+    brand: BrandPanel,
+  }
+
+  const panel = computed(() => editor.selection
+    ? PANELS[editor.selection.section as keyof typeof PANELS] ?? null
+    : null)
 
   // a panel of its own for each part, so nothing of the previous one stays in it
   const panelKey = computed(() => editor.selection
@@ -60,9 +78,13 @@
 
     <div class="flex-1 min-h-0 flex">
       <aside class="w-[420px] shrink-0 flex flex-col bg-white border-r border-zinc-200">
+        <component :is="panel"
+                   :key="panelKey"
+                   v-if="panel"/>
+
         <SectionPanel :key="panelKey"
                       :selection="editor.selection"
-                      v-if="editor.selection"/>
+                      v-else-if="editor.selection"/>
 
         <PageStructure v-else/>
       </aside>

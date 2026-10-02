@@ -1,12 +1,13 @@
 <script setup lang="ts">
-  import {computed, PropType, ref, watch} from 'vue'
+  import {computed, PropType} from 'vue'
   import {useI18n} from 'vue-i18n'
   import {Info} from 'lucide-vue-next'
   import type {EditorCategory, EditorDish, EditorMenu, EditorTranslations} from '@/api'
   import PanelShell from '@/Components/Editor/PanelShell.vue'
   import {useEditorStore} from '@/stores/editor'
+  import {useContentLocale} from '@/composables/useContentLocale'
   import type {Breadcrumb, LanguageTab, Section, Selection} from '@/editor/sections'
-  import {languageName, translated} from '@/editor/translations'
+  import {translated} from '@/editor/translations'
 
   /**
    * The panel of a part of the page: its frame, with what it's about. The fields of each
@@ -81,28 +82,10 @@
     return crumbs
   })
 
-  // language of the texts being edited, the preview follows it
-  const locale = ref(editor.defaultLocale)
+  // texts in each language
+  const {locale, languages: tabs} = useContentLocale()
 
-  watch(locale, (value) => {
-    editor.previewLocale = value
-  })
-
-  const languages = computed<LanguageTab[] | null>(() => {
-    if (!TRANSLATED.includes(section.value)) {
-      return null
-    }
-
-    // the default language first
-    return [...editor.locales]
-      .sort((a, b) => Number(b === editor.defaultLocale) - Number(a === editor.defaultLocale))
-      .map((code) => ({
-        locale: code,
-        label: languageName(code),
-        isDefault: code === editor.defaultLocale,
-        missing: null,
-      }))
-  })
+  const languages = computed<LanguageTab[] | null>(() => TRANSLATED.includes(section.value) ? tabs.value : null)
 
   function navigate(selection: Selection | null) {
     editor.select(selection, !!selection && editor.isShown(selection))

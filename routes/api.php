@@ -187,6 +187,8 @@ Route::group([
         ->name('restaurants.photos');
     Route::put('/restaurants/{id}/hours', [RestaurantEditorController::class, 'updateHours'])
         ->name('restaurants.hours');
+    Route::post('/restaurants/{id}/media', [RestaurantEditorController::class, 'uploadPhoto'])
+        ->name('restaurants.media');
     Route::post('/restaurants/{id}/menus', [MenuEditorController::class, 'store'])
         ->name('menus.store');
     Route::put('/restaurants/{id}/menus/order', [MenuEditorController::class, 'order'])

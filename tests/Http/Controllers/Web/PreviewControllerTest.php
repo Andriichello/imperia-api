@@ -6,6 +6,8 @@ use App\Models\DishCategory;
 use App\Models\DishMenu;
 use App\Models\Restaurant;
 use App\Models\Schedule;
+use App\Models\ScheduleException;
+use Illuminate\Support\Carbon;
 use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
@@ -204,6 +206,60 @@ class PreviewControllerTest extends TestCase
     {
         $this->get($this->menuUrl())
             ->assertRedirect($this->restaurantUrl());
+    }
+
+    /**
+     * Test that the page has the restaurant's brand colors, its closure and the special days,
+     * which haven't passed, in the page's language.
+     *
+     * @return void
+     */
+    public function testClosureSpecialDaysAndBrandColorsAreShown()
+    {
+        Carbon::setTestNow(Carbon::parse('2026-10-02 12:00', 'Europe/Kyiv'));
+
+        $this->restaurant->fill([
+            'timezone' => 'Europe/Kyiv',
+            'brand_primary' => '#6db0bb',
+            'brand_primary_content' => '#295a5a',
+            'closed_until' => '2026-10-14',
+        ]);
+        $this->restaurant->putTranslations('closed_reason', ['en' => 'Renovation', 'uk' => 'Ремонт']);
+        $this->restaurant->save();
+
+        $factory = ScheduleException::factory()->withRestaurant($this->restaurant);
+        $factory->create(['starts_on' => '2026-09-20', 'ends_on' => '2026-09-30']);
+        /** @var ScheduleException $yesterday */
+        $yesterday = $factory->create(['starts_on' => '2026-10-01', 'ends_on' => '2026-10-01']);
+        /** @var ScheduleException $christmas */
+        $christmas = $factory->create([
+            'starts_on' => '2026-12-24',
+            'ends_on' => '2026-12-24',
+            'is_closed' => false,
+            'beg_hour' => 10,
+            'beg_minute' => 0,
+            'end_hour' => 18,
+            'end_minute' => 0,
+            'reason' => ['en' => 'Christmas Eve', 'uk' => 'Святвечір'],
+        ]);
+
+        $url = route('web.restaurant.preview', ['locale' => 'uk', 'restaurant_id' => $this->restaurant->id]);
+
+        $response = $this->get($url)
+            ->assertOk()
+            ->assertSee('style="--color-warning: #6db0bb; --color-warning-content: #295a5a;"', false);
+
+        $restaurant = $response->viewData('restaurant')->resolve();
+
+        $this->assertSame('2026-10-14', $restaurant['closed_until']);
+        $this->assertSame('Ремонт', $restaurant['closed_reason']);
+        $this->assertSame([$yesterday->id, $christmas->id], collect($restaurant['exceptions'])->pluck('id')->all());
+        $this->assertSame('Святвечір', $restaurant['exceptions'][1]->resolve()['reason']);
+
+        // without brand colors, the page has the default ones
+        $this->restaurant->update(['brand_primary' => null, 'brand_primary_content' => null]);
+
+        $this->getRestaurantPage()->assertDontSee('--color-warning:', false);
     }
 
     /**

@@ -30,7 +30,7 @@ trait LoadsAndCachesTrait
 
         $key = WebCacheHelper::restaurantKey($idOrSlug);
         $callback = fn() => RestaurantHelper::find($idOrSlug)
-            ?->load(['media', 'schedules', 'notes']);
+            ?->load(['media', 'schedules', 'scheduleExceptions', 'notes']);
 
         return Cache::remember($key, $ttl, $callback);
     }

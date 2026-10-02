@@ -9,10 +9,13 @@ use App\Http\Requests\Editor\UpdateRestaurantHoursRequest;
 use App\Http\Requests\Editor\UpdateRestaurantNotesRequest;
 use App\Http\Requests\Editor\UpdateRestaurantPhotosRequest;
 use App\Http\Requests\Editor\UpdateRestaurantRequest;
+use App\Http\Requests\Editor\UploadRestaurantPhotoRequest;
 use App\Http\Resources\Editor\EditorRestaurantResource;
+use App\Http\Resources\Media\MediaResource;
 use App\Http\Responses\ApiResponse;
 use App\Models\Restaurant;
 use App\Repositories\Editor\RestaurantEditorRepository;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use OpenApi\Annotations as OA;
 
 /**
@@ -21,6 +24,8 @@ use OpenApi\Annotations as OA;
  * The admin editor's restaurant: everything of it in all languages (hidden and archived
  * menus, categories and dishes included), and its details, notes, photos and hours.
  * Each change responds with everything of the restaurant again.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class RestaurantEditorController extends Controller
 {
@@ -99,6 +104,21 @@ class RestaurantEditorController extends Controller
         $this->repository->setPhotos($request->restaurant(), $request->validated('media'));
 
         return $this->respond($request->restaurant());
+    }
+
+    /**
+     * Upload a photo of the restaurant (of itself or of a dish), to be set as one of the photos.
+     *
+     * @param UploadRestaurantPhotoRequest $request
+     *
+     * @return ApiResponse
+     * @throws FileNotFoundException
+     */
+    public function uploadPhoto(UploadRestaurantPhotoRequest $request): ApiResponse
+    {
+        $media = $this->repository->uploadPhoto($request->restaurant(), $request->file('file'));
+
+        return ApiResponse::make(['data' => new MediaResource($media)], 201, 'Created');
     }
 
     /**
@@ -232,6 +252,31 @@ class RestaurantEditorController extends Controller
      *     response=200,
      *     description="Success.",
      *     @OA\JsonContent(ref="#/components/schemas/EditorRestaurantResponse")
+     *   ),
+     *   @OA\Response(response=401, description="Unauthenticated.",
+     *     @OA\JsonContent(ref="#/components/schemas/UnauthenticatedResponse")),
+     *   @OA\Response(response=403, description="The user can't edit the restaurant."),
+     *   @OA\Response(response=422, description="Invalid values.",
+     *     @OA\JsonContent(ref="#/components/schemas/ValidationErrorsResponse")),
+     * ),
+     * @OA\Post(
+     *   path="/api/editor/restaurants/{id}/media",
+     *   summary="Upload a photo of the restaurant, to be set as one of its or its dishes' photos.",
+     *   operationId="uploadEditorRestaurantPhoto",
+     *   security={{"bearerAuth": {}}},
+     *   tags={"editor"},
+     *
+     *   @OA\Parameter(name="id", required=true, in="path", example=1, @OA\Schema(type="integer"),
+     *     description="Id of the restaurant."),
+     *   @OA\RequestBody(
+     *     required=true,
+     *     @OA\MediaType(mediaType="multipart/form-data",
+     *       @OA\Schema(ref="#/components/schemas/EditorUploadPhotoRequest"))
+     *   ),
+     *   @OA\Response(
+     *     response=201,
+     *     description="Created.",
+     *     @OA\JsonContent(ref="#/components/schemas/StoreMediaResponse")
      *   ),
      *   @OA\Response(response=401, description="Unauthenticated.",
      *     @OA\JsonContent(ref="#/components/schemas/UnauthenticatedResponse")),

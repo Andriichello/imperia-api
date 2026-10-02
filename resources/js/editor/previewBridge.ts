@@ -9,8 +9,10 @@ import {
   keyId,
   keyKind,
   PreviewMessage,
+  PreviewBrand,
   PreviewMode,
   PreviewPage,
+  PreviewPatch,
 } from '@/editor/protocol'
 
 /**
@@ -166,9 +168,28 @@ class PreviewBridge {
       case 'editor:locale':
         this.switchLocale(message.locale)
         return
+      case 'editor:draft':
+        this.applyDraft(message.patch)
+        break
+      case 'editor:brand':
+        this.applyBrand(message.brand)
+        break
     }
 
     this.render()
+  }
+
+  /** Show the unsaved changes: they replace the page's data, which it shows reactively. */
+  protected applyDraft(patch: PreviewPatch): void {
+    if (patch.restaurant && this.app.restaurant) {
+      Object.assign(this.app.restaurant, patch.restaurant)
+    }
+  }
+
+  /** Brand colors instead of the restaurant's ones (they're set on the body, see `web/app.blade.php`). */
+  protected applyBrand(brand: PreviewBrand): void {
+    document.body.style.setProperty('--color-warning', brand.primary)
+    document.body.style.setProperty('--color-warning-content', brand.content)
   }
 
   /** Whether clicks select parts of the page now (Select mode, Alt isn't held). */

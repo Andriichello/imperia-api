@@ -26,6 +26,8 @@ import type {
   EditorUpdateRestaurantNotesRequest,
   EditorUpdateRestaurantPhotosRequest,
   EditorUpdateRestaurantRequest,
+  EditorUploadPhotoRequest,
+  StoreMediaResponse,
   SuccessResponse,
 } from "../models";
 
@@ -617,6 +619,30 @@ export const getUpdateEditorRestaurantPhotosUrl = (id: number) => {
     });
 };
 /**
+ * @summary Upload a photo of the restaurant, to be set as one of its or its dishes' photos.
+ */
+export const uploadEditorRestaurantPhoto = (
+  id: number,
+  editorUploadPhotoRequest: EditorUploadPhotoRequest,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<StoreMediaResponse>> => {
+  const formData = new FormData();
+  formData.append(`file`, editorUploadPhotoRequest.file);
+
+  return axios.post(`/api/editor/restaurants/${id}/media`, formData, options);
+};
+export const getUploadEditorRestaurantPhotoUrl = (id: number) => {
+  return axios
+    .create({
+      baseURL: "",
+      params: null,
+    })
+    .getUri({
+      url: `/api/editor/restaurants/${id}/media`,
+      baseURL: "",
+    });
+};
+/**
  * @summary Replace hours, special days and closure of the restaurant.
  */
 export const updateEditorRestaurantHours = (
@@ -673,5 +699,7 @@ export type UpdateEditorRestaurantNotesResult =
   AxiosResponse<EditorRestaurantResponse>;
 export type UpdateEditorRestaurantPhotosResult =
   AxiosResponse<EditorRestaurantResponse>;
+export type UploadEditorRestaurantPhotoResult =
+  AxiosResponse<StoreMediaResponse>;
 export type UpdateEditorRestaurantHoursResult =
   AxiosResponse<EditorRestaurantResponse>;

@@ -10,7 +10,7 @@ use OpenApi\Annotations as OA;
  * Class UpdateRestaurantPhotosRequest.
  *
  * Ids of the restaurant's photos, in their order (the first one is the cover).
- * Photos are uploaded beforehand (`POST /api/media`), they have to be the restaurant's.
+ * Photos are uploaded beforehand (`POST /api/editor/restaurants/{id}/media`), they have to be the restaurant's.
  */
 class UpdateRestaurantPhotosRequest extends EditorRequest
 {

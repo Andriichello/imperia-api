@@ -1,5 +1,6 @@
 <script setup lang="ts">
   import {computed, PropType, ref} from "vue";
+  import {DateTime} from "luxon";
   import {Splide, SplideSlide} from '@splidejs/vue-splide';
   import {
     Copy,
@@ -38,7 +39,8 @@
     })
   });
 
-  const slideOptions = ref({
+  // follows the photos (they change in the editor's preview)
+  const slideOptions = computed(() => ({
     perPage: 1,
     perMove: 1,
     rewind: false,
@@ -46,7 +48,7 @@
     drag: (media.value?.length ?? 0) > 1,
     arrows: (media.value?.length ?? 0) > 1,
     pagination: true,
-  });
+  }));
 
   const scheduleInfo = computed<ScheduleInfo>(
     () => getScheduleInfo(props.restaurant)
@@ -59,9 +61,29 @@
     closed: {dot: 'bg-red-600', text: 'text-red-700'},
   };
 
-  /** Working hours status: "● Open · until 23:00", with a line of details in the last hour. */
+  /** "14 Oct" in the page's language. */
+  function shortDate(date: string): string {
+    return DateTime.fromISO(date)
+      .setLocale(i18n.locale.value)
+      .toLocaleString({day: 'numeric', month: 'short'});
+  }
+
+  /**
+   * Working hours status: "● Open · until 23:00", with a line of details in the last hour
+   * and the name of today's special day (a holiday, a short day).
+   */
   const scheduleStatus = computed(() => {
-    const {state, relevant, minutesLeft, opensToday} = scheduleInfo.value;
+    const {state, relevant, minutesLeft, opensToday, special, closedUntil} = scheduleInfo.value;
+
+    // closed for a while (e.g. for a renovation): till when, and why
+    if (state === 'temporarily_closed') {
+      return {
+        tone: STATUS_TONES.closed,
+        label: i18n.t('schedule.temporarily_closed'),
+        detail: i18n.t('schedule.until_date', {date: shortDate(closedUntil as string)}),
+        note: props.restaurant.closed_reason || null,
+      };
+    }
 
     if (!relevant) {
       return null;
@@ -70,31 +92,35 @@
     const closesAt = time(relevant.end_hour, relevant.end_minute);
     const opensAt = time(relevant.beg_hour, relevant.beg_minute);
     const minutes = minutesLeft ?? 0;
+    let status;
 
     switch (state) {
       case 'open':
-        return {
+        status = {
           tone: STATUS_TONES.open,
           label: i18n.t('restaurant.open'),
           detail: i18n.t('schedule.until', {time: closesAt}),
           note: null,
         };
+        break;
       case 'closing_soon':
-        return {
+        status = {
           tone: STATUS_TONES.soon,
           label: i18n.t('schedule.closing_soon'),
           detail: closesAt,
           note: i18n.t('schedule.closes_in', {count: minutes}, minutes),
         };
+        break;
       case 'opens_soon':
-        return {
+        status = {
           tone: STATUS_TONES.soon,
           label: i18n.t('schedule.opens_soon'),
           detail: opensAt,
           note: i18n.t('schedule.opens_in', {count: minutes}, minutes),
         };
+        break;
       default:
-        return {
+        status = {
           tone: STATUS_TONES.closed,
           label: i18n.t('restaurant.closed'),
           detail: opensToday
@@ -103,6 +129,12 @@
           note: null,
         };
     }
+
+    if (special?.reason) {
+      status.note = status.note ? `${special.reason} · ${status.note}` : special.reason;
+    }
+
+    return status;
   });
 
   const getEstablishmentTitle = computed(() => {

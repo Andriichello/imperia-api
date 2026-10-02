@@ -8,12 +8,15 @@ use App\Models\Dish;
 use App\Models\DishCategory;
 use App\Models\DishMenu;
 use App\Models\DishVariant;
+use App\Models\Morphs\Media;
 use App\Models\Restaurant;
 use App\Models\RestaurantNote;
 use App\Models\Schedule;
 use App\Models\ScheduleException;
 use Database\Factories\Morphs\MediaFactory;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\Sanctum;
 
 /**
@@ -309,6 +312,45 @@ class RestaurantEditorTest extends EditorTestCase
         $this->putJson("/api/editor/restaurants/{$this->restaurant->id}/photos", ['media' => []])
             ->assertOk()
             ->assertJsonPath('data.photos', []);
+    }
+
+    /**
+     * Test that a photo is uploaded for the restaurant: it's unattached till it's set as a photo.
+     *
+     * @return void
+     */
+    public function testPhotosAreUploadedForTheRestaurant()
+    {
+        Storage::fake(config('media.disk'));
+        $other = Restaurant::factory()->create();
+        $url = "/api/editor/restaurants/{$this->restaurant->id}/media";
+
+        $id = $this->postJson($url, ['file' => UploadedFile::fake()->image('dining-room.jpg', 800, 600)])
+            ->assertCreated()
+            ->assertJsonPath('data.title', 'dining-room.jpg')
+            ->json('data.id');
+
+        /** @var Media $media */
+        $media = Media::query()->findOrFail($id);
+
+        $this->assertSame($this->restaurant->id, $media->restaurant_id);
+        $this->assertStringEndsWith("/{$this->restaurant->id}/", $media->folder);
+        $this->assertSame(0, $media->mediables()->count());
+
+        $this->putJson("/api/editor/restaurants/{$this->restaurant->id}/photos", ['media' => [$id]])
+            ->assertOk()
+            ->assertJsonPath('data.photos.0.id', $id);
+
+        $this->postJson($url, ['file' => UploadedFile::fake()->create('menu.pdf', 100, 'application/pdf')])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['file']);
+
+        $this->postJson($url, ['file' => UploadedFile::fake()->image('huge.jpg')->size(11 * 1024)])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['file']);
+
+        $this->postJson("/api/editor/restaurants/{$other->id}/media", ['file' => UploadedFile::fake()->image('a.jpg')])
+            ->assertForbidden();
     }
 
     /**

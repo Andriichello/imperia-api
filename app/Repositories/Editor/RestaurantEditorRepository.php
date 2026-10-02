@@ -2,13 +2,17 @@
 
 namespace App\Repositories\Editor;
 
+use App\Models\Morphs\Media;
 use App\Models\Restaurant;
 use App\Models\RestaurantNote;
 use App\Models\Schedule;
 use App\Models\ScheduleException;
 use App\Models\Scopes\ArchivedScope;
 use App\Models\User;
+use App\Repositories\MediaRepository;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -17,9 +21,20 @@ use Illuminate\Support\Facades\DB;
  * Class RestaurantEditorRepository.
  *
  * Changes of the restaurant itself: its details, notes, photos and hours.
+ *
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class RestaurantEditorRepository extends EditorRepository
 {
+    /**
+     * RestaurantEditorRepository constructor.
+     *
+     * @param MediaRepository $media
+     */
+    public function __construct(protected MediaRepository $media)
+    {
+    }
+
     /**
      * Restaurants the user can edit (the editor's restaurant switcher).
      *
@@ -123,6 +138,28 @@ class RestaurantEditorRepository extends EditorRepository
                 $note->save();
             }
         });
+    }
+
+    /**
+     * Upload a photo of the restaurant (of itself or of a dish). It's shown, once it's set
+     * as one of the photos; till then it's unattached.
+     *
+     * @param Restaurant $restaurant
+     * @param UploadedFile $file
+     *
+     * @return Media
+     * @throws FileNotFoundException
+     */
+    public function uploadPhoto(Restaurant $restaurant, UploadedFile $file): Media
+    {
+        return $this->media->create([
+            'file' => $file,
+            // the original name of the file is the photo's title
+            'name' => $file->getClientOriginalName(),
+            'disk' => config('media.disk'),
+            'folder' => config('media.folder'),
+            'restaurant_id' => $restaurant->id,
+        ]);
     }
 
     /**

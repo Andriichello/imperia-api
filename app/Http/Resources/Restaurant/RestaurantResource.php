@@ -4,9 +4,12 @@ namespace App\Http\Resources\Restaurant;
 
 use App\Http\Resources\Media\MediaCollection;
 use App\Http\Resources\Schedule\ScheduleCollection;
+use App\Http\Resources\Schedule\ScheduleExceptionResource;
 use App\Models\Restaurant;
 use App\Models\RestaurantNote;
+use App\Models\ScheduleException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 use OpenApi\Annotations as OA;
 
@@ -56,7 +59,28 @@ class RestaurantResource extends JsonResource
             /* @phpstan-ignore-next-line */
             'media' => new MediaCollection($this->media->load('variants')),
             'schedules' => new ScheduleCollection($this->schedules),
+            // special days, which haven't passed yet (yesterday's hours may go on after midnight)
+            'exceptions' => ScheduleExceptionResource::collection($this->upcomingExceptions()),
+            'closed_until' => $this->closed_until?->format('Y-m-d'),
+            'closed_reason' => $this->closed_reason ?: null,
+            'brand_primary' => $this->brand_primary,
+            'brand_primary_content' => $this->brand_primary_content,
         ];
+    }
+
+    /**
+     * Special days of the restaurant from yesterday on, in its time zone.
+     *
+     * @return array<int, ScheduleException>
+     */
+    protected function upcomingExceptions(): array
+    {
+        $yesterday = Carbon::now($this->timezone ?: config('app.timezone'))->subDay()->format('Y-m-d');
+
+        return $this->scheduleExceptions
+            ->filter(fn (ScheduleException $exception) => $exception->ends_on->format('Y-m-d') >= $yesterday)
+            ->values()
+            ->all();
     }
 
     /**
@@ -65,7 +89,8 @@ class RestaurantResource extends JsonResource
      *   description="Restaurant resource object",
      *   required = {"id", "type", "slug", "name", "country", "city", "place",
      *     "phone", "email", "website", "location", "timezone", "timezone_offset",
-     *     "popularity", "locale", "currency", "establishment", "notes", "media", "schedules"},
+     *     "popularity", "locale", "currency", "establishment", "notes", "media", "schedules",
+     *     "exceptions", "closed_until", "closed_reason", "brand_primary", "brand_primary_content"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="restaurants"),
      *   @OA\Property(property="slug", type="string", example="first"),
@@ -93,6 +118,14 @@ class RestaurantResource extends JsonResource
      *   @OA\Property(property="notes", type="array", nullable=true, @OA\Items(type="string")),
      *   @OA\Property(property="media", type="array", @OA\Items(ref ="#/components/schemas/Media")),
      *   @OA\Property(property="schedules", type="array", @OA\Items(ref ="#/components/schemas/Schedule")),
+     *   @OA\Property(property="exceptions", type="array", description="Special days from yesterday on.",
+     *     @OA\Items(ref ="#/components/schemas/ScheduleException")),
+     *   @OA\Property(property="closed_until", type="string", format="date", nullable=true,
+     *     example="2026-10-14", description="Temporarily closed till this day (inclusive)."),
+     *   @OA\Property(property="closed_reason", type="string", nullable=true, example="Renovation"),
+     *   @OA\Property(property="brand_primary", type="string", nullable=true, example="#3bb517"),
+     *   @OA\Property(property="brand_primary_content", type="string", nullable=true, example="#284625",
+     *     description="Color of text on tints of the primary one."),
      * )
      */
 }

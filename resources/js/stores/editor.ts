@@ -1,6 +1,6 @@
 import {defineStore} from 'pinia'
 import type {EditorCategory, EditorDish, EditorMenu, EditorRestaurant, EditorRestaurantItem} from '@/api'
-import type {PreviewMode, PreviewPage} from '@/editor/protocol'
+import type {PreviewBrand, PreviewMode, PreviewPage, PreviewPatch} from '@/editor/protocol'
 import {isSameSelection, keysOf, Selection, selectionOf} from '@/editor/sections'
 import {brandOf, BrandColors} from '@/editor/brand'
 
@@ -37,6 +37,10 @@ interface EditorState {
   navigation: { page: PreviewPage, count: number }
   // there are changes, which aren't saved
   dirty: boolean
+  // the open panel's changes, shown in the preview
+  previewPatch: PreviewPatch
+  // brand colors shown in the preview, the saved ones when there are none
+  previewBrand: PreviewBrand | null
 }
 
 export const useEditorStore = defineStore('editor', {
@@ -56,6 +60,8 @@ export const useEditorStore = defineStore('editor', {
     reveal: {keys: [], count: 0},
     navigation: {page: {page: 'restaurant', menuId: null}, count: 0},
     dirty: false,
+    previewPatch: {},
+    previewBrand: null,
   }),
   getters: {
     defaultLocale: (state): string => state.restaurant?.default_locale ?? 'en',

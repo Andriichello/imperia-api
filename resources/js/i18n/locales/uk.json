@@ -83,6 +83,9 @@
     "opens_in": "Відчиниться через {count} хвилину | Відчиниться через {count} хвилини | Відчиниться через {count} хвилин",
     "opens_at": "відчиниться о {time}",
     "opens_day_at": "відчиниться {day} о {time}",
+    "temporarily_closed": "Тимчасово зачинено",
+    "until_date": "до {date}",
+    "special_days": "Особливі дні",
     "short": {
       "monday": "пн",
       "tuesday": "вт",

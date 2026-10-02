@@ -83,6 +83,9 @@
     "opens_in": "Opens in {count} minute | Opens in {count} minutes",
     "opens_at": "opens at {time}",
     "opens_day_at": "opens {day} {time}",
+    "temporarily_closed": "Temporarily closed",
+    "until_date": "until {date}",
+    "special_days": "Special days",
     "short": {
       "monday": "Mon",
       "tuesday": "Tue",

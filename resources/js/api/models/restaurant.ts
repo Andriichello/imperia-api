@@ -6,6 +6,7 @@
  */
 import type { Media } from "./media";
 import type { Schedule } from "./schedule";
+import type { ScheduleException } from "./scheduleException";
 
 /**
  * Restaurant resource object
@@ -42,4 +43,20 @@ export interface Restaurant {
   notes: string[] | null;
   media: Media[];
   schedules: Schedule[];
+  /** Special days from yesterday on. */
+  exceptions: ScheduleException[];
+  /**
+   * Temporarily closed till this day (inclusive).
+   * @nullable
+   */
+  closed_until: string | null;
+  /** @nullable */
+  closed_reason: string | null;
+  /** @nullable */
+  brand_primary: string | null;
+  /**
+   * Color of text on tints of the primary one.
+   * @nullable
+   */
+  brand_primary_content: string | null;
 }

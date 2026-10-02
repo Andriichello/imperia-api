@@ -38,6 +38,11 @@
       type: Boolean,
       default: false,
     },
+    // saving failed for another reason than invalid values
+    failed: {
+      type: Boolean,
+      default: false,
+    },
     // it's valid and nothing is being uploaded
     canSave: {
       type: Boolean,
@@ -141,6 +146,11 @@
         <slot name="status">
           <template v-if="saving">
             <span class="text-zinc-500">{{ t('editor.panel.saving') }}</span>
+          </template>
+
+          <template v-else-if="failed">
+            <span class="size-[7px] rounded-full bg-red-600" aria-hidden="true"/>
+            <span class="text-red-700">{{ t('editor.panel.save_failed') }}</span>
           </template>
 
           <template v-else-if="dirty">
