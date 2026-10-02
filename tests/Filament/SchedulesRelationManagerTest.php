@@ -7,6 +7,7 @@ use App\Filament\Resources\RestaurantResource\Pages\EditRestaurant;
 use App\Filament\Resources\RestaurantResource\RelationManagers\SchedulesRelationManager;
 use App\Models\Restaurant;
 use App\Models\Schedule;
+use Carbon\Carbon;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\EditAction;
 use Illuminate\Support\Collection;
@@ -117,7 +118,12 @@ class SchedulesRelationManagerTest extends FilamentTestCase
 
         $this->hours()
             ->mountTableAction(EditAction::class, $friday)
-            ->assertTableActionDataSet(['weekday' => 'friday', 'opens_at' => '11:30', 'closes_at' => '23:45'])
+            // the picker holds a date and time (today's date)
+            ->assertTableActionDataSet([
+                'weekday' => 'friday',
+                'opens_at' => Carbon::today()->setTime(11, 30)->toDateTimeString(),
+                'closes_at' => Carbon::today()->setTime(23, 45)->toDateTimeString(),
+            ])
             ->setTableActionData(['opens_at' => '12:00', 'closes_at' => '01:00', 'archived' => true])
             ->callMountedTableAction()
             ->assertHasNoTableActionErrors();

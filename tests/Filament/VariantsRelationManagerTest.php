@@ -113,7 +113,7 @@ class VariantsRelationManagerTest extends FilamentTestCase
         $this->assertFalse((bool) $variant->archived);
 
         $this->variants()
-            ->callTableAction(EditAction::class, $variant, data: ['price' => 190, 'archived' => true])
+            ->callTableAction(EditAction::class, $variant, data: ['price' => 190, 'live' => false])
             ->assertHasNoTableActionErrors()
             ->callTableAction(DeleteAction::class, $variant);
 

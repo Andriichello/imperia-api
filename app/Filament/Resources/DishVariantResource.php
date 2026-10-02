@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Enums\WeightUnit;
 use App\Filament\Actions\SchedulePriceChangeBulkAction;
 use App\Filament\BaseResource;
+use App\Filament\Fields\LiveFields;
 use App\Filament\RelationManagers\AlterationsRelationManager;
 use App\Filament\Filters\LiveFilter;
 use App\Filament\Filters\TrashedFilter;
@@ -14,7 +15,6 @@ use App\Filament\Tables\Columns\LiveColumn;
 use App\Models\DishVariant;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -75,8 +75,7 @@ class DishVariantResource extends BaseResource
                 ->numeric()
                 ->minValue(0)
                 ->nullable(),
-            Toggle::make('archived')
-                ->default(false),
+            ...LiveFields::make(),
         ];
     }
 

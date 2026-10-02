@@ -6,6 +6,7 @@ use App\Enums\ProductFlag;
 use App\Enums\WeightUnit;
 use App\Filament\Actions\SchedulePriceChangeBulkAction;
 use App\Filament\BaseResource;
+use App\Filament\Fields\LiveFields;
 use App\Filament\Fields\FlagFields;
 use App\Filament\RelationManagers\AlterationsRelationManager;
 use App\Filament\Filters\LiveFilter;
@@ -23,7 +24,6 @@ use Filament\Actions;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Tables;
@@ -129,8 +129,7 @@ class DishResource extends BaseResource
                 ->numeric()
                 ->minValue(0)
                 ->nullable(),
-            Toggle::make('archived')
-                ->default(false),
+            ...LiveFields::make(),
             TextInput::make('popularity')
                 ->numeric()
                 ->nullable()

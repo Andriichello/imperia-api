@@ -92,7 +92,7 @@ class AlterationsTable
                 ->listWithLineBreaks(),
             TextColumn::make('perform_at')
                 ->label('When')
-                ->dateTime('d M Y, H:i')
+                ->dateTime('D, j M Y, H:i')
                 ->timezone(fn (Alteration $record) => $record->restaurant?->timezone ?: null)
                 ->placeholder('As soon as possible')
                 ->sortable(),
@@ -111,7 +111,7 @@ class AlterationsTable
                     : null),
             TextColumn::make('performed_at')
                 ->label('Performed')
-                ->dateTime('d M Y, H:i')
+                ->dateTime('D, j M Y, H:i')
                 ->timezone(fn (Alteration $record) => $record->restaurant?->timezone ?: null)
                 ->placeholder('—')
                 ->toggleable(isToggledHiddenByDefault: true),
@@ -281,12 +281,15 @@ class AlterationsTable
         $lines = [];
 
         foreach ($record->getJson('metadata') as $key => $value) {
-            $line = Str::headline($key) . ': ' . static::formatValue($key, $value);
+            // shown as "Live", like in the tables and forms
+            $label = $key === 'archived' ? 'Live' : Str::headline($key);
+            $new = static::formatValue($key, static::displayValue($key, $value));
+            $line = "$label: $new";
 
             if ($isPending && $alterable) {
-                $current = static::formatValue($key, $alterable->getAttribute($key));
+                $current = static::formatValue($key, static::displayValue($key, $alterable->getAttribute($key)));
 
-                if ($current !== static::formatValue($key, $value)) {
+                if ($current !== $new) {
                     $line .= " (now: $current)";
                 }
             }
@@ -479,6 +482,19 @@ class AlterationsTable
             $value === null => '—',
             default => Str::limit((string) $value, 60),
         };
+    }
+
+    /**
+     * Value as the admin shows it: `archived` is shown the other way around, as "Live".
+     *
+     * @param string $key
+     * @param mixed $value
+     *
+     * @return mixed
+     */
+    protected static function displayValue(string $key, mixed $value): mixed
+    {
+        return $key === 'archived' ? !static::normalizeValue($key, $value) : $value;
     }
 
     /**

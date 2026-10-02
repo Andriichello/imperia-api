@@ -146,7 +146,7 @@ class ScheduledChangesTest extends FilamentTestCase
                 'flag_hotness' => null,
                 'flag_allergens' => [],
                 // shown in the restaurant's timezone
-                'perform_at' => $monday->format('Y-m-d H:i'),
+                'perform_at' => $monday->format('Y-m-d H:i:s'),
             ]);
     }
 
@@ -261,7 +261,7 @@ class ScheduledChangesTest extends FilamentTestCase
             'ownerRecord' => $variant,
             'pageClass' => EditDishVariant::class,
         ])
-            ->callTableAction('schedule', data: ['perform_at' => '2030-01-07 09:00', 'archived' => true])
+            ->callTableAction('schedule', data: ['perform_at' => '2030-01-07 09:00', 'live' => false])
             ->assertHasNoTableActionErrors();
 
         /** @var Alteration $alteration */
@@ -269,6 +269,13 @@ class ScheduledChangesTest extends FilamentTestCase
 
         $this->assertSame(['archived' => true], $alteration->getJson('metadata'));
         $this->assertSame($this->restaurant->id, $alteration->restaurant_id);
+
+        // described as "Live", like the toggle
+        Livewire::test(AlterationsRelationManager::class, [
+            'ownerRecord' => $variant,
+            'pageClass' => EditDishVariant::class,
+        ])
+            ->assertTableColumnStateSet('changes', ['Live: No (now: Yes)'], $alteration);
     }
 
     /**

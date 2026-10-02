@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\BaseResource;
+use App\Filament\Fields\LiveFields;
 use App\Filament\RelationManagers\AlterationsRelationManager;
 use App\Filament\Filters\LiveFilter;
 use App\Filament\Filters\TrashedFilter;
@@ -13,7 +14,6 @@ use App\Models\DishCategory;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -66,8 +66,7 @@ class DishCategoryResource extends BaseResource
             Textarea::make('description')
                 ->maxLength(1020)
                 ->columnSpanFull(),
-            Toggle::make('archived')
-                ->default(false),
+            ...LiveFields::make(),
             TextInput::make('popularity')
                 ->numeric()
                 ->nullable()
