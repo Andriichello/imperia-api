@@ -12,7 +12,7 @@ export default defineConfig({
 			httpClient: 'axios',
 		},
 		hooks: {
-			afterAllFilesWrite: 'prettier --write "./resources/js/api/**/*.ts',
+			afterAllFilesWrite: 'prettier --write "./resources/js/api/**/*.ts"',
 		},
 	},
 });

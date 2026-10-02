@@ -106,8 +106,7 @@ class StoreMediaRequest extends StoreRequest
      *      enum={"public", "uploads"}),
      *   @OA\Property(property="folder", type="string", example="/media/",
      *     description="Must start and end with the `/`."),
-     *   @OA\Property(property="metadata", nullable=true,
-     *      ref ="#/components/schemas/MediaMetadata"),
+     *   @OA\Property(property="metadata", type="object", nullable=true),
      *  )
      */
 }

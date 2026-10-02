@@ -51,6 +51,7 @@ import {Dish, DishVariant, Media} from "@/api";
       weight_unit: props.product.weight_unit,
       calories: props.product.calories,
       preparation_time: props.product.preparation_time,
+      archived: false,
     };
 
     variants.push(base);

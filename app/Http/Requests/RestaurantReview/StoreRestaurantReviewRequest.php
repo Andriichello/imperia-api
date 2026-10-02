@@ -90,8 +90,8 @@ class StoreRestaurantReviewRequest extends StoreRequest
      *   @OA\Property(property="reviewer", type="string", example="Steve"),
      *   @OA\Property(property="score", type="integer", example=5,
      *     description="Min value: `0`, max value: `5`."),
-     *   @OA\Property(property="title", type="string", nullable="null", example="Great"),
-     *   @OA\Property(property="description", type="string", nullable="null",
+     *   @OA\Property(property="title", type="string", nullable=true, example="Great"),
+     *   @OA\Property(property="description", type="string", nullable=true,
      *     example="This is a great establishment, nice personnel."),
      *  )
      */

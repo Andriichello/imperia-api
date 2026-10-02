@@ -57,6 +57,7 @@ const variants = computed<Partial<DishVariant>[]>(() => {
     weight_unit: props.product.weight_unit,
     calories: props.product.calories,
     preparation_time: props.product.preparation_time,
+    archived: false,
   };
 
   variants.push(base);

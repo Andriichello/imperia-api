@@ -32,7 +32,7 @@ class ProductResource extends JsonResource
     {
         $categoryIds = $this->resource->relationLoaded('categories')
             ? $this->resource->categories->pluck('id')
-            : $this->resource->categories()->pluck('id'); // @phpstan-ignore-line
+            : $this->resource->categories()->pluck('id');
 
         return [
             'id' => $this->id,
@@ -74,7 +74,7 @@ class ProductResource extends JsonResource
      *   required = {"id", "type", "title", "description", "price", "weight", "weight_unit",
      *     "badge", "archived", "popularity", "calories", "is_vegan", "is_vegetarian", "is_low_calorie",
      *     "has_eggs", "has_nuts", "hotness", "preparation_time",
-     *     "tags", "flags", "categories", "media", "variants", "menu_ids", "category_ids", "media"},
+     *     "tags", "flags", "categories", "media", "variants", "menu_ids", "category_ids"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="products"),
      *   @OA\Property(property="title", type="string", example="Margarita"),

@@ -1,6 +1,4 @@
 allowBuilds:
-  # usage analytics only (pulled in by orval's Stoplight linter)
-  '@scarf/scarf': false
   # installs the platform binary (orval, vite)
   esbuild: true
   # picks the Vue 3 build (pinia)
@@ -9,3 +7,5 @@ allowBuilds:
 overrides:
   # laravel-mix 6 breaks on newer webpack (also pinned as a direct dev dependency)
   webpack: ~5.105.4
+  # orval's @scalar/json-magic pins undici 7.29.0, which has advisories (fixed in 7.29.1)
+  undici: ^7.29.1

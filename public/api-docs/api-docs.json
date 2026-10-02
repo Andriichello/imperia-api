@@ -5251,11 +5251,7 @@
                         "example": "/media/"
                     },
                     "metadata": {
-                        "oneOf": [
-                            {
-                                "$ref": "#/components/schemas/MediaMetadata"
-                            }
-                        ],
+                        "type": "object",
                         "nullable": true
                     }
                 },
@@ -5265,7 +5261,8 @@
                 "description": "Update media request",
                 "properties": {
                     "file": {
-                        "type": "file"
+                        "type": "string",
+                        "format": "binary"
                     },
                     "name": {
                         "type": "string",
@@ -5286,11 +5283,7 @@
                         "example": "/media/"
                     },
                     "metadata": {
-                        "oneOf": [
-                            {
-                                "$ref": "#/components/schemas/MediaMetadata"
-                            }
-                        ],
+                        "type": "object",
                         "nullable": true
                     }
                 },
@@ -5807,12 +5800,12 @@
                     "title": {
                         "type": "string",
                         "example": "Great",
-                        "nullable": "null"
+                        "nullable": true
                     },
                     "description": {
                         "type": "string",
                         "example": "This is a great establishment, nice personnel.",
-                        "nullable": "null"
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -6600,8 +6593,7 @@
                     "media",
                     "variants",
                     "menu_ids",
-                    "category_ids",
-                    "media"
+                    "category_ids"
                 ],
                 "properties": {
                     "id": {
