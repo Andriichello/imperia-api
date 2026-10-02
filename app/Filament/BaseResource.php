@@ -6,6 +6,7 @@ use App\Models\Scopes\ArchivedScope;
 use App\Models\Scopes\SoftDeletableScope;
 use App\Queries\BaseQueryBuilder;
 use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -23,6 +24,38 @@ abstract class BaseResource extends Resource
     public static function shouldCheckPolicyExistence(): bool
     {
         return false;
+    }
+
+    /**
+     * Search a translated column (JSON by language) in any of its languages, ignoring case.
+     *
+     * @param Builder $query
+     * @param string $column
+     * @param string $search
+     *
+     * @return Builder
+     */
+    public static function searchTranslated(Builder $query, string $column, string $search): Builder
+    {
+        $query->whereRaw("lower($column) like ?", ['%' . mb_strtolower($search) . '%']);
+
+        return $query;
+    }
+
+    /**
+     * Suffix of the record's label in select options, telling when guests don't see it.
+     *
+     * @param Model $record
+     *
+     * @return string
+     */
+    public static function getStatusSuffix(Model $record): string
+    {
+        return match (true) {
+            (bool) $record->getAttribute('archived') => ' (archived)',
+            (bool) $record->getAttribute('is_hidden') => ' (hidden)',
+            default => '',
+        };
     }
 
     /**

@@ -6,19 +6,20 @@ use App\Enums\Currency;
 use App\Enums\Establishment;
 use App\Filament\BaseResource;
 use App\Filament\Filters\TrashedFilter;
+use App\Filament\Forms\Components\MediaAttachmentField;
 use App\Filament\Resources\RestaurantResource\Pages;
 use App\Filament\Resources\RestaurantResource\RelationManagers\SchedulesRelationManager;
 use App\Models\Restaurant;
-use App\Filament\Forms\Components\MediaAttachmentField;
 use DateTimeZone;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Builder;
 use Locale;
 
 /**
@@ -126,34 +127,27 @@ class RestaurantResource extends BaseResource
                             ))),
                     ])
                     ->columns(3),
-                TagsInput::make('notes')
+                Repeater::make('notes')
                     ->label('Notes')
-                    ->helperText('Short notes shown on the restaurant page, e.g. "Pets welcome". '
-                        . 'Press Enter after each.')
-                    ->columnSpanFull()
-                    ->afterStateHydrated(function (TagsInput $component, $state): void {
-                        $state = $state ?? [];
-                        if ($state instanceof Collection) {
-                            $state = $state->all();
-                        }
-                        if (!is_array($state)) {
-                            $state = (array)$state;
-                        }
-                        $component->state($state);
-                    })
-                    ->dehydrateStateUsing(function ($state): array {
-                        if ($state instanceof Collection) {
-                            $state = $state->all();
-                        }
-                        $state = (array)$state;
-
-                        // Ensure values are strings and remove empties
-                        $mapped = array_map(
-                            static fn($v) => is_string($v) ? $v : (is_scalar($v) ? (string)$v : ''),
-                            $state
-                        );
-                        return array_values(array_filter($mapped, static fn($v) => $v !== ''));
-                    }),
+                    ->helperText('Short notes shown under the restaurant\'s name, e.g. "Pets welcome". '
+                        . 'Hidden ones stay here, but guests don\'t see them.')
+                    ->relationship()
+                    ->orderColumn('order')
+                    ->schema([
+                        TextInput::make('text')
+                            ->hiddenLabel()
+                            ->required()
+                            ->maxLength(120)
+                            ->columnSpan(5),
+                        Toggle::make('is_hidden')
+                            ->label('Hidden')
+                            ->inline(false)
+                            ->default(false),
+                    ])
+                    ->columns(6)
+                    ->defaultItems(0)
+                    ->addActionLabel('Add note')
+                    ->columnSpanFull(),
                 MediaAttachmentField::make('media')
                     ->label('Restaurant images')
                     ->modelType('restaurants')
@@ -171,7 +165,12 @@ class RestaurantResource extends BaseResource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')->sortable(),
-                Tables\Columns\TextColumn::make('name')->searchable(),
+                Tables\Columns\TextColumn::make('name')
+                    ->searchable(query: fn (Builder $query, string $search) => static::searchTranslated(
+                        $query,
+                        'restaurants.name',
+                        $search
+                    )),
                 Tables\Columns\TextColumn::make('establishment')
                     ->label('Type')
                     ->formatStateUsing(fn (?string $state) => Establishment::getLabels()[$state] ?? $state),

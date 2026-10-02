@@ -7,7 +7,9 @@ use App\Models\BaseModel;
 use App\Models\DishCategory;
 use App\Models\DishMenu;
 use App\Models\Restaurant;
+use App\Models\RestaurantNote;
 use App\Models\Schedule;
+use App\Models\ScheduleException;
 
 /**
  * Class WebCacheSubscriber.
@@ -27,6 +29,8 @@ class WebCacheSubscriber extends BaseSubscriber
         Schedule::class => 'scheduleChanged',
         DishMenu::class => 'menuChanged',
         DishCategory::class => 'categoryChanged',
+        RestaurantNote::class => 'restaurantItemChanged',
+        ScheduleException::class => 'restaurantItemChanged',
     ];
 
     protected function map(): void
@@ -61,6 +65,18 @@ class WebCacheSubscriber extends BaseSubscriber
     public function scheduleChanged(Schedule $schedule): void
     {
         WebCacheHelper::forgetRestaurants($schedule->restaurant_id, $schedule->getOriginal('restaurant_id'));
+    }
+
+    /**
+     * Forget the cached website pages of the note's or special day's restaurant.
+     *
+     * @param RestaurantNote|ScheduleException $item
+     *
+     * @return void
+     */
+    public function restaurantItemChanged(RestaurantNote|ScheduleException $item): void
+    {
+        WebCacheHelper::forgetRestaurants($item->restaurant_id, $item->getOriginal('restaurant_id'));
     }
 
     /**

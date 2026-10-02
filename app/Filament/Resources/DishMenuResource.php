@@ -83,7 +83,7 @@ class DishMenuResource extends BaseResource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(query: function (Builder $query, string $search): Builder {
-                        return $query->where('dish_menus.title', 'like', "%{$search}%");
+                        return static::searchTranslated($query, 'dish_menus.title', $search);
                     }),
                 LiveColumn::make(),
                 AlterationsTable::scheduledColumn(),
@@ -115,7 +115,7 @@ class DishMenuResource extends BaseResource
     }
 
     /**
-     * Menus the current user can pick in other forms, archived ones included.
+     * Menus the current user can pick in other forms, hidden and archived ones included.
      * The restaurant is prefixed when menus of several restaurants are listed.
      *
      * @return array<int, string>
@@ -124,8 +124,8 @@ class DishMenuResource extends BaseResource
     {
         $menus = static::getEloquentQuery()
             ->with('restaurant')
-            ->orderBy('dish_menus.title')
-            ->get();
+            ->get()
+            ->sortBy(fn ($menu) => mb_strtolower((string) $menu->getAttribute('title')));
 
         $withRestaurant = $menus->pluck('restaurant_id')->unique()->count() > 1;
 
@@ -135,7 +135,7 @@ class DishMenuResource extends BaseResource
                 ? $menu->restaurant->name . ' · ' . $menu->title
                 : $menu->title;
 
-            return [$menu->id => $label . ($menu->archived ? ' (archived)' : '')];
+            return [$menu->id => $label . static::getStatusSuffix($menu)];
         })->all();
     }
 

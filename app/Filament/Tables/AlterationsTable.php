@@ -59,7 +59,14 @@ class AlterationsTable
      *
      * @var string[]
      */
-    protected const BOOLEANS = ['archived'];
+    protected const BOOLEANS = ['archived', 'is_hidden'];
+
+    /**
+     * Attributes, which are shown the other way around, as "Live".
+     *
+     * @var string[]
+     */
+    protected const LIVE = ['archived', 'is_hidden'];
 
     /**
      * Columns of the altered model and its restaurant (for the global page).
@@ -282,7 +289,7 @@ class AlterationsTable
 
         foreach ($record->getJson('metadata') as $key => $value) {
             // shown as "Live", like in the tables and forms
-            $label = $key === 'archived' ? 'Live' : Str::headline($key);
+            $label = in_array($key, static::LIVE) ? 'Live' : Str::headline($key);
             $new = static::formatValue($key, static::displayValue($key, $value));
             $line = "$label: $new";
 
@@ -485,7 +492,7 @@ class AlterationsTable
     }
 
     /**
-     * Value as the admin shows it: `archived` is shown the other way around, as "Live".
+     * Value as the admin shows it: `archived` and `is_hidden` are shown the other way around, as "Live".
      *
      * @param string $key
      * @param mixed $value
@@ -494,7 +501,7 @@ class AlterationsTable
      */
     protected static function displayValue(string $key, mixed $value): mixed
     {
-        return $key === 'archived' ? !static::normalizeValue($key, $value) : $value;
+        return in_array($key, static::LIVE) ? !static::normalizeValue($key, $value) : $value;
     }
 
     /**

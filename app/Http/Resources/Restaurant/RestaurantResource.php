@@ -5,6 +5,7 @@ namespace App\Http\Resources\Restaurant;
 use App\Http\Resources\Media\MediaCollection;
 use App\Http\Resources\Schedule\ScheduleCollection;
 use App\Models\Restaurant;
+use App\Models\RestaurantNote;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use OpenApi\Annotations as OA;
@@ -45,7 +46,13 @@ class RestaurantResource extends JsonResource
             'currency' => $this->currency,
             'establishment' => $this->establishment,
             'popularity' => $this->popularity,
-            'notes' => $this->notes,
+            // the visible notes, in the current language
+            'notes' => $this->notes
+                ->reject(fn (RestaurantNote $note) => $note->is_hidden)
+                ->map(fn (RestaurantNote $note) => $note->text)
+                ->filter()
+                ->values()
+                ->all(),
             /* @phpstan-ignore-next-line */
             'media' => new MediaCollection($this->media->load('variants')),
             'schedules' => new ScheduleCollection($this->schedules),

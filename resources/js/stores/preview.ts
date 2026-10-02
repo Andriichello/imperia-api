@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import type { Dish } from '@/api'
 import { indexDishes } from '@/api/services/dish-dishes'
+import { useAppStore } from '@/stores/app'
 
 interface PreviewState {
   products: Dish[] | null
@@ -91,7 +92,10 @@ export const usePreviewStore = defineStore('preview', {
           params['filter[restaurant_id]'] = String(restaurantId)
         }
 
-        const resp = await indexDishes(params)
+        // dishes in the page's language, which may differ from the browser's ones
+        const resp = await indexDishes(params, {
+          headers: { 'Accept-Language': useAppStore().locale || 'en' },
+        })
         // AxiosResponse<IndexDishResponse>
         this.products = resp.data.data
 

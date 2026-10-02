@@ -3,6 +3,10 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Editor\CategoryEditorController;
+use App\Http\Controllers\Editor\DishEditorController;
+use App\Http\Controllers\Editor\MenuEditorController;
+use App\Http\Controllers\Editor\RestaurantEditorController;
 use App\Http\Controllers\Model\CategoryController;
 use App\Http\Controllers\Model\CommentController;
 use App\Http\Controllers\Model\DishCategoryController;
@@ -159,6 +163,75 @@ Route::group(['middleware' => ['web', 'auth:sanctum,web'], 'as' => 'api.'], func
 
     Route::get('/model-media', [ModelMediaController::class, 'getModelMedia'])->name('media.get-model-media');
     Route::post('/model-media', [ModelMediaController::class, 'setModelMedia'])->name('media.set-model-media');
+});
+
+/*
+ * The admin editor: everything of a restaurant in all languages (hidden and archived
+ * menus, categories and dishes included). Signed in like the admin panel (session),
+ * or with a token.
+ */
+Route::group([
+    'middleware' => ['web', 'auth:sanctum,web'],
+    'prefix' => 'editor',
+    'as' => 'api.editor.',
+], function () {
+    Route::get('/restaurants', [RestaurantEditorController::class, 'index'])
+        ->name('restaurants.index');
+    Route::get('/restaurants/{id}', [RestaurantEditorController::class, 'show'])
+        ->name('restaurants.show');
+    Route::patch('/restaurants/{id}', [RestaurantEditorController::class, 'update'])
+        ->name('restaurants.update');
+    Route::put('/restaurants/{id}/notes', [RestaurantEditorController::class, 'updateNotes'])
+        ->name('restaurants.notes');
+    Route::put('/restaurants/{id}/photos', [RestaurantEditorController::class, 'updatePhotos'])
+        ->name('restaurants.photos');
+    Route::put('/restaurants/{id}/hours', [RestaurantEditorController::class, 'updateHours'])
+        ->name('restaurants.hours');
+    Route::post('/restaurants/{id}/menus', [MenuEditorController::class, 'store'])
+        ->name('menus.store');
+    Route::put('/restaurants/{id}/menus/order', [MenuEditorController::class, 'order'])
+        ->name('menus.order');
+
+    Route::patch('/menus/{id}', [MenuEditorController::class, 'update'])
+        ->name('menus.update');
+    Route::delete('/menus/{id}', [MenuEditorController::class, 'destroy'])
+        ->name('menus.destroy');
+    Route::post('/menus/{id}/archive', [MenuEditorController::class, 'archive'])
+        ->name('menus.archive');
+    Route::post('/menus/{id}/unarchive', [MenuEditorController::class, 'unarchive'])
+        ->name('menus.unarchive');
+    Route::post('/menus/{id}/duplicate', [MenuEditorController::class, 'duplicate'])
+        ->name('menus.duplicate');
+    Route::post('/menus/{id}/categories', [CategoryEditorController::class, 'store'])
+        ->name('categories.store');
+
+    Route::patch('/categories/{id}', [CategoryEditorController::class, 'update'])
+        ->name('categories.update');
+    Route::delete('/categories/{id}', [CategoryEditorController::class, 'destroy'])
+        ->name('categories.destroy');
+    Route::post('/categories/{id}/archive', [CategoryEditorController::class, 'archive'])
+        ->name('categories.archive');
+    Route::post('/categories/{id}/unarchive', [CategoryEditorController::class, 'unarchive'])
+        ->name('categories.unarchive');
+    Route::post('/categories/{id}/duplicate', [CategoryEditorController::class, 'duplicate'])
+        ->name('categories.duplicate');
+    Route::post('/categories/{id}/move', [CategoryEditorController::class, 'move'])
+        ->name('categories.move');
+    Route::post('/categories/{id}/dishes', [DishEditorController::class, 'store'])
+        ->name('dishes.store');
+
+    Route::patch('/dishes/{id}', [DishEditorController::class, 'update'])
+        ->name('dishes.update');
+    Route::delete('/dishes/{id}', [DishEditorController::class, 'destroy'])
+        ->name('dishes.destroy');
+    Route::post('/dishes/{id}/archive', [DishEditorController::class, 'archive'])
+        ->name('dishes.archive');
+    Route::post('/dishes/{id}/unarchive', [DishEditorController::class, 'unarchive'])
+        ->name('dishes.unarchive');
+    Route::post('/dishes/{id}/duplicate', [DishEditorController::class, 'duplicate'])
+        ->name('dishes.duplicate');
+    Route::post('/dishes/{id}/move', [DishEditorController::class, 'move'])
+        ->name('dishes.move');
 });
 
 Route::fallback(function () {

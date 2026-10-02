@@ -83,10 +83,13 @@ class DishCategoryResource extends BaseResource
                 Tables\Columns\TextColumn::make('id')->sortable(),
                 Tables\Columns\TextColumn::make('menu.title')
                     ->label('Menu')
-                    ->searchable(),
+                    ->searchable(query: fn (Builder $query, string $search) => $query->whereHas(
+                        'menu',
+                        fn (Builder $query) => static::searchTranslated($query, 'dish_menus.title', $search)
+                    )),
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(query: function (Builder $query, string $search): Builder {
-                        return $query->where('dish_categories.title', 'like', "%{$search}%");
+                        return static::searchTranslated($query, 'dish_categories.title', $search);
                     }),
                 LiveColumn::make(),
                 AlterationsTable::scheduledColumn(),
@@ -118,7 +121,7 @@ class DishCategoryResource extends BaseResource
     }
 
     /**
-     * Categories of the given menu, archived ones included.
+     * Categories of the given menu, hidden and archived ones included.
      *
      * @param int|null $menuId
      *
@@ -132,16 +135,16 @@ class DishCategoryResource extends BaseResource
 
         return static::getEloquentQuery()
             ->where('dish_categories.menu_id', $menuId)
-            ->orderBy('dish_categories.title')
             ->get()
+            ->sortBy(fn ($category) => mb_strtolower((string) $category->getAttribute('title')))
             // @phpstan-ignore-next-line
             ->mapWithKeys(function (DishCategory $category) {
-                return [$category->id => $category->title . ($category->archived ? ' (archived)' : '')];
+                return [$category->id => $category->title . static::getStatusSuffix($category)];
             })->all();
     }
 
     /**
-     * Categories the current user can pick, archived ones included, grouped by their menu.
+     * Categories the current user can pick, hidden and archived ones included, grouped by their menu.
      *
      * @return array<string, array<int, string>>
      */
@@ -152,12 +155,13 @@ class DishCategoryResource extends BaseResource
 
         static::getEloquentQuery()
             ->whereIn('dish_categories.menu_id', array_keys($menus))
-            ->orderBy('dish_categories.title')
             ->get()
+            // @phpstan-ignore-next-line
+            ->sortBy(fn (DishCategory $category) => mb_strtolower($category->title))
             // @phpstan-ignore-next-line
             ->each(function (DishCategory $category) use ($menus, &$groups) {
                 $groups[$menus[$category->menu_id]][$category->id] = $category->title
-                    . ($category->archived ? ' (archived)' : '');
+                    . static::getStatusSuffix($category);
             });
 
         return $groups;

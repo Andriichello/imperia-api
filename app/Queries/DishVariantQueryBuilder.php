@@ -95,4 +95,18 @@ class DishVariantQueryBuilder extends BaseQueryBuilder implements
 
         return $this;
     }
+
+    /**
+     * Only variants of dishes guests see (the dish, its menu and category aren't
+     * archived, hidden or deleted).
+     *
+     * @return static
+     */
+    public function withVisibleDish(): static
+    {
+        // @phpstan-ignore-next-line
+        $this->whereHas('dish', fn (DishQueryBuilder $query) => $query->shownToGuests()->withVisibleParents());
+
+        return $this;
+    }
 }

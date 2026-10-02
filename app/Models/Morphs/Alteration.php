@@ -3,6 +3,7 @@
 namespace App\Models\Morphs;
 
 use App\Models\BaseModel;
+use App\Models\Interfaces\TranslatableInterface;
 use App\Models\Restaurant;
 use App\Models\Scopes\ArchivedScope;
 use App\Models\Scopes\SoftDeletableScope;
@@ -227,6 +228,11 @@ class Alteration extends BaseModel
             throw new RuntimeException(
                 "Model {$this->alterable_type} #{$this->alterable_id} doesn't exist."
             );
+        }
+
+        // texts are changed in the restaurant's default language, like the admin shows them
+        if ($alterable instanceof TranslatableInterface) {
+            $alterable->setLocale($alterable->getDefaultLocale());
         }
 
         $alterable->fill($this->getJson('metadata'));

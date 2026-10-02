@@ -87,7 +87,7 @@ class DishResourceTest extends FilamentTestCase
             ->call('create')
             ->assertHasNoFormErrors();
 
-        $dish = Dish::query()->where('title', 'Borscht')->firstOrFail();
+        $dish = Dish::query()->where('title->en', 'Borscht')->firstOrFail();
         $this->assertSame(mb_substr($description, 0, 1020), $dish->description);
 
         $this->menu->update(['description' => $description]);

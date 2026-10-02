@@ -75,7 +75,7 @@ class DishVariantResource extends BaseResource
                 ->numeric()
                 ->minValue(0)
                 ->nullable(),
-            ...LiveFields::make(),
+            ...LiveFields::make('archived'),
         ];
     }
 
@@ -108,14 +108,14 @@ class DishVariantResource extends BaseResource
                     ->label('Prep Time (min)')
                     ->numeric()
                     ->sortable(),
-                LiveColumn::make(),
+                LiveColumn::make('archived'),
                 AlterationsTable::scheduledColumn(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
             ])
             ->filters([
-                LiveFilter::make(),
+                LiveFilter::make()->hiddenBy('archived'),
                 TrashedFilter::make(),
             ])
             ->actions([

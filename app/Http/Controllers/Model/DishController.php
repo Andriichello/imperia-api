@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Model;
 
 use App\Http\Controllers\CrudController;
+use App\Http\Requests\CrudRequest;
 use App\Http\Requests\Dish\DestroyDishRequest;
 use App\Http\Requests\Dish\IndexDishRequest;
 use App\Http\Requests\Dish\ShowDishRequest;
@@ -12,6 +13,7 @@ use App\Http\Resources\Dish\DishCollection;
 use App\Http\Resources\Dish\DishResource;
 use App\Policies\DishPolicy;
 use App\Repositories\DishRepository;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 /**
  * Class DishController.
@@ -258,4 +260,17 @@ class DishController extends CrudController
      *   type="string", example="menu,category,variants"
      * )
      */
+
+    /**
+     * Query builder of the controller's model. Dishes of menus and categories guests don't see are left out too.
+     *
+     * @param CrudRequest $request
+     *
+     * @return EloquentBuilder
+     */
+    protected function builder(CrudRequest $request): EloquentBuilder
+    {
+        // @phpstan-ignore-next-line
+        return parent::builder($request)->withVisibleParents();
+    }
 }

@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Model;
 
 use App\Http\Controllers\CrudController;
+use App\Http\Requests\CrudRequest;
 use App\Http\Requests\Dish\IndexDishCategoryRequest;
 use App\Http\Requests\Dish\ShowDishCategoryRequest;
 use App\Http\Resources\Dish\DishCategoryCollection;
 use App\Http\Resources\Dish\DishCategoryResource;
 use App\Policies\DishCategoryPolicy;
 use App\Repositories\DishCategoryRepository;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 /**
  * Class DishCategoryController.
@@ -120,4 +122,17 @@ class DishCategoryController extends CrudController
      *   type="string", example="menu"
      * )
      */
+
+    /**
+     * Query builder of the controller's model. Categories of menus guests don't see are left out too.
+     *
+     * @param CrudRequest $request
+     *
+     * @return EloquentBuilder
+     */
+    protected function builder(CrudRequest $request): EloquentBuilder
+    {
+        // @phpstan-ignore-next-line
+        return parent::builder($request)->withVisibleMenu();
+    }
 }

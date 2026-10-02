@@ -87,7 +87,7 @@ class VariantsRelationManager extends RelationManager
                     ->label('Prep Time (min)')
                     ->numeric()
                     ->placeholder('—'),
-                LiveColumn::make(),
+                LiveColumn::make('archived'),
                 AlterationsTable::scheduledColumn(),
             ])
             ->filters([

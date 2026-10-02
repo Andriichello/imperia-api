@@ -2,20 +2,25 @@
 
 namespace App\Models;
 
+use App\Helpers\ContentLocale;
 use App\Models\Interfaces\AlterableInterface;
 use App\Models\Interfaces\ArchivableInterface;
 use App\Models\Interfaces\FlaggableInterface;
+use App\Models\Interfaces\HideableInterface;
 use App\Models\Interfaces\LoggableInterface;
 use App\Models\Interfaces\MediableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
+use App\Models\Interfaces\TranslatableInterface;
 use App\Models\Scopes\ArchivedScope;
 use App\Models\Scopes\SoftDeletableScope;
 use App\Models\Traits\AlterableTrait;
 use App\Models\Traits\ArchivableTrait;
 use App\Models\Traits\FlaggableTrait;
+use App\Models\Traits\HideableTrait;
 use App\Models\Traits\LoggableTrait;
 use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
+use App\Models\Traits\TranslatableTrait;
 use App\Queries\DishQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\DishFactory;
@@ -40,6 +45,8 @@ use Illuminate\Support\Collection;
  * @property integer|null $calories
  * @property integer|null $preparation_time
  * @property bool $archived
+ * @property bool $is_hidden
+ * @property Carbon|null $archived_at
  * @property int|null $popularity
  * @property string|null $metadata
  * @property Carbon|null $created_at
@@ -56,10 +63,12 @@ use Illuminate\Support\Collection;
 class Dish extends BaseModel implements
     SoftDeletableInterface,
     ArchivableInterface,
+    HideableInterface,
     LoggableInterface,
     MediableInterface,
     FlaggableInterface,
-    AlterableInterface
+    AlterableInterface,
+    TranslatableInterface
 {
     use HasFactory;
     use SoftDeletableTrait;
@@ -68,6 +77,18 @@ class Dish extends BaseModel implements
     use MediableTrait;
     use FlaggableTrait;
     use AlterableTrait;
+    use HideableTrait;
+    use TranslatableTrait;
+
+    /**
+     * The model's default values for attributes.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'archived' => false,
+        'is_hidden' => false,
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -85,6 +106,8 @@ class Dish extends BaseModel implements
         'weight',
         'weight_unit',
         'archived',
+        'is_hidden',
+        'archived_at',
         'popularity',
         'metadata',
         'calories',
@@ -121,6 +144,19 @@ class Dish extends BaseModel implements
      */
     protected $casts = [
         'price' => 'float',
+        'is_hidden' => 'boolean',
+        'archived_at' => 'datetime',
+    ];
+
+    /**
+     * The attributes that have translations.
+     *
+     * @var string[]
+     */
+    protected array $translatable = [
+        'title',
+        'description',
+        'badge',
     ];
 
     /**
@@ -183,6 +219,16 @@ class Dish extends BaseModel implements
         return $this->hasMany(DishVariant::class, 'dish_id')
             ->orderBy('price')
             ->withoutGlobalScopes([ArchivedScope::class, SoftDeletableScope::class]);
+    }
+
+    /**
+     * Default language of the dish's content (its restaurant's one).
+     *
+     * @return string
+     */
+    public function getDefaultLocale(): string
+    {
+        return ContentLocale::instance()->ofMenu($this->menu_id);
     }
 
     /**

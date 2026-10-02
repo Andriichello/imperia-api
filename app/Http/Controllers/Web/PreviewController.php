@@ -10,6 +10,7 @@ use App\Http\Resources\Restaurant\RestaurantResource;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 
 class PreviewController extends Controller
 {
@@ -25,6 +26,19 @@ class PreviewController extends Controller
      */
     public function show(Request $request): View|RedirectResponse
     {
+        // Content in the page's language (it falls back to another one, if there's no translation)
+        $locale = $this->getSharedProp($request, 'locale');
+
+        if (in_array($locale, config('app.supported_locales'), true)) {
+            App::setLocale($locale);
+        }
+
+        // Guests always see the same page: what's archived, hidden or deleted is never shown,
+        // whoever asks and however (it's cached for everyone)
+        $request->query->remove('archived');
+        $request->query->remove('deleted');
+        $request->query->remove('filter');
+
         $restaurant = $this->loadAndCacheRestaurant($request->route('restaurant_id'));
 
         if (!$restaurant) {

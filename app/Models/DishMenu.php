@@ -3,14 +3,19 @@
 namespace App\Models;
 
 use App\Models\Interfaces\AlterableInterface;
+use App\Helpers\ContentLocale;
 use App\Models\Interfaces\ArchivableInterface;
+use App\Models\Interfaces\HideableInterface;
 use App\Models\Interfaces\MediableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
+use App\Models\Interfaces\TranslatableInterface;
 use App\Models\Scopes\ArchivedScope;
 use App\Models\Traits\AlterableTrait;
 use App\Models\Traits\ArchivableTrait;
+use App\Models\Traits\HideableTrait;
 use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
+use App\Models\Traits\TranslatableTrait;
 use App\Queries\DishMenuQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\DishMenuFactory;
@@ -28,6 +33,8 @@ use Illuminate\Support\Collection;
  * @property string $title
  * @property string|null $description
  * @property bool $archived
+ * @property bool $is_hidden
+ * @property Carbon|null $archived_at
  * @property int|null $popularity
  * @property string|null $metadata
  * @property Carbon|null $created_at
@@ -43,15 +50,19 @@ use Illuminate\Support\Collection;
  */
 class DishMenu extends BaseModel implements
     ArchivableInterface,
+    HideableInterface,
     SoftDeletableInterface,
     MediableInterface,
-    AlterableInterface
+    AlterableInterface,
+    TranslatableInterface
 {
     use HasFactory;
     use SoftDeletableTrait;
     use ArchivableTrait;
+    use HideableTrait;
     use MediableTrait;
     use AlterableTrait;
+    use TranslatableTrait;
 
     /**
      * The table associated with the model.
@@ -59,6 +70,16 @@ class DishMenu extends BaseModel implements
      * @var string
      */
     protected $table = 'dish_menus';
+
+    /**
+     * The model's default values for attributes.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'archived' => false,
+        'is_hidden' => false,
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -71,8 +92,30 @@ class DishMenu extends BaseModel implements
         'title',
         'description',
         'archived',
+        'is_hidden',
+        'archived_at',
         'popularity',
         'metadata',
+    ];
+
+    /**
+     * The attributes that have translations.
+     *
+     * @var string[]
+     */
+    protected array $translatable = [
+        'title',
+        'description',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'is_hidden' => 'boolean',
+        'archived_at' => 'datetime',
     ];
 
     /**
@@ -123,7 +166,10 @@ class DishMenu extends BaseModel implements
      */
     public function categories(): HasMany
     {
-        return $this->hasMany(DishCategory::class, 'menu_id');
+        // @phpstan-ignore-next-line
+        return $this->hasMany(DishCategory::class, 'menu_id')
+            ->orderByDesc('popularity')
+            ->orderBy('id');
     }
 
     /**
@@ -160,6 +206,16 @@ class DishMenu extends BaseModel implements
     public function restaurant(): BelongsTo
     {
         return $this->belongsTo(Restaurant::class);
+    }
+
+    /**
+     * Default language of the menu's content (its restaurant's one).
+     *
+     * @return string
+     */
+    public function getDefaultLocale(): string
+    {
+        return ContentLocale::instance()->ofRestaurant($this->restaurant_id);
     }
 
     /**

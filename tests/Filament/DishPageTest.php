@@ -157,7 +157,7 @@ class DishPageTest extends FilamentTestCase
         $bistro = DishMenu::factory()->withRestaurant(Restaurant::factory()->create())->create();
 
         $soup = Dish::factory()->withMenu($this->menu)->create(['flags' => ['vegan', 'alg-celery']]);
-        $salad = Dish::factory()->withMenu($lunch)->create(['flags' => ['alg-nuts'], 'archived' => true]);
+        $salad = Dish::factory()->withMenu($lunch)->create(['flags' => ['alg-nuts'], 'is_hidden' => true]);
         $steak = Dish::factory()->withMenu($bistro)->create(['flags' => []]);
 
         $this->actingAsStaff();
@@ -223,27 +223,27 @@ class DishPageTest extends FilamentTestCase
     }
 
     /**
-     * Test that the live toggle archives and publishes dishes.
+     * Test that the live toggle hides and publishes dishes.
      *
      * @return void
      */
-    public function testLiveToggleArchivesAndPublishes()
+    public function testLiveToggleHidesAndPublishes()
     {
-        $dish = Dish::factory()->withMenu($this->menu)->create(['archived' => false]);
+        $dish = Dish::factory()->withMenu($this->menu)->create(['is_hidden' => false]);
 
         $this->actingAsStaff(UserRole::Admin, $this->restaurant);
 
         Livewire::test(ListDishes::class)
-            ->assertTableColumnStateSet('archived', true, $dish->getKey())
-            ->call('updateTableColumnState', 'archived', (string) $dish->getKey(), false);
+            ->assertTableColumnStateSet('is_hidden', true, $dish->getKey())
+            ->call('updateTableColumnState', 'is_hidden', (string) $dish->getKey(), false);
 
-        $this->assertTrue((bool) $dish->fresh()->archived);
+        $this->assertTrue($dish->fresh()->is_hidden);
 
         Livewire::test(ListDishes::class)
-            ->assertTableColumnStateSet('archived', false, $dish->getKey())
-            ->call('updateTableColumnState', 'archived', (string) $dish->getKey(), true);
+            ->assertTableColumnStateSet('is_hidden', false, $dish->getKey())
+            ->call('updateTableColumnState', 'is_hidden', (string) $dish->getKey(), true);
 
-        $this->assertFalse((bool) $dish->fresh()->archived);
+        $this->assertFalse($dish->fresh()->is_hidden);
     }
 
     /**
@@ -253,19 +253,19 @@ class DishPageTest extends FilamentTestCase
      */
     public function testManagersCannotToggleLive()
     {
-        $dish = Dish::factory()->withMenu($this->menu)->create(['archived' => false]);
+        $dish = Dish::factory()->withMenu($this->menu)->create(['is_hidden' => false]);
 
         $this->actingAsStaff(UserRole::Manager, $this->restaurant);
 
         Livewire::test(ListDishes::class)
-            ->assertTableColumnStateSet('archived', true, $dish->getKey())
-            ->call('updateTableColumnState', 'archived', (string) $dish->getKey(), false);
+            ->assertTableColumnStateSet('is_hidden', true, $dish->getKey())
+            ->call('updateTableColumnState', 'is_hidden', (string) $dish->getKey(), false);
 
-        $this->assertFalse((bool) $dish->fresh()->archived);
+        $this->assertFalse($dish->fresh()->is_hidden);
     }
 
     /**
-     * Test that a dish is duplicated as an archived copy with its variants and images,
+     * Test that a dish is duplicated as a hidden copy with its variants and images,
      * without its slug, scheduled changes or the old menu reference.
      *
      * @return void
@@ -319,11 +319,12 @@ class DishPageTest extends FilamentTestCase
             ->assertNotified('The dish was duplicated');
 
         /** @var Dish $copy */
-        $copy = Dish::query()->withoutGlobalScopes()->where('title', 'Lunch borscht')->sole();
+        $copy = Dish::query()->withoutGlobalScopes()->where('title->en', 'Lunch borscht')->sole();
 
         $this->assertSame($lunch->id, $copy->menu_id);
         $this->assertSame($lunchSoups->id, $copy->category_id);
-        $this->assertTrue((bool) $copy->archived);
+        $this->assertTrue($copy->is_hidden);
+        $this->assertFalse((bool) $copy->archived);
         $this->assertNull($copy->slug);
         $this->assertEquals(150, $copy->price);
         $this->assertSame(['vegan', 'alg-celery'], $copy->flags);
@@ -366,7 +367,7 @@ class DishPageTest extends FilamentTestCase
             ->callAction('duplicate')
             ->assertHasNoActionErrors();
 
-        $copy = Dish::query()->withoutGlobalScopes()->where('title', 'Borscht (copy)')->sole();
+        $copy = Dish::query()->withoutGlobalScopes()->where('title->en', 'Borscht (copy)')->sole();
 
         $page->assertRedirect(EditDish::getUrl(['record' => $copy]));
     }

@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Helpers\ContentLocale;
 use App\Models\Interfaces\MediableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
+use App\Models\Interfaces\TranslatableInterface;
 use App\Models\Morphs\Category;
 use App\Models\Traits\MediableTrait;
 use App\Models\Traits\SoftDeletableTrait;
+use App\Models\Traits\TranslatableTrait;
 use App\Queries\RestaurantQueryBuilder;
 use Carbon\Carbon;
 use Database\Factories\RestaurantFactory;
@@ -27,7 +30,10 @@ use Illuminate\Support\Collection;
  * @property string $country
  * @property string $city
  * @property string $place
+ * @property string|null $address
  * @property string $timezone
+ * @property Carbon|null $closed_until
+ * @property string|null $closed_reason
  * @property int|null $popularity
  * @property string|null $metadata
  * @property Carbon|null $created_at
@@ -43,12 +49,15 @@ use Illuminate\Support\Collection;
  * @property string|null $locale
  * @property string|null $currency
  * @property string|null $establishment
- * @property string[]|null $notes
+ * @property string|null $brand_primary
+ * @property string|null $brand_primary_content
  *
  * @property Menu[]|Collection $menus
  * @property Product[]|Collection $products
  * @property Category[]|Collection $categories
  * @property Schedule[]|Collection $schedules
+ * @property ScheduleException[]|Collection $scheduleExceptions
+ * @property RestaurantNote[]|Collection $notes
  * @property Holiday[]|Collection $holidays
  * @property Holiday[]|Collection $relevantHolidays
  * @property RestaurantReview[]|Collection $reviews
@@ -63,11 +72,13 @@ use Illuminate\Support\Collection;
  */
 class Restaurant extends BaseModel implements
     MediableInterface,
-    SoftDeletableInterface
+    SoftDeletableInterface,
+    TranslatableInterface
 {
     use HasFactory;
     use MediableTrait;
     use SoftDeletableTrait;
+    use TranslatableTrait;
 
     /**
      * The model's attributes.
@@ -100,7 +111,11 @@ class Restaurant extends BaseModel implements
         'locale',
         'currency',
         'establishment',
-        'notes',
+        'address',
+        'closed_until',
+        'closed_reason',
+        'brand_primary',
+        'brand_primary_content',
     ];
 
     /**
@@ -119,7 +134,28 @@ class Restaurant extends BaseModel implements
         'locale',
         'currency',
         'establishment',
-        'notes',
+        'brand_primary',
+        'brand_primary_content',
+    ];
+
+    /**
+     * The attributes that have translations.
+     *
+     * @var string[]
+     */
+    protected array $translatable = [
+        'name',
+        'address',
+        'closed_reason',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'closed_until' => 'date',
     ];
 
     /**
@@ -138,6 +174,8 @@ class Restaurant extends BaseModel implements
         'dishMenus',
         'dishCategories',
         'dishes',
+        'notes',
+        'scheduleExceptions',
     ];
 
     /**
@@ -180,6 +218,32 @@ class Restaurant extends BaseModel implements
     public function schedules(): HasMany
     {
         return $this->hasMany(Schedule::class, 'restaurant_id', 'id');
+    }
+
+    /**
+     * Get the special days of the restaurant (holidays and short days), from the earliest.
+     *
+     * @return HasMany
+     */
+    public function scheduleExceptions(): HasMany
+    {
+        // @phpstan-ignore-next-line
+        return $this->hasMany(ScheduleException::class)
+            ->orderBy('starts_on')
+            ->orderBy('id');
+    }
+
+    /**
+     * Get the notes of the restaurant, in their order (hidden ones included).
+     *
+     * @return HasMany
+     */
+    public function notes(): HasMany
+    {
+        // @phpstan-ignore-next-line
+        return $this->hasMany(RestaurantNote::class)
+            ->orderBy('order')
+            ->orderBy('id');
     }
 
     /**
@@ -286,7 +350,8 @@ class Restaurant extends BaseModel implements
     }
 
     /**
-     * Accessor for the restaurant's full address.
+     * Accessor for the restaurant's full address: its address,
+     * or (if it has none) its place, city and country.
      *
      * @return Attribute
      */
@@ -294,6 +359,11 @@ class Restaurant extends BaseModel implements
     {
         return Attribute::get(
             function () {
+                // the address written in the editor, in the current language
+                if (!empty($this->address)) {
+                    return $this->address;
+                }
+
                 if (!$this->place && !$this->city && !$this->country) {
                     return null;
                 }
@@ -448,23 +518,54 @@ class Restaurant extends BaseModel implements
     }
 
     /**
-     * Accessor for the restaurant's notes.
+     * Accessor for the restaurant's brand color (a hex one, e.g. `#3bb517`),
+     * used for buttons, tabs and tinted backgrounds of its pages.
      *
-     * @return string[]|null
+     * @return string|null
      */
-    public function getNotesAttribute(): ?array
+    public function getBrandPrimaryAttribute(): ?string
     {
-        return $this->getFromJson('metadata', 'notes');
+        return $this->getFromJson('metadata', 'brand_primary');
     }
 
     /**
-     * Mutator for the restaurant's notes.
+     * Mutator for the restaurant's brand color.
      *
-     * @param $notes string[]|null
+     * @param string|null $color
      */
-    public function setNotesAttribute(array $notes): void
+    public function setBrandPrimaryAttribute(?string $color): void
     {
-        $this->setToJson('metadata', 'notes', $notes);
+        $this->setToJson('metadata', 'brand_primary', $color ? strtolower($color) : null);
+    }
+
+    /**
+     * Accessor for the color of text and icons on the restaurant's brand color tints.
+     *
+     * @return string|null
+     */
+    public function getBrandPrimaryContentAttribute(): ?string
+    {
+        return $this->getFromJson('metadata', 'brand_primary_content');
+    }
+
+    /**
+     * Mutator for the color of text and icons on the restaurant's brand color tints.
+     *
+     * @param string|null $color
+     */
+    public function setBrandPrimaryContentAttribute(?string $color): void
+    {
+        $this->setToJson('metadata', 'brand_primary_content', $color ? strtolower($color) : null);
+    }
+
+    /**
+     * Default language of the restaurant's content.
+     *
+     * @return string
+     */
+    public function getDefaultLocale(): string
+    {
+        return ContentLocale::fromMetadata($this->getAttributes()['metadata'] ?? null);
     }
 
     /**

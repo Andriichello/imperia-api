@@ -16,7 +16,7 @@ use Livewire\Livewire;
 /**
  * Class LiveFieldsTest.
  *
- * The "Live" toggle in the forms, which saves the opposite into `archived`.
+ * The "Live" toggle in the forms, which saves the opposite into `is_hidden`.
  */
 class LiveFieldsTest extends FilamentTestCase
 {
@@ -28,7 +28,7 @@ class LiveFieldsTest extends FilamentTestCase
 
         $this->menu = DishMenu::factory()
             ->withRestaurant(Restaurant::factory()->create())
-            ->create(['archived' => false]);
+            ->create(['is_hidden' => false]);
     }
 
     /**
@@ -51,20 +51,23 @@ class LiveFieldsTest extends FilamentTestCase
             ->call('create')
             ->assertHasNoFormErrors();
 
-        $dishes = Dish::query()->withoutGlobalScope(ArchivedScope::class)->pluck('archived', 'title');
+        $dishes = Dish::query()
+            ->withoutGlobalScope(ArchivedScope::class)
+            ->get()
+            ->pluck('is_hidden', 'title');
 
         $this->assertFalse((bool) $dishes['Borscht']);
         $this->assertTrue((bool) $dishes['Okroshka']);
     }
 
     /**
-     * Test that the toggle shows whether a dish is live, and archives or publishes it.
+     * Test that the toggle shows whether a dish is live, and hides or publishes it.
      *
      * @return void
      */
-    public function testDishCanBeArchivedAndPublished()
+    public function testDishCanBeHiddenAndPublished()
     {
-        $dish = Dish::factory()->withMenu($this->menu)->create(['archived' => true]);
+        $dish = Dish::factory()->withMenu($this->menu)->create(['is_hidden' => true]);
 
         $this->actingAsStaff();
 
@@ -74,7 +77,7 @@ class LiveFieldsTest extends FilamentTestCase
             ->call('save')
             ->assertHasNoFormErrors();
 
-        $this->assertFalse((bool) $dish->fresh()->archived);
+        $this->assertFalse($dish->fresh()->is_hidden);
 
         Livewire::test(EditDish::class, ['record' => $dish->getRouteKey()])
             ->assertFormSet(['live' => true])
@@ -82,7 +85,9 @@ class LiveFieldsTest extends FilamentTestCase
             ->call('save')
             ->assertHasNoFormErrors();
 
-        $this->assertTrue((bool) $dish->fresh()->archived);
+        $this->assertTrue($dish->fresh()->is_hidden);
+        // hidden, not moved to the archive
+        $this->assertFalse((bool) $dish->fresh()->archived);
     }
 
     /**
@@ -90,9 +95,9 @@ class LiveFieldsTest extends FilamentTestCase
      *
      * @return void
      */
-    public function testMenusAndCategoriesCanBeArchived()
+    public function testMenusAndCategoriesCanBeHidden()
     {
-        $category = DishCategory::factory()->withMenu($this->menu)->create(['archived' => false]);
+        $category = DishCategory::factory()->withMenu($this->menu)->create(['is_hidden' => false]);
 
         $this->actingAsStaff();
 
@@ -108,7 +113,7 @@ class LiveFieldsTest extends FilamentTestCase
             ->call('save')
             ->assertHasNoFormErrors();
 
-        $this->assertTrue((bool) $this->menu->fresh()->archived);
-        $this->assertTrue((bool) $category->fresh()->archived);
+        $this->assertTrue($this->menu->fresh()->is_hidden);
+        $this->assertTrue($category->fresh()->is_hidden);
     }
 }

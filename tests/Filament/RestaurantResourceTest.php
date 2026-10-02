@@ -7,6 +7,7 @@ use App\Filament\Resources\RestaurantResource\Pages\CreateRestaurant;
 use App\Filament\Resources\RestaurantResource\Pages\EditRestaurant;
 use App\Filament\Resources\RestaurantResource\Pages\ListRestaurants;
 use App\Models\Restaurant;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Livewire\Livewire;
 
@@ -36,7 +37,7 @@ class RestaurantResourceTest extends FilamentTestCase
     }
 
     /**
-     * Test that type, currency and language are saved from their selects.
+     * Test that type, currency and language are saved from their selects, and notes with them.
      *
      * @return void
      */
@@ -44,16 +45,24 @@ class RestaurantResourceTest extends FilamentTestCase
     {
         $this->actingAsStaff();
 
+        // numbered repeater items, instead of random keys
+        $undoRepeaterFake = Repeater::fake();
+
         Livewire::test(CreateRestaurant::class)
             ->assertFormSet(['timezone' => 'Europe/Kyiv', 'currency' => 'UAH'])
             ->fillForm($this->restaurantData([
                 'establishment' => 'cafe',
                 'currency' => 'EUR',
                 'locale' => 'uk',
-                'notes' => ['Pets welcome'],
+                'notes' => [
+                    ['text' => 'Pets welcome', 'is_hidden' => false],
+                    ['text' => 'Closed for a private event', 'is_hidden' => true],
+                ],
             ]))
             ->call('create')
             ->assertHasNoFormErrors();
+
+        $undoRepeaterFake();
 
         /** @var Restaurant $restaurant */
         $restaurant = Restaurant::query()->where('slug', 'imperia')->sole();
@@ -61,7 +70,12 @@ class RestaurantResourceTest extends FilamentTestCase
         $this->assertSame('cafe', $restaurant->establishment);
         $this->assertSame('EUR', $restaurant->currency);
         $this->assertSame('uk', $restaurant->locale);
-        $this->assertSame(['Pets welcome'], $restaurant->notes);
+        $this->assertSame(
+            ['Pets welcome', 'Closed for a private event'],
+            $restaurant->notes->pluck('text')->all()
+        );
+        $this->assertSame([false, true], $restaurant->notes->pluck('is_hidden')->all());
+        $this->assertSame([1, 2], $restaurant->notes->pluck('order')->all());
     }
 
     /**

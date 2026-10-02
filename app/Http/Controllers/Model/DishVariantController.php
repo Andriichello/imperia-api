@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Model;
 
 use App\Http\Controllers\CrudController;
+use App\Http\Requests\CrudRequest;
 use App\Http\Requests\Dish\IndexDishVariantRequest;
 use App\Http\Requests\Dish\ShowDishVariantRequest;
 use App\Http\Resources\Dish\DishVariantCollection;
 use App\Http\Resources\Dish\DishVariantResource;
 use App\Policies\DishVariantPolicy;
 use App\Repositories\DishVariantRepository;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 /**
  * Class DishVariantController.
@@ -120,4 +122,17 @@ class DishVariantController extends CrudController
      *   type="string", example="dish"
      * )
      */
+
+    /**
+     * Query builder of the controller's model. Variants of dishes guests don't see are left out too.
+     *
+     * @param CrudRequest $request
+     *
+     * @return EloquentBuilder
+     */
+    protected function builder(CrudRequest $request): EloquentBuilder
+    {
+        // @phpstan-ignore-next-line
+        return parent::builder($request)->withVisibleDish();
+    }
 }

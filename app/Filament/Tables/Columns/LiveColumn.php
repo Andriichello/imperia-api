@@ -9,12 +9,13 @@ use Illuminate\Support\Facades\Gate;
 /**
  * Class LiveColumn.
  *
- * Toggle, which shows the opposite of `archived` and archives or publishes
- * the record right from the table (for users, who can update it).
+ * Toggle, which shows the opposite of the given attribute (`is_hidden` by default,
+ * `archived` of variants), and hides or publishes the record right from the table
+ * (for users, who can update it).
  */
 class LiveColumn extends ToggleColumn
 {
-    public static function make(string $name = 'archived'): static
+    public static function make(string $name = 'is_hidden'): static
     {
         $static = app(static::class, ['name' => $name]);
         $static->configure();

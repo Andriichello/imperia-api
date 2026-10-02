@@ -14,3 +14,4 @@ export * from "./services/restaurants";
 export * from "./services/tags";
 export * from "./services/users";
 export * from "./models";
+export * from "./services/editor";

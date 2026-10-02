@@ -6,20 +6,19 @@ use App\Enums\ProductFlag;
 use App\Enums\WeightUnit;
 use App\Filament\Actions\SchedulePriceChangeBulkAction;
 use App\Filament\BaseResource;
-use App\Filament\Fields\LiveFields;
 use App\Filament\Fields\FlagFields;
-use App\Filament\RelationManagers\AlterationsRelationManager;
+use App\Filament\Fields\LiveFields;
 use App\Filament\Filters\LiveFilter;
 use App\Filament\Filters\TrashedFilter;
+use App\Filament\Forms\Components\MediaAttachmentField;
+use App\Filament\RelationManagers\AlterationsRelationManager;
 use App\Filament\Resources\DishResource\Pages;
 use App\Filament\Resources\DishResource\RelationManagers\VariantsRelationManager;
 use App\Filament\Tables\AlterationsTable;
 use App\Filament\Tables\Columns\LiveColumn;
 use App\Models\Dish;
-use App\Models\DishVariant;
-use App\Models\Scopes\ArchivedScope;
 use App\Queries\DishQueryBuilder;
-use App\Filament\Forms\Components\MediaAttachmentField;
+use App\Repositories\Editor\DishEditorRepository;
 use Filament\Actions;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -30,7 +29,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Class DishResource.
@@ -164,7 +162,7 @@ class DishResource extends BaseResource
                     }),
                 Tables\Columns\TextColumn::make('title')
                     ->searchable(query: function (Builder $query, string $search): Builder {
-                        return $query->where('dishes.title', 'like', "%{$search}%");
+                        return static::searchTranslated($query, 'dishes.title', $search);
                     }),
                 Tables\Columns\TextColumn::make('price')
                     ->money(fn (Dish $record): string => $record->menu->restaurant->currency ?: 'UAH')
@@ -234,7 +232,7 @@ class DishResource extends BaseResource
     }
 
     /**
-     * Action, which duplicates the dish with its variants and images, as an archived draft.
+     * Action, which duplicates the dish with its variants and images, as a hidden draft.
      *
      * @param class-string<Tables\Actions\Action|Actions\Action> $class
      *
@@ -248,7 +246,7 @@ class DishResource extends BaseResource
             ->authorize('create')
             ->hidden(fn (Dish $record) => $record->trashed())
             ->modalHeading(fn (Dish $record) => "Duplicate $record->title")
-            ->modalDescription('The copy is archived, until you make it live. '
+            ->modalDescription('The copy is hidden, until you make it live. '
                 . 'Variants, images and tags are copied too, scheduled changes are not.')
             ->modalSubmitActionLabel('Duplicate')
             ->form([
@@ -276,7 +274,7 @@ class DishResource extends BaseResource
 
     /**
      * Copy the dish with its variants (archived ones included) and images.
-     * The copy is archived and gets no slug, scheduled changes aren't copied.
+     * The copy is hidden and gets no slug, scheduled changes aren't copied.
      *
      * @param Dish $dish
      * @param array $data Values of the copy: `menu_id`, `category_id` and `title`.
@@ -285,33 +283,12 @@ class DishResource extends BaseResource
      */
     public static function duplicate(Dish $dish, array $data): Dish
     {
-        return DB::transaction(function () use ($dish, $data) {
-            /** @var Dish $copy */
-            $copy = $dish->replicate(['slug', 'scheduled_changes_count']);
-            $copy->fill(Arr::only($data, ['menu_id', 'category_id', 'title']));
-            $copy->archived = true;
-            // the copy isn't a copy of the old menu (see `dishes:copy-old-menu`)
-            $copy->setJson('metadata', Arr::except($copy->getJson('metadata'), 'copied_from'));
-            $copy->save();
-
-            /** @var DishVariant $variant */
-            foreach ($dish->variants()->withoutGlobalScope(ArchivedScope::class)->get() as $variant) {
-                $variant->replicate()
-                    ->fill(['dish_id' => $copy->id])
-                    ->save();
-            }
-
-            $copy->media()->attach($dish->media()
-                ->pluck('mediables.order', 'media.id')
-                ->map(fn ($order) => ['order' => $order])
-                ->all());
-
-            return $copy;
-        });
+        return app(DishEditorRepository::class)
+            ->duplicate($dish, Arr::only($data, ['menu_id', 'category_id', 'title']));
     }
 
     /**
-     * Dishes the current user can pick in other forms, archived ones included.
+     * Dishes the current user can pick in other forms, hidden and archived ones included.
      * Labelled with their menu (and restaurant, when several are listed).
      *
      * @return array<int, string>
@@ -320,8 +297,8 @@ class DishResource extends BaseResource
     {
         $dishes = static::getEloquentQuery()
             ->with('menu.restaurant')
-            ->orderBy('dishes.title')
-            ->get();
+            ->get()
+            ->sortBy(fn ($dish) => mb_strtolower((string) $dish->getAttribute('title')));
 
         $withRestaurant = $dishes->pluck('menu.restaurant_id')->unique()->count() > 1;
 
@@ -333,7 +310,7 @@ class DishResource extends BaseResource
                 $dish->title,
             ]);
 
-            return [$dish->id => implode(' · ', $parts) . ($dish->archived ? ' (archived)' : '')];
+            return [$dish->id => implode(' · ', $parts) . static::getStatusSuffix($dish)];
         })->all();
     }
 

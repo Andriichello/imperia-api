@@ -8,6 +8,7 @@ use App\Models\Restaurant;
 use App\Models\User;
 use App\Queries\Interfaces\ArchivableInterface;
 use App\Queries\Traits\Archivable;
+use App\Queries\Traits\ShownToGuests;
 
 /**
  * Class DishCategoryQueryBuilder.
@@ -23,6 +24,7 @@ class DishCategoryQueryBuilder extends BaseQueryBuilder implements
     ArchivableInterface
 {
     use Archivable;
+    use ShownToGuests;
 
     /**
      * Apply index query conditions.
@@ -72,6 +74,19 @@ class DishCategoryQueryBuilder extends BaseQueryBuilder implements
                 ->whereIn('dm.restaurant_id', $ids)
                 ->select('dish_categories.*');
         }
+
+        return $this;
+    }
+
+    /**
+     * Only categories of menus guests see (not archived, hidden or deleted).
+     *
+     * @return static
+     */
+    public function withVisibleMenu(): static
+    {
+        // @phpstan-ignore-next-line
+        $this->whereHas('menu', fn (DishMenuQueryBuilder $query) => $query->shownToGuests());
 
         return $this;
     }

@@ -111,7 +111,7 @@ class SchedulesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('closes')
                     ->state(fn (Schedule $record) => static::formatTime($record->end_hour, $record->end_minute)
                         . ($record->is_cross_date ? ' (next day)' : '')),
-                LiveColumn::make()
+                LiveColumn::make('archived')
                     ->label('Open'),
             ])
             ->paginated(false)

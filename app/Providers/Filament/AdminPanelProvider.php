@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Http\Middleware\UseDefaultContentLocale;
 use App\Http\Middleware\UsePanelAuthGuard;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Http\Middleware\Authenticate;
@@ -86,6 +87,10 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
+            // also on Livewire's requests, which save the forms
+            ->middleware([
+                UseDefaultContentLocale::class,
+            ], isPersistent: true)
             ->authMiddleware([
                 Authenticate::class,
             ]);

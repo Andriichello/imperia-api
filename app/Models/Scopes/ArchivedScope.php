@@ -2,6 +2,7 @@
 
 namespace App\Models\Scopes;
 
+use App\Models\Interfaces\HideableInterface;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -9,6 +10,9 @@ use Illuminate\Database\Eloquent\Scope;
 
 /**
  * Class ArchivedScope.
+ *
+ * Leaves archived models out by default, and hidden ones too (see `HideableInterface`).
+ * Staff can choose to see them with `?archived=with|only`.
  */
 class ArchivedScope implements Scope
 {
@@ -62,6 +66,11 @@ class ArchivedScope implements Scope
         }
         if ($archived === 'without') {
             $builder->where($model->getTable() . '.' . $this->key, false);
+
+            // hidden ones aren't shown to guests either
+            if ($model instanceof HideableInterface) {
+                $builder->where($model->getTable() . '.is_hidden', false);
+            }
         }
     }
 

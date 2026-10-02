@@ -2,6 +2,8 @@
 
 namespace App\Filament\Concerns;
 
+use App\Helpers\WebCacheHelper;
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
@@ -69,5 +71,14 @@ trait ReordersByPopularity
                 $popularity--;
             }
         });
+
+        // the website caches menus with their categories, the updates above fire no model events
+        $restaurantIds = $model->newQueryWithoutScopes()
+            ->whereKey($keys)
+            ->get()
+            ->map(fn (BaseModel $record) => $record->getRestaurantId())
+            ->all();
+
+        WebCacheHelper::forgetRestaurants(...$restaurantIds);
     }
 }
