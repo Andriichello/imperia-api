@@ -44,6 +44,8 @@ class OrderMenusRequest extends EditorRequest
                     ->where('restaurant_id', $restaurantId)
                     ->whereNull('deleted_at'),
             ],
+            // hidden from guests, or shown again (left out: as it is)
+            'menus.*.is_hidden' => ['sometimes', 'boolean'],
             'menus.*.categories' => ['present', 'array'],
             'menus.*.categories.*' => [
                 'integer',
@@ -65,11 +67,13 @@ class OrderMenusRequest extends EditorRequest
     /**
      * @OA\Schema(
      *   schema="EditorOrderMenusRequest",
-     *   description="Menus and their categories in their new order. Categories listed under another menu move there.",
+     *   description="Menus and their categories in their new order. Categories listed under another menu move there.
+     *     Menus can be hidden or shown at the same time.",
      *   required={"menus"},
      *   @OA\Property(property="menus", type="array", @OA\Items(
      *     required={"id", "categories"},
      *     @OA\Property(property="id", type="integer", example=1),
+     *     @OA\Property(property="is_hidden", type="boolean", example=false),
      *     @OA\Property(property="categories", type="array", @OA\Items(type="integer"), example={3, 1, 2}),
      *   )),
      * ),

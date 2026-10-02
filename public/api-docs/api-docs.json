@@ -7046,7 +7046,7 @@
                 "type": "object"
             },
             "EditorOrderMenusRequest": {
-                "description": "Menus and their categories in their new order. Categories listed under another menu move there.",
+                "description": "Menus and their categories in their new order. Categories listed under another menu move there.\n     *     Menus can be hidden or shown at the same time.",
                 "required": [
                     "menus"
                 ],
@@ -7062,6 +7062,10 @@
                                 "id": {
                                     "type": "integer",
                                     "example": 1
+                                },
+                                "is_hidden": {
+                                    "type": "boolean",
+                                    "example": false
                                 },
                                 "categories": {
                                     "type": "array",

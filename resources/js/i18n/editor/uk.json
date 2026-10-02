@@ -1,0 +1,11 @@
+{
+  "editor": {
+    "dish": {
+      "picks": {
+        "new": "Новинка",
+        "bestseller": "Хіт",
+        "seasonal": "Сезонне"
+      }
+    }
+  }
+}

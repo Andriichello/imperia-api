@@ -1,4 +1,5 @@
 import type {Pinia} from 'pinia'
+import {watch} from 'vue'
 import type {Dish, DishMenu} from '@/api'
 import {useAppStore} from '@/stores/app'
 import {usePreviewStore} from '@/stores/preview'
@@ -48,6 +49,30 @@ function selectorOf(key: string): string {
   return `[${EDIT_KEY_ATTRIBUTE}="${CSS.escape(key)}"]`
 }
 
+/**
+ * The new items in their order: the current ones (by id) updated with their new values,
+ * so whoever holds them keeps them.
+ */
+function mergeById<T extends { id: number }>(
+  current: T[],
+  next: T[],
+  update: (item: T, values: T) => void = (item, values) => Object.assign(item, values),
+): T[] {
+  const byId = new Map(current.map((item) => [item.id, item]))
+
+  return next.map((values) => {
+    const item = byId.get(values.id)
+
+    if (!item) {
+      return values
+    }
+
+    update(item, values)
+
+    return item
+  })
+}
+
 function styled<K extends keyof HTMLElementTagNameMap>(tag: K, style: Partial<CSSStyleDeclaration>): HTMLElementTagNameMap[K] {
   const element = document.createElement(tag)
   Object.assign(element.style, style)
@@ -69,6 +94,9 @@ class PreviewBridge {
   protected page: PreviewPage
   protected overlay: HTMLDivElement
   protected frame: number | null = null
+  // the unsaved changes shown now: they're shown again on the dishes, once they're loaded
+  protected draft: PreviewPatch = {}
+  protected applyingDraft = false
 
   constructor(
     protected app: ReturnType<typeof useAppStore>,
@@ -121,6 +149,13 @@ class PreviewBridge {
     new MutationObserver(() => this.render()).observe(document.body, {childList: true, subtree: true})
 
     this.watchNavigation()
+
+    // the page loads its dishes after it opens
+    watch(() => this.preview.products, () => {
+      if (!this.applyingDraft && this.draft.products) {
+        this.applyDraft(this.draft)
+      }
+    }, {flush: 'sync'})
 
     this.post({type: 'editor:ready', page: this.page, locale: this.app.locale})
   }
@@ -179,11 +214,34 @@ class PreviewBridge {
     this.render()
   }
 
-  /** Show the unsaved changes: they replace the page's data, which it shows reactively. */
+  /**
+   * Show the unsaved changes: they replace the page's data, which it shows reactively.
+   * Menus, categories and dishes are updated in place (by their ids): the page keeps
+   * the ones it shows (e.g. the selected menu).
+   */
   protected applyDraft(patch: PreviewPatch): void {
+    this.draft = {...this.draft, ...patch}
+    this.applyingDraft = true
+
     if (patch.restaurant && this.app.restaurant) {
       Object.assign(this.app.restaurant, patch.restaurant)
     }
+
+    if (patch.menus) {
+      this.app.menus = mergeById(this.app.menus ?? [], patch.menus, (menu, next) => {
+        const {categories, ...values} = next
+
+        Object.assign(menu, values)
+        menu.categories = mergeById(menu.categories ?? [], categories ?? [])
+      })
+    }
+
+    // the dishes aren't loaded yet: they'll be shown once they are
+    if (patch.products && this.preview.products) {
+      this.preview.products = mergeById(this.preview.products, patch.products)
+    }
+
+    this.applyingDraft = false
   }
 
   /** Brand colors instead of the restaurant's ones (they're set on the body, see `web/app.blade.php`). */

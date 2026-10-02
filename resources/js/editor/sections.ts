@@ -3,11 +3,19 @@ import {keyId, keyKind} from '@/editor/protocol'
 /** Panels of the editor: one per part of the page (and the brand colors of all of them). */
 export type Section = 'photos' | 'details' | 'notes' | 'menus' | 'hours' | 'brand' | 'menu' | 'category' | 'dish'
 
-/** The part being edited: a section of the restaurant page, or a menu, category or dish. */
+/**
+ * The part being edited: a section of the restaurant page, or a menu, category or dish.
+ * A new menu, category or dish has no id yet, but the one it's added to (a new menu, the
+ * restaurant's).
+ */
 export interface Selection {
   section: Section
   id: number | null
+  parent?: number | null
 }
+
+/** Id of a new menu, category or dish in the preview, till it's saved. */
+export const NEW_ID = -1
 
 /** A link of a panel's breadcrumb: to another panel, or to the page structure (no selection). */
 export interface Breadcrumb {
@@ -47,7 +55,8 @@ export function selectionOf(key: string): Selection | null {
     case 'dish': {
       const id = keyId(key)
 
-      return id ? {section: kind, id} : null
+      // a new one, which is being added, is edited already
+      return id && id > 0 ? {section: kind, id} : null
     }
   }
 
@@ -73,12 +82,14 @@ export function keysOf(selection: Selection | null): string[] {
     case 'menu':
     case 'category':
     case 'dish':
-      return [`${selection.section}:${selection.id}`]
+      return [`${selection.section}:${selection.id ?? NEW_ID}`]
     default:
       return [selection.section]
   }
 }
 
 export function isSameSelection(a: Selection | null, b: Selection | null): boolean {
-  return a?.section === b?.section && (a?.id ?? null) === (b?.id ?? null)
+  return a?.section === b?.section
+    && (a?.id ?? null) === (b?.id ?? null)
+    && (a?.parent ?? null) === (b?.parent ?? null)
 }

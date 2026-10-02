@@ -2,13 +2,19 @@
   import {computed, onBeforeUnmount, onMounted} from 'vue'
   import EditorTopBar from '@/Components/Editor/EditorTopBar.vue'
   import PageStructure from '@/Components/Editor/PageStructure.vue'
-  import SectionPanel from '@/Components/Editor/SectionPanel.vue'
+  import MissingPanel from '@/Components/Editor/Panels/MissingPanel.vue'
   import PreviewPane from '@/Components/Editor/PreviewPane.vue'
+  import ToastStack from '@/Components/Editor/ToastStack.vue'
+  import ConfirmDialog from '@/Components/Editor/ConfirmDialog.vue'
   import BrandPanel from '@/Components/Editor/Panels/BrandPanel.vue'
   import DetailsPanel from '@/Components/Editor/Panels/DetailsPanel.vue'
   import HoursPanel from '@/Components/Editor/Panels/HoursPanel.vue'
   import NotesPanel from '@/Components/Editor/Panels/NotesPanel.vue'
   import PhotosPanel from '@/Components/Editor/Panels/PhotosPanel.vue'
+  import MenusPanel from '@/Components/Editor/Panels/MenusPanel.vue'
+  import MenuPanel from '@/Components/Editor/Panels/MenuPanel.vue'
+  import CategoryPanel from '@/Components/Editor/Panels/CategoryPanel.vue'
+  import DishPanel from '@/Components/Editor/Panels/DishPanel.vue'
   import {useEditorStore} from '@/stores/editor'
 
   /**
@@ -17,22 +23,46 @@
    */
   const editor = useEditorStore()
 
-  /** Panels of the restaurant page's sections. */
+  /** Panels of the restaurant page's sections, and of menus, categories and dishes. */
   const PANELS = {
     photos: PhotosPanel,
     details: DetailsPanel,
     notes: NotesPanel,
     hours: HoursPanel,
     brand: BrandPanel,
+    menus: MenusPanel,
+    menu: MenuPanel,
+    category: CategoryPanel,
+    dish: DishPanel,
   }
 
-  const panel = computed(() => editor.selection
+  /** Panels of one item (a new one has no id yet). */
+  const ITEMS = ['menu', 'category', 'dish']
+
+  const isItem = computed(() => !!editor.selection && ITEMS.includes(editor.selection.section))
+
+  // the item isn't there anymore (e.g. it was deleted)
+  const isMissing = computed(() => {
+    const selection = editor.selection
+
+    if (!selection || !isItem.value || selection.id === null) {
+      return false
+    }
+
+    return !{
+      menu: editor.findMenu,
+      category: editor.findCategory,
+      dish: editor.findDish,
+    }[selection.section as 'menu' | 'category' | 'dish'](selection.id)
+  })
+
+  const panel = computed(() => editor.selection && !isMissing.value
     ? PANELS[editor.selection.section as keyof typeof PANELS] ?? null
     : null)
 
   // a panel of its own for each part, so nothing of the previous one stays in it
   const panelKey = computed(() => editor.selection
-    ? `${editor.selection.section}:${editor.selection.id ?? ''}`
+    ? `${editor.selection.section}:${editor.selection.id ?? 'new'}:${editor.selection.parent ?? ''}`
     : null)
 
   function onKeydown(event: KeyboardEvent) {
@@ -80,9 +110,10 @@
       <aside class="w-[420px] shrink-0 flex flex-col bg-white border-r border-zinc-200">
         <component :is="panel"
                    :key="panelKey"
+                   v-bind="isItem ? {selection: editor.selection} : {}"
                    v-if="panel"/>
 
-        <SectionPanel :key="panelKey"
+        <MissingPanel :key="panelKey"
                       :selection="editor.selection"
                       v-else-if="editor.selection"/>
 
@@ -91,5 +122,8 @@
 
       <PreviewPane/>
     </div>
+
+    <ToastStack/>
+    <ConfirmDialog/>
   </div>
 </template>

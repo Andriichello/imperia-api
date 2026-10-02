@@ -8,6 +8,7 @@ import type { EditorOrderMenusRequestMenusItem } from "./editorOrderMenusRequest
 
 /**
  * Menus and their categories in their new order. Categories listed under another menu move there.
+ *      *     Menus can be hidden or shown at the same time.
  */
 export interface EditorOrderMenusRequest {
   menus: EditorOrderMenusRequestMenusItem[];

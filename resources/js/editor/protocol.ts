@@ -1,4 +1,4 @@
-import type {Restaurant} from '@/api'
+import type {Dish, DishMenu, Restaurant} from '@/api'
 
 /**
  * Messages between the editor and the public page in its preview (a same-origin iframe).
@@ -20,6 +20,10 @@ export interface PreviewPage {
  */
 export interface PreviewPatch {
   restaurant?: Partial<Restaurant>
+  // the menus guests see, with their categories, in their order
+  menus?: DishMenu[]
+  // the dishes guests see, in their order
+  products?: Dish[]
 }
 
 /** Brand colors of the public page: the primary one and the one of text on its tints. */

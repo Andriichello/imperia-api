@@ -7,5 +7,6 @@
 
 export type EditorOrderMenusRequestMenusItem = {
   id: number;
+  is_hidden?: boolean;
   categories: number[];
 };

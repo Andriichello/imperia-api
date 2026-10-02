@@ -51,7 +51,12 @@ const media = computed<Media[]>(() => {
 
 const sizes = computed<DishSize[]>(() => getDishSizes(props.product));
 
-const selectedSize = ref<DishSize>(sizes.value[0]);
+// the size is picked by its id: the sizes change in the editor's preview
+const selectedSizeId = ref<number | null>(sizes.value[0]?.id ?? null);
+
+const selectedSize = computed<DishSize>(
+  () => sizes.value.find((size) => size.id === selectedSizeId.value) ?? sizes.value[0]
+);
 
 const price = computed(
   () => priceFormatted(selectedSize.value.price, props.currency?.toLowerCase() ?? 'uah')
@@ -151,7 +156,7 @@ const allergenNames = computed<string>(
                     : 'border-dashed border-base-content/40 text-base-content/75'"
                   :aria-pressed="selectedSize.id === size.id"
                   v-for="size in sizes" :key="size.id ?? 'base'"
-                  @click.stop="selectedSize = size">
+                  @click.stop="selectedSizeId = size.id">
             {{ sizeWeightFormatted(size) }}
           </button>
         </div>

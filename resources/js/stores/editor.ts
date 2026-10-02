@@ -1,5 +1,6 @@
 import {defineStore} from 'pinia'
 import type {EditorCategory, EditorDish, EditorMenu, EditorRestaurant, EditorRestaurantItem} from '@/api'
+import {getEditorRestaurant} from '@/api'
 import type {PreviewBrand, PreviewMode, PreviewPage, PreviewPatch} from '@/editor/protocol'
 import {isSameSelection, keysOf, Selection, selectionOf} from '@/editor/sections'
 import {brandOf, BrandColors} from '@/editor/brand'
@@ -13,6 +14,27 @@ export interface EditorUrls {
   admin: string
   logout: string
 }
+
+/** A message at the bottom of the editor, with an action (e.g. Undo). */
+export interface Toast {
+  id: number
+  message: string
+  action?: { label: string, run: () => unknown }
+}
+
+/** A question, which has to be answered before going on (e.g. before deleting). */
+export interface Confirmation {
+  title: string
+  message: string
+  confirm: string
+  danger?: boolean
+  resolve: (confirmed: boolean) => void
+}
+
+/** How long a toast stays. */
+const TOAST_MS = 6000
+
+let toasts = 0
 
 interface EditorState {
   // language of the editor itself
@@ -41,6 +63,8 @@ interface EditorState {
   previewPatch: PreviewPatch
   // brand colors shown in the preview, the saved ones when there are none
   previewBrand: PreviewBrand | null
+  toasts: Toast[]
+  confirmation: Confirmation | null
 }
 
 export const useEditorStore = defineStore('editor', {
@@ -62,6 +86,8 @@ export const useEditorStore = defineStore('editor', {
     dirty: false,
     previewPatch: {},
     previewBrand: null,
+    toasts: [],
+    confirmation: null,
   }),
   getters: {
     defaultLocale: (state): string => state.restaurant?.default_locale ?? 'en',
@@ -106,6 +132,36 @@ export const useEditorStore = defineStore('editor', {
       this.select(null)
     },
 
+    /** Everything of the restaurant again, after its menus, categories or dishes changed. */
+    async reload() {
+      this.restaurant = (await getEditorRestaurant(this.restaurant!.id)).data.data
+    },
+
+    notify(message: string, action?: Toast['action']) {
+      const id = ++toasts
+
+      this.toasts = [...this.toasts, {id, message, action}]
+      setTimeout(() => this.dismiss(id), TOAST_MS)
+    },
+
+    dismiss(id: number) {
+      this.toasts = this.toasts.filter((toast) => toast.id !== id)
+    },
+
+    /** Ask a question: whether it's confirmed. */
+    confirm(question: Omit<Confirmation, 'resolve'>): Promise<boolean> {
+      this.confirmation?.resolve(false)
+
+      return new Promise((resolve) => {
+        this.confirmation = {...question, resolve}
+      })
+    },
+
+    answer(confirmed: boolean) {
+      this.confirmation?.resolve(confirmed)
+      this.confirmation = null
+    },
+
     /** Open a page in the preview. */
     openPage(page: PreviewPage) {
       this.page = page
@@ -126,6 +182,12 @@ export const useEditorStore = defineStore('editor', {
       }
 
       return null
+    },
+
+    /** The menu of the category. */
+    menuOf(categoryId: number | null): EditorMenu | null {
+      return (this.restaurant?.menus ?? [])
+        .find((menu) => (menu.categories ?? []).some((category) => category.id === categoryId)) ?? null
     },
 
     findDish(id: number | null): EditorDish | null {

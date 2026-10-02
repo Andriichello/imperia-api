@@ -144,6 +144,7 @@ class MenuEditorTest extends EditorTestCase
 
     /**
      * Test that menus and categories are ordered, and categories moved between menus take their dishes.
+     * Menus are hidden or shown at the same time.
      *
      * @return void
      */
@@ -160,12 +161,13 @@ class MenuEditorTest extends EditorTestCase
 
         $this->putJson("/api/editor/restaurants/{$this->restaurant->id}/menus/order", [
             'menus' => [
-                ['id' => $drinks->id, 'categories' => []],
+                ['id' => $drinks->id, 'is_hidden' => true, 'categories' => []],
                 ['id' => $this->menu->id, 'categories' => [$coffee->id, $salads->id, $soups->id]],
             ],
         ])
             ->assertOk()
             ->assertJsonPath('data.menus.*.id', [$drinks->id, $this->menu->id])
+            ->assertJsonPath('data.menus.*.is_hidden', [true, false])
             ->assertJsonPath('data.menus.1.categories.*.id', [$coffee->id, $salads->id, $soups->id]);
 
         $this->assertSame($this->menu->id, $coffee->fresh()->menu_id);

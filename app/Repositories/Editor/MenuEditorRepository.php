@@ -81,6 +81,13 @@ class MenuEditorRepository extends EditorRepository
             $this->order(DishMenu::class, Arr::pluck($menus, 'id'));
 
             foreach ($menus as $menu) {
+                if (array_key_exists('is_hidden', $menu)) {
+                    DishMenu::query()
+                        ->withoutGlobalScopes()
+                        ->whereKey($menu['id'])
+                        ->update(['is_hidden' => (bool) $menu['is_hidden']]);
+                }
+
                 $this->order(DishCategory::class, $menu['categories'], ['menu_id' => $menu['id']]);
 
                 // dishes of the categories, which were moved to the menu
