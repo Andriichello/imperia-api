@@ -49,6 +49,16 @@ class SchedulesRelationManager extends RelationManager
     protected static ?string $pluralModelLabel = 'opening hours';
 
     /**
+     * Always check abilities through the policies (see `BaseResource`).
+     *
+     * @return bool
+     */
+    public static function shouldCheckPolicyExistence(): bool
+    {
+        return false;
+    }
+
+    /**
      * Configure the form.
      *
      * @param Form $form

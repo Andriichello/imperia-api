@@ -14,6 +14,18 @@ use Illuminate\Database\Eloquent\Model;
 abstract class BaseResource extends Resource
 {
     /**
+     * Always check abilities through the policies, also the ones they don't have
+     * a method for (e.g. `deleteAny`, `reorder`). Filament would allow those
+     * without running the policy's `before()`, which is where most rules are.
+     *
+     * @return bool
+     */
+    public static function shouldCheckPolicyExistence(): bool
+    {
+        return false;
+    }
+
+    /**
      * Archived records stay visible to admins, soft-deleted ones
      * only show up through the trashed filter.
      *

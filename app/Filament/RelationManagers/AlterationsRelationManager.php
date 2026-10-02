@@ -30,6 +30,16 @@ class AlterationsRelationManager extends RelationManager
     protected static ?string $modelLabel = 'scheduled change';
 
     /**
+     * Always check abilities through the policies (see `BaseResource`).
+     *
+     * @return bool
+     */
+    public static function shouldCheckPolicyExistence(): bool
+    {
+        return false;
+    }
+
+    /**
      * Configure the table.
      *
      * @param Table $table
