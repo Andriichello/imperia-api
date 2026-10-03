@@ -1,13 +1,16 @@
 <script setup lang="ts">
-  import {computed, PropType, ref} from 'vue'
+  import {computed, nextTick, PropType, ref} from 'vue'
   import {useI18n} from 'vue-i18n'
   import {
     Archive,
     ArrowLeft,
+    ArrowUpNarrowWide,
     Check,
     ChevronRight,
     Copy,
     Ellipsis,
+    Eye,
+    EyeOff,
     Flame,
     FolderInput,
     MousePointer2,
@@ -26,10 +29,12 @@
   import {usePanelDraft} from '@/composables/usePanelDraft'
   import {useContentLocale} from '@/composables/useContentLocale'
   import {useItemActions} from '@/composables/useItemActions'
-  import {DishDraft, isListed, sizeOf} from '@/editor/menuDrafts'
+  import {DishDraft, isListed, SizeDraft, sizeOf, sortSizes} from '@/editor/menuDrafts'
+  import ScheduledNotice from '@/Components/Editor/ScheduledNotice.vue'
   import {Breadcrumb, isNewId, Selection} from '@/editor/sections'
   import {translated} from '@/editor/translations'
   import {ALLERGENS, DISH_TAGS, getAllergenLabel} from '@/flags'
+  import {priceFormatted} from '@/helpers'
   import {useEditorStore} from '@/stores/editor'
 
   /**
@@ -63,7 +68,7 @@
   const category = computed<EditorCategory | null>(() => editor.findCategory(dish.value?.category_id ?? props.selection.parent ?? null))
   const menu = computed(() => category.value ? editor.findMenu(category.value.menu_id) : null)
 
-  const {draft, change, error} = usePanelDraft<DishDraft>(props.selection)
+  const {draft, saved, changed, change, error} = usePanelDraft<DishDraft>(props.selection)
 
   // the preview shows the dish's page: a click on a part of it shows the part here
   const onItsPage = computed(() => !!dish.value && editor.page.page === 'dish' && editor.page.dishId === dish.value.id)
@@ -92,9 +97,40 @@
     ? optional
     : /^\d+([.,]\d+)?$/.test(value.trim())
 
-  function sizeError(index: number): string | null {
-    const size = draft.value.sizes[index]
+  const isWhole = (value: string) => value.trim() === '' || /^\d+$/.test(value.trim())
 
+  // saved sizes by their ids: changed values are marked
+  const savedSizes = computed(() => new Map(saved.value.sizes.filter((size) => size.id).map((size) => [size.id, size])))
+
+  const shownSizes = computed(() => draft.value.sizes.filter((size) => !size.is_hidden).length)
+
+  /** Whether the size's value differs from the saved one (a new size isn't marked). */
+  function sizeChanged(size: SizeDraft, field: keyof SizeDraft): boolean {
+    const before = size.id ? savedSizes.value.get(size.id) : null
+
+    return !!before && before[field] !== size[field]
+  }
+
+  /** "Was 185 ₴" under a changed price. */
+  function wasPrice(size: SizeDraft): string | null {
+    const before = size.id ? savedSizes.value.get(size.id) : null
+
+    return before && before.price !== size.price
+      ? t('editor.dish.was', {value: priceFormatted(Number(before.price), (restaurant.value.currency ?? 'uah').toLowerCase())})
+      : null
+  }
+
+  /** "300 g · 185 ₴" in the size's header. */
+  function sizeTitle(size: SizeDraft, index: number): string {
+    const weight = size.weight.trim() ? `${size.weight.trim()} ${t('weight_unit.' + size.weight_unit)}` : ''
+    const price = isNumber(size.price, false)
+      ? priceFormatted(Number(size.price.replace(',', '.')), (restaurant.value.currency ?? 'uah').toLowerCase())
+      : ''
+
+    return [weight, price].filter(Boolean).join(' · ') || t('editor.dish.size', {number: index + 1})
+  }
+
+  function sizeError(size: SizeDraft): string | null {
     if (!isNumber(size.price, false)) {
       return t('editor.dish.price_needed')
     }
@@ -103,11 +139,13 @@
       return t('editor.dish.size_number')
     }
 
-    const saved = ['price', 'weight', 'weight_unit', 'calories', 'preparation_time']
-      .map((key) => error(`sizes.${size.key}.${key}`))
-      .find(Boolean)
+    if (!isWhole(size.preparation_time) || !isWhole(size.calories)) {
+      return t('editor.dish.whole_number')
+    }
 
-    return saved ?? null
+    return ['price', 'weight', 'weight_unit', 'calories', 'preparation_time', 'is_hidden']
+      .map((key) => error(`sizes.${size.key}.${key}`))
+      .find(Boolean) ?? null
   }
 
   function addSize() {
@@ -116,21 +154,28 @@
     draft.value.sizes.push(sizeOf({
       weight_unit: (last?.weight_unit ?? 'g') as EditorDish['sizes'][number]['weight_unit'],
     }))
+
+    // its weight is typed first
+    nextTick(() => document.getElementById(`size-${draft.value.sizes[draft.value.sizes.length - 1].key}-weight`)?.focus())
   }
 
-  /** Different time and calories for each size, or the same for all (the first size's ones). */
-  function setShared(shared: boolean) {
-    if (shared) {
-      draft.value.preparation_time = draft.value.sizes[0]?.preparation_time ?? ''
-      draft.value.calories = draft.value.sizes[0]?.calories ?? ''
-    } else {
-      draft.value.sizes.forEach((size) => {
-        size.preparation_time = draft.value.preparation_time
-        size.calories = draft.value.calories
-      })
-    }
+  /** Sizes go from the cheapest one: a price, once it's typed, sorts them again. */
+  function sortByPrice() {
+    draft.value.sizes = sortSizes(draft.value.sizes)
+  }
 
-    draft.value.shared = shared
+  /** Hide the size from guests, or show it again: a dish keeps a size they see. */
+  function toggleSize(size: SizeDraft) {
+    if (size.is_hidden || shownSizes.value > 1) {
+      size.is_hidden = !size.is_hidden
+    }
+  }
+
+  /** Delete the size: when the dish is saved, it's archived (a dish keeps a size guests see). */
+  function removeSize(size: SizeDraft) {
+    if (draft.value.sizes.length > 1 && (size.is_hidden || shownSizes.value > 1)) {
+      draft.value.sizes = draft.value.sizes.filter((item) => item.key !== size.key)
+    }
   }
 
   // Flags
@@ -200,9 +245,12 @@
               v-model:locale="locale"
               @navigate="editor.select($event, !!$event)"
               @close="editor.close()">
-    <template #notice v-if="onItsPage">
+    <template #notice>
+      <ScheduledNotice :selection="selection"/>
+
       <div class="shrink-0 flex gap-2.5 mx-5 mt-3 px-3 py-2.5 rounded-lg bg-blue-50 border border-blue-200 text-[13px]/[18px] text-blue-900"
-           role="status">
+           role="status"
+           v-if="onItsPage">
         <MousePointer2 class="size-4 shrink-0 mt-px"/>
         <p class="flex-1">
           {{ t('editor.dish.on_its_page') }}
@@ -301,6 +349,7 @@
                maxlength="255"
                :placeholder="placeholder(draft.title)"
                :aria-invalid="!!textError(error, 'title')"
+               :class="{'e-changed': changed((values) => values.title[locale])}"
                v-model="draft.title[locale]"/>
 
         <p class="e-error" v-if="textError(error, 'title')">{{ textError(error, 'title') }}</p>
@@ -317,6 +366,7 @@
                   :maxlength="MAX_DESCRIPTION"
                   :placeholder="placeholder(draft.description)"
                   :aria-invalid="!!textError(error, 'description')"
+                  :class="{'e-changed': changed((values) => values.description[locale])}"
                   v-model="draft.description[locale]"/>
 
         <p class="e-error" v-if="textError(error, 'description')">{{ textError(error, 'description') }}</p>
@@ -335,6 +385,7 @@
                :maxlength="MAX_BADGE"
                :placeholder="placeholder(draft.badge)"
                :aria-invalid="!!textError(error, 'badge')"
+               :class="{'e-changed': changed((values) => values.badge[locale])}"
                v-model="draft.badge[locale]"/>
 
         <div class="flex flex-wrap gap-1.5">
@@ -354,137 +405,148 @@
       </div>
     </PanelField>
 
-    <PanelField class="flex flex-col gap-5" field="sizes" v-slot="{selected}">
-      <section class="flex flex-col gap-2">
+    <PanelField class="flex flex-col gap-2.5" field="sizes" v-slot="{selected}">
+      <div class="flex flex-col gap-0.5">
         <div class="flex items-center gap-1.5">
           <p class="e-label">{{ t('editor.dish.sizes') }}</p>
           <SelectedInPreview v-if="selected"/>
         </div>
 
-        <div class="flex flex-col gap-1"
-             v-for="(size, index) in draft.sizes" :key="size.key">
-          <div class="flex items-center gap-2">
-            <input class="e-input flex-1 min-w-0 tabular-nums"
-                   type="text"
-                   inputmode="decimal"
-                   maxlength="8"
-                   :placeholder="t('editor.dish.size_placeholder')"
-                   :aria-label="t('editor.dish.size', {number: index + 1})"
-                   :aria-invalid="!isNumber(size.weight, true)"
-                   v-model="size.weight"/>
+        <p class="flex items-center gap-1.5 text-xs/4 text-zinc-600">
+          <ArrowUpNarrowWide class="size-3.5 text-zinc-500"/>
+          {{ t('editor.dish.sorted') }}
+        </p>
+      </div>
 
-            <select class="e-input w-[76px] shrink-0"
-                    :aria-label="t('editor.dish.unit', {number: index + 1})"
-                    v-model="size.weight_unit">
-              <option :value="unit" v-for="unit in UNITS" :key="unit">{{ t(`weight_unit.${unit}`) }}</option>
-            </select>
+      <div class="rounded-[10px] border border-zinc-200 overflow-hidden bg-white"
+           v-for="(size, index) in draft.sizes" :key="size.key">
+        <div class="flex items-center gap-2 py-1.5 pr-1.5 pl-3 bg-zinc-50 border-b border-[#f0f0f1]">
+          <span class="size-5 shrink-0 flex items-center justify-center rounded-full bg-zinc-200 text-[11px] font-bold text-zinc-700">
+            {{ index + 1 }}
+          </span>
 
-            <div class="relative w-[110px] shrink-0">
-              <input class="e-input pr-7 text-end tabular-nums"
+          <span class="flex-1 min-w-0 font-semibold truncate"
+                :class="{'text-zinc-400': size.is_hidden}">
+            {{ sizeTitle(size, index) }}
+          </span>
+
+          <span class="e-pill e-pill-sm bg-zinc-100 text-zinc-600" v-if="size.is_hidden">
+            {{ t('editor.menus.hidden') }}
+          </span>
+
+          <button type="button"
+                  class="e-icon-btn size-7"
+                  :class="{'text-blue-700!': size.is_hidden}"
+                  :aria-label="t(size.is_hidden ? 'editor.dish.show_size' : 'editor.dish.hide_size', {size: sizeTitle(size, index)})"
+                  :title="!size.is_hidden && shownSizes === 1
+                    ? t('editor.dish.last_shown')
+                    : t(size.is_hidden ? 'editor.dish.show_size' : 'editor.dish.hide_size', {size: sizeTitle(size, index)})"
+                  :disabled="!size.is_hidden && shownSizes === 1"
+                  @click="toggleSize(size)">
+            <Eye class="size-[15px]" v-if="size.is_hidden"/>
+            <EyeOff class="size-[15px]" v-else/>
+          </button>
+
+          <button type="button"
+                  class="e-icon-btn size-7"
+                  :aria-label="t('editor.dish.remove_size', {number: index + 1})"
+                  :title="t('editor.dish.remove_size', {number: index + 1})"
+                  :disabled="draft.sizes.length === 1 || (!size.is_hidden && shownSizes === 1)"
+                  @click="removeSize(size)">
+            <Trash2 class="size-[15px]"/>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 p-3"
+             :class="{'opacity-60': size.is_hidden}">
+          <div class="flex flex-col gap-1.5">
+            <label class="e-label" :for="`size-${size.key}-weight`">{{ t('editor.dish.weight') }}</label>
+
+            <div class="flex">
+              <input class="e-input h-9 min-w-0 rounded-r-none text-end tabular-nums"
+                     type="text"
+                     inputmode="decimal"
+                     maxlength="8"
+                     :id="`size-${size.key}-weight`"
+                     :class="{'e-changed': sizeChanged(size, 'weight')}"
+                     :aria-invalid="!isNumber(size.weight, true)"
+                     v-model="size.weight"/>
+
+              <select class="e-input h-9 w-[70px] shrink-0 -ml-px pl-2.5 pr-7 rounded-l-none bg-[position:right_8px_center]"
+                      :aria-label="t('editor.dish.unit', {number: index + 1})"
+                      :class="{'e-changed': sizeChanged(size, 'weight_unit')}"
+                      v-model="size.weight_unit">
+                <option :value="unit" v-for="unit in UNITS" :key="unit">{{ t(`weight_unit.${unit}`) }}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="e-label" :for="`size-${size.key}-price`">{{ t('editor.dish.price_label') }}</label>
+
+            <div class="relative">
+              <input class="e-input h-9 pr-7 text-end tabular-nums"
                      type="text"
                      inputmode="decimal"
                      maxlength="10"
-                     :aria-label="t('editor.dish.price', {number: index + 1})"
+                     :id="`size-${size.key}-price`"
+                     :class="{'e-changed': sizeChanged(size, 'price')}"
                      :aria-invalid="!isNumber(size.price, false)"
-                     v-model="size.price"/>
-              <span class="absolute right-3 top-2.5 text-zinc-500" aria-hidden="true">{{ currency }}</span>
+                     v-model="size.price"
+                     @change="sortByPrice"/>
+              <span class="absolute right-3 top-2 text-zinc-500" aria-hidden="true">{{ currency }}</span>
             </div>
 
-            <button type="button"
-                    class="e-icon-btn"
-                    :aria-label="t('editor.dish.remove_size', {number: index + 1})"
-                    :title="t('editor.dish.remove_size', {number: index + 1})"
-                    :disabled="draft.sizes.length === 1"
-                    :class="{'invisible': draft.sizes.length === 1}"
-                    @click="draft.sizes.splice(index, 1)">
-              <Trash2 class="size-[15px]"/>
-            </button>
+            <p class="text-xs/4 text-[#a16207]" v-if="wasPrice(size)">{{ wasPrice(size) }}</p>
           </div>
 
-          <!-- time and calories of each size -->
-          <div class="grid grid-cols-2 gap-2 pr-10"
-               v-if="!draft.shared">
+          <div class="flex flex-col gap-1.5">
+            <label class="e-label" :for="`size-${size.key}-time`">{{ t('editor.dish.time') }}</label>
+
             <div class="relative">
-              <input class="e-input h-9 pr-11 tabular-nums"
+              <input class="e-input h-9 pr-11 text-end tabular-nums"
                      type="text"
                      inputmode="numeric"
                      maxlength="4"
-                     :aria-label="t('editor.dish.time_of', {number: index + 1})"
-                     :aria-invalid="!isNumber(size.preparation_time, true)"
+                     :id="`size-${size.key}-time`"
+                     :class="{'e-changed': sizeChanged(size, 'preparation_time')}"
+                     :aria-invalid="!isWhole(size.preparation_time)"
                      v-model="size.preparation_time"/>
               <span class="absolute right-3 top-2 text-zinc-500" aria-hidden="true">{{ t('editor.dish.minutes') }}</span>
             </div>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="e-label" :for="`size-${size.key}-calories`">{{ t('editor.dish.calories') }}</label>
 
             <div class="relative">
-              <input class="e-input h-9 pr-12 tabular-nums"
+              <input class="e-input h-9 pr-12 text-end tabular-nums"
                      type="text"
                      inputmode="numeric"
                      maxlength="6"
-                     :aria-label="t('editor.dish.calories_of', {number: index + 1})"
-                     :aria-invalid="!isNumber(size.calories, true)"
+                     :id="`size-${size.key}-calories`"
+                     :class="{'e-changed': sizeChanged(size, 'calories')}"
+                     :aria-invalid="!isWhole(size.calories)"
                      v-model="size.calories"/>
               <span class="absolute right-3 top-2 text-zinc-500" aria-hidden="true">{{ t('editor.dish.kcal') }}</span>
             </div>
           </div>
-
-          <p class="e-error" v-if="sizeError(index)">{{ sizeError(index) }}</p>
         </div>
 
-        <button type="button"
-                class="self-start h-8 inline-flex items-center gap-1.5 px-0.5 text-blue-600 font-semibold rounded e-focus"
-                v-if="draft.sizes.length < MAX_SIZES"
-                @click="addSize">
-          <Plus class="size-4"/>
-          {{ t('editor.dish.add_size') }}
-        </button>
+        <p class="px-3 pb-2.5 -mt-1 e-help" v-if="size.is_hidden">{{ t('editor.dish.size_hidden') }}</p>
+        <p class="px-3 pb-2.5 -mt-1 e-error" v-if="sizeError(size)">{{ sizeError(size) }}</p>
+      </div>
 
-        <p class="e-error" v-if="error('sizes')">{{ error('sizes') }}</p>
-        <p class="e-help">{{ t('editor.dish.sizes_help') }}</p>
-      </section>
+      <button type="button"
+              class="h-10 flex items-center justify-center gap-1.5 border border-dashed border-zinc-400 rounded-[10px] text-zinc-700 font-semibold hover:bg-zinc-50 e-focus"
+              v-if="draft.sizes.length < MAX_SIZES"
+              @click="addSize">
+        <Plus class="size-4"/>
+        {{ t('editor.dish.add_size') }}
+      </button>
 
-      <section class="flex flex-col gap-2">
-        <div class="grid grid-cols-2 gap-3"
-             v-if="draft.shared">
-          <div class="flex flex-col gap-1.5">
-            <FieldLabel target="dish-time" :label="t('editor.dish.time')"/>
-
-            <div class="relative">
-              <input id="dish-time"
-                     class="e-input pr-11 tabular-nums"
-                     type="text"
-                     inputmode="numeric"
-                     maxlength="4"
-                     :aria-invalid="!isNumber(draft.preparation_time, true)"
-                     v-model="draft.preparation_time"/>
-              <span class="absolute right-3 top-2.5 text-zinc-500" aria-hidden="true">{{ t('editor.dish.minutes') }}</span>
-            </div>
-          </div>
-
-          <div class="flex flex-col gap-1.5">
-            <FieldLabel target="dish-calories" :label="t('editor.dish.calories')"/>
-
-            <div class="relative">
-              <input id="dish-calories"
-                     class="e-input pr-12 tabular-nums"
-                     type="text"
-                     inputmode="numeric"
-                     maxlength="6"
-                     :aria-invalid="!isNumber(draft.calories, true)"
-                     v-model="draft.calories"/>
-              <span class="absolute right-3 top-2.5 text-zinc-500" aria-hidden="true">{{ t('editor.dish.kcal') }}</span>
-            </div>
-          </div>
-        </div>
-
-        <label class="self-start inline-flex items-center gap-2 text-[13px] text-zinc-700 cursor-pointer"
-               v-if="draft.sizes.length > 1">
-          <input class="size-4 accent-zinc-900"
-                 type="checkbox"
-                 :checked="!draft.shared"
-                 @change="setShared(!($event.target as HTMLInputElement).checked)"/>
-          {{ t('editor.dish.per_size') }}
-        </label>
-      </section>
+      <p class="e-error" v-if="error('sizes')">{{ error('sizes') }}</p>
+      <p class="e-help">{{ t('editor.dish.sizes_help') }}</p>
     </PanelField>
 
     <PanelField field="tags" v-slot="{selected}">

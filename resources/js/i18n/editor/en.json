@@ -214,10 +214,12 @@
       "last_visible_title": "Guests see only this menu",
       "last_visible_message": "Without it, your menu page has no menus until you show one again.",
       "continue": "Continue",
-      "info": "{hide} takes a menu off your site for now. {archive} moves it out of this list with all its dishes, ready to restore. {delete} is permanent and only available for archived menus.",
+      "info": "{hide} takes a menu off your site for now. {archive} moves it out of this list with all its dishes, ready to restore. {delete} is permanent and only available for archived menus (⋯ menu).",
       "info_hide": "Hide",
       "info_archive": "Archive",
-      "info_delete": "Delete"
+      "info_delete": "Delete",
+      "no_description": "No description",
+      "archived_pill": "Archived"
     },
     "menu": {
       "new": "New menu",
@@ -260,21 +262,16 @@
       "badge_help": "Optional. Shown as a banner above the dish.",
       "sizes": "Sizes and prices",
       "size": "Size {number}",
-      "size_placeholder": "Size, e.g. 300",
       "unit": "Unit of size {number}",
-      "price": "Price of size {number}",
       "remove_size": "Remove size {number}",
       "add_size": "Add size",
-      "sizes_help": "One size shows as text. Two or more become buttons guests can switch, and the price updates.",
+      "sizes_help": "One size shows as text on the menu. With two or more, guests switch between them and the price, time and calories update.",
       "price_needed": "Enter a price, e.g. 185.",
       "size_number": "The size is a number, e.g. 300.",
       "time": "Preparation time",
       "calories": "Calories",
       "minutes": "min",
       "kcal": "kcal",
-      "time_of": "Preparation time of size {number}",
-      "calories_of": "Calories of size {number}",
-      "per_size": "Different for each size",
       "diet": "Diet and spiciness",
       "spicy": "Spicy",
       "spiciness": "How spicy",
@@ -291,7 +288,16 @@
       "selected_in_preview": "Selected in preview",
       "on_its_page": "The preview shows this dish's page. Click a block there to jump to its field.",
       "back_to_list": "Back to the menu list",
-      "photos_help": "Up to 3 photos. The first visible one is shown in the menu list; guests can swipe through all of them on the dish page."
+      "photos_help": "Up to 3 photos. The first visible one is shown in the menu list; guests can swipe through all of them on the dish page.",
+      "sorted": "Sorted by price, from lowest to highest",
+      "weight": "Weight or volume",
+      "price_label": "Price",
+      "was": "Was {value}",
+      "whole_number": "Time and calories are whole numbers, e.g. 15.",
+      "hide_size": "Hide {size} from guests",
+      "show_size": "Show {size} to guests",
+      "last_shown": "Guests see at least one size",
+      "size_hidden": "Hidden from guests. It stays here for later."
     },
     "actions": {
       "duplicate": "Duplicate",
@@ -301,7 +307,6 @@
       "archive": "Archive",
       "restore": "Restore",
       "delete": "Delete",
-      "delete_for_good": "Delete {name} for good",
       "delete_title": "Delete “{name}” for good?",
       "delete_with": "This deletes {contents} too. It can't be undone.",
       "delete_message": "It can't be undone.",
@@ -311,7 +316,8 @@
       "deleted": "“{name}” deleted",
       "moved": "“{name}” moved to {to}",
       "undo": "Undo",
-      "failed": "That didn't work. Try again."
+      "failed": "That didn't work. Try again.",
+      "delete_permanently": "Delete permanently"
     },
     "toast": {
       "dismiss": "Dismiss"
@@ -432,7 +438,61 @@
       "closed_temporarily": "Closed temporarily",
       "reopened": "Not closed anymore",
       "colors": "Colors: {name}",
-      "custom_colors": "Custom"
+      "custom_colors": "Custom",
+      "big_update": "Big update? Put these changes into a scheduled version and pick when they go live.",
+      "move_to_version": "Move to a version"
+    },
+    "planned": {
+      "dish_one": "1 scheduled change for this dish: {what} on {date}.",
+      "dish_many": "{count} scheduled changes for this dish, the first on {date}.",
+      "category_one": "1 scheduled change for this category: {what} on {date}.",
+      "category_many": "{count} scheduled changes for this category, the first on {date}.",
+      "menu_one": "1 scheduled change for this menu: {what} on {date}.",
+      "menu_many": "{count} scheduled changes for this menu, the first on {date}.",
+      "manage": "Manage",
+      "new_size": "new size {size}",
+      "new_size_unnamed": "a new size",
+      "archive_size": "archive size {size}",
+      "archive_size_unnamed": "archive a size",
+      "hide_size": "hide size {size}",
+      "hide_size_unnamed": "hide a size",
+      "show_size": "show size {size}",
+      "show_size_unnamed": "show a size",
+      "change_size": "change size {size}",
+      "change_size_unnamed": "change a size",
+      "price_of": "price of {size} {from} → {to}",
+      "price": "price {from} → {to}",
+      "archive": "archive it",
+      "hide": "hide it from guests",
+      "show": "show it to guests",
+      "change": "change {count} field | change {count} fields"
+    },
+    "schedule": {
+      "open": "Schedule for later",
+      "title": "Schedule for later",
+      "help": "Guests keep seeing the current version until then.",
+      "more": "and {count} more item | and {count} more items",
+      "staying": "{names} can't be scheduled and stays unsaved. | {names} can't be scheduled and stay unsaved.",
+      "where": "Where the changes go",
+      "own": "On its own",
+      "own_help": "Its own date and time, set below",
+      "add_to": "Add to “{name}”",
+      "status": {
+        "draft": "Draft",
+        "scheduled": "Version",
+        "inactive": "Inactive"
+      },
+      "no_date": "no date yet",
+      "date": "Date",
+      "time": "Time",
+      "zone": "{city} time (UTC{offset}).",
+      "in_past": "Pick a time in the future.",
+      "schedule": "Schedule",
+      "scheduling": "Scheduling…",
+      "nothing": "None of the unsaved changes can be scheduled.",
+      "failed": "Couldn't schedule. Try again.",
+      "scheduled": "Scheduled for {date}",
+      "manage": "Manage"
     }
   }
 }

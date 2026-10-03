@@ -150,5 +150,17 @@
         </div>
       </div>
     </div>
+
+    <div class="shrink-0 flex items-center gap-2.5 px-3.5 py-2.5 border-t border-zinc-200 bg-zinc-50"
+         v-if="editor.schedulable.length">
+      <p class="flex-1 text-xs/4 text-zinc-600">{{ t('editor.unsaved.big_update') }}</p>
+
+      <button type="button"
+              class="e-btn e-btn-secondary h-[30px] px-2.5 text-[13px]"
+              @click="editor.reviewOpen = false; editor.scheduleOpen = true">
+        <CalendarClock class="size-4"/>
+        {{ t('editor.unsaved.move_to_version') }}
+      </button>
+    </div>
   </div>
 </template>

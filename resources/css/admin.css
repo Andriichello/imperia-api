@@ -198,6 +198,20 @@
     background-position: right 12px center;
   }
 
+  /* A field with a value, which isn't saved yet */
+  .e-input.e-changed {
+    background-color: #fffbeb;
+  }
+
+  /* a mistake stays red */
+  .e-input.e-changed:not([aria-invalid="true"]), .e-input.e-changed:not([aria-invalid="true"]):focus {
+    border-color: var(--color-amber-500);
+  }
+
+  .e-input.e-changed:not([aria-invalid="true"]):focus {
+    box-shadow: 0 0 0 3px rgb(245 158 11 / 0.2);
+  }
+
   /* Error under a field: 12/16, red */
   .e-error {
     font-size: 12px;

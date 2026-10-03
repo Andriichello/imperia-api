@@ -2,6 +2,7 @@
   import {computed, ref} from 'vue'
   import {useI18n} from 'vue-i18n'
   import {DateTime} from 'luxon'
+  import {intlLocale} from '@/admin/format'
   import {
     Archive,
     ChevronDown,
@@ -43,6 +44,10 @@
   const {draft} = usePanelDraft<MenuOrder[]>({section: 'menus', id: null})
 
   const name = (item: { title: EditorMenu['title'] } | null) => item ? translated(item.title, editor.defaultLocale) : ''
+
+  const description = (item: { description: EditorMenu['description'] } | null) => item
+    ? translated(item.description, editor.defaultLocale)
+    : ''
 
   const archived = computed(() => restaurant.value.menus.filter((menu) => menu.archived))
 
@@ -120,7 +125,7 @@
 
   function archivedAt(menu: EditorMenu): string {
     return menu.archived_at
-      ? DateTime.fromISO(menu.archived_at).setLocale(editor.locale).toLocaleString(DateTime.DATE_MED)
+      ? DateTime.fromISO(menu.archived_at).setLocale(intlLocale(editor.locale)).toLocaleString(DateTime.DATE_MED)
       : ''
   }
 </script>
@@ -159,7 +164,7 @@
                     ghost-class="e-drag-ghost"
                     :animation="150">
         <div v-for="(item, index) in draft" :key="item.id">
-          <div class="flex items-center gap-1 min-h-[52px] py-1 pr-1 border-b border-[#f0f0f1]">
+          <div class="flex items-start gap-1 min-h-[52px] py-2.5 pr-1 border-b border-[#f0f0f1]">
             <GripHandle class="e-menu-grip"
                         :name="name(editor.findMenu(item.id))"
                         :index="index"
@@ -176,12 +181,16 @@
             </button>
 
             <button type="button"
-                    class="flex-1 min-w-0 flex flex-col text-start rounded e-focus"
+                    class="flex-1 min-w-0 flex flex-col pt-1 text-start rounded e-focus"
                     @click="toggle(item.id)">
               <span class="font-semibold truncate" :class="{'text-zinc-500': item.is_hidden}">
                 {{ name(editor.findMenu(item.id)) }}
               </span>
-              <span class="text-xs text-zinc-500">{{ meta(item) }}</span>
+              <span class="text-[13px]/[18px] text-zinc-600 line-clamp-2"
+                    v-if="description(editor.findMenu(item.id))">
+                {{ description(editor.findMenu(item.id)) }}
+              </span>
+              <span class="text-xs/4 text-zinc-500">{{ meta(item) }}</span>
             </button>
 
             <UnsavedPill v-if="editor.isUnsaved({section: 'menu', id: item.id})"/>
@@ -251,7 +260,7 @@
                           handle=".e-category-grip"
                           ghost-class="e-drag-ghost"
                           :animation="150">
-              <div class="h-10 flex items-center gap-1 pl-7 pr-1 rounded-md hover:bg-zinc-50"
+              <div class="min-h-12 flex items-center gap-1 py-1 pl-7 pr-1 rounded-md hover:bg-zinc-50"
                    v-for="(id, position) in item.categories" :key="id">
                 <GripHandle class="e-category-grip h-7"
                             :name="name(editor.findCategory(id))"
@@ -262,9 +271,16 @@
                 <button type="button"
                         class="flex-1 min-w-0 h-full flex items-center gap-2 text-start rounded e-focus"
                         @click="editor.select({section: 'category', id}, true)">
-                  <span class="truncate"
-                        :class="{'text-zinc-400': editor.findCategory(id)?.is_hidden}">
-                    {{ name(editor.findCategory(id)) }}
+                  <span class="min-w-0 flex flex-col">
+                    <span class="truncate"
+                          :class="{'text-zinc-400': editor.findCategory(id)?.is_hidden}">
+                      {{ name(editor.findCategory(id)) }}
+                    </span>
+                    <span class="text-xs/4 text-zinc-500 truncate"
+                          v-if="description(editor.findCategory(id))">
+                      {{ description(editor.findCategory(id)) }}
+                    </span>
+                    <span class="text-xs/4 text-zinc-400 italic" v-else>{{ t('editor.menus.no_description') }}</span>
                   </span>
 
                   <EyeOff class="size-3.5 shrink-0 text-zinc-400"
@@ -312,29 +328,47 @@
       </button>
 
       <template v-if="showArchived">
-        <div class="flex items-center gap-2.5 py-2.5 pl-3 pr-2 rounded-lg bg-zinc-50 border border-[#f0f0f1]"
+        <div class="flex items-start gap-2.5 py-2.5 pl-3 pr-1 rounded-lg bg-zinc-50 border border-[#f0f0f1]"
              v-for="menu in archived" :key="menu.id">
-          <span class="flex-1 min-w-0 flex flex-col">
-            <span class="font-semibold text-zinc-600 truncate">{{ name(menu) }}</span>
+          <Archive class="size-4 shrink-0 mt-0.5 text-zinc-400"/>
+
+          <div class="flex-1 min-w-0 flex flex-col items-start gap-0.5">
+            <span class="max-w-full font-semibold text-zinc-500 truncate">{{ name(menu) }}</span>
+            <span class="text-[13px]/[18px] text-zinc-500 line-clamp-2" v-if="description(menu)">{{ description(menu) }}</span>
             <span class="e-help">
               {{ [t('editor.menus.archived_on', {date: archivedAt(menu)}), actions.menuContents(menu)].filter(Boolean).join(' · ') }}
             </span>
+
+            <button type="button"
+                    class="e-btn e-btn-secondary h-8 px-2.5 mt-1.5"
+                    @click="restore(menu)">
+              <RotateCcw class="size-[15px]"/>
+              {{ t('editor.actions.restore') }}
+            </button>
+          </div>
+
+          <span class="e-pill bg-zinc-100 text-zinc-600 shrink-0">
+            <Archive class="size-3"/>
+            {{ t('editor.menus.archived_pill') }}
           </span>
 
-          <button type="button"
-                  class="e-btn e-btn-secondary h-8 px-2.5"
-                  @click="restore(menu)">
-            <RotateCcw class="size-[15px]"/>
-            {{ t('editor.actions.restore') }}
-          </button>
+          <DropdownMenu align="end">
+            <template #trigger="{open, toggle: toggleMenu}">
+              <button type="button"
+                      class="e-icon-btn -mt-1"
+                      aria-haspopup="menu"
+                      :aria-expanded="open"
+                      :aria-label="t('editor.panel.more_actions', {name: name(menu)})"
+                      @click="toggleMenu">
+                <Ellipsis class="size-[18px]"/>
+              </button>
+            </template>
 
-          <button type="button"
-                  class="e-icon-btn text-red-700 hover:text-red-800"
-                  :aria-label="t('editor.actions.delete_for_good', {name: name(menu)})"
-                  :title="t('editor.actions.delete_for_good', {name: name(menu)})"
-                  @click="destroy(menu)">
-            <Trash2 class="size-4"/>
-          </button>
+            <button type="button" class="e-dropdown-item text-red-700" role="menuitem" @click="destroy(menu)">
+              <Trash2 class="size-4"/>
+              {{ t('editor.actions.delete_permanently') }}
+            </button>
+          </DropdownMenu>
         </div>
       </template>
     </section>

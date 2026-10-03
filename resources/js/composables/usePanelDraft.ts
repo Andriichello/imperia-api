@@ -1,6 +1,6 @@
 import {computed, onBeforeUnmount, watch, WritableComputedRef} from 'vue'
 import {isNewId, Selection} from '@/editor/sections'
-import type {ValidationErrors} from '@/editor/items'
+import {canonical, savedOf, ValidationErrors} from '@/editor/items'
 import {useEditorStore} from '@/stores/editor'
 
 /**
@@ -22,6 +22,14 @@ export function usePanelDraft<T>(selection: Selection) {
   })
 
   const dirty = computed(() => editor.isUnsaved(selection))
+
+  // the saved values (a new item's: its empty ones)
+  const saved = computed<T>(() => savedOf<T>(editor.restaurant!, selection))
+
+  /** Whether the value differs from the saved one (a new item isn't marked: all of it is new). */
+  function changed(value: (values: T) => unknown): boolean {
+    return !isNewId(selection.id) && canonical(value(draft.value)) !== canonical(value(saved.value))
+  }
 
   // a new item is in the preview, once something of it is typed: the preview shows it
   if (isNewId(selection.id)) {
@@ -58,5 +66,5 @@ export function usePanelDraft<T>(selection: Selection) {
   // a draft, which changes nothing, isn't kept
   onBeforeUnmount(() => editor.prune())
 
-  return {draft, dirty, errors, error, change, discard}
+  return {draft, saved, dirty, changed, errors, error, change, discard}
 }

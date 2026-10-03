@@ -1,8 +1,9 @@
 import {defineStore} from 'pinia'
 import {watch} from 'vue'
 import axios from 'axios'
-import type {EditorCategory, EditorDish, EditorMenu, EditorRestaurant, EditorRestaurantItem} from '@/api'
-import {getEditorRestaurant} from '@/api'
+import {DateTime} from 'luxon'
+import type {EditorCategory, EditorDish, EditorMenu, EditorRestaurant, EditorRestaurantItem, EditorVersion} from '@/api'
+import {getEditorRestaurant, putEditorVersionChange, storeEditorVersion} from '@/api'
 import type {PreviewBrand, PreviewMode, PreviewPage, PreviewPatch} from '@/editor/protocol'
 import {
   draftKey,
@@ -30,7 +31,9 @@ import {
   savedOf,
 } from '@/editor/items'
 import {findCategory, findDish, findMenu} from '@/editor/find'
+import {schedulingOf, Scheduling} from '@/editor/schedule'
 import {t} from '@/i18n/utils'
+import {formatDateTime} from '@/admin/format'
 
 export interface EditorUser {
   id: number
@@ -122,6 +125,8 @@ interface EditorState {
   uploads: number
   // the list of unsaved items is open
   reviewOpen: boolean
+  // scheduling the drafts for later
+  scheduleOpen: boolean
   toasts: Toast[]
   confirmation: Confirmation | null
   // read out by screen readers (e.g. where an item was moved)
@@ -151,6 +156,7 @@ export const useEditorStore = defineStore('editor', {
     saving: false,
     uploads: 0,
     reviewOpen: false,
+    scheduleOpen: false,
     toasts: [],
     confirmation: null,
     announcement: '',
@@ -160,6 +166,8 @@ export const useEditorStore = defineStore('editor', {
     locales: (state): string[] => state.restaurant?.supported_locales ?? ['en'],
     // the ones in the lists (archived ones are kept aside)
     menus: (state): EditorMenu[] => (state.restaurant?.menus ?? []).filter((m) => !m.archived),
+    // versions, which haven't gone live yet (the panels show what's planned for their items)
+    versions: (state): EditorVersion[] => state.restaurant?.versions ?? [],
     // the saved ones
     brand: (state): BrandColors => brandOf(state.restaurant ?? {brand_primary: null, brand_primary_content: null}),
     // the preview isn't selecting now (Browse mode, or Alt is held)
@@ -189,6 +197,21 @@ export const useEditorStore = defineStore('editor', {
       return draft && isHex(draft.primary) && isHex(draft.content)
         ? {primary: draft.primary, content: draft.content}
         : null
+    },
+
+    /**
+     * Drafts, which can be scheduled for later (they're valid, a version can take something of
+     * them), with their changes.
+     */
+    schedulable(): { entry: DraftEntry, scheduling: Scheduling }[] {
+      const restaurant = this.restaurant
+
+      return restaurant
+        ? bySaveOrder(this.unsaved)
+          .filter((entry) => KINDS[entry.selection.section].valid(entry.values, restaurant, entry.selection))
+          .map((entry) => ({entry, scheduling: schedulingOf(entry, restaurant)}))
+          .filter(({scheduling}) => scheduling.changes.length > 0)
+        : []
     },
 
     /** Keys of the parts of the public page, which have drafts. */
@@ -487,6 +510,78 @@ export const useEditorStore = defineStore('editor', {
       }
 
       this.prune()
+    },
+
+    /**
+     * Schedule the drafts for later: in a new version of their own, which goes live at the date
+     * (in the restaurant's time zone), or in a version, which is planned already. What's
+     * scheduled leaves the drafts; what a version can't change stays.
+     *
+     * @return An error, none when they're scheduled
+     */
+    async scheduleDrafts(target: { goesLiveAt: string } | { versionId: number }): Promise<string | null> {
+      const restaurant = this.restaurant
+      const plans = this.schedulable
+
+      if (!restaurant || !plans.length || this.saving) {
+        return t('editor.schedule.nothing')
+      }
+
+      const changes = plans.flatMap(({scheduling}) => scheduling.changes)
+      let version: EditorVersion | null = null
+
+      this.saving = true
+
+      try {
+        if ('goesLiveAt' in target) {
+          version = (await storeEditorVersion(restaurant.id, {goes_live_at: target.goesLiveAt, schedule: true, changes})).data.data
+        } else {
+          for (const change of changes) {
+            version = (await putEditorVersionChange(target.versionId, change)).data.data
+          }
+        }
+      } catch (e) {
+        const errors = axios.isAxiosError(e) && e.response?.status === 422 ? e.response.data?.errors : null
+        const message = errors ? Object.values(errors as Record<string, string[]>).flat()[0] : null
+
+        return message ?? t('editor.schedule.failed')
+      } finally {
+        this.saving = false
+      }
+
+      for (const {entry, scheduling} of plans) {
+        if (scheduling.rest !== null) {
+          entry.values = scheduling.rest
+        } else if (isNewId(entry.selection.id)) {
+          // a new dish is created, when the version goes live
+          this.discard(entry.key)
+        } else {
+          entry.values = copy(savedOf(restaurant, entry.selection))
+        }
+      }
+
+      this.prune()
+      this.scheduleOpen = false
+      this.reviewOpen = false
+
+      try {
+        await this.reload()
+      } catch (e) {
+        // the versions are shown, once the restaurant is loaded again
+      }
+
+      if (version) {
+        this.notify(t('editor.schedule.scheduled', {date: version.goes_live_at ? formatDateTime(
+          DateTime.fromISO(version.goes_live_at, {setZone: true}), this.locale,
+        ) : ''}), this.urls ? {label: t('editor.schedule.manage'), run: () => window.location.assign(this.versionUrl(version!.id))} : undefined)
+      }
+
+      return null
+    },
+
+    /** Page of the version (in the admin panel, till the editor has one). */
+    versionUrl(id: number): string {
+      return `${this.urls?.versions ?? ''}?version=${id}`
     },
 
     /** Everything of the restaurant again, after its menus, categories or dishes changed. */

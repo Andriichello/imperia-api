@@ -1,13 +1,17 @@
 <script setup lang="ts">
   import {computed, PropType, ref} from 'vue'
+  import {DateTime} from 'luxon'
+  import {intlLocale} from '@/admin/format'
   import {useI18n} from 'vue-i18n'
-  import {Archive, ChevronDown, ChevronRight, Copy, Ellipsis, Eye, EyeOff, Plus, RotateCcw, Trash2} from 'lucide-vue-next'
+  import {Archive, ChevronDown, ChevronRight, Copy, Ellipsis, Eye, EyeOff, Plus} from 'lucide-vue-next'
   import type {EditorCategory} from '@/api'
   import PanelShell from '@/Components/Editor/PanelShell.vue'
   import DropdownMenu from '@/Components/Editor/DropdownMenu.vue'
   import FieldLabel from '@/Components/Editor/Fields/FieldLabel.vue'
   import UnsavedPill from '@/Components/Editor/UnsavedPill.vue'
   import NewDraftRow from '@/Components/Editor/NewDraftRow.vue'
+  import ArchivedRow from '@/Components/Editor/ArchivedRow.vue'
+  import ScheduledNotice from '@/Components/Editor/ScheduledNotice.vue'
   import {usePanelDraft} from '@/composables/usePanelDraft'
   import {useContentLocale} from '@/composables/useContentLocale'
   import {useItemActions} from '@/composables/useItemActions'
@@ -34,7 +38,7 @@
   const isNew = computed(() => isNewId(props.selection.id))
   const menu = computed(() => isNew.value ? null : editor.findMenu(props.selection.id))
 
-  const {draft, error} = usePanelDraft<TextsDraft>(props.selection)
+  const {draft, changed, error} = usePanelDraft<TextsDraft>(props.selection)
 
   const {locale, languages, placeholder, textError} = useContentLocale(
     () => [draft.value.title, draft.value.description]
@@ -51,7 +55,19 @@
 
   const categories = computed(() => (menu.value?.categories ?? []).filter(isListed))
   const archived = computed(() => (menu.value?.categories ?? []).filter((category) => category.archived))
-  const showArchived = ref(false)
+  const showArchived = ref(true)
+
+  /** "Archived 2 Sep · 4 dishes" */
+  function archivedMeta(category: EditorCategory): string {
+    const date = category.archived_at
+      ? DateTime.fromISO(category.archived_at).setLocale(intlLocale(editor.locale)).toLocaleString({day: 'numeric', month: 'short'})
+      : null
+
+    return [
+      date ? t('editor.menus.archived_on', {date}) : null,
+      t('editor.structure.dishes_count', (category.dishes ?? []).filter(isListed).length),
+    ].filter(Boolean).join(' · ')
+  }
 
   /** Guests see only this menu: hiding or archiving it leaves the menu page empty. */
   async function confirmLastVisible(): Promise<boolean> {
@@ -101,6 +117,10 @@
               v-model:locale="locale"
               @navigate="editor.select($event, !!$event)"
               @close="editor.close()">
+    <template #notice v-if="menu">
+      <ScheduledNotice :selection="selection"/>
+    </template>
+
     <template #actions v-if="menu">
       <DropdownMenu align="end">
         <template #trigger="{open, toggle}">
@@ -159,6 +179,7 @@
              maxlength="255"
              :placeholder="placeholder(draft.title)"
              :aria-invalid="!!textError(error, 'title')"
+             :class="{'e-changed': changed((values) => values.title[locale])}"
              v-model="draft.title[locale]"/>
 
       <p class="e-error" v-if="textError(error, 'title')">{{ textError(error, 'title') }}</p>
@@ -173,6 +194,7 @@
                 maxlength="1000"
                 :placeholder="placeholder(draft.description)"
                 :aria-invalid="!!textError(error, 'description')"
+                :class="{'e-changed': changed((values) => values.description[locale])}"
                 v-model="draft.description[locale]"/>
 
       <p class="e-error" v-if="textError(error, 'description')">{{ textError(error, 'description') }}</p>
@@ -234,27 +256,14 @@
           {{ t('editor.menu.archived_categories', {count: archived.length}) }}
         </button>
 
-        <template v-if="showArchived">
-          <div class="mt-2 flex items-center gap-2.5 py-2 pl-3 pr-2 rounded-lg bg-zinc-50 border border-[#f0f0f1]"
-               v-for="category in archived" :key="category.id">
-            <span class="flex-1 min-w-0 font-semibold text-zinc-600 truncate">{{ name(category) }}</span>
-
-            <button type="button"
-                    class="e-btn e-btn-secondary h-8 px-2.5"
-                    @click="actions.restore('category', category.id, name(category))">
-              <RotateCcw class="size-[15px]"/>
-              {{ t('editor.actions.restore') }}
-            </button>
-
-            <button type="button"
-                    class="e-icon-btn text-red-700 hover:text-red-800"
-                    :aria-label="t('editor.actions.delete_for_good', {name: name(category)})"
-                    :title="t('editor.actions.delete_for_good', {name: name(category)})"
-                    @click="actions.destroy('category', category.id, name(category), actions.categoryContents(category))">
-              <Trash2 class="size-4"/>
-            </button>
-          </div>
-        </template>
+        <div class="mt-1 flex flex-col"
+             v-if="showArchived">
+          <ArchivedRow :name="name(category)"
+                       :meta="archivedMeta(category)"
+                       v-for="category in archived" :key="category.id"
+                       @restore="actions.restore('category', category.id, name(category))"
+                       @delete="actions.destroy('category', category.id, name(category), actions.categoryContents(category))"/>
+        </div>
       </template>
     </section>
   </PanelShell>

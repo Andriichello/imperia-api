@@ -264,11 +264,8 @@ export interface DishDraft {
   badge: Translations
   is_hidden: boolean
   flags: string[]
+  // from the cheapest one, each with its own time and calories
   sizes: SizeDraft[]
-  // the same preparation time and calories for every size
-  shared: boolean
-  preparation_time: string
-  calories: string
   photos: Media[]
 }
 
@@ -294,11 +291,26 @@ export function sizeOf(size: Partial<EditorSize> = {}, key: string | null = null
   }
 }
 
+/** The price of a size, which it's sorted by: ones without a price come last. */
+function priceOf(size: SizeDraft): number {
+  const price = numberOf(size.price)
+
+  return price === null || Number.isNaN(price) ? Infinity : price
+}
+
+/**
+ * The sizes from the cheapest one (there's no order of their own): they're sorted again, once
+ * a price is changed.
+ */
+export function sortSizes(sizes: SizeDraft[]): SizeDraft[] {
+  return sizes
+    .map((size, index) => ({size, index}))
+    .sort((a, b) => priceOf(a.size) - priceOf(b.size) || a.index - b.index)
+    .map(({size}) => size)
+}
+
 export function dishOf(dish: EditorDish | null, locales: string[]): DishDraft {
   const sizes = dish?.sizes?.length ? dish.sizes : [{} as EditorSize]
-  const first = sizes[0]
-  const shared = sizes.every((size) => size.calories === first.calories
-    && size.preparation_time === first.preparation_time)
 
   return {
     title: translationsOf(dish?.title, locales),
@@ -306,17 +318,13 @@ export function dishOf(dish: EditorDish | null, locales: string[]): DishDraft {
     badge: translationsOf(dish?.badge, locales),
     is_hidden: dish?.is_hidden ?? false,
     flags: [...(dish?.flags ?? [])],
-    sizes: sizes.map((size) => sizeOf(size, 'new-first')),
-    shared,
-    preparation_time: field(first.preparation_time),
-    calories: field(first.calories),
+    sizes: sortSizes(sizes.map((size) => sizeOf(size, 'new-first'))),
     photos: dish?.photos ?? [],
   }
 }
 
 /**
- * Sizes as they're saved: the time and calories of all of them, when they're the same.
- * New ones have negative ids, so that the preview tells them apart.
+ * Sizes as they're saved. New ones have negative ids, so that the preview tells them apart.
  */
 function sizesOf(draft: DishDraft): EditorSize[] {
   return draft.sizes.map((size, index) => {
@@ -329,8 +337,8 @@ function sizesOf(draft: DishDraft): EditorSize[] {
       price: numberOf(size.price) ?? 0,
       weight: weight === null ? null : String(weight),
       weight_unit: (weight === null ? null : size.weight_unit) as EditorSize['weight_unit'],
-      calories: numberOf(draft.shared ? draft.calories : size.calories),
-      preparation_time: numberOf(draft.shared ? draft.preparation_time : size.preparation_time),
+      calories: numberOf(size.calories),
+      preparation_time: numberOf(size.preparation_time),
     }
   })
 }

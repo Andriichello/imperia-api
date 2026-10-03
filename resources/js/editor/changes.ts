@@ -159,13 +159,9 @@ function sizeChanges(saved: DishDraft, draft: DishDraft, ctx: Context): string[]
     parts.push(named(size.is_hidden ? 'size_hidden' : 'size_shown', size))
   }
 
-  const details = (size: SizeDraft, shared: DishDraft) => [
-    size.weight, size.weight_unit,
-    shared.shared ? shared.preparation_time : size.preparation_time,
-    shared.shared ? shared.calories : size.calories,
-  ]
+  const details = (size: SizeDraft) => [size.weight, size.weight_unit, size.preparation_time, size.calories]
 
-  if (kept.some((size) => !same(details(size, draft), details(before.get(size.id)!, saved)))) {
+  if (kept.some((size) => !same(details(size), details(before.get(size.id)!)))) {
     parts.push(ctx.t(KEY + 'sizes'))
   }
 

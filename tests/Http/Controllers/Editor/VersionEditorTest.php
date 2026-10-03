@@ -557,6 +557,11 @@ class VersionEditorTest extends EditorTestCase
             ->assertOk()
             ->assertJsonPath('data.*.id', [$sooner->id, $later->id, $undated->id]);
 
+        // as the API's client sends it
+        $this->getJson("$url?pending=true")
+            ->assertOk()
+            ->assertJsonPath('data.*.id', [$sooner->id, $later->id, $undated->id]);
+
         $this->getJson("/api/editor/restaurants/{$this->restaurant->id}")
             ->assertOk()
             ->assertJsonPath('data.versions.*.id', [$sooner->id, $later->id, $undated->id]);

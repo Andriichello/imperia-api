@@ -22,6 +22,20 @@ class IndexVersionsRequest extends EditorRequest
     }
 
     /**
+     * The flags of the query as booleans (`?pending=true` too).
+     *
+     * @return void
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('pending')) {
+            $this->merge([
+                'pending' => filter_var($this->input('pending'), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE),
+            ]);
+        }
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      *
      * @return array

@@ -3,11 +3,13 @@
   import {useI18n} from 'vue-i18n'
   import {Check, ChevronDown, ChevronUp} from 'lucide-vue-next'
   import UnsavedList from '@/Components/Editor/UnsavedList.vue'
+  import SchedulePopover from '@/Components/Editor/SchedulePopover.vue'
   import {useEditorStore} from '@/stores/editor'
 
   /**
    * The editor's one save bar, under the open panel: how many items have unsaved changes (they
-   * open the list of them), Discard all and Save all. Nothing reaches guests before Save.
+   * open the list of them), Discard all and Save all, or ▾ Schedule for later. Nothing reaches
+   * guests before Save (or before the time they're scheduled for).
    */
   const editor = useEditorStore()
   const {t} = useI18n()
@@ -16,13 +18,20 @@
 
   function toggle() {
     editor.reviewOpen = !editor.reviewOpen
+    editor.scheduleOpen = false
   }
 
-  // a click outside of the bar and its list closes the list
+  function toggleSchedule() {
+    editor.scheduleOpen = !editor.scheduleOpen
+    editor.reviewOpen = false
+  }
+
+  // a click outside of the bar, its list and the scheduling closes them
   function onPointerDown(event: PointerEvent) {
-    if (editor.reviewOpen && bar.value && !bar.value.contains(event.target as Node)
+    if ((editor.reviewOpen || editor.scheduleOpen) && bar.value && !bar.value.contains(event.target as Node)
       && !(event.target as Element).closest?.('[data-keeps-review]')) {
       editor.reviewOpen = false
+      editor.scheduleOpen = false
     }
   }
 
@@ -55,15 +64,29 @@
         {{ t('editor.save.discard_all') }}
       </button>
 
-      <button type="button"
-              class="e-btn e-btn-primary"
-              :disabled="editor.saving || editor.uploads > 0"
-              :title="editor.uploads ? t('editor.save.wait_uploads') : undefined"
-              @click="editor.saveAll()">
-        {{ t('editor.save.save_all') }}
-      </button>
+      <div class="inline-flex">
+        <button type="button"
+                class="e-btn e-btn-primary rounded-r-none"
+                :disabled="editor.saving || editor.uploads > 0"
+                :title="editor.uploads ? t('editor.save.wait_uploads') : undefined"
+                @click="editor.saveAll()">
+          {{ t('editor.save.save_all') }}
+        </button>
+
+        <button type="button"
+                class="e-btn e-btn-primary w-[34px] px-0 rounded-l-none border-l border-white/25"
+                aria-haspopup="dialog"
+                :aria-expanded="editor.scheduleOpen"
+                :aria-label="t('editor.schedule.open')"
+                :title="t('editor.schedule.open')"
+                :disabled="editor.saving || editor.uploads > 0"
+                @click="toggleSchedule">
+          <ChevronDown class="size-4"/>
+        </button>
+      </div>
 
       <UnsavedList v-if="editor.reviewOpen"/>
+      <SchedulePopover v-if="editor.scheduleOpen"/>
     </template>
 
     <p class="flex-1 inline-flex items-center gap-2 text-[13px] text-zinc-500"

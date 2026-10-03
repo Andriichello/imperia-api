@@ -1,5 +1,7 @@
 <script setup lang="ts">
   import {computed, PropType, ref} from 'vue'
+  import {DateTime} from 'luxon'
+  import {intlLocale} from '@/admin/format'
   import {useI18n} from 'vue-i18n'
   import {
     Archive,
@@ -13,8 +15,6 @@
     FolderInput,
     Image,
     Plus,
-    RotateCcw,
-    Trash2,
   } from 'lucide-vue-next'
   import {VueDraggable} from 'vue-draggable-plus'
   import type {EditorDish, EditorMenu} from '@/api'
@@ -26,6 +26,8 @@
   import InfoBox from '@/Components/Editor/Fields/InfoBox.vue'
   import UnsavedPill from '@/Components/Editor/UnsavedPill.vue'
   import NewDraftRow from '@/Components/Editor/NewDraftRow.vue'
+  import ArchivedRow from '@/Components/Editor/ArchivedRow.vue'
+  import ScheduledNotice from '@/Components/Editor/ScheduledNotice.vue'
   import {usePanelDraft} from '@/composables/usePanelDraft'
   import {useContentLocale} from '@/composables/useContentLocale'
   import {useItemActions} from '@/composables/useItemActions'
@@ -57,7 +59,7 @@
     ? editor.findMenu(category.value.menu_id)
     : editor.findMenu(props.selection.parent ?? null))
 
-  const {draft, error} = usePanelDraft<CategoryDraft>(props.selection)
+  const {draft, changed, error} = usePanelDraft<CategoryDraft>(props.selection)
 
   const {locale, languages, placeholder, textError} = useContentLocale(
     () => [draft.value.title, draft.value.description]
@@ -78,16 +80,25 @@
   })
 
   const archived = computed(() => (category.value?.dishes ?? []).filter((dish) => dish.archived))
-  const showArchived = ref(false)
+  const showArchived = ref(true)
+
+  /** "Archived 2 Sep · 300 g · 150 ₴" */
+  function archivedMeta(dish: EditorDish): string {
+    const date = dish.archived_at
+      ? DateTime.fromISO(dish.archived_at).setLocale(intlLocale(editor.locale)).toLocaleString({day: 'numeric', month: 'short'})
+      : null
+
+    return [date ? t('editor.menus.archived_on', {date}) : null, sizesMeta(dish)].filter(Boolean).join(' · ')
+  }
 
   const breadcrumbs = computed<Breadcrumb[]>(() => [
     {label: t('editor.panel.page_structure'), selection: null},
     ...(menu.value ? [{label: name(menu.value), selection: {section: 'menu' as const, id: menu.value.id}}] : []),
   ])
 
-  /** "300 g · 450 g · from 185 ₴", or "350 g · 140 ₴", and when it has no photo. */
-  function dishMeta(dish: EditorDish): string {
-    const sizes = [...dish.sizes].sort((a, b) => a.price - b.price)
+  /** "300 g · 450 g · from 185 ₴", or "350 g · 140 ₴" (of the sizes guests see). */
+  function sizesMeta(dish: EditorDish): string {
+    const sizes = dish.sizes.filter((size) => !size.is_hidden).sort((a, b) => a.price - b.price)
     const weights = sizes.map((size) => sizeWeightFormatted(size)).filter(Boolean)
     const price = priceFormatted(sizes[0]?.price ?? null, restaurant.value.currency ?? 'uah')
     const parts = [...weights]
@@ -95,6 +106,13 @@
     if (price) {
       parts.push(sizes.length > 1 ? t('editor.category.from', {price}) : price)
     }
+
+    return parts.join(' · ')
+  }
+
+  /** Its sizes, and when it has no photo. */
+  function dishMeta(dish: EditorDish): string {
+    const parts = [sizesMeta(dish)].filter(Boolean)
 
     if (!(dish.photos ?? []).some((photo) => !photo.is_hidden)) {
       parts.push(t('editor.category.no_photo'))
@@ -148,6 +166,10 @@
               v-model:locale="locale"
               @navigate="editor.select($event, !!$event)"
               @close="editor.close()">
+    <template #notice v-if="category">
+      <ScheduledNotice :selection="selection"/>
+    </template>
+
     <template #actions v-if="category">
       <DropdownMenu align="end">
         <template #trigger="{open, toggle}">
@@ -229,6 +251,7 @@
              maxlength="255"
              :placeholder="placeholder(draft.title)"
              :aria-invalid="!!textError(error, 'title')"
+             :class="{'e-changed': changed((values) => values.title[locale])}"
              v-model="draft.title[locale]"/>
 
       <p class="e-error" v-if="textError(error, 'title')">{{ textError(error, 'title') }}</p>
@@ -243,6 +266,7 @@
                 maxlength="1000"
                 :placeholder="placeholder(draft.description)"
                 :aria-invalid="!!textError(error, 'description')"
+                :class="{'e-changed': changed((values) => values.description[locale])}"
                 v-model="draft.description[locale]"/>
 
       <p class="e-error" v-if="textError(error, 'description')">{{ textError(error, 'description') }}</p>
@@ -333,27 +357,16 @@
           {{ t('editor.category.archived_dishes', {count: archived.length}) }}
         </button>
 
-        <template v-if="showArchived">
-          <div class="mt-2 flex items-center gap-2.5 py-2 pl-3 pr-2 rounded-lg bg-zinc-50 border border-[#f0f0f1]"
-               v-for="dish in archived" :key="dish.id">
-            <span class="flex-1 min-w-0 font-semibold text-zinc-600 truncate">{{ name(dish) }}</span>
-
-            <button type="button"
-                    class="e-btn e-btn-secondary h-8 px-2.5"
-                    @click="actions.restore('dish', dish.id, name(dish))">
-              <RotateCcw class="size-[15px]"/>
-              {{ t('editor.actions.restore') }}
-            </button>
-
-            <button type="button"
-                    class="e-icon-btn text-red-700 hover:text-red-800"
-                    :aria-label="t('editor.actions.delete_for_good', {name: name(dish)})"
-                    :title="t('editor.actions.delete_for_good', {name: name(dish)})"
-                    @click="actions.destroy('dish', dish.id, name(dish))">
-              <Trash2 class="size-4"/>
-            </button>
-          </div>
-        </template>
+        <div class="mt-1 flex flex-col"
+             v-if="showArchived">
+          <ArchivedRow :name="name(dish)"
+                       :badge="translated(dish.badge, editor.defaultLocale) || null"
+                       :meta="archivedMeta(dish)"
+                       :thumbnail="thumbnail(dish)"
+                       v-for="dish in archived" :key="dish.id"
+                       @restore="actions.restore('dish', dish.id, name(dish))"
+                       @delete="actions.destroy('dish', dish.id, name(dish))"/>
+        </div>
       </template>
     </section>
 

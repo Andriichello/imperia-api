@@ -245,8 +245,9 @@ const dish: ItemKind<DishDraft> = {
     : !!findDish(restaurant, selection.id),
   valid: (values, restaurant) => hasText(values.title, restaurant.default_locale)
     && values.sizes.every((size) => isNumber(size.price, false) && isNumber(size.weight, true)
-      && (values.shared || (isNumber(size.preparation_time, true) && isNumber(size.calories, true))))
-    && (!values.shared || (isNumber(values.preparation_time, true) && isNumber(values.calories, true))),
+      && isNumber(size.preparation_time, true) && isNumber(size.calories, true))
+    // guests see a size of it
+    && values.sizes.some((size) => !size.is_hidden),
   save: async (values, restaurant, selection) => {
     if (!isNewId(selection.id)) {
       await updateEditorDish(selection.id!, dishRequest(values, false))
