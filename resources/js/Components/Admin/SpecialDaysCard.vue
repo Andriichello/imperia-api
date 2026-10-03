@@ -2,13 +2,14 @@
   import {computed, PropType} from 'vue'
   import {useI18n} from 'vue-i18n'
   import {DateTime} from 'luxon'
-  import {ChevronRight, Plus} from 'lucide-vue-next'
+  import {Plus} from 'lucide-vue-next'
   import type {EditorDashboard, EditorInterval, EditorScheduleException, EditorWeekdays} from '@/api'
   import {formatHour, intlLocale} from '@/admin/format'
   import {translated} from '@/editor/translations'
 
   /**
-   * The next special days: holidays (closed, in red) and short days (in amber).
+   * Changes in the working schedule: the next special days, holidays (closed, in red) and short
+   * days (in amber).
    */
   const props = defineProps({
     restaurant: {type: Object as PropType<EditorDashboard>, required: true},
@@ -49,14 +50,19 @@
     }
   }
 
+  const count = computed(() => props.restaurant.exceptions.length)
   const days = computed(() => props.restaurant.exceptions.slice(0, SHOWN).map(describe))
 </script>
 
 <template>
   <section class="e-card px-5 pt-[18px] pb-3 flex flex-col">
     <div class="flex items-center gap-2 min-h-7">
-      <h2 class="e-card-title">{{ t('admin.dashboard.special_days.title') }}</h2>
+      <h2 class="e-card-title flex items-center">
+        {{ t('admin.dashboard.special_days.title') }}
+        <span class="e-pill h-5! ml-1.5 bg-zinc-100 text-zinc-700" v-if="count">{{ count }}</span>
+      </h2>
       <div class="flex-1"/>
+      <a class="mr-2 e-link" :href="hoursUrl" v-if="count">{{ t('admin.dashboard.special_days.see_all') }}</a>
       <a class="e-btn e-btn-secondary h-[30px]! px-2.5! text-[13px]!" :href="hoursUrl">
         <Plus class="size-3.5"/>
         {{ t('admin.dashboard.special_days.add') }}
@@ -82,9 +88,8 @@
       {{ t('admin.dashboard.special_days.empty') }}
     </p>
 
-    <a class="mt-auto pt-2.5 pb-0.5 e-link self-start" :href="hoursUrl" v-if="days.length">
-      {{ t('admin.dashboard.special_days.all') }}
-      <ChevronRight class="size-3.5"/>
-    </a>
+    <p class="mt-auto pt-2.5 pb-0.5 border-t border-[#f0f0f1] e-help" v-if="days.length">
+      {{ t('admin.dashboard.special_days.footer') }}
+    </p>
   </section>
 </template>

@@ -5,8 +5,7 @@ import {ref, computed, PropType} from "vue";
 import {DishSize, getDishSizes, priceFormatted, sizeWeightFormatted} from "@/helpers";
 import DiagonalPattern from "@/Components/Base/DiagonalPattern.vue";
 import {Timer, Flame, TriangleAlert} from "lucide-vue-next";
-import DishTags from "@/Components/Menu/DishTags.vue";
-import {getAllergenLabel, getAllergens, getDishTags} from "@/flags";
+import {type DishTag, getAllergenLabel, getAllergens, getDishTags} from "@/flags";
 import { useI18n } from "vue-i18n";
 
 const i18n = useI18n();
@@ -62,7 +61,7 @@ const price = computed(
   () => priceFormatted(selectedSize.value.price, props.currency?.toLowerCase() ?? 'uah')
 );
 
-const hasTags = computed<boolean>(() => getDishTags(props.product.flags).length > 0);
+const tags = computed<DishTag[]>(() => getDishTags(props.product.flags));
 
 const allergenNames = computed<string>(
   () => getAllergens(props.product.flags).map((flag) => i18n.t(getAllergenLabel(flag))).join(', ')
@@ -135,15 +134,20 @@ const allergenNames = computed<string>(
         </div>
       </div>
 
-      <div class="flex flex-col gap-1"
-           v-if="hasTags || allergenNames.length">
-        <DishTags class="text-[13px]/5" :flags="product.flags"/>
+      <!-- tags, then allergens, on one line, which wraps when they don't fit -->
+      <div class="flex flex-wrap items-start gap-x-3 gap-y-0.5 text-[13px]/5"
+           v-if="tags.length || allergenNames.length">
+        <span class="flex items-center gap-1 text-primary-content"
+              v-for="tag in tags" :key="tag.key">
+          <component :is="tag.icon" class="size-3.5 shrink-0"/>
+          {{ i18n.t(tag.label) }}
+        </span>
 
-        <div class="flex items-start gap-1 text-[13px]/5 font-semibold text-orange-700"
-             v-if="allergenNames.length">
+        <span class="flex items-start gap-1 text-orange-700"
+              v-if="allergenNames.length">
           <TriangleAlert class="size-3.5 shrink-0 mt-[3px]"/>
           <span>{{ allergenNames }}</span>
-        </div>
+        </span>
       </div>
 
       <div class="flex justify-between gap-2"

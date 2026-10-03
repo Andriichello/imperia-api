@@ -1,12 +1,12 @@
 <script setup lang="ts">
   import {computed, onUnmounted, PropType, ref, watch} from "vue";
   import {Dish, DishCategory, DishMenu, Restaurant} from "@/api";
-  import {Ban, ChevronDown, ChevronUp, Flame, Funnel, Search, X} from "lucide-vue-next";
+  import {Check, ChevronDown, ChevronUp, Flame, Funnel, Search, X} from "lucide-vue-next";
   import {useI18n} from "vue-i18n";
   import Deferred from "@/Components/Deferred.vue";
   import ProductInListRightMedia from "@/Components/Menu/ProductInListRightMedia.vue";
   import LoadingProductInListRightMedia from "@/Components/Menu/LoadingProductInListRightMedia.vue";
-  import {ALLERGENS, DISH_TAGS, type DishTag, getAllergenLabel, getAllergens, hasTag, matchesTag} from "@/flags";
+  import {type DishTag, findTag, HOTNESS, matchesTag, OPPOSITE_TAGS, TAG_GROUPS, tagsOf} from "@/flags";
 
   const props = defineProps({
     open: {
@@ -41,15 +41,9 @@
 
   const emits = defineEmits(['open-menu', 'open-category', 'open-product', 'query-updated', 'filtering-changed', 'has-results-changed']);
 
-  type Spiciness = 'spicy' | 'not-spicy';
-
-  /** Diet filters, in this order; a dish has to match all the selected ones. */
-  const DIETS = ['vegetarian', 'vegan'];
-
   /** Looks of a filter chip, selected or not. */
   const CHIP_ON = 'bg-primary/20 border-primary/40 text-primary-content';
   const CHIP_OFF = 'bg-base-100 border-zinc-300 text-base-content';
-  const CHIP_EXCLUDED = 'bg-[#fbefeb] border-orange-700 text-orange-700';
 
   const i18n = useI18n();
 
@@ -57,95 +51,54 @@
 
   const searchQuery = ref("");
 
-  interface Filters {
-    diets: string[],
-    spiciness: Spiciness | null,
-    // Allergen flags of the ingredients to exclude
-    excluded: string[],
-  }
-
-  const noFilters = (): Filters => ({diets: [], spiciness: null, excluded: []});
-
-  const hasAny = (filters: Filters): boolean =>
-    filters.diets.length > 0 || filters.spiciness !== null || filters.excluded.length > 0;
-
-  // The filters the results are filtered by
-  const applied = ref<Filters>(noFilters());
-  // The selections in the open filters, applied with "Show N dishes"
-  const draft = ref<Filters>(noFilters());
+  // Tags of the dishes the results are filtered by
+  const applied = ref<string[]>([]);
+  // The tags picked in the open filters, applied with "Show N dishes"
+  const draft = ref<string[]>([]);
 
   const filtersOpen = ref(false);
 
-  const anyFilter = computed<boolean>(() => hasAny(applied.value));
+  const anyFilter = computed<boolean>(() => applied.value.length > 0);
 
   const searching = computed<boolean>(() => searchQuery.value.length > 0 || anyFilter.value);
 
-  // Filters offered: the ones at least one dish has
-  const dietOptions = computed<DishTag[]>(() => DIETS
-    .map((key) => DISH_TAGS.find((t: DishTag) => t.key === key)!)
-    .filter((t: DishTag) => props.products?.some((p: Dish) => matchesTag(p.flags, t.key))));
+  // Filters offered, by their groups: the tags at least one dish matches
+  const filterGroups = computed(() => TAG_GROUPS
+    .map((group) => ({
+      group,
+      tags: tagsOf(group).filter((tag: DishTag) => props.products?.some((p: Dish) => matchesTag(p.flags, tag.key))),
+    }))
+    .filter(({tags}) => tags.length > 0));
 
-  const offersSpiciness = computed<boolean>(
-    () => !!props.products?.some((p: Dish) => hasTag(p.flags, 'hotness'))
-  );
-
-  const allergenOptions = computed<string[]>(
-    () => ALLERGENS.filter((flag) => props.products?.some((p: Dish) => p.flags?.includes(flag)))
-  );
-
-  const offersFilters = computed<boolean>(
-    () => dietOptions.value.length > 0 || offersSpiciness.value || allergenOptions.value.length > 0
-  );
-
-  function allergenName(flag: string): string {
-    return i18n.t(getAllergenLabel(flag));
-  }
-
-  function spicinessLabel(value: Spiciness): string {
-    return i18n.t(value === 'spicy' ? 'search.spicy' : 'search.not_spicy');
-  }
+  const offersFilters = computed<boolean>(() => filterGroups.value.length > 0);
 
   /** Applied filters, as shown in the collapsed banner; removing one applies right away. */
-  const selectedFilters = computed(() => [
-    ...applied.value.diets.map((key) => ({
-      key,
-      label: i18n.t(DISH_TAGS.find((t: DishTag) => t.key === key)!.label),
-      excluding: false,
-      remove: () => applied.value = {...applied.value, diets: applied.value.diets.filter((k) => k !== key)},
-    })),
-    ...(applied.value.spiciness ? [{
-      key: applied.value.spiciness,
-      label: spicinessLabel(applied.value.spiciness),
-      excluding: false,
-      remove: () => applied.value = {...applied.value, spiciness: null},
-    }] : []),
-    ...applied.value.excluded.map((flag) => ({
-      key: flag,
-      label: i18n.t('search.without', {name: allergenName(flag).toLocaleLowerCase()}),
-      excluding: true,
-      remove: () => applied.value = {...applied.value, excluded: applied.value.excluded.filter((f) => f !== flag)},
-    })),
-  ]);
+  const selectedFilters = computed<DishTag[]>(
+    () => applied.value.map((key) => findTag(key)).filter((tag): tag is DishTag => tag !== null)
+  );
 
-  function toggle(list: string[], item: string): string[] {
-    return list.includes(item) ? list.filter((i) => i !== item) : [...list, item];
+  function removeFilter(key: string) {
+    applied.value = applied.value.filter((other) => other !== key);
   }
 
-  function toggleDiet(key: string) {
-    draft.value = {...draft.value, diets: toggle(draft.value.diets, key)};
-  }
+  /**
+   * Picks the tag in the open filters, or unpicks it. Spicy is any level of hotness, so it doesn't
+   * go with the levels; low and high of the same thing don't go together either.
+   */
+  function toggleTag(key: string) {
+    if (draft.value.includes(key)) {
+      draft.value = draft.value.filter((other) => other !== key);
+      return;
+    }
 
-  function toggleSpiciness(value: Spiciness) {
-    draft.value = {...draft.value, spiciness: draft.value.spiciness === value ? null : value};
-  }
+    const dropped = key === 'hotness' ? HOTNESS : [HOTNESS.includes(key) ? 'hotness' : OPPOSITE_TAGS[key]];
 
-  function toggleExcluded(flag: string) {
-    draft.value = {...draft.value, excluded: toggle(draft.value.excluded, flag)};
+    draft.value = [...draft.value.filter((other) => !dropped.includes(other)), key];
   }
 
   /** Opens the filters with the applied ones selected. */
   function openFilters() {
-    draft.value = {...applied.value};
+    draft.value = [...applied.value];
     filtersOpen.value = true;
   }
 
@@ -155,7 +108,7 @@
   }
 
   function applyFilters() {
-    applied.value = {...draft.value};
+    applied.value = [...draft.value];
     filtersOpen.value = false;
   }
 
@@ -201,54 +154,35 @@
     ) ?? [];
   });
 
-  /** Whether a dish matches the diet and spiciness of the filters. */
-  function matchesDietAndSpiciness(product: Dish, filters: Filters): boolean {
-    return filters.diets.every((key) => matchesTag(product.flags, key)) &&
-      (filters.spiciness === null || hasTag(product.flags, 'hotness') === (filters.spiciness === 'spicy'));
-  }
+  /** Whether a dish matches the tags: all of them, but any one of the levels of hotness. */
+  function matchesFilters(product: Dish, keys: string[]): boolean {
+    const levels = keys.filter((key) => HOTNESS.includes(key));
 
-  function containsExcluded(product: Dish, filters: Filters): boolean {
-    return getAllergens(product.flags).some((flag) => filters.excluded.includes(flag));
+    return keys.every((key) => HOTNESS.includes(key) || matchesTag(product.flags, key)) &&
+      (!levels.length || levels.some((key) => matchesTag(product.flags, key)));
   }
-
-  /** Dishes matching the query, diet and spiciness, before excluding ingredients. */
-  const matchingProducts = computed<Dish[]>(
-    () => queriedProducts.value.filter((p) => matchesDietAndSpiciness(p, applied.value))
-  );
 
   const filteredProducts = computed<Dish[]>(
-    () => matchingProducts.value.filter((p) => !containsExcluded(p, applied.value))
+    () => queriedProducts.value.filter((p) => matchesFilters(p, applied.value))
   );
 
-  const hiddenProducts = computed<Dish[]>(
-    () => matchingProducts.value.filter((p) => containsExcluded(p, applied.value))
+  /** How many dishes the tags picked in the open filters would show. */
+  const draftCount = computed<number>(
+    () => queriedProducts.value.filter((p) => matchesFilters(p, draft.value)).length
   );
-
-  /** How many dishes the selections in the open filters would show. */
-  const draftCount = computed<number>(() => queriedProducts.value
-    .filter((p) => matchesDietAndSpiciness(p, draft.value) && !containsExcluded(p, draft.value))
-    .length);
-
-  /** The excluded ingredients the hidden dishes contain, e.g. "milk, eggs". */
-  const hiddenBecauseOf = computed<string>(() => ALLERGENS
-    .filter((flag) => applied.value.excluded.includes(flag) &&
-      hiddenProducts.value.some((p: Dish) => p.flags?.includes(flag)))
-    .map((flag) => allergenName(flag).toLocaleLowerCase())
-    .join(', '));
 
   const hasResults = computed(() => {
     return props.products === null || (searching.value && (
       filteredMenus.value.length > 0 ||
       filteredCategories.value.length > 0 ||
-      filteredProducts.value.length > 0 ||
-      hiddenProducts.value.length > 0
+      filteredProducts.value.length > 0
     ));
   });
 
   function clearSearch() {
     searchQuery.value = "";
-    applied.value = noFilters();
-    draft.value = noFilters();
+    applied.value = [];
+    draft.value = [];
     filtersOpen.value = false;
   }
 
@@ -334,65 +268,41 @@
                   @click="closeFilters">
             <Funnel class="size-[18px] shrink-0"/>
             <span class="flex-1 text-sm/5 font-semibold">{{ i18n.t('search.filter_banner') }}</span>
+            <span class="min-w-[22px] h-[22px] shrink-0 inline-flex items-center justify-center px-1.5 rounded-full bg-primary-content text-base-100 text-xs/4 font-bold"
+                  v-if="draft.length">
+              <span aria-hidden="true">{{ draft.length }}</span>
+              <span class="sr-only">{{ i18n.t('search.filters_on', {count: draft.length}, draft.length) }}</span>
+            </span>
             <ChevronUp class="size-5 shrink-0"/>
           </button>
 
           <div class="flex-1 min-h-0 overflow-auto flex flex-col gap-5 pt-4 px-4 pb-4">
             <div class="flex flex-col gap-2"
-                 v-if="dietOptions.length">
-              <p class="text-[13px]/5 font-semibold text-base-content/68">{{ i18n.t('search.diet') }}</p>
+                 role="group"
+                 :aria-label="i18n.t(`search.${group}`)"
+                 v-for="{group, tags} in filterGroups" :key="group">
+              <p class="text-[13px]/5 font-semibold text-base-content/68">
+                {{ i18n.t(`search.${group}`) }}<span class="font-normal text-base-content/60" v-if="group === 'spiciness'"> · {{ i18n.t('search.pick_several') }}</span>
+              </p>
 
               <div class="flex flex-wrap gap-2">
+                <!-- levels of hotness show 1–4 flames after the label -->
                 <button type="button"
-                        class="h-10 inline-flex items-center gap-1.5 pl-2.5 pr-3 rounded-lg border text-sm font-semibold cursor-pointer"
-                        :class="draft.diets.includes(t.key) ? CHIP_ON : CHIP_OFF"
-                        :aria-pressed="draft.diets.includes(t.key)"
-                        v-for="t in dietOptions" :key="t.key"
-                        @click="toggleDiet(t.key)">
-                  <component :is="t.icon" class="size-4 shrink-0"/>
-                  {{ i18n.t(t.label) }}
-                </button>
-              </div>
-            </div>
-
-            <div class="flex flex-col gap-2"
-                 v-if="offersSpiciness">
-              <p class="text-[13px]/5 font-semibold text-base-content/68">{{ i18n.t('search.spiciness') }}</p>
-
-              <div class="flex flex-wrap gap-2">
-                <button type="button"
-                        class="h-10 inline-flex items-center gap-1.5 pl-2.5 pr-3 rounded-lg border text-sm font-semibold cursor-pointer"
-                        :class="draft.spiciness === 'spicy' ? CHIP_ON : CHIP_OFF"
-                        :aria-pressed="draft.spiciness === 'spicy'"
-                        @click="toggleSpiciness('spicy')">
-                  <Flame class="size-4 shrink-0"/>
-                  {{ spicinessLabel('spicy') }}
-                </button>
-
-                <button type="button"
-                        class="h-10 inline-flex items-center px-3 rounded-lg border text-sm font-semibold cursor-pointer"
-                        :class="draft.spiciness === 'not-spicy' ? CHIP_ON : CHIP_OFF"
-                        :aria-pressed="draft.spiciness === 'not-spicy'"
-                        @click="toggleSpiciness('not-spicy')">
-                  {{ spicinessLabel('not-spicy') }}
-                </button>
-              </div>
-            </div>
-
-            <div class="flex flex-col gap-2"
-                 v-if="allergenOptions.length">
-              <p class="text-[13px]/5 font-semibold text-base-content/68">{{ i18n.t('search.exclude_ingredients') }}</p>
-
-              <div class="flex flex-wrap gap-2">
-                <button type="button"
-                        class="h-10 inline-flex items-center gap-1.5 pl-2.5 pr-3 rounded-lg border text-sm font-semibold cursor-pointer"
-                        :class="draft.excluded.includes(flag) ? CHIP_EXCLUDED : CHIP_OFF"
-                        :aria-pressed="draft.excluded.includes(flag)"
-                        v-for="flag in allergenOptions" :key="flag"
-                        @click="toggleExcluded(flag)">
-                  <Ban class="size-4 shrink-0"
-                       :class="{'text-base-content/65': !draft.excluded.includes(flag)}"/>
-                  {{ allergenName(flag) }}
+                        class="h-10 inline-flex items-center gap-1.5 pl-2.5 pr-3 rounded-lg border text-sm font-semibold whitespace-nowrap cursor-pointer"
+                        :class="draft.includes(tag.key) ? CHIP_ON : CHIP_OFF"
+                        :aria-pressed="draft.includes(tag.key)"
+                        :aria-label="tag.level ? i18n.t('search.level', {name: i18n.t(tag.label), level: tag.level}) : undefined"
+                        v-for="tag in tags" :key="tag.key"
+                        @click="toggleTag(tag.key)">
+                  <Check class="size-4 shrink-0 stroke-3" v-if="draft.includes(tag.key)"/>
+                  <component :is="tag.icon" class="size-4 shrink-0 text-base-content/60" v-else-if="!tag.level"/>
+                  {{ i18n.t(tag.label) }}
+                  <span class="inline-flex"
+                        :class="draft.includes(tag.key) ? 'text-primary-content' : 'text-base-content/60'"
+                        aria-hidden="true"
+                        v-if="tag.level">
+                    <Flame class="size-[13px] shrink-0 not-first:-ml-0.5" v-for="n in tag.level" :key="n"/>
+                  </span>
                 </button>
               </div>
             </div>
@@ -401,8 +311,8 @@
           <div class="shrink-0 flex flex-col gap-2 pt-3 px-4 pb-5 border-t border-primary/40">
             <button type="button"
                     class="w-full h-11 flex items-center justify-center rounded-lg border border-zinc-300 bg-base-100 text-base-content text-base font-semibold cursor-pointer disabled:cursor-default disabled:opacity-50"
-                    :disabled="!hasAny(draft)"
-                    @click="draft = noFilters()">
+                    :disabled="!draft.length"
+                    @click="draft = []">
               {{ i18n.t('search.clear_all') }}
             </button>
 
@@ -413,7 +323,7 @@
               {{ i18n.t('search.show_dishes', {count: draftCount}, draftCount) }}
             </button>
 
-            <div class="h-13 flex items-center justify-center rounded-lg bg-zinc-200 text-base-content/72 text-base font-semibold"
+            <div class="h-13 flex items-center justify-center rounded-lg bg-zinc-200 text-zinc-600 text-base font-semibold"
                  role="status"
                  v-else>
               {{ i18n.t('search.no_matching_dishes') }}
@@ -428,15 +338,16 @@
           <Funnel class="size-[18px] shrink-0"/>
 
           <div class="no-scrollbar flex-1 min-w-0 flex items-center gap-1.5 overflow-x-auto">
-            <span class="h-9 shrink-0 inline-flex items-center pl-2.5 rounded-lg border text-sm font-semibold"
-                  :class="filter.excluding ? CHIP_EXCLUDED : CHIP_ON"
-                  v-for="filter in selectedFilters" :key="filter.key">
-              {{ filter.label }}
+            <span class="h-9 shrink-0 inline-flex items-center gap-1.5 pl-2.5 rounded-lg border text-sm font-semibold"
+                  :class="CHIP_ON"
+                  v-for="tag in selectedFilters" :key="tag.key">
+              <component :is="tag.icon" class="size-4 shrink-0"/>
+              {{ i18n.t(tag.label) }}
 
               <button type="button"
-                      class="size-[34px] flex items-center justify-center cursor-pointer"
-                      :aria-label="i18n.t('search.remove_filter', {name: filter.label})"
-                      @click.stop="filter.remove()">
+                      class="w-[30px] h-[34px] -ml-0.5 flex items-center justify-center cursor-pointer"
+                      :aria-label="i18n.t('search.remove_filter', {name: i18n.t(tag.label)})"
+                      @click.stop="removeFilter(tag.key)">
                 <X class="size-4"/>
               </button>
             </span>
@@ -517,7 +428,7 @@
           </template>
 
           <div class="flex flex-col gap-1"
-               v-if="filteredProducts.length || hiddenProducts.length">
+               v-if="filteredProducts.length">
             <h3 class="text-base/6 font-bold">
               {{ i18n.t('search.dishes_count', {count: filteredProducts.length}, filteredProducts.length) }}
             </h3>
@@ -533,19 +444,6 @@
 
               <div class="h-px bg-[#e8e8e8]"/>
             </template>
-
-            <div class="mt-2 flex items-center justify-between gap-3 py-1 pr-1 pl-3.5 rounded-lg bg-zinc-100 text-sm/5 text-base-content/72"
-                 v-if="hiddenProducts.length">
-              <span>
-                {{ i18n.t('search.hidden_contains', {count: hiddenProducts.length, names: hiddenBecauseOf}, hiddenProducts.length) }}
-              </span>
-
-              <button type="button"
-                      class="h-11 shrink-0 px-3 font-semibold text-primary-content cursor-pointer"
-                      @click="applied = {...applied, excluded: []}">
-                {{ i18n.t('search.show') }}
-              </button>
-            </div>
           </div>
         </Deferred>
       </template>

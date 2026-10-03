@@ -75,7 +75,6 @@
         "open_editor": "Open menu editor",
         "copy_link": "Copy link",
         "copied": "Link copied",
-        "qr_code": "QR code",
         "menus": "No menus | {count} menu | {count} menus",
         "dishes": "no dishes | {count} dish | {count} dishes",
         "saved": {
@@ -87,13 +86,15 @@
         }
       },
       "qr": {
-        "title": "QR code of your menu page",
-        "help": "Print it on table cards or the menu cover: guests scan it to open your page.",
-        "download": "Download SVG",
-        "close": "Close"
+        "label": "QR code for {address}",
+        "scan": "Scan to open {address}",
+        "png": "PNG",
+        "png_title": "Download the QR code as a PNG image",
+        "print": "Print",
+        "print_title": "Print the QR code for your tables"
       },
       "now": {
-        "title": "Right now",
+        "title": "Schedule",
         "hours": "Working hours",
         "today": "Today · {weekday}",
         "this_week": "This week",
@@ -124,17 +125,18 @@
         }
       },
       "special_days": {
-        "title": "Upcoming special days",
+        "title": "Changes in working schedule",
         "add": "Add",
-        "all": "All special days",
+        "see_all": "See all",
         "empty": "No special days ahead. Add holidays and short days, so guests see the right hours.",
         "closed": "{weekday} · Closed",
         "closes_at": "{weekday} · closes at {time}",
         "hours": "{weekday} · {hours}",
-        "untitled": "Special day"
+        "untitled": "Special day",
+        "footer": "Special days override your usual hours on the menu page."
       },
       "versions": {
-        "title": "Scheduled changes",
+        "title": "Planned menu changes",
         "see_all": "See all",
         "add": "Add",
         "empty": "Nothing is scheduled. Schedule price changes or a whole new menu to go live at a set time.",
@@ -333,7 +335,8 @@
       "remove": "Remove",
       "new_note": "A new note, e.g. Card payments only.",
       "add": "Add",
-      "remove_allergen": "Remove {name}"
+      "remove_allergen": "Remove {name}",
+      "remove_tag": "Remove {name}"
     }
   }
 }

@@ -11,7 +11,6 @@
     Ellipsis,
     Eye,
     EyeOff,
-    Flame,
     FolderInput,
     MousePointer2,
     Plus,
@@ -33,13 +32,13 @@
   import ScheduledNotice from '@/Components/Editor/ScheduledNotice.vue'
   import {Breadcrumb, isNewId, Selection} from '@/editor/sections'
   import {translated} from '@/editor/translations'
-  import {ALLERGENS, DISH_TAGS, getAllergenLabel} from '@/flags'
+  import {ALLERGENS, getAllergenLabel, HOTNESS, TAG_GROUPS, tagsOf, withTag} from '@/flags'
   import {priceFormatted} from '@/helpers'
   import {useEditorStore} from '@/stores/editor'
 
   /**
    * A dish: whether guests see it, its photo, texts, sizes with prices, preparation time and
-   * calories, diet tags and allergens. A new one is created in its category, when it's saved.
+   * calories, tags and allergens. A new one is created in its category, when it's saved.
    * On the dish's page in the preview, a click on a part of it shows that part here.
    */
   const props = defineProps({
@@ -60,7 +59,6 @@
   const MAX_PHOTOS = 3
   const UNITS = Object.values(EditorSizeWeightUnit)
   const QUICK_PICKS = ['new', 'bestseller', 'seasonal']
-  const HOTNESS = ['low-hotness', 'medium-hotness', 'high-hotness', 'extreme-hotness']
 
   const restaurant = computed(() => editor.restaurant!)
   const isNew = computed(() => isNewId(props.selection.id))
@@ -180,8 +178,6 @@
 
   // Flags
 
-  const tags = DISH_TAGS.filter((tag) => tag.key !== 'hotness')
-
   function hasFlag(flag: string): boolean {
     return draft.value.flags.includes(flag)
   }
@@ -192,14 +188,17 @@
       : [...draft.value.flags, flag]
   }
 
-  const spicy = computed(() => draft.value.flags.some((flag) => flag === 'hotness' || HOTNESS.includes(flag)))
+  /** Picks a tag or unpicks it: one level of hotness at most, and either low or high of the same thing. */
+  function toggleTag(key: string) {
+    draft.value.flags = hasFlag(key)
+      ? draft.value.flags.filter((other) => other !== key)
+      : withTag(draft.value.flags, key)
+  }
 
-  /** Spicy, at a level (none: not spicy). */
-  function setHotness(level: string | null) {
-    draft.value.flags = [
-      ...draft.value.flags.filter((flag) => flag !== 'hotness' && !HOTNESS.includes(flag)),
-      ...(level ? [level] : []),
-    ]
+  const spicy = computed(() => draft.value.flags.some((flag) => HOTNESS.includes(flag)))
+
+  function setNotSpicy() {
+    draft.value.flags = draft.value.flags.filter((flag) => !HOTNESS.includes(flag))
   }
 
   const allergens = computed(() => draft.value.flags.filter((flag) => ALLERGENS.includes(flag)))
@@ -550,53 +549,50 @@
     </PanelField>
 
     <PanelField field="tags" v-slot="{selected}">
-      <section class="flex flex-col gap-2">
-        <div class="flex items-center gap-1.5">
-          <p class="e-label">{{ t('editor.dish.diet') }}</p>
-          <SelectedInPreview v-if="selected"/>
+      <section class="flex flex-col gap-2.5">
+        <div class="flex flex-col gap-0.5">
+          <div class="flex items-center gap-1.5">
+            <p class="e-label">{{ t('editor.dish.tags') }}</p>
+            <SelectedInPreview v-if="selected"/>
+          </div>
+          <p class="e-help">{{ t('editor.dish.tags_help') }}</p>
         </div>
 
-        <div class="flex flex-wrap gap-1.5">
-          <button type="button"
-                  class="h-8 inline-flex items-center gap-1.5 px-2.5 rounded-full border text-[13px] font-semibold e-focus"
-                  :class="hasFlag(tag.key)
-                    ? 'border-zinc-900 bg-zinc-900 text-white'
-                    : 'border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-50'"
-                  :aria-pressed="hasFlag(tag.key)"
-                  v-for="tag in tags" :key="tag.key"
-                  @click="toggleFlag(tag.key)">
-            <component :is="tag.icon" class="size-3.5"/>
-            {{ t(tag.label) }}
-          </button>
-
-          <button type="button"
-                  class="h-8 inline-flex items-center gap-1.5 px-2.5 rounded-full border text-[13px] font-semibold e-focus"
-                  :class="spicy
-                    ? 'border-zinc-900 bg-zinc-900 text-white'
-                    : 'border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-50'"
-                  :aria-pressed="spicy"
-                  @click="setHotness(spicy ? null : 'medium-hotness')">
-            <Flame class="size-3.5"/>
-            {{ t('editor.dish.spicy') }}
-          </button>
-        </div>
-
-        <div class="flex items-center gap-1.5"
+        <div class="flex flex-col gap-1.5"
              role="group"
-             :aria-label="t('editor.dish.spiciness')"
-             v-if="spicy">
-          <span class="e-help mr-1">{{ t('editor.dish.spiciness') }}</span>
+             :aria-label="t(`editor.dish.tag_groups.${group}`)"
+             v-for="group in TAG_GROUPS" :key="group">
+          <p class="text-xs/4 font-semibold text-zinc-600">
+            {{ t(`editor.dish.tag_groups.${group}`) }}<span class="font-normal text-zinc-500" v-if="group !== 'diet'"> · {{ t(`editor.dish.tag_hints.${group}`) }}</span>
+          </p>
 
-          <button type="button"
-                  class="h-7 px-2.5 rounded-full border text-xs font-semibold e-focus"
-                  :class="hasFlag(level)
-                    ? 'border-zinc-900 bg-zinc-900 text-white'
-                    : 'border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-50'"
-                  :aria-pressed="hasFlag(level)"
-                  v-for="level in HOTNESS" :key="level"
-                  @click="setHotness(level)">
-            {{ t(`editor.dish.hotness.${level}`) }}
-          </button>
+          <div class="flex flex-wrap gap-1.5">
+            <!-- spiciness is picked one of: not spicy is none of its flags -->
+            <button type="button"
+                    class="h-8 inline-flex items-center gap-1.5 px-2.5 rounded-full border text-[13px] font-semibold e-focus"
+                    :class="!spicy
+                      ? 'border-zinc-900 bg-zinc-900 text-white'
+                      : 'border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-50'"
+                    :aria-pressed="!spicy"
+                    v-if="group === 'spiciness'"
+                    @click="setNotSpicy">
+              <Check class="size-[13px] stroke-3" v-if="!spicy"/>
+              {{ t('editor.dish.not_spicy') }}
+            </button>
+
+            <button type="button"
+                    class="h-8 inline-flex items-center gap-1.5 px-2.5 rounded-full border text-[13px] font-semibold e-focus"
+                    :class="hasFlag(tag.key)
+                      ? 'border-zinc-900 bg-zinc-900 text-white'
+                      : 'border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-50'"
+                    :aria-pressed="hasFlag(tag.key)"
+                    v-for="tag in tagsOf(group)" :key="tag.key"
+                    @click="toggleTag(tag.key)">
+              <Check class="size-[13px] stroke-3" v-if="hasFlag(tag.key)"/>
+              <component :is="tag.icon" class="size-3.5" v-else/>
+              {{ t(tag.label) }}
+            </button>
+          </div>
         </div>
       </section>
     </PanelField>

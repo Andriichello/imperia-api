@@ -272,18 +272,21 @@
       "calories": "Calories",
       "minutes": "min",
       "kcal": "kcal",
-      "diet": "Diet and spiciness",
-      "spicy": "Spicy",
-      "spiciness": "How spicy",
-      "hotness": {
-        "low-hotness": "Mild",
-        "medium-hotness": "Medium",
-        "high-hotness": "Hot",
-        "extreme-hotness": "Extra hot"
+      "tags": "Tags",
+      "tags_help": "Shown on the menu in your brand color. Guests can filter by them in search.",
+      "tag_groups": {
+        "diet": "Diet",
+        "spiciness": "Spiciness",
+        "nutrition": "Nutrition"
       },
+      "tag_hints": {
+        "spiciness": "pick one",
+        "nutrition": "low and high exclude each other"
+      },
+      "not_spicy": "Not spicy",
       "allergens": "Allergens",
       "selected": "{count} selected",
-      "allergens_help": "Guests see these in orange on the list and can hide dishes that contain them.",
+      "allergens_help": "Shown in orange on the menu and on the dish page. Mark every allergen the dish contains: guests rely on this list.",
       "move_to": "Move to category…",
       "selected_in_preview": "Selected in preview",
       "on_its_page": "The preview shows this dish's page. Click a block there to jump to its field.",
@@ -349,7 +352,7 @@
       "badge": "Badge",
       "text": "Name and description",
       "sizes": "Sizes and prices",
-      "tags": "Diet and spiciness",
+      "tags": "Tags",
       "allergens": "Allergens"
     },
     "save": {
@@ -414,7 +417,7 @@
       "size_shown": "Size {size} shown",
       "size_shown_unnamed": "Size shown",
       "sizes": "Sizes",
-      "diet": "Diet",
+      "tags": "Tags",
       "allergens": "Allergens",
       "dish_order": "Dish order",
       "menu_order": "Menu order",

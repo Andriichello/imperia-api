@@ -13,8 +13,8 @@
   import {translated} from '@/editor/translations'
 
   /**
-   * The admin's home (see `DashboardController`): the restaurant's page, whether it's open now,
-   * upcoming special days and scheduled changes.
+   * The admin's home (see `DashboardController`): the restaurant's page, its schedule (whether it's
+   * open now), upcoming changes in its working schedule and planned changes of its menu.
    */
   const props = defineProps({
     props: {type: Object as PropType<DashboardProps>, required: true},
@@ -75,7 +75,8 @@
           <p class="text-[13px]/[18px] text-zinc-500 first-letter:uppercase">{{ today }}</p>
         </div>
 
-        <div class="grid grid-cols-3 gap-4 items-stretch max-lg:grid-cols-1">
+        <!-- the menu page, then the schedule and its changes side by side, then planned menu changes -->
+        <div class="grid grid-cols-2 gap-4 items-stretch max-lg:grid-cols-1">
           <MenuPageCard :restaurant="restaurant" :editor-url="props.props.urls.editor"/>
           <RightNowCard :restaurant="restaurant" :hours-url="hoursUrl"/>
           <SpecialDaysCard :restaurant="restaurant" :hours-url="hoursUrl"/>

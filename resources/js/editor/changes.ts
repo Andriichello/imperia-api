@@ -170,7 +170,7 @@ function sizeChanges(saved: DishDraft, draft: DishDraft, ctx: Context): string[]
 
 function dishChanges(saved: DishDraft, draft: DishDraft, ctx: Context): string[] {
   const allergens = (flags: string[]) => flags.filter((flag) => ALLERGENS.includes(flag)).sort()
-  const diet = (flags: string[]) => flags.filter((flag) => !ALLERGENS.includes(flag)).sort()
+  const tags = (flags: string[]) => flags.filter((flag) => !ALLERGENS.includes(flag)).sort()
 
   return [
     ...visibility(saved.is_hidden, draft.is_hidden, ctx),
@@ -178,7 +178,7 @@ function dishChanges(saved: DishDraft, draft: DishDraft, ctx: Context): string[]
     ...texts([['name', saved.title, draft.title], ['description', saved.description, draft.description],
       ['badge', saved.badge, draft.badge]], ctx),
     ...photoChanges(saved.photos, draft.photos, ctx),
-    ...(same(diet(saved.flags), diet(draft.flags)) ? [] : [ctx.t(KEY + 'diet')]),
+    ...(same(tags(saved.flags), tags(draft.flags)) ? [] : [ctx.t(KEY + 'tags')]),
     ...(same(allergens(saved.flags), allergens(draft.flags)) ? [] : [ctx.t(KEY + 'allergens')]),
   ]
 }

@@ -136,7 +136,7 @@
 </script>
 
 <template>
-  <section class="e-card col-span-2 max-lg:col-span-1 px-5 pt-[18px] pb-3">
+  <section class="e-card col-span-full px-5 pt-[18px] pb-3">
     <div class="flex items-center gap-2 min-h-7">
       <h2 class="e-card-title flex items-center">
         {{ t(key + 'title') }}
