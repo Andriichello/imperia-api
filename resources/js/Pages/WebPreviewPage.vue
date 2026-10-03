@@ -164,6 +164,12 @@
   const selectedCategory = ref<DishCategory | null>(null)
   const selectedProduct = ref<Dish | null>(null)
 
+  // A dish opened in the search: its page is shown over the search, and the page under them
+  // stays as it is (nothing is selected in it)
+  const searchedProduct = ref<Dish | null>(null)
+  // Marks the history entry under the searched dish's page: going back to it shows the search again
+  let searchEntry: number | null = null
+
   // Navigation & History helpers
   type HistoryAction = 'push' | 'replace'
 
@@ -484,21 +490,26 @@
     }, 200)
   }
 
-  const onSwitchProduct = (product: Dish, category: DishCategory, menu: DishMenu = selectedMenu.value as DishMenu) => {
-    if (mode.value !== 'menu') {
-      mode.value = 'menu'
-    }
+  /**
+   * Open the page of a dish found in the search over it: the search keeps its query, filters and
+   * scroll, and closing the dish (or going back) shows it again.
+   */
+  const onOpenSearchedProduct = (product: Dish, category: DishCategory, menu: DishMenu) => {
+    searchEntry = Date.now()
+    window.history.replaceState({...window.history.state, searchEntry}, '')
 
-    isSearchOpened.value = false
+    setHistory('push', {
+      mode: 'menu',
+      restaurantId: restaurantId.value ?? resolveRestaurantId(),
+      menuId: menu?.id ?? null,
+      categoryId: category?.id ?? null,
+      productId: product.id,
+      productPage: true,
+      scrollY: null,
+    })
 
-    if (menu.id !== selectedMenu.value?.id) {
-      switchMenu(menu, 'replace')
-    }
-
-    setTimeout(() => {
-      switchCategory(category, product, 'push')
-      scrollToCategory(category, product)
-    }, 200)
+    searchedProduct.value = product
+    isProductOpened.value = true
   }
 
   function onBackFromMenu() {
@@ -604,6 +615,14 @@
   }
 
   const onCloseProduct = () => {
+    // Back to the search: its entry is the previous one (see `onOpenSearchedProduct`)
+    if (searchedProduct.value) {
+      isProductOpened.value = false
+      searchedProduct.value = null
+      window.history.back()
+      return
+    }
+
     // Close the drawer without triggering a browser back navigation to avoid page reload
     isProductOpened.value = false
 
@@ -702,6 +721,17 @@
   }
 
   function onPopState(e: PopStateEvent) {
+    // Back from a dish opened in the search: the search is shown as it was, over the same page
+    if (searchEntry !== null && e.state?.searchEntry === searchEntry) {
+      searchEntry = null
+      isProductOpened.value = false
+      searchedProduct.value = null
+      return
+    }
+
+    searchEntry = null
+    searchedProduct.value = null
+
     // Close overlay drawers on browser navigation
     isSearchOpened.value = false
     isLanguageOpened.value = false
@@ -934,7 +964,7 @@
                     @close="isSearchOpened = false"
                     @open-menu="onSwitchMenu"
                     @open-category="onSwitchCategory"
-                    @open-product="onSwitchProduct"
+                    @open-product="onOpenSearchedProduct"
                     @open-language="onOpenLanguage"/>
 
       <LanguageDrawer :open="isLanguageOpened"
@@ -944,7 +974,7 @@
                       @switch-language="onSwitchLanguage"/>
 
       <ProductDrawer :open="isProductOpened"
-                     :product="selectedProduct"
+                     :product="searchedProduct ?? selectedProduct"
                      :currency="restaurant?.currency ?? 'uah'"
                      :establishment="restaurant?.establishment ?? 'restaurant'"
                      @close="onCloseProduct"/>

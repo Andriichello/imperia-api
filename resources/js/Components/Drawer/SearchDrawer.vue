@@ -73,9 +73,9 @@
     close();
   }
 
+  // The dish's page opens over the search, which stays as it is (its query, filters and scroll)
   function openProduct(product: Dish, category: DishCategory, menu: DishMenu) {
     emits('open-product', product, category, menu);
-    close();
   }
 
   function onQueryUpdated(query: string) {
