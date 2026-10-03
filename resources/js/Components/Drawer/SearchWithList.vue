@@ -315,9 +315,8 @@
               {{ i18n.t('search.clear_all') }}
             </button>
 
-            <!-- looks like the selected category -->
             <button type="button"
-                    class="w-full h-13 flex items-center justify-center rounded-lg border border-primary/40 bg-primary/20 text-primary-content text-base font-semibold cursor-pointer"
+                    class="w-full h-13 flex items-center justify-center rounded-lg bg-primary-content text-base-100 text-base font-semibold cursor-pointer"
                     v-if="draftCount"
                     @click="applyFilters">
               {{ i18n.t('search.show_dishes', {count: draftCount}, draftCount) }}
