@@ -82,7 +82,8 @@ const allergenNames = computed<string>(
 
     <div class="flex flex-col gap-2.5"
          :class="flush ? 'pt-3 pb-3.5' : 'px-2 py-3.5'">
-      <div class="flex items-start gap-3">
+      <!-- the text stretches to the photo's height, so time and calories line up with its bottom edge -->
+      <div class="flex items-stretch gap-3">
         <div class="flex-1 min-w-0 flex flex-col gap-1.5">
           <h3 class="text-lg/[26px] font-semibold line-clamp-3">
             {{ product.title }}
@@ -92,9 +93,24 @@ const allergenNames = computed<string>(
              v-if="product.description?.length">
             {{ product.description }}
           </p>
+
+          <div class="mt-auto pt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[13px]/5 text-base-content/65"
+               v-if="selectedSize.preparation_time || selectedSize.calories">
+            <span class="flex items-center gap-1"
+                  v-if="selectedSize.preparation_time">
+              <Timer class="size-3.5 shrink-0"/>
+              {{ i18n.t('badges.time', { minutes: selectedSize.preparation_time }) }}
+            </span>
+
+            <span class="flex items-center gap-1"
+                  v-if="selectedSize.calories">
+              <Flame class="size-3.5 shrink-0"/>
+              {{ i18n.t('badges.calories', { calories: selectedSize.calories }) }}
+            </span>
+          </div>
         </div>
 
-        <div class="size-28 shrink-0 relative rounded-lg overflow-hidden border border-base-300 bg-base-200/20"
+        <div class="size-28 shrink-0 self-start relative rounded-lg overflow-hidden border border-base-300 bg-base-200/20"
              v-if="media.length">
           <div class="absolute inset-0 overflow-hidden flex flex-col justify-center">
             <DiagonalPattern class="scale-165 text-primary-content/50"
@@ -120,22 +136,7 @@ const allergenNames = computed<string>(
       </div>
 
       <div class="flex flex-col gap-1"
-           v-if="selectedSize.preparation_time || selectedSize.calories || hasTags || allergenNames.length">
-        <div class="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[13px]/5 text-base-content/65"
-             v-if="selectedSize.preparation_time || selectedSize.calories">
-          <span class="flex items-center gap-1"
-                v-if="selectedSize.preparation_time">
-            <Timer class="size-3.5 shrink-0"/>
-            {{ i18n.t('badges.time', { minutes: selectedSize.preparation_time }) }}
-          </span>
-
-          <span class="flex items-center gap-1"
-                v-if="selectedSize.calories">
-            <Flame class="size-3.5 shrink-0"/>
-            {{ i18n.t('badges.calories', { calories: selectedSize.calories }) }}
-          </span>
-        </div>
-
+           v-if="hasTags || allergenNames.length">
         <DishTags class="text-[13px]/5" :flags="product.flags"/>
 
         <div class="flex items-start gap-1 text-[13px]/5 font-semibold text-orange-700"
