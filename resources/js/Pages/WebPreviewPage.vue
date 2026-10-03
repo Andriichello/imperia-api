@@ -535,8 +535,8 @@
   }
 
   /**
-   * The restaurant's button (on a menu page, a dish, search, languages): the restaurant page, with
-   * no drawer over it.
+   * The restaurant's button (on a menu page, search, languages): the restaurant page, with no drawer
+   * over it.
    */
   function onOpenRestaurant() {
     searchEntry = null
@@ -999,8 +999,7 @@
                      :product="searchedProduct ?? selectedProduct"
                      :currency="restaurant?.currency ?? 'uah'"
                      :establishment="restaurant?.establishment ?? 'restaurant'"
-                     @close="onCloseProduct"
-                     @open-restaurant="onOpenRestaurant"/>
+                     @close="onCloseProduct"/>
     </div>
   </BaseLayout>
 </template>

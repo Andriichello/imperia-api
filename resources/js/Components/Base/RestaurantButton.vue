@@ -6,8 +6,8 @@
   import {restaurantUrl} from "@/reviews";
 
   /**
-   * The restaurant's button, top-left on every public page but the restaurant page itself (a menu,
-   * a dish, search, languages): a link to the restaurant page, with the name cut short when it's
+   * The restaurant's button, top-left on the public pages (a menu, search, languages, reviews), but
+   * not on the restaurant page itself or a dish's page: a link to the restaurant page, with the name cut short when it's
    * long. A plain click is left to the page (`navigate`), which opens it without loading it again.
    */
   const emits = defineEmits(['navigate']);

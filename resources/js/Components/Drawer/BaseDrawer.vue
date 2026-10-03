@@ -16,6 +16,11 @@
       type: Boolean,
       default: true,
     },
+    // the restaurant's button, top-left (not on the dish page)
+    restaurantButton: {
+      type: Boolean,
+      default: true,
+    },
   });
 
   const i18n = useI18n();
@@ -38,7 +43,9 @@
         <!-- The restaurant's button on the left; buttons of the drawer (if any), then the close button on the right -->
         <div class="absolute top-2 inset-x-2 z-51 flex items-start justify-between gap-2 pointer-events-none">
           <RestaurantButton class="pointer-events-auto"
+                            v-if="restaurantButton"
                             @navigate="emits('restaurant')"/>
+          <span v-else/>
 
           <div class="shrink-0 flex gap-2 pointer-events-auto">
             <slot name="actions"/>

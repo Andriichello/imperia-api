@@ -34,7 +34,7 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['close', 'open-restaurant']);
+const emit = defineEmits(['close']);
 
 const media = computed<Media[]>(() => {
   return props.product?.media?.map((m: Media) => {
@@ -54,7 +54,7 @@ const closePopup = () => {
 </script>
 
 <template>
-  <BaseDrawer :open="open" :padding-top="false" @close="closePopup" @restaurant="emit('open-restaurant')">
+  <BaseDrawer :open="open" :padding-top="false" :restaurant-button="false" @close="closePopup">
     <div class="w-full h-full flex flex-col overflow-auto">
       <template v-if="product">
         <div class="w-full h-65 shrink-0 relative overflow-hidden border-b border-base-300"
