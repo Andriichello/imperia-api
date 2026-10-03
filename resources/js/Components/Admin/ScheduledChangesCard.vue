@@ -22,6 +22,7 @@
     deactivateEditorVersion,
     deleteEditorVersion,
     duplicateEditorVersion,
+    storeEditorVersion,
     type EditorDashboard,
     type EditorVersion,
   } from '@/api'
@@ -36,8 +37,10 @@
    */
   const props = defineProps({
     restaurant: {type: Object as PropType<EditorDashboard>, required: true},
-    // the list of versions (the version's own page comes later)
+    // the list of versions in the admin panel
     versionsUrl: {type: String, required: true},
+    // of a version: this one and `/{id}`
+    versionUrl: {type: String, required: true},
   })
 
   const emit = defineEmits<{
@@ -107,6 +110,20 @@
     }
   }
 
+  /** A new version, a draft: its page. */
+  async function add() {
+    busy.value = true
+
+    try {
+      const version = (await storeEditorVersion(props.restaurant.id, {})).data.data
+
+      window.location.assign(`${props.versionUrl}/${version.id}`)
+    } catch (error) {
+      emit('notify', t(key + 'error'))
+      busy.value = false
+    }
+  }
+
   function confirmed() {
     const {action, row} = asking.value!
 
@@ -126,7 +143,11 @@
         <span class="e-pill h-5! ml-1.5 bg-zinc-100 text-zinc-700" v-if="rows.length">{{ rows.length }}</span>
       </h2>
       <div class="flex-1"/>
-      <a class="mr-2 e-link" :href="versionsUrl">{{ t(key + 'see_all') }}</a>
+      <a class="mr-3 e-link" :href="versionsUrl">{{ t(key + 'see_all') }}</a>
+      <button type="button" class="e-btn e-btn-secondary h-8 px-2.5" :disabled="busy" @click="add">
+        <Plus class="size-4"/>
+        {{ t(key + 'add') }}
+      </button>
     </div>
 
     <ul class="mt-2" :aria-busy="busy" v-if="rows.length">
@@ -138,7 +159,7 @@
           <component :is="ICONS[row.icon]" class="size-4"/>
         </span>
 
-        <a class="flex-1 min-w-0 flex flex-col" :href="versionsUrl">
+        <a class="flex-1 min-w-0 flex flex-col" :href="`${versionUrl}/${row.version.id}`">
           <span class="flex items-center gap-1.5 whitespace-nowrap overflow-hidden">
             <span class="truncate">
               <b class="font-semibold">{{ row.title }}</b>

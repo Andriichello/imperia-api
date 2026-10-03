@@ -7,6 +7,7 @@
 import type { EditorVersionChange } from "./editorVersionChange";
 import type { EditorVersionCreatedBy } from "./editorVersionCreatedBy";
 import type { EditorVersionStatus } from "./editorVersionStatus";
+import type { Media } from "./media";
 
 /**
  * Scheduled version: changes, which go live together. Dates are in the restaurant's time zone.
@@ -37,4 +38,6 @@ export interface EditorVersion {
   changes_count: number;
   items_count: number;
   changes: EditorVersionChange[];
+  /** Photos of the changes. */
+  media: Media[];
 }

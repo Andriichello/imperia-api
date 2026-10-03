@@ -1,5 +1,5 @@
 import {Component, createApp} from 'vue';
-import {createPinia} from 'pinia';
+import {createPinia, Pinia} from 'pinia';
 import setupI18n from '@/i18n';
 import {setI18n} from '@/i18n/utils';
 import adminEn from '@/i18n/admin/en.json';
@@ -18,6 +18,21 @@ const PAGES: Record<string, () => Promise<{ default: Component }>> = {
   'reset-password': () => import(/* webpackChunkName: "admin-reset-password" */ '@/Pages/Admin/ResetPasswordPage.vue'),
   dashboard: () => import(/* webpackChunkName: "admin-dashboard" */ '@/Pages/Admin/DashboardPage.vue'),
   editor: () => import(/* webpackChunkName: "admin-editor" */ '@/Pages/EditorPage.vue'),
+  version: () => import(/* webpackChunkName: "admin-version" */ '@/Pages/Admin/VersionPage.vue'),
+};
+
+/** Pages, which keep their props in their stores. */
+const STORES: Record<string, () => Promise<(pinia: Pinia, props: Record<string, unknown>) => void>> = {
+  editor: async () => {
+    const {useEditorStore} = await import(/* webpackChunkName: "admin-editor" */ '@/stores/editor');
+
+    return (pinia, props) => useEditorStore(pinia).hydrate(props);
+  },
+  version: async () => {
+    const {useVersionStore} = await import(/* webpackChunkName: "admin-version" */ '@/stores/version');
+
+    return (pinia, props) => useVersionStore(pinia).hydrate(props);
+  },
 };
 
 async function mount(element: HTMLElement) {
@@ -31,19 +46,18 @@ async function mount(element: HTMLElement) {
   const {default: component} = await PAGES[page]();
   const pinia = createPinia();
 
-  // the editor keeps its props in its store
-  const app = page === 'editor' ? createApp(component) : createApp(component, {props: {...props, locale}});
+  // the editor and the version page keep their props in their stores
+  const app = STORES[page] ? createApp(component) : createApp(component, {props: {...props, locale}});
   app.use(pinia);
-
-  if (page === 'editor') {
-    const {useEditorStore} = await import(/* webpackChunkName: "admin-editor" */ '@/stores/editor');
-    useEditorStore(pinia).hydrate({...props, locale});
-  }
 
   // The admin's own texts, on top of the public site's ones (e.g. names of restaurant types)
   const i18n = setupI18n(locale, {en: {...editorEn, ...adminEn}, uk: {...editorUk, ...adminUk}});
   setI18n(i18n.global);
   app.use(i18n);
+
+  if (STORES[page]) {
+    (await STORES[page]())(pinia, {...props, locale});
+  }
 
   app.mount(element);
 }

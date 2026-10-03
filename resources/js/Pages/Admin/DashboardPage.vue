@@ -81,6 +81,7 @@
           <SpecialDaysCard :restaurant="restaurant" :hours-url="hoursUrl"/>
           <ScheduledChangesCard :restaurant="restaurant"
                                 :versions-url="props.props.urls.versions"
+                                :version-url="props.props.urls.version"
                                 @changed="reload"
                                 @notify="notify"/>
         </div>

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PasswordResetController;
 use App\Http\Controllers\Admin\SignInController;
+use App\Http\Controllers\Admin\VersionPageController;
 use App\Http\Controllers\Editor\EditorPageController;
 use Illuminate\Support\Facades\Route;
 
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 | Admin Routes
 |--------------------------------------------------------------------------
 |
-| The restaurant admin: sign in, the dashboard and the menu editor, under `/admin`
+| The restaurant admin: sign in, the dashboard, the menu editor and scheduled versions, under `/admin`
 | (the admin panel itself is at `/admin/manage`). Signed in with the session.
 |
 */
@@ -41,4 +42,8 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/editor/{id}', [EditorPageController::class, 'show'])
         ->whereNumber('id')
         ->name('editor');
+
+    Route::get('/versions/{id}', [VersionPageController::class, 'show'])
+        ->whereNumber('id')
+        ->name('versions.show');
 });

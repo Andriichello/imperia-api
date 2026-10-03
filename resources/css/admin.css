@@ -371,6 +371,20 @@
     color: var(--color-zinc-500);
   }
 
+  /* A field of a version's item: label · live · arrow · from the version's date · actions */
+  .e-vrow {
+    display: grid;
+    grid-template-columns: 136px minmax(0, 0.8fr) 20px minmax(0, 1.3fr) 64px;
+    column-gap: 12px;
+    padding: 9px 12px;
+    border-bottom: 1px solid #f0f0f1;
+  }
+
+  .e-vrow-changed {
+    background: #fffbeb;
+    box-shadow: inset 3px 0 0 var(--color-amber-500);
+  }
+
   /* Card of the dashboard: white, 1px border, radius 10 */
   .e-card {
     background: #ffffff;

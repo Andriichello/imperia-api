@@ -80,6 +80,8 @@ abstract class AdminPageController extends Controller
                 // the admin panel, for the ones, who can open it
                 'panel' => $user->isStaff() ? route('filament.admin.pages.dashboard') : null,
                 'versions' => route('filament.admin.resources.menu-versions.index'),
+                // of a version: this one and `/{id}`
+                'version' => url('admin/versions'),
             ],
         ];
     }

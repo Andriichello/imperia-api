@@ -49,6 +49,8 @@ export interface EditorUrls {
   // the admin panel, for the ones, who can open it
   panel: string | null
   versions: string
+  // of a version: this one and `/{id}`
+  version: string
 }
 
 /** A message at the bottom of the editor, with an action (e.g. Undo). */
@@ -579,9 +581,9 @@ export const useEditorStore = defineStore('editor', {
       return null
     },
 
-    /** Page of the version (in the admin panel, till the editor has one). */
+    /** Page of the version. */
     versionUrl(id: number): string {
-      return `${this.urls?.versions ?? ''}?version=${id}`
+      return `${this.urls?.version ?? ''}/${id}`
     },
 
     /** Everything of the restaurant again, after its menus, categories or dishes changed. */

@@ -18,6 +18,8 @@ export interface AdminUrls {
   // the admin panel, for the ones, who can open it
   panel: string | null
   versions: string
+  // of a version: this one and `/{id}`
+  version: string
 }
 
 export interface AdminUser {

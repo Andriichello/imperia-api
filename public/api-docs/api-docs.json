@@ -10502,7 +10502,8 @@
                     "failure_reason",
                     "changes_count",
                     "items_count",
-                    "changes"
+                    "changes",
+                    "media"
                 ],
                 "properties": {
                     "id": {
@@ -10591,6 +10592,13 @@
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/EditorVersionChange"
+                        }
+                    },
+                    "media": {
+                        "description": "Photos of the changes.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Media"
                         }
                     }
                 },

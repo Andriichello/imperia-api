@@ -2,8 +2,12 @@
 
 namespace App\Http\Resources\Editor;
 
+use App\Http\Resources\Media\MediaCollection;
 use App\Models\MenuVersion;
+use App\Models\MenuVersionChange;
+use App\Models\Morphs\Media;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use OpenApi\Annotations as OA;
@@ -40,7 +44,35 @@ class EditorVersionResource extends JsonResource
             'changes_count' => $this->countChanges(),
             'items_count' => $this->countItems(),
             'changes' => EditorVersionChangeResource::collection($this->itemChanges),
+            'media' => new MediaCollection($this->photos()),
         ];
+    }
+
+    /**
+     * Photos, which the changes have (an uploaded one isn't an item's photo before it goes live).
+     *
+     * @return Collection<int, Media>
+     */
+    protected function photos(): Collection
+    {
+        $ids = $this->itemChanges
+            ->flatMap(fn (MenuVersionChange $change) => [
+                ...($change->fields['media']['live'] ?? []),
+                ...($change->fields['media']['new'] ?? []),
+            ])
+            ->pluck('id')
+            ->filter()
+            ->unique()
+            ->values();
+
+        if ($ids->isEmpty()) {
+            return new Collection();
+        }
+
+        /** @var Collection<int, Media> $photos */
+        $photos = Media::query()->whereIn('id', $ids)->get();
+
+        return $photos->load('variants');
     }
 
     /**
@@ -70,7 +102,7 @@ class EditorVersionResource extends JsonResource
      *   schema="EditorVersion",
      *   description="Scheduled version: changes, which go live together. Dates are in the restaurant's time zone.",
      *   required={"id", "restaurant_id", "name", "status", "goes_live_at", "timezone", "created_by", "created_at",
-     *     "applied_at", "failed_at", "failure_reason", "changes_count", "items_count", "changes"},
+     *     "applied_at", "failed_at", "failure_reason", "changes_count", "items_count", "changes", "media"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="restaurant_id", type="integer", example=1),
      *   @OA\Property(property="name", type="string", nullable=true, example="Winter menu",
@@ -92,6 +124,8 @@ class EditorVersionResource extends JsonResource
      *     description="Changed fields, a new item counts as one."),
      *   @OA\Property(property="items_count", type="integer", example=8),
      *   @OA\Property(property="changes", type="array", @OA\Items(ref="#/components/schemas/EditorVersionChange")),
+     *   @OA\Property(property="media", type="array", @OA\Items(ref="#/components/schemas/Media"),
+     *     description="Photos of the changes."),
      * ),
      */
 }
