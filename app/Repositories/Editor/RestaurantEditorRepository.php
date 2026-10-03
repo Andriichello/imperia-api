@@ -52,7 +52,6 @@ class RestaurantEditorRepository extends EditorRepository
     {
         /** @var Collection<int, Restaurant> $restaurants */
         $restaurants = Restaurant::query()
-            ->with('media')
             ->orderBy('id')
             ->get();
 
@@ -63,8 +62,6 @@ class RestaurantEditorRepository extends EditorRepository
                 'slug' => $restaurant->slug,
                 'name' => $restaurant->name,
                 'default_locale' => $restaurant->getDefaultLocale(),
-                // the cover (its first photo guests see)
-                'photo' => $restaurant->media->first()?->url,
             ])
             ->values()
             ->toBase();

@@ -4,8 +4,8 @@ import {priceFormatted, weightUnitFormatted} from '@/helpers'
 import {formatDateTime, formatList, formatRelative} from '@/admin/format'
 
 /**
- * Rows of the dashboard's scheduled changes: a change scheduled on its own is described by
- * what it changes ("Chicken broth, 350 g · 140 ₴ → 150 ₴"), a version by its name and counts.
+ * Rows of planned menu changes: a change scheduled on its own is described by what it changes
+ * ("Chicken broth, 350 g · 140 ₴ → 150 ₴"), a version by its name and counts.
  */
 export type RowIcon = 'price' | 'hide' | 'show' | 'note' | 'archive' | 'new' | 'edit' | 'version'
 
@@ -190,6 +190,14 @@ export function describeVersion(version: EditorVersion, ctx: Context): VersionRo
       row.statusTone = 'red'
       detail = [detail, version.failure_reason].filter(Boolean).join(' · ')
       break
+    case 'applied': {
+      // when it went live (applied now, it's earlier than its date)
+      const appliedAt = version.applied_at ? DateTime.fromISO(version.applied_at, {setZone: true}) : goesLiveAt
+
+      row.date = appliedAt ? formatDateTime(appliedAt, ctx.locale, now) : row.date
+      row.status = ctx.t(key + 'went_live')
+      break
+    }
   }
 
   row.meta = [detail, by].filter(Boolean).join(' · ')

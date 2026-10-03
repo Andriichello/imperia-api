@@ -89,7 +89,10 @@ class DashboardPageTest extends TestCase
         $this->assertSame(['id' => $admin->id, 'name' => 'Anna Kovalenko', 'email' => $admin->email], $props['user']);
         $this->assertSame(route('admin.editor', ['id' => $this->restaurant->id]), $props['urls']['editor']);
         $this->assertSame(route('admin.logout'), $props['urls']['logout']);
-        $this->assertSame(route('filament.admin.pages.dashboard'), $props['urls']['panel']);
+        $this->assertSame(route('admin.versions.index'), $props['urls']['versions']);
+        // none of the pages go to the admin panel
+        $this->assertArrayNotHasKey('panel', $props['urls']);
+        $this->assertStringNotContainsString('/admin/manage', json_encode($props));
     }
 
     /**
@@ -126,8 +129,8 @@ class DashboardPageTest extends TestCase
     }
 
     /**
-     * Test that guests sign in first, staff, who can't edit a restaurant, go to the admin panel,
-     * customers can't open it.
+     * Test that guests sign in first, staff, who can't edit a restaurant, are told so (they don't go
+     * to the admin panel), customers can't open it.
      *
      * @return void
      */
@@ -138,9 +141,14 @@ class DashboardPageTest extends TestCase
 
         $this->get(route('admin.dashboard'))->assertRedirect(route('admin.login'));
 
-        $this->signIn($manager)
+        $props = $this->signIn($manager)
             ->get(route('admin.dashboard'))
-            ->assertRedirect(route('filament.admin.pages.dashboard'));
+            ->assertOk()
+            ->assertViewHas('page', 'no-restaurant')
+            ->viewData('props');
+
+        $this->assertSame($manager->email, $props['user']['email']);
+        $this->assertSame(route('admin.logout'), $props['urls']['logout']);
 
         $this->signIn($customer)
             ->get(route('admin.dashboard'))

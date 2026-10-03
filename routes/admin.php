@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 |
 | The restaurant admin: sign in, the dashboard, the menu editor and scheduled versions, under `/admin`
-| (the admin panel itself is at `/admin/manage`). Signed in with the session.
+| (the admin panel itself is at `/admin/manage`, none of these pages go there). Signed in with the session.
 |
 */
 
@@ -43,6 +43,8 @@ Route::middleware('auth:web')->group(function () {
         ->whereNumber('id')
         ->name('editor');
 
+    Route::get('/versions', [VersionPageController::class, 'index'])
+        ->name('versions.index');
     Route::get('/versions/{id}', [VersionPageController::class, 'show'])
         ->whereNumber('id')
         ->name('versions.show');

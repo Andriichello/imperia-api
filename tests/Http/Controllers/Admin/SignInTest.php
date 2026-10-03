@@ -176,7 +176,8 @@ class SignInTest extends TestCase
     }
 
     /**
-     * Test that staff, who can't edit a restaurant, go to the admin panel, customers can't sign in.
+     * Test that staff, who can't edit a restaurant, go to the dashboard too (not to the admin panel),
+     * customers can't sign in.
      *
      * @return void
      */
@@ -185,7 +186,7 @@ class SignInTest extends TestCase
         $manager = $this->user(UserRole::Manager, Restaurant::factory()->create());
 
         $this->signIn($manager->email, 'menu-2026')
-            ->assertRedirect(route('filament.admin.pages.dashboard'));
+            ->assertRedirect(route('admin.dashboard'));
 
         $this->guard()->logout();
 

@@ -6,9 +6,9 @@
     "nav": {
       "dashboard": "Dashboard",
       "switch_restaurant": "Restaurant: {name}. Switch restaurant",
+      "switch": "Switch restaurant",
       "visit_site": "Visit site",
       "account": "Account: {name}",
-      "admin_panel": "Admin panel",
       "sign_out": "Sign out"
     },
     "sign_in": {
@@ -151,6 +151,7 @@
         "not_scheduled": "Not scheduled",
         "inactive": "Inactive",
         "failed": "Failed",
+        "went_live": "Went live",
         "inactive_detail": "inactive, won't go live until you activate it",
         "actions": "Actions for {name}",
         "apply": "Apply now",
@@ -217,6 +218,17 @@
           "sizes": "sizes"
         }
       }
+    },
+    "versions": {
+      "title": "Planned menu changes",
+      "help": "Changes go live automatically at their set time, {timezone} time. Open one to edit it, reschedule or deactivate it.",
+      "add": "New version",
+      "planned": "Not live yet",
+      "applied": "Went live"
+    },
+    "no_restaurant": {
+      "title": "No restaurant to edit",
+      "help": "You are signed in as {email}, but this account can't edit a restaurant yet. Ask the restaurant owner to invite you."
     },
     "version": {
       "title": "Scheduled version",

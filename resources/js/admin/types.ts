@@ -6,8 +6,6 @@ export interface AdminRestaurant {
   slug: string | null
   name: string
   default_locale: string
-  // its cover
-  photo: string | null
 }
 
 /** Pages of the admin (see `AdminPageController::signedIn()`). */
@@ -15,8 +13,7 @@ export interface AdminUrls {
   dashboard: string
   editor: string
   logout: string
-  // the admin panel, for the ones, who can open it
-  panel: string | null
+  // planned menu changes: all versions of the restaurant
   versions: string
   // of a version: this one and `/{id}`
   version: string
@@ -36,3 +33,6 @@ export interface DashboardProps {
   urls: AdminUrls
   restaurant: EditorDashboard
 }
+
+/** Props of planned menu changes: the dashboard's ones, with all versions (see `VersionPageController::index()`). */
+export type VersionsProps = DashboardProps

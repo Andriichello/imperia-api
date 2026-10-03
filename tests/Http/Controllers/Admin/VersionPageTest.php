@@ -108,6 +108,60 @@ class VersionPageTest extends EditorTestCase
     }
 
     /**
+     * Test that the admin gets all versions of the current restaurant: the ones, which haven't gone
+     * live, then the ones, which went live. Another restaurant's versions aren't there.
+     *
+     * @return void
+     */
+    public function testAdminSeesPlannedMenuChanges()
+    {
+        $scheduled = $this->version($this->restaurant);
+        $draft = MenuVersion::factory()->withRestaurant($this->restaurant)->create(['name' => 'Spring prices']);
+        $applied = MenuVersion::factory()->withRestaurant($this->restaurant)->create([
+            'name' => 'Autumn menu',
+            'status' => MenuVersion::STATUS_APPLIED,
+            'goes_live_at' => now()->subDays(3),
+            'applied_at' => now()->subDays(3),
+        ]);
+        MenuVersion::factory()->withRestaurant(Restaurant::factory()->create())->create();
+
+        $props = $this->signIn($this->admin)
+            ->get(route('admin.versions.index'))
+            ->assertOk()
+            ->assertViewIs('admin.app')
+            ->assertViewHas('page', 'versions')
+            ->assertSee('<title>Planned menu changes · ' . $this->restaurant->name . '</title>', false)
+            ->viewData('props');
+
+        $versions = collect($props['restaurant']->resolve()['versions'])->map(fn ($version) => $version->resolve());
+
+        $this->assertSame([$scheduled->id, $draft->id, $applied->id], $versions->pluck('id')->all());
+        $this->assertSame(['scheduled', 'draft', 'applied'], $versions->pluck('status')->all());
+        $this->assertSame(route('admin.versions.index'), $props['urls']['versions']);
+        $this->assertSame(url('admin/versions'), $props['urls']['version']);
+    }
+
+    /**
+     * Test that guests sign in first, customers can't open planned menu changes.
+     *
+     * @return void
+     */
+    public function testOnlyStaffSeePlannedMenuChanges()
+    {
+        $customer = $this->user(UserRole::Customer);
+
+        $this->get(route('admin.versions.index'))
+            ->assertRedirect(route('admin.login'));
+
+        $this->signIn($customer)
+            ->get(route('admin.versions.index'))
+            ->assertRedirect(route('admin.dashboard'));
+
+        $this->get(route('admin.dashboard'))
+            ->assertForbidden();
+    }
+
+    /**
      * Test that guests sign in first, others can't open the version.
      *
      * @return void

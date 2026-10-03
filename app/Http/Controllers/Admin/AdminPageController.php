@@ -77,9 +77,7 @@ abstract class AdminPageController extends Controller
                 'dashboard' => route('admin.dashboard'),
                 'editor' => route('admin.editor', ['id' => $restaurant->id]),
                 'logout' => route('admin.logout'),
-                // the admin panel, for the ones, who can open it
-                'panel' => $user->isStaff() ? route('filament.admin.pages.dashboard') : null,
-                'versions' => route('filament.admin.resources.menu-versions.index'),
+                'versions' => route('admin.versions.index'),
                 // of a version: this one and `/{id}`
                 'version' => url('admin/versions'),
             ],

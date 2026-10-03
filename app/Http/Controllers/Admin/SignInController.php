@@ -54,8 +54,7 @@ class SignInController extends AdminPageController
     }
 
     /**
-     * Sign in, and go where the user wanted to, or to their home: the dashboard (or the admin
-     * panel for staff, who can't edit a restaurant). Customers can't sign in here.
+     * Sign in, and go where the user wanted to, or to the dashboard. Customers can't sign in here.
      *
      * @param SignInRequest $request
      *
@@ -90,7 +89,7 @@ class SignInController extends AdminPageController
 
         $request->session()->regenerate();
 
-        return redirect()->intended($this->home($user));
+        return redirect()->intended(route('admin.dashboard'));
     }
 
     /**
@@ -120,20 +119,6 @@ class SignInController extends AdminPageController
         return redirect()->route('admin.login')
             ->withInput($request->only('email', 'remember'))
             ->with('sign_in_error', $error);
-    }
-
-    /**
-     * Where the user starts: the dashboard, or the admin panel for staff, who can't edit a restaurant.
-     *
-     * @param User $user
-     *
-     * @return string
-     */
-    protected function home(User $user): string
-    {
-        return $this->restaurants->editableBy($user)->isNotEmpty()
-            ? route('admin.dashboard')
-            : route('filament.admin.pages.dashboard');
     }
 
     /**

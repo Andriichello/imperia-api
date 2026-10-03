@@ -1,14 +1,14 @@
 <script setup lang="ts">
   import {computed, PropType} from 'vue'
   import {useI18n} from 'vue-i18n'
-  import {Check, ChevronDown, ExternalLink, LayoutDashboard, LogOut, Utensils} from 'lucide-vue-next'
+  import {Check, ChevronDown, ExternalLink, LogOut, Utensils} from 'lucide-vue-next'
   import DropdownMenu from '@/Components/Editor/DropdownMenu.vue'
   import LanguageMenu from '@/Components/Admin/LanguageMenu.vue'
   import type {AdminRestaurant, AdminUser} from '@/admin/types'
 
   /**
-   * The admin's navbar on every signed-in page: home, the restaurant (switches to another one's
-   * dashboard), the admin's language, the public site and the account.
+   * The admin's navbar on every signed-in page: home (the logo and the restaurant's name), other
+   * restaurants (their dashboards), the admin's language, the public site and the account.
    */
   const props = defineProps({
     user: {type: Object as PropType<AdminUser>, required: true},
@@ -16,7 +16,7 @@
     restaurantId: {type: Number, required: true},
     siteUrl: {type: String, required: true},
     urls: {
-      type: Object as PropType<{ dashboard: string, logout: string, panel: string | null }>,
+      type: Object as PropType<{ dashboard: string, logout: string }>,
       required: true,
     },
     // the page of another restaurant (its dashboard, or e.g. its editor)
@@ -53,22 +53,22 @@
 
     <span class="w-px h-5 bg-zinc-200" aria-hidden="true"/>
 
-    <DropdownMenu v-if="restaurants.length > 1">
+    <a class="e-nav-btn min-w-0 text-[15px]! e-focus"
+       :href="urls.dashboard"
+       :title="t('admin.nav.dashboard')">
+      <span class="truncate">{{ current?.name }}</span>
+    </a>
+
+    <!-- another restaurant: its dashboard (or e.g. its editor) -->
+    <DropdownMenu class="-ml-1.5" v-if="restaurants.length > 1">
       <template #trigger="{open, toggle}">
         <button type="button"
-                class="e-nav-btn pl-1.5!"
+                class="e-nav-btn px-1.5! e-focus"
                 aria-haspopup="menu"
                 :aria-expanded="open"
                 :aria-label="t('admin.nav.switch_restaurant', {name: current?.name ?? ''})"
+                :title="t('admin.nav.switch')"
                 @click="toggle">
-          <img class="size-6 rounded-md object-cover shadow-[inset_0_0_0_1px_rgba(0,0,0,0.08)]"
-               :src="current.photo"
-               alt=""
-               v-if="current?.photo"/>
-          <span class="size-6 rounded-md bg-gradient-to-br from-[#efe2d2] to-[#c9ab8c] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.08)]"
-                aria-hidden="true"
-                v-else/>
-          <span class="text-[15px]">{{ current?.name }}</span>
           <ChevronDown class="size-4 text-zinc-500"/>
         </button>
       </template>
@@ -82,16 +82,6 @@
         <Check class="size-4 text-zinc-500" v-if="item.id === restaurantId"/>
       </a>
     </DropdownMenu>
-
-    <span class="h-[34px] inline-flex items-center gap-1.5 pl-1.5 pr-2.5 text-[15px] font-semibold"
-          v-else>
-      <img class="size-6 rounded-md object-cover"
-           :src="current.photo"
-           alt=""
-           v-if="current?.photo"/>
-      <span class="size-6 rounded-md bg-gradient-to-br from-[#efe2d2] to-[#c9ab8c]" aria-hidden="true" v-else/>
-      {{ current?.name }}
-    </span>
 
     <slot/>
 
@@ -123,14 +113,6 @@
         <p class="font-semibold truncate">{{ user.name }}</p>
         <p class="text-xs text-zinc-500 truncate">{{ user.email }}</p>
       </div>
-
-      <a class="e-dropdown-item"
-         role="menuitem"
-         :href="urls.panel"
-         v-if="urls.panel">
-        <LayoutDashboard class="size-4 text-zinc-500"/>
-        {{ t('admin.nav.admin_panel') }}
-      </a>
 
       <form method="post" :action="urls.logout">
         <input type="hidden" name="_token" :value="csrfToken"/>

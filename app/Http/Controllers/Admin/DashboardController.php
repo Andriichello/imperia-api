@@ -5,25 +5,25 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Resources\Editor\EditorDashboardResource;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 /**
  * Class DashboardController.
  *
- * The admin's home: the restaurant's page, whether it's open now, upcoming special days and
- * scheduled changes.
+ * The admin's home: the restaurant's page, its schedule and its changes, and planned changes
+ * of its menu.
  */
 class DashboardController extends AdminPageController
 {
     /**
-     * The dashboard of the current restaurant. Staff, who can't edit a restaurant, go to the admin panel.
+     * The dashboard of the current restaurant. Staff, who can't edit a restaurant, are told so
+     * (they don't go to the admin panel).
      *
      * @param Request $request
      *
-     * @return View|RedirectResponse
+     * @return View
      */
-    public function show(Request $request): View|RedirectResponse
+    public function show(Request $request): View
     {
         /** @var User $user */
         $user = $request->user();
@@ -32,7 +32,10 @@ class DashboardController extends AdminPageController
         if (!$restaurant) {
             abort_unless($user->isStaff(), 403);
 
-            return redirect()->route('filament.admin.pages.dashboard');
+            return $this->page($request, 'no-restaurant', __('Menu editor'), [
+                'user' => ['name' => $user->name, 'email' => $user->email],
+                'urls' => ['logout' => route('admin.logout')],
+            ]);
         }
 
         $dashboard = new EditorDashboardResource($this->restaurants->dashboard($restaurant));
