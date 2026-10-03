@@ -375,7 +375,9 @@ class PreviewBridge {
   protected styles(): HTMLStyleElement {
     const style = document.createElement('style')
 
+    // scrollbars take no room, like on a phone (a classic one narrows the page and scrolls it sideways)
     style.textContent = `
+      * { scrollbar-width: none; }
       html[data-editor-mode="select"] body { user-select: none; -webkit-user-select: none; }
       html[data-editor-mode="select"] [${EDIT_KEY_ATTRIBUTE}],
       html[data-editor-mode="select"] [${EDIT_KEY_ATTRIBUTE}] * { cursor: pointer; }
