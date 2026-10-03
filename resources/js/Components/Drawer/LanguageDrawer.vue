@@ -17,7 +17,7 @@
     }
   });
 
-  const emits = defineEmits(['close', 'switch-language']);
+  const emits = defineEmits(['close', 'switch-language', 'open-restaurant']);
 
   const selected = ref<string>(props.locale);
 
@@ -34,7 +34,8 @@
 
 <template>
   <BaseDrawer :open="open"
-              @close="close">
+              @close="close"
+              @restaurant="emits('open-restaurant')">
     <div class="w-full h-full flex flex-col gap-2 px-6">
       <h2 class="w-full font-bold text-xl pb-1 cursor-pointer">
         {{ $t('languages.title') }}:

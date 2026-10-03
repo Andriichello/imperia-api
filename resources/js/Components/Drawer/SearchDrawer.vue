@@ -41,7 +41,7 @@
     },
   });
 
-  const emits = defineEmits(['close', 'open-menu', 'open-category', 'open-product', 'open-language', 'query-updated']);
+  const emits = defineEmits(['close', 'open-menu', 'open-category', 'open-product', 'open-language', 'open-restaurant', 'query-updated']);
 
   const searchInputRef = ref<HTMLInputElement | null>(null);
   const hasResults = ref(false);
@@ -98,7 +98,8 @@
 
 <template>
   <BaseDrawer :open="open"
-              @close="close">
+              @close="close"
+              @restaurant="emits('open-restaurant')">
     <template #actions>
       <LanguageButton @click="emits('open-language')"/>
     </template>

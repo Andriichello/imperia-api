@@ -533,6 +533,23 @@
     })
   }
 
+  /**
+   * The restaurant's button (on a menu page, a dish, search, languages): the restaurant page, with
+   * no drawer over it.
+   */
+  function onOpenRestaurant() {
+    searchEntry = null
+    searchedProduct.value = null
+    isProductOpened.value = false
+    isSearchOpened.value = false
+    isLanguageOpened.value = false
+
+    // A drawer over the restaurant page just closes (a dish found in the search is on its menu's URL)
+    if (mode.value === 'menu' || window.location.pathname.includes('/menu')) {
+      onBackFromMenu()
+    }
+  }
+
   // Methods for Drawers
   function onOpenSearch() {
     isSearchOpened.value = true
@@ -965,19 +982,22 @@
                     @open-menu="onSwitchMenu"
                     @open-category="onSwitchCategory"
                     @open-product="onOpenSearchedProduct"
-                    @open-language="onOpenLanguage"/>
+                    @open-language="onOpenLanguage"
+                    @open-restaurant="onOpenRestaurant"/>
 
       <LanguageDrawer :open="isLanguageOpened"
                       :locale="locale"
                       :supported_locales="supported_locales"
                       @close="isLanguageOpened = false"
-                      @switch-language="onSwitchLanguage"/>
+                      @switch-language="onSwitchLanguage"
+                      @open-restaurant="onOpenRestaurant"/>
 
       <ProductDrawer :open="isProductOpened"
                      :product="searchedProduct ?? selectedProduct"
                      :currency="restaurant?.currency ?? 'uah'"
                      :establishment="restaurant?.establishment ?? 'restaurant'"
-                     @close="onCloseProduct"/>
+                     @close="onCloseProduct"
+                     @open-restaurant="onOpenRestaurant"/>
     </div>
   </BaseLayout>
 </template>

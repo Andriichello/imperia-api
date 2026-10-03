@@ -157,9 +157,9 @@
     "close": "Close"
   },
   "nav": {
-    "back": "Back to restaurant",
     "language": "Language: {name}",
     "search": "Search",
-    "browse": "Menus and categories"
+    "browse": "Menus and categories",
+    "restaurant_page": "{name}, restaurant page"
   }
 }
