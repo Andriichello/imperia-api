@@ -2,11 +2,13 @@
   import {computed, onBeforeUnmount, reactive, ref} from 'vue'
   import {useI18n} from 'vue-i18n'
   import axios from 'axios'
-  import {GripVertical, Trash2, Upload, X} from 'lucide-vue-next'
+  import {Trash2, Upload, X} from 'lucide-vue-next'
   import {VueDraggable} from 'vue-draggable-plus'
   import type {Media} from '@/api'
   import {updateEditorRestaurantPhotos, uploadEditorRestaurantPhoto} from '@/api'
   import PanelShell from '@/Components/Editor/PanelShell.vue'
+  import GripHandle from '@/Components/Editor/Fields/GripHandle.vue'
+  import {moveItem} from '@/editor/lists'
   import InfoBox from '@/Components/Editor/Fields/InfoBox.vue'
   import {usePanelDraft} from '@/composables/usePanelDraft'
   import {photosPreview} from '@/editor/drafts'
@@ -25,14 +27,6 @@
 
   const restaurant = computed(() => editor.restaurant!)
 
-  const {draft, dirty, saving, failed, discard, save, error} = usePanelDraft<Media[]>({
-    saved: () => restaurant.value.photos ?? [],
-    save: async (photos) => (await updateEditorRestaurantPhotos(restaurant.value.id, {
-      media: photos.map((photo) => photo.id),
-    })).data.data,
-    preview: (photos) => photosPreview(photos),
-  })
-
   interface PhotoUpload {
     key: number
     name: string
@@ -43,12 +37,31 @@
     controller: AbortController
   }
 
+  // photos being uploaded, they join the draft once they are (before the draft: it waits for them)
   const uploads = ref<PhotoUpload[]>([])
+
+  const {draft, dirty, saving, failed, discard, save, error} = usePanelDraft<Media[]>({
+    saved: () => restaurant.value.photos ?? [],
+    save: async (photos) => (await updateEditorRestaurantPhotos(restaurant.value.id, {
+      media: photos.map((photo) => photo.id),
+    })).data.data,
+    preview: (photos) => photosPreview(photos),
+    // photos being uploaded are lost, when the panel is left
+    pending: () => uploads.value.length > 0,
+  })
+
   // files, which weren't uploaded, and why
   const rejected = ref<string[]>([])
   const dragging = ref(false)
   const fileInput = ref<HTMLInputElement | null>(null)
   let uploaded = 0
+
+  /** Its title, or "Photo 2" for ones without one (older uploads have a hash as their title). */
+  function photoName(photo: Media, index: number): string {
+    const title = photo.title ?? ''
+
+    return title && !/^[0-9a-f]{32}$/.test(title) ? title : t('editor.photos.untitled', {number: index + 1})
+  }
 
   /** The WebP version, when there's one. */
   function thumbnail(photo: Media): string {
@@ -134,7 +147,7 @@
   <PanelShell :breadcrumbs="[{label: t('editor.panel.page_structure'), selection: null}]"
               :title="t('editor.sections.photos')"
               :subtitle="t('editor.subtitles.photos')"
-              :dirty="dirty || uploads.length > 0"
+              :dirty="dirty"
               :saving="saving"
               :failed="failed"
               :can-save="uploads.length === 0"
@@ -211,19 +224,22 @@
 
             <button type="button"
                     class="e-icon-btn absolute top-1.5 right-1.5 size-[30px] bg-white/90 shadow-[0_1px_2px_rgba(0,0,0,0.15)]"
-                    :aria-label="t('editor.photos.remove', {name: photo.title ?? photo.name})"
-                    :title="t('editor.photos.remove', {name: photo.title ?? photo.name})"
+                    :aria-label="t('editor.photos.remove', {name: photoName(photo, index)})"
+                    :title="t('editor.photos.remove', {name: photoName(photo, index)})"
                     @click="remove(photo)">
               <Trash2 class="size-[15px]"/>
             </button>
 
-            <span class="e-grip absolute bottom-1.5 right-1.5 size-[30px] rounded-md bg-white/90 text-zinc-600 shadow-[0_1px_2px_rgba(0,0,0,0.15)]"
-                  :aria-label="t('editor.reorder')">
-              <GripVertical class="size-[15px]"/>
-            </span>
+            <GripHandle class="absolute bottom-1.5 right-1.5 size-[30px] rounded-md bg-white/90 text-zinc-600 shadow-[0_1px_2px_rgba(0,0,0,0.15)]"
+                        icon-class="size-[15px]"
+                        :name="photoName(photo, index)"
+                        :index="index"
+                        :count="draft.length"
+                        :columns="2"
+                        @move="(from, to) => draft = moveItem(draft, from, to)"/>
           </div>
 
-          <p class="text-xs text-zinc-600 truncate">{{ photo.title ?? photo.name }}</p>
+          <p class="text-xs text-zinc-600 truncate">{{ photoName(photo, index) }}</p>
         </div>
       </VueDraggable>
 
@@ -258,6 +274,7 @@
       </div>
     </section>
 
-    <InfoBox>{{ t('editor.photos.info') }}</InfoBox>
+    <!-- without photos, there's only the dropzone -->
+    <InfoBox v-if="draft.length || uploads.length">{{ t('editor.photos.info') }}</InfoBox>
   </PanelShell>
 </template>

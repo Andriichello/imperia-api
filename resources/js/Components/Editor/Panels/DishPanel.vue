@@ -69,6 +69,9 @@
 
   let created: number | null = null
 
+  // percent of the photo being uploaded (before the draft: it waits for it)
+  const uploading = ref<number | null>(null)
+
   const {draft, dirty, saving, failed, discard, save, error} = usePanelDraft<DishDraft>({
     saved: () => dishOf(dish.value, editor.locales),
     save: async (values) => {
@@ -80,6 +83,10 @@
 
       return (await getEditorRestaurant(restaurant.value.id)).data.data
     },
+    canSave: () => canSave.value,
+    // a photo being uploaded is lost, when the panel is left
+    pending: () => uploading.value !== null,
+    lists: {sizes: (values) => values.sizes.map((size) => size.key)},
     preview: (values, locale) => menusPreview(
       applyDish(restaurant.value.menus, props.selection.id, category.value?.id ?? 0, values),
       locale,
@@ -123,7 +130,7 @@
     }
 
     const saved = ['price', 'weight', 'weight_unit', 'calories', 'preparation_time']
-      .map((key) => error(`sizes.${index}.${key}`))
+      .map((key) => error(`sizes.${size.key}.${key}`))
       .find(Boolean)
 
     return saved ?? null
@@ -181,7 +188,6 @@
   // Photo
 
   const fileInput = ref<HTMLInputElement | null>(null)
-  const uploading = ref<number | null>(null)
   const photoError = ref<string | null>(null)
   let upload: AbortController | null = null
 
@@ -263,7 +269,7 @@
     photoError.value = null
 
     if (isNew.value) {
-      editor.select(category.value ? {section: 'category', id: category.value.id} : null)
+      editor.select(category.value ? {section: 'category', id: category.value.id} : null, false, true)
     } else {
       discard()
     }
@@ -285,7 +291,7 @@
 
   async function archive() {
     if (dish.value && await actions.archive('dish', dish.value.id, name(dish.value))) {
-      editor.select(category.value ? {section: 'category', id: category.value.id} : null)
+      editor.select(category.value ? {section: 'category', id: category.value.id} : null, false, true)
     }
   }
 

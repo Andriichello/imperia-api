@@ -1,5 +1,7 @@
 <script setup lang="ts">
-  import {computed, onBeforeUnmount, onMounted} from 'vue'
+  import {computed, onBeforeUnmount, onMounted, ref, watch} from 'vue'
+  import {useI18n} from 'vue-i18n'
+  import {Eye, X} from 'lucide-vue-next'
   import EditorTopBar from '@/Components/Editor/EditorTopBar.vue'
   import PageStructure from '@/Components/Editor/PageStructure.vue'
   import MissingPanel from '@/Components/Editor/Panels/MissingPanel.vue'
@@ -22,6 +24,15 @@
    * on the left, and the preview of the public page.
    */
   const editor = useEditorStore()
+  const {t} = useI18n()
+
+  // narrow screens: the preview is shown instead of the panel
+  const previewOpen = ref(false)
+
+  // a part picked in the preview opens its panel
+  watch(() => editor.selection, () => {
+    previewOpen.value = false
+  })
 
   /** Panels of the restaurant page's sections, and of menus, categories and dishes. */
   const PANELS = {
@@ -89,16 +100,26 @@
     editor.altHeld = false
   }
 
+  // the browser asks before the page is left (another restaurant, signing out) with unsaved changes
+  function onBeforeUnload(event: BeforeUnloadEvent) {
+    if (editor.dirty) {
+      event.preventDefault()
+      event.returnValue = ''
+    }
+  }
+
   onMounted(() => {
     window.addEventListener('keydown', onKeydown)
     window.addEventListener('keyup', onKeyup)
     window.addEventListener('blur', onBlur)
+    window.addEventListener('beforeunload', onBeforeUnload)
   })
 
   onBeforeUnmount(() => {
     window.removeEventListener('keydown', onKeydown)
     window.removeEventListener('keyup', onKeyup)
     window.removeEventListener('blur', onBlur)
+    window.removeEventListener('beforeunload', onBeforeUnload)
   })
 </script>
 
@@ -107,7 +128,9 @@
     <EditorTopBar/>
 
     <div class="flex-1 min-h-0 flex">
-      <aside class="w-[420px] shrink-0 flex flex-col bg-white border-r border-zinc-200">
+      <!-- narrow screens: the panel takes the width, the preview is behind a button -->
+      <aside class="w-full lg:w-[420px] shrink-0 flex flex-col bg-white border-r border-zinc-200"
+             :class="{'max-lg:hidden': previewOpen}">
         <component :is="panel"
                    :key="panelKey"
                    v-bind="isItem ? {selection: editor.selection} : {}"
@@ -120,10 +143,23 @@
         <PageStructure v-else/>
       </aside>
 
-      <PreviewPane/>
+      <div class="flex-1 min-w-0 flex"
+           :class="{'max-lg:hidden': !previewOpen}">
+        <PreviewPane/>
+      </div>
     </div>
+
+    <button type="button"
+            class="lg:hidden fixed bottom-20 right-5 z-30 e-btn e-btn-primary h-11 px-4 shadow-[0_12px_32px_-8px_rgba(24,24,27,0.5)]"
+            @click="previewOpen = !previewOpen">
+      <X class="size-4" v-if="previewOpen"/>
+      <Eye class="size-4" v-else/>
+      {{ previewOpen ? t('editor.narrow.back') : t('editor.narrow.preview') }}
+    </button>
 
     <ToastStack/>
     <ConfirmDialog/>
+
+    <p class="sr-only" aria-live="polite">{{ editor.announcement }}</p>
   </div>
 </template>

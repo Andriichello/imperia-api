@@ -33,3 +33,29 @@ export function translationsOf(value: EditorTranslations | null | undefined, loc
 
   return Object.fromEntries(locales.map((locale) => [locale, texts[locale] ?? '']))
 }
+
+/** Languages of the editor itself (its texts are in `i18n/editor/`). */
+export const INTERFACE_LOCALES = ['en', 'uk']
+
+const INTERFACE_LOCALE_KEY = 'editor-locale'
+
+/** The editor's language picked on this browser, or the given one (the browser's language). */
+export function interfaceLocale(fallback: string): string {
+  let saved: string | null = null
+
+  try {
+    saved = localStorage.getItem(INTERFACE_LOCALE_KEY)
+  } catch (e) {
+    // no storage (e.g. it's blocked): the browser's language
+  }
+
+  return [saved, fallback].find((locale) => !!locale && INTERFACE_LOCALES.includes(locale)) ?? 'en'
+}
+
+export function saveInterfaceLocale(locale: string): void {
+  try {
+    localStorage.setItem(INTERFACE_LOCALE_KEY, locale)
+  } catch (e) {
+    // it's the language till the page is opened again
+  }
+}

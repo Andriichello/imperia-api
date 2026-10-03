@@ -22,6 +22,7 @@
     saved: () => detailsOf(restaurant.value),
     save: async (details) => (await updateEditorRestaurant(restaurant.value.id, detailsRequest(details))).data.data,
     preview: (details, locale) => detailsPreview(details, locale, editor.defaultLocale),
+    canSave: () => canSave.value,
   })
 
   const {locale, languages, placeholder, textError} = useContentLocale(

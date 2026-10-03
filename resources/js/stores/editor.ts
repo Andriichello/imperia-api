@@ -4,6 +4,7 @@ import {getEditorRestaurant} from '@/api'
 import type {PreviewBrand, PreviewMode, PreviewPage, PreviewPatch} from '@/editor/protocol'
 import {isSameSelection, keysOf, Selection, selectionOf} from '@/editor/sections'
 import {brandOf, BrandColors} from '@/editor/brand'
+import {t} from '@/i18n/utils'
 
 export interface EditorUser {
   name: string
@@ -22,14 +23,29 @@ export interface Toast {
   action?: { label: string, run: () => unknown }
 }
 
+/** Answers to a question: its button, the other one (when there's one), or Cancel. */
+export type Answer = 'confirm' | 'alternative' | 'cancel'
+
 /** A question, which has to be answered before going on (e.g. before deleting). */
 export interface Confirmation {
   title: string
   message: string
   confirm: string
+  // a second choice (e.g. Discard next to Save)
+  alternative?: string
   danger?: boolean
-  resolve: (confirmed: boolean) => void
+  resolve: (answer: Answer) => void
 }
+
+/** What the open panel does with its changes, when it's left. */
+export interface PanelGuard {
+  save: () => Promise<boolean>
+  discard: () => void
+  canSave: () => boolean
+}
+
+// the open panel's (functions only, so it isn't in the store's state)
+let panelGuard: PanelGuard | null = null
 
 /** How long a toast stays. */
 const TOAST_MS = 6000
@@ -65,6 +81,8 @@ interface EditorState {
   previewBrand: PreviewBrand | null
   toasts: Toast[]
   confirmation: Confirmation | null
+  // read out by screen readers (e.g. where an item was moved)
+  announcement: string
 }
 
 export const useEditorStore = defineStore('editor', {
@@ -88,6 +106,7 @@ export const useEditorStore = defineStore('editor', {
     previewBrand: null,
     toasts: [],
     confirmation: null,
+    announcement: '',
   }),
   getters: {
     defaultLocale: (state): string => state.restaurant?.default_locale ?? 'en',
@@ -107,16 +126,71 @@ export const useEditorStore = defineStore('editor', {
 
     /**
      * Open the panel of the part (none: the page structure). The preview shows it, when
-     * it's picked outside of the preview.
+     * it's picked outside of the preview. Unsaved changes of the open panel are saved or
+     * discarded first, or it stays open.
+     *
+     * @param selection
+     * @param reveal The preview scrolls to the part
+     * @param force Leave the open panel without asking (e.g. after it was archived)
      */
-    select(selection: Selection | null, reveal: boolean = false) {
+    async select(selection: Selection | null, reveal: boolean = false, force: boolean = false): Promise<boolean> {
       if (!isSameSelection(selection, this.selection)) {
+        if (!force && !await this.leave()) {
+          return false
+        }
+
         this.selection = selection
       }
 
       if (reveal && selection) {
         this.reveal = {keys: keysOf(selection), count: this.reveal.count + 1}
       }
+
+      return true
+    },
+
+    /** The open panel registers what it does with its changes, when it's left. */
+    guard(guard: PanelGuard) {
+      panelGuard = guard
+    },
+
+    unguard(guard: PanelGuard) {
+      if (panelGuard === guard) {
+        panelGuard = null
+      }
+    },
+
+    /**
+     * Whether the open panel can be left: its changes are saved or discarded first, or it
+     * stays open. Changes, which can't be saved (they're invalid), can only be discarded.
+     */
+    async leave(): Promise<boolean> {
+      const guard = panelGuard
+
+      if (!this.dirty || !guard) {
+        return true
+      }
+
+      const canSave = guard.canSave()
+      const answer = await this.ask({
+        title: t('editor.leave.title'),
+        message: t(canSave ? 'editor.leave.message' : 'editor.leave.message_invalid'),
+        confirm: t(canSave ? 'editor.leave.save' : 'editor.leave.discard'),
+        alternative: canSave ? t('editor.leave.discard') : undefined,
+        danger: !canSave,
+      })
+
+      if (answer === 'cancel') {
+        return false
+      }
+
+      if (answer === 'confirm' && canSave) {
+        return guard.save()
+      }
+
+      guard.discard()
+
+      return true
     },
 
     /** A part of the page was clicked in the preview. */
@@ -129,7 +203,7 @@ export const useEditorStore = defineStore('editor', {
     },
 
     close() {
-      this.select(null)
+      return this.select(null)
     },
 
     /** Everything of the restaurant again, after its menus, categories or dishes changed. */
@@ -144,21 +218,33 @@ export const useEditorStore = defineStore('editor', {
       setTimeout(() => this.dismiss(id), TOAST_MS)
     },
 
+    /** Read the message out to screen reader users. */
+    announce(message: string) {
+      // the same message again is read out too
+      this.announcement = ''
+      setTimeout(() => this.announcement = message, 50)
+    },
+
     dismiss(id: number) {
       this.toasts = this.toasts.filter((toast) => toast.id !== id)
     },
 
-    /** Ask a question: whether it's confirmed. */
-    confirm(question: Omit<Confirmation, 'resolve'>): Promise<boolean> {
-      this.confirmation?.resolve(false)
+    /** Ask a question: its answer. */
+    ask(question: Omit<Confirmation, 'resolve'>): Promise<Answer> {
+      this.confirmation?.resolve('cancel')
 
       return new Promise((resolve) => {
         this.confirmation = {...question, resolve}
       })
     },
 
-    answer(confirmed: boolean) {
-      this.confirmation?.resolve(confirmed)
+    /** Ask a question: whether it's confirmed. */
+    async confirm(question: Omit<Confirmation, 'resolve' | 'alternative'>): Promise<boolean> {
+      return await this.ask(question) === 'confirm'
+    },
+
+    answer(answer: Answer) {
+      this.confirmation?.resolve(answer)
       this.confirmation = null
     },
 

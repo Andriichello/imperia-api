@@ -26,7 +26,7 @@
 <template>
   <dialog class="m-auto w-[400px] p-0 rounded-xl bg-white text-zinc-900 shadow-[0_24px_48px_-12px_rgba(24,24,27,0.4)] backdrop:bg-zinc-900/40"
           ref="dialog"
-          @keydown.esc.prevent="editor.answer(false)">
+          @keydown.esc.prevent="editor.answer('cancel')">
     <div class="p-5 flex flex-col gap-2"
          v-if="editor.confirmation">
       <h2 class="text-base font-semibold">{{ editor.confirmation.title }}</h2>
@@ -35,15 +35,22 @@
       <div class="mt-3 flex justify-end gap-2">
         <button type="button"
                 class="e-btn e-btn-secondary"
-                @click="editor.answer(false)">
+                @click="editor.answer('cancel')">
           {{ t('editor.confirm.cancel') }}
+        </button>
+
+        <button type="button"
+                class="e-btn e-btn-secondary"
+                v-if="editor.confirmation.alternative"
+                @click="editor.answer('alternative')">
+          {{ editor.confirmation.alternative }}
         </button>
 
         <button type="button"
                 class="e-btn"
                 :class="editor.confirmation.danger ? 'bg-red-700 text-white' : 'e-btn-primary'"
                 ref="confirmButton"
-                @click="editor.answer(true)">
+                @click="editor.answer('confirm')">
           {{ editor.confirmation.confirm }}
         </button>
       </div>

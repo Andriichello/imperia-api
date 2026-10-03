@@ -11,7 +11,6 @@
     Eye,
     EyeOff,
     FolderInput,
-    GripVertical,
     Image,
     Plus,
     RotateCcw,
@@ -21,6 +20,8 @@
   import type {EditorDish, EditorMenu} from '@/api'
   import {getEditorRestaurant, storeEditorCategory, updateEditorCategory} from '@/api'
   import PanelShell from '@/Components/Editor/PanelShell.vue'
+  import GripHandle from '@/Components/Editor/Fields/GripHandle.vue'
+  import {moveItem} from '@/editor/lists'
   import DropdownMenu from '@/Components/Editor/DropdownMenu.vue'
   import FieldLabel from '@/Components/Editor/Fields/FieldLabel.vue'
   import InfoBox from '@/Components/Editor/Fields/InfoBox.vue'
@@ -68,6 +69,7 @@
 
       return (await getEditorRestaurant(restaurant.value.id)).data.data
     },
+    canSave: () => canSave.value,
     preview: (values, locale) => menusPreview(
       applyCategory(restaurant.value.menus, props.selection.id, menu.value?.id ?? 0, values),
       locale,
@@ -156,7 +158,7 @@
 
   async function archive() {
     if (category.value && await actions.archive('category', category.value.id, name(category.value))) {
-      editor.select(menu.value ? {section: 'menu', id: menu.value.id} : null)
+      editor.select(menu.value ? {section: 'menu', id: menu.value.id} : null, false, true)
     }
   }
 
@@ -186,7 +188,7 @@
               :save-label="isNew ? t('editor.category.create') : null"
               @navigate="editor.select($event, !!$event)"
               @close="editor.close()"
-              @discard="isNew ? editor.select(menu ? {section: 'menu', id: menu.id} : null) : discard()"
+              @discard="isNew ? editor.select(menu ? {section: 'menu', id: menu.id} : null, false, true) : discard()"
               @save="onSave">
     <template #actions v-if="category">
       <DropdownMenu align="end">
@@ -310,10 +312,11 @@
                     ghost-class="e-drag-ghost"
                     :animation="150">
         <div class="flex items-center gap-2.5 min-h-[60px] py-2 pr-1 border-b border-[#f0f0f1]"
-             v-for="dish in dishes" :key="dish.id">
-          <span class="e-grip" :aria-label="t('editor.reorder')">
-            <GripVertical class="size-4"/>
-          </span>
+             v-for="(dish, index) in dishes" :key="dish.id">
+          <GripHandle :name="name(dish)"
+                      :index="index"
+                      :count="dishes.length"
+                      @move="(from, to) => dishes = moveItem(dishes, from, to)"/>
 
           <button type="button"
                   class="flex-1 min-w-0 flex items-center gap-2.5 text-start rounded e-focus"

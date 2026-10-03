@@ -261,6 +261,7 @@ class RestaurantEditorTest extends EditorTestCase
 
     /**
      * Test that notes need text in the default language, and only the restaurant's notes can be kept.
+     * Messages name the fields.
      *
      * @return void
      */
@@ -277,7 +278,12 @@ class RestaurantEditorTest extends EditorTestCase
             ],
         ])
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['notes.0.text.en', 'notes.1.id', 'notes.2.text.en']);
+            // fields are named in messages
+            ->assertJsonValidationErrors([
+                'notes.0.text.en' => 'The note field is required.',
+                'notes.1.id' => 'The selected note is invalid.',
+                'notes.2.text.en' => 'The note must not be greater than 120 characters.',
+            ]);
 
         $this->putJson("/api/editor/restaurants/{$this->restaurant->id}/notes", ['notes' => []])
             ->assertOk()

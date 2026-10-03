@@ -3,11 +3,16 @@ import en from './locales/en.json';
 import uk from './locales/uk.json';
 
 /**
- * Ukrainian plurals with three forms: "1 страва | 2 страви | 5 страв".
- * Messages with two forms are split as in English.
+ * Ukrainian plurals with three forms: "1 страва | 2 страви | 5 страв", or four with one for
+ * none first. Messages with two forms are split as in English.
  */
 function ukrainianPlural(choice: number, choicesLength: number): number {
   const n = Math.abs(choice);
+
+  // with a form for none first: "Немає страв | 1 страва | 2 страви | 5 страв"
+  if (choicesLength === 4) {
+    return n === 0 ? 0 : 1 + ukrainianPlural(choice, 3);
+  }
 
   if (choicesLength < 3) {
     return n === 1 ? 0 : 1;

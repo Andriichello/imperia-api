@@ -82,6 +82,11 @@ class EditorPageTest extends EditorTestCase
         $this->assertSame([$menu->id], collect($props['restaurant']->resolve()['menus'])->pluck('id')->all());
         $this->assertSame([$this->restaurant->id], $props['restaurants']->pluck('id')->all());
         $this->assertSame($this->admin->email, $props['user']['email']);
+
+        // the editor is in the browser's language
+        $this->withHeader('Accept-Language', 'uk-UA,uk;q=0.9,en;q=0.8')
+            ->get(route('filament.admin.editor', ['id' => $this->restaurant->id]))
+            ->assertViewHas('props', fn (array $props) => $props['locale'] === 'uk');
     }
 
     /**

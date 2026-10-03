@@ -34,6 +34,7 @@
       brand_primary: colors.primary.toLowerCase(),
       brand_primary_content: colors.content.toLowerCase(),
     })).data.data,
+    canSave: () => readable.value,
   })
 
   const valid = computed(() => isHex(draft.value.primary) && isHex(draft.value.content))

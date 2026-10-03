@@ -105,6 +105,62 @@ abstract class EditorRequest extends BaseRequest
     }
 
     /**
+     * Names of fields in validation messages ("The note must not be greater than 120 characters."
+     * instead of "The notes.0.text.en must not ...").
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return [
+            'name.*' => 'name',
+            'title.*' => 'name',
+            'description.*' => 'description',
+            'badge.*' => 'badge',
+            'address.*' => 'address',
+            'establishment' => 'type',
+            'brand_primary' => 'primary color',
+            'brand_primary_content' => 'text color',
+            'notes' => 'notes',
+            'notes.*.id' => 'note',
+            'notes.*.text' => 'note',
+            'notes.*.text.*' => 'note',
+            'media' => 'photos',
+            'media.*' => 'photo',
+            'file' => 'photo',
+            'timezone' => 'time zone',
+            'weekdays.*' => 'hours of the day',
+            'weekdays.*.*.beg_hour' => 'opening time',
+            'weekdays.*.*.beg_minute' => 'opening time',
+            'weekdays.*.*.end_hour' => 'closing time',
+            'weekdays.*.*.end_minute' => 'closing time',
+            'exceptions.*.id' => 'special day',
+            'exceptions.*.starts_on' => 'first day',
+            'exceptions.*.ends_on' => 'last day',
+            'exceptions.*.beg_hour' => 'opening time',
+            'exceptions.*.beg_minute' => 'opening time',
+            'exceptions.*.end_hour' => 'closing time',
+            'exceptions.*.end_minute' => 'closing time',
+            'exceptions.*.reason.*' => 'name of the day',
+            'closed_until' => 'closing date',
+            'closed_reason.*' => 'reason',
+            'flags.*' => 'tag',
+            'sizes' => 'sizes',
+            'sizes.*.id' => 'size',
+            'sizes.*.price' => 'price',
+            'sizes.*.weight' => 'size',
+            'sizes.*.weight_unit' => 'unit',
+            'sizes.*.calories' => 'calories',
+            'sizes.*.preparation_time' => 'preparation time',
+            'menu_id' => 'menu',
+            'category_id' => 'category',
+            'menus.*.id' => 'menu',
+            'menus.*.categories.*' => 'category',
+            'dishes.*' => 'dish',
+        ];
+    }
+
+    /**
      * Validated data, with items of lists in the order they were sent: it's built rule by rule,
      * so e.g. items with an `id` would come before ones without it.
      *

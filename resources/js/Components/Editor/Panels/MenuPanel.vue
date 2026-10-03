@@ -47,6 +47,7 @@
 
       return (await getEditorRestaurant(restaurant.value.id)).data.data
     },
+    canSave: () => canSave.value,
     preview: (texts, locale) => menusPreview(
       applyMenu(restaurant.value.menus, props.selection.id, texts, restaurant.value.id),
       locale,
@@ -103,7 +104,7 @@
 
   async function archive() {
     if (menu.value && await confirmLastVisible() && await actions.archive('menu', menu.value.id, name(menu.value))) {
-      editor.select({section: 'menus', id: null})
+      editor.select({section: 'menus', id: null}, false, true)
     }
   }
 
@@ -133,7 +134,7 @@
               :save-label="isNew ? t('editor.menu.create') : null"
               @navigate="editor.select($event, !!$event)"
               @close="editor.close()"
-              @discard="isNew ? editor.select({section: 'menus', id: null}) : discard()"
+              @discard="isNew ? editor.select({section: 'menus', id: null}, false, true) : discard()"
               @save="onSave">
     <template #actions v-if="menu">
       <DropdownMenu align="end">
@@ -225,6 +226,8 @@
           {{ t('editor.menus.add_category') }}
         </button>
       </div>
+
+      <p class="py-2 text-[13px] text-zinc-500" v-if="!categories.length">{{ t('editor.menu.no_categories') }}</p>
 
       <button type="button"
               class="min-h-11 flex items-center gap-2.5 px-1 border-b border-[#f0f0f1] text-start hover:bg-zinc-50 e-focus"

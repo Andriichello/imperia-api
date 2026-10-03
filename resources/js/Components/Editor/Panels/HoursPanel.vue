@@ -37,6 +37,8 @@
     saved: () => hoursOf(restaurant.value),
     save: async (hours) => (await updateEditorRestaurantHours(restaurant.value.id, hoursRequest(hours))).data.data,
     preview: (hours, locale) => hoursPreview(hours, locale, editor.defaultLocale),
+    canSave: () => canSave.value,
+    lists: {exceptions: (hours) => hours.exceptions.map((day) => day.key)},
   })
 
   // the default language first
@@ -182,10 +184,6 @@
   const editingDay = ref<string | null>(null)
   let newDays = 0
 
-  function dayIndex(day: SpecialDayDraft): number {
-    return draft.value.exceptions.findIndex((item) => item.key === day.key)
-  }
-
   /** What's wrong with the special day: no date, or the hours. */
   function specialProblem(day: SpecialDayDraft): string | null {
     if (!day.starts_on) {
@@ -200,7 +198,7 @@
   }
 
   function specialError(day: SpecialDayDraft): string | null {
-    const saved = Object.entries(errors.value).find(([field]) => field.startsWith(`exceptions.${dayIndex(day)}.`))
+    const saved = Object.entries(errors.value).find(([field]) => field.startsWith(`exceptions.${day.key}.`))
 
     return specialProblem(day) ?? saved?.[1]?.[0] ?? null
   }

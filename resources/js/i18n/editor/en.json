@@ -16,7 +16,8 @@
       "view_site": "View site",
       "account": "Account",
       "admin_panel": "Admin panel",
-      "sign_out": "Sign out"
+      "sign_out": "Sign out",
+      "interface_language": "Language of the editor"
     },
     "structure": {
       "title": "Page structure",
@@ -120,7 +121,11 @@
         "purple": "Purple"
       }
     },
-    "reorder": "Drag to reorder",
+    "reorder": {
+      "label": "Move {name}: drag, or use the arrow keys",
+      "hint": "Drag, or use the arrow keys",
+      "moved": "Moved to position {position} of {count}"
+    },
     "fields": {
       "translated": "Translated per language"
     },
@@ -168,7 +173,8 @@
       "too_big": "{name} is bigger than 10 MB.",
       "too_many": "Up to {count} photos.",
       "upload_failed": "{name} wasn't uploaded. Try again.",
-      "info": "The first photo is the cover. It's also the image people see when your link is shared in messengers."
+      "info": "The first photo is the cover. It's also the image people see when your link is shared in messengers.",
+      "untitled": "Photo {number}"
     },
     "hours": {
       "time_zone": "Time zone",
@@ -233,7 +239,8 @@
       "description_help": "Optional. Shown under the menu's name.",
       "hidden": "Hidden from guests. It stays here, but it isn't on your page.",
       "categories": "Categories · {count}",
-      "archived_categories": "Archived categories · {count}"
+      "archived_categories": "Archived categories · {count}",
+      "no_categories": "No categories yet."
     },
     "category": {
       "new": "New category",
@@ -327,6 +334,17 @@
     },
     "confirm": {
       "cancel": "Cancel"
+    },
+    "leave": {
+      "title": "Save your changes?",
+      "message": "This panel has changes, which aren't saved yet.",
+      "message_invalid": "This panel has changes, which can't be saved as they are. Discard them, or stay and fix them.",
+      "save": "Save",
+      "discard": "Discard"
+    },
+    "narrow": {
+      "preview": "Preview",
+      "back": "Back to editing"
     }
   }
 }

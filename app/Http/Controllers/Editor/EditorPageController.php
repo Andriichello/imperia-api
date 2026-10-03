@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Editor;
 
+use App\Helpers\ContentLocale;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Editor\ShowRestaurantRequest;
 use App\Http\Resources\Editor\EditorRestaurantResource;
@@ -61,8 +62,8 @@ class EditorPageController extends Controller
 
         return view('editor.app', [
             'props' => [
-                // language of the editor itself, the restaurant's content has its own ones
-                'locale' => app()->getLocale(),
+                // language of the editor itself (the browser's one), the restaurant's content has its own ones
+                'locale' => $request->getPreferredLanguage(ContentLocale::supported()) ?? app()->getLocale(),
                 'restaurant' => new EditorRestaurantResource($this->repository->load($request->restaurant())),
                 'restaurants' => $this->repository->editableBy($user),
                 'user' => [

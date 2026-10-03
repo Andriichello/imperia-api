@@ -91,7 +91,8 @@
         <PreviewFrame primary/>
       </div>
 
-      <div class="min-h-0 flex flex-col items-center"
+      <!-- two phones fit from 1280 px wide -->
+      <div class="min-h-0 flex flex-col items-center max-xl:hidden"
            v-if="twoPages && menuPage.menuId">
         <p class="shrink-0 mb-2.5 text-xs font-semibold text-zinc-600">
           {{ t('editor.preview.menu_page') }}

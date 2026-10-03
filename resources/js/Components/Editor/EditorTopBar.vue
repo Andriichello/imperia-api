@@ -15,11 +15,19 @@
   import type {EditorMenu} from '@/api'
   import DropdownMenu from '@/Components/Editor/DropdownMenu.vue'
   import {useEditorStore} from '@/stores/editor'
-  import {translated} from '@/editor/translations'
+  import {INTERFACE_LOCALES, languageName, saveInterfaceLocale, translated} from '@/editor/translations'
   import type {PreviewMode} from '@/editor/protocol'
 
   const editor = useEditorStore()
-  const {t} = useI18n()
+  const {t, locale: interfaceLocale} = useI18n()
+
+  /** The editor's own language (the restaurant's content has its own ones). */
+  function setInterfaceLocale(locale: string) {
+    interfaceLocale.value = locale
+    editor.locale = locale
+    document.documentElement.lang = locale
+    saveInterfaceLocale(locale)
+  }
 
   const restaurantName = computed(() => translated(editor.restaurant?.name, editor.defaultLocale))
 
@@ -56,7 +64,7 @@
 </script>
 
 <template>
-  <header class="h-14 shrink-0 flex items-center gap-3 px-4 bg-white border-b border-zinc-200">
+  <header class="h-14 shrink-0 flex items-center gap-2 lg:gap-3 px-3 lg:px-4 bg-white border-b border-zinc-200">
     <div class="flex items-center gap-2">
       <a class="size-7 rounded-md bg-zinc-900 text-white flex items-center justify-center e-focus"
          :href="editor.urls?.admin"
@@ -105,7 +113,7 @@
                 :aria-label="t('editor.top.page')"
                 @click="toggle">
           <File class="size-4 text-zinc-500"/>
-          <span class="max-w-60 truncate">{{ pageLabel }}</span>
+          <span class="max-w-60 truncate max-md:hidden">{{ pageLabel }}</span>
           <ChevronDown class="size-4 text-zinc-500"/>
         </button>
       </template>
@@ -142,7 +150,7 @@
               v-for="item in MODES" :key="item.mode"
               @click="editor.mode = item.mode">
         <component :is="item.icon" class="size-[15px]"/>
-        {{ t('editor.top.' + item.mode) }}
+        <span class="max-sm:sr-only">{{ t('editor.top.' + item.mode) }}</span>
       </button>
     </div>
 
@@ -150,7 +158,7 @@
 
     <div class="flex items-center gap-2"
          v-if="editor.locales.length > 1">
-      <span class="text-xs text-zinc-500">{{ t('editor.top.preview_in') }}</span>
+      <span class="text-xs text-zinc-500 max-lg:hidden">{{ t('editor.top.preview_in') }}</span>
 
       <div class="inline-flex p-0.5 rounded-md bg-zinc-100"
            role="group"
@@ -174,7 +182,7 @@
       <span class="size-3.5 rounded-full shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)]"
             :style="{background: editor.brand.primary}"
             aria-hidden="true"/>
-      {{ t('editor.top.brand_colors') }}
+      <span class="max-md:sr-only">{{ t('editor.top.brand_colors') }}</span>
     </button>
 
     <a class="e-btn e-btn-secondary"
@@ -182,7 +190,7 @@
        rel="noopener"
        :href="editor.restaurant?.url">
       <ExternalLink class="size-[15px]"/>
-      {{ t('editor.top.view_site') }}
+      <span class="max-md:sr-only">{{ t('editor.top.view_site') }}</span>
     </a>
 
     <DropdownMenu align="end">
@@ -201,6 +209,20 @@
         <p class="font-semibold truncate">{{ editor.user?.name }}</p>
         <p class="text-xs text-zinc-500 truncate">{{ editor.user?.email }}</p>
       </div>
+
+      <p class="e-section px-2.5 pt-1.5 pb-1">{{ t('editor.top.interface_language') }}</p>
+
+      <button type="button"
+              class="e-dropdown-item"
+              role="menuitemradio"
+              :aria-checked="editor.locale === locale"
+              v-for="locale in INTERFACE_LOCALES" :key="locale"
+              @click="setInterfaceLocale(locale)">
+        <span class="flex-1" :lang="locale">{{ languageName(locale) }}</span>
+        <Check class="size-4 text-zinc-500" v-if="editor.locale === locale"/>
+      </button>
+
+      <div class="h-px my-1 bg-[#f0f0f1]"/>
 
       <a class="e-dropdown-item"
          role="menuitem"

@@ -11,6 +11,7 @@
     Image,
     Info,
     MessageSquare,
+    Plus,
   } from 'lucide-vue-next'
   import type {EditorCategory, EditorMenu} from '@/api'
   import {useEditorStore} from '@/stores/editor'
@@ -150,10 +151,17 @@
       <section class="flex flex-col gap-0.5">
         <h3 class="e-section px-2 pb-1.5">{{ t('editor.structure.menus') }}</h3>
 
-        <p class="px-2.5 text-[13px] text-zinc-500"
-           v-if="!editor.menus.length">
-          {{ t('editor.structure.no_menus') }}
-        </p>
+        <div class="flex flex-col items-start gap-2 px-2.5 py-1"
+             v-if="!editor.menus.length">
+          <p class="text-[13px] text-zinc-500">{{ t('editor.structure.no_menus') }}</p>
+
+          <button type="button"
+                  class="e-btn e-btn-secondary h-8 px-2.5"
+                  @click="editor.select({section: 'menu', id: null})">
+            <Plus class="size-[15px]"/>
+            {{ t('editor.menus.first') }}
+          </button>
+        </div>
 
         <template v-for="menu in editor.menus" :key="menu.id">
           <div class="h-10 flex items-center gap-1 pl-0.5 pr-2.5 rounded-md"

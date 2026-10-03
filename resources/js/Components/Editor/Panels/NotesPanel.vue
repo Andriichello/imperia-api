@@ -5,6 +5,8 @@
   import {VueDraggable} from 'vue-draggable-plus'
   import {updateEditorRestaurantNotes} from '@/api'
   import PanelShell from '@/Components/Editor/PanelShell.vue'
+  import GripHandle from '@/Components/Editor/Fields/GripHandle.vue'
+  import {moveItem} from '@/editor/lists'
   import FieldLabel from '@/Components/Editor/Fields/FieldLabel.vue'
   import InfoBox from '@/Components/Editor/Fields/InfoBox.vue'
   import {usePanelDraft} from '@/composables/usePanelDraft'
@@ -30,6 +32,8 @@
     saved: () => notesOf(restaurant.value),
     save: async (notes) => (await updateEditorRestaurantNotes(restaurant.value.id, notesRequest(notes))).data.data,
     preview: (notes, locale) => notesPreview(notes, locale, editor.defaultLocale),
+    canSave: () => canSave.value,
+    lists: {notes: (notes) => notes.map((note) => note.key)},
   })
 
   const {locale, languages, placeholder, textError} = useContentLocale(
@@ -162,7 +166,7 @@
           <!-- edited -->
           <div class="flex items-start gap-1 pt-1 pr-2 pb-2 pl-0.5 border border-blue-600 rounded-lg bg-white shadow-[0_0_0_3px_rgba(37,99,235,0.15)]"
                v-if="editing === note.key">
-            <span class="e-grip mt-0.5" :aria-label="t('editor.reorder')">
+            <span class="e-grip mt-0.5" aria-hidden="true">
               <GripVertical class="size-4"/>
             </span>
 
@@ -192,9 +196,10 @@
           <div class="flex items-center gap-1 py-1 pr-1 pl-0.5 border rounded-lg"
                :class="note.is_hidden ? 'border-dashed border-zinc-300 bg-zinc-50' : 'border-zinc-200 bg-white'"
                v-else>
-            <span class="e-grip" :aria-label="t('editor.reorder')">
-              <GripVertical class="size-4"/>
-            </span>
+            <GripHandle :name="note.text[locale] || placeholder(note.text)"
+                        :index="indexOf(note)"
+                        :count="draft.length"
+                        @move="(from, to) => draft = moveItem(draft, from, to)"/>
 
             <button type="button"
                     class="flex-1 min-w-0 py-1.5 text-start text-sm/5 rounded e-focus"
@@ -231,8 +236,8 @@
           </div>
 
           <p class="e-error px-1"
-             v-if="textError(error, `notes.${indexOf(note)}.text`)">
-            {{ textError(error, `notes.${indexOf(note)}.text`) }}
+             v-if="textError(error, `notes.${note.key}.text`)">
+            {{ textError(error, `notes.${note.key}.text`) }}
           </p>
         </div>
       </VueDraggable>

@@ -10,7 +10,6 @@
     Ellipsis,
     Eye,
     EyeOff,
-    GripVertical,
     Pencil,
     Plus,
     RotateCcw,
@@ -20,6 +19,8 @@
   import type {EditorMenu} from '@/api'
   import {orderEditorMenus} from '@/api'
   import PanelShell from '@/Components/Editor/PanelShell.vue'
+  import GripHandle from '@/Components/Editor/Fields/GripHandle.vue'
+  import {moveItem} from '@/editor/lists'
   import DropdownMenu from '@/Components/Editor/DropdownMenu.vue'
   import InfoBox from '@/Components/Editor/Fields/InfoBox.vue'
   import {usePanelDraft} from '@/composables/usePanelDraft'
@@ -195,11 +196,13 @@
                     handle=".e-menu-grip"
                     ghost-class="e-drag-ghost"
                     :animation="150">
-        <div v-for="item in draft" :key="item.id">
+        <div v-for="(item, index) in draft" :key="item.id">
           <div class="flex items-center gap-1 min-h-[52px] py-1 pr-1 border-b border-[#f0f0f1]">
-            <span class="e-grip e-menu-grip" :aria-label="t('editor.reorder')">
-              <GripVertical class="size-4"/>
-            </span>
+            <GripHandle class="e-menu-grip"
+                        :name="name(editor.findMenu(item.id))"
+                        :index="index"
+                        :count="draft.length"
+                        @move="(from, to) => draft = moveItem(draft, from, to)"/>
 
             <button type="button"
                     class="e-icon-btn w-6"
@@ -285,10 +288,12 @@
                           ghost-class="e-drag-ghost"
                           :animation="150">
               <div class="h-10 flex items-center gap-1 pl-7 pr-1 rounded-md hover:bg-zinc-50"
-                   v-for="id in item.categories" :key="id">
-                <span class="e-grip e-category-grip h-7" :aria-label="t('editor.reorder')">
-                  <GripVertical class="size-4"/>
-                </span>
+                   v-for="(id, position) in item.categories" :key="id">
+                <GripHandle class="e-category-grip h-7"
+                            :name="name(editor.findCategory(id))"
+                            :index="position"
+                            :count="item.categories.length"
+                            @move="(from, to) => item.categories = moveItem(item.categories, from, to)"/>
 
                 <button type="button"
                         class="flex-1 min-w-0 h-full flex items-center gap-2 text-start rounded e-focus"
