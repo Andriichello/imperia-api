@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import {DishMenu, Restaurant} from "@/api";
+import {DishMenu, Restaurant, RestaurantReviewsSummary} from "@/api";
 
 interface AppState {
   locale: string;
@@ -8,6 +8,8 @@ interface AppState {
   developer_email: string | null;
   restaurant: Restaurant | null;
   menus: DishMenu[] | null;
+  // approved reviews of the restaurant
+  reviews: RestaurantReviewsSummary | null;
 }
 
 export const useAppStore = defineStore('app', {
@@ -17,6 +19,7 @@ export const useAppStore = defineStore('app', {
     developer_email: null,
     restaurant: null,
     menus: null,
+    reviews: null,
   }),
   actions: {
     hydrate(props: Partial<AppState>) {

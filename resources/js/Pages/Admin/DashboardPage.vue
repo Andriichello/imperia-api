@@ -6,6 +6,7 @@
   import AdminNavbar from '@/Components/Admin/AdminNavbar.vue'
   import MenuPageCard from '@/Components/Admin/MenuPageCard.vue'
   import RightNowCard from '@/Components/Admin/RightNowCard.vue'
+  import ReviewsCard from '@/Components/Admin/ReviewsCard.vue'
   import ScheduledChangesCard from '@/Components/Admin/ScheduledChangesCard.vue'
   import SpecialDaysCard from '@/Components/Admin/SpecialDaysCard.vue'
   import {formatLongDate} from '@/admin/format'
@@ -14,7 +15,7 @@
 
   /**
    * The admin's home (see `DashboardController`): the restaurant's page, its schedule (whether it's
-   * open now), upcoming changes in its working schedule and planned changes of its menu.
+   * open now), upcoming changes in its working schedule, planned changes of its menu and its reviews.
    */
   const props = defineProps({
     props: {type: Object as PropType<DashboardProps>, required: true},
@@ -85,6 +86,7 @@
                                 :version-url="props.props.urls.version"
                                 @changed="reload"
                                 @notify="notify"/>
+          <ReviewsCard :restaurant="restaurant" :reviews-url="props.props.urls.reviews"/>
         </div>
       </div>
     </main>

@@ -7,6 +7,7 @@ use App\Http\Controllers\Editor\CategoryEditorController;
 use App\Http\Controllers\Editor\DishEditorController;
 use App\Http\Controllers\Editor\MenuEditorController;
 use App\Http\Controllers\Editor\RestaurantEditorController;
+use App\Http\Controllers\Editor\ReviewEditorController;
 use App\Http\Controllers\Editor\VersionEditorController;
 use App\Http\Controllers\Model\CategoryController;
 use App\Http\Controllers\Model\CommentController;
@@ -20,11 +21,11 @@ use App\Http\Controllers\Model\ModelMediaController;
 use App\Http\Controllers\Model\NotificationController;
 use App\Http\Controllers\Model\ProductController;
 use App\Http\Controllers\Model\RestaurantController;
-use App\Http\Controllers\Model\RestaurantReviewController;
 use App\Http\Controllers\Model\TagController;
 use App\Http\Controllers\Model\UserController;
 use App\Http\Controllers\Other\QueueController;
 use App\Http\Controllers\Other\StatusController;
+use App\Http\Controllers\Web\ReviewController;
 use App\Http\Responses\ApiResponse;
 use Illuminate\Support\Facades\Route;
 
@@ -106,10 +107,14 @@ Route::group(['as' => 'api.'], function () {
         ->name('restaurants.holidays')
         ->middleware('cached:restaurants');
 
-    Route::apiResource('restaurant-reviews', RestaurantReviewController::class)
-        ->only('index', 'show', 'store')
-        ->parameters(['restaurant-reviews' => 'id'])
-        ->middleware('cached:restaurants');
+    // reviews of a restaurant: guests leave them, they're public once the restaurant approves them
+    Route::get('/restaurants/{id}/reviews', [ReviewController::class, 'index'])
+        ->name('restaurants.reviews.index');
+    Route::post('/restaurants/{id}/reviews', [ReviewController::class, 'store'])
+        ->middleware('throttle:reviews')
+        ->name('restaurants.reviews.store');
+    Route::post('/restaurants/{id}/reviews/mine', [ReviewController::class, 'mine'])
+        ->name('restaurants.reviews.mine');
 });
 
 Route::group(['middleware' => ['auth:signature,sanctum'], 'as' => 'api.'], function () {
@@ -263,6 +268,13 @@ Route::group([
         ->name('versions.apply');
     Route::post('/versions/{id}/duplicate', [VersionEditorController::class, 'duplicate'])
         ->name('versions.duplicate');
+
+    Route::get('/restaurants/{id}/reviews', [ReviewEditorController::class, 'index'])
+        ->name('reviews.index');
+    Route::post('/reviews/{id}/approve', [ReviewEditorController::class, 'approve'])
+        ->name('reviews.approve');
+    Route::post('/reviews/{id}/reject', [ReviewEditorController::class, 'reject'])
+        ->name('reviews.reject');
 });
 
 Route::fallback(function () {

@@ -9,6 +9,7 @@ import type { EditorScheduleException } from "./editorScheduleException";
 import type { EditorTranslations } from "./editorTranslations";
 import type { EditorVersion } from "./editorVersion";
 import type { EditorWeekdays } from "./editorWeekdays";
+import type { RestaurantReviewsSummary } from "./restaurantReviewsSummary";
 
 /**
  * What the dashboard shows: what guests see, hours, upcoming special days, pending versions.
@@ -41,4 +42,7 @@ export interface EditorDashboard {
   /** Special days, which haven't ended yet, from the nearest. */
   exceptions: EditorScheduleException[];
   versions: EditorVersion[];
+  reviews: RestaurantReviewsSummary;
+  /** Reviews, which wait for approval. */
+  pending_reviews: number;
 }

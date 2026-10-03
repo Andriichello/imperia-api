@@ -4,24 +4,36 @@
  * imperia-api
  * OpenAPI spec version: 0.1
  */
+import type { RestaurantReviewStatus } from "./restaurantReviewStatus";
 
 /**
- * Restaurant review resource object
+ * A guest's review of a restaurant, in the language it was written in.
  */
 export interface RestaurantReview {
-  id: number;
-  type: string;
-  restaurant_id: number;
-  ip: string;
-  reviewer: string;
-  /** Min value: `0`, max value: `5`. */
-  score: number;
+  /**
+   * None, when the review wasn't kept.
+   * @nullable
+   */
+  id: number | null;
+  /**
+   * @minimum 1
+   * @maximum 5
+   */
+  rating: number;
+  /**
+   * None for a guest, who didn't give it.
+   * @nullable
+   */
+  name: string | null;
+  /**
+   * None for a rating only.
+   * @nullable
+   */
+  text: string | null;
   /** @nullable */
-  title: string | null;
-  /** @nullable */
-  description: string | null;
+  locale: string | null;
+  /** Public reviews are approved; a guest sees the status of their own ones. */
+  status: RestaurantReviewStatus;
   /** @nullable */
   created_at: string | null;
-  /** @nullable */
-  updated_at: string | null;
 }

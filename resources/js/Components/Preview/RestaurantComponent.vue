@@ -16,6 +16,7 @@
   import {getScheduleInfo, ScheduleInfo, time} from "@/helpers";
   import {editKey} from "@/editor/editKey";
   import PageFooter from "@/Components/Base/PageFooter.vue";
+  import ReviewsRow from "@/Components/Reviews/ReviewsRow.vue";
   import { useI18n } from 'vue-i18n';
 
   const props = defineProps({
@@ -338,6 +339,8 @@
             <Copy class="size-6"/>
           </button>
         </div>
+
+        <ReviewsRow/>
       </div>
 
       <PageFooter/>

@@ -50,6 +50,8 @@ class EditorDashboardResource extends EditorRestaurantResource
             'weekdays' => $this->weekdays(),
             'exceptions' => EditorScheduleExceptionResource::collection($this->scheduleExceptions),
             'versions' => EditorVersionResource::collection($this->versions),
+            'reviews' => $this->getAttribute('reviews_summary'),
+            'pending_reviews' => (int) $this->getAttribute('pending_reviews'),
         ];
     }
 
@@ -59,7 +61,7 @@ class EditorDashboardResource extends EditorRestaurantResource
      *   description="What the dashboard shows: what guests see, hours, upcoming special days, pending versions.",
      *   required={"id", "slug", "url", "default_locale", "supported_locales", "name", "establishment", "timezone",
      *     "currency", "menus_count", "dishes_count", "last_saved_at", "last_saved_by", "closed_until",
-     *     "closed_reason", "weekdays", "exceptions", "versions"},
+     *     "closed_reason", "weekdays", "exceptions", "versions", "reviews", "pending_reviews"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="slug", type="string", nullable=true, example="smak"),
      *   @OA\Property(property="url", type="string", example="https://example.com/en/web/smak"),
@@ -82,6 +84,9 @@ class EditorDashboardResource extends EditorRestaurantResource
      *     @OA\Items(ref="#/components/schemas/EditorScheduleException"),
      *     description="Special days, which haven't ended yet, from the nearest."),
      *   @OA\Property(property="versions", type="array", @OA\Items(ref="#/components/schemas/EditorVersion")),
+     *   @OA\Property(property="reviews", ref="#/components/schemas/RestaurantReviewsSummary"),
+     *   @OA\Property(property="pending_reviews", type="integer", example=3,
+     *     description="Reviews, which wait for approval."),
      * ),
      */
 }

@@ -24,6 +24,12 @@ const routes: Array<RouteRecordRaw> = [
     component: WebPreviewPage,
     props: true
   },
+  {
+    path: '/:restaurant_id/reviews',
+    name: 'reviews.preview',
+    // a chunk of its own: the menus don't need it
+    component: () => import(/* webpackChunkName: "reviews" */ '@/Pages/ReviewsPage.vue'),
+  },
 ]
 
 export function createWebRouter() {

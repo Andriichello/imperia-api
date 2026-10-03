@@ -23,3 +23,6 @@ Route::get('/{restaurant_id}', [PreviewController::class, 'show'])
 
 Route::get('/{restaurant_id}/menu/{menu_id?}', [PreviewController::class, 'show'])
     ->name('menu.preview');
+
+Route::get('/{restaurant_id}/reviews', [PreviewController::class, 'show'])
+    ->name('reviews.preview');

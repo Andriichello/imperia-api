@@ -4,14 +4,12 @@
  * imperia-api
  * OpenAPI spec version: 0.1
  */
-import type { PaginationMeta } from "./paginationMeta";
 import type { RestaurantReview } from "./restaurantReview";
 
 /**
- * Index restaurant reviews response object.
+ * The device's own reviews of the restaurant.
  */
-export interface IndexRestaurantReviewResponse {
+export interface MyRestaurantReviewsResponse {
   data: RestaurantReview[];
-  meta: PaginationMeta;
   message: string;
 }

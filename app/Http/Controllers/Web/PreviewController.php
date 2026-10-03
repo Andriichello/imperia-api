@@ -7,6 +7,7 @@ use App\Http\Controllers\Web\Traits\LoadsAndCachesTrait;
 use App\Http\Controllers\Web\Traits\SharesPropsTrait;
 use App\Http\Resources\Dish\DishMenuCollection;
 use App\Http\Resources\Restaurant\RestaurantResource;
+use App\Repositories\RestaurantReviewRepository;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,7 +19,16 @@ class PreviewController extends Controller
     use LoadsAndCachesTrait;
 
     /**
-     * Returns the restaurant page or one of its menus.
+     * PreviewController constructor.
+     *
+     * @param RestaurantReviewRepository $reviews
+     */
+    public function __construct(protected RestaurantReviewRepository $reviews)
+    {
+    }
+
+    /**
+     * Returns the restaurant page, one of its menus or its reviews.
      *
      * @param Request $request
      *
@@ -72,6 +82,8 @@ class PreviewController extends Controller
             ...$this->getSharedProps($request),
             'restaurant' => new RestaurantResource($restaurant),
             'menus' => new DishMenuCollection($menus),
+            // not cached: an approved review shows right away
+            'reviews' => $this->reviews->summary($restaurant),
         ]);
     }
 }

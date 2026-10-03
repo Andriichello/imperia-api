@@ -18,6 +18,8 @@ import type {
   EditorPutVersionChangeRequest,
   EditorRestaurantResponse,
   EditorRestaurantsResponse,
+  EditorReviewResponse,
+  EditorReviewsResponse,
   EditorStoreCategoryRequest,
   EditorStoreDishRequest,
   EditorStoreMenuRequest,
@@ -33,6 +35,7 @@ import type {
   EditorUploadPhotoRequest,
   EditorVersionResponse,
   EditorVersionsResponse,
+  GetEditorReviewsParams,
   GetEditorVersionsParams,
   StoreMediaResponse,
   SuccessResponse,
@@ -695,6 +698,74 @@ export const getUpdateEditorRestaurantHoursUrl = (id: number) => {
     });
 };
 /**
+ * @summary A page of the restaurant's reviews with the status, and how many have each status.
+ */
+export const getEditorReviews = (
+  id: number,
+  params?: GetEditorReviewsParams,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<EditorReviewsResponse>> => {
+  return axios.get(`/api/editor/restaurants/${id}/reviews`, {
+    ...options,
+    params: { ...params, ...options?.params },
+  });
+};
+export const getGetEditorReviewsUrl = (
+  id: number,
+  params?: GetEditorReviewsParams,
+) => {
+  return axios
+    .create({
+      baseURL: "",
+      params: null,
+    })
+    .getUri({
+      url: `/api/editor/restaurants/${id}/reviews`,
+      baseURL: "",
+      params,
+    });
+};
+/**
+ * @summary Approve the review: it's public.
+ */
+export const approveEditorReview = (
+  id: number,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<EditorReviewResponse>> => {
+  return axios.post(`/api/editor/reviews/${id}/approve`, undefined, options);
+};
+export const getApproveEditorReviewUrl = (id: number) => {
+  return axios
+    .create({
+      baseURL: "",
+      params: null,
+    })
+    .getUri({
+      url: `/api/editor/reviews/${id}/approve`,
+      baseURL: "",
+    });
+};
+/**
+ * @summary Reject the review: it's never public.
+ */
+export const rejectEditorReview = (
+  id: number,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<EditorReviewResponse>> => {
+  return axios.post(`/api/editor/reviews/${id}/reject`, undefined, options);
+};
+export const getRejectEditorReviewUrl = (id: number) => {
+  return axios
+    .create({
+      baseURL: "",
+      params: null,
+    })
+    .getUri({
+      url: `/api/editor/reviews/${id}/reject`,
+      baseURL: "",
+    });
+};
+/**
  * @summary Versions of the restaurant: pending ones by their date, then the ones, which went live.
  */
 export const getEditorVersions = (
@@ -999,6 +1070,9 @@ export type UploadEditorRestaurantPhotoResult =
   AxiosResponse<StoreMediaResponse>;
 export type UpdateEditorRestaurantHoursResult =
   AxiosResponse<EditorRestaurantResponse>;
+export type GetEditorReviewsResult = AxiosResponse<EditorReviewsResponse>;
+export type ApproveEditorReviewResult = AxiosResponse<EditorReviewResponse>;
+export type RejectEditorReviewResult = AxiosResponse<EditorReviewResponse>;
 export type GetEditorVersionsResult = AxiosResponse<EditorVersionsResponse>;
 export type StoreEditorVersionResult = AxiosResponse<EditorVersionResponse>;
 export type GetEditorVersionResult = AxiosResponse<EditorVersionResponse>;

@@ -8,27 +8,30 @@ import axios from "axios";
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
 
 import type {
-  IndexRestaurantReviewResponse,
-  IndexRestaurantReviewsParams,
-  ShowRestaurantReviewResponse,
+  GetRestaurantReviewsParams,
+  MyRestaurantReviewsRequest,
+  MyRestaurantReviewsResponse,
+  RestaurantReviewResponse,
+  RestaurantReviewsResponse,
   StoreRestaurantReviewRequest,
-  StoreRestaurantReviewResponse,
 } from "../models";
 
 /**
- * @summary Index restaurant reviews.
+ * @summary A page of the restaurant's approved reviews, with their summary.
  */
-export const indexRestaurantReviews = (
-  params?: IndexRestaurantReviewsParams,
+export const getRestaurantReviews = (
+  id: string,
+  params?: GetRestaurantReviewsParams,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<IndexRestaurantReviewResponse>> => {
-  return axios.get(`/api/restaurant-reviews`, {
+): Promise<AxiosResponse<RestaurantReviewsResponse>> => {
+  return axios.get(`/api/restaurants/${id}/reviews`, {
     ...options,
     params: { ...params, ...options?.params },
   });
 };
-export const getIndexRestaurantReviewsUrl = (
-  params?: IndexRestaurantReviewsParams,
+export const getGetRestaurantReviewsUrl = (
+  id: string,
+  params?: GetRestaurantReviewsParams,
 ) => {
   return axios
     .create({
@@ -36,58 +39,64 @@ export const getIndexRestaurantReviewsUrl = (
       params: null,
     })
     .getUri({
-      url: `/api/restaurant-reviews`,
+      url: `/api/restaurants/${id}/reviews`,
       baseURL: "",
       params,
     });
 };
 /**
- * @summary Store restaurant review.
+ * @summary Leave a review of the restaurant: it waits for the restaurant to approve it.
  */
 export const storeRestaurantReview = (
+  id: string,
   storeRestaurantReviewRequest: StoreRestaurantReviewRequest,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<StoreRestaurantReviewResponse>> => {
+): Promise<AxiosResponse<RestaurantReviewResponse>> => {
   return axios.post(
-    `/api/restaurant-reviews`,
+    `/api/restaurants/${id}/reviews`,
     storeRestaurantReviewRequest,
     options,
   );
 };
-export const getStoreRestaurantReviewUrl = () => {
+export const getStoreRestaurantReviewUrl = (id: string) => {
   return axios
     .create({
       baseURL: "",
       params: null,
     })
     .getUri({
-      url: `/api/restaurant-reviews`,
+      url: `/api/restaurants/${id}/reviews`,
       baseURL: "",
     });
 };
 /**
- * @summary Show restaurant reviews by id.
+ * @summary The device's own reviews of the restaurant, whatever their status.
  */
-export const showRestaurantReview = (
-  id: number,
+export const getMyRestaurantReviews = (
+  id: string,
+  myRestaurantReviewsRequest: MyRestaurantReviewsRequest,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<ShowRestaurantReviewResponse>> => {
-  return axios.get(`/api/restaurant-reviews/${id}`, options);
+): Promise<AxiosResponse<MyRestaurantReviewsResponse>> => {
+  return axios.post(
+    `/api/restaurants/${id}/reviews/mine`,
+    myRestaurantReviewsRequest,
+    options,
+  );
 };
-export const getShowRestaurantReviewUrl = (id: number) => {
+export const getGetMyRestaurantReviewsUrl = (id: string) => {
   return axios
     .create({
       baseURL: "",
       params: null,
     })
     .getUri({
-      url: `/api/restaurant-reviews/${id}`,
+      url: `/api/restaurants/${id}/reviews/mine`,
       baseURL: "",
     });
 };
-export type IndexRestaurantReviewsResult =
-  AxiosResponse<IndexRestaurantReviewResponse>;
+export type GetRestaurantReviewsResult =
+  AxiosResponse<RestaurantReviewsResponse>;
 export type StoreRestaurantReviewResult =
-  AxiosResponse<StoreRestaurantReviewResponse>;
-export type ShowRestaurantReviewResult =
-  AxiosResponse<ShowRestaurantReviewResponse>;
+  AxiosResponse<RestaurantReviewResponse>;
+export type GetMyRestaurantReviewsResult =
+  AxiosResponse<MyRestaurantReviewsResponse>;

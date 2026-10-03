@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PasswordResetController;
+use App\Http\Controllers\Admin\ReviewPageController;
 use App\Http\Controllers\Admin\SignInController;
 use App\Http\Controllers\Admin\VersionPageController;
 use App\Http\Controllers\Editor\EditorPageController;
@@ -42,6 +43,9 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/editor/{id}', [EditorPageController::class, 'show'])
         ->whereNumber('id')
         ->name('editor');
+
+    Route::get('/reviews', [ReviewPageController::class, 'index'])
+        ->name('reviews.index');
 
     Route::get('/versions', [VersionPageController::class, 'index'])
         ->name('versions.index');

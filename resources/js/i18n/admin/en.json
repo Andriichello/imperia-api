@@ -217,6 +217,14 @@
           "archived": "archive",
           "sizes": "sizes"
         }
+      },
+      "reviews": {
+        "title": "Reviews",
+        "waiting": "{count} waiting | {count} waiting",
+        "check": "Check them",
+        "see_all": "See all",
+        "count": "no reviews | {count} review | {count} reviews",
+        "none": "No reviews yet. Guests leave them on your menu page."
       }
     },
     "versions": {
@@ -225,6 +233,34 @@
       "add": "New version",
       "planned": "Not live yet",
       "applied": "Went live"
+    },
+    "reviews": {
+      "title": "Reviews",
+      "help": "Guests see a review once you approve it. Reject only spam, insults and personal details: low ratings stay, your page says so.",
+      "public_page": "Reviews page",
+      "statuses": "Reviews by status",
+      "tabs": {
+        "pending": "Waiting",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "approve": "Approve",
+      "reject": "Reject",
+      "approved_message": "The review is on your page",
+      "rejected_message": "The review won't be shown",
+      "no_text": "Rating only",
+      "decided": {
+        "approved": "Approved by {name} on {date}",
+        "rejected": "Rejected by {name} on {date}",
+        "pending": ""
+      },
+      "empty": {
+        "pending": "No reviews wait for approval.",
+        "approved": "No approved reviews yet.",
+        "rejected": "No rejected reviews."
+      },
+      "show_more": "Show more",
+      "error": "That didn't work. Try again."
     },
     "no_restaurant": {
       "title": "No restaurant to edit",

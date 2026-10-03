@@ -78,6 +78,7 @@ abstract class AdminPageController extends Controller
                 'editor' => route('admin.editor', ['id' => $restaurant->id]),
                 'logout' => route('admin.logout'),
                 'versions' => route('admin.versions.index'),
+                'reviews' => route('admin.reviews.index'),
                 // of a version: this one and `/{id}`
                 'version' => url('admin/versions'),
             ],

@@ -1896,6 +1896,183 @@
                 ]
             }
         },
+        "/api/editor/restaurants/{id}/reviews": {
+            "get": {
+                "tags": [
+                    "editor"
+                ],
+                "summary": "A page of the restaurant's reviews with the status, and how many have each status.",
+                "operationId": "getEditorReviews",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the restaurant.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "The ones, which wait for approval, by default.",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "pending",
+                                "approved",
+                                "rejected"
+                            ]
+                        },
+                        "example": "pending"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EditorReviewsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The user can't edit the restaurant."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/editor/reviews/{id}/approve": {
+            "post": {
+                "tags": [
+                    "editor"
+                ],
+                "summary": "Approve the review: it's public.",
+                "operationId": "approveEditorReview",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the review.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EditorReviewResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The user can't edit the restaurant."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/editor/reviews/{id}/reject": {
+            "post": {
+                "tags": [
+                    "editor"
+                ],
+                "summary": "Reject the review: it's never public.",
+                "operationId": "rejectEditorReview",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the review.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EditorReviewResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The user can't edit the restaurant."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/editor/restaurants/{id}/versions": {
             "get": {
                 "tags": [
@@ -5665,187 +5842,6 @@
                 ]
             }
         },
-        "/api/restaurant-reviews": {
-            "get": {
-                "tags": [
-                    "restaurant-reviews"
-                ],
-                "summary": "Index restaurant reviews.",
-                "operationId": "indexRestaurantReviews",
-                "parameters": [
-                    {
-                        "name": "page[size]",
-                        "in": "query",
-                        "schema": {
-                            "$ref": "#/components/schemas/PageSize"
-                        }
-                    },
-                    {
-                        "name": "page[number]",
-                        "in": "query",
-                        "schema": {
-                            "$ref": "#/components/schemas/PageNumber"
-                        }
-                    },
-                    {
-                        "name": "sort",
-                        "in": "query",
-                        "description": "Available sorts: `created_at` (is default, but in descending order)",
-                        "schema": {
-                            "type": "string"
-                        },
-                        "example": "-created_at"
-                    },
-                    {
-                        "name": "filter[restaurant_id]",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "example": "1"
-                    },
-                    {
-                        "name": "filter[ip]",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "example": "127.0.0.1"
-                    },
-                    {
-                        "name": "is_approved",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "boolean",
-                            "example": "true"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Index restaurant review response object.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/IndexRestaurantReviewResponse"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            },
-            "post": {
-                "tags": [
-                    "restaurant-reviews"
-                ],
-                "summary": "Store restaurant review.",
-                "operationId": "storeRestaurantReview",
-                "requestBody": {
-                    "description": "Store restaurant review request object.",
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/StoreRestaurantReviewRequest"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Create restaurant review response object.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/StoreRestaurantReviewResponse"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/restaurant-reviews/{id}": {
-            "get": {
-                "tags": [
-                    "restaurant-reviews"
-                ],
-                "summary": "Show restaurant reviews by id.",
-                "operationId": "showRestaurantReview",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Id of the restaurant review.",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        },
-                        "example": 1
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Show restaurant review response object.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ShowRestaurantReviewResponse"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthenticated.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
         "/api/tags": {
             "get": {
                 "tags": [
@@ -6168,6 +6164,178 @@
                     }
                 ]
             }
+        },
+        "/api/restaurants/{id}/reviews": {
+            "get": {
+                "tags": [
+                    "restaurant-reviews"
+                ],
+                "summary": "A page of the restaurant's approved reviews, with their summary.",
+                "operationId": "getRestaurantReviews",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id or slug of the restaurant.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "sort",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "newest",
+                                "highest",
+                                "lowest"
+                            ]
+                        },
+                        "example": "newest"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RestaurantReviewsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The restaurant doesn't exist."
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "restaurant-reviews"
+                ],
+                "summary": "Leave a review of the restaurant: it waits for the restaurant to approve it.",
+                "operationId": "storeRestaurantReview",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id or slug of the restaurant.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreRestaurantReviewRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RestaurantReviewResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The restaurant doesn't exist."
+                    },
+                    "422": {
+                        "description": "Invalid values.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "429": {
+                        "description": "A review was left from the device today, or too many from the IP."
+                    }
+                }
+            }
+        },
+        "/api/restaurants/{id}/reviews/mine": {
+            "post": {
+                "tags": [
+                    "restaurant-reviews"
+                ],
+                "summary": "The device's own reviews of the restaurant, whatever their status.",
+                "operationId": "getMyRestaurantReviews",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id or slug of the restaurant.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MyRestaurantReviewsRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MyRestaurantReviewsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "The restaurant doesn't exist."
+                    },
+                    "422": {
+                        "description": "Invalid values.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorsResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -6379,6 +6547,94 @@
                 "properties": {
                     "data": {
                         "$ref": "#/components/schemas/EditorRestaurant"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "EditorReviewsResponse": {
+                "description": "A page of the restaurant's reviews with the status, and how many have each status.",
+                "required": [
+                    "data",
+                    "meta",
+                    "counts",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EditorReview"
+                        }
+                    },
+                    "meta": {
+                        "required": [
+                            "current_page",
+                            "last_page",
+                            "per_page",
+                            "total"
+                        ],
+                        "properties": {
+                            "current_page": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "last_page": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "per_page": {
+                                "type": "integer",
+                                "example": 20
+                            },
+                            "total": {
+                                "type": "integer",
+                                "example": 3
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "counts": {
+                        "required": [
+                            "pending",
+                            "approved",
+                            "rejected"
+                        ],
+                        "properties": {
+                            "pending": {
+                                "type": "integer",
+                                "example": 3
+                            },
+                            "approved": {
+                                "type": "integer",
+                                "example": 128
+                            },
+                            "rejected": {
+                                "type": "integer",
+                                "example": 2
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "EditorReviewResponse": {
+                "description": "The review with its new status.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/EditorReview"
                     },
                     "message": {
                         "type": "string",
@@ -7373,64 +7629,6 @@
                 },
                 "type": "object"
             },
-            "IndexRestaurantReviewResponse": {
-                "description": "Index restaurant reviews response object.",
-                "required": [
-                    "data",
-                    "meta",
-                    "message"
-                ],
-                "properties": {
-                    "data": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/RestaurantReview"
-                        }
-                    },
-                    "meta": {
-                        "$ref": "#/components/schemas/PaginationMeta"
-                    },
-                    "message": {
-                        "type": "string",
-                        "example": "Success"
-                    }
-                },
-                "type": "object"
-            },
-            "ShowRestaurantReviewResponse": {
-                "description": "Show restaurant review response object.",
-                "required": [
-                    "data",
-                    "message"
-                ],
-                "properties": {
-                    "data": {
-                        "$ref": "#/components/schemas/RestaurantReview"
-                    },
-                    "message": {
-                        "type": "string",
-                        "example": "Success"
-                    }
-                },
-                "type": "object"
-            },
-            "StoreRestaurantReviewResponse": {
-                "description": "Store restaurant review response object.",
-                "required": [
-                    "data",
-                    "message"
-                ],
-                "properties": {
-                    "data": {
-                        "$ref": "#/components/schemas/RestaurantReview"
-                    },
-                    "message": {
-                        "type": "string",
-                        "example": "Created"
-                    }
-                },
-                "type": "object"
-            },
             "IndexTagResponse": {
                 "description": "Index tags response object.",
                 "required": [
@@ -7561,6 +7759,95 @@
                 "description": "Page number to be returned.",
                 "type": "integer",
                 "example": 1
+            },
+            "RestaurantReviewsResponse": {
+                "description": "A page of the restaurant's approved reviews, with their summary.",
+                "required": [
+                    "data",
+                    "meta",
+                    "summary",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RestaurantReview"
+                        }
+                    },
+                    "meta": {
+                        "required": [
+                            "current_page",
+                            "last_page",
+                            "per_page",
+                            "total"
+                        ],
+                        "properties": {
+                            "current_page": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "last_page": {
+                                "type": "integer",
+                                "example": 13
+                            },
+                            "per_page": {
+                                "type": "integer",
+                                "example": 10
+                            },
+                            "total": {
+                                "type": "integer",
+                                "example": 128
+                            }
+                        },
+                        "type": "object"
+                    },
+                    "summary": {
+                        "$ref": "#/components/schemas/RestaurantReviewsSummary"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "RestaurantReviewResponse": {
+                "description": "The review, which was left.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/RestaurantReview"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Created"
+                    }
+                },
+                "type": "object"
+            },
+            "MyRestaurantReviewsResponse": {
+                "description": "The device's own reviews of the restaurant.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RestaurantReview"
+                        }
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
             },
             "LoginRequest": {
                 "description": "Supports login by credantials (`email` and `password`) and\n    by remember token (`remember_token`).",
@@ -9049,40 +9336,70 @@
                 },
                 "type": "object"
             },
-            "StoreRestaurantReviewRequest": {
-                "description": "Store restaurant review request",
+            "MyRestaurantReviewsRequest": {
+                "description": "Reviews the device left: their ids and the device's token.",
                 "required": [
-                    "restaurant_id",
-                    "ip",
-                    "reviewer",
-                    "score"
+                    "client_token",
+                    "ids"
                 ],
                 "properties": {
-                    "restaurant_id": {
+                    "client_token": {
+                        "type": "string",
+                        "example": "0f8c5d2e-6b1a-4c3e-9d7f-2a4b6c8e0f12"
+                    },
+                    "ids": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "maxItems": 50
+                    }
+                },
+                "type": "object"
+            },
+            "StoreRestaurantReviewRequest": {
+                "description": "A guest's review: it waits for the restaurant to approve it.",
+                "required": [
+                    "rating",
+                    "locale",
+                    "client_token"
+                ],
+                "properties": {
+                    "rating": {
                         "type": "integer",
-                        "example": 1
+                        "example": 5,
+                        "maximum": 5,
+                        "minimum": 1
                     },
-                    "ip": {
+                    "name": {
+                        "description": "None posts it as a guest.",
                         "type": "string",
-                        "example": "127.0.0.1"
+                        "example": "Olena",
+                        "nullable": true,
+                        "maxLength": 40
                     },
-                    "reviewer": {
+                    "text": {
                         "type": "string",
-                        "example": "Steve"
+                        "example": "Best borscht I've had in Kyiv.",
+                        "nullable": true,
+                        "maxLength": 1000
                     },
-                    "score": {
-                        "description": "Min value: `0`, max value: `5`.",
-                        "type": "integer",
-                        "example": 5
-                    },
-                    "title": {
+                    "locale": {
+                        "description": "The language it's written in.",
                         "type": "string",
-                        "example": "Great",
-                        "nullable": true
+                        "example": "en"
                     },
-                    "description": {
+                    "client_token": {
+                        "description": "A random token of the guest's device: it asks for the status of its reviews with it.",
                         "type": "string",
-                        "example": "This is a great establishment, nice personnel.",
+                        "example": "0f8c5d2e-6b1a-4c3e-9d7f-2a4b6c8e0f12",
+                        "maxLength": 100,
+                        "minLength": 16
+                    },
+                    "website": {
+                        "description": "A field guests don't see: when it's filled in, the review isn't kept.",
+                        "type": "string",
                         "nullable": true
                     }
                 },
@@ -9656,7 +9973,9 @@
                     "closed_reason",
                     "weekdays",
                     "exceptions",
-                    "versions"
+                    "versions",
+                    "reviews",
+                    "pending_reviews"
                 ],
                 "properties": {
                     "id": {
@@ -9759,6 +10078,14 @@
                         "items": {
                             "$ref": "#/components/schemas/EditorVersion"
                         }
+                    },
+                    "reviews": {
+                        "$ref": "#/components/schemas/RestaurantReviewsSummary"
+                    },
+                    "pending_reviews": {
+                        "description": "Reviews, which wait for approval.",
+                        "type": "integer",
+                        "example": 3
                     }
                 },
                 "type": "object"
@@ -10286,6 +10613,90 @@
                         "items": {
                             "$ref": "#/components/schemas/EditorVersion"
                         }
+                    }
+                },
+                "type": "object"
+            },
+            "EditorReview": {
+                "description": "A guest's review of the restaurant, for its moderation.",
+                "required": [
+                    "id",
+                    "restaurant_id",
+                    "rating",
+                    "name",
+                    "text",
+                    "locale",
+                    "status",
+                    "created_at",
+                    "moderated_at",
+                    "moderated_by"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "restaurant_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "rating": {
+                        "type": "integer",
+                        "example": 5,
+                        "maximum": 5,
+                        "minimum": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Olena",
+                        "nullable": true
+                    },
+                    "text": {
+                        "type": "string",
+                        "example": "Best borscht I've had in Kyiv.",
+                        "nullable": true
+                    },
+                    "locale": {
+                        "type": "string",
+                        "example": "en",
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "pending",
+                        "enum": [
+                            "pending",
+                            "approved",
+                            "rejected"
+                        ]
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "moderated_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "moderated_by": {
+                        "required": [
+                            "id",
+                            "name"
+                        ],
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Anna"
+                            }
+                        },
+                        "type": "object",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -11387,66 +11798,102 @@
                 "type": "object"
             },
             "RestaurantReview": {
-                "description": "Restaurant review resource object",
+                "description": "A guest's review of a restaurant, in the language it was written in.",
                 "required": [
                     "id",
-                    "type",
-                    "restaurant_id",
-                    "ip",
-                    "reviewer",
-                    "score",
-                    "title",
-                    "description",
-                    "created_at",
-                    "updated_at"
+                    "rating",
+                    "name",
+                    "text",
+                    "locale",
+                    "status",
+                    "created_at"
                 ],
                 "properties": {
                     "id": {
+                        "description": "None, when the review wasn't kept.",
                         "type": "integer",
-                        "example": 1
-                    },
-                    "type": {
-                        "type": "string",
-                        "example": "restaurant-reviews"
-                    },
-                    "restaurant_id": {
-                        "type": "integer",
-                        "example": 1
-                    },
-                    "ip": {
-                        "type": "string",
-                        "example": "127.0.0.1"
-                    },
-                    "reviewer": {
-                        "type": "string",
-                        "example": "Steve"
-                    },
-                    "score": {
-                        "description": "Min value: `0`, max value: `5`.",
-                        "type": "integer",
-                        "example": 5
-                    },
-                    "title": {
-                        "type": "string",
-                        "example": "Great",
+                        "example": 1,
                         "nullable": true
                     },
-                    "description": {
+                    "rating": {
+                        "type": "integer",
+                        "example": 5,
+                        "maximum": 5,
+                        "minimum": 1
+                    },
+                    "name": {
+                        "description": "None for a guest, who didn't give it.",
                         "type": "string",
-                        "example": "The restaurant is great and the personnel is nice.",
+                        "example": "Olena",
                         "nullable": true
+                    },
+                    "text": {
+                        "description": "None for a rating only.",
+                        "type": "string",
+                        "example": "Best borscht I've had in Kyiv.",
+                        "nullable": true
+                    },
+                    "locale": {
+                        "type": "string",
+                        "example": "en",
+                        "nullable": true
+                    },
+                    "status": {
+                        "description": "Public reviews are approved; a guest sees the status of their own ones.",
+                        "type": "string",
+                        "example": "approved",
+                        "enum": [
+                            "pending",
+                            "approved",
+                            "rejected"
+                        ]
                     },
                     "created_at": {
                         "type": "string",
                         "format": "date-time",
-                        "example": "2022-01-12 10:00:00",
+                        "example": "2026-10-03T12:00:00+00:00",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "RestaurantReviewsSummary": {
+                "description": "The approved reviews of a restaurant: their average, count and counts by rating (5 to 1).",
+                "required": [
+                    "average",
+                    "count",
+                    "ratings"
+                ],
+                "properties": {
+                    "average": {
+                        "description": "To one decimal; none without reviews.",
+                        "type": "number",
+                        "example": 4.6,
                         "nullable": true
                     },
-                    "updated_at": {
-                        "type": "string",
-                        "format": "date-time",
-                        "example": "2022-01-12 10:00:00",
-                        "nullable": true
+                    "count": {
+                        "type": "integer",
+                        "example": 128
+                    },
+                    "ratings": {
+                        "type": "array",
+                        "items": {
+                            "required": [
+                                "rating",
+                                "count"
+                            ],
+                            "properties": {
+                                "rating": {
+                                    "type": "integer",
+                                    "example": 5
+                                },
+                                "count": {
+                                    "type": "integer",
+                                    "example": 96
+                                }
+                            },
+                            "type": "object"
+                        }
                     }
                 },
                 "type": "object"
@@ -11763,16 +12210,16 @@
             "description": "restaurants"
         },
         {
-            "name": "restaurant-reviews",
-            "description": "restaurant-reviews"
-        },
-        {
             "name": "tags",
             "description": "tags"
         },
         {
             "name": "users",
             "description": "users"
+        },
+        {
+            "name": "restaurant-reviews",
+            "description": "restaurant-reviews"
         }
     ]
 }

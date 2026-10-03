@@ -165,5 +165,64 @@
   "footer": {
     "allergens": "Allergen and diet info comes from {name}. If you have a severe allergy, ask the staff before you order.",
     "work_together": "Want a menu like this for your place, or want to work together?"
+  },
+  "reviews": {
+    "title": "Reviews",
+    "count": "no reviews | {count} review | {count} reviews",
+    "row_label": "Reviews: {average} out of 5 from {count}. Read or leave a review",
+    "row_label_none": "Reviews: no reviews yet. Be the first to leave one",
+    "none": "No reviews yet",
+    "be_first": "be the first",
+    "empty": "Be the first to tell others about your visit.",
+    "stars": "{rating} out of 5 stars",
+    "summary": "Rating summary",
+    "breakdown": "{rating} star: {total} | {rating} stars: {total}",
+    "leave": "Leave a review",
+    "moderation": "New reviews appear after {name} checks them. Only spam, insults and personal details are removed.",
+    "yours": "Your review",
+    "waiting": "Waiting for approval",
+    "yours_note": "Only you can see it until {name} approves it. If it isn't approved, it won't be published.",
+    "all": "All reviews",
+    "sort": "Sort reviews",
+    "sorts": {
+      "newest": "Newest",
+      "highest": "Highest rated",
+      "lowest": "Lowest rated"
+    },
+    "guest": "Guest",
+    "just_now": "just now",
+    "read_more": "Read more",
+    "show_less": "Show less",
+    "show_more": "Show more reviews",
+    "load_failed": "Reviews couldn't be loaded.",
+    "try_again": "Try again",
+    "form": {
+      "title": "Leave a review",
+      "subtitle": "Tell others about your visit to {name}.",
+      "rating": "Your rating",
+      "star": "{rating} star | {rating} stars",
+      "tap": "Tap a star to rate",
+      "ratings": {
+        "1": "Bad",
+        "2": "Poor",
+        "3": "Okay",
+        "4": "Good",
+        "5": "Excellent"
+      },
+      "name": "Your name",
+      "optional": "(optional)",
+      "name_help": "Shown with your review. Leave it empty to post as Guest.",
+      "text": "Your review",
+      "text_placeholder": "What did you order? How was it?",
+      "post": "Post review",
+      "posting": "Posting…",
+      "pick_rating": "Pick a rating to post",
+      "note": "{name} checks reviews before they're published. Don't include phone numbers or other personal details.",
+      "too_many": "You've already left a review today. Try again tomorrow.",
+      "failed": "Your review couldn't be posted. Try again.",
+      "sent_title": "Thanks, we've got your review!",
+      "sent_text": "{name} checks new reviews before they're published. Until then, only you can see it on the reviews page.",
+      "back": "Back to reviews"
+    }
   }
 }

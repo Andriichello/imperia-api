@@ -73,5 +73,10 @@ class RouteServiceProvider extends ServiceProvider
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->getAuthIdentifier() ?: $request->ip());
         });
+
+        // reviews from an IP: guests in a restaurant may share its Wi-Fi (a device leaves one a day)
+        RateLimiter::for('reviews', function (Request $request) {
+            return Limit::perHour(20)->by($request->ip());
+        });
     }
 }

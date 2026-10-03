@@ -9,7 +9,6 @@ use App\Models\Morphs\Alteration;
 use App\Models\Morphs\Category;
 use App\Models\Product;
 use App\Models\Restaurant;
-use App\Models\RestaurantReview;
 use Illuminate\Support\Arr;
 
 /**
@@ -24,9 +23,6 @@ class CacheSubscriber extends BaseSubscriber
      */
     protected array $models = [
         Restaurant::class => [
-            'groups' => ['restaurants'],
-        ],
-        RestaurantReview::class => [
             'groups' => ['restaurants'],
         ],
         Menu::class => [

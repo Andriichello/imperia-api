@@ -7,11 +7,13 @@ use App\Models\DishMenu;
 use App\Models\Morphs\Media;
 use App\Models\Restaurant;
 use App\Models\RestaurantNote;
+use App\Models\RestaurantReview;
 use App\Models\Schedule;
 use App\Models\ScheduleException;
 use App\Models\Scopes\ArchivedScope;
 use App\Models\User;
 use App\Repositories\MediaRepository;
+use App\Repositories\RestaurantReviewRepository;
 use Carbon\Carbon;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -34,10 +36,12 @@ class RestaurantEditorRepository extends EditorRepository
      *
      * @param MediaRepository $media
      * @param VersionEditorRepository $versions
+     * @param RestaurantReviewRepository $reviews
      */
     public function __construct(
         protected MediaRepository $media,
         protected VersionEditorRepository $versions,
+        protected RestaurantReviewRepository $reviews,
     ) {
     }
 
@@ -97,11 +101,12 @@ class RestaurantEditorRepository extends EditorRepository
 
     /**
      * What the admin's dashboard shows: what guests see (menus and dishes), when the page was
-     * last saved, the hours, upcoming special days and the versions, which haven't gone live yet.
+     * last saved, the hours, upcoming special days, the versions, which haven't gone live yet, and
+     * the reviews (the approved ones, and how many wait for approval).
      *
      * @param Restaurant $restaurant
      *
-     * @return Restaurant with `menus_count` and `dishes_count`
+     * @return Restaurant with `menus_count`, `dishes_count`, `reviews_summary` and `pending_reviews`
      */
     public function dashboard(Restaurant $restaurant): Restaurant
     {
@@ -127,6 +132,12 @@ class RestaurantEditorRepository extends EditorRepository
             ->shownToGuests()
             ->withVisibleParents()
             ->count());
+
+        $restaurant->setAttribute('reviews_summary', $this->reviews->summary($restaurant));
+        $restaurant->setAttribute(
+            'pending_reviews',
+            $this->reviews->counts($restaurant)[RestaurantReview::STATUS_PENDING],
+        );
 
         return $restaurant->setRelation('versions', $this->versions->ofRestaurant($restaurant, true));
     }

@@ -18,7 +18,7 @@ class RestaurantReviewFactory extends Factory
     /**
      * The name of the factory's corresponding model.
      *
-     * @var string|null
+     * @var class-string<RestaurantReview>
      */
     protected $model = RestaurantReview::class;
 
@@ -30,12 +30,33 @@ class RestaurantReviewFactory extends Factory
     public function definition(): array
     {
         return [
-            'ip' => $this->faker->ipv4(),
-            'reviewer' => $this->faker->name,
-            'score' => rand(1, 5),
-            'title' => $this->faker->sentence(3),
-            'description' => $this->faker->sentence(10),
+            'rating' => rand(1, 5),
+            'name' => $this->faker->firstName(),
+            'text' => $this->faker->sentence(10),
+            'locale' => 'en',
+            'ip_hash' => RestaurantReview::hash($this->faker->ipv4()),
+            'client_hash' => RestaurantReview::hash($this->faker->uuid()),
         ];
+    }
+
+    /**
+     * Indicate the review is public.
+     *
+     * @return static
+     */
+    public function approved(): static
+    {
+        return $this->state(['status' => RestaurantReview::STATUS_APPROVED, 'moderated_at' => now()]);
+    }
+
+    /**
+     * Indicate the review is never public.
+     *
+     * @return static
+     */
+    public function rejected(): static
+    {
+        return $this->state(['status' => RestaurantReview::STATUS_REJECTED, 'moderated_at' => now()]);
     }
 
     /**

@@ -19,6 +19,7 @@
           // specific props
           "restaurant" => $restaurant ?? null,
           "menus" => $menus ?? null,
+          "reviews" => $reviews ?? null,
       ];
 
       // the restaurant's brand colors instead of the default ones of `app.css`

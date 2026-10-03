@@ -3,6 +3,7 @@
   import {ChevronLeft} from "lucide-vue-next";
   import {useI18n} from "vue-i18n";
   import {useAppStore} from "@/stores/app";
+  import {restaurantUrl} from "@/reviews";
 
   /**
    * The restaurant's button, top-left on every public page but the restaurant page itself (a menu,
@@ -16,8 +17,7 @@
 
   const name = computed(() => app.restaurant?.name ?? '');
 
-  // The restaurant page; the query stays (e.g. `?editor=1` of the editor's preview)
-  const href = (window.location.pathname.match(/^\/[^/]+\/web\/[^/]+/)?.[0] ?? '/') + window.location.search;
+  const href = restaurantUrl();
 
   function onClick(event: MouseEvent) {
     // A new tab or window opens the link itself

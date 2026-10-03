@@ -15,6 +15,8 @@ export interface AdminUrls {
   logout: string
   // planned menu changes: all versions of the restaurant
   versions: string
+  // reviews guests left, for their moderation
+  reviews: string
   // of a version: this one and `/{id}`
   version: string
 }

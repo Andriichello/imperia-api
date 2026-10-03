@@ -10,6 +10,8 @@ use OpenApi\Annotations as OA;
 /**
  * Class RestaurantReviewResource.
  *
+ * A guest's review on the public site: neither the guest's IP nor their device is in it.
+ *
  * @mixin RestaurantReview
  */
 class RestaurantReviewResource extends JsonResource
@@ -18,46 +20,52 @@ class RestaurantReviewResource extends JsonResource
      * Transform the resource into an array.
      *
      * @param Request $request
-     * @return array
      *
+     * @return array
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function toArray($request): array
     {
         return [
             'id' => $this->id,
-            'type' => $this->type,
-            'restaurant_id' => $this->restaurant_id,
-            'ip' => $this->ip,
-            'reviewer' => $this->reviewer,
-            'score' => $this->score,
-            'title' => $this->title,
-            'description' => $this->description,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'rating' => $this->rating,
+            'name' => $this->name,
+            'text' => $this->text,
+            'locale' => $this->locale,
+            'status' => $this->status,
+            'created_at' => $this->created_at?->toIso8601String(),
         ];
     }
 
     /**
      * @OA\Schema(
      *   schema="RestaurantReview",
-     *   description="Restaurant review resource object",
-     *   required = {"id", "type", "restaurant_id", "ip", "reviewer", "score",
-     *     "title", "description", "created_at", "updated_at"},
-     *   @OA\Property(property="id", type="integer", example=1),
-     *   @OA\Property(property="type", type="string", example="restaurant-reviews"),
-     *   @OA\Property(property="restaurant_id", type="integer", example=1),
-     *   @OA\Property(property="ip", type="string", example="127.0.0.1"),
-     *   @OA\Property(property="reviewer", type="string", example="Steve"),
-     *   @OA\Property(property="score", type="integer", example=5,
-     *     description="Min value: `0`, max value: `5`."),
-     *   @OA\Property(property="title", type="string", nullable=true, example="Great"),
-     *   @OA\Property(property="description", type="string", nullable=true,
-     *     example="The restaurant is great and the personnel is nice."),
-     *   @OA\Property(property="created_at", type="string", format="date-time",
-     *     nullable=true, example="2022-01-12 10:00:00"),
-     *   @OA\Property(property="updated_at", type="string", format="date-time",
-     *     nullable=true, example="2022-01-12 10:00:00"),
-     * )
+     *   description="A guest's review of a restaurant, in the language it was written in.",
+     *   required={"id", "rating", "name", "text", "locale", "status", "created_at"},
+     *   @OA\Property(property="id", type="integer", nullable=true, example=1,
+     *     description="None, when the review wasn't kept."),
+     *   @OA\Property(property="rating", type="integer", minimum=1, maximum=5, example=5),
+     *   @OA\Property(property="name", type="string", nullable=true, example="Olena",
+     *     description="None for a guest, who didn't give it."),
+     *   @OA\Property(property="text", type="string", nullable=true,
+     *     example="Best borscht I've had in Kyiv.", description="None for a rating only."),
+     *   @OA\Property(property="locale", type="string", nullable=true, example="en"),
+     *   @OA\Property(property="status", type="string", example="approved",
+     *     enum={"pending", "approved", "rejected"},
+     *     description="Public reviews are approved; a guest sees the status of their own ones."),
+     *   @OA\Property(property="created_at", type="string", format="date-time", nullable=true,
+     *     example="2026-10-03T12:00:00+00:00"),
+     * ),
+     * @OA\Schema(
+     *   schema="RestaurantReviewsSummary",
+     *   description="The approved reviews of a restaurant: their average, count and counts by rating (5 to 1).",
+     *   required={"average", "count", "ratings"},
+     *   @OA\Property(property="average", type="number", nullable=true, example=4.6,
+     *     description="To one decimal; none without reviews."),
+     *   @OA\Property(property="count", type="integer", example=128),
+     *   @OA\Property(property="ratings", type="array", @OA\Items(type="object", required={"rating", "count"},
+     *     @OA\Property(property="rating", type="integer", example=5),
+     *     @OA\Property(property="count", type="integer", example=96))),
+     * ),
      */
 }

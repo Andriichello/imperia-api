@@ -7,9 +7,9 @@
 import type { RestaurantReview } from "./restaurantReview";
 
 /**
- * Store restaurant review response object.
+ * The review, which was left.
  */
-export interface StoreRestaurantReviewResponse {
+export interface RestaurantReviewResponse {
   data: RestaurantReview;
   message: string;
 }

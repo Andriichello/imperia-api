@@ -3,7 +3,7 @@
 namespace App\Queries;
 
 use App\Models\RestaurantReview;
-use App\Models\User;
+use Carbon\CarbonInterface;
 
 /**
  * Class RestaurantReviewQueryBuilder.
@@ -18,20 +18,82 @@ use App\Models\User;
 class RestaurantReviewQueryBuilder extends BaseQueryBuilder
 {
     /**
-     * Apply index query conditions.
+     * Sorts of public reviews: the newest ones first, the highest rated or the lowest rated ones.
+     */
+    public const SORTS = ['newest', 'highest', 'lowest'];
+
+    /**
+     * Reviews of the restaurant.
      *
-     * @param User|null $user
+     * @param int $restaurantId
      *
      * @return static
      */
-    public function index(?User $user = null): static
+    public function ofRestaurant(int $restaurantId): static
     {
-        $query = parent::index($user);
+        $this->where('restaurant_reviews.restaurant_id', $restaurantId);
 
-        if ($user->restaurant_id) {
-            $query->where('restaurant_id', $user->restaurant_id);
-        }
+        return $this;
+    }
 
-        return $query;
+    /**
+     * Reviews with the status.
+     *
+     * @param string $status
+     *
+     * @return static
+     */
+    public function withStatus(string $status): static
+    {
+        $this->where('restaurant_reviews.status', $status);
+
+        return $this;
+    }
+
+    /**
+     * Public reviews: the approved ones.
+     *
+     * @return static
+     */
+    public function approved(): static
+    {
+        return $this->withStatus(RestaurantReview::STATUS_APPROVED);
+    }
+
+    /**
+     * Reviews left from a device (by its token's hash) since the time.
+     *
+     * @param string $clientHash
+     * @param CarbonInterface $since
+     *
+     * @return static
+     */
+    public function fromClientSince(string $clientHash, CarbonInterface $since): static
+    {
+        $this->where('restaurant_reviews.client_hash', $clientHash)
+            ->where('restaurant_reviews.created_at', '>=', $since);
+
+        return $this;
+    }
+
+    /**
+     * In the order of the sort (see `SORTS`), the newest ones first among equal ratings.
+     *
+     * @param string $sort
+     *
+     * @return static
+     */
+    public function sorted(string $sort): static
+    {
+        match ($sort) {
+            'highest' => $this->orderByDesc('restaurant_reviews.rating'),
+            'lowest' => $this->orderBy('restaurant_reviews.rating'),
+            default => null,
+        };
+
+        $this->orderByDesc('restaurant_reviews.created_at')
+            ->orderByDesc('restaurant_reviews.id');
+
+        return $this;
     }
 }

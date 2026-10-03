@@ -20,6 +20,7 @@ const PAGES: Record<string, () => Promise<{ default: Component }>> = {
   editor: () => import(/* webpackChunkName: "admin-editor" */ '@/Pages/EditorPage.vue'),
   version: () => import(/* webpackChunkName: "admin-version" */ '@/Pages/Admin/VersionPage.vue'),
   versions: () => import(/* webpackChunkName: "admin-versions" */ '@/Pages/Admin/VersionsPage.vue'),
+  reviews: () => import(/* webpackChunkName: "admin-reviews" */ '@/Pages/Admin/ReviewsPage.vue'),
   'no-restaurant': () => import(/* webpackChunkName: "admin-no-restaurant" */ '@/Pages/Admin/NoRestaurantPage.vue'),
 };
 

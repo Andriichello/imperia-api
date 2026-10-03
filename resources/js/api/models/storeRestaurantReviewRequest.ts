@@ -6,16 +6,36 @@
  */
 
 /**
- * Store restaurant review request
+ * A guest's review: it waits for the restaurant to approve it.
  */
 export interface StoreRestaurantReviewRequest {
-  restaurant_id: number;
-  ip: string;
-  reviewer: string;
-  /** Min value: `0`, max value: `5`. */
-  score: number;
-  /** @nullable */
-  title?: string | null;
-  /** @nullable */
-  description?: string | null;
+  /**
+   * @minimum 1
+   * @maximum 5
+   */
+  rating: number;
+  /**
+   * None posts it as a guest.
+   * @maxLength 40
+   * @nullable
+   */
+  name?: string | null;
+  /**
+   * @maxLength 1000
+   * @nullable
+   */
+  text?: string | null;
+  /** The language it's written in. */
+  locale: string;
+  /**
+   * A random token of the guest's device: it asks for the status of its reviews with it.
+   * @minLength 16
+   * @maxLength 100
+   */
+  client_token: string;
+  /**
+   * A field guests don't see: when it's filled in, the review isn't kept.
+   * @nullable
+   */
+  website?: string | null;
 }
