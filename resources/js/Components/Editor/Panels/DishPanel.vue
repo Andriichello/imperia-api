@@ -263,8 +263,8 @@
       </div>
     </template>
 
-    <template #actions v-if="dish">
-      <DropdownMenu align="end">
+    <template #actions>
+      <DropdownMenu align="end" v-if="dish">
         <template #trigger="{open, toggle}">
           <button type="button"
                   class="e-icon-btn"

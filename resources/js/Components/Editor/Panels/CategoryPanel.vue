@@ -167,12 +167,12 @@
               v-model:locale="locale"
               @navigate="editor.select($event, !!$event)"
               @close="editor.close()">
-    <template #notice v-if="category">
-      <ScheduledNotice :selection="selection"/>
+    <template #notice>
+      <ScheduledNotice :selection="selection" v-if="category"/>
     </template>
 
-    <template #actions v-if="category">
-      <DropdownMenu align="end">
+    <template #actions>
+      <DropdownMenu align="end" v-if="category">
         <template #trigger="{open, toggle}">
           <button type="button"
                   class="e-icon-btn"
