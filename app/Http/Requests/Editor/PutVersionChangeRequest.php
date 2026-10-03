@@ -50,9 +50,7 @@ class PutVersionChangeRequest extends EditorRequest
     /**
      * @OA\Schema(
      *   schema="EditorPutVersionChangeRequest",
-     *   description="A change of an item (or a new one). Its fields are merged into the item's change in the
-     *     version; a field back at its live value isn't a change anymore. Fields and their values are those of
-     *     the editor's requests: texts in every language, `media` as photos, `archived` to archive or restore.",
+     *   description="A change of an item (or a new one), merged into the item's change in the version.",
      *   required={"target_type"},
      *   @OA\Property(property="id", type="integer", nullable=true, example=null,
      *     description="Change of a new item, which is being edited."),
@@ -63,7 +61,7 @@ class PutVersionChangeRequest extends EditorRequest
      *   @OA\Property(property="parent_id", type="integer", nullable=true, example=null,
      *     description="Where a new item goes: the category of a dish, the dish of a size, the restaurant of a note."),
      *   @OA\Property(property="fields", type="object", example={"price": 195},
-     *     description="New values of the fields. A new dish has `sizes` too."),
+     *     description="New values, as in the editor's requests (a new dish has `sizes`); live ones are no change."),
      *   @OA\Property(property="revert", type="array", @OA\Items(type="string"), example={"calories"},
      *     description="Fields, which aren't changed anymore."),
      * ),

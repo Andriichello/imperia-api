@@ -2,11 +2,10 @@
 
 namespace App\Providers\Filament;
 
-use App\Http\Controllers\Editor\EditorPageController;
+use App\Http\Middleware\AuthenticatePanel;
 use App\Http\Middleware\UseDefaultContentLocale;
 use App\Http\Middleware\UsePanelAuthGuard;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -22,7 +21,6 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Support\Facades\Route;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 /**
@@ -63,8 +61,8 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('admin')
-            ->path('admin')
-            ->login()
+            // the restaurant admin is at `/admin`, its sign-in serves the panel too
+            ->path('admin/manage')
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -77,18 +75,10 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
             ])
-            // the editor of the public page is a Vue app of its own, signed in like the panel
-            ->authenticatedRoutes(function () {
-                Route::get('/editor', [EditorPageController::class, 'index'])
-                    ->name('editor.index');
-                Route::get('/editor/{id}', [EditorPageController::class, 'show'])
-                    ->whereNumber('id')
-                    ->name('editor');
-            })
             ->navigationItems([
-                NavigationItem::make('Page editor')
+                NavigationItem::make('Restaurant admin')
                     ->icon('heroicon-o-paint-brush')
-                    ->url(fn () => route('filament.admin.editor.index'))
+                    ->url(fn () => route('admin.dashboard'))
                     ->visible(fn () => (bool) request()->user()?->isAdmin())
                     ->sort(-1),
             ])
@@ -110,7 +100,7 @@ class AdminPanelProvider extends PanelProvider
                 UseDefaultContentLocale::class,
             ], isPersistent: true)
             ->authMiddleware([
-                Authenticate::class,
+                AuthenticatePanel::class,
             ]);
     }
 }

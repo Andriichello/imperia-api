@@ -22,6 +22,7 @@ class Authenticate extends Middleware
         if ($request->expectsJson()) {
             throw new AuthenticationException();
         }
-        return route('login');
+        // the admin's sign in (the API has no page of its own)
+        return route('admin.login');
     }
 }

@@ -1,12 +1,13 @@
 @import "tailwindcss";
 
 /*
- * The page editor: a neutral look (zinc, with blue for what's selected) of its own,
- * so the restaurant's brand colors never mix with it. No daisyUI here.
+ * The restaurant admin (sign in, dashboard, page editor): a neutral look (zinc, with blue
+ * for what's selected) of its own, so the restaurant's brand colors never mix with it.
+ * No daisyUI here.
  */
 
 @layer base {
-  html, body, #editor {
+  html, body, #admin {
     height: 100%;
   }
 
@@ -274,8 +275,61 @@
     opacity: 0.4;
   }
 
+  /* Button of the navbar: 34px, 14px 600 */
+  .e-nav-btn {
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-zinc-900);
+    white-space: nowrap;
+  }
+
+  .e-nav-btn:hover {
+    background: var(--color-zinc-100);
+  }
+
+  /* Card of the dashboard: white, 1px border, radius 10 */
+  .e-card {
+    background: #ffffff;
+    border: 1px solid var(--color-zinc-200);
+    border-radius: 10px;
+  }
+
+  /* Card heading: 15/22, 600 */
+  .e-card-title {
+    font-size: 15px;
+    line-height: 22px;
+    font-weight: 600;
+  }
+
+  /* Link of a card: 13px 600, blue */
+  .e-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-blue-600);
+  }
+
+  .e-link:hover {
+    text-decoration: underline;
+  }
+
+  /* Dot grid behind phones (the preview, the sign-in page) */
+  .e-dots {
+    background-color: #eef0f3;
+    background-image: radial-gradient(var(--color-zinc-300) 1px, transparent 1px);
+    background-size: 18px 18px;
+  }
+
   /* Visible keyboard focus everywhere in the editor */
-  .e-focus:focus-visible, .e-btn:focus-visible, .e-icon-btn:focus-visible {
+  .e-focus:focus-visible, .e-btn:focus-visible, .e-icon-btn:focus-visible, .e-nav-btn:focus-visible, .e-link:focus-visible {
     outline: 2px solid var(--color-blue-600);
     outline-offset: 1px;
   }

@@ -11,9 +11,14 @@ export interface EditorUser {
   email: string
 }
 
+/** Pages of the admin (see `AdminPageController::signedIn()`). */
 export interface EditorUrls {
-  admin: string
+  dashboard: string
+  editor: string
   logout: string
+  // the admin panel, for the ones, who can open it
+  panel: string | null
+  versions: string
 }
 
 /** A message at the bottom of the editor, with an action (e.g. Undo). */

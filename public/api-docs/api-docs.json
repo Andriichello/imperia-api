@@ -7923,7 +7923,7 @@
                 "type": "object"
             },
             "EditorPutVersionChangeRequest": {
-                "description": "A change of an item (or a new one). Its fields are merged into the item's change in the\n     *     version; a field back at its live value isn't a change anymore. Fields and their values are those of\n     *     the editor's requests: texts in every language, `media` as photos, `archived` to archive or restore.",
+                "description": "A change of an item (or a new one), merged into the item's change in the version.",
                 "required": [
                     "target_type"
                 ],
@@ -7959,7 +7959,7 @@
                         "nullable": true
                     },
                     "fields": {
-                        "description": "New values of the fields. A new dish has `sizes` too.",
+                        "description": "New values, as in the editor's requests (a new dish has `sizes`); live ones are no change.",
                         "type": "object",
                         "example": {
                             "price": 195
@@ -9637,7 +9637,7 @@
                 "type": "object"
             },
             "EditorDashboard": {
-                "description": "What the dashboard shows: what guests see, the hours (open now is worked out from them,\n     *     in the restaurant's time zone), upcoming special days and the versions, which haven't gone live yet.",
+                "description": "What the dashboard shows: what guests see, hours, upcoming special days, pending versions.",
                 "required": [
                     "id",
                     "slug",
@@ -10342,7 +10342,7 @@
                 "type": "object"
             },
             "EditorVersionChange": {
-                "description": "Change of an item in a version: for each changed field, its live value from when it was\n     *     planned and the new one.",
+                "description": "Change of an item in a version: each field's live value when it was planned, and the new one.",
                 "required": [
                     "id",
                     "target_type",
@@ -10414,7 +10414,7 @@
                         "$ref": "#/components/schemas/EditorVersionLabel"
                     },
                     "conflicts": {
-                        "description": "Only on a version's own page: `missing` when the item (or a new one's parent) is gone,\n     *       `fields` with live values, which changed since they were planned.",
+                        "description": "Only on the version's page: the item is gone, or live values, which changed since.",
                         "properties": {
                             "missing": {
                                 "type": "boolean",

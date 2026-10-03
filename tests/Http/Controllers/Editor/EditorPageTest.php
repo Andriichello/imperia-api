@@ -11,7 +11,7 @@ use Illuminate\Testing\TestResponse;
 /**
  * Class EditorPageTest.
  *
- * The editor's page, which is a page of the admin panel.
+ * The editor's page, a page of the restaurant admin.
  */
 class EditorPageTest extends EditorTestCase
 {
@@ -29,7 +29,7 @@ class EditorPageTest extends EditorTestCase
     }
 
     /**
-     * Open the editor of the restaurant as the user (signed in to the admin panel).
+     * Open the editor of the restaurant as the user (signed in with the session).
      *
      * @param User|null $user
      * @param int|null $id
@@ -42,7 +42,7 @@ class EditorPageTest extends EditorTestCase
             $this->signIn($user);
         }
 
-        return $this->get(route('filament.admin.editor', ['id' => $id ?? $this->restaurant->id]));
+        return $this->get(route('admin.editor', ['id' => $id ?? $this->restaurant->id]));
     }
 
     /**
@@ -72,7 +72,8 @@ class EditorPageTest extends EditorTestCase
 
         $response = $this->openEditor($this->admin)
             ->assertOk()
-            ->assertViewIs('editor.app')
+            ->assertViewIs('admin.app')
+            ->assertViewHas('page', 'editor')
             ->assertSee('<title>Smak · Page editor</title>', false);
 
         $props = $response->viewData('props');
@@ -82,15 +83,17 @@ class EditorPageTest extends EditorTestCase
         $this->assertSame([$menu->id], collect($props['restaurant']->resolve()['menus'])->pluck('id')->all());
         $this->assertSame([$this->restaurant->id], $props['restaurants']->pluck('id')->all());
         $this->assertSame($this->admin->email, $props['user']['email']);
+        $this->assertSame(route('admin.dashboard'), $props['urls']['dashboard']);
+        $this->assertSame(route('admin.logout'), $props['urls']['logout']);
 
         // the editor is in the browser's language
         $this->withHeader('Accept-Language', 'uk-UA,uk;q=0.9,en;q=0.8')
-            ->get(route('filament.admin.editor', ['id' => $this->restaurant->id]))
+            ->get(route('admin.editor', ['id' => $this->restaurant->id]))
             ->assertViewHas('props', fn (array $props) => $props['locale'] === 'uk');
     }
 
     /**
-     * Test that guests are sent to the admin's login, others can't open the editor.
+     * Test that guests are sent to the admin's sign-in, others can't open the editor.
      *
      * @return void
      */
@@ -104,7 +107,7 @@ class EditorPageTest extends EditorTestCase
         ];
 
         $this->openEditor(null)
-            ->assertRedirect(route('filament.admin.auth.login'));
+            ->assertRedirect(route('admin.login'));
 
         foreach ($others as $user) {
             $this->openEditor($user)->assertForbidden();
@@ -126,18 +129,18 @@ class EditorPageTest extends EditorTestCase
         $manager = $this->user(UserRole::Manager, $other);
 
         $this->signIn($otherAdmin)
-            ->get(route('filament.admin.editor.index'))
-            ->assertRedirect(route('filament.admin.editor', ['id' => $other->id]));
+            ->get(route('admin.editor.index'))
+            ->assertRedirect(route('admin.editor', ['id' => $other->id]));
 
         $this->signIn($superAdmin)
-            ->get(route('filament.admin.editor.index'))
-            ->assertRedirect(route('filament.admin.editor', ['id' => $this->restaurant->id]));
+            ->get(route('admin.editor.index'))
+            ->assertRedirect(route('admin.editor', ['id' => $this->restaurant->id]));
 
-        $this->get(route('filament.admin.editor', ['id' => $other->id]))
+        $this->get(route('admin.editor', ['id' => $other->id]))
             ->assertOk();
 
         $this->signIn($manager)
-            ->get(route('filament.admin.editor.index'))
+            ->get(route('admin.editor.index'))
             ->assertForbidden();
     }
 }

@@ -1,0 +1,220 @@
+{
+  "admin": {
+    "brand": "Menu editor",
+    "language": "Language: {language}",
+    "language_title": "Language of this editor",
+    "nav": {
+      "dashboard": "Dashboard",
+      "switch_restaurant": "Restaurant: {name}. Switch restaurant",
+      "visit_site": "Visit site",
+      "account": "Account: {name}",
+      "admin_panel": "Admin panel",
+      "sign_out": "Sign out"
+    },
+    "sign_in": {
+      "title": "Sign in",
+      "subtitle": "Edit your menu, photos and opening hours.",
+      "email": "Email",
+      "password": "Password",
+      "forgot": "Forgot password?",
+      "show_password": "Show password",
+      "hide_password": "Hide password",
+      "remember": "Keep me signed in on this device",
+      "submit": "Sign in",
+      "no_account": "No account yet? Ask the restaurant owner to invite you.",
+      "password_reset": "Your password was changed. Sign in with the new one.",
+      "illustration": "Click any part of your page to change it, and see it exactly as your guests do.",
+      "errors": {
+        "credentials": "That email and password don't match. Check them and try again, or reset your password.",
+        "throttled": "Too many attempts. Try again in {count} second. | Too many attempts. Try again in {count} seconds.",
+        "not_allowed": "This account can't sign in here. Ask the restaurant owner to invite you.",
+        "invalid": "Enter your email and password."
+      }
+    },
+    "forgot": {
+      "title": "Reset your password",
+      "subtitle": "Enter the email you sign in with, and we'll send you a link to set a new password.",
+      "submit": "Send link",
+      "sent": "If {email} has an account, a link is on its way. Check your inbox.",
+      "throttled": "A link was sent a moment ago. Wait a minute before asking for another one.",
+      "invalid": "Enter a valid email.",
+      "back": "Back to sign in"
+    },
+    "reset": {
+      "title": "Set a new password",
+      "subtitle": "For {email}. At least 8 characters.",
+      "password": "New password",
+      "confirmation": "Repeat the new password",
+      "submit": "Save password",
+      "invalid_link": "This link has expired or was already used. Ask for a new one.",
+      "ask_again": "Ask for a new link",
+      "password_error": "Use at least 8 characters, the same in both fields."
+    },
+    "illustration": {
+      "photo": "Restaurant photo",
+      "name": "Smak",
+      "type": "Restaurant",
+      "notes": "Notes",
+      "note_1": "Kitchen takes last orders 30 minutes before closing.",
+      "note_2": "Card payments only.",
+      "note_3": "Live music every Friday from 19:00.",
+      "menu": "Main menu",
+      "menu_description": "Soups, salads and hot dishes, all day"
+    },
+    "dashboard": {
+      "greeting": {
+        "morning": "Good morning, {name}",
+        "afternoon": "Good afternoon, {name}",
+        "evening": "Good evening, {name}"
+      },
+      "page": {
+        "title": "Your menu page",
+        "live": "Live",
+        "not_live": "No menus yet",
+        "help": "Guests open this link or scan the QR code on your tables. Changes show up as soon as you save them.",
+        "open_editor": "Open menu editor",
+        "copy_link": "Copy link",
+        "copied": "Link copied",
+        "qr_code": "QR code",
+        "menus": "No menus | {count} menu | {count} menus",
+        "dishes": "no dishes | {count} dish | {count} dishes",
+        "saved": {
+          "today": "Last saved today at {time}",
+          "yesterday": "Last saved yesterday at {time}",
+          "date": "Last saved on {date} at {time}",
+          "by": "{saved} by {name}",
+          "never": "Not saved in the editor yet"
+        }
+      },
+      "qr": {
+        "title": "QR code of your menu page",
+        "help": "Print it on table cards or the menu cover: guests scan it to open your page.",
+        "download": "Download SVG",
+        "close": "Close"
+      },
+      "now": {
+        "title": "Right now",
+        "hours": "Working hours",
+        "today": "Today · {weekday}",
+        "this_week": "This week",
+        "closed": "Closed",
+        "now": "Now: {time}",
+        "states": {
+          "open": "Open",
+          "closing_soon": "Closing soon",
+          "opens_soon": "Opens soon",
+          "closed": "Closed",
+          "holiday": "Closed today",
+          "temporarily_closed": "Temporarily closed"
+        },
+        "details": {
+          "until": "until {time} · closes in {left}",
+          "closes_at": "closes at {time} · in {left}",
+          "opens_at": "opens at {time} · in {left}",
+          "opens_today": "opens today at {time}",
+          "opens_tomorrow": "opens tomorrow at {time}",
+          "opens_on": "opens on {weekday} at {time}",
+          "no_hours": "No working hours set",
+          "special_day": "Special day",
+          "reopens_on": "reopens on {date}"
+        },
+        "left": {
+          "hours": "{hours} h {minutes} min",
+          "minutes": "{minutes} min"
+        }
+      },
+      "special_days": {
+        "title": "Upcoming special days",
+        "add": "Add",
+        "all": "All special days",
+        "empty": "No special days ahead. Add holidays and short days, so guests see the right hours.",
+        "closed": "{weekday} · Closed",
+        "closes_at": "{weekday} · closes at {time}",
+        "hours": "{weekday} · {hours}",
+        "untitled": "Special day"
+      },
+      "versions": {
+        "title": "Scheduled changes",
+        "see_all": "See all",
+        "add": "Add",
+        "empty": "Nothing is scheduled. Schedule price changes or a whole new menu to go live at a set time.",
+        "footer": "Changes apply automatically at the set time, {timezone} time. Reschedule or deactivate a whole version from its page.",
+        "version": "Version",
+        "changes_in_items": "{changes} in {items}",
+        "changes": "no changes | {count} change | {count} changes",
+        "items": "no items | {count} item | {count} items",
+        "by": "by {name}",
+        "unnamed": "Changes",
+        "draft": "Draft",
+        "not_scheduled": "Not scheduled",
+        "inactive": "Inactive",
+        "failed": "Failed",
+        "inactive_detail": "inactive, won't go live until you activate it",
+        "actions": "Actions for {name}",
+        "apply": "Apply now",
+        "deactivate": "Deactivate",
+        "activate": "Activate",
+        "duplicate": "Duplicate",
+        "delete": "Delete",
+        "confirm_apply": "Apply {name} now?",
+        "confirm_apply_message": "All of its changes go live right away, instead of at the set time.",
+        "confirm_delete": "Delete {name}?",
+        "confirm_delete_message": "Its changes won't go live. This can't be undone.",
+        "cancel": "Cancel",
+        "applied": "The changes went live",
+        "apply_failed": "The changes couldn't be applied: {reason}",
+        "error": "That didn't work. Try again.",
+        "what": {
+          "hide": "hide",
+          "show": "show",
+          "archive": "archive",
+          "restore": "restore",
+          "hide_note": "hide note",
+          "show_note": "show note",
+          "new_dish": "new dish",
+          "new_size": "new size",
+          "new_note": "new note",
+          "edit": "{fields}"
+        },
+        "kinds": {
+          "price": "Price",
+          "restaurant": "Restaurant page",
+          "menu": "Menu",
+          "category": "Category in {menu}",
+          "dish": "Dish in {category}",
+          "size": "Size of {dish}",
+          "new_dishes": "new dishes",
+          "new_sizes": "new sizes",
+          "new_notes": "new notes",
+          "prices": "prices",
+          "photos": "photos",
+          "texts": "texts",
+          "visibility": "what's shown",
+          "archives": "archives {names}"
+        },
+        "fields": {
+          "name": "name",
+          "title": "name",
+          "description": "description",
+          "badge": "badge",
+          "text": "text",
+          "address": "address",
+          "phone": "phone",
+          "establishment": "type",
+          "brand_primary": "brand colors",
+          "brand_primary_content": "brand colors",
+          "media": "photos",
+          "flags": "tags and allergens",
+          "price": "price",
+          "weight": "size",
+          "weight_unit": "size",
+          "calories": "calories",
+          "preparation_time": "preparation time",
+          "is_hidden": "visibility",
+          "archived": "archive",
+          "sizes": "sizes"
+        }
+      }
+    }
+  }
+}

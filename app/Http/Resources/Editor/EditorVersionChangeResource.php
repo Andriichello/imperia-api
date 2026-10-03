@@ -47,8 +47,7 @@ class EditorVersionChangeResource extends JsonResource
     /**
      * @OA\Schema(
      *   schema="EditorVersionChange",
-     *   description="Change of an item in a version: for each changed field, its live value from when it was
-     *     planned and the new one.",
+     *   description="Change of an item in a version: each field's live value when it was planned, and the new one.",
      *   required={"id", "target_type", "target_id", "parent_id", "is_new", "fields", "changes_count", "label"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="target_type", type="string", example="dish-variants",
@@ -65,8 +64,7 @@ class EditorVersionChangeResource extends JsonResource
      *   @OA\Property(property="changes_count", type="integer", example=1),
      *   @OA\Property(property="label", ref="#/components/schemas/EditorVersionLabel"),
      *   @OA\Property(property="conflicts", type="object",
-     *     description="Only on a version's own page: `missing` when the item (or a new one's parent) is gone,
-     *       `fields` with live values, which changed since they were planned.",
+     *     description="Only on the version's page: the item is gone, or live values, which changed since.",
      *     @OA\Property(property="missing", type="boolean", example=false),
      *     @OA\Property(property="fields", type="object", example={"price": 145})),
      * ),

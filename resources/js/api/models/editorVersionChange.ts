@@ -10,8 +10,7 @@ import type { EditorVersionChangeTargetType } from "./editorVersionChangeTargetT
 import type { EditorVersionLabel } from "./editorVersionLabel";
 
 /**
- * Change of an item in a version: for each changed field, its live value from when it was
- *      *     planned and the new one.
+ * Change of an item in a version: each field's live value when it was planned, and the new one.
  */
 export interface EditorVersionChange {
   id: number;
@@ -30,9 +29,6 @@ export interface EditorVersionChange {
   fields: EditorVersionChangeFields;
   changes_count: number;
   label: EditorVersionLabel | null;
-  /**
-   * Only on a version's own page: `missing` when the item (or a new one's parent) is gone,
-   *      *       `fields` with live values, which changed since they were planned.
-   */
+  /** Only on the version's page: the item is gone, or live values, which changed since. */
   conflicts?: EditorVersionChangeConflicts;
 }

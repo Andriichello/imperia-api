@@ -7,6 +7,8 @@ use App\Helpers\SignatureHelper;
 use App\Models as Models;
 use App\Models\Morphs as Morphs;
 use App\Policies as Policies;
+use App\Models\User;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Auth;
 
@@ -68,6 +70,10 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        // links in password reset emails open the admin's page, which sets a new password
+        ResetPassword::createUrlUsing(fn (User $user, string $token) => route('admin.password.reset', [
+            'token' => $token,
+            'email' => $user->getEmailForPasswordReset(),
+        ]));
     }
 }

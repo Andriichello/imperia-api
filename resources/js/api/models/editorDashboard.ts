@@ -11,8 +11,7 @@ import type { EditorVersion } from "./editorVersion";
 import type { EditorWeekdays } from "./editorWeekdays";
 
 /**
- * What the dashboard shows: what guests see, the hours (open now is worked out from them,
- *      *     in the restaurant's time zone), upcoming special days and the versions, which haven't gone live yet.
+ * What the dashboard shows: what guests see, hours, upcoming special days, pending versions.
  */
 export interface EditorDashboard {
   id: number;

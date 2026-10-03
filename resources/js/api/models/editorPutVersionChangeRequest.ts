@@ -8,9 +8,7 @@ import type { EditorPutVersionChangeRequestFields } from "./editorPutVersionChan
 import type { EditorPutVersionChangeRequestTargetType } from "./editorPutVersionChangeRequestTargetType";
 
 /**
- * A change of an item (or a new one). Its fields are merged into the item's change in the
- *      *     version; a field back at its live value isn't a change anymore. Fields and their values are those of
- *      *     the editor's requests: texts in every language, `media` as photos, `archived` to archive or restore.
+ * A change of an item (or a new one), merged into the item's change in the version.
  */
 export interface EditorPutVersionChangeRequest {
   /**
@@ -29,7 +27,7 @@ export interface EditorPutVersionChangeRequest {
    * @nullable
    */
   parent_id?: number | null;
-  /** New values of the fields. A new dish has `sizes` too. */
+  /** New values, as in the editor's requests (a new dish has `sizes`); live ones are no change. */
   fields?: EditorPutVersionChangeRequestFields;
   /** Fields, which aren't changed anymore. */
   revert?: string[];

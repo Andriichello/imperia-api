@@ -65,6 +65,6 @@ class PendingChangesTest extends FilamentTestCase
         $this->assertContains(PendingChanges::class, $widgets);
         $this->assertNotContains(FilamentInfoWidget::class, $widgets);
 
-        $this->get('/admin')->assertOk();
+        $this->get('/admin/manage')->assertOk();
     }
 }

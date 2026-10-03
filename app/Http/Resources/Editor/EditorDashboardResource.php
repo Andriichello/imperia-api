@@ -56,8 +56,7 @@ class EditorDashboardResource extends EditorRestaurantResource
     /**
      * @OA\Schema(
      *   schema="EditorDashboard",
-     *   description="What the dashboard shows: what guests see, the hours (open now is worked out from them,
-     *     in the restaurant's time zone), upcoming special days and the versions, which haven't gone live yet.",
+     *   description="What the dashboard shows: what guests see, hours, upcoming special days, pending versions.",
      *   required={"id", "slug", "url", "default_locale", "supported_locales", "name", "establishment", "timezone",
      *     "currency", "menus_count", "dishes_count", "last_saved_at", "last_saved_by", "closed_until",
      *     "closed_reason", "weekdays", "exceptions", "versions"},

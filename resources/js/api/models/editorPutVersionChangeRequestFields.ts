@@ -6,6 +6,6 @@
  */
 
 /**
- * New values of the fields. A new dish has `sizes` too.
+ * New values, as in the editor's requests (a new dish has `sizes`); live ones are no change.
  */
 export type EditorPutVersionChangeRequestFields = { [key: string]: unknown };

@@ -67,7 +67,7 @@
   <header class="h-14 shrink-0 flex items-center gap-2 lg:gap-3 px-3 lg:px-4 bg-white border-b border-zinc-200">
     <div class="flex items-center gap-2">
       <a class="size-7 rounded-md bg-zinc-900 text-white flex items-center justify-center e-focus"
-         :href="editor.urls?.admin"
+         :href="editor.urls?.dashboard"
          :aria-label="t('editor.top.home')"
          :title="t('editor.top.home')">
         <Utensils class="size-4"/>
@@ -226,7 +226,8 @@
 
       <a class="e-dropdown-item"
          role="menuitem"
-         :href="editor.urls?.admin">
+         :href="editor.urls.panel"
+         v-if="editor.urls?.panel">
         <LayoutDashboard class="size-4 text-zinc-500"/>
         {{ t('editor.top.admin_panel') }}
       </a>

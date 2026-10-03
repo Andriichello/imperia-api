@@ -7,8 +7,7 @@
 import type { EditorVersionChangeConflictsFields } from "./editorVersionChangeConflictsFields";
 
 /**
- * Only on a version's own page: `missing` when the item (or a new one's parent) is gone,
- *      *       `fields` with live values, which changed since they were planned.
+ * Only on the version's page: the item is gone, or live values, which changed since.
  */
 export type EditorVersionChangeConflicts = {
   missing?: boolean;
