@@ -6165,6 +6165,84 @@
                 ]
             }
         },
+        "/api/restaurants/{id}/dishes": {
+            "get": {
+                "tags": [
+                    "dish-dishes"
+                ],
+                "summary": "All dishes guests see on the restaurant's pages, in the language (gzipped JSON).",
+                "operationId": "getRestaurantDishes",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id or slug of the restaurant.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "locale",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "en"
+                    },
+                    {
+                        "name": "hash",
+                        "in": "query",
+                        "description": "Of the snapshot the page knows: when it's the current one, the answer is cached for long.",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "required": [
+                                        "data"
+                                    ],
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Dish"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "304": {
+                        "description": "Not modified (the ETag matches)."
+                    },
+                    "404": {
+                        "description": "The restaurant doesn't exist."
+                    },
+                    "422": {
+                        "description": "Invalid values.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorsResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/restaurants/{id}/reviews": {
             "get": {
                 "tags": [
@@ -12216,6 +12294,10 @@
         {
             "name": "users",
             "description": "users"
+        },
+        {
+            "name": "dish-dishes",
+            "description": "dish-dishes"
         },
         {
             "name": "restaurant-reviews",

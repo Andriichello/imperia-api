@@ -4,8 +4,10 @@ namespace App\Subscribers;
 
 use App\Helpers\WebCacheHelper;
 use App\Models\BaseModel;
+use App\Models\Dish;
 use App\Models\DishCategory;
 use App\Models\DishMenu;
+use App\Models\DishVariant;
 use App\Models\Restaurant;
 use App\Models\RestaurantNote;
 use App\Models\Schedule;
@@ -15,7 +17,10 @@ use App\Models\ScheduleException;
  * Class WebCacheSubscriber.
  *
  * Clears the cached restaurant and menu pages of the website when something
- * shown there changes, so the change doesn't wait for the cache to expire.
+ * shown there changes, so the change doesn't wait for the cache to expire: the
+ * restaurant's content version goes up too, so its dishes get a new snapshot.
+ * Changes of dishes and their sizes made outside the editor (the admin panel,
+ * the API) count too.
  */
 class WebCacheSubscriber extends BaseSubscriber
 {
@@ -29,6 +34,8 @@ class WebCacheSubscriber extends BaseSubscriber
         Schedule::class => 'scheduleChanged',
         DishMenu::class => 'menuChanged',
         DishCategory::class => 'categoryChanged',
+        Dish::class => 'dishChanged',
+        DishVariant::class => 'sizeChanged',
         RestaurantNote::class => 'restaurantItemChanged',
         ScheduleException::class => 'restaurantItemChanged',
     ];
@@ -96,12 +103,50 @@ class WebCacheSubscriber extends BaseSubscriber
      */
     public function categoryChanged(DishCategory $category): void
     {
-        $restaurantIds = DishMenu::query()
+        $menuIds = [$category->menu_id, $category->getOriginal('menu_id')];
+
+        WebCacheHelper::forgetRestaurants(...$this->restaurantsOfMenus(...$menuIds));
+    }
+
+    /**
+     * @param Dish $dish
+     *
+     * @return void
+     */
+    public function dishChanged(Dish $dish): void
+    {
+        WebCacheHelper::forgetRestaurants(...$this->restaurantsOfMenus($dish->menu_id, $dish->getOriginal('menu_id')));
+    }
+
+    /**
+     * @param DishVariant $size
+     *
+     * @return void
+     */
+    public function sizeChanged(DishVariant $size): void
+    {
+        $menuIds = Dish::query()
             ->withoutGlobalScopes()
-            ->whereIn('id', array_filter([$category->menu_id, $category->getOriginal('menu_id')]))
-            ->pluck('restaurant_id')
+            ->whereIn('id', array_filter([$size->dish_id, $size->getOriginal('dish_id')]))
+            ->pluck('menu_id')
             ->all();
 
-        WebCacheHelper::forgetRestaurants(...$restaurantIds);
+        WebCacheHelper::forgetRestaurants(...$this->restaurantsOfMenus(...$menuIds));
+    }
+
+    /**
+     * Ids of the restaurants of the menus (hidden and archived ones too).
+     *
+     * @param int|null ...$menuIds
+     *
+     * @return int[]
+     */
+    protected function restaurantsOfMenus(?int ...$menuIds): array
+    {
+        return DishMenu::query()
+            ->withoutGlobalScopes()
+            ->whereIn('id', array_filter($menuIds))
+            ->pluck('restaurant_id')
+            ->all();
     }
 }

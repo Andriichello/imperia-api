@@ -7,6 +7,7 @@ use App\Http\Controllers\Web\Traits\LoadsAndCachesTrait;
 use App\Http\Controllers\Web\Traits\SharesPropsTrait;
 use App\Http\Resources\Dish\DishMenuCollection;
 use App\Http\Resources\Restaurant\RestaurantResource;
+use App\Repositories\MenuSnapshotRepository;
 use App\Repositories\RestaurantReviewRepository;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -22,9 +23,12 @@ class PreviewController extends Controller
      * PreviewController constructor.
      *
      * @param RestaurantReviewRepository $reviews
+     * @param MenuSnapshotRepository $snapshots
      */
-    public function __construct(protected RestaurantReviewRepository $reviews)
-    {
+    public function __construct(
+        protected RestaurantReviewRepository $reviews,
+        protected MenuSnapshotRepository $snapshots,
+    ) {
     }
 
     /**
@@ -84,6 +88,8 @@ class PreviewController extends Controller
             'menus' => new DishMenuCollection($menus),
             // not cached: an approved review shows right away
             'reviews' => $this->reviews->summary($restaurant),
+            // where the dishes are loaded from: the current snapshot, or the API, which builds it
+            'dishes_url' => $this->snapshots->pageUrl($restaurant, App::getLocale()),
         ]);
     }
 }

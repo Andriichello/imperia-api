@@ -25,6 +25,7 @@ use App\Http\Controllers\Model\TagController;
 use App\Http\Controllers\Model\UserController;
 use App\Http\Controllers\Other\QueueController;
 use App\Http\Controllers\Other\StatusController;
+use App\Http\Controllers\Web\MenuSnapshotController;
 use App\Http\Controllers\Web\ReviewController;
 use App\Http\Responses\ApiResponse;
 use Illuminate\Support\Facades\Route;
@@ -106,6 +107,10 @@ Route::group(['as' => 'api.'], function () {
     Route::get('/restaurants/{id}/holidays', [RestaurantController::class, 'getHolidays'])
         ->name('restaurants.holidays')
         ->middleware('cached:restaurants');
+
+    // all dishes guests see on a restaurant's pages, from its snapshot (a gzipped JSON file)
+    Route::get('/restaurants/{id}/dishes', [MenuSnapshotController::class, 'show'])
+        ->name('restaurants.dishes');
 
     // reviews of a restaurant: guests leave them, they're public once the restaurant approves them
     Route::get('/restaurants/{id}/reviews', [ReviewController::class, 'index'])

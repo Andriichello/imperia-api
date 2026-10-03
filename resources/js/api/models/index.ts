@@ -113,6 +113,8 @@ export * from "./getHolidaysParams";
 export * from "./getHolidaysResponse";
 export * from "./getModelMediaParams";
 export * from "./getModelMediaResponse";
+export * from "./getRestaurantDishes200";
+export * from "./getRestaurantDishesParams";
 export * from "./getRestaurantReviewsParams";
 export * from "./getRestaurantReviewsSort";
 export * from "./getSchedulesResponse";

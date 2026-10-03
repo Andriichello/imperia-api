@@ -40,6 +40,7 @@ use Illuminate\Support\Facades\DB;
  * @property Carbon|null $closed_until
  * @property string|null $closed_reason
  * @property Carbon|null $last_saved_at
+ * @property int $content_version
  * @property int|null $last_saved_by
  * @property int|null $popularity
  * @property string|null $metadata

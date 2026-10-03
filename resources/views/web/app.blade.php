@@ -10,6 +10,11 @@
     <link href="{{ mix('/css/app.css') }}" rel="stylesheet"/>
     <script src="{{ mix('/js/app.js') }}" defer></script>
 
+    @isset($dishes_url)
+      <!-- the dishes are loaded while the scripts are -->
+      <link rel="preload" href="{{ $dishes_url }}" as="fetch" crossorigin="anonymous"/>
+    @endisset
+
     @php
       $props = [
           // shared props
@@ -20,6 +25,7 @@
           "restaurant" => $restaurant ?? null,
           "menus" => $menus ?? null,
           "reviews" => $reviews ?? null,
+          "dishes_url" => $dishes_url ?? null,
       ];
 
       // the restaurant's brand colors instead of the default ones of `app.css`

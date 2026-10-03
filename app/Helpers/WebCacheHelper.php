@@ -65,7 +65,8 @@ class WebCacheHelper
     }
 
     /**
-     * Forget the cached pages of the restaurant (by its id and slugs) and its menus.
+     * Forget the cached pages of the restaurant (by its id and slugs) and its menus. Its content
+     * version goes up: its dishes get a new snapshot (see `MenuSnapshotRepository`).
      *
      * @param Restaurant $restaurant
      *
@@ -73,6 +74,13 @@ class WebCacheHelper
      */
     public static function forgetRestaurant(Restaurant $restaurant): void
     {
+        // a query: no events of the restaurant again, and its update time stays
+        Restaurant::query()
+            ->withoutGlobalScopes()
+            ->whereKey($restaurant->id)
+            ->toBase()
+            ->increment('content_version');
+
         $keys = [
             static::restaurantKey($restaurant->id),
             static::menusKey($restaurant->id),

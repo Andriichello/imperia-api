@@ -10,6 +10,8 @@ import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import type {
   DestroyDishResponse,
   DestroyRequest,
+  GetRestaurantDishes200,
+  GetRestaurantDishesParams,
   IndexDishResponse,
   IndexDishesParams,
   RestoreDishResponse,
@@ -155,9 +157,38 @@ export const getRestoreDishUrl = (id: number) => {
       baseURL: "",
     });
 };
+/**
+ * @summary All dishes guests see on the restaurant's pages, in the language (gzipped JSON).
+ */
+export const getRestaurantDishes = (
+  id: string,
+  params: GetRestaurantDishesParams,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<GetRestaurantDishes200>> => {
+  return axios.get(`/api/restaurants/${id}/dishes`, {
+    ...options,
+    params: { ...params, ...options?.params },
+  });
+};
+export const getGetRestaurantDishesUrl = (
+  id: string,
+  params: GetRestaurantDishesParams,
+) => {
+  return axios
+    .create({
+      baseURL: "",
+      params: null,
+    })
+    .getUri({
+      url: `/api/restaurants/${id}/dishes`,
+      baseURL: "",
+      params,
+    });
+};
 export type IndexDishesResult = AxiosResponse<IndexDishResponse>;
 export type StoreDishResult = AxiosResponse<StoreDishResponse>;
 export type ShowDishResult = AxiosResponse<ShowDishResponse>;
 export type DestroyDishResult = AxiosResponse<DestroyDishResponse>;
 export type UpdateDishResult = AxiosResponse<UpdateDishResponse>;
 export type RestoreDishResult = AxiosResponse<RestoreDishResponse>;
+export type GetRestaurantDishesResult = AxiosResponse<GetRestaurantDishes200>;

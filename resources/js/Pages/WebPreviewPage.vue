@@ -43,7 +43,7 @@
   )
 
   function reloadProducts() {
-    preview.loadProducts()
+    preview.loadDishes()
   }
 
   const isSearchOpened = ref(false)
@@ -774,11 +774,8 @@
     }
     window.history.replaceState(initialState, '', buildUrl(initialState.menuId, initialState.categoryId, initialState.productId, initialState.productPage))
 
-    // Load all products for all menus initially via store
-    const allMenuIds = (menus.value || []).map((m: any) => Number(m.id)).filter((id: any) => Number.isFinite(id)) as number[]
-    const rId = restaurantId.value ?? resolveRestaurantId()
-    preview.setContext(rId as number | null, null, allMenuIds)
-    await preview.loadProducts({ restaurantId: rId as number | null, menuIds: allMenuIds })
+    // All dishes of the restaurant's menus at once, from their snapshot
+    await preview.loadDishes()
 
     // Open Product drawer automatically if the URL hash targets a product page
     const hash = window.location.hash || ''

@@ -10,6 +10,8 @@ interface AppState {
   menus: DishMenu[] | null;
   // approved reviews of the restaurant
   reviews: RestaurantReviewsSummary | null;
+  // where the dishes are loaded from: their current snapshot, or the API, which builds it
+  dishes_url: string | null;
 }
 
 export const useAppStore = defineStore('app', {
@@ -20,6 +22,7 @@ export const useAppStore = defineStore('app', {
     restaurant: null,
     menus: null,
     reviews: null,
+    dishes_url: null,
   }),
   actions: {
     hydrate(props: Partial<AppState>) {
