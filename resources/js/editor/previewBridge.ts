@@ -45,6 +45,9 @@ const RESTAURANT_KINDS = ['photos', 'details', 'notes', 'menus', 'hours', 'conta
 /** How long to wait for a part after opening its page (dishes are loaded after it opens). */
 const WAIT_MS = 4000
 
+/** How long the page takes to settle after its dishes are loaded. */
+const SETTLE_MS = 300
+
 /** How long the dish's page takes to close. */
 const CLOSING_MS = 250
 
@@ -538,6 +541,13 @@ class PreviewBridge {
 
   /** Scroll to the first of the parts, which is on the page, or open the page of the first one. */
   protected async scrollTo(keys: string[]): Promise<void> {
+    // the page loads its dishes after it opens (the page of a dish is known then), and scrolls
+    // to its top once they're there: after that
+    if (!this.preview.products) {
+      await this.until(() => !!this.preview.products)
+      await new Promise((resolve) => setTimeout(resolve, SETTLE_MS))
+    }
+
     // another part than the dish's: the menu page under the dish's page shows it
     if (this.page.page === 'dish' && keys.length
       && !keys.some((k) => k.startsWith(DISH_PART) || k === `dish:${this.page.dishId}`)) {
@@ -579,15 +589,23 @@ class PreviewBridge {
     window.scrollTo({top: window.scrollY + rect.top - offset, behavior: 'smooth'})
   }
 
-  protected waitFor(keys: string[]): Promise<string | undefined> {
+  /** The first of the parts, which is on the page, once one is (none, when none is for a while). */
+  protected async waitFor(keys: string[]): Promise<string | undefined> {
+    let key: string | undefined
+
+    await this.until(() => !!(key = keys.find((k) => this.rectOf(k))))
+
+    return key
+  }
+
+  /** Once the condition is met, or after a while. */
+  protected until(condition: () => boolean): Promise<void> {
     const until = Date.now() + WAIT_MS
 
     return new Promise((resolve) => {
       const check = () => {
-        const key = keys.find((k) => this.rectOf(k))
-
-        if (key || Date.now() > until) {
-          resolve(key)
+        if (condition() || Date.now() > until) {
+          resolve()
         } else {
           setTimeout(check, 50)
         }

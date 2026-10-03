@@ -350,7 +350,7 @@ export const useEditorStore = defineStore('editor', {
       const confirmed = await this.confirm({
         title: t('editor.save.discard_title', {count}, count),
         message: t('editor.save.discard_message'),
-        confirm: t('editor.save.discard_all'),
+        confirm: t('editor.save.discard_confirm'),
         danger: true,
       })
 

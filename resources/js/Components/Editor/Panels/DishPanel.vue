@@ -1,7 +1,6 @@
 <script setup lang="ts">
   import {computed, PropType, ref} from 'vue'
   import {useI18n} from 'vue-i18n'
-  import axios from 'axios'
   import {
     Archive,
     ArrowLeft,
@@ -11,18 +10,17 @@
     Ellipsis,
     Flame,
     FolderInput,
-    Image,
     MousePointer2,
     Plus,
     Trash2,
-    Upload,
   } from 'lucide-vue-next'
   import type {EditorCategory, EditorDish} from '@/api'
-  import {EditorSizeWeightUnit, uploadEditorRestaurantPhoto} from '@/api'
+  import {EditorSizeWeightUnit} from '@/api'
   import PanelShell from '@/Components/Editor/PanelShell.vue'
   import DropdownMenu from '@/Components/Editor/DropdownMenu.vue'
   import FieldLabel from '@/Components/Editor/Fields/FieldLabel.vue'
   import ToggleSwitch from '@/Components/Editor/Fields/ToggleSwitch.vue'
+  import PhotoGallery from '@/Components/Editor/PhotoGallery.vue'
   import PanelField from '@/Components/Editor/Fields/PanelField.vue'
   import SelectedInPreview from '@/Components/Editor/Fields/SelectedInPreview.vue'
   import {usePanelDraft} from '@/composables/usePanelDraft'
@@ -53,8 +51,8 @@
   const MAX_DESCRIPTION = 300
   const MAX_BADGE = 25
   const MAX_SIZES = 10
-  const PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp']
-  const MAX_PHOTO_SIZE = 10 * 1024 * 1024
+  // the most photos of a dish, hidden ones included
+  const MAX_PHOTOS = 3
   const UNITS = Object.values(EditorSizeWeightUnit)
   const QUICK_PICKS = ['new', 'bestseller', 'seasonal']
   const HOTNESS = ['low-hotness', 'medium-hotness', 'high-hotness', 'extreme-hotness']
@@ -64,9 +62,6 @@
   const dish = computed(() => isNew.value ? null : editor.findDish(props.selection.id))
   const category = computed<EditorCategory | null>(() => editor.findCategory(dish.value?.category_id ?? props.selection.parent ?? null))
   const menu = computed(() => category.value ? editor.findMenu(category.value.menu_id) : null)
-
-  // percent of the photo being uploaded
-  const uploading = ref<number | null>(null)
 
   const {draft, change, error} = usePanelDraft<DishDraft>(props.selection)
 
@@ -163,74 +158,6 @@
   }
 
   const allergens = computed(() => draft.value.flags.filter((flag) => ALLERGENS.includes(flag)))
-
-  // Photo
-
-  const fileInput = ref<HTMLInputElement | null>(null)
-  const photoError = ref<string | null>(null)
-  let upload: AbortController | null = null
-
-  const photo = computed(() => draft.value.photos[0] ?? null)
-
-  function photoUrl(): string | null {
-    const item = photo.value
-
-    return item ? (item.variants?.find((variant) => variant.extension === 'webp')?.url ?? item.url) : null
-  }
-
-  /** The new photo replaces the first one, it's shown once the dish is saved. */
-  async function uploadPhoto(files: FileList | null) {
-    const file = files?.[0]
-    photoError.value = null
-
-    if (fileInput.value) {
-      fileInput.value.value = ''
-    }
-
-    if (!file) {
-      return
-    }
-
-    if (!PHOTO_TYPES.includes(file.type)) {
-      photoError.value = t('editor.photos.wrong_type', {name: file.name})
-      return
-    }
-
-    if (file.size > MAX_PHOTO_SIZE) {
-      photoError.value = t('editor.photos.too_big', {name: file.name})
-      return
-    }
-
-    upload = new AbortController()
-    uploading.value = 0
-    editor.uploads++
-
-    try {
-      const response = await uploadEditorRestaurantPhoto(restaurant.value.id, {file}, {
-        signal: upload.signal,
-        onUploadProgress: (event) => {
-          uploading.value = event.total ? Math.round(event.loaded / event.total * 100) : 0
-        },
-      })
-
-      change((values) => ({...values, photos: [response.data.data, ...values.photos.slice(1)]}))
-    } catch (e) {
-      if (!axios.isCancel(e)) {
-        const reason = axios.isAxiosError(e) ? e.response?.data?.errors?.file?.[0] : null
-
-        photoError.value = reason ?? t('editor.photos.upload_failed', {name: file.name})
-      }
-    } finally {
-      uploading.value = null
-      upload = null
-      editor.uploads--
-    }
-  }
-
-  function removePhoto() {
-    upload?.abort()
-    draft.value.photos = draft.value.photos.slice(1)
-  }
 
   // Actions
 
@@ -350,60 +277,16 @@
     </div>
 
     <PanelField field="photos" v-slot="{selected}">
-      <div class="flex flex-col gap-1.5">
-        <FieldLabel :label="t('editor.dish.photo')">
+      <PhotoGallery v-model="draft.photos"
+                    compact
+                    :max="MAX_PHOTOS"
+                    :uploaded="(photo) => change((values) => ({...values, photos: [...values.photos, photo]}))"
+                    :error="error('media')"
+                    :help="t('editor.dish.photos_help')">
+        <template #label>
           <SelectedInPreview v-if="selected"/>
-        </FieldLabel>
-
-        <div class="flex items-center gap-3">
-          <div class="relative size-24 shrink-0 rounded-lg overflow-hidden">
-            <img class="size-full object-cover" :src="photoUrl()!" alt="" v-if="photoUrl()"/>
-
-            <span class="size-full flex items-center justify-center rounded-lg border border-dashed border-zinc-300 text-zinc-400"
-                  aria-hidden="true"
-                  v-else>
-              <Image class="size-6"/>
-            </span>
-
-            <span class="absolute inset-0 rounded-lg shadow-[inset_0_0_0_1px_rgba(0,0,0,0.06)]" aria-hidden="true"/>
-
-            <div class="absolute inset-0 bg-white/80 flex flex-col items-center justify-center gap-1.5"
-                 v-if="uploading !== null">
-              <span class="text-xs font-semibold text-zinc-700">{{ uploading }}%</span>
-              <span class="w-[70%] h-1 rounded-sm bg-zinc-200 overflow-hidden">
-                <span class="block h-full bg-blue-600" :style="{width: `${uploading}%`}"/>
-              </span>
-            </div>
-          </div>
-
-          <div class="flex flex-col items-start gap-2">
-            <button type="button"
-                    class="e-btn e-btn-secondary h-8"
-                    :disabled="uploading !== null"
-                    @click="fileInput?.click()">
-              <Upload class="size-3.5"/>
-              {{ photo ? t('editor.dish.replace') : t('editor.dish.upload') }}
-            </button>
-
-            <button type="button"
-                    class="e-btn h-8 px-1 text-red-700"
-                    v-if="photo || uploading !== null"
-                    @click="removePhoto">
-              <Trash2 class="size-3.5"/>
-              {{ uploading !== null ? t('editor.photos.cancel_upload') : t('editor.dish.remove') }}
-            </button>
-          </div>
-
-          <input class="hidden"
-                 type="file"
-                 accept="image/jpeg,image/png,image/webp"
-                 ref="fileInput"
-                 @change="uploadPhoto(($event.target as HTMLInputElement).files)"/>
-        </div>
-
-        <p class="e-error" v-if="photoError || error('media')">{{ photoError ?? error('media') }}</p>
-        <p class="e-help" v-else>{{ t('editor.dish.photo_help') }}</p>
-      </div>
+        </template>
+      </PhotoGallery>
     </PanelField>
 
     <PanelField class="flex flex-col gap-5" field="text" v-slot="{selected}">

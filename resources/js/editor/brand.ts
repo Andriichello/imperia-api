@@ -9,14 +9,28 @@ export interface BrandPreset extends BrandColors {
   key: string
 }
 
-/** Ready-made colors (from `app.css`), the first one is the public pages' default. */
+/** Ready-made colors (all readable), the first one is the public pages' default (see `app.css`). */
 export const BRAND_PRESETS: BrandPreset[] = [
   {key: 'green', primary: '#3bb517', content: '#284625'},
   {key: 'light_green', primary: '#71d855', content: '#284625'},
+  {key: 'olive', primary: '#8a9a3b', content: '#3d4415'},
+  {key: 'teal', primary: '#14a3a3', content: '#0b4d4d'},
   {key: 'blue', primary: '#6db0bb', content: '#295a5a'},
-  {key: 'nude', primary: '#cc7a52', content: '#5f4237'},
+  {key: 'ocean', primary: '#2f7fd1', content: '#173f6b'},
+  {key: 'lavender', primary: '#9b8cdb', content: '#3b2f73'},
   {key: 'purple', primary: '#b768b3', content: '#5e0679'},
+  {key: 'rose', primary: '#e5739b', content: '#6e1f3d'},
+  {key: 'burgundy', primary: '#a3324a', content: '#5a1424'},
+  {key: 'coral', primary: '#f0776a', content: '#7a2a22'},
+  {key: 'terracotta', primary: '#d9603b', content: '#6b2412'},
+  {key: 'nude', primary: '#cc7a52', content: '#5f4237'},
+  {key: 'saffron', primary: '#e0a526', content: '#5c4108'},
+  {key: 'espresso', primary: '#8b5e3c', content: '#3f2a1a'},
+  {key: 'charcoal', primary: '#6b7280', content: '#1f2937'},
 ]
+
+/** The orange of allergens on the public pages. */
+const ALLERGEN_ORANGE = '#ca3500'
 
 /**
  * Colors of the restaurant: its own ones, or the default ones.
@@ -98,4 +112,40 @@ export function readableContent(colors: BrandColors): string | null {
   }
 
   return null
+}
+
+/** Hue (degrees) and saturation (0–1) of the color. */
+function hueAndSaturation(hex: string): { hue: number, saturation: number } {
+  const [r, g, b] = toRgb(hex).map((channel) => channel / 255)
+  const max = Math.max(r, g, b)
+  const min = Math.min(r, g, b)
+  const delta = max - min
+  const lightness = (max + min) / 2
+
+  if (!delta) {
+    return {hue: 0, saturation: 0}
+  }
+
+  const hue = max === r ? ((g - b) / delta) % 6 : (max === g ? (b - r) / delta + 2 : (r - g) / delta + 4)
+
+  return {
+    hue: (hue * 60 + 360) % 360,
+    saturation: delta / (1 - Math.abs(2 * lightness - 1)),
+  }
+}
+
+/**
+ * Whether the primary color is close to the orange of allergens (a hue within about 12° of it,
+ * and as vivid): allergen labels stand out less on the menu. It's allowed still.
+ */
+export function nearAllergens(colors: BrandColors): boolean {
+  if (!isHex(colors.primary)) {
+    return false
+  }
+
+  const color = hueAndSaturation(colors.primary)
+  const orange = hueAndSaturation(ALLERGEN_ORANGE)
+  const distance = Math.abs(color.hue - orange.hue)
+
+  return Math.min(distance, 360 - distance) <= 12 && color.saturation >= 0.5
 }

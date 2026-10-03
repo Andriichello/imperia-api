@@ -12,6 +12,7 @@
     contrastOnTints,
     formatContrast,
     isHex,
+    nearAllergens,
     presetOf,
     READABLE,
     readableContent,
@@ -20,7 +21,8 @@
 
   /**
    * Colors of the public pages: a preset or custom ones, whose text has to be readable on
-   * the tints of the primary color. Both previews show them till they're saved.
+   * the tints of the primary color (custom ones, which aren't, can't be saved). Both previews
+   * show them till they're saved.
    */
   const editor = useEditorStore()
   const {t} = useI18n()
@@ -37,6 +39,16 @@
   const suggestion = computed(() => valid.value && !readable.value ? readableContent(draft.value) : null)
 
   const selected = computed(() => valid.value ? presetOf(draft.value) : null)
+
+  // allergen labels stand out less with an orange close to theirs
+  const nearOrange = computed(() => nearAllergens(draft.value))
+
+  /** "Green · #3BB517 · text #284625" */
+  const presetTitle = (preset: BrandPreset) => [
+    t('editor.brand.presets.' + preset.key),
+    preset.primary.toUpperCase(),
+    `${t('editor.brand.text')} ${preset.content.toUpperCase()}`,
+  ].join(' · ')
 
   function pick(preset: BrandPreset) {
     draft.value = {primary: preset.primary, content: preset.content}
@@ -58,77 +70,77 @@
               :subtitle="t('editor.subtitles.brand')"
               @navigate="editor.close()"
               @close="editor.close()">
-    <section class="flex flex-col gap-1.5">
-      <h3 class="e-section mb-0.5">{{ t('editor.brand.presets_title') }}</h3>
+    <section class="flex flex-col gap-2">
+      <div class="flex items-baseline justify-between gap-2">
+        <h3 class="e-section">{{ t('editor.brand.presets_title', {count: BRAND_PRESETS.length}) }}</h3>
+        <p class="e-help">{{ t('editor.brand.presets_help') }}</p>
+      </div>
 
-      <button type="button"
-              class="w-full flex items-center gap-3 py-[7px] px-3 rounded-lg border text-start e-focus"
-              :class="selected?.key === preset.key
-                ? 'border-blue-600 bg-blue-50 shadow-[0_0_0_1px_#2563eb]'
-                : 'border-zinc-200 bg-white hover:bg-zinc-50'"
-              :aria-pressed="selected?.key === preset.key"
-              v-for="preset in BRAND_PRESETS" :key="preset.key"
-              @click="pick(preset)">
-        <span class="relative size-8 shrink-0 rounded-full shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)]"
-              :style="{background: preset.primary}"
-              aria-hidden="true">
-          <span class="absolute -right-0.5 -bottom-0.5 size-3.5 rounded-full border-2 border-white"
-                :style="{background: preset.content}"/>
-        </span>
-
-        <span class="flex-1 min-w-0 flex flex-col">
-          <span class="font-semibold">{{ t('editor.brand.presets.' + preset.key) }}</span>
-          <span class="text-xs text-zinc-500 tabular-nums">
-            <span class="uppercase">{{ preset.primary }}</span>
-            · {{ t('editor.brand.text') }}
-            <span class="uppercase">{{ preset.content }}</span>
+      <div class="grid grid-cols-4 gap-2">
+        <button type="button"
+                class="relative min-w-0 flex flex-col items-center gap-1.5 pt-2.5 pb-2 px-1 rounded-[10px] border e-focus"
+                :class="selected?.key === preset.key
+                  ? 'border-blue-600 bg-blue-50 shadow-[0_0_0_1px_#2563eb]'
+                  : 'border-zinc-200 bg-white hover:bg-zinc-50'"
+                :aria-pressed="selected?.key === preset.key"
+                :title="presetTitle(preset)"
+                v-for="preset in BRAND_PRESETS" :key="preset.key"
+                @click="pick(preset)">
+          <span class="relative size-9 rounded-full shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)]"
+                :style="{background: preset.primary}"
+                aria-hidden="true">
+            <span class="absolute -right-[3px] -bottom-[3px] size-4 rounded-full border-2 border-white"
+                  :style="{background: preset.content}"/>
           </span>
-        </span>
 
-        <span class="text-xs font-semibold text-green-800 tabular-nums">
-          {{ formatContrast(contrastOnTints(preset)) }} : 1
-        </span>
+          <span class="max-w-full text-xs/4 font-semibold truncate">{{ t('editor.brand.presets.' + preset.key) }}</span>
 
-        <span class="size-5 shrink-0 flex items-center justify-center rounded-full text-white"
-              :class="selected?.key === preset.key ? 'bg-blue-600' : 'bg-transparent'"
-              aria-hidden="true">
-          <Check class="size-[13px] stroke-3"/>
-        </span>
-      </button>
+          <span class="absolute top-[5px] right-[5px] size-4 flex items-center justify-center rounded-full bg-blue-600 text-white"
+                aria-hidden="true"
+                v-if="selected?.key === preset.key">
+            <Check class="size-[11px] stroke-3"/>
+          </span>
+        </button>
+      </div>
     </section>
 
     <div class="h-px shrink-0 bg-[#f0f0f1]"/>
 
     <section class="flex flex-col gap-3">
-      <h3 class="e-section">{{ t('editor.brand.custom') }}</h3>
+      <div class="flex items-baseline justify-between gap-2">
+        <h3 class="e-section">{{ t('editor.brand.fine_tune') }}</h3>
+        <p class="e-help">{{ t('editor.brand.fine_tune_help') }}</p>
+      </div>
 
-      <div class="flex flex-col gap-1.5"
-           v-for="key in (['primary', 'content'] as const)" :key="key">
-        <FieldLabel :target="`brand-${key}`" :label="t(`editor.brand.${key}`)"/>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="min-w-0 flex flex-col gap-1.5"
+             v-for="key in (['primary', 'content'] as const)" :key="key">
+          <FieldLabel :target="`brand-${key}`" :label="t(`editor.brand.${key}`)"/>
 
-        <div class="flex gap-2">
-          <!-- a click on the swatch opens the browser's color picker -->
-          <label class="relative size-10 shrink-0 rounded-md shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)] cursor-pointer"
-                 :style="{background: isHex(draft[key]) ? draft[key] : '#ffffff'}"
-                 :title="t('editor.brand.pick')">
-            <input class="absolute inset-0 size-full opacity-0 cursor-pointer"
-                   type="color"
-                   :aria-label="t('editor.brand.pick_for', {color: t(`editor.brand.${key}`)})"
-                   :value="isHex(draft[key]) ? draft[key].toLowerCase() : '#ffffff'"
+          <div class="flex gap-2">
+            <!-- a click on the swatch opens the browser's color picker -->
+            <label class="relative size-10 shrink-0 rounded-md shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)] cursor-pointer"
+                   :style="{background: isHex(draft[key]) ? draft[key] : '#ffffff'}"
+                   :title="t('editor.brand.pick')">
+              <input class="absolute inset-0 size-full opacity-0 cursor-pointer"
+                     type="color"
+                     :aria-label="t('editor.brand.pick_for', {color: t(`editor.brand.${key}`)})"
+                     :value="isHex(draft[key]) ? draft[key].toLowerCase() : '#ffffff'"
+                     @input="setColor(key, ($event.target as HTMLInputElement).value)"/>
+            </label>
+
+            <input class="e-input min-w-0 tabular-nums uppercase"
+                   type="text"
+                   maxlength="7"
+                   :id="`brand-${key}`"
+                   :aria-invalid="!isHex(draft[key]) || !!error(`brand_${key === 'primary' ? 'primary' : 'primary_content'}`)"
+                   :value="draft[key]"
                    @input="setColor(key, ($event.target as HTMLInputElement).value)"/>
-          </label>
+          </div>
 
-          <input class="e-input tabular-nums uppercase"
-                 type="text"
-                 maxlength="7"
-                 :id="`brand-${key}`"
-                 :aria-invalid="!isHex(draft[key]) || !!error(`brand_${key === 'primary' ? 'primary' : 'primary_content'}`)"
-                 :value="draft[key]"
-                 @input="setColor(key, ($event.target as HTMLInputElement).value)"/>
+          <p class="e-error" v-if="!isHex(draft[key])">{{ t('editor.brand.invalid') }}</p>
+          <p class="e-help" v-else>{{ t(`editor.brand.${key}_help`) }}</p>
         </div>
-
-        <p class="e-error" v-if="!isHex(draft[key])">{{ t('editor.brand.invalid') }}</p>
-        <p class="e-help" v-else>{{ t(`editor.brand.${key}_help`) }}</p>
       </div>
 
       <div class="flex items-center gap-2.5 py-2.5 px-3 rounded-lg border bg-green-50 border-green-200 text-green-800 text-[13px]/[18px]"
@@ -136,7 +148,9 @@
            v-if="readable">
         <Check class="size-4 shrink-0"/>
         <p class="flex-1">
-          <b class="font-semibold">{{ t('editor.brand.readable') }}</b>
+          <b class="font-semibold">
+            {{ selected ? t('editor.brand.readable_preset', {name: t('editor.brand.presets.' + selected.key)}) : t('editor.brand.readable') }}
+          </b>
           {{ t('editor.brand.readable_text', {ratio: formatContrast(contrast ?? 0)}) }}
         </p>
       </div>
@@ -162,6 +176,13 @@
             {{ t('editor.brand.use_darker', {color: suggestion.toUpperCase()}) }}
           </button>
         </div>
+      </div>
+
+      <div class="flex items-start gap-2.5 py-2.5 px-3 rounded-lg border bg-[#fffbeb] border-[#fde68a] text-[#92400e] text-[13px]/[18px]"
+           role="status"
+           v-if="nearOrange">
+        <AlertTriangle class="size-4 shrink-0 mt-px"/>
+        <p class="flex-1">{{ t('editor.brand.near_allergens') }}</p>
       </div>
 
       <p class="e-error" v-if="error('brand_primary_content')">{{ error('brand_primary_content') }}</p>

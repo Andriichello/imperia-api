@@ -96,15 +96,16 @@
       parts.push(sizes.length > 1 ? t('editor.category.from', {price}) : price)
     }
 
-    if (!dish.photos?.length) {
+    if (!(dish.photos ?? []).some((photo) => !photo.is_hidden)) {
       parts.push(t('editor.category.no_photo'))
     }
 
     return parts.join(' · ')
   }
 
+  /** Its cover: the first photo guests see. */
   function thumbnail(dish: EditorDish): string | null {
-    const photo = dish.photos?.[0]
+    const photo = (dish.photos ?? []).find((item) => !item.is_hidden)
 
     return photo ? (photo.variants?.find((variant) => variant.extension === 'webp')?.url ?? photo.url) : null
   }

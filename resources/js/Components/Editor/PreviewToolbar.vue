@@ -63,7 +63,14 @@
 <template>
   <div class="h-12 shrink-0 grid grid-cols-[1fr_auto_1fr] items-center gap-3 px-3.5 bg-white border-b border-zinc-200">
     <div class="min-w-0 flex">
-      <DropdownMenu>
+      <!-- brand colors are shown on both pages side by side -->
+      <p class="min-w-0 h-8 inline-flex items-center gap-1.5 text-[13px] font-medium text-zinc-700"
+         v-if="editor.selection?.section === 'brand'">
+        <File class="size-[15px] shrink-0 text-zinc-500"/>
+        <span class="truncate">{{ t('editor.toolbar.both_pages') }}</span>
+      </p>
+
+      <DropdownMenu v-else>
         <template #trigger="{open, toggle}">
           <button type="button"
                   class="e-tb max-w-full"

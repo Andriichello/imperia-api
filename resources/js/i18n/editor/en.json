@@ -65,14 +65,12 @@
       "unsaved": "{label} · unsaved changes"
     },
     "brand": {
-      "presets_title": "Presets",
+      "presets_title": "Presets · {count}",
       "text": "text",
-      "custom": "Custom",
-      "custom_colors": "custom colors",
-      "primary": "Primary color",
-      "content": "Text color",
-      "primary_help": "Buttons, active tabs, tinted backgrounds and the pattern.",
-      "content_help": "Text and icons on top of the primary tint.",
+      "primary": "Primary",
+      "content": "Text",
+      "primary_help": "Tints, buttons, the pattern.",
+      "content_help": "Text on the tints.",
       "pick": "Pick a color",
       "pick_for": "Pick the {color}",
       "invalid": "Enter a color like #3BB517.",
@@ -84,10 +82,26 @@
       "presets": {
         "green": "Green",
         "light_green": "Light green",
+        "olive": "Olive",
+        "teal": "Teal",
         "blue": "Blue",
+        "ocean": "Ocean",
+        "lavender": "Lavender",
+        "purple": "Purple",
+        "rose": "Rose",
+        "burgundy": "Burgundy",
+        "coral": "Coral",
+        "terracotta": "Terracotta",
         "nude": "Nude",
-        "purple": "Purple"
-      }
+        "saffron": "Saffron",
+        "espresso": "Espresso",
+        "charcoal": "Charcoal"
+      },
+      "presets_help": "All pass the 4.5 : 1 contrast check",
+      "fine_tune": "Fine-tune",
+      "fine_tune_help": "Editing a value switches to Custom",
+      "readable_preset": "{name} is readable.",
+      "near_allergens": "Close to the orange used for allergens, so allergen labels stand out a little less on the menu."
     },
     "reorder": {
       "label": "Move {name}: drag, or use the arrow keys",
@@ -128,12 +142,10 @@
       "info": "Keep notes to one short sentence. Hidden notes stay here for later but guests don't see them."
     },
     "photos": {
-      "drop": "Drop photos here or",
-      "browse": "browse",
-      "formats": "JPG, PNG or WebP · up to 10 MB · landscape works best",
-      "order": "Drag to change the order",
-      "cover": "1 · Cover",
-      "remove": "Remove {name}",
+      "formats": "JPG, PNG or WebP, up to 10 MB. Landscape photos work best.",
+      "order": "Drag to reorder",
+      "cover": "{number} · Cover",
+      "remove": "Delete {name}",
       "uploading": "No photos uploading | {count} photo uploading | {count} photos uploading",
       "uploading_percent": "Uploading {percent}%",
       "cancel_upload": "Cancel upload",
@@ -141,8 +153,16 @@
       "too_big": "{name} is bigger than 10 MB.",
       "too_many": "Up to {count} photos.",
       "upload_failed": "{name} wasn't uploaded. Try again.",
-      "info": "The first photo is the cover. It's also the image people see when your link is shared in messengers.",
-      "untitled": "Photo {number}"
+      "info": "The first visible photo is the cover and is shown when your link is shared. {hide} keeps a photo here without showing it to guests, so you can bring it back later.",
+      "untitled": "Photo {number}",
+      "label": "Photos",
+      "of": "{count} of {max}",
+      "hide": "Hide {name}",
+      "show": "Show {name}",
+      "hidden": "Hidden",
+      "add": "Add photos",
+      "or_drop": "or drop here",
+      "info_hide": "Hide"
     },
     "hours": {
       "time_zone": "Time zone",
@@ -228,11 +248,6 @@
       "new": "New dish",
       "shown": "Shown on the menu",
       "shown_help": "Turn off to hide it for a while, e.g. when it's sold out.",
-      "photo": "Photo",
-      "replace": "Replace",
-      "upload": "Upload",
-      "remove": "Remove",
-      "photo_help": "Square works best. Shown at 112 × 112 in the list.",
       "name": "Name",
       "description": "Description",
       "badge": "Badge",
@@ -275,7 +290,8 @@
       "move_to": "Move to category…",
       "selected_in_preview": "Selected in preview",
       "on_its_page": "The preview shows this dish's page. Click a block there to jump to its field.",
-      "back_to_list": "Back to the menu list"
+      "back_to_list": "Back to the menu list",
+      "photos_help": "Up to 3 photos. The first visible one is shown in the menu list; guests can swipe through all of them on the dish page."
     },
     "actions": {
       "duplicate": "Duplicate",
@@ -319,7 +335,8 @@
       "browse_help": "Use the page like a guest. Hold Alt to browse for a moment.",
       "preview": "Preview",
       "preview_language": "Preview language",
-      "colors": "Colors"
+      "colors": "Colors",
+      "both_pages": "Restaurant page and Menu page"
     },
     "dish_fields": {
       "photos": "Photos",
@@ -336,6 +353,7 @@
       "saving": "Saving…",
       "count": "No unsaved items | {count} item unsaved | {count} items unsaved",
       "discard_all": "Discard all",
+      "discard_confirm": "Discard all",
       "save_all": "Save all",
       "discard_title": "Discard the unsaved item? | Discard {count} unsaved items?",
       "discard_message": "Your changes are lost. It can't be undone.",
