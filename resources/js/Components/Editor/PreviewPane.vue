@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import {computed, watch} from 'vue'
+  import {computed, onBeforeUnmount, onMounted, ref, watch} from 'vue'
   import {useI18n} from 'vue-i18n'
   import {EyeOff} from 'lucide-vue-next'
   import PreviewFrame from '@/Components/Editor/PreviewFrame.vue'
@@ -9,11 +9,28 @@
   import {isNewId, ITEM_SECTIONS} from '@/editor/sections'
 
   /**
-   * The preview of the public page under its toolbar. Brand colors are shown on two pages side
-   * by side: the restaurant page and a menu page.
+   * The preview of the public page under its toolbar, which fits itself to the preview's width
+   * (it's a container). Brand colors are shown on two pages side by side, the restaurant page
+   * and a menu page, when both fit at their full width.
    */
   const editor = useEditorStore()
   const {t} = useI18n()
+
+  /** Width of a phone, and the gap between two of them. */
+  const PHONE_WIDTH = 390
+  const PHONES_GAP = 32
+
+  // the room for the phones
+  const body = ref<HTMLElement | null>(null)
+  const bodyWidth = ref(0)
+  let resizing: ResizeObserver | null = null
+
+  onMounted(() => {
+    resizing = new ResizeObserver(([entry]) => bodyWidth.value = entry.contentRect.width)
+    resizing.observe(body.value!)
+  })
+
+  onBeforeUnmount(() => resizing?.disconnect())
 
   const twoPages = computed(() => editor.selection?.section === 'brand')
 
@@ -22,6 +39,10 @@
     page: 'menu',
     menuId: editor.menus.find((menu) => !menu.is_hidden)?.id ?? null,
   }))
+
+  // the menu page is next to the restaurant page (only, when there's room for both)
+  const menuPageShown = computed(() => twoPages.value && !!menuPage.value.menuId
+    && bodyWidth.value >= 2 * PHONE_WIDTH + PHONES_GAP)
 
   // side by side with a menu page, the editor's preview shows the restaurant page
   watch(twoPages, (value) => {
@@ -40,11 +61,12 @@
 </script>
 
 <template>
-  <main class="flex-1 min-w-0 flex flex-col bg-[#eef0f3]"
+  <main class="@container flex-1 min-w-0 flex flex-col bg-[#eef0f3]"
         style="background-image: radial-gradient(#d4d4d8 1px, transparent 1px); background-size: 18px 18px">
     <PreviewToolbar/>
 
-    <div class="relative flex-1 min-h-0 flex justify-center gap-8 px-6 py-4">
+    <div class="relative flex-1 min-h-0 flex justify-center gap-8 px-6 py-4"
+         ref="body">
       <p class="absolute top-2 left-1/2 -translate-x-1/2 z-10 max-w-[calc(100%-32px)] inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-zinc-200 text-xs text-zinc-600 shadow-sm"
          role="status"
          v-if="hidden">
@@ -52,18 +74,17 @@
         <span class="truncate">{{ t('editor.preview.hidden') }}</span>
       </p>
 
-      <div class="min-h-0 flex flex-col items-center">
+      <div class="min-w-0 min-h-0 flex flex-col items-center">
         <p class="shrink-0 mb-2.5 text-xs font-semibold text-zinc-600"
-           v-if="twoPages">
+           v-if="menuPageShown">
           {{ t('editor.toolbar.restaurant_page') }}
         </p>
 
         <PreviewFrame primary/>
       </div>
 
-      <!-- two phones fit from 1280 px wide -->
-      <div class="min-h-0 flex flex-col items-center max-xl:hidden"
-           v-if="twoPages && menuPage.menuId">
+      <div class="min-w-0 min-h-0 flex flex-col items-center"
+           v-if="menuPageShown">
         <p class="shrink-0 mb-2.5 text-xs font-semibold text-zinc-600">
           {{ t('editor.preview.menu_page') }}
         </p>

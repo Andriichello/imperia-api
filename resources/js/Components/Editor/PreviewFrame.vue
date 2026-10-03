@@ -7,9 +7,9 @@
   import {DISH_FIELDS, keysOf} from '@/editor/sections'
 
   /**
-   * The public page in a phone-sized frame: it's the real page (`?editor=1`), which reports
-   * the parts clicked in it and outlines the ones hovered and edited (see `previewBridge.ts`).
-   * It shows the drafts too, outlined in amber.
+   * The public page in a phone-sized frame (narrower, when the preview has less room): it's the
+   * real page (`?editor=1`), which reports the parts clicked in it and outlines the ones hovered
+   * and edited (see `previewBridge.ts`). It shows the drafts too, outlined in amber.
    */
   const props = defineProps({
     // the editor's preview: its page follows the page picker and the page structure
@@ -196,7 +196,7 @@
 </script>
 
 <template>
-  <div class="w-[390px] flex-1 min-h-0 overflow-hidden bg-white shadow-[0_0_0_1px_#d4d4d8,0_16px_40px_-20px_rgba(24,24,27,0.4)]">
+  <div class="w-[390px] max-w-full flex-1 min-h-0 overflow-hidden bg-white shadow-[0_0_0_1px_#d4d4d8,0_16px_40px_-20px_rgba(24,24,27,0.4)]">
     <iframe class="block w-full h-full border-0"
             ref="frame"
             :src="src"

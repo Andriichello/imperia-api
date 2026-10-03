@@ -11,7 +11,7 @@
   /**
    * The toolbar above the preview: the page it shows (the restaurant page, a menu, the dish
    * page of the dish being edited), Select / Browse (hold Alt to browse for a moment), the
-   * preview's language and the brand colors.
+   * preview's language and the brand colors. In a narrower preview, the labels give way to icons.
    */
   const editor = useEditorStore()
   const {t} = useI18n()
@@ -66,11 +66,12 @@
       <!-- brand colors are shown on both pages side by side -->
       <p class="min-w-0 h-8 inline-flex items-center gap-1.5 text-[13px] font-medium text-zinc-700"
          v-if="editor.selection?.section === 'brand'">
-        <File class="size-[15px] shrink-0 text-zinc-500"/>
+        <File class="size-[15px] shrink-0 text-zinc-500 @max-[480px]:hidden"/>
         <span class="truncate">{{ t('editor.toolbar.both_pages') }}</span>
       </p>
 
-      <DropdownMenu v-else>
+      <!-- the page's name is cut short, when the preview is narrow -->
+      <DropdownMenu class="min-w-0" v-else>
         <template #trigger="{open, toggle}">
           <button type="button"
                   class="e-tb max-w-full"
@@ -78,7 +79,7 @@
                   :aria-expanded="open"
                   :aria-label="t('editor.toolbar.page', {page: labelOf(editor.page)})"
                   @click="toggle">
-            <File class="size-[15px] shrink-0 text-zinc-500"/>
+            <File class="size-[15px] shrink-0 text-zinc-500 @max-[480px]:hidden"/>
             <span class="truncate">{{ labelOf(editor.page) }}</span>
             <ChevronDown class="size-3.5 shrink-0 text-zinc-500"/>
           </button>
@@ -106,8 +107,8 @@
               v-for="item in MODES" :key="item.mode"
               @click="editor.mode = item.mode">
         <component :is="item.icon" class="size-3.5"/>
-        <span class="max-xl:sr-only">{{ t('editor.toolbar.' + item.mode) }}</span>
-        <kbd class="e-kbd max-xl:hidden" v-if="item.mode === 'browse'">Alt</kbd>
+        <span class="@max-[860px]:sr-only">{{ t('editor.toolbar.' + item.mode) }}</span>
+        <kbd class="e-kbd @max-[860px]:hidden" v-if="item.mode === 'browse'">Alt</kbd>
       </button>
     </div>
 
@@ -116,7 +117,7 @@
            role="group"
            :aria-label="t('editor.toolbar.preview_language')"
            v-if="editor.locales.length > 1">
-        <span class="text-xs text-zinc-500 max-xl:hidden">{{ t('editor.toolbar.preview') }}</span>
+        <span class="text-xs text-zinc-500 @max-[860px]:hidden">{{ t('editor.toolbar.preview') }}</span>
 
         <div class="e-seg">
           <button type="button"
@@ -129,17 +130,17 @@
         </div>
       </div>
 
-      <span class="w-px h-5 bg-zinc-200" aria-hidden="true" v-if="editor.locales.length > 1"/>
+      <span class="w-px h-5 bg-zinc-200 @max-[480px]:hidden" aria-hidden="true" v-if="editor.locales.length > 1"/>
 
       <button type="button"
               class="e-tb"
               :title="t('editor.sections.brand')"
               @click="editor.select({section: 'brand', id: null})">
-        <Palette class="size-[15px] text-zinc-600"/>
+        <Palette class="size-[15px] text-zinc-600 @max-[480px]:hidden"/>
         <span class="size-3 rounded-full shadow-[inset_0_0_0_1px_rgba(0,0,0,0.12)]"
               :style="{background: (editor.previewBrand ?? editor.brand).primary}"
               aria-hidden="true"/>
-        <span class="max-xl:sr-only">{{ t('editor.toolbar.colors') }}</span>
+        <span class="@max-[860px]:sr-only">{{ t('editor.toolbar.colors') }}</span>
       </button>
     </div>
   </div>

@@ -35,7 +35,7 @@
     editor.locale = value
   })
 
-  // narrow screens: the preview is shown instead of the panel
+  // narrow screens (below 800 px): the preview is shown instead of the panel
   const previewOpen = ref(false)
 
   // a part picked in the preview opens its panel
@@ -140,8 +140,8 @@
 
     <div class="flex-1 min-h-0 flex">
       <!-- narrow screens: the panel takes the width, the preview is behind a button -->
-      <aside class="w-full lg:w-[420px] shrink-0 flex flex-col bg-white border-r border-zinc-200"
-             :class="{'max-lg:hidden': previewOpen}">
+      <aside class="w-full min-[800px]:w-[420px] shrink-0 flex flex-col bg-white border-r border-zinc-200"
+             :class="{'max-[800px]:hidden': previewOpen}">
         <component :is="panel"
                    :key="panelKey"
                    v-bind="isItem ? {selection: editor.selection} : {}"
@@ -157,13 +157,13 @@
       </aside>
 
       <div class="flex-1 min-w-0 flex"
-           :class="{'max-lg:hidden': !previewOpen}">
+           :class="{'max-[800px]:hidden': !previewOpen}">
         <PreviewPane/>
       </div>
     </div>
 
     <button type="button"
-            class="lg:hidden fixed bottom-20 right-5 z-30 e-btn e-btn-primary h-11 px-4 shadow-[0_12px_32px_-8px_rgba(24,24,27,0.5)]"
+            class="min-[800px]:hidden fixed bottom-20 right-5 z-30 e-btn e-btn-primary h-11 px-4 shadow-[0_12px_32px_-8px_rgba(24,24,27,0.5)]"
             @click="previewOpen = !previewOpen">
       <X class="size-4" v-if="previewOpen"/>
       <Eye class="size-4" v-else/>

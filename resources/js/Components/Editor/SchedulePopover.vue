@@ -92,7 +92,7 @@
 </script>
 
 <template>
-  <div class="absolute left-full bottom-2 z-30 ml-2 w-[340px] max-h-[calc(100vh-80px)] overflow-y-auto flex flex-col gap-3 p-4 rounded-xl bg-white border border-zinc-200 shadow-[0_20px_48px_-12px_rgba(24,24,27,0.35)] max-lg:left-3 max-lg:right-3 max-lg:bottom-16 max-lg:ml-0 max-lg:w-auto"
+  <div class="absolute left-full bottom-2 z-30 ml-2 w-[340px] max-h-[calc(100vh-80px)] overflow-y-auto flex flex-col gap-3 p-4 rounded-xl bg-white border border-zinc-200 shadow-[0_20px_48px_-12px_rgba(24,24,27,0.35)] max-[800px]:left-3 max-[800px]:right-3 max-[800px]:bottom-16 max-[800px]:ml-0 max-[800px]:w-auto"
        role="dialog"
        :aria-label="t('editor.schedule.title')"
        data-keeps-review
