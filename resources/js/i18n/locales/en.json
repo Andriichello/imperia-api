@@ -161,5 +161,9 @@
     "search": "Search",
     "browse": "Menus and categories",
     "restaurant_page": "{name}, restaurant page"
+  },
+  "footer": {
+    "allergens": "Allergen and diet info comes from {name}. If you have a severe allergy, ask the staff before you order.",
+    "work_together": "Want a menu like this for your place, or want to work together?"
   }
 }

@@ -15,6 +15,7 @@
           // shared props
           "locale" => $locale ?? null,
           "supported_locales" => $supported_locales ?? null,
+          "developer_email" => $developer_email ?? null,
           // specific props
           "restaurant" => $restaurant ?? null,
           "menus" => $menus ?? null,

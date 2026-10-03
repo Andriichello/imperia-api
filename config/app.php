@@ -17,6 +17,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Developer's Contact
+    |--------------------------------------------------------------------------
+    |
+    | The email at the end of the public pages, for whoever wants a menu like
+    | that for their place (it's the developer's, not the restaurant's).
+    |
+    */
+
+    'developer_email' => env('DEVELOPER_EMAIL', 'codichello@gmail.com'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |

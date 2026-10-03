@@ -15,6 +15,7 @@
   import Schedule from "@/Components/Restaurant/Schedule.vue";
   import {getScheduleInfo, ScheduleInfo, time} from "@/helpers";
   import {editKey} from "@/editor/editKey";
+  import PageFooter from "@/Components/Base/PageFooter.vue";
   import { useI18n } from 'vue-i18n';
 
   const props = defineProps({
@@ -177,8 +178,8 @@
 </script>
 
 <template>
-  <div class="w-full h-full min-h-screen max-w-screen flex flex-col justify-start items-center bg-base-200/80 pb-21">
-    <div class="w-full max-w-md flex flex-col justify-start items-center relative">
+  <div class="w-full h-full min-h-screen max-w-screen flex flex-col justify-start items-center bg-base-200/80">
+    <div class="w-full max-w-md flex-1 flex flex-col justify-start items-center relative">
       <Splide class="w-full h-75" :options="slideOptions"
               v-bind="editKey('photos')"
               v-if="media?.length > 0">
@@ -338,6 +339,8 @@
           </button>
         </div>
       </div>
+
+      <PageFooter/>
     </div>
   </div>
 </template>

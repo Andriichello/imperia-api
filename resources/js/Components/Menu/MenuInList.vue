@@ -2,8 +2,12 @@
   import {DishMenu, Dish, DishCategory} from "@/api";
   import CategoryInList from "@/Components/Menu/CategoryInList.vue";
   import {editKey} from "@/editor/editKey";
-  import {PropType} from "vue";
+  import {computed, PropType} from "vue";
 
+  /**
+   * A menu with its categories and dishes. What comes after them (the slot, e.g. the page's footer)
+   * is at the bottom of the last category.
+   */
   const emits = defineEmits(['switch-menu', 'switch-category', 'open-product']);
 
   const props = defineProps({
@@ -32,6 +36,8 @@
     },
   });
 
+  const lastCategory = computed<DishCategory | null>(() => props.menu?.categories?.at(-1) ?? null);
+
   const categoryProducts = (menu: DishMenu, category: DishCategory) =>
     (props.products ?? []).filter(
       (p: Dish) => p.category_id === category.id
@@ -59,18 +65,31 @@
         </p>
       </div>
 
-      <!-- The last category fills the screen below the sticky menus (92px tall, plus a 10px gap),
-           down to the bottom padding of the page (10vh), so it can be scrolled up under them -->
-      <template v-for="(category, index) in menu.categories" :key="category.id"
-                v-if="!closed">
-        <CategoryInList :class="{'min-h-[calc(100dvh-102px-10vh)]': index === menu.categories.length - 1}"
-                        :category="category"
+      <template v-if="!closed && lastCategory">
+        <CategoryInList :category="category"
                         :products="categoryProducts(menu, category)"
                         :currency="currency"
                         :establishment="establishment"
                         @switch-category="switchCategory"
-                        @open-product="openProduct"/>
+                        @open-product="openProduct"
+                        v-for="category in menu.categories.slice(0, -1)" :key="category.id"/>
+
+        <!-- The last category and what's after it fill the screen below the sticky menus (92px tall,
+             plus a 10px gap), so it can be scrolled up under them -->
+        <div class="w-full min-h-[calc(100dvh-102px)] flex flex-col">
+          <CategoryInList :category="lastCategory"
+                          :products="categoryProducts(menu, lastCategory)"
+                          :currency="currency"
+                          :establishment="establishment"
+                          :key="lastCategory.id"
+                          @switch-category="switchCategory"
+                          @open-product="openProduct"/>
+
+          <slot/>
+        </div>
       </template>
+
+      <slot v-else/>
     </div>
   </div>
 </template>

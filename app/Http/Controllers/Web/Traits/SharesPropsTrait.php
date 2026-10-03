@@ -42,6 +42,8 @@ trait SharesPropsTrait
         return [
             'locale' => $this->getSharedProp($request, 'locale'),
             'supported_locales' => $this->getSharedProp($request, 'supported_locales'),
+            // the developer's contact at the end of the pages
+            'developer_email' => config('app.developer_email'),
         ];
     }
 }

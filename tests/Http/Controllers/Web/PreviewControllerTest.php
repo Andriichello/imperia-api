@@ -79,15 +79,19 @@ class PreviewControllerTest extends TestCase
     }
 
     /**
-     * Test the restaurant page.
+     * Test the restaurant page: it has the developer's contact for its footer (from the config).
      *
      * @return void
      */
     public function testRestaurantPage()
     {
+        config(['app.developer_email' => 'developer@example.com']);
+
         $this->get($this->restaurantUrl())
             ->assertOk()
-            ->assertViewIs('web.app');
+            ->assertViewIs('web.app')
+            ->assertViewHas('developer_email', 'developer@example.com')
+            ->assertSee('developer@example.com');
 
         $this->get(route('web.restaurant.preview', ['locale' => 'en', 'restaurant_id' => 999]))
             ->assertNotFound();

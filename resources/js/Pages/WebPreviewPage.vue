@@ -15,6 +15,7 @@
   import CategoryNavBar from '@/Components/Menu/CategoryNavBar.vue'
   import LoadingMenuInList from '@/Components/Menu/LoadingMenuInList.vue'
   import ProductDrawer from '@/Components/Drawer/ProductDrawer.vue'
+  import PageFooter from '@/Components/Base/PageFooter.vue'
   import {useAppStore} from '@/stores/app'
   import {usePreviewStore} from '@/stores/preview'
   import {editKey} from '@/editor/editKey'
@@ -961,7 +962,9 @@
                           :establishment="restaurant?.establishment ?? 'restaurant'"
                           @switch-menu="onSwitchMenu"
                           @switch-category="onSwitchCategory"
-                          @open-product="({product, category, menu}) => onOpenProduct({product, category, menu: menu ?? selectedMenu})"/>
+                          @open-product="({product, category, menu}) => onOpenProduct({product, category, menu: menu ?? selectedMenu})">
+                <PageFooter/>
+              </MenuInList>
             </div>
           </Deferred>
         </div>
