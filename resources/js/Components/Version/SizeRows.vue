@@ -5,7 +5,7 @@
   import {EditorSizeWeightUnit} from '@/api'
   import {priceFormatted} from '@/helpers'
   import type {TreeNode} from '@/version/model'
-  import {numberInput, SIZE_FIELDS, SizeField, SizeRow, sizeRows, weightLabel} from '@/version/sizes'
+  import {numberInput, SIZE_FIELDS, SizeField, SizeRow, sizeRows, usePriceOrder, weightLabel} from '@/version/sizes'
   import {useVersionStore} from '@/stores/version'
 
   /**
@@ -25,7 +25,10 @@
 
   const UNITS = Object.values(EditorSizeWeightUnit).filter(Boolean) as string[]
 
-  const rows = computed<SizeRow[]>(() => sizeRows(props.dish))
+  // they're sorted by price again, once a price's field is left
+  const {sorted, hold, release} = usePriceOrder()
+
+  const rows = computed<SizeRow[]>(() => sorted(sizeRows(props.dish)))
   const currency = computed(() => (store.restaurant?.currency ?? 'uah').toLowerCase())
   const symbol = computed(() => t(`currency_symbol.${currency.value}`))
   const price = (value: unknown) => value === null || value === undefined || value === ''
@@ -170,6 +173,8 @@
                      :class="{'e-changed': row.changed('price') && !row.isNew}"
                      :value="text(row.values.price)"
                      :disabled="store.readOnly"
+                     @focus="hold(rows)"
+                     @blur="release"
                      @input="row.set('price', numberInput(($event.target as HTMLInputElement).value))"/>
               <span class="absolute right-2 top-2 text-xs text-zinc-500">{{ symbol }}</span>
             </span>

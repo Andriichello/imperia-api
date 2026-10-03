@@ -1,3 +1,4 @@
+import {ref} from 'vue'
 import {canonical} from '@/editor/items'
 import {weightUnitFormatted} from '@/helpers'
 import {Target, TreeNode, valueOf} from '@/version/model'
@@ -78,4 +79,42 @@ export function sizeRows(dish: TreeNode): SizeRow[] {
 /** A typed number as the version takes it: none for an empty field. */
 export function numberInput(value: string): string | null {
   return value.trim() === '' ? null : value.trim().replace(',', '.')
+}
+
+/** The price of a size, which it's sorted by: ones without a price come last. */
+function priceOf(row: SizeRow): number {
+  const price = row.values.price
+
+  return price === null || price === undefined || price === '' || Number.isNaN(Number(price)) ? Infinity : Number(price)
+}
+
+/**
+ * Sizes from the cheapest one, which keep their places while a price is typed: they're sorted
+ * again, once its field is left (`hold()` on its focus, `release()` on its blur).
+ */
+export function usePriceOrder() {
+  // places of the rows, while a price is typed
+  const held = ref<Map<string, number> | null>(null)
+
+  function sorted<T extends SizeRow>(rows: T[]): T[] {
+    const places = held.value
+
+    return rows
+      .map((row, index) => ({row, index}))
+      .sort((a, b) => (places
+        ? (places.get(a.row.key) ?? Infinity) - (places.get(b.row.key) ?? Infinity)
+        : priceOf(a.row) - priceOf(b.row)) || a.index - b.index)
+      .map(({row}) => row)
+  }
+
+  /** Keep the rows, as they're shown now, in their places. */
+  function hold(rows: SizeRow[]) {
+    held.value = new Map(rows.map((row, index) => [row.key, index]))
+  }
+
+  function release() {
+    held.value = null
+  }
+
+  return {sorted, hold, release}
 }

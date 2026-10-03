@@ -159,7 +159,7 @@
     nextTick(() => document.getElementById(`size-${draft.value.sizes[draft.value.sizes.length - 1].key}-weight`)?.focus())
   }
 
-  /** Sizes go from the cheapest one: a price, once it's typed, sorts them again. */
+  /** Sizes go from the cheapest one: a price sorts them again, once its field is left (not while it's typed). */
   function sortByPrice() {
     draft.value.sizes = sortSizes(draft.value.sizes)
   }
@@ -493,7 +493,7 @@
                      :class="{'e-changed': sizeChanged(size, 'price')}"
                      :aria-invalid="!isNumber(size.price, false)"
                      v-model="size.price"
-                     @change="sortByPrice"/>
+                     @blur="sortByPrice"/>
               <span class="absolute right-3 top-2 text-zinc-500" aria-hidden="true">{{ currency }}</span>
             </div>
 

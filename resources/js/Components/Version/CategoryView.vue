@@ -8,7 +8,7 @@
   import {priceFormatted} from '@/helpers'
   import {fieldsFor} from '@/version/fields'
   import {liveOf, TreeNode} from '@/version/model'
-  import {numberInput, SizeRow, sizeRows, weightLabel} from '@/version/sizes'
+  import {numberInput, SizeRow, sizeRows, usePriceOrder, weightLabel} from '@/version/sizes'
   import {useVersionStore} from '@/stores/version'
 
   /**
@@ -37,8 +37,11 @@
   const symbol = computed(() => t(`currency_symbol.${currency.value}`))
   const price = (value: unknown) => value === null || value === undefined ? '—' : (priceFormatted(Number(value), currency.value) ?? '')
 
+  // they're sorted by price again, once a price's field is left
+  const {sorted, hold, release} = usePriceOrder()
+
   // each dish with its sizes
-  const dishes = computed(() => props.node.children.map((dish) => ({dish, sizes: sizeRows(dish)})))
+  const dishes = computed(() => props.node.children.map((dish) => ({dish, sizes: sorted(sizeRows(dish))})))
 
   const changed = (row: SizeRow) => row.changed('price') || row.changed('is_hidden')
 </script>
@@ -113,6 +116,8 @@
                :class="{'e-changed': row.changed('price') && !row.isNew}"
                :value="row.values.price ?? ''"
                :disabled="store.readOnly || !!row.values.archived"
+               @focus="hold(dishes.flatMap((item) => item.sizes))"
+               @blur="release"
                @input="row.set('price', numberInput(($event.target as HTMLInputElement).value))"/>
         <span class="absolute right-2 top-2 text-xs text-zinc-500">{{ symbol }}</span>
       </span>
