@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Enums\ProductFlag;
-use App\Enums\WeightUnit;
 use App\Filament\Actions\SchedulePriceChangeBulkAction;
 use App\Filament\BaseResource;
 use App\Filament\Fields\FlagFields;
@@ -11,15 +10,16 @@ use App\Filament\Fields\LiveFields;
 use App\Filament\Filters\LiveFilter;
 use App\Filament\Filters\TrashedFilter;
 use App\Filament\Forms\Components\MediaAttachmentField;
-use App\Filament\RelationManagers\AlterationsRelationManager;
+use App\Filament\RelationManagers\ScheduledChangesRelationManager;
 use App\Filament\Resources\DishResource\Pages;
 use App\Filament\Resources\DishResource\RelationManagers\VariantsRelationManager;
-use App\Filament\Tables\AlterationsTable;
+use App\Filament\Tables\ScheduledChangesTable;
 use App\Filament\Tables\Columns\LiveColumn;
 use App\Models\Dish;
 use App\Queries\DishQueryBuilder;
 use App\Repositories\Editor\DishEditorRepository;
 use Filament\Actions;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -55,7 +55,17 @@ class DishResource extends BaseResource
                 ...static::getPlacementFields(),
                 TextInput::make('slug')
                     ->maxLength(255),
-                ...static::getAlterableFields(),
+                ...static::getSchedulableFields(),
+                TextInput::make('popularity')
+                    ->numeric()
+                    ->nullable()
+                    ->helperText('Higher numbers come first on the website. '
+                        . 'The list can also be reordered by dragging.'),
+                Section::make('First size')
+                    ->description('More sizes can be added on the Sizes tab, once the dish is created.')
+                    ->schema(DishVariantResource::getSizeFields())
+                    ->columns(2)
+                    ->visibleOn('create'),
                 MediaAttachmentField::make('media')
                     ->label('Dish Images')
                     ->modelType('dishes')
@@ -96,11 +106,12 @@ class DishResource extends BaseResource
     }
 
     /**
-     * Fields that can also be changed in advance, through a scheduled change (alteration).
+     * Fields that can also be changed in advance, through a scheduled change.
+     * Sizes have their own (see `DishVariantResource`).
      *
      * @return array
      */
-    public static function getAlterableFields(): array
+    public static function getSchedulableFields(): array
     {
         return [
             TextInput::make('title')
@@ -109,30 +120,9 @@ class DishResource extends BaseResource
             Textarea::make('description')
                 ->maxLength(1020)
                 ->columnSpanFull(),
-            TextInput::make('price')
-                ->numeric()
-                ->minValue(0)
-                ->required(),
-            TextInput::make('weight')
-                ->maxLength(255),
-            Select::make('weight_unit')
-                ->options(array_flip(WeightUnit::getMap())),
             TextInput::make('badge')
                 ->maxLength(25),
-            TextInput::make('calories')
-                ->numeric()
-                ->minValue(0)
-                ->nullable(),
-            TextInput::make('preparation_time')
-                ->label('Preparation Time (minutes)')
-                ->numeric()
-                ->minValue(0)
-                ->nullable(),
             ...LiveFields::make(),
-            TextInput::make('popularity')
-                ->numeric()
-                ->nullable()
-                ->helperText('Higher numbers come first on the website. The list can also be reordered by dragging.'),
             ...FlagFields::make(),
         ];
     }
@@ -140,7 +130,7 @@ class DishResource extends BaseResource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => AlterationsTable::withScheduledChangesCount(
+            ->modifyQueryUsing(fn (Builder $query) => ScheduledChangesTable::withScheduledChangesCount(
                 $query->with('menu.restaurant')
             ))
             ->reorderable('popularity')
@@ -165,6 +155,8 @@ class DishResource extends BaseResource
                         return static::searchTranslated($query, 'dishes.title', $search);
                     }),
                 Tables\Columns\TextColumn::make('price')
+                    ->label('From')
+                    ->tooltip('The price of its cheapest size, which guests see.')
                     ->money(fn (Dish $record): string => $record->menu->restaurant->currency ?: 'UAH')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('weight')
@@ -172,7 +164,7 @@ class DishResource extends BaseResource
                         return $query->where('dishes.weight', 'like', "%{$search}%");
                     }),
                 LiveColumn::make(),
-                AlterationsTable::scheduledColumn(),
+                ScheduledChangesTable::scheduledColumn(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
@@ -227,12 +219,12 @@ class DishResource extends BaseResource
     {
         return [
             VariantsRelationManager::class,
-            AlterationsRelationManager::class,
+            ScheduledChangesRelationManager::class,
         ];
     }
 
     /**
-     * Action, which duplicates the dish with its variants and images, as a hidden draft.
+     * Action, which duplicates the dish with its sizes and images, as a hidden draft.
      *
      * @param class-string<Tables\Actions\Action|Actions\Action> $class
      *
@@ -247,7 +239,7 @@ class DishResource extends BaseResource
             ->hidden(fn (Dish $record) => $record->trashed())
             ->modalHeading(fn (Dish $record) => "Duplicate $record->title")
             ->modalDescription('The copy is hidden, until you make it live. '
-                . 'Variants, images and tags are copied too, scheduled changes are not.')
+                . 'Sizes, images and tags are copied too, scheduled changes are not.')
             ->modalSubmitActionLabel('Duplicate')
             ->form([
                 ...static::getPlacementFields(),
@@ -273,7 +265,7 @@ class DishResource extends BaseResource
     }
 
     /**
-     * Copy the dish with its variants (archived ones included) and images.
+     * Copy the dish with its sizes (hidden and archived ones included) and images.
      * The copy is hidden and gets no slug, scheduled changes aren't copied.
      *
      * @param Dish $dish

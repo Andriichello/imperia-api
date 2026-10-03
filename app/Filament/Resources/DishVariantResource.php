@@ -6,13 +6,14 @@ use App\Enums\WeightUnit;
 use App\Filament\Actions\SchedulePriceChangeBulkAction;
 use App\Filament\BaseResource;
 use App\Filament\Fields\LiveFields;
-use App\Filament\RelationManagers\AlterationsRelationManager;
+use App\Filament\RelationManagers\ScheduledChangesRelationManager;
 use App\Filament\Filters\LiveFilter;
 use App\Filament\Filters\TrashedFilter;
 use App\Filament\Resources\DishVariantResource\Pages;
-use App\Filament\Tables\AlterationsTable;
+use App\Filament\Tables\ScheduledChangesTable;
 use App\Filament\Tables\Columns\LiveColumn;
 use App\Models\DishVariant;
+use App\Repositories\Editor\DishEditorRepository;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -46,16 +47,29 @@ class DishVariantResource extends BaseResource
                     ->in(fn () => array_keys(DishResource::getSelectOptions()))
                     ->required()
                     ->searchable(),
-                ...static::getAlterableFields(),
+                ...static::getSchedulableFields(),
             ]);
     }
 
     /**
-     * Fields that can also be changed in advance, through a scheduled change (alteration).
+     * Fields that can also be changed in advance, through a scheduled change.
      *
      * @return array
      */
-    public static function getAlterableFields(): array
+    public static function getSchedulableFields(): array
+    {
+        return [
+            ...static::getSizeFields(),
+            ...LiveFields::make(),
+        ];
+    }
+
+    /**
+     * Values of a size.
+     *
+     * @return array
+     */
+    public static function getSizeFields(): array
     {
         return [
             TextInput::make('price')
@@ -75,14 +89,13 @@ class DishVariantResource extends BaseResource
                 ->numeric()
                 ->minValue(0)
                 ->nullable(),
-            ...LiveFields::make('archived'),
         ];
     }
 
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => AlterationsTable::withScheduledChangesCount(
+            ->modifyQueryUsing(fn (Builder $query) => ScheduledChangesTable::withScheduledChangesCount(
                 $query->with('dish.menu.restaurant')
             ))
             ->columns([
@@ -108,18 +121,20 @@ class DishVariantResource extends BaseResource
                     ->label('Prep Time (min)')
                     ->numeric()
                     ->sortable(),
-                LiveColumn::make('archived'),
-                AlterationsTable::scheduledColumn(),
+                LiveColumn::make(),
+                static::archivedColumn(),
+                ScheduledChangesTable::scheduledColumn(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
             ])
             ->filters([
-                LiveFilter::make()->hiddenBy('archived'),
+                LiveFilter::make(),
                 TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                ...static::archiveActions(),
                 Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
@@ -131,10 +146,52 @@ class DishVariantResource extends BaseResource
             ]);
     }
 
+    /**
+     * Column, which shows that a size is archived: off the menu, it can be restored.
+     *
+     * @return Tables\Columns\IconColumn
+     */
+    public static function archivedColumn(): Tables\Columns\IconColumn
+    {
+        return Tables\Columns\IconColumn::make('archived')
+            ->alignCenter()
+            ->icon(fn ($state) => $state ? 'heroicon-o-archive-box' : null)
+            ->color('gray')
+            ->tooltip(fn ($state) => $state ? 'Archived: off the menu, it can be restored' : null);
+    }
+
+    /**
+     * Actions, which archive the size and restore it from the archive.
+     *
+     * @return Tables\Actions\Action[]
+     */
+    public static function archiveActions(): array
+    {
+        $repository = fn () => app(DishEditorRepository::class);
+
+        return [
+            Tables\Actions\Action::make('archive')
+                ->label('Archive')
+                ->icon('heroicon-o-archive-box')
+                ->color('gray')
+                ->requiresConfirmation()
+                ->modalDescription('The size is off the menu, until it\'s restored.')
+                ->authorize('update')
+                ->hidden(fn (DishVariant $record) => $record->archived || $record->trashed() || $record->isLastShown())
+                ->action(fn (DishVariant $record) => $repository()->archive($record)),
+            Tables\Actions\Action::make('unarchive')
+                ->label('Restore from archive')
+                ->icon('heroicon-o-arrow-uturn-left')
+                ->authorize('update')
+                ->visible(fn (DishVariant $record) => $record->archived && !$record->trashed())
+                ->action(fn (DishVariant $record) => $repository()->unarchive($record)),
+        ];
+    }
+
     public static function getRelations(): array
     {
         return [
-            AlterationsRelationManager::class,
+            ScheduledChangesRelationManager::class,
         ];
     }
 

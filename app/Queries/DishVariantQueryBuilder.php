@@ -9,6 +9,7 @@ use App\Models\Restaurant;
 use App\Models\User;
 use App\Queries\Interfaces\ArchivableInterface;
 use App\Queries\Traits\Archivable;
+use App\Queries\Traits\ShownToGuests;
 
 /**
  * Class DishVariantQueryBuilder.
@@ -24,6 +25,7 @@ class DishVariantQueryBuilder extends BaseQueryBuilder implements
     ArchivableInterface
 {
     use Archivable;
+    use ShownToGuests;
 
     /**
      * Apply index query conditions.

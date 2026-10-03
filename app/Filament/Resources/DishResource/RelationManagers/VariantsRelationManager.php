@@ -5,7 +5,7 @@ namespace App\Filament\Resources\DishResource\RelationManagers;
 use App\Filament\Actions\SchedulePriceChangeBulkAction;
 use App\Filament\Filters\TrashedFilter;
 use App\Filament\Resources\DishVariantResource;
-use App\Filament\Tables\AlterationsTable;
+use App\Filament\Tables\ScheduledChangesTable;
 use App\Filament\Tables\Columns\LiveColumn;
 use App\Models\Dish;
 use App\Models\DishVariant;
@@ -32,12 +32,12 @@ class VariantsRelationManager extends RelationManager
     /**
      * @var string|null
      */
-    protected static ?string $title = 'Variants';
+    protected static ?string $title = 'Sizes';
 
     /**
      * @var string|null
      */
-    protected static ?string $modelLabel = 'variant';
+    protected static ?string $modelLabel = 'size';
 
     /**
      * Always check abilities through the policies (see `BaseResource`).
@@ -59,7 +59,7 @@ class VariantsRelationManager extends RelationManager
     public function form(Form $form): Form
     {
         return $form
-            ->schema(DishVariantResource::getAlterableFields());
+            ->schema(DishVariantResource::getSchedulableFields());
     }
 
     /**
@@ -72,7 +72,7 @@ class VariantsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => AlterationsTable::withScheduledChangesCount($query))
+            ->modifyQueryUsing(fn (Builder $query) => ScheduledChangesTable::withScheduledChangesCount($query))
             ->recordTitle(fn (DishVariant $record) => static::getVariantLabel($record))
             ->columns([
                 Tables\Columns\TextColumn::make('price')
@@ -87,14 +87,15 @@ class VariantsRelationManager extends RelationManager
                     ->label('Prep Time (min)')
                     ->numeric()
                     ->placeholder('—'),
-                LiveColumn::make('archived'),
-                AlterationsTable::scheduledColumn(),
+                LiveColumn::make(),
+                DishVariantResource::archivedColumn(),
+                ScheduledChangesTable::scheduledColumn(),
             ])
             ->filters([
                 TrashedFilter::make(),
             ])
-            ->emptyStateHeading('No variants')
-            ->emptyStateDescription('Add variants when the dish comes in several sizes, e.g. 300 g and 500 g.')
+            ->emptyStateHeading('No sizes')
+            ->emptyStateDescription('Every dish has at least one size, e.g. 300 g, and its price.')
             ->headerActions([
                 Tables\Actions\CreateAction::make(),
             ])
@@ -102,11 +103,14 @@ class VariantsRelationManager extends RelationManager
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('schedule')
                     ->label('Schedule')
-                    ->tooltip('Open the variant to schedule changes')
+                    ->tooltip('Open the size to schedule changes')
                     ->icon('heroicon-o-clock')
                     ->url(fn (DishVariant $record) => DishVariantResource::getUrl('edit', ['record' => $record]))
                     ->hidden(fn (DishVariant $record) => $record->trashed()),
-                Tables\Actions\DeleteAction::make(),
+                ...DishVariantResource::archiveActions(),
+                // a dish keeps a size, which guests see
+                Tables\Actions\DeleteAction::make()
+                    ->hidden(fn (DishVariant $record) => $record->trashed() || $record->isLastShown()),
                 Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([

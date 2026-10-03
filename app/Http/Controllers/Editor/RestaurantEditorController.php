@@ -10,6 +10,7 @@ use App\Http\Requests\Editor\UpdateRestaurantNotesRequest;
 use App\Http\Requests\Editor\UpdateRestaurantPhotosRequest;
 use App\Http\Requests\Editor\UpdateRestaurantRequest;
 use App\Http\Requests\Editor\UploadRestaurantPhotoRequest;
+use App\Http\Resources\Editor\EditorDashboardResource;
 use App\Http\Resources\Editor\EditorRestaurantResource;
 use App\Http\Resources\Media\MediaResource;
 use App\Http\Responses\ApiResponse;
@@ -62,6 +63,20 @@ class RestaurantEditorController extends Controller
     public function show(ShowRestaurantRequest $request): ApiResponse
     {
         return $this->respond($request->restaurant());
+    }
+
+    /**
+     * What the admin's dashboard shows of the restaurant.
+     *
+     * @param ShowRestaurantRequest $request
+     *
+     * @return ApiResponse
+     */
+    public function dashboard(ShowRestaurantRequest $request): ApiResponse
+    {
+        $data = new EditorDashboardResource($this->repository->dashboard($request->restaurant()));
+
+        return ApiResponse::make(compact('data'));
     }
 
     /**
@@ -182,6 +197,24 @@ class RestaurantEditorController extends Controller
      *     response=200,
      *     description="Success.",
      *     @OA\JsonContent(ref="#/components/schemas/EditorRestaurantResponse")
+     *   ),
+     *   @OA\Response(response=401, description="Unauthenticated.",
+     *     @OA\JsonContent(ref="#/components/schemas/UnauthenticatedResponse")),
+     *   @OA\Response(response=403, description="The user can't edit the restaurant."),
+     * ),
+     * @OA\Get(
+     *   path="/api/editor/restaurants/{id}/dashboard",
+     *   summary="What the admin's dashboard shows of the restaurant.",
+     *   operationId="getEditorDashboard",
+     *   security={{"bearerAuth": {}}},
+     *   tags={"editor"},
+     *
+     *   @OA\Parameter(name="id", required=true, in="path", example=1, @OA\Schema(type="integer"),
+     *     description="Id of the restaurant."),
+     *   @OA\Response(
+     *     response=200,
+     *     description="Success.",
+     *     @OA\JsonContent(ref="#/components/schemas/EditorDashboardResponse")
      *   ),
      *   @OA\Response(response=401, description="Unauthenticated.",
      *     @OA\JsonContent(ref="#/components/schemas/UnauthenticatedResponse")),
@@ -313,6 +346,13 @@ class RestaurantEditorController extends Controller
      *   description="Restaurants the user can edit.",
      *   required={"data", "message"},
      *   @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/EditorRestaurantItem")),
+     *   @OA\Property(property="message", type="string", example="Success"),
+     * ),
+     * @OA\Schema(
+     *   schema="EditorDashboardResponse",
+     *   description="What the dashboard shows of the restaurant.",
+     *   required={"data", "message"},
+     *   @OA\Property(property="data", ref="#/components/schemas/EditorDashboard"),
      *   @OA\Property(property="message", type="string", example="Success"),
      * ),
      * @OA\Schema(

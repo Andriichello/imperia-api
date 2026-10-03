@@ -14,8 +14,8 @@ use Tests\TestCase;
 class DishTest extends TestCase
 {
     /**
-     * Test that deleted variants are never loaded with the dish,
-     * not even when deleted records are requested.
+     * Test that only the sizes guests see are loaded with the dish (never deleted ones, not even
+     * when deleted records are requested), the admin's sizes have hidden and archived ones too.
      *
      * @return void
      */
@@ -24,15 +24,21 @@ class DishTest extends TestCase
         $menu = DishMenu::factory()->withRestaurant(Restaurant::factory()->create())->create();
         $dish = Dish::factory()->withMenu($menu)->create();
 
+        /** @var DishVariant $first */
+
+        $first = $dish->sizes()->sole();
         $live = DishVariant::factory()->withDish($dish)->create(['price' => 100]);
         DishVariant::factory()->withDish($dish)->create(['price' => 120, 'archived' => true]);
+        DishVariant::factory()->withDish($dish)->create(['price' => 130, 'is_hidden' => true]);
         DishVariant::factory()->withDish($dish)->create(['price' => 140])->delete();
 
-        $this->assertSame([$live->id], $dish->variants()->pluck('id')->all());
+        $shown = [$live->id, $first->id];
+        $this->assertEqualsCanonicalizing($shown, $dish->variants()->pluck('id')->all());
 
         request()->merge(['deleted' => 'with']);
 
-        $this->assertSame([$live->id], $dish->variants()->pluck('id')->all());
-        $this->assertCount(3, $dish->allVariants()->get());
+        $this->assertEqualsCanonicalizing($shown, $dish->variants()->pluck('id')->all());
+        $this->assertCount(4, $dish->sizes()->get());
+        $this->assertCount(5, $dish->allVariants()->get());
     }
 }

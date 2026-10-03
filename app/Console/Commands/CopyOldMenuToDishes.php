@@ -14,7 +14,10 @@ use App\Models\Morphs\Alteration;
 use App\Models\Morphs\Category;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Repositories\Editor\VersionEditorRepository;
+use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -128,13 +131,23 @@ class CopyOldMenuToDishes extends Command
     protected array $processed = [];
 
     /**
+     * Scheduled versions, which the old scheduled changes become.
+     *
+     * @var VersionEditorRepository
+     */
+    protected VersionEditorRepository $versions;
+
+    /**
      * Execute the console command.
+     *
+     * @param VersionEditorRepository $versions
      *
      * @return int
      * @throws Throwable
      */
-    public function handle(): int
+    public function handle(VersionEditorRepository $versions): int
     {
+        $this->versions = $versions;
         $dryRun = (bool) $this->option('dry-run');
 
         // the same instance is reused when the command is called again in the same process
@@ -504,14 +517,16 @@ class CopyOldMenuToDishes extends Command
     }
 
     /**
-     * Copy the pending (not performed, not failed) scheduled changes of the old record.
+     * Copy the pending (not performed, not failed) scheduled changes of the old record, each as
+     * a version of one change. The old menu's `archived` is what's hidden now; a change of a
+     * product's size is a change of its dish's first size.
      *
      * @param BaseModel $from
-     * @param BaseModel $to
+     * @param Dish|DishVariant $to
      *
      * @return void
      */
-    protected function copyAlterations(BaseModel $from, BaseModel $to): void
+    protected function copyAlterations(BaseModel $from, Dish|DishVariant $to): void
     {
         $alterations = Alteration::query()
             ->where('alterable_type', $from->getMorphClass())
@@ -520,15 +535,26 @@ class CopyOldMenuToDishes extends Command
             ->whereNull('failed_at')
             ->get();
 
+        /** @var Alteration $alteration */
         foreach ($alterations as $alteration) {
-            Alteration::query()->create([
-                'alterable_id' => $to->getKey(),
-                'alterable_type' => $to->getMorphClass(),
-                'metadata' => $alteration->metadata,
-                'perform_at' => $alteration->perform_at,
-            ]);
+            $metadata = $alteration->getJson('metadata');
 
-            $this->count('scheduled changes');
+            if (array_key_exists('archived', $metadata)) {
+                $metadata['is_hidden'] = (bool) $metadata['archived'];
+                unset($metadata['archived']);
+            }
+
+            $changes = $to instanceof Dish
+                ? [[$to, Arr::except($metadata, Dish::SIZE)], [$to->firstSize(), Arr::only($metadata, Dish::SIZE)]]
+                : [[$to, $metadata]];
+
+            foreach ($changes as [$target, $values]) {
+                $goesLiveAt = $alteration->perform_at ?? Carbon::now();
+
+                if ($target && $values && $this->versions->scheduleChange($target, $values, $goesLiveAt, null)) {
+                    $this->count('scheduled changes');
+                }
+            }
         }
     }
 

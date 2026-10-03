@@ -141,7 +141,9 @@ class RestaurantEditorTest extends EditorTestCase
             ->assertJsonPath('data.menus.0.categories.0.dishes.0.badge', ['en' => 'New', 'uk' => null])
             ->assertJsonPath('data.menus.0.categories.0.dishes.0.flags', ['alg-milk'])
             ->assertJsonPath('data.menus.0.categories.0.dishes.0.sizes.*.price', [185, 245])
-            ->assertJsonPath('data.menus.0.categories.0.dishes.0.sizes.0.id', null)
+            ->assertJsonPath('data.menus.0.categories.0.dishes.0.sizes.0.id', $borscht->sizes()->value('id'))
+            ->assertJsonPath('data.menus.0.categories.0.dishes.0.sizes.0.is_hidden', false)
+            ->assertJsonPath('data.menus.0.categories.0.dishes.0.archived_sizes', [])
             ->assertJsonPath('data.menus.0.categories.0.dishes.1.archived', true);
 
         $this->assertCount(2, $response->json('data.menus'));
@@ -291,7 +293,8 @@ class RestaurantEditorTest extends EditorTestCase
     }
 
     /**
-     * Test that photos are set in their order, and only the restaurant's ones.
+     * Test that photos are set in their order, hidden ones are kept (guests don't see them),
+     * and only the restaurant's ones can be set.
      *
      * @return void
      */
@@ -303,17 +306,19 @@ class RestaurantEditorTest extends EditorTestCase
         Cache::put(WebCacheHelper::restaurantKey($this->restaurant->id), 'cached');
 
         $this->putJson("/api/editor/restaurants/{$this->restaurant->id}/photos", [
-            'media' => [$second->id, $first->id],
+            'media' => [['id' => $second->id], ['id' => $first->id, 'is_hidden' => true]],
         ])
             ->assertOk()
-            ->assertJsonPath('data.photos.*.id', [$second->id, $first->id]);
+            ->assertJsonPath('data.photos.*.id', [$second->id, $first->id])
+            ->assertJsonPath('data.photos.*.is_hidden', [false, true]);
 
         // attaching photos fires no events, the website is forgotten anyway
         $this->assertFalse(Cache::has(WebCacheHelper::restaurantKey($this->restaurant->id)));
+        $this->assertSame([$second->id], $this->restaurant->media()->pluck('media.id')->all());
 
-        $this->putJson("/api/editor/restaurants/{$this->restaurant->id}/photos", ['media' => [$foreign->id]])
+        $this->putJson("/api/editor/restaurants/{$this->restaurant->id}/photos", ['media' => [['id' => $foreign->id]]])
             ->assertUnprocessable()
-            ->assertJsonValidationErrors(['media.0']);
+            ->assertJsonValidationErrors(['media.0.id']);
 
         $this->putJson("/api/editor/restaurants/{$this->restaurant->id}/photos", ['media' => []])
             ->assertOk()
@@ -343,7 +348,7 @@ class RestaurantEditorTest extends EditorTestCase
         $this->assertStringEndsWith("/{$this->restaurant->id}/", $media->folder);
         $this->assertSame(0, $media->mediables()->count());
 
-        $this->putJson("/api/editor/restaurants/{$this->restaurant->id}/photos", ['media' => [$id]])
+        $this->putJson("/api/editor/restaurants/{$this->restaurant->id}/photos", ['media' => [['id' => $id]]])
             ->assertOk()
             ->assertJsonPath('data.photos.0.id', $id);
 

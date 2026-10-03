@@ -26,22 +26,24 @@ export function weightUnitFormatted(unit: string): string {
     return t(`weight_unit.${unit.toLowerCase()}`) || unit;
 }
 
-/** One size of a dish: the dish itself (id is null) or one of its variants. */
+/** One size of a dish: one of its variants (or the dish's own values, when it has none). */
 export type DishSize = Pick<DishVariant, 'price' | 'weight' | 'weight_unit' | 'calories' | 'preparation_time'>
   & {id: number | null};
 
-/** Sizes of a dish, the dish itself included, from the cheapest. */
+/** Sizes of a dish guests see, from the cheapest. */
 export function getDishSizes(dish: Dish): DishSize[] {
-    const base: DishSize = {
-        id: null,
-        price: dish.price,
-        weight: dish.weight,
-        weight_unit: dish.weight_unit,
-        calories: dish.calories,
-        preparation_time: dish.preparation_time,
-    };
+    if (!dish.variants?.length) {
+        return [{
+            id: null,
+            price: dish.price,
+            weight: dish.weight,
+            weight_unit: dish.weight_unit,
+            calories: dish.calories,
+            preparation_time: dish.preparation_time,
+        }];
+    }
 
-    return [base, ...(dish.variants ?? [])].sort((a, b) => a.price - b.price);
+    return [...dish.variants].sort((a, b) => a.price - b.price);
 }
 
 /** Weight of a dish size with its unit, e.g. "300 g", or an empty string. */

@@ -2,10 +2,13 @@
 
 namespace App\Filament\Actions;
 
-use App\Filament\Tables\AlterationsTable;
+use App\Filament\Tables\ScheduledChangesTable;
 use App\Models\BaseModel;
+use App\Models\Dish;
 use App\Models\DishVariant;
-use App\Models\Morphs\Alteration;
+use App\Models\MenuVersion;
+use App\Models\Restaurant;
+use App\Repositories\Editor\VersionEditorRepository;
 use Carbon\Carbon;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
@@ -23,7 +26,7 @@ use Illuminate\Support\Str;
 /**
  * Class SchedulePriceChangeBulkAction.
  *
- * Schedules a price change (alteration) for each selected dish or variant:
+ * Schedules a price change of the selected dishes (all their sizes) or sizes:
  * a new price, or the current price changed by a percent or an amount.
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -67,11 +70,11 @@ class SchedulePriceChangeBulkAction extends BulkAction
         $this->label('Schedule price change')
             ->icon('heroicon-o-clock')
             ->modalHeading('Schedule a price change')
-            ->modalDescription('A scheduled change is created for each selected record.')
+            ->modalDescription('The prices change together. Selected dishes change the prices of all their sizes.')
             ->modalSubmitActionLabel('Schedule')
-            ->visible(fn () => Gate::allows('create', Alteration::class))
+            ->visible(fn () => Gate::allows('create', MenuVersion::class))
             ->form([
-                DateTimePicker::make('perform_at')
+                DateTimePicker::make('goes_live_at')
                     ->label('When')
                     ->helperText("In each restaurant's timezone.")
                     ->seconds(false)
@@ -117,7 +120,8 @@ class SchedulePriceChangeBulkAction extends BulkAction
     }
 
     /**
-     * Create the scheduled changes, or none if one of them is invalid.
+     * Schedule the price changes: one version per restaurant (in its timezone), with a change
+     * of each size, whose price changes. Selected dishes change all their sizes.
      *
      * @param Collection $records
      * @param array $data
@@ -126,9 +130,9 @@ class SchedulePriceChangeBulkAction extends BulkAction
      */
     protected function scheduleChanges(Collection $records, array $data): void
     {
-        $changes = [];
+        $versions = [];
+        $count = 0;
         $skipped = 0;
-        $timezones = [];
 
         /** @var BaseModel $record */
         foreach ($records as $record) {
@@ -138,41 +142,54 @@ class SchedulePriceChangeBulkAction extends BulkAction
                 continue;
             }
 
-            $current = (float) $record->getAttribute('price');
-            $price = static::calculatePrice($current, $data);
+            $restaurantId = $record->getRestaurantId();
+            $timezone = ScheduledChangesTable::getTimezone($record);
+            $goesLiveAt = Carbon::parse($data['goes_live_at'], $timezone);
 
-            if ($price < 0) {
-                $this->stop('A price would be negative', static::getRecordTitle($record));
-            }
-
-            $timezone = $timezones[$record->getRestaurantId()] ??= AlterationsTable::getTimezone($record);
-            $performAt = Carbon::parse($data['perform_at'], $timezone)
-                ->setTimezone(config('app.timezone'));
-
-            if ($performAt->isPast()) {
+            if ($goesLiveAt->isPast()) {
                 $this->stop('The time has already passed', "In the timezone of {$timezone}.");
             }
 
-            if (abs($price - $current) < 0.005) {
-                $skipped++;
-                continue;
+            $sizes = $record instanceof Dish
+                ? $record->sizes()->where('dish_variants.archived', false)->get()
+                : collect([$record]);
+            $changed = false;
+
+            /** @var DishVariant $size */
+            foreach ($sizes as $size) {
+                $current = (float) $size->price;
+                $price = static::calculatePrice($current, $data);
+
+                if ($price < 0) {
+                    $this->stop('A price would be negative', static::getRecordTitle($record));
+                }
+
+                if (abs($price - $current) < 0.005) {
+                    continue;
+                }
+
+                $versions[$restaurantId]['goes_live_at'] = $goesLiveAt->toIso8601String();
+                $versions[$restaurantId]['changes'][] = [
+                    'target_type' => $size->getMorphClass(),
+                    'target_id' => $size->id,
+                    'fields' => ['price' => $price],
+                ];
+                $changed = true;
+                $count++;
             }
 
-            $changes[] = [
-                'alterable_id' => $record->getKey(),
-                'alterable_type' => $record->getMorphClass(),
-                'metadata' => json_encode(['price' => $price]),
-                'perform_at' => $performAt,
-            ];
+            $skipped += $changed ? 0 : 1;
         }
 
-        DB::transaction(function () use ($changes) {
-            foreach ($changes as $attributes) {
-                Alteration::query()->create($attributes);
+        DB::transaction(function () use ($versions) {
+            foreach ($versions as $restaurantId => $version) {
+                app(VersionEditorRepository::class)->create(Restaurant::query()->findOrFail($restaurantId), [
+                    ...$version,
+                    'name' => count($version['changes']) > 1 ? 'Price change' : null,
+                    'schedule' => true,
+                ], request()->user());
             }
         });
-
-        $count = count($changes);
 
         Notification::make()
             ->title($count ? "Scheduled $count price " . Str::plural('change', $count) : 'Nothing to schedule')
@@ -216,7 +233,7 @@ class SchedulePriceChangeBulkAction extends BulkAction
     protected static function getRecordTitle(BaseModel $record): string
     {
         if ($record instanceof DishVariant) {
-            return $record->dish->title . ' (variant)';
+            return $record->dish->title . ' (size)';
         }
 
         return (string) $record->getAttribute('title');

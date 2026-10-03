@@ -123,10 +123,7 @@ class MenuEditorRepository extends EditorRepository
             );
             $copy->save();
 
-            $copy->media()->attach($menu->media()
-                ->pluck('mediables.order', 'media.id')
-                ->map(fn ($order) => ['order' => $order])
-                ->all());
+            $this->copyMedia($menu, $copy);
 
             /** @var DishCategory $category */
             foreach ($menu->categories()->withoutGlobalScope(ArchivedScope::class)->get() as $category) {

@@ -5,14 +5,14 @@ namespace App\Repositories\Editor;
 use App\Models\Dish;
 use App\Models\DishCategory;
 use App\Models\DishVariant;
-use App\Models\Scopes\ArchivedScope;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 /**
  * Class DishEditorRepository.
  *
- * Changes of dishes: texts, visibility, flags, sizes and photos.
+ * Changes of dishes: texts, visibility, flags, sizes (their variants) and photos.
  */
 class DishEditorRepository extends EditorRepository
 {
@@ -61,22 +61,22 @@ class DishEditorRepository extends EditorRepository
 
             $dish->fill(Arr::only($data, ['is_hidden', 'flags']));
 
-            // the first size is the dish itself, the others are its variants
-            $sizes = array_map(fn (array $size) => $this->sizeValues($size), array_values($data['sizes'] ?? []));
-            $own = array_shift($sizes);
+            $sizes = array_key_exists('sizes', $data)
+                ? array_map(fn (array $size) => $this->sizeValues($size), array_values($data['sizes']))
+                : null;
 
-            if ($own) {
-                $dish->fill(Arr::except($own, 'id'));
+            if (!$dish->exists && $sizes) {
+                $sizes = $this->createWithFirstSize($dish, $sizes);
             }
 
             $dish->save();
 
-            if ($own) {
-                $this->setVariants($dish, $sizes);
+            if ($sizes !== null) {
+                $this->setSizes($dish, $sizes);
             }
 
             if (array_key_exists('media', $data)) {
-                $dish->setMedia(...$data['media']);
+                $dish->setMediaWithVisibility($data['media']);
             }
 
             return $dish;
@@ -84,20 +84,43 @@ class DishEditorRepository extends EditorRepository
     }
 
     /**
-     * Replace variants of the dish with the given sizes: kept variants are updated, others are
-     * deleted or added (archived variants aren't touched).
+     * Save a new dish with the first of its sizes shown to guests (the dish creates it from
+     * its own size columns), which the sizes then refer to.
+     *
+     * @param Dish $dish
+     * @param array $sizes
+     *
+     * @return array the sizes
+     */
+    protected function createWithFirstSize(Dish $dish, array $sizes): array
+    {
+        $index = array_key_first(array_filter($sizes, fn (array $size) => !$size['is_hidden'])) ?? 0;
+
+        $dish->fill(Arr::only($sizes[$index], Dish::SIZE));
+        $dish->save();
+
+        $sizes[$index]['id'] = $dish->sizes()->value('id');
+
+        return $sizes;
+    }
+
+    /**
+     * Replace sizes of the dish with the given ones: kept ones are updated, others are deleted
+     * or added (archived ones aren't touched). Shown ones are saved first, so that the dish
+     * always has one.
      *
      * @param Dish $dish
      * @param array $sizes
      *
      * @return void
      */
-    protected function setVariants(Dish $dish, array $sizes): void
+    protected function setSizes(Dish $dish, array $sizes): void
     {
-        $existing = $dish->variants()->get()->keyBy('id');
+        /** @var Collection<int, DishVariant> $existing */
+        $existing = $dish->sizes()->where('dish_variants.archived', false)->get()->keyBy('id');
         $kept = [];
 
-        foreach ($sizes as $size) {
+        foreach (collect($sizes)->sortBy(fn (array $size) => $size['is_hidden']) as $size) {
             /** @var DishVariant $variant */
             $variant = $existing->get($size['id'] ?? 0) ?? new DishVariant(['dish_id' => $dish->id]);
             $variant->fill(Arr::except($size, 'id'));
@@ -106,7 +129,7 @@ class DishEditorRepository extends EditorRepository
             $kept[] = $variant->id;
         }
 
-        $existing->except($kept)->each(fn ($variant) => $variant->delete());
+        $existing->except($kept)->each(fn (DishVariant $variant) => $variant->delete());
     }
 
     /**
@@ -123,6 +146,7 @@ class DishEditorRepository extends EditorRepository
         $weight = $values['weight'] ?? null;
         $values['weight'] = $weight === null || $weight === '' ? null : (string) ($weight + 0);
         $values['weight_unit'] = $values['weight'] === null ? null : ($values['weight_unit'] ?? null);
+        $values['is_hidden'] = (bool) ($size['is_hidden'] ?? false);
 
         return $values;
     }
@@ -169,7 +193,7 @@ class DishEditorRepository extends EditorRepository
     }
 
     /**
-     * Copy the dish with its variants (archived ones included) and photos, keeping its state
+     * Copy the dish with its sizes (hidden and archived ones included) and photos, keeping its state
      * (e.g. with its menu or category). The copy gets no slug, scheduled changes aren't copied.
      *
      * @param Dish $dish
@@ -187,19 +211,19 @@ class DishEditorRepository extends EditorRepository
 
             // the copy isn't a copy of the old menu (see `dishes:copy-old-menu`)
             $copy->setJson('metadata', Arr::except($copy->getJson('metadata'), 'copied_from'));
-            $copy->save();
+            // its sizes are copies of the dish's ones
+            Dish::withoutFirstSize(fn () => $copy->save());
 
-            /** @var DishVariant $variant */
-            foreach ($dish->variants()->withoutGlobalScope(ArchivedScope::class)->get() as $variant) {
+            /** @var Collection<int, DishVariant> $sizes */
+            $sizes = $dish->sizes()->get();
+
+            foreach ($sizes->sortBy(fn (DishVariant $variant) => !$variant->isShown()) as $variant) {
                 $variant->replicate()
                     ->fill(['dish_id' => $copy->id])
                     ->save();
             }
 
-            $copy->media()->attach($dish->media()
-                ->pluck('mediables.order', 'media.id')
-                ->map(fn ($order) => ['order' => $order])
-                ->all());
+            $this->copyMedia($dish, $copy);
 
             return $copy;
         });

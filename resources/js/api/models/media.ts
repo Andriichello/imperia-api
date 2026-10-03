@@ -25,6 +25,8 @@ export interface Media {
   folder: string;
   /** @nullable */
   order: number | null;
+  /** Hidden from guests (only the admin gets hidden ones). */
+  is_hidden?: boolean;
   url: string;
   metadata: MediaMetadata | null;
   variants?: Media[];

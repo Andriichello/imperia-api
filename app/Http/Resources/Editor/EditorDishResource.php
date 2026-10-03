@@ -41,31 +41,34 @@ class EditorDishResource extends JsonResource
             'archived_at' => $this->archived_at?->toIso8601String(),
             'popularity' => $this->popularity,
             'flags' => $this->flags,
-            'sizes' => $this->sizes(),
-            'photos' => new MediaCollection($this->whenLoaded('media')),
+            'sizes' => $this->sizes(false),
+            'archived_sizes' => $this->sizes(true),
+            'photos' => new MediaCollection($this->whenLoaded('allMedia')),
         ];
     }
 
     /**
-     * Sizes of the dish (the dish itself, with no id, and its variants), from the cheapest,
-     * like the website lists them.
+     * Sizes of the dish (its variants), from the cheapest, like the website lists them:
+     * the current ones (hidden ones included) or the archived ones.
+     *
+     * @param bool $archived
      *
      * @return array
      */
-    protected function sizes(): array
+    protected function sizes(bool $archived): array
     {
-        $size = fn (?int $id, Dish|DishVariant $model) => [
-            'id' => $id,
-            'price' => (float) $model->price,
-            'weight' => $model->weight,
-            'weight_unit' => $model->weight_unit,
-            'calories' => $model->calories,
-            'preparation_time' => $model->preparation_time,
-        ];
-
-        return collect([$size(null, $this->resource)])
-            ->merge($this->variants->map(fn (DishVariant $variant) => $size($variant->id, $variant)))
-            ->sortBy('price')
+        return $this->sizes
+            ->filter(fn (DishVariant $variant) => (bool) $variant->archived === $archived)
+            ->map(fn (DishVariant $variant) => [
+                'id' => $variant->id,
+                'price' => (float) $variant->price,
+                'weight' => $variant->weight,
+                'weight_unit' => $variant->weight_unit,
+                'calories' => $variant->calories,
+                'preparation_time' => $variant->preparation_time,
+                'is_hidden' => (bool) $variant->is_hidden,
+                'archived_at' => $variant->archived_at?->toIso8601String(),
+            ])
             ->values()
             ->all();
     }
@@ -73,10 +76,10 @@ class EditorDishResource extends JsonResource
     /**
      * @OA\Schema(
      *   schema="EditorSize",
-     *   description="Size of a dish: the dish itself (with no id) or one of its variants.",
-     *   required={"id", "price", "weight", "weight_unit", "calories", "preparation_time"},
-     *   @OA\Property(property="id", type="integer", nullable=true, example=null,
-     *     description="Id of the variant, `null` for the dish itself."),
+     *   description="Size of a dish (one of its variants).",
+     *   required={"id", "price", "weight", "weight_unit", "calories", "preparation_time", "is_hidden",
+     *     "archived_at"},
+     *   @OA\Property(property="id", type="integer", example=4),
      *   @OA\Property(property="price", type="number", example=185),
      *   @OA\Property(property="weight", type="string", nullable=true, example="300"),
      *   @OA\Property(property="weight_unit", type="string", nullable=true, example="g",
@@ -84,12 +87,16 @@ class EditorDishResource extends JsonResource
      *   @OA\Property(property="calories", type="integer", nullable=true, example=380),
      *   @OA\Property(property="preparation_time", type="integer", nullable=true, example=15,
      *     description="In minutes."),
+     *   @OA\Property(property="is_hidden", type="boolean", example=false,
+     *     description="Hidden from guests (a dish has at least one size, which isn't)."),
+     *   @OA\Property(property="archived_at", type="string", format="date-time", nullable=true,
+     *     description="When an archived size was archived."),
      * ),
      * @OA\Schema(
      *   schema="EditorDish",
      *   description="Dish with its sizes (from the cheapest) and photos.",
      *   required={"id", "menu_id", "category_id", "slug", "title", "description", "badge", "is_hidden",
-     *     "archived", "archived_at", "popularity", "flags", "sizes"},
+     *     "archived", "archived_at", "popularity", "flags", "sizes", "archived_sizes"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="menu_id", type="integer", example=1),
      *   @OA\Property(property="category_id", type="integer", nullable=true, example=1),
@@ -104,7 +111,10 @@ class EditorDishResource extends JsonResource
      *     description="Order of the dishes in the category, from the highest."),
      *   @OA\Property(property="flags", type="array", @OA\Items(type="string"),
      *     example={"vegetarian", "alg-milk"}, description="Diet tags and allergens."),
-     *   @OA\Property(property="sizes", type="array", @OA\Items(ref="#/components/schemas/EditorSize")),
+     *   @OA\Property(property="sizes", type="array", @OA\Items(ref="#/components/schemas/EditorSize"),
+     *     description="Its sizes, hidden ones included, from the cheapest."),
+     *   @OA\Property(property="archived_sizes", type="array", @OA\Items(ref="#/components/schemas/EditorSize"),
+     *     description="Its archived sizes: off the menu, they can be restored."),
      *   @OA\Property(property="photos", type="array", @OA\Items(ref="#/components/schemas/Media")),
      * ),
      */

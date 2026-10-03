@@ -45,7 +45,8 @@ class DishVariantResourceTest extends FilamentTestCase
             ->call('create')
             ->assertHasFormErrors(['dish_id' => 'in']);
 
-        $this->assertSame(0, DishVariant::query()->count());
+        // the other restaurant's dish has only its first size
+        $this->assertSame(1, DishVariant::query()->withoutGlobalScopes()->where('dish_id', $otherDish->id)->count());
     }
 
     /**

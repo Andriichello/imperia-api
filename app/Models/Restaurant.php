@@ -4,10 +4,12 @@ namespace App\Models;
 
 use App\Helpers\ContentLocale;
 use App\Models\Interfaces\MediableInterface;
+use App\Models\Interfaces\SchedulableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Interfaces\TranslatableInterface;
 use App\Models\Morphs\Category;
 use App\Models\Traits\MediableTrait;
+use App\Models\Traits\SchedulableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use App\Models\Traits\TranslatableTrait;
 use App\Queries\RestaurantQueryBuilder;
@@ -16,10 +18,13 @@ use Database\Factories\RestaurantFactory;
 use DateTimeZone;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Class Restaurant.
@@ -34,6 +39,8 @@ use Illuminate\Support\Collection;
  * @property string $timezone
  * @property Carbon|null $closed_until
  * @property string|null $closed_reason
+ * @property Carbon|null $last_saved_at
+ * @property int|null $last_saved_by
  * @property int|null $popularity
  * @property string|null $metadata
  * @property Carbon|null $created_at
@@ -65,6 +72,8 @@ use Illuminate\Support\Collection;
  * @property DishMenu[]|Collection $dishMenus
  * @property DishCategory[]|Collection $dishCategories
  * @property Dish[]|Collection $dishes
+ * @property MenuVersion[]|Collection $versions
+ * @property User|null $lastSavedBy
  *
  * @method static RestaurantQueryBuilder query()
  * @method static RestaurantFactory factory(...$parameters)
@@ -72,11 +81,13 @@ use Illuminate\Support\Collection;
  */
 class Restaurant extends BaseModel implements
     MediableInterface,
+    SchedulableInterface,
     SoftDeletableInterface,
     TranslatableInterface
 {
     use HasFactory;
     use MediableTrait;
+    use SchedulableTrait;
     use SoftDeletableTrait;
     use TranslatableTrait;
 
@@ -156,6 +167,7 @@ class Restaurant extends BaseModel implements
      */
     protected $casts = [
         'closed_until' => 'date',
+        'last_saved_at' => 'datetime',
     ];
 
     /**
@@ -244,6 +256,50 @@ class Restaurant extends BaseModel implements
         return $this->hasMany(RestaurantNote::class)
             ->orderBy('order')
             ->orderBy('id');
+    }
+
+    /**
+     * Scheduled versions of the restaurant's page.
+     *
+     * @return HasMany
+     */
+    public function versions(): HasMany
+    {
+        return $this->hasMany(MenuVersion::class);
+    }
+
+    /**
+     * Remember, that pages of the restaurants were saved now (by the signed-in user, if any).
+     * The restaurants' own `updated_at` stays as it is.
+     *
+     * @param int|null ...$ids
+     *
+     * @return void
+     */
+    public static function markSaved(?int ...$ids): void
+    {
+        $ids = array_unique(array_filter($ids));
+
+        if (empty($ids)) {
+            return;
+        }
+
+        DB::table('restaurants')
+            ->whereIn('id', $ids)
+            ->update([
+                'last_saved_at' => Carbon::now(),
+                'last_saved_by' => Auth::id(),
+            ]);
+    }
+
+    /**
+     * The user, who last saved the restaurant's page.
+     *
+     * @return BelongsTo
+     */
+    public function lastSavedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'last_saved_by');
     }
 
     /**

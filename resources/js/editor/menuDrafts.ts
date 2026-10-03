@@ -45,8 +45,9 @@ function numberOf(value: string): number | null {
 // Preview
 
 function publicDish(dish: EditorDish, menuId: number, categoryId: number, locale: string, fallback: string): Dish {
-  // the first size is the dish itself, the others are its variants
-  const [own, ...others] = dish.sizes
+  // guests see the sizes and photos, which aren't hidden; the dish shows its cheapest size
+  const sizes = dish.sizes.filter((size) => !size.is_hidden).sort((a, b) => a.price - b.price)
+  const [first] = sizes
 
   return {
     id: dish.id,
@@ -56,16 +57,16 @@ function publicDish(dish: EditorDish, menuId: number, categoryId: number, locale
     title: text(dish.title, locale, fallback) ?? '',
     description: text(dish.description, locale, fallback),
     badge: text(dish.badge, locale, fallback),
-    price: own?.price ?? 0,
-    weight: own?.weight ?? null,
-    weight_unit: own?.weight_unit ?? null,
-    calories: own?.calories ?? null,
-    preparation_time: own?.preparation_time ?? null,
+    price: first?.price ?? 0,
+    weight: first?.weight ?? null,
+    weight_unit: first?.weight_unit ?? null,
+    calories: first?.calories ?? null,
+    preparation_time: first?.preparation_time ?? null,
     archived: false,
     popularity: dish.popularity,
     flags: dish.flags,
-    variants: others.map((size, index) => ({
-      id: size.id ?? -(index + 1),
+    variants: sizes.map((size) => ({
+      id: size.id,
       dish_id: dish.id,
       price: size.price,
       weight: size.weight,
@@ -74,7 +75,7 @@ function publicDish(dish: EditorDish, menuId: number, categoryId: number, locale
       preparation_time: size.preparation_time,
       archived: false,
     }) as DishVariant),
-    media: dish.photos ?? [],
+    media: (dish.photos ?? []).filter((photo) => !photo.is_hidden),
   } as Dish
 }
 
@@ -245,8 +246,10 @@ export function applyCategory(menus: EditorMenu[], id: number | null, menuId: nu
 export interface SizeDraft {
   // of the list (ids of new sizes are unknown)
   key: string
-  // of its variant, null for the dish itself and new ones
+  // of its variant, null for new ones
   id: number | null
+  // guests don't see it (a dish has a size they see)
+  is_hidden: boolean
   weight: string
   weight_unit: string
   price: string
@@ -276,6 +279,7 @@ export function sizeOf(size: Partial<EditorSize> = {}): SizeDraft {
   return {
     key: size.id ? `size-${size.id}` : `new-${++newSizes}`,
     id: size.id ?? null,
+    is_hidden: size.is_hidden ?? false,
     weight: field(size.weight),
     weight_unit: size.weight_unit ?? 'g',
     price: field(size.price),
@@ -296,8 +300,7 @@ export function dishOf(dish: EditorDish | null, locales: string[]): DishDraft {
     badge: translationsOf(dish?.badge, locales),
     is_hidden: dish?.is_hidden ?? false,
     flags: [...(dish?.flags ?? [])],
-    // the dish itself has no id: it's the first one, keys tell them apart
-    sizes: sizes.map((size, index) => ({...sizeOf(size), key: size.id ? `size-${size.id}` : `own-${index}`})),
+    sizes: sizes.map((size) => sizeOf(size)),
     shared,
     preparation_time: field(first.preparation_time),
     calories: field(first.calories),
@@ -305,13 +308,18 @@ export function dishOf(dish: EditorDish | null, locales: string[]): DishDraft {
   }
 }
 
-/** Sizes as they're saved: the time and calories of all of them, when they're the same. */
+/**
+ * Sizes as they're saved: the time and calories of all of them, when they're the same.
+ * New ones have negative ids, so that the preview tells them apart.
+ */
 function sizesOf(draft: DishDraft): EditorSize[] {
-  return draft.sizes.map((size) => {
+  return draft.sizes.map((size, index) => {
     const weight = numberOf(size.weight)
 
     return {
-      id: size.id,
+      id: size.id ?? -(index + 1),
+      is_hidden: size.is_hidden,
+      archived_at: null,
       price: numberOf(size.price) ?? 0,
       weight: weight === null ? null : String(weight),
       weight_unit: (weight === null ? null : size.weight_unit) as EditorSize['weight_unit'],
@@ -328,13 +336,13 @@ export function dishRequest(draft: DishDraft, isNew: boolean): EditorStoreDishRe
     badge: texts(draft.badge),
     is_hidden: draft.is_hidden,
     flags: draft.flags,
-    sizes: sizesOf(draft).map(({id, weight, ...size}) => ({
-      // new dishes have no variants yet
-      ...(isNew ? {} : {id}),
+    sizes: sizesOf(draft).map(({id, weight, archived_at, ...size}) => ({
+      // new dishes have no sizes yet
+      ...(isNew ? {} : {id: id > 0 ? id : null}),
       ...size,
       weight: weight === null ? null : Number(weight),
     })),
-    media: draft.photos.map((photo) => photo.id),
+    media: draft.photos.map((photo) => ({id: photo.id, is_hidden: photo.is_hidden ?? false})),
   }
 }
 
@@ -365,6 +373,7 @@ export function applyDish(menus: EditorMenu[], id: number | null, categoryId: nu
               archived: false,
               archived_at: null,
               popularity: null,
+              archived_sizes: [],
               ...values,
             }],
           }

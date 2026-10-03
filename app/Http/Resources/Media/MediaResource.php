@@ -35,6 +35,8 @@ class MediaResource extends JsonResource
             'disk' => $this->disk,
             'folder' => $this->folder,
             'order' => $this->order,
+            // of the link to its model: hidden photos are kept, but guests don't see them
+            'is_hidden' => (bool) data_get($this->resource, 'pivot.is_hidden', false),
             'url' => $this->url,
             'metadata' => $this->metadata,
             'variants' => new MediaCollection($this->whenLoaded('variants')),
@@ -64,6 +66,8 @@ class MediaResource extends JsonResource
      *   @OA\Property(property="folder", type="string", example="/",
      *     description="Must start and end with `/`."),
      *   @OA\Property(property="order", type="integer", nullable=true, example=1),
+     *   @OA\Property(property="is_hidden", type="boolean", example=false,
+     *     description="Hidden from guests (only the admin gets hidden ones)."),
      *   @OA\Property(property="url", type="string", example="http://localhost/storage/drinks.svg"),
      *   @OA\Property(property="metadata", nullable=true,
      *     ref ="#/components/schemas/MediaMetadata"),

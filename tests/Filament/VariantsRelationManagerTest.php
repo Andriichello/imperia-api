@@ -61,7 +61,7 @@ class VariantsRelationManagerTest extends FilamentTestCase
     }
 
     /**
-     * Test that the dish's variants are listed, archived ones too,
+     * Test that the dish's sizes are listed, hidden and archived ones too,
      * deleted ones only with the trashed filter.
      *
      * @return void
@@ -84,7 +84,8 @@ class VariantsRelationManagerTest extends FilamentTestCase
             ->assertCanNotSeeTableRecords([$deleted, $other])
             ->assertTableColumnFormattedStateSet('price', '€100.00', $small)
             ->assertTableColumnStateSet('weight', '300 g', $small)
-            ->assertTableColumnStateSet('archived', false, $archived)
+            ->assertTableColumnStateSet('is_hidden', true, $small)
+            ->assertTableColumnStateSet('archived', true, $archived)
             ->filterTable('trashed', false)
             ->assertCanSeeTableRecords([$deleted])
             ->assertCanNotSeeTableRecords([$small, $archived])
@@ -94,7 +95,7 @@ class VariantsRelationManagerTest extends FilamentTestCase
     }
 
     /**
-     * Test that variants can be added, edited and deleted from the dish page.
+     * Test that sizes can be added, edited (hidden) and deleted from the dish page.
      *
      * @return void
      */
@@ -107,10 +108,10 @@ class VariantsRelationManagerTest extends FilamentTestCase
             ->assertHasNoTableActionErrors();
 
         /** @var DishVariant $variant */
-        $variant = DishVariant::query()->sole();
+        $variant = DishVariant::query()->where('price', 180)->sole();
         $this->assertSame($this->dish->id, $variant->dish_id);
-        $this->assertEquals(180, $variant->price);
-        $this->assertFalse((bool) $variant->archived);
+        $this->assertFalse($variant->is_hidden);
+        $this->assertFalse($variant->archived);
 
         $this->variants()
             ->callTableAction(EditAction::class, $variant, data: ['price' => 190, 'live' => false])
@@ -119,8 +120,54 @@ class VariantsRelationManagerTest extends FilamentTestCase
 
         $variant = DishVariant::query()->withoutGlobalScopes()->findOrFail($variant->id);
         $this->assertEquals(190, $variant->price);
-        $this->assertTrue((bool) $variant->archived);
+        $this->assertTrue($variant->is_hidden);
         $this->assertTrue($variant->trashed());
+    }
+
+    /**
+     * Test that a size can be archived and restored from the archive.
+     *
+     * @return void
+     */
+    public function testSizesCanBeArchived()
+    {
+        $variant = DishVariant::factory()->withDish($this->dish)->create(['price' => 150]);
+
+        $this->actingAsStaff(UserRole::Admin, $this->restaurant);
+
+        $this->variants()->callTableAction('archive', $variant);
+
+        $this->assertTrue($variant->fresh()->archived);
+        $this->assertNotNull($variant->fresh()->archived_at);
+
+        // keys, so the records are loaded again
+        $this->variants()
+            ->assertTableActionHidden('archive', $variant->getKey())
+            ->callTableAction('unarchive', $variant->getKey());
+
+        $this->assertFalse($variant->fresh()->archived);
+    }
+
+    /**
+     * Test that the dish's only size guests see can't be hidden, archived or deleted.
+     *
+     * @return void
+     */
+    public function testTheLastShownSizeStays()
+    {
+        /** @var DishVariant $first */
+        $first = $this->dish->sizes()->sole();
+        $hidden = DishVariant::factory()->withDish($this->dish)->create(['is_hidden' => true]);
+
+        $this->actingAsStaff(UserRole::Admin, $this->restaurant);
+
+        $this->variants()
+            ->assertTableActionHidden(DeleteAction::class, $first)
+            ->assertTableActionHidden('archive', $first)
+            ->assertTableActionVisible(DeleteAction::class, $hidden);
+
+        $this->assertTrue($first->isLastShown());
+        $this->assertFalse($hidden->isLastShown());
     }
 
     /**
@@ -136,7 +183,8 @@ class VariantsRelationManagerTest extends FilamentTestCase
             ->callTableAction(CreateAction::class, data: ['price' => -1])
             ->assertHasTableActionErrors(['price' => 'min']);
 
-        $this->assertSame(0, DishVariant::query()->withoutGlobalScopes()->count());
+        // only the dish's first size
+        $this->assertSame(1, DishVariant::query()->withoutGlobalScopes()->count());
     }
 
     /**

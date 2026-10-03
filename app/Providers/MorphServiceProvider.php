@@ -17,6 +17,7 @@ use App\Models\Morphs\Periodical;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Restaurant;
+use App\Models\RestaurantNote;
 use App\Models\RestaurantReview;
 use App\Models\Schedule;
 use App\Models\User;
@@ -73,6 +74,7 @@ class MorphServiceProvider extends ServiceProvider
         DishCategory::class,
         /** Items (additional) */
         DishVariant::class,
+        RestaurantNote::class,
     ];
 
     /**

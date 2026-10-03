@@ -11,11 +11,18 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 interface MediableInterface
 {
     /**
-     * Medias related to the model.
+     * Medias related to the model, which guests see (hidden ones are left out).
      *
      * @return MorphToMany
      */
     public function media(): MorphToMany;
+
+    /**
+     * Medias related to the model, hidden ones included.
+     *
+     * @return MorphToMany
+     */
+    public function allMedia(): MorphToMany;
 
     /**
      * Attach given media to the model.
@@ -52,6 +59,15 @@ interface MediableInterface
      * @return static
      */
     public function setMedia(Media|int ...$media): static;
+
+    /**
+     * Set model's media in the given order, each one shown to guests or hidden.
+     *
+     * @param array $media `[['id' => 4, 'is_hidden' => false], ...]`
+     *
+     * @return static
+     */
+    public function setMediaWithVisibility(array $media): static;
 
     /**
      * Determines if model has media attached.

@@ -158,8 +158,8 @@ class MenuEditorController extends Controller
         $menu->load([
             'categories' => $withArchived,
             'categories.dishes' => $withArchived,
-            'categories.dishes.variants',
-            'categories.dishes.media',
+            'categories.dishes.sizes',
+            'categories.dishes.allMedia',
         ]);
 
         return ApiResponse::make(['data' => new EditorMenuResource($menu)], $status, $message);

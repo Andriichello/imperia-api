@@ -4,6 +4,7 @@
  * imperia-api
  * OpenAPI spec version: 0.1
  */
+import type { EditorPhoto } from "./editorPhoto";
 import type { EditorStoreDishRequestSizesItem } from "./editorStoreDishRequestSizesItem";
 import type { EditorTranslations } from "./editorTranslations";
 
@@ -16,8 +17,8 @@ export interface EditorStoreDishRequest {
   badge?: EditorTranslations;
   is_hidden?: boolean;
   flags?: string[];
-  /** The first one is the dish itself, 1 to 10 of them. */
+  /** Its variants, 1 to 10 of them, at least one shown to guests. Archived ones stay as they are. */
   sizes: EditorStoreDishRequestSizesItem[];
-  /** Ids of the dish's photos (the restaurant's ones), 5 at most. */
-  media?: number[];
+  /** The dish's photos (the restaurant's ones) in their order, 3 at most, hidden ones included. */
+  media?: EditorPhoto[];
 }

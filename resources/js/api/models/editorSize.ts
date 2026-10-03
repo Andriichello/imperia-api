@@ -7,14 +7,10 @@
 import type { EditorSizeWeightUnit } from "./editorSizeWeightUnit";
 
 /**
- * Size of a dish: the dish itself (with no id) or one of its variants.
+ * Size of a dish (one of its variants).
  */
 export interface EditorSize {
-  /**
-   * Id of the variant, `null` for the dish itself.
-   * @nullable
-   */
-  id: number | null;
+  id: number;
   price: number;
   /** @nullable */
   weight: string | null;
@@ -27,4 +23,11 @@ export interface EditorSize {
    * @nullable
    */
   preparation_time: number | null;
+  /** Hidden from guests (a dish has at least one size, which isn't). */
+  is_hidden: boolean;
+  /**
+   * When an archived size was archived.
+   * @nullable
+   */
+  archived_at: string | null;
 }

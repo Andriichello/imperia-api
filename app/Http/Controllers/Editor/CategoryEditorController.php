@@ -153,8 +153,8 @@ class CategoryEditorController extends Controller
     {
         $category->load([
             'dishes' => fn (Relation $query) => $query->withoutGlobalScope(ArchivedScope::class),
-            'dishes.variants',
-            'dishes.media',
+            'dishes.sizes',
+            'dishes.allMedia',
         ]);
 
         return ApiResponse::make(['data' => new EditorCategoryResource($category)], $status, $message);

@@ -1561,6 +1561,57 @@
                 ]
             }
         },
+        "/api/editor/restaurants/{id}/dashboard": {
+            "get": {
+                "tags": [
+                    "editor"
+                ],
+                "summary": "What the admin's dashboard shows of the restaurant.",
+                "operationId": "getEditorDashboard",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the restaurant.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EditorDashboardResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The user can't edit the restaurant."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/editor/restaurants/{id}/notes": {
             "put": {
                 "tags": [
@@ -1836,6 +1887,738 @@
                                 }
                             }
                         }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/editor/restaurants/{id}/versions": {
+            "get": {
+                "tags": [
+                    "editor"
+                ],
+                "summary": "Versions of the restaurant: pending ones by their date, then the ones, which went live.",
+                "operationId": "getEditorVersions",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the restaurant.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "pending",
+                        "in": "query",
+                        "description": "Only the ones, which haven't gone live.",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EditorVersionsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The user can't edit the restaurant."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "editor"
+                ],
+                "summary": "Create a version: a draft, or scheduled right away, with its first changes.",
+                "operationId": "storeEditorVersion",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the restaurant.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EditorStoreVersionRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EditorVersionResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The user can't edit the restaurant."
+                    },
+                    "422": {
+                        "description": "Invalid values.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorsResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/editor/versions/{id}": {
+            "get": {
+                "tags": [
+                    "editor"
+                ],
+                "summary": "The version with its changes, their items and conflicts.",
+                "operationId": "getEditorVersion",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the version.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EditorVersionResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The user can't edit the restaurant."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "editor"
+                ],
+                "summary": "Delete the version with its changes.",
+                "operationId": "deleteEditorVersion",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the version.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Deleted."
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The user can't edit the restaurant."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "patch": {
+                "tags": [
+                    "editor"
+                ],
+                "summary": "Rename or reschedule the version.",
+                "operationId": "updateEditorVersion",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the version.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EditorUpdateVersionRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EditorVersionResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The user can't edit the restaurant."
+                    },
+                    "422": {
+                        "description": "Invalid values, or the version has gone live.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorsResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/editor/versions/{id}/changes": {
+            "put": {
+                "tags": [
+                    "editor"
+                ],
+                "summary": "Put a change of an item (or a new one) into the version.",
+                "operationId": "putEditorVersionChange",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the version.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/EditorPutVersionChangeRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EditorVersionResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The user can't edit the restaurant."
+                    },
+                    "422": {
+                        "description": "Invalid values, or the version has gone live.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorsResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/editor/versions/{id}/changes/{change}": {
+            "delete": {
+                "tags": [
+                    "editor"
+                ],
+                "summary": "Remove a change from the version: the item stays as it is.",
+                "operationId": "removeEditorVersionChange",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the version.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "change",
+                        "in": "path",
+                        "description": "Id of the change.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EditorVersionResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The user can't edit the restaurant."
+                    },
+                    "404": {
+                        "description": "The change isn't in the version."
+                    },
+                    "422": {
+                        "description": "The version has gone live, or a dish would lose its last size.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorsResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/editor/versions/{id}/schedule": {
+            "post": {
+                "tags": [
+                    "editor"
+                ],
+                "summary": "Schedule the version at its date, which has to be in the future.",
+                "operationId": "scheduleEditorVersion",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the version.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EditorVersionResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The user can't edit the restaurant."
+                    },
+                    "422": {
+                        "description": "It has no date in the future, or it has gone live.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorsResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/editor/versions/{id}/deactivate": {
+            "post": {
+                "tags": [
+                    "editor"
+                ],
+                "summary": "Deactivate the scheduled version: it keeps its date, but doesn't go live.",
+                "operationId": "deactivateEditorVersion",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the version.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EditorVersionResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The user can't edit the restaurant."
+                    },
+                    "422": {
+                        "description": "It isn't scheduled.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorsResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/editor/versions/{id}/activate": {
+            "post": {
+                "tags": [
+                    "editor"
+                ],
+                "summary": "Activate the inactive version: it's scheduled again.",
+                "operationId": "activateEditorVersion",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the version.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EditorVersionResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The user can't edit the restaurant."
+                    },
+                    "422": {
+                        "description": "It isn't inactive, or its date has passed.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ValidationErrorsResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/editor/versions/{id}/apply": {
+            "post": {
+                "tags": [
+                    "editor"
+                ],
+                "summary": "Apply the version now: all of its changes, or none (then it's failed, with the reason).",
+                "operationId": "applyEditorVersion",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the version.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Applied.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EditorVersionResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The user can't edit the restaurant."
+                    },
+                    "422": {
+                        "description": "It failed (the version, with the reason) or has gone live.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EditorVersionResponse"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/editor/versions/{id}/duplicate": {
+            "post": {
+                "tags": [
+                    "editor"
+                ],
+                "summary": "Copy the version as a draft with the same date and changes.",
+                "operationId": "duplicateEditorVersion",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Id of the version.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/EditorVersionResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UnauthenticatedResponse"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "The user can't edit the restaurant."
                     }
                 },
                 "security": [
@@ -5570,6 +6353,23 @@
                 },
                 "type": "object"
             },
+            "EditorDashboardResponse": {
+                "description": "What the dashboard shows of the restaurant.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/EditorDashboard"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
             "EditorRestaurantResponse": {
                 "description": "Everything of the restaurant.",
                 "required": [
@@ -5579,6 +6379,43 @@
                 "properties": {
                     "data": {
                         "$ref": "#/components/schemas/EditorRestaurant"
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "EditorVersionsResponse": {
+                "description": "Versions of the restaurant.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EditorVersion"
+                        }
+                    },
+                    "message": {
+                        "type": "string",
+                        "example": "Success"
+                    }
+                },
+                "type": "object"
+            },
+            "EditorVersionResponse": {
+                "description": "The version with its changes, their items and conflicts.",
+                "required": [
+                    "data",
+                    "message"
+                ],
+                "properties": {
+                    "data": {
+                        "$ref": "#/components/schemas/EditorVersion"
                     },
                     "message": {
                         "type": "string",
@@ -7085,6 +7922,62 @@
                 },
                 "type": "object"
             },
+            "EditorPutVersionChangeRequest": {
+                "description": "A change of an item (or a new one). Its fields are merged into the item's change in the\n     *     version; a field back at its live value isn't a change anymore. Fields and their values are those of\n     *     the editor's requests: texts in every language, `media` as photos, `archived` to archive or restore.",
+                "required": [
+                    "target_type"
+                ],
+                "properties": {
+                    "id": {
+                        "description": "Change of a new item, which is being edited.",
+                        "type": "integer",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "target_type": {
+                        "type": "string",
+                        "example": "dish-variants",
+                        "enum": [
+                            "restaurants",
+                            "restaurant-notes",
+                            "dish-menus",
+                            "dish-categories",
+                            "dishes",
+                            "dish-variants"
+                        ]
+                    },
+                    "target_id": {
+                        "description": "The changed item, none for a new one.",
+                        "type": "integer",
+                        "example": 12,
+                        "nullable": true
+                    },
+                    "parent_id": {
+                        "description": "Where a new item goes: the category of a dish, the dish of a size, the restaurant of a note.",
+                        "type": "integer",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "fields": {
+                        "description": "New values of the fields. A new dish has `sizes` too.",
+                        "type": "object",
+                        "example": {
+                            "price": 195
+                        }
+                    },
+                    "revert": {
+                        "description": "Fields, which aren't changed anymore.",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "example": [
+                            "calories"
+                        ]
+                    }
+                },
+                "type": "object"
+            },
             "EditorStoreCategoryRequest": {
                 "description": "A new one goes at the end of the list.",
                 "required": [
@@ -7135,7 +8028,7 @@
                         ]
                     },
                     "sizes": {
-                        "description": "The first one is the dish itself, 1 to 10 of them.",
+                        "description": "Its variants, 1 to 10 of them, at least one shown to guests. Archived ones stay as they are.",
                         "type": "array",
                         "items": {
                             "required": [
@@ -7146,6 +8039,10 @@
                                     "description": "Variant to keep (only when updating).",
                                     "type": "integer",
                                     "nullable": true
+                                },
+                                "is_hidden": {
+                                    "type": "boolean",
+                                    "example": false
                                 },
                                 "price": {
                                     "type": "number",
@@ -7184,14 +8081,11 @@
                         }
                     },
                     "media": {
-                        "description": "Ids of the dish's photos (the restaurant's ones), 5 at most.",
+                        "description": "The dish's photos (the restaurant's ones) in their order, 3 at most, hidden ones included.",
                         "type": "array",
                         "items": {
-                            "type": "integer"
-                        },
-                        "example": [
-                            4
-                        ]
+                            "$ref": "#/components/schemas/EditorPhoto"
+                        }
                     }
                 },
                 "type": "object"
@@ -7211,6 +8105,34 @@
                     "is_hidden": {
                         "type": "boolean",
                         "example": false
+                    }
+                },
+                "type": "object"
+            },
+            "EditorStoreVersionRequest": {
+                "description": "A new version: a draft, or scheduled right away (then it needs its date).",
+                "properties": {
+                    "name": {
+                        "description": "None for a change scheduled on its own: it's named after the change.",
+                        "type": "string",
+                        "example": "Winter menu",
+                        "nullable": true
+                    },
+                    "goes_live_at": {
+                        "description": "In the restaurant's time zone, unless it has an offset.",
+                        "type": "string",
+                        "example": "2026-11-01 00:00",
+                        "nullable": true
+                    },
+                    "schedule": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "changes": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EditorPutVersionChangeRequest"
+                        }
                     }
                 },
                 "type": "object"
@@ -7270,7 +8192,7 @@
                         ]
                     },
                     "sizes": {
-                        "description": "The first one is the dish itself, 1 to 10 of them.",
+                        "description": "Its variants, 1 to 10 of them, at least one shown to guests. Archived ones stay as they are.",
                         "type": "array",
                         "items": {
                             "required": [
@@ -7281,6 +8203,10 @@
                                     "description": "Variant to keep (only when updating).",
                                     "type": "integer",
                                     "nullable": true
+                                },
+                                "is_hidden": {
+                                    "type": "boolean",
+                                    "example": false
                                 },
                                 "price": {
                                     "type": "number",
@@ -7319,14 +8245,11 @@
                         }
                     },
                     "media": {
-                        "description": "Ids of the dish's photos (the restaurant's ones), 5 at most.",
+                        "description": "The dish's photos (the restaurant's ones) in their order, 3 at most, hidden ones included.",
                         "type": "array",
                         "items": {
-                            "type": "integer"
-                        },
-                        "example": [
-                            4
-                        ]
+                            "$ref": "#/components/schemas/EditorPhoto"
+                        }
                     }
                 },
                 "type": "object"
@@ -7465,22 +8388,35 @@
                 },
                 "type": "object"
             },
+            "EditorPhoto": {
+                "description": "A photo in a gallery: hidden ones are kept, but guests don't see them.",
+                "required": [
+                    "id"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "is_hidden": {
+                        "type": "boolean",
+                        "example": false
+                    }
+                },
+                "type": "object"
+            },
             "EditorUpdateRestaurantPhotosRequest": {
-                "description": "Ids of the restaurant's photos in their order, the first one is the cover.",
+                "description": "The restaurant's photos in their order, the first one shown is the cover.",
                 "required": [
                     "media"
                 ],
                 "properties": {
                     "media": {
+                        "description": "20 at most.",
                         "type": "array",
                         "items": {
-                            "type": "integer"
-                        },
-                        "example": [
-                            3,
-                            1,
-                            2
-                        ]
+                            "$ref": "#/components/schemas/EditorPhoto"
+                        }
                     }
                 },
                 "type": "object"
@@ -7520,6 +8456,23 @@
                     "brand_primary_content": {
                         "type": "string",
                         "example": "#284625",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "EditorUpdateVersionRequest": {
+                "description": "Fields, which are left out, stay as they are. A scheduled version stays in the future.",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Winter menu",
+                        "nullable": true
+                    },
+                    "goes_live_at": {
+                        "description": "In the restaurant's time zone, unless it has an offset.",
+                        "type": "string",
+                        "example": "2026-11-01 00:00",
                         "nullable": true
                     }
                 },
@@ -8683,22 +9636,149 @@
                 },
                 "type": "object"
             },
+            "EditorDashboard": {
+                "description": "What the dashboard shows: what guests see, the hours (open now is worked out from them,\n     *     in the restaurant's time zone), upcoming special days and the versions, which haven't gone live yet.",
+                "required": [
+                    "id",
+                    "slug",
+                    "url",
+                    "default_locale",
+                    "supported_locales",
+                    "name",
+                    "establishment",
+                    "timezone",
+                    "currency",
+                    "menus_count",
+                    "dishes_count",
+                    "last_saved_at",
+                    "last_saved_by",
+                    "closed_until",
+                    "closed_reason",
+                    "weekdays",
+                    "exceptions",
+                    "versions"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "slug": {
+                        "type": "string",
+                        "example": "smak",
+                        "nullable": true
+                    },
+                    "url": {
+                        "type": "string",
+                        "example": "https://example.com/en/web/smak"
+                    },
+                    "default_locale": {
+                        "type": "string",
+                        "example": "en"
+                    },
+                    "supported_locales": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "example": [
+                            "en",
+                            "uk"
+                        ]
+                    },
+                    "name": {
+                        "$ref": "#/components/schemas/EditorTranslations"
+                    },
+                    "establishment": {
+                        "type": "string",
+                        "example": "restaurant",
+                        "nullable": true
+                    },
+                    "timezone": {
+                        "type": "string",
+                        "example": "Europe/Kyiv"
+                    },
+                    "currency": {
+                        "type": "string",
+                        "example": "UAH",
+                        "nullable": true
+                    },
+                    "menus_count": {
+                        "description": "Menus guests see.",
+                        "type": "integer",
+                        "example": 3
+                    },
+                    "dishes_count": {
+                        "description": "Dishes guests see.",
+                        "type": "integer",
+                        "example": 42
+                    },
+                    "last_saved_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "last_saved_by": {
+                        "required": [
+                            "id",
+                            "name"
+                        ],
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Anna"
+                            }
+                        },
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "closed_until": {
+                        "type": "string",
+                        "format": "date",
+                        "nullable": true
+                    },
+                    "closed_reason": {
+                        "$ref": "#/components/schemas/EditorTranslations"
+                    },
+                    "weekdays": {
+                        "$ref": "#/components/schemas/EditorWeekdays"
+                    },
+                    "exceptions": {
+                        "description": "Special days, which haven't ended yet, from the nearest.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EditorScheduleException"
+                        }
+                    },
+                    "versions": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EditorVersion"
+                        }
+                    }
+                },
+                "type": "object"
+            },
             "EditorSize": {
-                "description": "Size of a dish: the dish itself (with no id) or one of its variants.",
+                "description": "Size of a dish (one of its variants).",
                 "required": [
                     "id",
                     "price",
                     "weight",
                     "weight_unit",
                     "calories",
-                    "preparation_time"
+                    "preparation_time",
+                    "is_hidden",
+                    "archived_at"
                 ],
                 "properties": {
                     "id": {
-                        "description": "Id of the variant, `null` for the dish itself.",
                         "type": "integer",
-                        "example": null,
-                        "nullable": true
+                        "example": 4
                     },
                     "price": {
                         "type": "number",
@@ -8732,6 +9812,17 @@
                         "type": "integer",
                         "example": 15,
                         "nullable": true
+                    },
+                    "is_hidden": {
+                        "description": "Hidden from guests (a dish has at least one size, which isn't).",
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "archived_at": {
+                        "description": "When an archived size was archived.",
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -8751,7 +9842,8 @@
                     "archived_at",
                     "popularity",
                     "flags",
-                    "sizes"
+                    "sizes",
+                    "archived_sizes"
                 ],
                 "properties": {
                     "id": {
@@ -8812,6 +9904,14 @@
                         ]
                     },
                     "sizes": {
+                        "description": "Its sizes, hidden ones included, from the cheapest.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EditorSize"
+                        }
+                    },
+                    "archived_sizes": {
+                        "description": "Its archived sizes: off the menu, they can be restored.",
                         "type": "array",
                         "items": {
                             "$ref": "#/components/schemas/EditorSize"
@@ -9172,6 +10272,13 @@
                         "items": {
                             "$ref": "#/components/schemas/EditorMenu"
                         }
+                    },
+                    "versions": {
+                        "description": "Versions, which haven't gone live yet, with their changes.",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EditorVersion"
+                        }
                     }
                 },
                 "type": "object"
@@ -9230,6 +10337,254 @@
                     },
                     "reason": {
                         "$ref": "#/components/schemas/EditorTranslations"
+                    }
+                },
+                "type": "object"
+            },
+            "EditorVersionChange": {
+                "description": "Change of an item in a version: for each changed field, its live value from when it was\n     *     planned and the new one.",
+                "required": [
+                    "id",
+                    "target_type",
+                    "target_id",
+                    "parent_id",
+                    "is_new",
+                    "fields",
+                    "changes_count",
+                    "label"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "target_type": {
+                        "type": "string",
+                        "example": "dish-variants",
+                        "enum": [
+                            "restaurants",
+                            "restaurant-notes",
+                            "dish-menus",
+                            "dish-categories",
+                            "dishes",
+                            "dish-variants"
+                        ]
+                    },
+                    "target_id": {
+                        "description": "None for a new item.",
+                        "type": "integer",
+                        "example": 12,
+                        "nullable": true
+                    },
+                    "parent_id": {
+                        "description": "Where a new item goes.",
+                        "type": "integer",
+                        "example": null,
+                        "nullable": true
+                    },
+                    "is_new": {
+                        "type": "boolean",
+                        "example": false
+                    },
+                    "fields": {
+                        "type": "object",
+                        "example": {
+                            "price": {
+                                "live": 140,
+                                "new": 150
+                            }
+                        },
+                        "additionalProperties": {
+                            "required": [
+                                "live",
+                                "new"
+                            ],
+                            "properties": {
+                                "live": {},
+                                "new": {}
+                            },
+                            "type": "object"
+                        }
+                    },
+                    "changes_count": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "label": {
+                        "$ref": "#/components/schemas/EditorVersionLabel"
+                    },
+                    "conflicts": {
+                        "description": "Only on a version's own page: `missing` when the item (or a new one's parent) is gone,\n     *       `fields` with live values, which changed since they were planned.",
+                        "properties": {
+                            "missing": {
+                                "type": "boolean",
+                                "example": false
+                            },
+                            "fields": {
+                                "type": "object",
+                                "example": {
+                                    "price": 145
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "EditorVersionLabel": {
+                "description": "The changed item, in the restaurant's default language. None, when it's gone.",
+                "required": [
+                    "name",
+                    "size",
+                    "path"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "Chicken broth",
+                        "nullable": true
+                    },
+                    "size": {
+                        "description": "Of a dish's size.",
+                        "required": [
+                            "weight",
+                            "weight_unit"
+                        ],
+                        "properties": {
+                            "weight": {
+                                "type": "string",
+                                "example": "350"
+                            },
+                            "weight_unit": {
+                                "type": "string",
+                                "example": "g",
+                                "nullable": true
+                            }
+                        },
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "path": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "example": [
+                            "Main menu",
+                            "Soups"
+                        ]
+                    }
+                },
+                "type": "object",
+                "nullable": true
+            },
+            "EditorVersion": {
+                "description": "Scheduled version: changes, which go live together. Dates are in the restaurant's time zone.",
+                "required": [
+                    "id",
+                    "restaurant_id",
+                    "name",
+                    "status",
+                    "goes_live_at",
+                    "timezone",
+                    "created_by",
+                    "created_at",
+                    "applied_at",
+                    "failed_at",
+                    "failure_reason",
+                    "changes_count",
+                    "items_count",
+                    "changes"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "restaurant_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "description": "None for a change scheduled on its own.",
+                        "type": "string",
+                        "example": "Winter menu",
+                        "nullable": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "example": "scheduled",
+                        "enum": [
+                            "draft",
+                            "scheduled",
+                            "inactive",
+                            "applied",
+                            "failed"
+                        ]
+                    },
+                    "goes_live_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2026-11-01T00:00:00+02:00",
+                        "nullable": true
+                    },
+                    "timezone": {
+                        "type": "string",
+                        "example": "Europe/Kyiv"
+                    },
+                    "created_by": {
+                        "required": [
+                            "id",
+                            "name"
+                        ],
+                        "properties": {
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "Anna"
+                            }
+                        },
+                        "type": "object",
+                        "nullable": true
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "applied_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "failed_at": {
+                        "type": "string",
+                        "format": "date-time",
+                        "nullable": true
+                    },
+                    "failure_reason": {
+                        "type": "string",
+                        "example": "A changed dish doesn't exist anymore.",
+                        "nullable": true
+                    },
+                    "changes_count": {
+                        "description": "Changed fields, a new item counts as one.",
+                        "type": "integer",
+                        "example": 14
+                    },
+                    "items_count": {
+                        "type": "integer",
+                        "example": 8
+                    },
+                    "changes": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/EditorVersionChange"
+                        }
                     }
                 },
                 "type": "object"
@@ -9338,6 +10693,11 @@
                         "type": "integer",
                         "example": 1,
                         "nullable": true
+                    },
+                    "is_hidden": {
+                        "description": "Hidden from guests (only the admin gets hidden ones).",
+                        "type": "boolean",
+                        "example": false
                     },
                     "url": {
                         "type": "string",

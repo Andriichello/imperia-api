@@ -6,15 +6,17 @@ use App\Enums\UserRole;
 use App\Models\Dish;
 use App\Models\DishCategory;
 use App\Models\DishMenu;
+use App\Models\DishVariant;
 use App\Models\Restaurant;
 use App\Models\User;
+use Database\Factories\Morphs\MediaFactory;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 /**
  * Class GuestVisibilityTest.
  *
- * Guests never see what's hidden, archived or deleted, at any level (menu, category, dish),
+ * Guests never see what's hidden, archived or deleted, at any level (menu, category, dish, size, photo),
  * on the page and through the API, and they see content in the page's language.
  */
 class GuestVisibilityTest extends TestCase
@@ -136,6 +138,45 @@ class GuestVisibilityTest extends TestCase
 
         $this->getJson("/api/dishes/{$visible->id}")->assertOk();
         $this->getJson('/api/dishes/categories/' . $hiddenCategory->id)->assertNotFound();
+    }
+
+    /**
+     * Test that hidden and archived sizes and hidden photos aren't shown to guests, neither on the
+     * page nor through the API. A dish shows its first size guests see.
+     *
+     * @return void
+     */
+    public function testHiddenSizesAndPhotosArentShown()
+    {
+        $menu = DishMenu::factory()->withRestaurant($this->restaurant)->create();
+        $category = DishCategory::factory()->withMenu($menu)->create();
+        $dish = Dish::factory()->withMenu($menu)->withCategory($category)->create(['price' => 100]);
+        /** @var DishVariant $first */
+        $first = $dish->sizes()->sole();
+        DishVariant::factory()->withDish($dish)->create(['price' => 50, 'is_hidden' => true]);
+        DishVariant::factory()->withDish($dish)->create(['price' => 60, 'archived' => true]);
+        $large = DishVariant::factory()->withDish($dish)->create(['price' => 150]);
+
+        [$shown, $hidden] = MediaFactory::new()->count(2)->create(['restaurant_id' => $this->restaurant->id]);
+        $photos = [['id' => $hidden->id, 'is_hidden' => true], ['id' => $shown->id]];
+        $dish->setMediaWithVisibility($photos);
+        $this->restaurant->setMediaWithVisibility($photos);
+
+        $dishes = $this->getJson('/api/dishes?' . http_build_query([
+            'filter' => ['menu_ids' => $menu->id],
+            'include' => 'variants,media',
+        ]))->assertOk();
+
+        $this->assertSame([$first->id, $large->id], $dishes->json('data.0.variants.*.id'));
+        $this->assertEquals(100, $dishes->json('data.0.price'));
+        $this->assertSame([$shown->id], $dishes->json('data.0.media.*.id'));
+
+        $this->getJson("/api/dishes/{$dish->id}?include=variants,media")
+            ->assertOk()
+            ->assertJsonPath('data.variants.*.id', [$first->id, $large->id])
+            ->assertJsonPath('data.media.*.id', [$shown->id]);
+
+        $this->assertSame([$shown->id], collect($this->pageProps()['restaurant']['media'])->pluck('id')->all());
     }
 
     /**

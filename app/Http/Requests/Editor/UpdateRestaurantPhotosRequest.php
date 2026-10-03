@@ -3,17 +3,18 @@
 namespace App\Http\Requests\Editor;
 
 use App\Models\Restaurant;
-use Illuminate\Validation\Rule;
 use OpenApi\Annotations as OA;
 
 /**
  * Class UpdateRestaurantPhotosRequest.
  *
- * Ids of the restaurant's photos, in their order (the first one is the cover).
+ * The restaurant's photos, in their order (the first one shown is the cover), each one shown or hidden.
  * Photos are uploaded beforehand (`POST /api/editor/restaurants/{id}/media`), they have to be the restaurant's.
  */
 class UpdateRestaurantPhotosRequest extends EditorRequest
 {
+    use PhotoRules;
+
     /**
      * Class of the model the request is about.
      *
@@ -33,22 +34,24 @@ class UpdateRestaurantPhotosRequest extends EditorRequest
     {
         return [
             'media' => ['present', 'array', 'max:20'],
-            'media.*' => [
-                'integer',
-                'distinct',
-                Rule::exists('media', 'id')
-                    ->where('restaurant_id', $this->restaurant()->id)
-                    ->whereNull('original_id'),
-            ],
+            ...$this->photoRules(),
         ];
     }
 
     /**
      * @OA\Schema(
+     *   schema="EditorPhoto",
+     *   description="A photo in a gallery: hidden ones are kept, but guests don't see them.",
+     *   required={"id"},
+     *   @OA\Property(property="id", type="integer", example=3),
+     *   @OA\Property(property="is_hidden", type="boolean", example=false),
+     * ),
+     * @OA\Schema(
      *   schema="EditorUpdateRestaurantPhotosRequest",
-     *   description="Ids of the restaurant's photos in their order, the first one is the cover.",
+     *   description="The restaurant's photos in their order, the first one shown is the cover.",
      *   required={"media"},
-     *   @OA\Property(property="media", type="array", @OA\Items(type="integer"), example={3, 1, 2}),
+     *   @OA\Property(property="media", type="array", @OA\Items(ref="#/components/schemas/EditorPhoto"),
+     *     description="20 at most."),
      * ),
      */
 }

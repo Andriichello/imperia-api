@@ -8,6 +8,7 @@ use App\Http\Requests\Queue\QueuePerformAlternationsRequest;
 use App\Http\Responses\ApiResponse;
 use App\Jobs\Morph\PerformAlternations;
 use App\Jobs\Queue\Backup;
+use App\Jobs\Version\ApplyDueVersions;
 use Illuminate\Http\JsonResponse;
 use Spatie\BackupTool\Jobs\CreateBackupJob;
 
@@ -31,7 +32,7 @@ class QueueController extends Controller
     }
 
     /**
-     * Queue job for performing alterations.
+     * Queue jobs for performing alterations (of the old menu) and applying scheduled versions.
      *
      * @param QueuePerformAlternationsRequest $request
      *
@@ -41,6 +42,7 @@ class QueueController extends Controller
     public function performAlternations(QueuePerformAlternationsRequest $request): JsonResponse
     {
         $this->dispatch(new PerformAlternations());
+        $this->dispatch(new ApplyDueVersions());
 
         return ApiResponse::make();
     }

@@ -135,10 +135,7 @@ class CategoryEditorRepository extends EditorRepository
             $copy->forceFill($attributes);
             $copy->save();
 
-            $copy->media()->attach($category->media()
-                ->pluck('mediables.order', 'media.id')
-                ->map(fn ($order) => ['order' => $order])
-                ->all());
+            $this->copyMedia($category, $copy);
 
             /** @var Dish $dish */
             foreach ($category->dishes()->withoutGlobalScope(ArchivedScope::class)->get() as $dish) {

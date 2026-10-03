@@ -9,16 +9,19 @@ import type { AxiosRequestConfig, AxiosResponse } from "axios";
 
 import type {
   EditorCategoryResponse,
+  EditorDashboardResponse,
   EditorDishResponse,
   EditorMenuResponse,
   EditorMoveCategoryRequest,
   EditorMoveDishRequest,
   EditorOrderMenusRequest,
+  EditorPutVersionChangeRequest,
   EditorRestaurantResponse,
   EditorRestaurantsResponse,
   EditorStoreCategoryRequest,
   EditorStoreDishRequest,
   EditorStoreMenuRequest,
+  EditorStoreVersionRequest,
   EditorUpdateCategoryRequest,
   EditorUpdateDishRequest,
   EditorUpdateMenuRequest,
@@ -26,7 +29,11 @@ import type {
   EditorUpdateRestaurantNotesRequest,
   EditorUpdateRestaurantPhotosRequest,
   EditorUpdateRestaurantRequest,
+  EditorUpdateVersionRequest,
   EditorUploadPhotoRequest,
+  EditorVersionResponse,
+  EditorVersionsResponse,
+  GetEditorVersionsParams,
   StoreMediaResponse,
   SuccessResponse,
 } from "../models";
@@ -569,6 +576,26 @@ export const getUpdateEditorRestaurantUrl = (id: number) => {
     });
 };
 /**
+ * @summary What the admin's dashboard shows of the restaurant.
+ */
+export const getEditorDashboard = (
+  id: number,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<EditorDashboardResponse>> => {
+  return axios.get(`/api/editor/restaurants/${id}/dashboard`, options);
+};
+export const getGetEditorDashboardUrl = (id: number) => {
+  return axios
+    .create({
+      baseURL: "",
+      params: null,
+    })
+    .getUri({
+      url: `/api/editor/restaurants/${id}/dashboard`,
+      baseURL: "",
+    });
+};
+/**
  * @summary Replace notes of the restaurant.
  */
 export const updateEditorRestaurantNotes = (
@@ -667,6 +694,274 @@ export const getUpdateEditorRestaurantHoursUrl = (id: number) => {
       baseURL: "",
     });
 };
+/**
+ * @summary Versions of the restaurant: pending ones by their date, then the ones, which went live.
+ */
+export const getEditorVersions = (
+  id: number,
+  params?: GetEditorVersionsParams,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<EditorVersionsResponse>> => {
+  return axios.get(`/api/editor/restaurants/${id}/versions`, {
+    ...options,
+    params: { ...params, ...options?.params },
+  });
+};
+export const getGetEditorVersionsUrl = (
+  id: number,
+  params?: GetEditorVersionsParams,
+) => {
+  return axios
+    .create({
+      baseURL: "",
+      params: null,
+    })
+    .getUri({
+      url: `/api/editor/restaurants/${id}/versions`,
+      baseURL: "",
+      params,
+    });
+};
+/**
+ * @summary Create a version: a draft, or scheduled right away, with its first changes.
+ */
+export const storeEditorVersion = (
+  id: number,
+  editorStoreVersionRequest: EditorStoreVersionRequest,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<EditorVersionResponse>> => {
+  return axios.post(
+    `/api/editor/restaurants/${id}/versions`,
+    editorStoreVersionRequest,
+    options,
+  );
+};
+export const getStoreEditorVersionUrl = (id: number) => {
+  return axios
+    .create({
+      baseURL: "",
+      params: null,
+    })
+    .getUri({
+      url: `/api/editor/restaurants/${id}/versions`,
+      baseURL: "",
+    });
+};
+/**
+ * @summary The version with its changes, their items and conflicts.
+ */
+export const getEditorVersion = (
+  id: number,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<EditorVersionResponse>> => {
+  return axios.get(`/api/editor/versions/${id}`, options);
+};
+export const getGetEditorVersionUrl = (id: number) => {
+  return axios
+    .create({
+      baseURL: "",
+      params: null,
+    })
+    .getUri({
+      url: `/api/editor/versions/${id}`,
+      baseURL: "",
+    });
+};
+/**
+ * @summary Delete the version with its changes.
+ */
+export const deleteEditorVersion = (
+  id: number,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<void>> => {
+  return axios.delete(`/api/editor/versions/${id}`, options);
+};
+export const getDeleteEditorVersionUrl = (id: number) => {
+  return axios
+    .create({
+      baseURL: "",
+      params: null,
+    })
+    .getUri({
+      url: `/api/editor/versions/${id}`,
+      baseURL: "",
+    });
+};
+/**
+ * @summary Rename or reschedule the version.
+ */
+export const updateEditorVersion = (
+  id: number,
+  editorUpdateVersionRequest: EditorUpdateVersionRequest,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<EditorVersionResponse>> => {
+  return axios.patch(
+    `/api/editor/versions/${id}`,
+    editorUpdateVersionRequest,
+    options,
+  );
+};
+export const getUpdateEditorVersionUrl = (id: number) => {
+  return axios
+    .create({
+      baseURL: "",
+      params: null,
+    })
+    .getUri({
+      url: `/api/editor/versions/${id}`,
+      baseURL: "",
+    });
+};
+/**
+ * @summary Put a change of an item (or a new one) into the version.
+ */
+export const putEditorVersionChange = (
+  id: number,
+  editorPutVersionChangeRequest: EditorPutVersionChangeRequest,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<EditorVersionResponse>> => {
+  return axios.put(
+    `/api/editor/versions/${id}/changes`,
+    editorPutVersionChangeRequest,
+    options,
+  );
+};
+export const getPutEditorVersionChangeUrl = (id: number) => {
+  return axios
+    .create({
+      baseURL: "",
+      params: null,
+    })
+    .getUri({
+      url: `/api/editor/versions/${id}/changes`,
+      baseURL: "",
+    });
+};
+/**
+ * @summary Remove a change from the version: the item stays as it is.
+ */
+export const removeEditorVersionChange = (
+  id: number,
+  change: number,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<EditorVersionResponse>> => {
+  return axios.delete(`/api/editor/versions/${id}/changes/${change}`, options);
+};
+export const getRemoveEditorVersionChangeUrl = (id: number, change: number) => {
+  return axios
+    .create({
+      baseURL: "",
+      params: null,
+    })
+    .getUri({
+      url: `/api/editor/versions/${id}/changes/${change}`,
+      baseURL: "",
+    });
+};
+/**
+ * @summary Schedule the version at its date, which has to be in the future.
+ */
+export const scheduleEditorVersion = (
+  id: number,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<EditorVersionResponse>> => {
+  return axios.post(`/api/editor/versions/${id}/schedule`, undefined, options);
+};
+export const getScheduleEditorVersionUrl = (id: number) => {
+  return axios
+    .create({
+      baseURL: "",
+      params: null,
+    })
+    .getUri({
+      url: `/api/editor/versions/${id}/schedule`,
+      baseURL: "",
+    });
+};
+/**
+ * @summary Deactivate the scheduled version: it keeps its date, but doesn't go live.
+ */
+export const deactivateEditorVersion = (
+  id: number,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<EditorVersionResponse>> => {
+  return axios.post(
+    `/api/editor/versions/${id}/deactivate`,
+    undefined,
+    options,
+  );
+};
+export const getDeactivateEditorVersionUrl = (id: number) => {
+  return axios
+    .create({
+      baseURL: "",
+      params: null,
+    })
+    .getUri({
+      url: `/api/editor/versions/${id}/deactivate`,
+      baseURL: "",
+    });
+};
+/**
+ * @summary Activate the inactive version: it's scheduled again.
+ */
+export const activateEditorVersion = (
+  id: number,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<EditorVersionResponse>> => {
+  return axios.post(`/api/editor/versions/${id}/activate`, undefined, options);
+};
+export const getActivateEditorVersionUrl = (id: number) => {
+  return axios
+    .create({
+      baseURL: "",
+      params: null,
+    })
+    .getUri({
+      url: `/api/editor/versions/${id}/activate`,
+      baseURL: "",
+    });
+};
+/**
+ * @summary Apply the version now: all of its changes, or none (then it's failed, with the reason).
+ */
+export const applyEditorVersion = (
+  id: number,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<EditorVersionResponse>> => {
+  return axios.post(`/api/editor/versions/${id}/apply`, undefined, options);
+};
+export const getApplyEditorVersionUrl = (id: number) => {
+  return axios
+    .create({
+      baseURL: "",
+      params: null,
+    })
+    .getUri({
+      url: `/api/editor/versions/${id}/apply`,
+      baseURL: "",
+    });
+};
+/**
+ * @summary Copy the version as a draft with the same date and changes.
+ */
+export const duplicateEditorVersion = (
+  id: number,
+  options?: AxiosRequestConfig,
+): Promise<AxiosResponse<EditorVersionResponse>> => {
+  return axios.post(`/api/editor/versions/${id}/duplicate`, undefined, options);
+};
+export const getDuplicateEditorVersionUrl = (id: number) => {
+  return axios
+    .create({
+      baseURL: "",
+      params: null,
+    })
+    .getUri({
+      url: `/api/editor/versions/${id}/duplicate`,
+      baseURL: "",
+    });
+};
 export type StoreEditorCategoryResult = AxiosResponse<EditorCategoryResponse>;
 export type DestroyEditorCategoryResult = AxiosResponse<SuccessResponse>;
 export type UpdateEditorCategoryResult = AxiosResponse<EditorCategoryResponse>;
@@ -695,6 +990,7 @@ export type GetEditorRestaurantsResult =
 export type GetEditorRestaurantResult = AxiosResponse<EditorRestaurantResponse>;
 export type UpdateEditorRestaurantResult =
   AxiosResponse<EditorRestaurantResponse>;
+export type GetEditorDashboardResult = AxiosResponse<EditorDashboardResponse>;
 export type UpdateEditorRestaurantNotesResult =
   AxiosResponse<EditorRestaurantResponse>;
 export type UpdateEditorRestaurantPhotosResult =
@@ -703,3 +999,17 @@ export type UploadEditorRestaurantPhotoResult =
   AxiosResponse<StoreMediaResponse>;
 export type UpdateEditorRestaurantHoursResult =
   AxiosResponse<EditorRestaurantResponse>;
+export type GetEditorVersionsResult = AxiosResponse<EditorVersionsResponse>;
+export type StoreEditorVersionResult = AxiosResponse<EditorVersionResponse>;
+export type GetEditorVersionResult = AxiosResponse<EditorVersionResponse>;
+export type DeleteEditorVersionResult = AxiosResponse<void>;
+export type UpdateEditorVersionResult = AxiosResponse<EditorVersionResponse>;
+export type PutEditorVersionChangeResult = AxiosResponse<EditorVersionResponse>;
+export type RemoveEditorVersionChangeResult =
+  AxiosResponse<EditorVersionResponse>;
+export type ScheduleEditorVersionResult = AxiosResponse<EditorVersionResponse>;
+export type DeactivateEditorVersionResult =
+  AxiosResponse<EditorVersionResponse>;
+export type ActivateEditorVersionResult = AxiosResponse<EditorVersionResponse>;
+export type ApplyEditorVersionResult = AxiosResponse<EditorVersionResponse>;
+export type DuplicateEditorVersionResult = AxiosResponse<EditorVersionResponse>;

@@ -9,7 +9,8 @@ use App\Filament\Resources\DishResource\RelationManagers\VariantsRelationManager
 use App\Models\Dish;
 use App\Models\DishMenu;
 use App\Models\DishVariant;
-use App\Models\Morphs\Alteration;
+use App\Models\MenuVersion;
+use App\Models\MenuVersionChange;
 use App\Models\Restaurant;
 use Carbon\Carbon;
 use Livewire\Livewire;
@@ -17,7 +18,8 @@ use Livewire\Livewire;
 /**
  * Class SchedulePriceChangeTest.
  *
- * The bulk action, which schedules price changes of dishes and variants.
+ * The bulk action, which schedules price changes of dishes (all their sizes) and sizes,
+ * as one version per restaurant.
  */
 class SchedulePriceChangeTest extends FilamentTestCase
 {
@@ -49,21 +51,33 @@ class SchedulePriceChangeTest extends FilamentTestCase
     }
 
     /**
-     * The only scheduled change of the record.
+     * The only scheduled change of the size (the first size of a dish).
      *
      * @param Dish|DishVariant $record
      *
-     * @return Alteration
+     * @return MenuVersionChange
      */
-    protected function changeOf(Dish|DishVariant $record): Alteration
+    protected function changeOf(Dish|DishVariant $record): MenuVersionChange
     {
-        /** @var Alteration $alteration */
-        $alteration = Alteration::query()
-            ->where('alterable_type', $record->getMorphClass())
-            ->where('alterable_id', $record->getKey())
-            ->sole();
+        /** @var DishVariant $size */
+        $size = $record instanceof Dish ? $record->sizes()->first() : $record;
 
-        return $alteration;
+        /** @var MenuVersionChange $change */
+        $change = $size->scheduledChanges()->sole();
+
+        return $change;
+    }
+
+    /**
+     * The new price of the size in its scheduled change.
+     *
+     * @param Dish|DishVariant $record
+     *
+     * @return float
+     */
+    protected function newPrice(Dish|DishVariant $record): float
+    {
+        return $this->changeOf($record)->fields['price']['new'];
     }
 
     /**
@@ -78,7 +92,7 @@ class SchedulePriceChangeTest extends FilamentTestCase
 
         Livewire::test(ListDishes::class)
             ->callTableBulkAction('schedulePriceChange', [$this->soup, $this->salad], data: [
-                'perform_at' => $this->nextMonday(),
+                'goes_live_at' => $this->nextMonday(),
                 'mode' => 'percent',
                 'value' => 10,
                 'round_to' => 1,
@@ -88,9 +102,16 @@ class SchedulePriceChangeTest extends FilamentTestCase
 
         $expected = Carbon::parse($this->nextMonday(), 'Europe/Kyiv')->utc();
 
-        $this->assertEquals(['price' => 110], $this->changeOf($this->soup)->getJson('metadata'));
-        $this->assertEquals(['price' => 164], $this->changeOf($this->salad)->getJson('metadata'));
-        $this->assertTrue($this->changeOf($this->soup)->perform_at->equalTo($expected));
+        $this->assertEquals(110, $this->newPrice($this->soup));
+        $this->assertEquals(164, $this->newPrice($this->salad));
+
+        // one version of both, at the time
+        /** @var MenuVersion $version */
+        $version = MenuVersion::query()->sole();
+        $this->assertSame(MenuVersion::STATUS_SCHEDULED, $version->status);
+        $this->assertSame('Price change', $version->name);
+        $this->assertSame(2, $version->countItems());
+        $this->assertTrue($version->goes_live_at->equalTo($expected));
 
         // nothing changes until the time comes
         $this->assertEquals(100, $this->soup->fresh()->price);
@@ -104,19 +125,49 @@ class SchedulePriceChangeTest extends FilamentTestCase
     public function testVariantPricesChangeByAmount()
     {
         $variant = DishVariant::factory()->withDish($this->soup)->create(['price' => 55.5]);
+        $large = DishVariant::factory()->withDish($this->soup)->create(['price' => 140]);
 
         $this->actingAsStaff(UserRole::Admin, $this->restaurant);
 
         Livewire::test(VariantsRelationManager::class, ['ownerRecord' => $this->soup, 'pageClass' => EditDish::class])
             ->callTableBulkAction('schedulePriceChange', [$variant], data: [
-                'perform_at' => $this->nextMonday(),
+                'goes_live_at' => $this->nextMonday(),
                 'mode' => 'amount',
                 'value' => -5.25,
                 'round_to' => 0,
             ])
             ->assertHasNoTableBulkActionErrors();
 
-        $this->assertEquals(['price' => 50.25], $this->changeOf($variant)->getJson('metadata'));
+        $this->assertEquals(50.25, $this->newPrice($variant));
+        $this->assertFalse($large->scheduledChanges()->exists());
+    }
+
+    /**
+     * Test that a dish changes the prices of all its sizes (archived ones stay as they are).
+     *
+     * @return void
+     */
+    public function testDishesChangeAllTheirSizes()
+    {
+        $large = DishVariant::factory()->withDish($this->soup)->create(['price' => 150]);
+        $archived = DishVariant::factory()->withDish($this->soup)->create(['price' => 90, 'archived' => true]);
+
+        $this->actingAsStaff(UserRole::Admin, $this->restaurant);
+
+        Livewire::test(ListDishes::class)
+            ->callTableBulkAction('schedulePriceChange', [$this->soup], data: [
+                'goes_live_at' => $this->nextMonday(),
+                'mode' => 'percent',
+                'value' => 10,
+                'round_to' => 5,
+            ])
+            ->assertNotified('Scheduled 2 price changes');
+
+        /** @var DishVariant $small */
+        $small = $this->soup->sizes()->where('price', 100)->sole();
+        $this->assertEquals(110, $this->newPrice($small));
+        $this->assertEquals(165, $this->newPrice($large));
+        $this->assertFalse($archived->scheduledChanges()->exists());
     }
 
     /**
@@ -130,15 +181,22 @@ class SchedulePriceChangeTest extends FilamentTestCase
 
         Livewire::test(ListDishes::class)
             ->callTableBulkAction('schedulePriceChange', [$this->soup, $this->salad], data: [
-                'perform_at' => $this->nextMonday(),
+                'goes_live_at' => $this->nextMonday(),
                 'mode' => 'set',
                 'value' => 100,
             ])
             ->assertHasNoTableBulkActionErrors()
             ->assertNotified('Scheduled 1 price change');
 
-        $this->assertEquals(['price' => 100], $this->changeOf($this->salad)->getJson('metadata'));
-        $this->assertFalse($this->soup->alterations()->exists());
+        $this->assertEquals(100, $this->newPrice($this->salad));
+        /** @var DishVariant $soup */
+        $soup = $this->soup->sizes()->first();
+        $this->assertFalse($soup->scheduledChanges()->exists());
+
+        // a single change is a version on its own
+        /** @var MenuVersion $version */
+        $version = MenuVersion::query()->sole();
+        $this->assertNull($version->name);
     }
 
     /**
@@ -157,16 +215,17 @@ class SchedulePriceChangeTest extends FilamentTestCase
 
         Livewire::test(ListDishes::class)
             ->callTableBulkAction('schedulePriceChange', [$this->soup, $fish], data: [
-                'perform_at' => $this->nextMonday(),
+                'goes_live_at' => $this->nextMonday(),
                 'mode' => 'percent',
                 'value' => 50,
                 'round_to' => 1,
             ])
             ->assertHasNoTableBulkActionErrors();
 
-        $this->assertTrue($this->changeOf($this->soup)->perform_at
+        // a version of each restaurant
+        $this->assertTrue($this->changeOf($this->soup)->version->goes_live_at
             ->equalTo(Carbon::parse($this->nextMonday(), 'Europe/Kyiv')));
-        $this->assertTrue($this->changeOf($fish)->perform_at
+        $this->assertTrue($this->changeOf($fish)->version->goes_live_at
             ->equalTo(Carbon::parse($this->nextMonday(), 'Europe/London')));
     }
 
@@ -181,7 +240,7 @@ class SchedulePriceChangeTest extends FilamentTestCase
 
         Livewire::test(ListDishes::class)
             ->callTableBulkAction('schedulePriceChange', [$this->salad, $this->soup], data: [
-                'perform_at' => $this->nextMonday(),
+                'goes_live_at' => $this->nextMonday(),
                 'mode' => 'amount',
                 'value' => -120,
                 'round_to' => 1,
@@ -190,14 +249,14 @@ class SchedulePriceChangeTest extends FilamentTestCase
 
         Livewire::test(ListDishes::class)
             ->callTableBulkAction('schedulePriceChange', [$this->soup], data: [
-                'perform_at' => Carbon::now()->subDay()->toDateTimeString(),
+                'goes_live_at' => Carbon::now()->subDay()->toDateTimeString(),
                 'mode' => 'percent',
                 'value' => 10,
                 'round_to' => 1,
             ])
             ->assertNotified('The time has already passed');
 
-        $this->assertEquals(0, Alteration::query()->count());
+        $this->assertEquals(0, MenuVersion::query()->count());
     }
 
     /**

@@ -2,8 +2,9 @@
 
 namespace App\Filament\Widgets;
 
-use App\Filament\Resources\AlterationResource;
-use App\Filament\Tables\AlterationsTable;
+use App\Filament\Resources\MenuVersionResource;
+use App\Filament\Tables\ScheduledChangesTable;
+use App\Queries\MenuVersionQueryBuilder;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
@@ -12,7 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 /**
  * Class PendingChanges.
  *
- * Dashboard table of the scheduled changes, which aren't performed yet
+ * Dashboard table of the scheduled changes, which haven't gone live yet
  * (failed ones included, they come first as their time has passed).
  */
 class PendingChanges extends TableWidget
@@ -42,23 +43,24 @@ class PendingChanges extends TableWidget
     public function table(Table $table): Table
     {
         return $table
-            ->query(fn () => AlterationResource::getEloquentQuery()
-                ->whereNull('alterations.performed_at'))
-            ->modifyQueryUsing(fn (Builder $query) => AlterationsTable::withSubjects($query))
-            ->columns([
-                ...AlterationsTable::subjectColumns(),
-                ...AlterationsTable::columns(),
-            ])
-            ->defaultSort('perform_at')
+            ->query(function () {
+                /** @var MenuVersionQueryBuilder $query */
+                $query = MenuVersionResource::getEloquentQuery();
+
+                return $query->pending();
+            })
+            ->modifyQueryUsing(fn (Builder $query) => $query->with(['restaurant', 'creator', 'itemChanges.target']))
+            ->columns(ScheduledChangesTable::versionColumns())
+            ->defaultSort('goes_live_at')
             ->paginated([5])
             ->emptyStateHeading('No upcoming changes')
-            ->emptyStateDescription('Changes scheduled on a menu, category, dish or variant page show up here.')
+            ->emptyStateDescription('Changes scheduled on a menu, category, dish or size page show up here.')
             ->headerActions([
                 Action::make('all')
                     ->label('All scheduled changes')
                     ->link()
-                    ->url(AlterationResource::getUrl()),
+                    ->url(MenuVersionResource::getUrl()),
             ])
-            ->actions(AlterationsTable::actions());
+            ->actions(ScheduledChangesTable::versionActions());
     }
 }

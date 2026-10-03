@@ -43,7 +43,7 @@
   const {draft, dirty, saving, failed, discard, save, error} = usePanelDraft<Media[]>({
     saved: () => restaurant.value.photos ?? [],
     save: async (photos) => (await updateEditorRestaurantPhotos(restaurant.value.id, {
-      media: photos.map((photo) => photo.id),
+      media: photos.map((photo) => ({id: photo.id, is_hidden: photo.is_hidden ?? false})),
     })).data.data,
     preview: (photos) => photosPreview(photos),
     // photos being uploaded are lost, when the panel is left

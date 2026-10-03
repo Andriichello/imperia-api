@@ -3,17 +3,18 @@
 namespace Tests\Jobs\Morph;
 
 use App\Jobs\Morph\PerformAlternations;
-use App\Models\Dish;
-use App\Models\DishCategory;
-use App\Models\DishMenu;
-use App\Models\DishVariant;
 use App\Models\Morphs\Alteration;
+use App\Models\Product;
+use App\Models\ProductVariant;
 use App\Models\Restaurant;
 use Exception;
 use Tests\TestCase;
 
 /**
  * Class PerformAlternationsTest.
+ *
+ * Scheduled changes of the old menu (products and their variants). Changes of menus,
+ * categories, dishes and sizes are scheduled versions (see `ApplyDueVersionsTest`).
  */
 class PerformAlternationsTest extends TestCase
 {
@@ -23,24 +24,14 @@ class PerformAlternationsTest extends TestCase
     protected Restaurant $restaurant;
 
     /**
-     * @var DishMenu
+     * @var Product
      */
-    protected DishMenu $menu;
+    protected Product $product;
 
     /**
-     * @var DishCategory
+     * @var ProductVariant
      */
-    protected DishCategory $category;
-
-    /**
-     * @var Dish
-     */
-    protected Dish $dish;
-
-    /**
-     * @var DishVariant
-     */
-    protected DishVariant $variant;
+    protected ProductVariant $variant;
 
     /**
      * Setup the test environment.
@@ -52,40 +43,33 @@ class PerformAlternationsTest extends TestCase
         parent::setUp();
 
         $this->restaurant = Restaurant::factory()->create();
-        $this->menu = DishMenu::factory()
+        $this->product = Product::factory()
             ->withRestaurant($this->restaurant)
-            ->create(['title' => 'Kitchen']);
-        $this->category = DishCategory::factory()
-            ->withMenu($this->menu)
-            ->create(['title' => 'Soups']);
-        $this->dish = Dish::factory()
-            ->withMenu($this->menu)
-            ->withCategory($this->category)
-            ->create(['price' => 100, 'flags' => ['vegetarian']]);
-        $this->variant = DishVariant::factory()
-            ->withDish($this->dish)
+            ->create(['title' => 'Borscht', 'price' => 100]);
+        $this->variant = ProductVariant::factory()
+            ->withProduct($this->product)
             ->create(['price' => 150]);
     }
 
     /**
-     * Test that due alterations are applied to dishes.
+     * Test that due alterations are applied to products.
      *
      * @return void
      * @throws Exception
      */
-    public function testPerformsDueAlterationOnDish()
+    public function testPerformsDueAlterationOnProduct()
     {
         $alteration = Alteration::factory()
-            ->withModel($this->dish)
-            ->withValues(['price' => 120, 'flags' => ['vegan', 'alg-nuts']])
+            ->withModel($this->product)
+            ->withValues(['price' => 120, 'title' => 'Beet soup'])
             ->performAt(now()->subMinute())
             ->create();
 
         (new PerformAlternations())->handle();
 
-        $dish = $this->dish->fresh();
-        $this->assertEquals(120, $dish->price);
-        $this->assertSame(['vegan', 'alg-nuts'], $dish->flags);
+        $product = $this->product->fresh();
+        $this->assertEquals(120, $product->price);
+        $this->assertSame('Beet soup', $product->title);
 
         $alteration = $alteration->fresh();
         $this->assertNotNull($alteration->performed_at);
@@ -101,85 +85,45 @@ class PerformAlternationsTest extends TestCase
     public function testSkipsFutureAlterations()
     {
         $alteration = Alteration::factory()
-            ->withModel($this->dish)
+            ->withModel($this->product)
             ->withValues(['price' => 120])
             ->performAt(now()->addDay())
             ->create();
 
         (new PerformAlternations())->handle();
 
-        $this->assertEquals(100, $this->dish->fresh()->price);
+        $this->assertEquals(100, $this->product->fresh()->price);
         $this->assertNull($alteration->fresh()->performed_at);
-        $this->assertTrue($this->dish->hasPendingAlterations() === false);
+        $this->assertFalse($this->product->hasPendingAlterations());
     }
 
     /**
-     * Test that a dish variant can be archived and its price changed in advance.
+     * Test that a variant's price can be changed in advance.
      *
      * @return void
      * @throws Exception
      */
-    public function testArchivesDishVariant()
+    public function testAltersProductVariant()
     {
         Alteration::factory()
             ->withModel($this->variant)
-            ->withValues(['archived' => true, 'price' => 175])
+            ->withValues(['price' => 175])
             ->performAt(now()->subMinute())
             ->create();
 
         (new PerformAlternations())->handle();
 
-        /** @var DishVariant $variant */
-        $variant = DishVariant::query()
-            ->withoutGlobalScopes()
-            ->findOrFail($this->variant->id);
-
-        $this->assertTrue((bool) $variant->archived);
-        $this->assertEquals(175, $variant->price);
-        $this->assertTrue($this->dish->fresh()->variants->isEmpty());
+        $this->assertEquals(175, $this->variant->fresh()->price);
     }
 
     /**
-     * Test that categories and menus can be altered.
-     *
-     * @return void
-     * @throws Exception
-     */
-    public function testAltersDishCategoryAndMenu()
-    {
-        Alteration::factory()
-            ->withModel($this->category)
-            ->withValues(['title' => 'Hot soups'])
-            ->performAt(now()->subMinute())
-            ->create();
-
-        Alteration::factory()
-            ->withModel($this->menu)
-            ->withValues(['title' => 'Summer kitchen', 'archived' => true])
-            ->performAt(now()->subMinute())
-            ->create();
-
-        (new PerformAlternations())->handle();
-
-        $this->assertSame('Hot soups', $this->category->fresh()->title);
-
-        /** @var DishMenu $menu */
-        $menu = DishMenu::query()
-            ->withoutGlobalScopes()
-            ->findOrFail($this->menu->id);
-
-        $this->assertSame('Summer kitchen', $menu->title);
-        $this->assertTrue((bool) $menu->archived);
-    }
-
-    /**
-     * Test that the restaurant is filled in for alterations of all dish models.
+     * Test that the restaurant is filled in for alterations of the old menu's models.
      *
      * @return void
      */
     public function testFillsRestaurantId()
     {
-        foreach ([$this->menu, $this->category, $this->dish, $this->variant] as $model) {
+        foreach ([$this->product, $this->variant] as $model) {
             $alteration = Alteration::factory()
                 ->withModel($model)
                 ->create();
@@ -199,7 +143,7 @@ class PerformAlternationsTest extends TestCase
         $alteration = Alteration::factory()
             ->withValues(['price' => 120])
             ->performAt(now()->subMinute())
-            ->create(['alterable_id' => 999999, 'alterable_type' => $this->dish->getMorphClass()]);
+            ->create(['alterable_id' => 999999, 'alterable_type' => $this->product->getMorphClass()]);
 
         try {
             (new PerformAlternations())->handle();

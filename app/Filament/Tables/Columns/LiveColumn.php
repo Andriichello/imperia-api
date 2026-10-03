@@ -2,6 +2,7 @@
 
 namespace App\Filament\Tables\Columns;
 
+use App\Models\DishVariant;
 use Filament\Tables\Columns\ToggleColumn;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
@@ -37,6 +38,19 @@ class LiveColumn extends ToggleColumn
 
                 return (bool) $state;
             })
-            ->disabled(fn (Model $record) => Gate::denies('update', $record));
+            ->disabled(fn (Model $record) => Gate::denies('update', $record) || static::isLastSize($record))
+            ->tooltip(fn (Model $record) => static::isLastSize($record) ? DishVariant::LAST_SIZE_MESSAGE : null);
+    }
+
+    /**
+     * Whether the record is the only size of its dish, which guests see (it can't be hidden).
+     *
+     * @param Model $record
+     *
+     * @return bool
+     */
+    protected static function isLastSize(Model $record): bool
+    {
+        return $record instanceof DishVariant && $record->isLastShown();
     }
 }

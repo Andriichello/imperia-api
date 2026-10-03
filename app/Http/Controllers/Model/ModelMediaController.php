@@ -65,7 +65,7 @@ class ModelMediaController extends Controller
 
         $target = $this->findMediable($modelId, $modelType);
 
-        $data = new MediaCollection($target->media()->get());
+        $data = new MediaCollection($target->allMedia()->get());
         return ApiResponse::make(compact('data'));
     }
 
@@ -85,7 +85,7 @@ class ModelMediaController extends Controller
         $target = $this->findMediable($modelId, $modelType)
             ->setMedia(...$request->ids());
 
-        $data = new MediaCollection($target->media()->get());
+        $data = new MediaCollection($target->allMedia()->get());
         return ApiResponse::make(compact('data'));
     }
 

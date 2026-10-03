@@ -4,6 +4,8 @@ namespace App\Http\Requests\Editor;
 
 use App\Enums\ProductFlag;
 use App\Enums\WeightUnit;
+use App\Models\DishVariant;
+use Closure;
 use Illuminate\Validation\Rule;
 
 /**
@@ -15,6 +17,8 @@ use Illuminate\Validation\Rule;
  */
 trait DishRules
 {
+    use PhotoRules;
+
     /**
      * Rules of the dish.
      *
@@ -23,6 +27,7 @@ trait DishRules
      *
      * @return array
      * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function dishRules(bool $partial, ?int $dishId): array
     {
@@ -37,15 +42,27 @@ trait DishRules
             'flags' => ['sometimes', 'array'],
             'flags.*' => ['string', 'distinct', Rule::in(ProductFlag::getValues())],
 
-            // the first one is the dish itself, the others are its variants
-            'sizes' => [$presence, 'array', 'min:1', 'max:10'],
+            // its variants, at least one of them shown to guests
+            'sizes' => [
+                $presence,
+                'array',
+                'min:1',
+                'max:10',
+                function (string $attribute, mixed $value, Closure $fail) {
+                    if (is_array($value) && collect($value)->every(fn ($size) => !empty($size['is_hidden']))) {
+                        $fail(DishVariant::LAST_SIZE_MESSAGE);
+                    }
+                },
+            ],
             'sizes.*.id' => $dishId
                 ? [
                     'nullable',
                     'integer',
                     'distinct',
+                    // archived sizes are left as they are
                     Rule::exists('dish_variants', 'id')
                         ->where('dish_id', $dishId)
+                        ->where('archived', false)
                         ->whereNull('deleted_at'),
                 ]
                 : ['prohibited'],
@@ -54,15 +71,11 @@ trait DishRules
             'sizes.*.weight_unit' => ['nullable', 'required_with:sizes.*.weight', Rule::in(WeightUnit::getValues())],
             'sizes.*.calories' => ['nullable', 'integer', 'min:0', 'max:100000'],
             'sizes.*.preparation_time' => ['nullable', 'integer', 'min:0', 'max:1440'],
+            'sizes.*.is_hidden' => ['sometimes', 'boolean'],
 
-            'media' => ['sometimes', 'array', 'max:5'],
-            'media.*' => [
-                'integer',
-                'distinct',
-                Rule::exists('media', 'id')
-                    ->where('restaurant_id', $this->restaurant()->id)
-                    ->whereNull('original_id'),
-            ],
+            // hidden photos count too
+            'media' => ['sometimes', 'array', 'max:' . static::MAX_PHOTOS],
+            ...$this->photoRules(),
         ];
     }
 }

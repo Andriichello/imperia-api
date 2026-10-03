@@ -12,6 +12,7 @@ export type EditorUpdateDishRequestSizesItem = {
    * @nullable
    */
   id?: number | null;
+  is_hidden?: boolean;
   price: number;
   /** @nullable */
   weight?: number | null;

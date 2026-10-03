@@ -3,24 +3,26 @@
 namespace Tests\Filament;
 
 use App\Enums\UserRole;
-use App\Filament\RelationManagers\AlterationsRelationManager;
-use App\Filament\Resources\AlterationResource\Pages\ListAlterations;
+use App\Filament\RelationManagers\ScheduledChangesRelationManager;
 use App\Filament\Resources\DishResource\Pages\EditDish;
 use App\Filament\Resources\DishResource\Pages\ListDishes;
 use App\Filament\Resources\DishVariantResource\Pages\EditDishVariant;
+use App\Filament\Resources\MenuVersionResource\Pages\ListMenuVersions;
+use App\Models\BaseModel;
 use App\Models\Dish;
 use App\Models\DishMenu;
 use App\Models\DishVariant;
-use App\Models\Morphs\Alteration;
+use App\Models\MenuVersion;
+use App\Models\MenuVersionChange;
 use App\Models\Restaurant;
+use App\Repositories\Editor\VersionEditorRepository;
 use Carbon\Carbon;
-use Carbon\CarbonInterface;
-use Filament\Tables\Actions\DeleteAction;
 use Livewire\Livewire;
-use RuntimeException;
 
 /**
  * Class ScheduledChangesTest.
+ *
+ * Scheduled changes in the admin panel: versions of one change, made on the records' pages.
  *
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
@@ -37,6 +39,13 @@ class ScheduledChangesTest extends FilamentTestCase
     protected Dish $dish;
 
     /**
+     * The dish's first size.
+     *
+     * @var DishVariant
+     */
+    protected DishVariant $size;
+
+    /**
      * Setup the test environment.
      *
      * @return void
@@ -45,7 +54,7 @@ class ScheduledChangesTest extends FilamentTestCase
     {
         parent::setUp();
 
-        $this->restaurant = Restaurant::factory()->create(['timezone' => 'Europe/Kyiv']);
+        $this->restaurant = Restaurant::factory()->create(['timezone' => 'Europe/Kyiv', 'locale' => 'en']);
 
         $menu = DishMenu::factory()->withRestaurant($this->restaurant)->create(['title' => 'Kitchen']);
 
@@ -54,41 +63,46 @@ class ScheduledChangesTest extends FilamentTestCase
             'price' => 100,
             'flags' => ['vegetarian'],
         ]);
+
+        /** @var DishVariant $size */
+        $size = $this->dish->sizes()->sole();
+        $this->size = $size;
     }
 
     /**
-     * Test the relation manager of the dish's edit page.
+     * Test the relation manager of the record's edit page.
+     *
+     * @param BaseModel|null $record the dish, if not given
      *
      * @return mixed
      */
-    protected function dishChanges(): mixed
+    protected function changesOf(?BaseModel $record = null): mixed
     {
-        return Livewire::test(AlterationsRelationManager::class, [
-            'ownerRecord' => $this->dish,
-            'pageClass' => EditDish::class,
+        return Livewire::test(ScheduledChangesRelationManager::class, [
+            'ownerRecord' => $record ?? $this->dish,
+            'pageClass' => $record instanceof DishVariant ? EditDishVariant::class : EditDish::class,
         ]);
     }
 
     /**
-     * Create a scheduled change of the dish.
+     * Schedule a change of the record on its own.
      *
+     * @param BaseModel $record
      * @param array $values
-     * @param CarbonInterface|null $performAt
      *
-     * @return Alteration
+     * @return MenuVersion
      */
-    protected function scheduleForDish(array $values, ?CarbonInterface $performAt = null): Alteration
+    protected function scheduleFor(BaseModel $record, array $values): MenuVersion
     {
-        return Alteration::factory()
-            ->withModel($this->dish)
-            ->withValues($values)
-            ->performAt($performAt ?? now()->addWeek())
-            ->create();
+        /** @var MenuVersion $version */
+        $version = app(VersionEditorRepository::class)->scheduleChange($record, $values, now()->addWeek(), null);
+
+        return $version;
     }
 
     /**
-     * Test that only the changed values are stored, with the time converted
-     * from the restaurant's timezone and the restaurant filled in.
+     * Test that only the changed values are stored, as a version of one change at the time
+     * in the restaurant's timezone.
      *
      * @return void
      */
@@ -96,33 +110,38 @@ class ScheduledChangesTest extends FilamentTestCase
     {
         $this->actingAsStaff();
 
-        $this->dishChanges()
+        $this->changesOf()
             ->callTableAction('schedule', data: [
-                'perform_at' => '2030-01-07 09:00',
-                'price' => '120',
+                'goes_live_at' => '2030-01-07 09:00',
+                'title' => 'Beet soup',
                 'flag_allergens' => ['alg-celery'],
             ])
             ->assertHasNoTableActionErrors()
             ->assertNotified('The change was scheduled');
 
-        /** @var Alteration $alteration */
-        $alteration = Alteration::query()->sole();
+        /** @var MenuVersion $version */
+        $version = MenuVersion::query()->sole();
+        /** @var MenuVersionChange $change */
+        $change = $version->itemChanges()->sole();
 
-        $this->assertEquals(
-            ['price' => 120, 'flags' => ['vegetarian', 'alg-celery']],
-            $alteration->getJson('metadata')
-        );
+        $this->assertSame(MenuVersion::STATUS_SCHEDULED, $version->status);
+        $this->assertNull($version->name);
         // 09:00 in Kyiv (UTC+2 in winter) is 07:00 UTC
-        $this->assertSame('2030-01-07 07:00:00', $alteration->perform_at->toDateTimeString());
-        $this->assertSame($this->restaurant->id, $alteration->restaurant_id);
-        $this->assertSame($this->dish->getMorphClass(), $alteration->alterable_type);
+        $this->assertSame('2030-01-07 07:00:00', $version->goes_live_at->toDateTimeString());
+        $this->assertSame($this->restaurant->id, $version->restaurant_id);
+        $this->assertSame([$this->dish->getMorphClass(), $this->dish->id], [$change->target_type, $change->target_id]);
+        $this->assertSame(['en' => 'Beet soup', 'uk' => null], $change->fields['title']['new']);
+        $this->assertSame(['en' => 'Borscht', 'uk' => null], $change->fields['title']['live']);
+        $this->assertSame(['alg-celery', 'vegetarian'], $change->fields['flags']['new']);
+        $this->assertSame(['flags', 'title'], collect($change->fields)->keys()->sort()->values()->all());
 
         // flags are listed with their labels (the json column orders the keys)
-        $this->dishChanges()
+        $this->changesOf()
             ->assertTableColumnStateSet('changes', [
-                'Flags: Vegetarian, Celery (now: Vegetarian)',
-                'Price: 120 (now: 100)',
-            ], $alteration);
+                'Flags: Celery, Vegetarian (now: Vegetarian)',
+                'Title: Beet soup (now: Borscht)',
+            ], $change)
+            ->assertTableColumnStateSet('version.name', 'On its own', $change);
     }
 
     /**
@@ -136,18 +155,21 @@ class ScheduledChangesTest extends FilamentTestCase
 
         $monday = Carbon::now('Europe/Kyiv')->next(Carbon::MONDAY);
 
-        $this->dishChanges()
+        $this->changesOf()
             ->mountTableAction('schedule')
             ->assertTableActionDataSet([
                 'title' => 'Borscht',
-                'price' => 100,
                 'flags' => ['vegetarian'],
                 'flag_tags' => ['vegetarian'],
                 'flag_hotness' => null,
                 'flag_allergens' => [],
                 // shown in the restaurant's timezone
-                'perform_at' => $monday->format('Y-m-d H:i:s'),
+                'goes_live_at' => $monday->format('Y-m-d H:i:s'),
             ]);
+
+        $this->changesOf($this->size)
+            ->mountTableAction('schedule')
+            ->assertTableActionDataSet(['price' => 100, 'live' => true]);
     }
 
     /**
@@ -159,152 +181,166 @@ class ScheduledChangesTest extends FilamentTestCase
     {
         $this->actingAsStaff();
 
-        $this->dishChanges()
-            ->callTableAction('schedule', data: ['perform_at' => '2030-01-07 09:00'])
+        $this->changesOf()
+            ->callTableAction('schedule', data: ['goes_live_at' => '2030-01-07 09:00'])
             ->assertNotified('Nothing to schedule');
 
-        $this->dishChanges()
-            ->callTableAction('schedule', data: ['perform_at' => '2020-01-07 09:00', 'price' => 120])
-            ->assertHasTableActionErrors(['perform_at' => 'after']);
+        $this->changesOf($this->size)
+            ->callTableAction('schedule', data: ['goes_live_at' => '2020-01-07 09:00', 'price' => 120])
+            ->assertHasTableActionErrors(['goes_live_at' => 'after']);
 
-        $this->assertSame(0, Alteration::query()->count());
+        // the dish's only size can't be hidden
+        $this->changesOf($this->size)
+            ->callTableAction('schedule', data: ['goes_live_at' => '2030-01-07 09:00', 'live' => false])
+            ->assertNotified(DishVariant::LAST_SIZE_MESSAGE);
+
+        $this->assertSame(0, MenuVersion::query()->count());
     }
 
     /**
-     * Test that a change can be applied right away.
+     * Test that a price change of a size can be scheduled and applied right away.
      *
      * @return void
      */
-    public function testRunNowAppliesTheChange()
+    public function testApplyNowAppliesTheChange()
     {
         $this->actingAsStaff();
 
-        $alteration = $this->scheduleForDish(['price' => 175]);
+        $this->changesOf($this->size)
+            ->callTableAction('schedule', data: ['goes_live_at' => '2030-01-07 09:00', 'price' => '175'])
+            ->assertHasNoTableActionErrors();
 
-        $this->dishChanges()
-            ->assertTableColumnStateSet('changes', ['Price: 175 (now: 100)'], $alteration)
-            ->assertTableColumnStateSet('status', Alteration::STATUS_SCHEDULED, $alteration)
-            ->callTableAction('run', $alteration)
-            ->assertNotified('The change was applied');
+        /** @var MenuVersionChange $change */
+        $change = MenuVersionChange::query()->sole();
 
+        $this->changesOf($this->size)
+            ->assertTableColumnStateSet('changes', ['Price: 175 (now: 100)'], $change)
+            ->assertTableColumnStateSet('version.status', MenuVersion::STATUS_SCHEDULED, $change)
+            ->callTableAction('apply', $change)
+            ->assertNotified('The changes were applied');
+
+        $this->assertEquals(175, $this->size->fresh()->price);
+        // the dish shows its first size
         $this->assertEquals(175, $this->dish->fresh()->price);
-        $this->assertSame(Alteration::STATUS_DONE, $alteration->fresh()->getStatus());
+        $this->assertSame(MenuVersion::STATUS_APPLIED, $change->version->fresh()->status);
     }
 
     /**
-     * Test that a change, which can't be applied, is marked as failed.
+     * Test that a version, which can't be applied, is marked as failed, and nothing of it is applied.
      *
      * @return void
      */
-    public function testRunNowMarksFailures()
+    public function testApplyNowMarksFailures()
     {
         $this->actingAsStaff();
 
-        // the price column is unsigned, so the database rejects it
-        $alteration = $this->scheduleForDish(['price' => -5]);
+        // planned when the dish had another size, which is gone now
+        $version = MenuVersion::factory()->withRestaurant($this->restaurant)->scheduled()->create();
+        $change = MenuVersionChange::factory()->inVersion($version)
+            ->changing($this->size, ['is_hidden' => true, 'price' => 90])
+            ->create();
 
-        $this->dishChanges()
-            ->callTableAction('run', $alteration)
-            ->assertNotified('The change failed');
+        $this->changesOf($this->size)
+            ->callTableAction('apply', $change)
+            ->assertNotified('The changes couldn\'t be applied');
 
-        $this->assertEquals(100, $this->dish->fresh()->price);
-        $this->assertSame(Alteration::STATUS_FAILED, $alteration->fresh()->getStatus());
+        $this->assertEquals(100, $this->size->fresh()->price);
+        $this->assertFalse($this->size->fresh()->is_hidden);
+        $this->assertSame(MenuVersion::STATUS_FAILED, $version->fresh()->status);
+        $this->assertSame(DishVariant::LAST_SIZE_MESSAGE, $version->fresh()->failure_reason);
     }
 
     /**
-     * Test that a scheduled change can be cancelled.
+     * Test that a change can be cancelled: its version goes with it, when it was its only change.
      *
      * @return void
      */
-    public function testCancelDeletesTheChange()
+    public function testCancelRemovesTheChange()
     {
         $this->actingAsStaff();
 
-        $alteration = $this->scheduleForDish(['price' => 175]);
+        $version = $this->scheduleFor($this->dish, ['title' => 'Beet soup']);
+        $change = $version->itemChanges()->sole();
 
-        $this->dishChanges()
-            ->callTableAction(DeleteAction::class, $alteration);
+        $this->changesOf()
+            ->callTableAction('remove', $change)
+            ->assertNotified('The scheduled change was cancelled');
 
-        $this->assertModelMissing($alteration);
+        $this->assertModelMissing($change);
+        $this->assertModelMissing($version);
     }
 
     /**
-     * Test that managers can see scheduled changes, but not create, run or cancel them.
+     * Test that managers can see scheduled changes, but not schedule, apply or cancel them.
      *
      * @return void
      */
     public function testManagersCanOnlyView()
     {
-        $alteration = $this->scheduleForDish(['price' => 175]);
+        $change = $this->scheduleFor($this->dish, ['title' => 'Beet soup'])->itemChanges()->sole();
 
         $this->actingAsStaff(UserRole::Manager, $this->restaurant);
 
-        $this->dishChanges()
-            ->assertCanSeeTableRecords([$alteration])
+        $this->changesOf()
+            ->assertCanSeeTableRecords([$change])
             ->assertTableActionHidden('schedule')
-            ->assertTableActionHidden('run', $alteration)
-            ->assertTableActionHidden(DeleteAction::class, $alteration);
+            ->assertTableActionHidden('apply', $change)
+            ->assertTableActionHidden('remove', $change);
     }
 
     /**
-     * Test that archiving a variant can be scheduled.
+     * Test that hiding a size can be scheduled, when the dish has another one.
      *
      * @return void
      */
-    public function testVariantArchivingCanBeScheduled()
+    public function testHidingASizeCanBeScheduled()
     {
         $this->actingAsStaff();
 
         $variant = DishVariant::factory()->withDish($this->dish)->create(['price' => 150]);
 
-        Livewire::test(AlterationsRelationManager::class, [
-            'ownerRecord' => $variant,
-            'pageClass' => EditDishVariant::class,
-        ])
-            ->callTableAction('schedule', data: ['perform_at' => '2030-01-07 09:00', 'live' => false])
+        $this->changesOf($variant)
+            ->callTableAction('schedule', data: ['goes_live_at' => '2030-01-07 09:00', 'live' => false])
             ->assertHasNoTableActionErrors();
 
-        /** @var Alteration $alteration */
-        $alteration = Alteration::query()->sole();
+        /** @var MenuVersionChange $change */
+        $change = MenuVersionChange::query()->sole();
 
-        $this->assertSame(['archived' => true], $alteration->getJson('metadata'));
-        $this->assertSame($this->restaurant->id, $alteration->restaurant_id);
+        // the json column orders the keys
+        $this->assertEquals(['is_hidden' => ['live' => false, 'new' => true]], $change->fields);
 
         // described as "Live", like the toggle
-        Livewire::test(AlterationsRelationManager::class, [
-            'ownerRecord' => $variant,
-            'pageClass' => EditDishVariant::class,
-        ])
-            ->assertTableColumnStateSet('changes', ['Live: No (now: Yes)'], $alteration);
+        $this->changesOf($variant)
+            ->assertTableColumnStateSet('changes', ['Live: No (now: Yes)'], $change);
     }
 
     /**
-     * Test that the global page lists the dish changes of the user's restaurant
-     * (not other restaurants, not the old menu), and filters them by status.
+     * Test that the global page lists the versions of the user's restaurant (not other
+     * restaurants' ones) and filters them by status.
      *
      * @return void
      */
     public function testGlobalPageIsScopedAndFilterable()
     {
-        $scheduled = $this->scheduleForDish(['price' => 175]);
-        $failed = $this->scheduleForDish(['price' => 180], now()->subDay());
-        $failed->markAsFailed(new RuntimeException('Failed'));
+        $scheduled = $this->scheduleFor($this->dish, ['title' => 'Beet soup']);
+        $failed = MenuVersion::factory()->withRestaurant($this->restaurant)->create([
+            'name' => 'Winter menu',
+            'status' => MenuVersion::STATUS_FAILED,
+            'failure_reason' => 'A changed dish doesn\'t exist anymore.',
+        ]);
 
         $otherMenu = DishMenu::factory()->withRestaurant(Restaurant::factory()->create())->create();
         $otherDish = Dish::factory()->withMenu($otherMenu)->create();
-        $other = Alteration::factory()->withModel($otherDish)->withValues(['price' => 1])->create();
-
-        $oldMenu = Alteration::factory()
-            ->withValues(['price' => 1])
-            ->create(['alterable_id' => 1, 'alterable_type' => 'products', 'restaurant_id' => $this->restaurant->id]);
+        $other = $this->scheduleFor($otherDish, ['title' => 'Other']);
 
         $this->actingAsStaff(UserRole::Admin, $this->restaurant);
 
-        Livewire::test(ListAlterations::class)
+        Livewire::test(ListMenuVersions::class)
             ->assertCanSeeTableRecords([$scheduled, $failed])
-            ->assertCanNotSeeTableRecords([$other, $oldMenu])
-            ->assertTableColumnStateSet('subject', 'Dish · Borscht', $scheduled)
-            ->filterTable('status', Alteration::STATUS_FAILED)
+            ->assertCanNotSeeTableRecords([$other])
+            ->assertTableColumnStateSet('name', ['Dish · Borscht', 'Title: Beet soup (now: Borscht)'], $scheduled)
+            ->assertTableColumnStateSet('name', ['Winter menu', '0 changes in 0 items'], $failed)
+            ->filterTable('status', MenuVersion::STATUS_FAILED)
             ->assertCanSeeTableRecords([$failed])
             ->assertCanNotSeeTableRecords([$scheduled]);
     }
@@ -317,10 +353,10 @@ class ScheduledChangesTest extends FilamentTestCase
     public function testDishesTableShowsScheduledChanges()
     {
         $other = Dish::factory()->withMenu($this->dish->menu)->create();
-        $this->scheduleForDish(['price' => 175]);
+        $this->scheduleFor($this->dish, ['title' => 'Beet soup']);
 
-        $done = Alteration::factory()->withModel($other)->withValues(['price' => 1])->create();
-        $done->perform();
+        $applied = $this->scheduleFor($other, ['title' => 'Other']);
+        app(VersionEditorRepository::class)->apply($applied);
 
         $this->actingAsStaff();
 

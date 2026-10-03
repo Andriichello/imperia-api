@@ -120,7 +120,8 @@ export function notesPreview(notes: NoteDraft[], locale: string, fallback: strin
 // Photos
 
 export function photosPreview(photos: Media[]): PreviewPatch {
-  return {restaurant: {media: photos}}
+  // guests don't see hidden ones
+  return {restaurant: {media: photos.filter((photo) => !photo.is_hidden)}}
 }
 
 // Working hours

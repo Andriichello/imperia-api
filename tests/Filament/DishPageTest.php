@@ -11,7 +11,8 @@ use App\Models\Dish;
 use App\Models\DishCategory;
 use App\Models\DishMenu;
 use App\Models\DishVariant;
-use App\Models\Morphs\Alteration;
+use App\Models\MenuVersion;
+use App\Models\MenuVersionChange;
 use App\Models\Restaurant;
 use Database\Factories\Morphs\MediaFactory;
 use Illuminate\Support\Facades\DB;
@@ -265,7 +266,7 @@ class DishPageTest extends FilamentTestCase
     }
 
     /**
-     * Test that a dish is duplicated as a hidden copy with its variants and images,
+     * Test that a dish is duplicated as a hidden copy with its sizes and images,
      * without its slug, scheduled changes or the old menu reference.
      *
      * @return void
@@ -298,7 +299,10 @@ class DishPageTest extends FilamentTestCase
             ]);
         }
 
-        Alteration::factory()->withModel($dish)->withValues(['price' => 175])->performAt(now()->addWeek())->create();
+        $version = MenuVersion::factory()->withRestaurant($this->restaurant)->scheduled()->create();
+        MenuVersionChange::factory()->inVersion($version)
+            ->changing($dish, ['title' => ['en' => 'Beet soup']])
+            ->create();
 
         $this->actingAsStaff(UserRole::Admin, $this->restaurant);
 
@@ -326,7 +330,8 @@ class DishPageTest extends FilamentTestCase
         $this->assertTrue($copy->is_hidden);
         $this->assertFalse((bool) $copy->archived);
         $this->assertNull($copy->slug);
-        $this->assertEquals(150, $copy->price);
+        // the cheapest of its sizes, which guests see
+        $this->assertEquals(100, $copy->price);
         $this->assertSame(['vegan', 'alg-celery'], $copy->flags);
         $this->assertNull($copy->getFromJson('metadata', 'copied_from'));
 
@@ -334,10 +339,10 @@ class DishPageTest extends FilamentTestCase
         $this->assertSame('borscht', $dish->fresh()->slug);
         $this->assertNotNull($dish->fresh()->getFromJson('metadata', 'copied_from'));
 
-        // archived variants are copied (still archived), deleted ones aren't
+        // archived sizes are copied (still archived), deleted ones aren't
         $variants = DishVariant::query()->withoutGlobalScopes()->where('dish_id', $copy->id)->orderBy('price')->get();
-        $this->assertSame([100.0, 120.0], $variants->pluck('price')->all());
-        $this->assertSame([false, true], $variants->pluck('archived')->map(fn ($value) => (bool) $value)->all());
+        $this->assertSame([100.0, 120.0, 150.0], $variants->pluck('price')->all());
+        $this->assertSame([false, true, false], $variants->pluck('archived')->all());
         $this->assertSame('300', $variants[0]->weight);
         $this->assertNotContains($small->id, $variants->pluck('id'));
         $this->assertNotContains($old->id, $variants->pluck('id'));
@@ -349,7 +354,7 @@ class DishPageTest extends FilamentTestCase
         );
         $this->assertCount(2, $copy->media);
 
-        $this->assertSame(0, $copy->alterations()->count());
+        $this->assertSame(0, $copy->scheduledChanges()->count());
     }
 
     /**

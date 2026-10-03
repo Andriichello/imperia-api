@@ -4,12 +4,12 @@ namespace App\Filament\Resources;
 
 use App\Filament\BaseResource;
 use App\Filament\Fields\LiveFields;
-use App\Filament\RelationManagers\AlterationsRelationManager;
+use App\Filament\RelationManagers\ScheduledChangesRelationManager;
 use App\Filament\Filters\LiveFilter;
 use App\Filament\Filters\TrashedFilter;
 use App\Filament\Fields\RestaurantSelect;
 use App\Filament\Resources\DishMenuResource\Pages;
-use App\Filament\Tables\AlterationsTable;
+use App\Filament\Tables\ScheduledChangesTable;
 use App\Filament\Tables\Columns\LiveColumn;
 use App\Models\DishMenu;
 use Filament\Forms\Components\Textarea;
@@ -45,16 +45,21 @@ class DishMenuResource extends BaseResource
                     ->required(),
                 TextInput::make('slug')
                     ->maxLength(255),
-                ...static::getAlterableFields(),
+                ...static::getSchedulableFields(),
+                TextInput::make('popularity')
+                    ->numeric()
+                    ->nullable()
+                    ->helperText('Higher numbers come first on the website. '
+                        . 'The list can also be reordered by dragging.'),
             ]);
     }
 
     /**
-     * Fields that can also be changed in advance, through a scheduled change (alteration).
+     * Fields that can also be changed in advance, through a scheduled change.
      *
      * @return array
      */
-    public static function getAlterableFields(): array
+    public static function getSchedulableFields(): array
     {
         return [
             TextInput::make('title')
@@ -64,17 +69,13 @@ class DishMenuResource extends BaseResource
                 ->maxLength(1020)
                 ->columnSpanFull(),
             ...LiveFields::make(),
-            TextInput::make('popularity')
-                ->numeric()
-                ->nullable()
-                ->helperText('Higher numbers come first on the website. The list can also be reordered by dragging.'),
         ];
     }
 
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(fn (Builder $query) => AlterationsTable::withScheduledChangesCount($query))
+            ->modifyQueryUsing(fn (Builder $query) => ScheduledChangesTable::withScheduledChangesCount($query))
             ->reorderable('popularity')
             ->columns([
                 Tables\Columns\TextColumn::make('id')->sortable(),
@@ -86,7 +87,7 @@ class DishMenuResource extends BaseResource
                         return static::searchTranslated($query, 'dish_menus.title', $search);
                     }),
                 LiveColumn::make(),
-                AlterationsTable::scheduledColumn(),
+                ScheduledChangesTable::scheduledColumn(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
@@ -110,7 +111,7 @@ class DishMenuResource extends BaseResource
     public static function getRelations(): array
     {
         return [
-            AlterationsRelationManager::class,
+            ScheduledChangesRelationManager::class,
         ];
     }
 

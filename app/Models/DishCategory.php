@@ -3,18 +3,18 @@
 namespace App\Models;
 
 use App\Helpers\ContentLocale;
-use App\Models\Interfaces\AlterableInterface;
 use App\Models\Interfaces\ArchivableInterface;
 use App\Models\Interfaces\HideableInterface;
 use App\Models\Interfaces\MediableInterface;
+use App\Models\Interfaces\SchedulableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Interfaces\TranslatableInterface;
 use App\Models\Scopes\ArchivedScope;
 use App\Models\Scopes\SoftDeletableScope;
-use App\Models\Traits\AlterableTrait;
 use App\Models\Traits\ArchivableTrait;
 use App\Models\Traits\HideableTrait;
 use App\Models\Traits\MediableTrait;
+use App\Models\Traits\SchedulableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use App\Models\Traits\TranslatableTrait;
 use App\Queries\DishCategoryQueryBuilder;
@@ -52,7 +52,7 @@ class DishCategory extends BaseModel implements
     ArchivableInterface,
     HideableInterface,
     MediableInterface,
-    AlterableInterface,
+    SchedulableInterface,
     SoftDeletableInterface,
     TranslatableInterface
 {
@@ -61,7 +61,7 @@ class DishCategory extends BaseModel implements
     use ArchivableTrait;
     use HideableTrait;
     use MediableTrait;
-    use AlterableTrait;
+    use SchedulableTrait;
     use TranslatableTrait;
 
     /**

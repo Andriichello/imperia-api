@@ -4,10 +4,7 @@ namespace Tests\Filament;
 
 use App\Enums\UserRole;
 use App\Filament\Widgets\PendingChanges;
-use App\Models\Dish;
-use App\Models\DishMenu;
-use App\Models\Morphs\Alteration;
-use App\Models\Product;
+use App\Models\MenuVersion;
 use App\Models\Restaurant;
 use Filament\Widgets\FilamentInfoWidget;
 use Livewire\Livewire;
@@ -15,13 +12,13 @@ use Livewire\Livewire;
 /**
  * Class PendingChangesTest.
  *
- * The dashboard widget with scheduled changes, which aren't performed yet.
+ * The dashboard widget with scheduled changes, which haven't gone live yet.
  */
 class PendingChangesTest extends FilamentTestCase
 {
     /**
-     * Test that the widget lists the pending changes of the user's restaurant,
-     * failed ones first, without performed ones or changes of the old menu.
+     * Test that the widget lists the versions of the user's restaurant, which haven't gone live
+     * (failed ones included), from the earliest, without applied ones or other restaurants' ones.
      *
      * @return void
      */
@@ -29,42 +26,29 @@ class PendingChangesTest extends FilamentTestCase
     {
         // without a timezone, like restaurants created before it was added
         $restaurant = Restaurant::factory()->create(['timezone' => '']);
-        $menu = DishMenu::factory()->withRestaurant($restaurant)->create();
-        $dish = Dish::factory()->withMenu($menu)->create();
+        $versions = MenuVersion::factory()->withRestaurant($restaurant);
 
-        $scheduled = Alteration::factory()
-            ->withModel($dish)
-            ->withValues(['price' => 120])
-            ->performAt(now()->addWeek())
-            ->create();
-        $failed = Alteration::factory()
-            ->withModel($dish)
-            ->withValues(['price' => 130])
-            ->performAt(now()->subDay())
-            ->create(['failed_at' => now(), 'exception' => 'Something went wrong']);
-        $performed = Alteration::factory()
-            ->withModel($dish)
-            ->withValues(['price' => 110])
-            ->performAt(now()->subWeek())
-            ->create(['performed_at' => now()->subWeek()]);
-
-        $otherMenu = DishMenu::factory()->withRestaurant(Restaurant::factory()->create())->create();
-        $otherRestaurant = Alteration::factory()
-            ->withModel(Dish::factory()->withMenu($otherMenu)->create())
-            ->withValues(['price' => 1])
-            ->performAt(now()->addDay())
-            ->create();
-        $oldMenu = Alteration::factory()
-            ->withModel(Product::factory()->withRestaurant($restaurant)->create())
-            ->withValues(['price' => 1])
-            ->performAt(now()->addDay())
+        $scheduled = $versions->scheduled(now()->addWeek())->create();
+        $failed = $versions->create([
+            'status' => MenuVersion::STATUS_FAILED,
+            'goes_live_at' => now()->subDay(),
+            'failure_reason' => 'A changed dish doesn\'t exist anymore.',
+        ]);
+        $applied = $versions->create([
+            'status' => MenuVersion::STATUS_APPLIED,
+            'goes_live_at' => now()->subWeek(),
+            'applied_at' => now()->subWeek(),
+        ]);
+        $otherRestaurant = MenuVersion::factory()
+            ->withRestaurant(Restaurant::factory()->create())
+            ->scheduled(now()->addDay())
             ->create();
 
         $this->actingAsStaff(UserRole::Admin, $restaurant);
 
         Livewire::test(PendingChanges::class)
             ->assertCanSeeTableRecords([$failed, $scheduled], inOrder: true)
-            ->assertCanNotSeeTableRecords([$performed, $otherRestaurant, $oldMenu]);
+            ->assertCanNotSeeTableRecords([$applied, $otherRestaurant]);
     }
 
     /**

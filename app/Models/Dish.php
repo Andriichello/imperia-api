@@ -3,22 +3,22 @@
 namespace App\Models;
 
 use App\Helpers\ContentLocale;
-use App\Models\Interfaces\AlterableInterface;
 use App\Models\Interfaces\ArchivableInterface;
 use App\Models\Interfaces\FlaggableInterface;
 use App\Models\Interfaces\HideableInterface;
 use App\Models\Interfaces\LoggableInterface;
 use App\Models\Interfaces\MediableInterface;
+use App\Models\Interfaces\SchedulableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Interfaces\TranslatableInterface;
 use App\Models\Scopes\ArchivedScope;
 use App\Models\Scopes\SoftDeletableScope;
-use App\Models\Traits\AlterableTrait;
 use App\Models\Traits\ArchivableTrait;
 use App\Models\Traits\FlaggableTrait;
 use App\Models\Traits\HideableTrait;
 use App\Models\Traits\LoggableTrait;
 use App\Models\Traits\MediableTrait;
+use App\Models\Traits\SchedulableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use App\Models\Traits\TranslatableTrait;
 use App\Queries\DishQueryBuilder;
@@ -28,10 +28,14 @@ use Illuminate\Database\Query\Builder as DatabaseBuilder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 /**
  * Class Dish.
+ *
+ * Its sizes are its variants, at least one of them is shown to guests. The dish's own size
+ * columns (price, weight, ...) mirror its first size: the cheapest one shown to guests.
  *
  * @property int $menu_id
  * @property int|null $category_id
@@ -56,6 +60,7 @@ use Illuminate\Support\Collection;
  * @property DishMenu $menu
  * @property DishCategory|null $category
  * @property DishVariant[]|Collection $variants
+ * @property DishVariant[]|Collection $sizes
  *
  * @method static DishQueryBuilder query()
  * @method static DishFactory factory(...$parameters)
@@ -67,7 +72,7 @@ class Dish extends BaseModel implements
     LoggableInterface,
     MediableInterface,
     FlaggableInterface,
-    AlterableInterface,
+    SchedulableInterface,
     TranslatableInterface
 {
     use HasFactory;
@@ -76,9 +81,30 @@ class Dish extends BaseModel implements
     use LoggableTrait;
     use MediableTrait;
     use FlaggableTrait;
-    use AlterableTrait;
+    use SchedulableTrait;
     use HideableTrait;
     use TranslatableTrait;
+
+    /**
+     * Attributes of a size, which the dish's own columns mirror.
+     *
+     * @var string[]
+     */
+    public const SIZE = ['price', 'weight', 'weight_unit', 'calories', 'preparation_time'];
+
+    /**
+     * Whether new dishes get their first size from their own size columns.
+     *
+     * @var bool
+     */
+    protected static bool $createsFirstSize = true;
+
+    /**
+     * Whether the dish's own size columns are being set from its first size.
+     *
+     * @var bool
+     */
+    protected bool $mirroring = false;
 
     /**
      * The model's default values for attributes.
@@ -208,6 +234,21 @@ class Dish extends BaseModel implements
     }
 
     /**
+     * Get the sizes of the dish, hidden and archived ones included, from the cheapest.
+     *
+     * @return HasMany
+     */
+    public function sizes(): HasMany
+    {
+        // @phpstan-ignore-next-line
+        return $this->hasMany(DishVariant::class, 'dish_id')
+            ->withoutGlobalScopes([ArchivedScope::class, SoftDeletableScope::class])
+            ->whereNull('dish_variants.deleted_at')
+            ->orderBy('price')
+            ->orderBy('id');
+    }
+
+    /**
      * Get all variants associated with the model, including archived and deleted ones.
      * Used by the admin panel, which filters them itself.
      *
@@ -219,6 +260,94 @@ class Dish extends BaseModel implements
         return $this->hasMany(DishVariant::class, 'dish_id')
             ->orderBy('price')
             ->withoutGlobalScopes([ArchivedScope::class, SoftDeletableScope::class]);
+    }
+
+    /**
+     * Create the first size of a new dish from its own size columns, and change the first size,
+     * when they're changed (e.g. by the API or the admin panel).
+     *
+     * @return void
+     */
+    protected static function booted(): void
+    {
+        static::created(function (Dish $dish) {
+            if (static::$createsFirstSize && !$dish->sizes()->exists()) {
+                $dish->sizes()->create(Arr::only($dish->getAttributes(), static::SIZE));
+            }
+        });
+
+        static::updated(function (Dish $dish) {
+            if ($dish->mirroring || !$dish->wasChanged(static::SIZE)) {
+                return;
+            }
+
+            $dish->firstSize()
+                ?->fill(Arr::only($dish->getAttributes(), static::SIZE))
+                ->save();
+        });
+    }
+
+    /**
+     * Create dishes without their first size (e.g. copies, whose sizes are copied too).
+     *
+     * @param callable $callback
+     *
+     * @return mixed
+     */
+    public static function withoutFirstSize(callable $callback): mixed
+    {
+        $creates = static::$createsFirstSize;
+        static::$createsFirstSize = false;
+
+        try {
+            return $callback();
+        } finally {
+            static::$createsFirstSize = $creates;
+        }
+    }
+
+    /**
+     * The first size of the dish: the cheapest one shown to guests.
+     *
+     * @return DishVariant|null
+     */
+    public function firstSize(): ?DishVariant
+    {
+        /** @var DishVariant|null $size */
+        $size = $this->sizes()
+            ->where('dish_variants.archived', false)
+            ->where('dish_variants.is_hidden', false)
+            ->first();
+
+        return $size;
+    }
+
+    /**
+     * Set the dish's own size columns to its first size.
+     *
+     * @return void
+     */
+    public function mirrorFirstSize(): void
+    {
+        $first = $this->firstSize();
+
+        if (!$first) {
+            return;
+        }
+
+        $this->fill(Arr::only($first->getAttributes(), static::SIZE));
+
+        if (!$this->isDirty()) {
+            return;
+        }
+
+        $this->mirroring = true;
+
+        try {
+            $this->save();
+        } finally {
+            $this->mirroring = false;
+        }
     }
 
     /**

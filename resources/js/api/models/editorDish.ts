@@ -32,6 +32,9 @@ export interface EditorDish {
   popularity: number | null;
   /** Diet tags and allergens. */
   flags: string[];
+  /** Its sizes, hidden ones included, from the cheapest. */
   sizes: EditorSize[];
+  /** Its archived sizes: off the menu, they can be restored. */
+  archived_sizes: EditorSize[];
   photos?: Media[];
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\Editor\CategoryEditorController;
 use App\Http\Controllers\Editor\DishEditorController;
 use App\Http\Controllers\Editor\MenuEditorController;
 use App\Http\Controllers\Editor\RestaurantEditorController;
+use App\Http\Controllers\Editor\VersionEditorController;
 use App\Http\Controllers\Model\CategoryController;
 use App\Http\Controllers\Model\CommentController;
 use App\Http\Controllers\Model\DishCategoryController;
@@ -167,8 +168,8 @@ Route::group(['middleware' => ['web', 'auth:sanctum,web'], 'as' => 'api.'], func
 
 /*
  * The admin editor: everything of a restaurant in all languages (hidden and archived
- * menus, categories and dishes included). Signed in like the admin panel (session),
- * or with a token.
+ * menus, categories and dishes included), its dashboard and scheduled versions.
+ * Signed in like the admin panel (session), or with a token.
  */
 Route::group([
     'middleware' => ['web', 'auth:sanctum,web'],
@@ -179,6 +180,8 @@ Route::group([
         ->name('restaurants.index');
     Route::get('/restaurants/{id}', [RestaurantEditorController::class, 'show'])
         ->name('restaurants.show');
+    Route::get('/restaurants/{id}/dashboard', [RestaurantEditorController::class, 'dashboard'])
+        ->name('restaurants.dashboard');
     Route::patch('/restaurants/{id}', [RestaurantEditorController::class, 'update'])
         ->name('restaurants.update');
     Route::put('/restaurants/{id}/notes', [RestaurantEditorController::class, 'updateNotes'])
@@ -234,6 +237,32 @@ Route::group([
         ->name('dishes.duplicate');
     Route::post('/dishes/{id}/move', [DishEditorController::class, 'move'])
         ->name('dishes.move');
+
+    Route::get('/restaurants/{id}/versions', [VersionEditorController::class, 'index'])
+        ->name('versions.index');
+    Route::post('/restaurants/{id}/versions', [VersionEditorController::class, 'store'])
+        ->name('versions.store');
+    Route::get('/versions/{id}', [VersionEditorController::class, 'show'])
+        ->name('versions.show');
+    Route::patch('/versions/{id}', [VersionEditorController::class, 'update'])
+        ->name('versions.update');
+    Route::delete('/versions/{id}', [VersionEditorController::class, 'destroy'])
+        ->name('versions.destroy');
+    Route::put('/versions/{id}/changes', [VersionEditorController::class, 'putChange'])
+        ->name('versions.changes.put');
+    Route::delete('/versions/{id}/changes/{change}', [VersionEditorController::class, 'removeChange'])
+        ->whereNumber('change')
+        ->name('versions.changes.destroy');
+    Route::post('/versions/{id}/schedule', [VersionEditorController::class, 'schedule'])
+        ->name('versions.schedule');
+    Route::post('/versions/{id}/deactivate', [VersionEditorController::class, 'deactivate'])
+        ->name('versions.deactivate');
+    Route::post('/versions/{id}/activate', [VersionEditorController::class, 'activate'])
+        ->name('versions.activate');
+    Route::post('/versions/{id}/apply', [VersionEditorController::class, 'apply'])
+        ->name('versions.apply');
+    Route::post('/versions/{id}/duplicate', [VersionEditorController::class, 'duplicate'])
+        ->name('versions.duplicate');
 });
 
 Route::fallback(function () {

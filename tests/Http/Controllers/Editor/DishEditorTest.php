@@ -61,7 +61,8 @@ class DishEditorTest extends EditorTestCase
     }
 
     /**
-     * Test that a new dish goes at the end of its category: the first size is the dish itself.
+     * Test that a new dish goes at the end of its category, with its sizes (all of them variants)
+     * and photos. Its own size columns are its first size.
      *
      * @return void
      */
@@ -72,7 +73,7 @@ class DishEditorTest extends EditorTestCase
 
         $id = $this->postJson(
             "/api/editor/categories/{$this->category->id}/dishes",
-            $this->dishData(['media' => [$photo->id], 'is_hidden' => true])
+            $this->dishData(['media' => [['id' => $photo->id]], 'is_hidden' => true])
         )
             ->assertCreated()
             ->assertJsonPath('data.menu_id', $this->menu->id)
@@ -82,8 +83,8 @@ class DishEditorTest extends EditorTestCase
             ->assertJsonPath('data.flags', ['medium-hotness', 'alg-milk', 'alg-celery'])
             ->assertJsonPath('data.is_hidden', true)
             ->assertJsonPath('data.sizes.*.price', [185, 245])
-            ->assertJsonPath('data.sizes.0.id', null)
             ->assertJsonPath('data.sizes.0.weight', '300')
+            ->assertJsonPath('data.sizes.*.is_hidden', [false, false])
             ->assertJsonPath('data.sizes.1.calories', 520)
             ->assertJsonPath('data.photos.0.id', $photo->id)
             ->json('data.id');
@@ -92,11 +93,14 @@ class DishEditorTest extends EditorTestCase
 
         $this->assertEquals(185, $dish->price);
         $this->assertSame(2, $dish->popularity);
-        $this->assertCount(1, $dish->variants);
+        $this->assertEquals([185, 245], $dish->variants->pluck('price')->all());
+        // no extra size was made on the way
+        $this->assertSame(2, DishVariant::query()->withoutGlobalScopes()->where('dish_id', $id)->count());
     }
 
     /**
-     * Test that sizes are replaced: kept variants are updated, others are deleted or added.
+     * Test that sizes are replaced: kept ones are updated (they keep their ids), others are deleted
+     * or added, archived ones stay. The dish's own size columns follow its first size.
      *
      * @return void
      */
@@ -104,6 +108,8 @@ class DishEditorTest extends EditorTestCase
     {
         $dish = Dish::factory()->withMenu($this->menu)->withCategory($this->category)
             ->create(['price' => 100, 'weight' => '200', 'weight_unit' => 'g']);
+        /** @var DishVariant $first */
+        $first = $dish->sizes()->sole();
         $kept = DishVariant::factory()->withDish($dish)->create(['price' => 150]);
         $removed = DishVariant::factory()->withDish($dish)->create(['price' => 200]);
         $archived = DishVariant::factory()->withDish($dish)->create(['price' => 300, 'archived' => true]);
@@ -122,8 +128,10 @@ class DishEditorTest extends EditorTestCase
             ->assertJsonPath('data.sizes.2.weight', null);
 
         $this->assertSoftDeleted($removed);
+        $this->assertSoftDeleted($first);
         $this->assertNotSoftDeleted($archived);
         $this->assertEquals(160, $kept->fresh()->price);
+        $this->assertEquals(90, $dish->fresh()->price);
         $this->assertSame('l', $dish->fresh()->weight_unit);
 
         // a single size: the variants are gone
@@ -153,7 +161,7 @@ class DishEditorTest extends EditorTestCase
                 ['price' => -1, 'weight' => 300],
                 ['id' => $foreignVariant->id, 'price' => 10, 'weight_unit' => 'bucket'],
             ],
-            'media' => [$foreignPhoto->id],
+            'media' => [['id' => $foreignPhoto->id]],
         ])
             ->assertUnprocessable()
             ->assertJsonValidationErrors([
@@ -164,7 +172,7 @@ class DishEditorTest extends EditorTestCase
                 'sizes.0.weight_unit',
                 'sizes.1.id',
                 'sizes.1.weight_unit',
-                'media.0',
+                'media.0.id',
             ]);
 
         $this->patchJson("/api/editor/dishes/{$dish->id}", ['sizes' => []])
@@ -234,5 +242,100 @@ class DishEditorTest extends EditorTestCase
         $this->deleteJson("/api/editor/dishes/{$dish->id}")->assertOk();
 
         $this->assertSoftDeleted($dish);
+    }
+
+    /**
+     * Test that a size can be hidden from guests, but a dish keeps a size they see.
+     *
+     * @return void
+     */
+    public function testSizesCanBeHiddenButOneStaysShown()
+    {
+        $dish = Dish::factory()->withMenu($this->menu)->withCategory($this->category)->create(['price' => 100]);
+        /** @var DishVariant $first */
+        $first = $dish->sizes()->sole();
+        $large = DishVariant::factory()->withDish($dish)->create(['price' => 150]);
+
+        $this->patchJson("/api/editor/dishes/{$dish->id}", [
+            'sizes' => [
+                ['id' => $first->id, 'price' => 100, 'is_hidden' => true],
+                ['id' => $large->id, 'price' => 150],
+            ],
+        ])
+            ->assertOk()
+            ->assertJsonPath('data.sizes.*.id', [$first->id, $large->id])
+            ->assertJsonPath('data.sizes.*.is_hidden', [true, false]);
+
+        // guests see the other size, which the dish shows now
+        $this->assertSame([$large->id], $dish->variants()->pluck('id')->all());
+        $this->assertEquals(150, $dish->fresh()->price);
+
+        $this->patchJson("/api/editor/dishes/{$dish->id}", [
+            'sizes' => [
+                ['id' => $first->id, 'price' => 100, 'is_hidden' => true],
+                ['id' => $large->id, 'price' => 150, 'is_hidden' => true],
+            ],
+        ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['sizes' => DishVariant::LAST_SIZE_MESSAGE]);
+
+        $this->assertFalse($large->fresh()->is_hidden);
+    }
+
+    /**
+     * Test that archived sizes are listed apart, and stay as they are when the sizes are saved.
+     *
+     * @return void
+     */
+    public function testArchivedSizesAreListedApart()
+    {
+        $dish = Dish::factory()->withMenu($this->menu)->withCategory($this->category)->create(['price' => 100]);
+        /** @var DishVariant $first */
+        $first = $dish->sizes()->sole();
+        $archived = DishVariant::factory()->withDish($dish)
+            ->create(['price' => 245, 'archived' => true, 'archived_at' => now()]);
+
+        $this->patchJson("/api/editor/dishes/{$dish->id}", ['sizes' => [['id' => $first->id, 'price' => 110]]])
+            ->assertOk()
+            ->assertJsonPath('data.sizes.*.price', [110])
+            ->assertJsonPath('data.archived_sizes.*.id', [$archived->id]);
+
+        $this->assertNotSoftDeleted($archived);
+
+        // an archived size can't be edited with the others
+        $this->patchJson("/api/editor/dishes/{$dish->id}", ['sizes' => [['id' => $archived->id, 'price' => 1]]])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['sizes.0.id']);
+    }
+
+    /**
+     * Test that photos of a dish can be hidden from guests, and a dish has 3 photos at most
+     * (hidden ones count).
+     *
+     * @return void
+     */
+    public function testDishPhotosCanBeHiddenUpToThree()
+    {
+        $dish = Dish::factory()->withMenu($this->menu)->withCategory($this->category)->create();
+        $photos = MediaFactory::new()->count(4)->create(['restaurant_id' => $this->restaurant->id]);
+
+        $this->patchJson("/api/editor/dishes/{$dish->id}", [
+            'media' => [
+                ['id' => $photos[0]->id],
+                ['id' => $photos[1]->id, 'is_hidden' => true],
+                ['id' => $photos[2]->id],
+            ],
+        ])
+            ->assertOk()
+            ->assertJsonPath('data.photos.*.id', [$photos[0]->id, $photos[1]->id, $photos[2]->id])
+            ->assertJsonPath('data.photos.*.is_hidden', [false, true, false]);
+
+        $this->assertSame([$photos[0]->id, $photos[2]->id], $dish->media()->pluck('media.id')->all());
+
+        $this->patchJson("/api/editor/dishes/{$dish->id}", [
+            'media' => $photos->map(fn ($photo) => ['id' => $photo->id])->all(),
+        ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['media']);
     }
 }

@@ -2,16 +2,16 @@
 
 namespace Tests\Filament;
 
-use App\Filament\RelationManagers\AlterationsRelationManager;
-use App\Filament\Resources\AlterationResource\Pages\ListAlterations;
+use App\Filament\RelationManagers\ScheduledChangesRelationManager;
 use App\Filament\Resources\DishResource\Pages\EditDish;
 use App\Filament\Resources\DishResource\Pages\ListDishes;
+use App\Filament\Resources\MenuVersionResource\Pages\ListMenuVersions;
 use App\Filament\Resources\RestaurantResource\Pages\EditRestaurant;
 use App\Filament\Resources\RestaurantResource\RelationManagers\SchedulesRelationManager;
 use App\Filament\Widgets\PendingChanges;
 use App\Models\Dish;
 use App\Models\DishMenu;
-use App\Models\Morphs\Alteration;
+use App\Models\MenuVersion;
 use App\Models\Restaurant;
 use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
@@ -44,16 +44,16 @@ class DateTimeFormatsTest extends FilamentTestCase
         $this->actingAsStaff();
 
         // a date and time keeps the calendar open after picking the date, for the time
-        Livewire::test(AlterationsRelationManager::class, ['ownerRecord' => $dish, 'pageClass' => EditDish::class])
+        Livewire::test(ScheduledChangesRelationManager::class, ['ownerRecord' => $dish, 'pageClass' => EditDish::class])
             ->mountTableAction('schedule')
-            ->assertFormFieldExists('perform_at', 'mountedTableActionForm', fn (DateTimePicker $field) => !$field
+            ->assertFormFieldExists('goes_live_at', 'mountedTableActionForm', fn (DateTimePicker $field) => !$field
                 ->isNative()
                 && $field->getDisplayFormat() === 'D, j M Y H:i'
                 && $field->getFirstDayOfWeek() === 1
                 && !$field->shouldCloseOnDateSelection());
 
-        Livewire::test(ListAlterations::class)
-            ->assertFormFieldExists('perform_at.from', 'tableFiltersForm', fn (DatePicker $field) => !$field
+        Livewire::test(ListMenuVersions::class)
+            ->assertFormFieldExists('goes_live_at.from', 'tableFiltersForm', fn (DatePicker $field) => !$field
                 ->isNative()
                 && $field->getDisplayFormat() === 'D, j M Y'
                 && $field->shouldCloseOnDateSelection());
@@ -79,10 +79,9 @@ class DateTimeFormatsTest extends FilamentTestCase
         $menu = DishMenu::factory()->withRestaurant($restaurant)->create();
         $dish = Dish::factory()->withMenu($menu)->create(['created_at' => '2026-10-02 15:04:00']);
 
-        $alteration = Alteration::factory()
-            ->withModel($dish)
-            ->withValues(['price' => 120])
-            ->performAt(Carbon::parse('2026-10-04 21:00:00'))
+        $version = MenuVersion::factory()
+            ->withRestaurant($restaurant)
+            ->scheduled(Carbon::parse('2026-10-04 21:00:00'))
             ->create();
 
         $this->actingAsStaff();
@@ -92,6 +91,6 @@ class DateTimeFormatsTest extends FilamentTestCase
 
         // in the restaurant's timezone (UTC+3)
         Livewire::test(PendingChanges::class)
-            ->assertTableColumnFormattedStateSet('perform_at', 'Mon, 5 Oct 2026, 00:00', $alteration);
+            ->assertTableColumnFormattedStateSet('goes_live_at', 'Mon, 5 Oct 2026, 00:00', $version);
     }
 }

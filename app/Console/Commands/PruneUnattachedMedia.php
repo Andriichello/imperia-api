@@ -3,9 +3,12 @@
 namespace App\Console\Commands;
 
 use App\Helpers\MediaHelper;
+use App\Models\MenuVersionChange;
 use App\Models\Morphs\Media;
+use App\Queries\MenuVersionQueryBuilder;
 use Illuminate\Console\Command;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Throwable;
@@ -51,6 +54,8 @@ class PruneUnattachedMedia extends Command
             ->whereNotExists(fn (Builder $query) => $query->selectRaw('1')
                 ->from('mediables')
                 ->whereColumn('mediables.media_id', 'media.id'))
+            // added in a version, which hasn't gone live yet
+            ->whereNotIn('id', $this->scheduledMediaIds())
             ->orderBy('id')
             ->get();
 
@@ -95,5 +100,26 @@ class PruneUnattachedMedia extends Command
         $this->info("$deleted unattached photos were deleted.");
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Ids of the photos, which versions, which haven't gone live yet, add.
+     *
+     * @return int[]
+     */
+    protected function scheduledMediaIds(): array
+    {
+        $query = MenuVersionChange::query();
+        // @phpstan-ignore-next-line
+        $query->whereHas('version', fn (MenuVersionQueryBuilder $versions) => $versions->pending());
+
+        $ids = [];
+
+        /** @var MenuVersionChange $change */
+        foreach ($query->get() as $change) {
+            $ids = [...$ids, ...Arr::pluck($change->fields['media']['new'] ?? [], 'id')];
+        }
+
+        return array_values(array_unique($ids));
     }
 }

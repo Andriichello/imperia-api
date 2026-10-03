@@ -4,7 +4,10 @@ namespace App\Repositories\Editor;
 
 use App\Helpers\WebCacheHelper;
 use App\Models\BaseModel;
+use App\Models\Interfaces\MediableInterface;
 use App\Models\Interfaces\TranslatableInterface;
+use App\Models\Morphs\Media;
+use App\Models\Restaurant;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -121,7 +124,30 @@ abstract class EditorRepository
     }
 
     /**
-     * Forget the cached website pages of the restaurant (e.g. when only
+     * Attach photos of a model to its copy, in their order, hidden ones staying hidden.
+     *
+     * @param MediableInterface $from
+     * @param MediableInterface $to
+     *
+     * @return void
+     */
+    protected function copyMedia(MediableInterface $from, MediableInterface $to): void
+    {
+        $photos = [];
+
+        /** @var Media $media */
+        foreach ($from->allMedia()->get() as $media) {
+            $photos[$media->id] = [
+                'order' => data_get($media, 'pivot.order'),
+                'is_hidden' => (bool) data_get($media, 'pivot.is_hidden'),
+            ];
+        }
+
+        $to->allMedia()->attach($photos);
+    }
+
+    /**
+     * Forget the cached website pages of the restaurant and mark it as saved (e.g. when only
      * popularity or attached photos change, which fire no events).
      *
      * @param int|null $restaurantId
@@ -131,5 +157,6 @@ abstract class EditorRepository
     protected function forgetWebsite(?int $restaurantId): void
     {
         WebCacheHelper::forgetRestaurants($restaurantId);
+        Restaurant::markSaved($restaurantId);
     }
 }

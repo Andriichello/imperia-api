@@ -9,6 +9,7 @@ import type { EditorNote } from "./editorNote";
 import type { EditorRestaurantEstablishment } from "./editorRestaurantEstablishment";
 import type { EditorScheduleException } from "./editorScheduleException";
 import type { EditorTranslations } from "./editorTranslations";
+import type { EditorVersion } from "./editorVersion";
 import type { EditorWeekdays } from "./editorWeekdays";
 import type { Media } from "./media";
 
@@ -47,4 +48,6 @@ export interface EditorRestaurant {
   weekdays: EditorWeekdays;
   exceptions: EditorScheduleException[];
   menus: EditorMenu[];
+  /** Versions, which haven't gone live yet, with their changes. */
+  versions?: EditorVersion[];
 }

@@ -4,10 +4,12 @@
  * imperia-api
  * OpenAPI spec version: 0.1
  */
+import type { EditorPhoto } from "./editorPhoto";
 
 /**
- * Ids of the restaurant's photos in their order, the first one is the cover.
+ * The restaurant's photos in their order, the first one shown is the cover.
  */
 export interface EditorUpdateRestaurantPhotosRequest {
-  media: number[];
+  /** 20 at most. */
+  media: EditorPhoto[];
 }

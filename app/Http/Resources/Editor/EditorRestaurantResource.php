@@ -37,10 +37,7 @@ class EditorRestaurantResource extends JsonResource
         return [
             'id' => $this->id,
             'slug' => $this->slug,
-            'url' => route('web.restaurant.preview', [
-                'locale' => $default,
-                'restaurant_id' => $this->slug ?: $this->id,
-            ]),
+            'url' => $this->publicUrl(),
             'default_locale' => $default,
             'supported_locales' => ContentLocale::supported(),
             'name' => $this->translations($this->resource, 'name'),
@@ -54,11 +51,25 @@ class EditorRestaurantResource extends JsonResource
             'closed_until' => $this->closed_until?->format('Y-m-d'),
             'closed_reason' => $this->translations($this->resource, 'closed_reason'),
             'notes' => EditorNoteResource::collection($this->whenLoaded('notes')),
-            'photos' => new MediaCollection($this->whenLoaded('media')),
+            'photos' => new MediaCollection($this->whenLoaded('allMedia')),
             'weekdays' => $this->when($this->relationLoaded('schedules'), fn () => $this->weekdays()),
             'exceptions' => EditorScheduleExceptionResource::collection($this->whenLoaded('scheduleExceptions')),
             'menus' => EditorMenuResource::collection($this->whenLoaded('dishMenus')),
+            'versions' => EditorVersionResource::collection($this->whenLoaded('versions')),
         ];
+    }
+
+    /**
+     * Address of the restaurant's public page, in its default language.
+     *
+     * @return string
+     */
+    protected function publicUrl(): string
+    {
+        return route('web.restaurant.preview', [
+            'locale' => $this->getDefaultLocale(),
+            'restaurant_id' => $this->slug ?: $this->id,
+        ]);
     }
 
     /**
@@ -158,6 +169,8 @@ class EditorRestaurantResource extends JsonResource
      *   @OA\Property(property="exceptions", type="array",
      *     @OA\Items(ref="#/components/schemas/EditorScheduleException")),
      *   @OA\Property(property="menus", type="array", @OA\Items(ref="#/components/schemas/EditorMenu")),
+     *   @OA\Property(property="versions", type="array", @OA\Items(ref="#/components/schemas/EditorVersion"),
+     *     description="Versions, which haven't gone live yet, with their changes."),
      * ),
      */
 }

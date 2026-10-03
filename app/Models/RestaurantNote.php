@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Helpers\ContentLocale;
+use App\Models\Interfaces\SchedulableInterface;
 use App\Models\Interfaces\TranslatableInterface;
+use App\Models\Traits\SchedulableTrait;
 use App\Models\Traits\TranslatableTrait;
 use Carbon\Carbon;
 use Database\Factories\RestaurantNoteFactory;
@@ -26,9 +28,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @method static RestaurantNoteFactory factory(...$parameters)
  */
-class RestaurantNote extends BaseModel implements TranslatableInterface
+class RestaurantNote extends BaseModel implements SchedulableInterface, TranslatableInterface
 {
     use HasFactory;
+    use SchedulableTrait;
     use TranslatableTrait;
 
     /**

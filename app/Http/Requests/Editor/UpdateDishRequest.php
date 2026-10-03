@@ -9,7 +9,7 @@ use OpenApi\Annotations as OA;
  * Class UpdateDishRequest.
  *
  * Everything of a dish. Fields, which are left out, stay as they are. Sizes are replaced:
- * the first one is the dish itself, variants, which are left out, are deleted.
+ * sizes, which are left out, are deleted (archived ones stay).
  */
 class UpdateDishRequest extends EditorRequest
 {
@@ -47,11 +47,13 @@ class UpdateDishRequest extends EditorRequest
      *     description="25 characters at most."),
      *   @OA\Property(property="is_hidden", type="boolean", example=false),
      *   @OA\Property(property="flags", type="array", @OA\Items(type="string"), example={"vegetarian", "alg-milk"}),
-     *   @OA\Property(property="sizes", type="array", description="The first one is the dish itself, 1 to 10 of them.",
+     *   @OA\Property(property="sizes", type="array",
+     *     description="Its variants, 1 to 10 of them, at least one shown to guests. Archived ones stay as they are.",
      *     @OA\Items(
      *       required={"price"},
      *       @OA\Property(property="id", type="integer", nullable=true,
      *         description="Variant to keep (only when updating)."),
+     *       @OA\Property(property="is_hidden", type="boolean", example=false),
      *       @OA\Property(property="price", type="number", example=185),
      *       @OA\Property(property="weight", type="number", nullable=true, example=300),
      *       @OA\Property(property="weight_unit", type="string", nullable=true, example="g",
@@ -59,8 +61,8 @@ class UpdateDishRequest extends EditorRequest
      *       @OA\Property(property="calories", type="integer", nullable=true, example=380),
      *       @OA\Property(property="preparation_time", type="integer", nullable=true, example=15),
      *     )),
-     *   @OA\Property(property="media", type="array", @OA\Items(type="integer"), example={4},
-     *     description="Ids of the dish's photos (the restaurant's ones), 5 at most."),
+     *   @OA\Property(property="media", type="array", @OA\Items(ref="#/components/schemas/EditorPhoto"),
+     *     description="The dish's photos (the restaurant's ones) in their order, 3 at most, hidden ones included."),
      * ),
      */
 }

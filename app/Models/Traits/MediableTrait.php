@@ -17,6 +17,7 @@ use Illuminate\Support\Collection;
  * Trait MediableTrait.
  *
  * @property Media[]|Collection $media
+ * @property Media[]|Collection $allMedia
  * @property Media[]|Collection $default_media
  */
 trait MediableTrait
@@ -40,11 +41,22 @@ trait MediableTrait
     protected static Collection $defaultMedia;
 
     /**
-     * Media related to the model.
+     * Media related to the model, which guests see (hidden ones are left out).
      *
      * @return MorphToMany
      */
     public function media(): MorphToMany
+    {
+        return $this->allMedia()
+            ->wherePivot('is_hidden', false);
+    }
+
+    /**
+     * Media related to the model, hidden ones included (for the admin).
+     *
+     * @return MorphToMany
+     */
+    public function allMedia(): MorphToMany
     {
         return $this->morphToMany(
             Media::class, // related model
@@ -52,7 +64,7 @@ trait MediableTrait
             Mediable::class, // morph relation table
             'mediable_id', // morph table pivot key to current model
             'media_id' // morph table pivot key to related model
-        )->withPivot('order')
+        )->withPivot('order', 'is_hidden')
             ->orderByPivot('order');
     }
 
@@ -95,7 +107,7 @@ trait MediableTrait
      */
     public function attachMedia(Media|int ...$media): static
     {
-        $this->media()->attach(extractValues('id', ...$media));
+        $this->allMedia()->attach(extractValues('id', ...$media));
 
         return $this;
     }
@@ -109,7 +121,7 @@ trait MediableTrait
      */
     public function detachMedia(Media|int ...$media): static
     {
-        $this->media()->detach(extractValues('id', ...$media));
+        $this->allMedia()->detach(extractValues('id', ...$media));
 
         return $this;
     }
@@ -126,7 +138,7 @@ trait MediableTrait
         $ids = extractValues('id', ...$media);
 
         foreach ($ids as $index => $id) {
-            $this->media()
+            $this->allMedia()
                 ->updateExistingPivot($id, ['order' => $index], false);
         }
 
@@ -143,7 +155,7 @@ trait MediableTrait
     public function setMedia(Media|int ...$media): static
     {
         $given = extractValues('id', ...$media);
-        $attached = $this->media()->pluck('id')->all();
+        $attached = $this->allMedia()->pluck('id')->all();
 
         $add = array_diff($given, $attached);
         $remove = array_diff($attached, $given);
@@ -151,6 +163,26 @@ trait MediableTrait
         $this->attachMedia(...$add)
             ->detachMedia(...$remove)
             ->orderMedia(...$given);
+
+        return $this;
+    }
+
+    /**
+     * Set model's media in the given order, each one shown to guests or hidden:
+     * `[['id' => 4, 'is_hidden' => false], ...]`.
+     *
+     * @param array $media
+     *
+     * @return static
+     */
+    public function setMediaWithVisibility(array $media): static
+    {
+        $this->setMedia(...array_map(fn (array $item) => (int) $item['id'], $media));
+
+        foreach ($media as $item) {
+            $this->allMedia()
+                ->updateExistingPivot($item['id'], ['is_hidden' => (bool) ($item['is_hidden'] ?? false)], false);
+        }
 
         return $this;
     }

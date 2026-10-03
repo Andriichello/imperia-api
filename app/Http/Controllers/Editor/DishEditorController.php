@@ -150,7 +150,7 @@ class DishEditorController extends Controller
     protected function respond(Dish $dish, int $status = 200, string $message = 'Success'): ApiResponse
     {
         /** @var Dish $dish */
-        $dish = $dish->fresh(['variants', 'media']);
+        $dish = $dish->fresh(['sizes', 'allMedia']);
 
         return ApiResponse::make(['data' => new EditorDishResource($dish)], $status, $message);
     }

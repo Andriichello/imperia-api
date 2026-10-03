@@ -2,18 +2,18 @@
 
 namespace App\Models;
 
-use App\Models\Interfaces\AlterableInterface;
 use App\Helpers\ContentLocale;
 use App\Models\Interfaces\ArchivableInterface;
 use App\Models\Interfaces\HideableInterface;
 use App\Models\Interfaces\MediableInterface;
+use App\Models\Interfaces\SchedulableInterface;
 use App\Models\Interfaces\SoftDeletableInterface;
 use App\Models\Interfaces\TranslatableInterface;
 use App\Models\Scopes\ArchivedScope;
-use App\Models\Traits\AlterableTrait;
 use App\Models\Traits\ArchivableTrait;
 use App\Models\Traits\HideableTrait;
 use App\Models\Traits\MediableTrait;
+use App\Models\Traits\SchedulableTrait;
 use App\Models\Traits\SoftDeletableTrait;
 use App\Models\Traits\TranslatableTrait;
 use App\Queries\DishMenuQueryBuilder;
@@ -53,7 +53,7 @@ class DishMenu extends BaseModel implements
     HideableInterface,
     SoftDeletableInterface,
     MediableInterface,
-    AlterableInterface,
+    SchedulableInterface,
     TranslatableInterface
 {
     use HasFactory;
@@ -61,7 +61,7 @@ class DishMenu extends BaseModel implements
     use ArchivableTrait;
     use HideableTrait;
     use MediableTrait;
-    use AlterableTrait;
+    use SchedulableTrait;
     use TranslatableTrait;
 
     /**

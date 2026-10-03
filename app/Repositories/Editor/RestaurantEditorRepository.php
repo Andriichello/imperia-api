@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Editor;
 
+use App\Models\Dish;
+use App\Models\DishMenu;
 use App\Models\Morphs\Media;
 use App\Models\Restaurant;
 use App\Models\RestaurantNote;
@@ -10,6 +12,7 @@ use App\Models\ScheduleException;
 use App\Models\Scopes\ArchivedScope;
 use App\Models\User;
 use App\Repositories\MediaRepository;
+use Carbon\Carbon;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\UploadedFile;
@@ -30,9 +33,12 @@ class RestaurantEditorRepository extends EditorRepository
      * RestaurantEditorRepository constructor.
      *
      * @param MediaRepository $media
+     * @param VersionEditorRepository $versions
      */
-    public function __construct(protected MediaRepository $media)
-    {
+    public function __construct(
+        protected MediaRepository $media,
+        protected VersionEditorRepository $versions,
+    ) {
     }
 
     /**
@@ -62,8 +68,9 @@ class RestaurantEditorRepository extends EditorRepository
     }
 
     /**
-     * Load everything of the restaurant the editor shows: its notes, photos, hours and
-     * menus with their categories and dishes (hidden and archived ones included).
+     * Load everything of the restaurant the editor shows: its notes, photos, hours,
+     * menus with their categories and dishes (hidden and archived ones included, photos too)
+     * and the versions, which haven't gone live yet.
      *
      * @param Restaurant $restaurant
      *
@@ -75,7 +82,7 @@ class RestaurantEditorRepository extends EditorRepository
 
         return $restaurant->load([
             'notes',
-            'media',
+            'allMedia',
             'schedules',
             'scheduleExceptions',
             'dishMenus' => fn (Relation $query) => $query->withoutGlobalScope(ArchivedScope::class)
@@ -83,9 +90,45 @@ class RestaurantEditorRepository extends EditorRepository
                 ->orderBy('id'),
             'dishMenus.categories' => $withArchived,
             'dishMenus.categories.dishes' => $withArchived,
-            'dishMenus.categories.dishes.variants',
-            'dishMenus.categories.dishes.media',
+            'dishMenus.categories.dishes.sizes',
+            'dishMenus.categories.dishes.allMedia',
+        ])->setRelation('versions', $this->versions->ofRestaurant($restaurant, true));
+    }
+
+    /**
+     * What the admin's dashboard shows: what guests see (menus and dishes), when the page was
+     * last saved, the hours, upcoming special days and the versions, which haven't gone live yet.
+     *
+     * @param Restaurant $restaurant
+     *
+     * @return Restaurant with `menus_count` and `dishes_count`
+     */
+    public function dashboard(Restaurant $restaurant): Restaurant
+    {
+        $today = Carbon::now($restaurant->timezone ?: config('app.timezone'))->toDateString();
+
+        $restaurant->load([
+            'lastSavedBy',
+            'schedules',
+            'scheduleExceptions' => fn (Relation $query) => $query->where('ends_on', '>=', $today)
+                ->orderBy('starts_on')
+                ->limit(20),
         ]);
+
+        $restaurant->setAttribute('menus_count', DishMenu::query()
+            ->withoutGlobalScopes()
+            ->where('restaurant_id', $restaurant->id)
+            ->shownToGuests()
+            ->count());
+
+        $restaurant->setAttribute('dishes_count', Dish::query()
+            ->withoutGlobalScopes()
+            ->withRestaurant($restaurant->id)
+            ->shownToGuests()
+            ->withVisibleParents()
+            ->count());
+
+        return $restaurant->setRelation('versions', $this->versions->ofRestaurant($restaurant, true));
     }
 
     /**
@@ -163,16 +206,17 @@ class RestaurantEditorRepository extends EditorRepository
     }
 
     /**
-     * Set photos of the restaurant, in their order (the first one is the cover).
+     * Set photos of the restaurant, in their order (the first one shown is the cover),
+     * each one shown or hidden: `[['id' => 4, 'is_hidden' => false], ...]`.
      *
      * @param Restaurant $restaurant
-     * @param int[] $ids
+     * @param array $photos
      *
      * @return void
      */
-    public function setPhotos(Restaurant $restaurant, array $ids): void
+    public function setPhotos(Restaurant $restaurant, array $photos): void
     {
-        $restaurant->setMedia(...$ids);
+        $restaurant->setMediaWithVisibility($photos);
 
         $this->forgetWebsite($restaurant->id);
     }

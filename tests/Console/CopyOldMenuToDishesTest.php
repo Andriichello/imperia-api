@@ -8,6 +8,8 @@ use App\Models\DishCategory;
 use App\Models\DishMenu;
 use App\Models\DishVariant;
 use App\Models\Menu;
+use App\Models\MenuVersion;
+use App\Models\MenuVersionChange;
 use App\Models\Morphs\Alteration;
 use App\Models\Morphs\Category;
 use App\Models\Morphs\Media;
@@ -206,21 +208,41 @@ class CopyOldMenuToDishesTest extends TestCase
         $this->assertNull($bread->category_id);
         $this->assertTrue((bool) $bread->archived);
 
-        // variants: the deleted one isn't copied (per dish copy: 1 variant)
-        $this->assertSame(2, DishVariant::query()->withoutGlobalScopes()->count());
-        $this->assertEquals([200], DishVariant::query()->withoutGlobalScopes()
-            ->where('dish_id', $dish->id)->pluck('price')->all());
+        // sizes: the product's own one and its variants (the deleted one isn't copied)
+        $this->assertSame(5, DishVariant::query()->withoutGlobalScopes()->count());
+        $this->assertEquals([150, 200], DishVariant::query()->withoutGlobalScopes()
+            ->where('dish_id', $dish->id)->orderBy('price')->pluck('price')->all());
 
         // images: the menu, the category (twice) and the dish (twice) share the same file
         $this->assertSame(5, DB::table('mediables')->where('media_id', $this->photo->id)
             ->whereIn('mediable_type', ['dish-menus', 'dish-categories', 'dishes'])->count());
 
-        // scheduled changes: the pending dish change for both copies, the variant change for both variant copies
-        $copied = Alteration::query()->whereIn('alterable_type', ['dishes', 'dish-variants'])->get();
-        $this->assertCount(4, $copied);
-        $this->assertSame([175], $copied->where('alterable_type', 'dishes')->pluck('metadata')
-            ->map(fn ($metadata) => json_decode($metadata, true)['price'])->unique()->values()->all());
-        $this->assertSame($this->restaurant->id, $copied->first()->restaurant_id);
+        // scheduled changes, each a version of one change: the pending price change of the product for
+        // the first sizes of both copies, the variant's one for both variant copies
+        $versions = MenuVersion::query()->with('itemChanges')->get();
+        $this->assertCount(4, $versions);
+        $this->assertSame([$this->restaurant->id], $versions->pluck('restaurant_id')->unique()->all());
+        $this->assertSame([MenuVersion::STATUS_SCHEDULED], $versions->pluck('status')->unique()->all());
+
+        $prices = [];
+
+        /** @var MenuVersion $version */
+        foreach ($versions as $version) {
+            /** @var MenuVersionChange $change */
+            $change = $version->itemChanges->sole();
+
+            $this->assertSame('dish-variants', $change->target_type);
+            $prices[] = $change->fields['price']['new'];
+        }
+
+        $this->assertEqualsCanonicalizing([175, 175, 220, 220], $prices);
+
+        // the product's price change is one of the dish's first size
+        /** @var DishVariant $first */
+        $first = $dish->sizes()->where('price', 150)->sole();
+        /** @var MenuVersionChange $change */
+        $change = $first->scheduledChanges()->sole();
+        $this->assertEquals(175, $change->fields['price']['new']);
     }
 
     /**
@@ -239,7 +261,7 @@ class CopyOldMenuToDishesTest extends TestCase
             DishCategory::query()->withoutGlobalScopes()->count(),
             Dish::query()->withoutGlobalScopes()->count(),
             DishVariant::query()->withoutGlobalScopes()->count(),
-            Alteration::query()->count(),
+            MenuVersion::query()->count(),
         ];
         $before = $counts();
 
