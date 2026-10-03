@@ -17,11 +17,12 @@ export function setI18n(i18n: Composer) {
  *
  * @param key The translation key
  * @param params The translation parameters
+ * @param plural The number, which picks the plural form ("1 item | {count} items")
  * @returns The translated string
  */
-export function t(key: string, params: Record<string, unknown> = {}): string {
+export function t(key: string, params: Record<string, unknown> = {}, plural?: number): string {
   if (globalI18n) {
-    return globalI18n.t(key, params);
+    return plural === undefined ? globalI18n.t(key, params) : globalI18n.t(key, params, plural);
   }
 
   // Fallback to the key if i18n is not available

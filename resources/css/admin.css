@@ -293,6 +293,70 @@
     background: var(--color-zinc-100);
   }
 
+  /* Button of the preview's toolbar: 32px, 13px */
+  .e-tb {
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 10px;
+    border: 1px solid var(--color-zinc-200);
+    border-radius: 6px;
+    background: #ffffff;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-zinc-900);
+    white-space: nowrap;
+  }
+
+  .e-tb:hover {
+    background: var(--color-zinc-50);
+  }
+
+  /* Segmented control: a zinc track, the pressed one is white */
+  .e-seg {
+    display: inline-flex;
+    gap: 2px;
+    padding: 2px;
+    border-radius: 8px;
+    background: var(--color-zinc-100);
+  }
+
+  .e-seg > * {
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-zinc-600);
+    white-space: nowrap;
+  }
+
+  .e-seg > *:hover {
+    color: var(--color-zinc-900);
+  }
+
+  .e-seg > [aria-pressed="true"] {
+    background: #ffffff;
+    color: var(--color-zinc-900);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 0.1);
+  }
+
+  /* A key, e.g. Alt */
+  .e-kbd {
+    font-size: 11px;
+    line-height: 16px;
+    font-weight: 600;
+    padding: 0 4px;
+    border-radius: 3px;
+    border: 1px solid var(--color-zinc-300);
+    background: var(--color-zinc-50);
+    color: var(--color-zinc-500);
+  }
+
   /* Card of the dashboard: white, 1px border, radius 10 */
   .e-card {
     background: #ffffff;
@@ -329,7 +393,8 @@
   }
 
   /* Visible keyboard focus everywhere in the editor */
-  .e-focus:focus-visible, .e-btn:focus-visible, .e-icon-btn:focus-visible, .e-nav-btn:focus-visible, .e-link:focus-visible {
+  .e-focus:focus-visible, .e-btn:focus-visible, .e-icon-btn:focus-visible, .e-nav-btn:focus-visible, .e-link:focus-visible,
+  .e-tb:focus-visible, .e-seg > :focus-visible {
     outline: 2px solid var(--color-blue-600);
     outline-offset: 1px;
   }

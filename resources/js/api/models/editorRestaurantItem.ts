@@ -14,4 +14,9 @@ export interface EditorRestaurantItem {
   /** In the current language. */
   name: string;
   default_locale: string;
+  /**
+   * Its cover.
+   * @nullable
+   */
+  photo: string | null;
 }

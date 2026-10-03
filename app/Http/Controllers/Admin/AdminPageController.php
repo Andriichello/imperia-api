@@ -68,6 +68,7 @@ abstract class AdminPageController extends Controller
     {
         return [
             'user' => [
+                'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
             ],

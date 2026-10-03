@@ -1,128 +1,62 @@
-import {computed, onBeforeUnmount, Ref, ref, watch} from 'vue'
-import axios from 'axios'
-import type {EditorRestaurant} from '@/api'
-import type {PreviewPatch} from '@/editor/protocol'
-import {PanelGuard, useEditorStore} from '@/stores/editor'
-
-/** Validation errors of a request, by field ("notes.0.text.en"). */
-export type ValidationErrors = Record<string, string[]>
-
-interface DraftOptions<T> {
-  // the saved values, from the restaurant in the store (in the same shape as the draft)
-  saved: () => T
-  // save the values: one request, which responds with everything of the restaurant
-  save: (values: T) => Promise<EditorRestaurant>
-  // the values in the preview: the public page's data, in the preview's language
-  preview?: (values: T, locale: string) => PreviewPatch
-  // the values are valid, they can be saved
-  canSave?: () => boolean
-  // something isn't done yet, which is lost when the panel is left (e.g. an upload)
-  pending?: () => boolean
-  // keys of items of lists in the values, by the list's field ("notes"): errors of an item
-  // ("notes.2.text.en") are kept by its key ("notes.note-7.text.en"), it may be dragged meanwhile
-  lists?: Record<string, (values: T) => string[]>
-}
+import {computed, onBeforeUnmount, watch, WritableComputedRef} from 'vue'
+import {isNewId, Selection} from '@/editor/sections'
+import type {ValidationErrors} from '@/editor/items'
+import {useEditorStore} from '@/stores/editor'
 
 /**
- * A panel's draft: its changes stay in the panel (and the preview shows them) till they're
- * saved. Validation errors of saving are kept by field.
+ * A panel's draft: the part's changes, kept in the editor's store till they're saved or
+ * discarded (the save bar saves them, the preview shows them). Leaving the panel keeps them.
+ *
+ * @param selection The part the panel edits
  */
-export function usePanelDraft<T>(options: DraftOptions<T>) {
+export function usePanelDraft<T>(selection: Selection) {
   const editor = useEditorStore()
 
-  const copy = (value: T): T => JSON.parse(JSON.stringify(value))
+  const entry = editor.draftOf<T>(selection)
 
-  const draft = ref(copy(options.saved())) as Ref<T>
-  const errors = ref<ValidationErrors>({})
-  const saving = ref(false)
-  // saving failed for another reason (no connection, a server error)
-  const failed = ref(false)
+  const draft: WritableComputedRef<T> = computed({
+    get: () => entry.values,
+    set: (values: T) => {
+      entry.values = values
+    },
+  })
 
-  const dirty = computed(() => JSON.stringify(draft.value) !== JSON.stringify(options.saved())
-    || !!options.pending?.())
+  const dirty = computed(() => editor.isUnsaved(selection))
 
-  watch(dirty, (value) => {
-    editor.dirty = value
-  }, {immediate: true})
-
-  if (options.preview) {
-    watch([draft, () => editor.previewLocale], () => {
-      editor.previewPatch = options.preview!(draft.value, editor.previewLocale)
-    }, {deep: true, immediate: true})
-  }
-
-  function discard() {
-    draft.value = copy(options.saved())
-    errors.value = {}
-    failed.value = false
-  }
-
-  /** Errors of items of lists by their keys (in the order the items were sent). */
-  function keyed(received: ValidationErrors, values: T): ValidationErrors {
-    const lists = Object.entries(options.lists ?? {}).map(([field, keysOf]) => ({field, keys: keysOf(values)}))
-
-    return Object.fromEntries(Object.entries(received).map(([field, messages]) => {
-      for (const list of lists) {
-        const match = field.match(new RegExp(`^${list.field}\\.(\\d+)(.*)$`))
-        const key = match ? list.keys[parseInt(match[1])] : undefined
-
-        if (match && key !== undefined) {
-          return [`${list.field}.${key}${match[2]}`, messages]
-        }
+  // a new item is in the preview, once something of it is typed: the preview shows it
+  if (isNewId(selection.id)) {
+    const stop = watch(dirty, (value) => {
+      if (value) {
+        stop()
+        editor.select(editor.selection, true, 'none')
       }
-
-      return [field, messages]
-    }))
+    })
   }
 
-  async function save(): Promise<boolean> {
-    saving.value = true
-    errors.value = {}
-    failed.value = false
-
-    const values = copy(draft.value)
-
-    try {
-      editor.restaurant = await options.save(values)
-      draft.value = copy(options.saved())
-
-      return true
-    } catch (e) {
-      if (axios.isAxiosError(e) && e.response?.status === 422) {
-        errors.value = keyed(e.response.data?.errors ?? {}, values)
-      } else {
-        failed.value = true
-      }
-
-      return false
-    } finally {
-      saving.value = false
-    }
-  }
+  // of the last save
+  const errors = computed<ValidationErrors>(() => entry.errors)
 
   /** The first error of the field. */
   function error(field: string): string | null {
-    return errors.value[field]?.[0] ?? null
+    return entry.errors[field]?.[0] ?? null
   }
 
-  // leaving the panel with changes asks whether to save them or discard them
-  const guard: PanelGuard = {
-    save,
-    discard,
-    canSave: () => !options.pending?.() && (options.canSave?.() ?? true),
+  /**
+   * Change the values after something was done, which may end after the panel is left (an
+   * upload): the change goes to the part's draft, whether it's open or not.
+   */
+  function change(update: (values: T) => T) {
+    const current = editor.draftOf<T>(selection)
+
+    current.values = update(current.values)
   }
 
-  editor.guard(guard)
+  function discard() {
+    editor.discard(entry.key)
+  }
 
-  // the preview shows the saved values again, when the panel is left
-  onBeforeUnmount(() => {
-    editor.unguard(guard)
-    editor.dirty = false
+  // a draft, which changes nothing, isn't kept
+  onBeforeUnmount(() => editor.prune())
 
-    if (options.preview) {
-      editor.previewPatch = options.preview(options.saved(), editor.previewLocale)
-    }
-  })
-
-  return {draft, dirty, errors, saving, failed, discard, save, error}
+  return {draft, dirty, errors, error, change, discard}
 }

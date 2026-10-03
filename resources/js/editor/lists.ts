@@ -9,3 +9,13 @@ export function moveItem<T>(list: T[], from: number, to: number): T[] {
 
   return moved
 }
+
+let keys = 0
+
+/**
+ * A key of a new item of a list (a note, a size, a special day), which differs from the ones
+ * of drafts kept from before (they're kept over reloads).
+ */
+export function newKey(): string {
+  return `new-${Date.now().toString(36)}-${++keys}`
+}

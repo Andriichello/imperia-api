@@ -1,5 +1,6 @@
 import {DateTime} from 'luxon'
 import type {EditorInterval, EditorRestaurant, EditorWeekdays} from '@/api'
+import type {HoursDraft} from '@/editor/drafts'
 
 export type OpenState = 'open' | 'closed' | 'temporarily_closed'
 
@@ -55,4 +56,56 @@ export function openState(restaurant: EditorRestaurant, now: DateTime = DateTime
   }
 
   return 'closed'
+}
+
+/** What's wrong with hours (see `editor.hours.*` for the messages). */
+export type HoursProblem = 'same_time' | 'overlap' | 'pick_date' | 'end_before_start'
+
+const minutes = (hour: number, minute: number) => hour * 60 + minute
+
+/**
+ * What's wrong with the hours of a day: an interval closes when it opens, or two overlap
+ * (the same check as the server's).
+ */
+export function intervalsProblem(intervals: EditorInterval[]): HoursProblem | null {
+  const ranges: number[][] = []
+
+  for (const interval of intervals) {
+    const beg = minutes(interval.beg_hour, interval.beg_minute)
+    const end = minutes(interval.end_hour, interval.end_minute)
+
+    if (beg === end) {
+      return 'same_time'
+    }
+
+    const range = [beg, end < beg ? end + 24 * 60 : end]
+
+    if (ranges.some((other) => range[0] < other[1] && other[0] < range[1])) {
+      return 'overlap'
+    }
+
+    ranges.push(range)
+  }
+
+  return null
+}
+
+/** What's wrong with a special day: no date, or its hours. */
+export function specialDayProblem(day: EditorInterval & { starts_on: string, ends_on: string, is_closed: boolean }): HoursProblem | null {
+  if (!day.starts_on) {
+    return 'pick_date'
+  }
+
+  if (day.ends_on && day.ends_on < day.starts_on) {
+    return 'end_before_start'
+  }
+
+  return day.is_closed ? null : intervalsProblem([day])
+}
+
+/** Whether the hours can be saved as they are. */
+export function hoursValid(hours: HoursDraft): boolean {
+  return !(hours.closed && !hours.closed_until)
+    && Object.values(hours.weekdays).every((intervals) => !intervalsProblem(intervals))
+    && hours.exceptions.every((day) => !specialDayProblem(day))
 }

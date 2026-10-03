@@ -10117,7 +10117,8 @@
                     "id",
                     "slug",
                     "name",
-                    "default_locale"
+                    "default_locale",
+                    "photo"
                 ],
                 "properties": {
                     "id": {
@@ -10136,6 +10137,12 @@
                     "default_locale": {
                         "type": "string",
                         "example": "en"
+                    },
+                    "photo": {
+                        "description": "Its cover.",
+                        "type": "string",
+                        "example": "https://example.com/storage/media/cover.jpg",
+                        "nullable": true
                     }
                 },
                 "type": "object"

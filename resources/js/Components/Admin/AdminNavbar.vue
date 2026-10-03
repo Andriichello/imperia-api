@@ -19,6 +19,11 @@
       type: Object as PropType<{ dashboard: string, logout: string, panel: string | null }>,
       required: true,
     },
+    // the page of another restaurant (its dashboard, or e.g. its editor)
+    switchUrl: {
+      type: Function as PropType<(id: number) => string>,
+      default: null,
+    },
   })
 
   const {t} = useI18n()
@@ -34,7 +39,7 @@
 
   const csrfToken = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content ?? ''
 
-  const switchUrl = (id: number) => `${props.urls.dashboard}?restaurant=${id}`
+  const urlOf = (id: number) => props.switchUrl ? props.switchUrl(id) : `${props.urls.dashboard}?restaurant=${id}`
 </script>
 
 <template>
@@ -70,7 +75,7 @@
 
       <a class="e-dropdown-item"
          role="menuitem"
-         :href="switchUrl(item.id)"
+         :href="urlOf(item.id)"
          :aria-current="item.id === restaurantId"
          v-for="item in restaurants" :key="item.id">
         <span class="flex-1 truncate">{{ item.name }}</span>

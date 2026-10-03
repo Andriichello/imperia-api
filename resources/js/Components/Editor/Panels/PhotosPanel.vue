@@ -1,22 +1,22 @@
 <script setup lang="ts">
-  import {computed, onBeforeUnmount, reactive, ref} from 'vue'
+  import {computed, reactive, ref} from 'vue'
   import {useI18n} from 'vue-i18n'
   import axios from 'axios'
   import {Trash2, Upload, X} from 'lucide-vue-next'
   import {VueDraggable} from 'vue-draggable-plus'
   import type {Media} from '@/api'
-  import {updateEditorRestaurantPhotos, uploadEditorRestaurantPhoto} from '@/api'
+  import {uploadEditorRestaurantPhoto} from '@/api'
   import PanelShell from '@/Components/Editor/PanelShell.vue'
   import GripHandle from '@/Components/Editor/Fields/GripHandle.vue'
   import {moveItem} from '@/editor/lists'
   import InfoBox from '@/Components/Editor/Fields/InfoBox.vue'
   import {usePanelDraft} from '@/composables/usePanelDraft'
-  import {photosPreview} from '@/editor/drafts'
   import {useEditorStore} from '@/stores/editor'
 
   /**
    * Photos of the restaurant page's slideshow: the first one is the cover. Uploads start
-   * right away, but the photos join the gallery only when it's saved.
+   * right away (and go on when the panel is left), but the photos join the gallery only when
+   * it's saved.
    */
   const editor = useEditorStore()
   const {t} = useI18n()
@@ -37,18 +37,10 @@
     controller: AbortController
   }
 
-  // photos being uploaded, they join the draft once they are (before the draft: it waits for them)
+  // photos being uploaded, they join the draft once they are
   const uploads = ref<PhotoUpload[]>([])
 
-  const {draft, dirty, saving, failed, discard, save, error} = usePanelDraft<Media[]>({
-    saved: () => restaurant.value.photos ?? [],
-    save: async (photos) => (await updateEditorRestaurantPhotos(restaurant.value.id, {
-      media: photos.map((photo) => ({id: photo.id, is_hidden: photo.is_hidden ?? false})),
-    })).data.data,
-    preview: (photos) => photosPreview(photos),
-    // photos being uploaded are lost, when the panel is left
-    pending: () => uploads.value.length > 0,
-  })
+  const {draft, change, error} = usePanelDraft<Media[]>({section: 'photos', id: null})
 
   // files, which weren't uploaded, and why
   const rejected = ref<string[]>([])
@@ -99,6 +91,7 @@
     })
 
     uploads.value.push(item)
+    editor.uploads++
 
     try {
       const response = await uploadEditorRestaurantPhoto(restaurant.value.id, {file}, {
@@ -108,7 +101,7 @@
         },
       })
 
-      draft.value = [...draft.value, response.data.data]
+      change((photos) => [...photos, response.data.data])
     } catch (e) {
       if (!axios.isCancel(e)) {
         const reason = axios.isAxiosError(e) ? e.response?.data?.errors?.file?.[0] : null
@@ -117,12 +110,9 @@
       }
     } finally {
       uploads.value = uploads.value.filter((other) => other.key !== item.key)
+      editor.uploads--
       URL.revokeObjectURL(item.url)
     }
-  }
-
-  function cancelUploads() {
-    uploads.value.forEach((item) => item.controller.abort())
   }
 
   function onDrop(event: DragEvent) {
@@ -134,31 +124,14 @@
     draft.value = draft.value.filter((item) => item.id !== photo.id)
   }
 
-  function onDiscard() {
-    cancelUploads()
-    rejected.value = []
-    discard()
-  }
-
-  onBeforeUnmount(cancelUploads)
 </script>
 
 <template>
   <PanelShell :breadcrumbs="[{label: t('editor.panel.page_structure'), selection: null}]"
               :title="t('editor.sections.photos')"
               :subtitle="t('editor.subtitles.photos')"
-              :dirty="dirty"
-              :saving="saving"
-              :failed="failed"
-              :can-save="uploads.length === 0"
               @navigate="editor.close()"
-              @close="editor.close()"
-              @discard="onDiscard"
-              @save="save">
-    <template #status v-if="uploads.length && !saving">
-      <span class="size-[7px] rounded-full bg-amber-500" aria-hidden="true"/>
-      <span class="text-[#a16207]">{{ t('editor.photos.uploading', uploads.length) }}</span>
-    </template>
+              @close="editor.close()">
 
     <div class="flex flex-col items-center gap-1.5 px-4 py-5 border-[1.5px] border-dashed rounded-lg text-center transition-colors"
          :class="dragging ? 'border-blue-600 bg-blue-50' : 'border-zinc-400 bg-zinc-50'"

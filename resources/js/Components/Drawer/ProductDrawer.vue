@@ -9,6 +9,7 @@ import DishTags from "@/Components/Menu/DishTags.vue";
 import { getAllergenLabel, getAllergens } from "@/flags";
 import { useI18n } from "vue-i18n";
 import BaseDrawer from "@/Components/Drawer/BaseDrawer.vue";
+import { editKey } from "@/editor/editKey";
 
 const i18n = useI18n();
 
@@ -57,6 +58,7 @@ const closePopup = () => {
     <div class="w-full h-full flex flex-col overflow-auto">
       <template v-if="product">
         <div class="w-full h-65 shrink-0 relative overflow-hidden border-b border-base-300"
+             v-bind="editKey('dish-photos')"
              v-if="media.length">
           <div class="absolute inset-0 overflow-hidden flex flex-col justify-center">
             <DiagonalPattern class="scale-165 text-primary-content/50"
@@ -82,6 +84,7 @@ const closePopup = () => {
 
         <!-- Without photos: a strip under the close button -->
         <div class="w-full h-15 shrink-0 relative overflow-hidden border-b border-base-300"
+             v-bind="editKey('dish-photos')"
              v-else>
           <div class="absolute inset-0 overflow-hidden flex flex-col justify-center">
             <DiagonalPattern class="scale-165 text-primary-content/50"
@@ -90,12 +93,14 @@ const closePopup = () => {
         </div>
 
         <div class="w-full shrink-0 px-5 py-2.5 bg-primary/10 text-primary-content text-base/6 font-semibold"
+             v-bind="editKey('dish-badge')"
              v-if="product.badge?.length">
           {{ product.badge }}
         </div>
 
         <div class="flex flex-col gap-5 pt-4 px-5 pb-20">
-          <div class="flex flex-col items-start gap-2">
+          <div class="flex flex-col items-start gap-2"
+               v-bind="editKey('dish-text')">
             <h2 class="text-[22px]/[30px] font-semibold">
               {{ product.title }}
             </h2>
@@ -106,7 +111,8 @@ const closePopup = () => {
             </p>
           </div>
 
-          <div class="flex flex-col gap-2">
+          <div class="flex flex-col gap-2"
+               v-bind="editKey('dish-sizes')">
             <h3 class="text-lg/7 font-semibold">
               {{ i18n.t('product.sizes') }}
             </h3>
@@ -141,9 +147,10 @@ const closePopup = () => {
             </div>
           </div>
 
-          <DishTags class="text-sm/5" icon-class="size-4" :flags="product.flags"/>
+          <DishTags class="text-sm/5" icon-class="size-4" :flags="product.flags" v-bind="editKey('dish-tags')"/>
 
           <div class="flex flex-col gap-1.5 p-2.5 rounded-lg bg-orange-700/6 border border-orange-700/25"
+               v-bind="editKey('dish-allergens')"
                v-if="allergens.length">
             <h3 class="flex items-center gap-1 text-sm/5 font-semibold text-orange-700">
               <TriangleAlert class="size-4 shrink-0"/>

@@ -82,6 +82,7 @@ class EditorPageTest extends EditorTestCase
         $this->assertSame($this->restaurant->id, $props['restaurant']->resolve()['id']);
         $this->assertSame([$menu->id], collect($props['restaurant']->resolve()['menus'])->pluck('id')->all());
         $this->assertSame([$this->restaurant->id], $props['restaurants']->pluck('id')->all());
+        $this->assertSame($this->admin->id, $props['user']['id']);
         $this->assertSame($this->admin->email, $props['user']['email']);
         $this->assertSame(route('admin.dashboard'), $props['urls']['dashboard']);
         $this->assertSame(route('admin.logout'), $props['urls']['logout']);
@@ -138,6 +139,10 @@ class EditorPageTest extends EditorTestCase
 
         $this->get(route('admin.editor', ['id' => $other->id]))
             ->assertOk();
+
+        // the page and the part to edit go along (links of the dashboard)
+        $this->get(route('admin.editor.index', ['select' => 'hours', 'page' => 'menu:3', 'other' => 1]))
+            ->assertRedirect(route('admin.editor', ['id' => $other->id, 'page' => 'menu:3', 'select' => 'hours']));
 
         $this->signIn($manager)
             ->get(route('admin.editor.index'))

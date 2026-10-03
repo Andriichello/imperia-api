@@ -21,6 +21,7 @@ export interface AdminUrls {
 }
 
 export interface AdminUser {
+  id: number
   name: string
   email: string
 }

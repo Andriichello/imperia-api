@@ -12,7 +12,8 @@ import type {
   Media,
 } from '@/api'
 import type {PreviewPatch} from '@/editor/protocol'
-import {NEW_ID} from '@/editor/sections'
+import {isNewId} from '@/editor/sections'
+import {newKey} from '@/editor/lists'
 import {translated, Translations, translationsOf} from '@/editor/translations'
 
 /**
@@ -170,12 +171,12 @@ export function textsRequest(draft: TextsDraft) {
 }
 
 /** The menus with the menu's texts (a new one at the end). */
-export function applyMenu(menus: EditorMenu[], id: number | null, draft: TextsDraft, restaurantId: number): EditorMenu[] {
+export function applyMenu(menus: EditorMenu[], id: number, draft: TextsDraft, restaurantId: number): EditorMenu[] {
   const values = {title: draft.title, description: draft.description, is_hidden: draft.is_hidden}
 
-  if (id === null) {
+  if (isNewId(id)) {
     return [...menus, {
-      id: NEW_ID,
+      id,
       restaurant_id: restaurantId,
       slug: null,
       archived: false,
@@ -203,16 +204,16 @@ export function categoryOf(category: EditorCategory | null, locales: string[]): 
 }
 
 /** The menus with the category's texts and its dishes in their order (a new one in its menu). */
-export function applyCategory(menus: EditorMenu[], id: number | null, menuId: number, draft: CategoryDraft): EditorMenu[] {
+export function applyCategory(menus: EditorMenu[], id: number, menuId: number, draft: CategoryDraft): EditorMenu[] {
   const values = {title: draft.title, description: draft.description, is_hidden: draft.is_hidden}
 
   return menus.map((menu) => {
-    if (id === null) {
+    if (isNewId(id)) {
       return menu.id === menuId
         ? {
           ...menu,
           categories: [...(menu.categories ?? []), {
-            id: NEW_ID,
+            id,
             menu_id: menuId,
             slug: null,
             archived: false,
@@ -273,11 +274,16 @@ export interface DishDraft {
 
 const field = (value: string | number | null | undefined) => value === null || value === undefined ? '' : String(value)
 
-let newSizes = 0
-
-export function sizeOf(size: Partial<EditorSize> = {}): SizeDraft {
+/**
+ * A size to edit: a saved one, or a new one.
+ *
+ * @param size
+ * @param key Of a new one (the first size of a new dish has the same one every time, so that
+ *            the new dish's draft equals its empty values till something is typed)
+ */
+export function sizeOf(size: Partial<EditorSize> = {}, key: string | null = null): SizeDraft {
   return {
-    key: size.id ? `size-${size.id}` : `new-${++newSizes}`,
+    key: size.id ? `size-${size.id}` : (key ?? newKey()),
     id: size.id ?? null,
     is_hidden: size.is_hidden ?? false,
     weight: field(size.weight),
@@ -300,7 +306,7 @@ export function dishOf(dish: EditorDish | null, locales: string[]): DishDraft {
     badge: translationsOf(dish?.badge, locales),
     is_hidden: dish?.is_hidden ?? false,
     flags: [...(dish?.flags ?? [])],
-    sizes: sizes.map((size) => sizeOf(size)),
+    sizes: sizes.map((size) => sizeOf(size, 'new-first')),
     shared,
     preparation_time: field(first.preparation_time),
     calories: field(first.calories),
@@ -347,7 +353,7 @@ export function dishRequest(draft: DishDraft, isNew: boolean): EditorStoreDishRe
 }
 
 /** The menus with the dish's values (a new one in its category). */
-export function applyDish(menus: EditorMenu[], id: number | null, categoryId: number, draft: DishDraft): EditorMenu[] {
+export function applyDish(menus: EditorMenu[], id: number, categoryId: number, draft: DishDraft): EditorMenu[] {
   const values = {
     title: draft.title,
     description: draft.description,
@@ -361,12 +367,12 @@ export function applyDish(menus: EditorMenu[], id: number | null, categoryId: nu
   return menus.map((menu) => ({
     ...menu,
     categories: (menu.categories ?? []).map((category) => {
-      if (id === null) {
+      if (isNewId(id)) {
         return category.id === categoryId
           ? {
             ...category,
             dishes: [...(category.dishes ?? []), {
-              id: NEW_ID,
+              id,
               menu_id: menu.id,
               category_id: categoryId,
               slug: null,

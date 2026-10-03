@@ -1,29 +1,9 @@
 {
   "editor": {
     "title": "Page editor",
-    "top": {
-      "home": "Dashboard",
-      "switch_restaurant": "Switch restaurant",
-      "page": "Page in the preview",
-      "restaurant_page": "Restaurant page",
-      "menu_page": "Menu page · {menu}",
-      "mode": "Preview mode",
-      "select": "Select",
-      "browse": "Browse",
-      "preview_in": "Preview in",
-      "preview_language": "Language of the preview",
-      "brand_colors": "Brand colors",
-      "view_site": "View site",
-      "account": "Account",
-      "admin_panel": "Admin panel",
-      "sign_out": "Sign out",
-      "interface_language": "Language of the editor"
-    },
     "structure": {
       "title": "Page structure",
       "help": "Click a part of the page on the right, or pick it here.",
-      "restaurant_page": "Restaurant page",
-      "menus": "Menus",
       "appearance": "Appearance",
       "photos_count": "No photos | {count} photo | {count} photos",
       "details_meta": "Name, type, contacts",
@@ -35,7 +15,9 @@
       "hide_categories": "Hide categories of {menu}",
       "hidden": "Hidden from guests",
       "no_menus": "No menus yet",
-      "custom_colors": "Custom"
+      "custom_colors": "Custom",
+      "restaurant": "Restaurant",
+      "hidden_count": "{count} hidden"
     },
     "status": {
       "open": "Open now",
@@ -72,31 +54,17 @@
       "close": "Close panel",
       "more_actions": "More actions for {name}",
       "content_language": "Content language",
-      "default": "Default",
-      "missing": "{count} missing",
-      "complete": "Complete",
-      "unsaved": "Unsaved changes",
-      "saved": "All changes saved",
-      "saving": "Saving…",
-      "discard": "Discard",
-      "save": "Save changes",
       "not_found": "This part isn't there anymore.",
-      "save_failed": "Couldn't save. Try again."
+      "translated": "{filled} of {total} texts translated"
     },
     "preview": {
       "title": "Preview of your public page",
-      "hint_select": "Select mode: click any part of the page to edit it",
-      "hint_browse": "Browse mode: the page works like your public site",
-      "hint_alt": "Browsing — release Alt to select",
-      "hint_editing": "Editing: {name} · click another part of the page to switch",
-      "hint_hidden": "Editing: {name} · hidden from guests, so it isn't on the page",
-      "item": "{kind} “{name}”",
       "click_to_edit": "{label} · click to edit",
-      "hint_brand": "Previewing {name} on two pages · nothing is live until you save",
-      "menu_page": "Menu page"
+      "menu_page": "Menu page",
+      "hidden": "Guests don't see it, so it isn't in the preview",
+      "unsaved": "{label} · unsaved changes"
     },
     "brand": {
-      "save": "Save for all pages",
       "presets_title": "Presets",
       "text": "text",
       "custom": "Custom",
@@ -233,7 +201,6 @@
     },
     "menu": {
       "new": "New menu",
-      "create": "Create menu",
       "name": "Menu name",
       "description": "Description",
       "description_help": "Optional. Shown under the menu's name.",
@@ -244,7 +211,6 @@
     },
     "category": {
       "new": "New category",
-      "create": "Create category",
       "name": "Category name",
       "description": "Description",
       "description_help": "Optional. Shown under the category title.",
@@ -260,7 +226,6 @@
     },
     "dish": {
       "new": "New dish",
-      "create": "Create dish",
       "shown": "Shown on the menu",
       "shown_help": "Turn off to hide it for a while, e.g. when it's sold out.",
       "photo": "Photo",
@@ -307,7 +272,10 @@
       "allergens": "Allergens",
       "selected": "{count} selected",
       "allergens_help": "Guests see these in orange on the list and can hide dishes that contain them.",
-      "move_to": "Move to category…"
+      "move_to": "Move to category…",
+      "selected_in_preview": "Selected in preview",
+      "on_its_page": "The preview shows this dish's page. Click a block there to jump to its field.",
+      "back_to_list": "Back to the menu list"
     },
     "actions": {
       "duplicate": "Duplicate",
@@ -335,16 +303,118 @@
     "confirm": {
       "cancel": "Cancel"
     },
-    "leave": {
-      "title": "Save your changes?",
-      "message": "This panel has changes, which aren't saved yet.",
-      "message_invalid": "This panel has changes, which can't be saved as they are. Discard them, or stay and fix them.",
-      "save": "Save",
-      "discard": "Discard"
-    },
     "narrow": {
       "preview": "Preview",
       "back": "Back to editing"
+    },
+    "toolbar": {
+      "restaurant_page": "Restaurant page",
+      "menu_page": "Menu · {menu}",
+      "dish_page": "Dish page · {dish}",
+      "page": "Page in the preview: {page}",
+      "mode": "Clicks in the preview",
+      "select": "Select",
+      "browse": "Browse",
+      "select_help": "Click a part of the page to edit it",
+      "browse_help": "Use the page like a guest. Hold Alt to browse for a moment.",
+      "preview": "Preview",
+      "preview_language": "Preview language",
+      "colors": "Colors"
+    },
+    "dish_fields": {
+      "photos": "Photos",
+      "badge": "Badge",
+      "text": "Name and description",
+      "sizes": "Sizes and prices",
+      "tags": "Diet and spiciness",
+      "allergens": "Allergens"
+    },
+    "save": {
+      "unsaved": "Unsaved",
+      "new": "New",
+      "saved": "All changes saved",
+      "saving": "Saving…",
+      "count": "No unsaved items | {count} item unsaved | {count} items unsaved",
+      "discard_all": "Discard all",
+      "save_all": "Save all",
+      "discard_title": "Discard the unsaved item? | Discard {count} unsaved items?",
+      "discard_message": "Your changes are lost. It can't be undone.",
+      "not_saved": "{count} item wasn't saved. Fix it and save again. | {count} items weren't saved. Fix them and save again.",
+      "show": "Show",
+      "wait_uploads": "Wait till the photos are uploaded"
+    },
+    "unsaved": {
+      "title": "No unsaved items | {count} unsaved item | {count} unsaved items",
+      "kept": "Kept until you save or discard",
+      "find": "Find an item",
+      "find_label": "Find an unsaved item",
+      "nothing_found": "Nothing found.",
+      "open_now": "open now",
+      "revert": "Revert the changes to {name}",
+      "revert_short": "Revert",
+      "reverted": "Changes to “{name}” reverted",
+      "failed": "Couldn't save",
+      "needs_fixing": "Needs fixing",
+      "restaurant_page": "Restaurant page",
+      "changed": "Changed",
+      "new": {
+        "menu": "New menu",
+        "category": "New category",
+        "dish": "New dish"
+      },
+      "name": "Name",
+      "restaurant_name": "Name",
+      "description": "Description",
+      "badge": "Badge",
+      "type": "Type",
+      "phone": "Phone",
+      "address": "Address",
+      "hidden": "Hidden from guests",
+      "shown": "Shown to guests",
+      "photo_replaced": "Photo replaced",
+      "photos_added": "Photo added | {count} photos added",
+      "photos_removed": "Photo removed | {count} photos removed",
+      "photos_hidden": "Photo hidden | {count} photos hidden",
+      "photos_shown": "Photo shown | {count} photos shown",
+      "photos_visibility": "Photos hidden and shown",
+      "photo_order": "Photo order",
+      "price_of": "Price {size}: {from} → {to}",
+      "price_change": "Price: {from} → {to}",
+      "prices": "Price | Prices for {count} sizes",
+      "size_added": "Size {size} added",
+      "size_added_unnamed": "Size added",
+      "size_removed": "Size {size} removed",
+      "size_removed_unnamed": "Size removed",
+      "size_hidden": "Size {size} hidden",
+      "size_hidden_unnamed": "Size hidden",
+      "size_shown": "Size {size} shown",
+      "size_shown_unnamed": "Size shown",
+      "sizes": "Sizes",
+      "diet": "Diet",
+      "allergens": "Allergens",
+      "dish_order": "Dish order",
+      "menu_order": "Menu order",
+      "item_hidden": "{name} hidden",
+      "item_shown": "{name} shown",
+      "category_moved": "{name} moved to {menu}",
+      "categories_moved": "Category moved | {count} categories moved",
+      "category_order": "Category order",
+      "notes_added": "Note added | {count} notes added",
+      "notes_removed": "Note removed | {count} notes removed",
+      "notes_edited": "Note edited | {count} notes edited",
+      "notes_hidden": "Note hidden | {count} notes hidden",
+      "notes_shown": "Note shown | {count} notes shown",
+      "notes_visibility": "Notes hidden and shown",
+      "note_order": "Note order",
+      "time_zone": "Time zone",
+      "day_hours": "{day}: {hours}",
+      "day_closed": "{day}: closed",
+      "days_hours": "Hours of {count} day | Hours of {count} days",
+      "special_days": "Special days",
+      "closed_temporarily": "Closed temporarily",
+      "reopened": "Not closed anymore",
+      "colors": "Colors: {name}",
+      "custom_colors": "Custom"
     }
   }
 }

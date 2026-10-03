@@ -3,20 +3,21 @@
   import {useI18n} from 'vue-i18n'
   import {Archive, ChevronDown, ChevronRight, Copy, Ellipsis, Eye, EyeOff, Plus, RotateCcw, Trash2} from 'lucide-vue-next'
   import type {EditorCategory} from '@/api'
-  import {getEditorRestaurant, storeEditorMenu, updateEditorMenu} from '@/api'
   import PanelShell from '@/Components/Editor/PanelShell.vue'
   import DropdownMenu from '@/Components/Editor/DropdownMenu.vue'
   import FieldLabel from '@/Components/Editor/Fields/FieldLabel.vue'
+  import UnsavedPill from '@/Components/Editor/UnsavedPill.vue'
+  import NewDraftRow from '@/Components/Editor/NewDraftRow.vue'
   import {usePanelDraft} from '@/composables/usePanelDraft'
   import {useContentLocale} from '@/composables/useContentLocale'
   import {useItemActions} from '@/composables/useItemActions'
-  import {applyMenu, isListed, isShown, menusPreview, TextsDraft, textsOf, textsRequest} from '@/editor/menuDrafts'
-  import type {Breadcrumb, Selection} from '@/editor/sections'
+  import {isListed, isShown, TextsDraft} from '@/editor/menuDrafts'
+  import {Breadcrumb, isNewId, Selection} from '@/editor/sections'
   import {translated} from '@/editor/translations'
   import {useEditorStore} from '@/stores/editor'
 
   /**
-   * A menu: its name and description, and its categories. A new one is created on Save.
+   * A menu: its name and description, and its categories. A new one is created, when it's saved.
    */
   const props = defineProps({
     selection: {
@@ -30,36 +31,14 @@
   const actions = useItemActions()
 
   const restaurant = computed(() => editor.restaurant!)
-  const menu = computed(() => props.selection.id ? editor.findMenu(props.selection.id) : null)
-  const isNew = computed(() => props.selection.id === null)
+  const isNew = computed(() => isNewId(props.selection.id))
+  const menu = computed(() => isNew.value ? null : editor.findMenu(props.selection.id))
 
-  // the id of the menu, which was created
-  let created: number | null = null
-
-  const {draft, dirty, saving, failed, discard, save, error} = usePanelDraft<TextsDraft>({
-    saved: () => textsOf(menu.value, editor.locales),
-    save: async (texts) => {
-      if (menu.value) {
-        await updateEditorMenu(menu.value.id, textsRequest(texts))
-      } else {
-        created = (await storeEditorMenu(restaurant.value.id, textsRequest(texts))).data.data.id
-      }
-
-      return (await getEditorRestaurant(restaurant.value.id)).data.data
-    },
-    canSave: () => canSave.value,
-    preview: (texts, locale) => menusPreview(
-      applyMenu(restaurant.value.menus, props.selection.id, texts, restaurant.value.id),
-      locale,
-      editor.defaultLocale,
-    ),
-  })
+  const {draft, error} = usePanelDraft<TextsDraft>(props.selection)
 
   const {locale, languages, placeholder, textError} = useContentLocale(
     () => [draft.value.title, draft.value.description]
   )
-
-  const canSave = computed(() => !!draft.value.title[editor.defaultLocale]?.trim())
 
   const name = (item: { title: EditorCategory['title'] }) => translated(item.title, editor.defaultLocale)
 
@@ -73,13 +52,6 @@
   const categories = computed(() => (menu.value?.categories ?? []).filter(isListed))
   const archived = computed(() => (menu.value?.categories ?? []).filter((category) => category.archived))
   const showArchived = ref(false)
-
-  async function onSave() {
-    // a new menu: its panel, once it's created
-    if (await save() && created) {
-      editor.select({section: 'menu', id: created})
-    }
-  }
 
   /** Guests see only this menu: hiding or archiving it leaves the menu page empty. */
   async function confirmLastVisible(): Promise<boolean> {
@@ -104,7 +76,7 @@
 
   async function archive() {
     if (menu.value && await confirmLastVisible() && await actions.archive('menu', menu.value.id, name(menu.value))) {
-      editor.select({section: 'menus', id: null}, false, true)
+      editor.select({section: 'menus', id: null}, false, 'replace')
     }
   }
 
@@ -127,15 +99,8 @@
               :subtitle="t('editor.subtitles.menu')"
               :languages="languages"
               v-model:locale="locale"
-              :dirty="dirty || isNew"
-              :saving="saving"
-              :failed="failed"
-              :can-save="canSave"
-              :save-label="isNew ? t('editor.menu.create') : null"
               @navigate="editor.select($event, !!$event)"
-              @close="editor.close()"
-              @discard="isNew ? editor.select({section: 'menus', id: null}, false, true) : discard()"
-              @save="onSave">
+              @close="editor.close()">
     <template #actions v-if="menu">
       <DropdownMenu align="end">
         <template #trigger="{open, toggle}">
@@ -221,13 +186,16 @@
 
         <button type="button"
                 class="e-btn e-btn-secondary h-8 px-2.5"
-                @click="editor.select({section: 'category', id: null, parent: menu.id})">
+                @click="editor.add('category', menu.id)">
           <Plus class="size-[15px]"/>
           {{ t('editor.menus.add_category') }}
         </button>
       </div>
 
-      <p class="py-2 text-[13px] text-zinc-500" v-if="!categories.length">{{ t('editor.menu.no_categories') }}</p>
+      <p class="py-2 text-[13px] text-zinc-500"
+         v-if="!categories.length && !editor.newItems('category', menu.id).length">
+        {{ t('editor.menu.no_categories') }}
+      </p>
 
       <button type="button"
               class="min-h-11 flex items-center gap-2.5 px-1 border-b border-[#f0f0f1] text-start hover:bg-zinc-50 e-focus"
@@ -237,6 +205,8 @@
               :class="{'text-zinc-400': category.is_hidden}">
           {{ name(category) }}
         </span>
+
+        <UnsavedPill v-if="editor.isUnsaved({section: 'category', id: category.id})"/>
 
         <span class="e-pill bg-zinc-100 text-zinc-600" v-if="category.is_hidden">
           <EyeOff class="size-3"/>
@@ -248,6 +218,11 @@
         </span>
         <ChevronRight class="size-4 text-zinc-400"/>
       </button>
+
+      <div class="py-0.5 border-b border-[#f0f0f1]"
+           v-for="entry in editor.newItems('category', menu.id)" :key="entry.key">
+        <NewDraftRow :entry="entry"/>
+      </div>
 
       <template v-if="archived.length">
         <button type="button"

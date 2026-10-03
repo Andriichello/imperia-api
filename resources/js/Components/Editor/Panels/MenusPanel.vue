@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import {computed, ref, watch} from 'vue'
+  import {computed, ref} from 'vue'
   import {useI18n} from 'vue-i18n'
   import {DateTime} from 'luxon'
   import {
@@ -17,15 +17,16 @@
   } from 'lucide-vue-next'
   import {VueDraggable} from 'vue-draggable-plus'
   import type {EditorMenu} from '@/api'
-  import {orderEditorMenus} from '@/api'
   import PanelShell from '@/Components/Editor/PanelShell.vue'
   import GripHandle from '@/Components/Editor/Fields/GripHandle.vue'
   import {moveItem} from '@/editor/lists'
   import DropdownMenu from '@/Components/Editor/DropdownMenu.vue'
   import InfoBox from '@/Components/Editor/Fields/InfoBox.vue'
+  import UnsavedPill from '@/Components/Editor/UnsavedPill.vue'
+  import NewDraftRow from '@/Components/Editor/NewDraftRow.vue'
   import {usePanelDraft} from '@/composables/usePanelDraft'
   import {useItemActions} from '@/composables/useItemActions'
-  import {applyMenuOrder, isListed, MenuOrder, menuOrderOf, menusPreview} from '@/editor/menuDrafts'
+  import {isListed, MenuOrder} from '@/editor/menuDrafts'
   import {translated} from '@/editor/translations'
   import {useEditorStore} from '@/stores/editor'
 
@@ -39,11 +40,7 @@
 
   const restaurant = computed(() => editor.restaurant!)
 
-  const {draft, dirty, saving, failed, discard, save} = usePanelDraft<MenuOrder[]>({
-    saved: () => menuOrderOf(restaurant.value.menus),
-    save: async (order) => (await orderEditorMenus(restaurant.value.id, {menus: order})).data.data,
-    preview: (order, locale) => menusPreview(applyMenuOrder(restaurant.value.menus, order), locale, editor.defaultLocale),
-  })
+  const {draft} = usePanelDraft<MenuOrder[]>({section: 'menus', id: null})
 
   const name = (item: { title: EditorMenu['title'] } | null) => item ? translated(item.title, editor.defaultLocale) : ''
 
@@ -97,36 +94,6 @@
     }
   }
 
-  /**
-   * The draft after something was done right away (archived, restored, copied): the menus and
-   * categories, which are gone, are left out, new ones are added. The rest stays as it is.
-   */
-  function syncDraft() {
-    const saved = menuOrderOf(restaurant.value.menus)
-    const savedIds = new Set(saved.map((item) => item.id))
-    const categories = new Set(saved.flatMap((item) => item.categories))
-
-    const synced = draft.value
-      .filter((item) => savedIds.has(item.id))
-      .map((item) => ({...item, categories: item.categories.filter((id) => categories.has(id))}))
-
-    const kept = new Set(synced.map((item) => item.id))
-    synced.push(...saved.filter((item) => !kept.has(item.id)))
-
-    const placed = new Set(synced.flatMap((item) => item.categories))
-
-    for (const item of saved) {
-      const target = synced.find((other) => other.id === item.id)!
-
-      target.categories.push(...item.categories.filter((id) => !placed.has(id)))
-    }
-
-    draft.value = synced
-  }
-
-  // menus and categories changed right away (also from a toast's Undo)
-  watch(() => JSON.stringify(menuOrderOf(restaurant.value.menus).map((item) => [item.id, item.categories])), syncDraft)
-
   async function archive(item: MenuOrder) {
     const menu = editor.findMenu(item.id)
 
@@ -162,17 +129,12 @@
   <PanelShell :breadcrumbs="[{label: t('editor.panel.page_structure'), selection: null}]"
               :title="t('editor.sections.menus')"
               :subtitle="t('editor.subtitles.menus')"
-              :dirty="dirty"
-              :saving="saving"
-              :failed="failed"
               @navigate="editor.close()"
-              @close="editor.close()"
-              @discard="discard"
-              @save="save">
+              @close="editor.close()">
     <template #actions>
       <button type="button"
               class="e-btn e-btn-primary h-8 px-2.5"
-              @click="editor.select({section: 'menu', id: null})">
+              @click="editor.add('menu')">
         <Plus class="size-[15px]"/>
         {{ t('editor.menus.new') }}
       </button>
@@ -180,12 +142,12 @@
 
     <section class="flex flex-col">
       <div class="flex flex-col items-start gap-3 py-2"
-           v-if="!draft.length">
+           v-if="!draft.length && !editor.newItems('menu').length">
         <p class="text-zinc-500">{{ t('editor.structure.no_menus') }}</p>
 
         <button type="button"
                 class="e-btn e-btn-secondary"
-                @click="editor.select({section: 'menu', id: null})">
+                @click="editor.add('menu')">
           <Plus class="size-[15px]"/>
           {{ t('editor.menus.first') }}
         </button>
@@ -221,6 +183,8 @@
               </span>
               <span class="text-xs text-zinc-500">{{ meta(item) }}</span>
             </button>
+
+            <UnsavedPill v-if="editor.isUnsaved({section: 'menu', id: item.id})"/>
 
             <span class="e-pill bg-zinc-100 text-zinc-600"
                   v-if="item.is_hidden">
@@ -307,21 +271,33 @@
                           :aria-label="t('editor.structure.hidden')"
                           v-if="editor.findCategory(id)?.is_hidden"/>
 
-                  <span class="ml-auto shrink-0 text-[13px] text-zinc-500">{{ dishCount(id) }}</span>
+                  <UnsavedPill class="ml-auto" v-if="editor.isUnsaved({section: 'category', id})"/>
+                  <span class="shrink-0 text-[13px] text-zinc-500"
+                        :class="{'ml-auto': !editor.isUnsaved({section: 'category', id})}">{{ dishCount(id) }}</span>
                   <ChevronRight class="size-4 shrink-0 text-zinc-400"/>
                 </button>
               </div>
             </VueDraggable>
 
+            <div class="pl-12"
+                 v-for="entry in editor.newItems('category', item.id)" :key="entry.key">
+              <NewDraftRow :entry="entry"/>
+            </div>
+
             <button type="button"
                     class="h-9 flex items-center gap-2 pl-14 pr-2.5 text-blue-600 font-semibold rounded e-focus"
-                    @click="editor.select({section: 'category', id: null, parent: item.id})">
+                    @click="editor.add('category', item.id)">
               <Plus class="size-4"/>
               {{ t('editor.menus.add_category') }}
             </button>
           </div>
         </div>
       </VueDraggable>
+
+      <div class="py-1 border-b border-[#f0f0f1]"
+           v-for="entry in editor.newItems('menu')" :key="entry.key">
+        <NewDraftRow :entry="entry"/>
+      </div>
     </section>
 
     <section class="flex flex-col gap-2"

@@ -19,7 +19,8 @@ use Illuminate\Http\Request;
 class EditorPageController extends AdminPageController
 {
     /**
-     * Open the editor of the current restaurant (the user's own one, or the one picked last).
+     * Open the editor of the current restaurant (the user's own one, or the one picked last),
+     * with the page and the part to edit of the query (e.g. `?select=hours`).
      *
      * @param Request $request
      *
@@ -34,7 +35,10 @@ class EditorPageController extends AdminPageController
 
         abort_unless((bool) $restaurant, 403);
 
-        return redirect()->route('admin.editor', ['id' => $restaurant->id]);
+        return redirect()->route('admin.editor', [
+            'id' => $restaurant->id,
+            ...$request->only(['page', 'select']),
+        ]);
     }
 
     /**

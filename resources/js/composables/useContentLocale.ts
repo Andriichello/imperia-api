@@ -6,8 +6,8 @@ import {useEditorStore} from '@/stores/editor'
 /**
  * The language of the texts a panel edits (its tabs), which the preview follows.
  *
- * @param texts The panel's translatable texts: the tabs count the ones filled in the default
- *              language, but missing in theirs
+ * @param texts The panel's translatable texts: the tabs count the ones written in the default
+ *              language, and the ones of them written in theirs too
  */
 export function useContentLocale(texts: () => Translations[] = () => []) {
   const editor = useEditorStore()
@@ -26,14 +26,17 @@ export function useContentLocale(texts: () => Translations[] = () => []) {
     // the default language first
     return [...editor.locales]
       .sort((a, b) => Number(b === fallback) - Number(a === fallback))
-      .map((code) => ({
-        locale: code,
-        label: languageName(code),
-        isDefault: code === fallback,
-        missing: code === fallback
-          ? null
-          : texts().filter((text) => !!text[fallback]?.trim() && !text[code]?.trim()).length,
-      }))
+      .map((code) => {
+        const written = texts().filter((text) => !!text[fallback]?.trim())
+
+        return {
+          locale: code,
+          label: languageName(code),
+          isDefault: code === fallback,
+          total: written.length,
+          filled: written.filter((text) => !!text[code]?.trim()).length,
+        }
+      })
   })
 
   /** On other tabs, an empty text shows the default language's one. */

@@ -1,38 +1,34 @@
 <script setup lang="ts">
-  import {computed, ref} from 'vue'
+  import {computed} from 'vue'
   import {useI18n} from 'vue-i18n'
-  import {
-    BookOpen,
-    CalendarClock,
-    Check,
-    ChevronDown,
-    ChevronRight,
-    EyeOff,
-    Image,
-    Info,
-    MessageSquare,
-    Plus,
-  } from 'lucide-vue-next'
-  import type {EditorCategory, EditorMenu} from '@/api'
+  import {BookOpen, CalendarClock, ChevronRight, Image, Info, MessageSquare} from 'lucide-vue-next'
+  import PanelShell from '@/Components/Editor/PanelShell.vue'
+  import UnsavedPill from '@/Components/Editor/UnsavedPill.vue'
   import {useEditorStore} from '@/stores/editor'
-  import {isSameSelection, Section, Selection, selectionOf} from '@/editor/sections'
+  import {isSameSelection, Section, selectionOf} from '@/editor/sections'
+  import {isListed} from '@/editor/menuDrafts'
   import {translated} from '@/editor/translations'
   import {openState} from '@/editor/hours'
   import {presetOf} from '@/editor/brand'
 
   /**
-   * The parts of the public page: a click opens the panel of the part, and the preview shows it.
-   * The part hovered in the preview is highlighted here, and the other way round.
+   * The sections of the restaurant page: a click opens the panel of the section, and the
+   * preview shows it. Menus, categories and dishes are managed in the Menus panel. The section
+   * hovered in the preview is highlighted here, and the other way round.
    */
   const editor = useEditorStore()
   const {t} = useI18n()
 
   const restaurant = computed(() => editor.restaurant!)
 
-  const title = (value: EditorMenu | EditorCategory) => translated(value.title, editor.defaultLocale)
+  const name = computed(() => translated(restaurant.value.name, editor.defaultLocale))
 
-  const notArchived = <T extends { archived: boolean }>(items: T[] | undefined): T[] =>
-    (items ?? []).filter((item) => !item.archived)
+  // the cover: the first photo guests see
+  const cover = computed(() => {
+    const photo = (restaurant.value.photos ?? []).find((item) => !item.is_hidden)
+
+    return photo ? (photo.variants?.find((variant) => variant.extension === 'webp')?.url ?? photo.url) : null
+  })
 
   const status = computed(() => openState(restaurant.value))
 
@@ -42,31 +38,54 @@
     temporarily_closed: 'bg-amber-500',
   }
 
-  const sections = computed<{ section: Section, icon: typeof Image, meta: string }[]>(() => [
+  /** "3 photos · 1 hidden" */
+  function photosMeta(): string {
+    const photos = restaurant.value.photos ?? []
+    const hidden = photos.filter((photo) => photo.is_hidden).length
+
+    return [t('editor.structure.photos_count', photos.length), hidden ? t('editor.structure.hidden_count', hidden) : null]
+      .filter(Boolean)
+      .join(' · ')
+  }
+
+  /** "3 menus · 42 dishes" (archived ones aside) */
+  function menusMeta(): string {
+    const dishes = editor.menus.reduce((count, menu) => count + (menu.categories ?? []).filter(isListed)
+      .reduce((sum, category) => sum + (category.dishes ?? []).filter(isListed).length, 0), 0)
+
+    return `${t('editor.structure.menus_count', editor.menus.length)} · ${t('editor.structure.dishes_count', dishes)}`
+  }
+
+  const sections = computed<{ section: Section, icon: typeof Image, meta: string, unsaved: boolean }[]>(() => [
     {
       section: 'photos',
       icon: Image,
-      meta: t('editor.structure.photos_count', restaurant.value.photos?.length ?? 0),
+      meta: photosMeta(),
+      unsaved: editor.hasUnsaved(['photos']),
     },
     {
       section: 'details',
       icon: Info,
       meta: t('editor.structure.details_meta'),
+      unsaved: editor.hasUnsaved(['details']),
     },
     {
       section: 'notes',
       icon: MessageSquare,
       meta: t('editor.structure.notes_count', restaurant.value.notes?.length ?? 0),
+      unsaved: editor.hasUnsaved(['notes']),
     },
     {
       section: 'menus',
       icon: BookOpen,
-      meta: t('editor.structure.menus_count', editor.menus.length),
+      meta: menusMeta(),
+      unsaved: editor.hasUnsaved(['menus', 'menu', 'category', 'dish']),
     },
     {
       section: 'hours',
       icon: CalendarClock,
       meta: t('editor.status.' + status.value),
+      unsaved: editor.hasUnsaved(['hours']),
     },
   ])
 
@@ -76,179 +95,85 @@
     return preset ? t('editor.brand.presets.' + preset.key) : t('editor.structure.custom_colors')
   })
 
-  // the first menu is open at the start
-  const expanded = ref<Set<number>>(new Set(editor.menus.slice(0, 1).map((m) => m.id)))
-
-  function toggle(menu: EditorMenu) {
-    const ids = new Set(expanded.value)
-
-    if (!ids.delete(menu.id)) {
-      ids.add(menu.id)
-    }
-
-    expanded.value = ids
+  /** The row of the section hovered in the preview. */
+  function isHighlighted(section: Section): boolean {
+    return !!editor.previewHover && isSameSelection(selectionOf(editor.previewHover), {section, id: null})
   }
 
-  /** The row of the part hovered in the preview. */
-  function isHighlighted(selection: Selection): boolean {
-    return !!editor.previewHover && isSameSelection(selectionOf(editor.previewHover), selection)
+  function open(section: Section) {
+    editor.select({section, id: null}, true)
   }
 
-  function open(selection: Selection) {
-    // a menu's page opens in the preview, when guests can see it
-    if (selection.section === 'menu' && editor.isShown(selection)) {
-      editor.openPage({page: 'menu', menuId: selection.id})
-    }
-
-    editor.select(selection, editor.isShown(selection))
-  }
-
-  function hover(selection: Selection | null) {
-    editor.treeHover = selection
+  function hover(section: Section | null) {
+    editor.treeHover = section ? {section, id: null} : null
   }
 </script>
 
 <template>
-  <div class="flex-1 min-h-0 flex flex-col">
-    <div class="shrink-0 px-5 pt-4 pb-3 border-b border-[#f0f0f1]">
-      <p class="text-xs text-zinc-500">{{ translated(restaurant.name, editor.defaultLocale) }}</p>
-      <h2 class="mt-0.5 text-lg/[26px] font-semibold">{{ t('editor.structure.title') }}</h2>
-      <p class="mt-1 text-[13px]/[18px] text-zinc-500">{{ t('editor.structure.help') }}</p>
-    </div>
+  <PanelShell :title="t('editor.structure.title')"
+              :subtitle="t('editor.structure.help')"
+              :closable="false"
+              body-class="px-2.5 pt-4 pb-6 gap-[18px]">
+    <template #breadcrumb>
+      <p class="h-6 flex items-center gap-1.5 text-[13px]/[18px] text-zinc-500">
+        <img class="size-4 rounded object-cover"
+             :src="cover"
+             alt=""
+             v-if="cover"/>
+        <span class="size-4 rounded bg-gradient-to-br from-[#efe2d2] to-[#c9ab8c]"
+              aria-hidden="true"
+              v-else/>
+        <span class="truncate">{{ name }}</span>
+      </p>
+    </template>
 
-    <div class="flex-1 min-h-0 overflow-y-auto px-3 pt-3 pb-6 flex flex-col gap-4">
-      <section class="flex flex-col gap-0.5">
-        <h3 class="e-section px-2 pb-1.5">{{ t('editor.structure.restaurant_page') }}</h3>
+    <section class="flex flex-col gap-0.5">
+      <h3 class="e-section px-2.5 pb-1.5">{{ t('editor.structure.restaurant') }}</h3>
 
-        <button type="button"
-                class="h-10 w-full flex items-center gap-2.5 px-2.5 rounded-md text-start e-focus"
-                :class="isHighlighted({section: item.section, id: null}) ? 'bg-blue-50 text-blue-700' : 'hover:bg-zinc-50'"
-                v-for="item in sections" :key="item.section"
-                @click="open({section: item.section, id: null})"
-                @mouseenter="hover({section: item.section, id: null})"
-                @mouseleave="hover(null)"
-                @focus="hover({section: item.section, id: null})"
-                @blur="hover(null)">
-          <component :is="item.icon"
-                     class="size-4"
-                     :class="{'text-zinc-500': !isHighlighted({section: item.section, id: null})}"/>
-          <span class="font-medium">{{ t('editor.sections.' + item.section) }}</span>
+      <button type="button"
+              class="h-10 w-full flex items-center gap-2.5 px-2.5 rounded-md text-start e-focus"
+              :class="isHighlighted(item.section) ? 'bg-blue-50 text-blue-700' : 'hover:bg-zinc-50'"
+              v-for="item in sections" :key="item.section"
+              @click="open(item.section)"
+              @mouseenter="hover(item.section)"
+              @mouseleave="hover(null)"
+              @focus="hover(item.section)"
+              @blur="hover(null)">
+        <component :is="item.icon"
+                   class="size-4 shrink-0"
+                   :class="{'text-zinc-500': !isHighlighted(item.section)}"/>
+        <span class="font-medium whitespace-nowrap">{{ t('editor.sections.' + item.section) }}</span>
 
-          <span class="ml-auto inline-flex items-center gap-1.5 text-[13px]"
-                :class="{'text-zinc-500': !isHighlighted({section: item.section, id: null})}">
-            <span class="size-[7px] rounded-full"
-                  :class="STATUS_DOTS[status]"
-                  aria-hidden="true"
-                  v-if="item.section === 'hours'"/>
-            {{ item.meta }}
-          </span>
+        <span class="ml-auto min-w-0 inline-flex items-center gap-1.5 text-[13px]"
+              :class="{'text-zinc-500': !isHighlighted(item.section)}">
+          <span class="size-[7px] shrink-0 rounded-full"
+                :class="STATUS_DOTS[status]"
+                aria-hidden="true"
+                v-if="item.section === 'hours'"/>
+          <span class="truncate">{{ item.meta }}</span>
+        </span>
 
-          <ChevronRight class="size-4"
-                        :class="{'text-zinc-400': !isHighlighted({section: item.section, id: null})}"/>
-        </button>
-      </section>
+        <UnsavedPill v-if="item.unsaved"/>
 
-      <section class="flex flex-col gap-0.5">
-        <h3 class="e-section px-2 pb-1.5">{{ t('editor.structure.menus') }}</h3>
+        <ChevronRight class="size-4 shrink-0"
+                      :class="{'text-zinc-400': !isHighlighted(item.section)}"/>
+      </button>
+    </section>
 
-        <div class="flex flex-col items-start gap-2 px-2.5 py-1"
-             v-if="!editor.menus.length">
-          <p class="text-[13px] text-zinc-500">{{ t('editor.structure.no_menus') }}</p>
+    <section class="flex flex-col gap-0.5">
+      <h3 class="e-section px-2.5 pb-1.5">{{ t('editor.structure.appearance') }}</h3>
 
-          <button type="button"
-                  class="e-btn e-btn-secondary h-8 px-2.5"
-                  @click="editor.select({section: 'menu', id: null})">
-            <Plus class="size-[15px]"/>
-            {{ t('editor.menus.first') }}
-          </button>
-        </div>
-
-        <template v-for="menu in editor.menus" :key="menu.id">
-          <div class="h-10 flex items-center gap-1 pl-0.5 pr-2.5 rounded-md"
-               :class="isHighlighted({section: 'menu', id: menu.id}) ? 'bg-blue-50 text-blue-700' : 'hover:bg-zinc-50'">
-            <button type="button"
-                    class="size-7 shrink-0 flex items-center justify-center rounded-md text-zinc-500 hover:bg-zinc-100 e-focus"
-                    :aria-expanded="expanded.has(menu.id)"
-                    :aria-label="t(expanded.has(menu.id) ? 'editor.structure.hide_categories' : 'editor.structure.show_categories', {menu: title(menu)})"
-                    @click="toggle(menu)">
-              <ChevronDown class="size-4" v-if="expanded.has(menu.id)"/>
-              <ChevronRight class="size-4" v-else/>
-            </button>
-
-            <button type="button"
-                    class="flex-1 min-w-0 h-full flex items-center gap-2 text-start rounded-md e-focus"
-                    @click="open({section: 'menu', id: menu.id})"
-                    @mouseenter="hover({section: 'menu', id: menu.id})"
-                    @mouseleave="hover(null)">
-              <span class="font-semibold truncate"
-                    :class="{'text-zinc-400': menu.is_hidden}">
-                {{ title(menu) }}
-              </span>
-
-              <EyeOff class="size-3.5 shrink-0 text-zinc-400"
-                      :aria-label="t('editor.structure.hidden')"
-                      v-if="menu.is_hidden"/>
-
-              <span class="ml-auto shrink-0 text-[13px] text-zinc-500">
-                {{ t('editor.structure.categories_count', notArchived(menu.categories).length) }}
-              </span>
-            </button>
-          </div>
-
-          <div class="flex flex-col gap-0.5 pl-[26px]"
-               v-if="expanded.has(menu.id)">
-            <button type="button"
-                    class="h-9 w-full flex items-center gap-2.5 px-2.5 rounded-md text-start e-focus"
-                    :class="isHighlighted({section: 'category', id: category.id}) ? 'bg-blue-50 text-blue-700' : 'hover:bg-zinc-50'"
-                    v-for="category in notArchived(menu.categories)" :key="category.id"
-                    @click="open({section: 'category', id: category.id})"
-                    @mouseenter="hover({section: 'category', id: category.id})"
-                    @mouseleave="hover(null)"
-                    @focus="hover({section: 'category', id: category.id})"
-                    @blur="hover(null)">
-              <span class="truncate"
-                    :class="{'text-zinc-400': category.is_hidden || menu.is_hidden}">
-                {{ title(category) }}
-              </span>
-
-              <EyeOff class="size-3.5 shrink-0 text-zinc-400"
-                      :aria-label="t('editor.structure.hidden')"
-                      v-if="category.is_hidden"/>
-
-              <span class="ml-auto shrink-0 text-[13px] text-zinc-500">
-                {{ t('editor.structure.dishes_count', notArchived(category.dishes).length) }}
-              </span>
-            </button>
-          </div>
-        </template>
-      </section>
-
-      <section class="flex flex-col gap-0.5">
-        <h3 class="e-section px-2 pb-1.5">{{ t('editor.structure.appearance') }}</h3>
-
-        <button type="button"
-                class="h-10 w-full flex items-center gap-2.5 px-2.5 rounded-md text-start hover:bg-zinc-50 e-focus"
-                @click="open({section: 'brand', id: null})">
-          <span class="size-4 rounded-full shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)]"
-                :style="{background: editor.brand.primary}"
-                aria-hidden="true"/>
-          <span class="font-medium">{{ t('editor.sections.brand') }}</span>
-          <span class="ml-auto text-[13px] text-zinc-500">{{ brandName }}</span>
-          <ChevronRight class="size-4 text-zinc-400"/>
-        </button>
-      </section>
-    </div>
-
-    <div class="shrink-0 flex items-center gap-2 px-5 py-3 border-t border-zinc-200 text-[13px]">
-      <template v-if="editor.dirty">
-        <span class="size-[7px] rounded-full bg-amber-500" aria-hidden="true"/>
-        <span class="text-[#a16207]">{{ t('editor.panel.unsaved') }}</span>
-      </template>
-
-      <template v-else>
-        <Check class="size-4 text-[#00a63e]"/>
-        <span class="text-zinc-500">{{ t('editor.panel.saved') }}</span>
-      </template>
-    </div>
-  </div>
+      <button type="button"
+              class="h-10 w-full flex items-center gap-2.5 px-2.5 rounded-md text-start hover:bg-zinc-50 e-focus"
+              @click="open('brand')">
+        <span class="size-4 shrink-0 rounded-full shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)]"
+              :style="{background: editor.brand.primary}"
+              aria-hidden="true"/>
+        <span class="font-medium whitespace-nowrap">{{ t('editor.sections.brand') }}</span>
+        <span class="ml-auto min-w-0 truncate text-[13px] text-zinc-500">{{ brandName }}</span>
+        <UnsavedPill v-if="editor.hasUnsaved(['brand'])"/>
+        <ChevronRight class="size-4 shrink-0 text-zinc-400"/>
+      </button>
+    </section>
+  </PanelShell>
 </template>

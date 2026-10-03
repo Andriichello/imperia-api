@@ -4,20 +4,15 @@
   import {DateTime} from 'luxon'
   import {Copy, Pencil, Plus, Trash2, X} from 'lucide-vue-next'
   import type {EditorInterval} from '@/api'
-  import {ScheduleWeekday, updateEditorRestaurantHours} from '@/api'
+  import {ScheduleWeekday} from '@/api'
   import PanelShell from '@/Components/Editor/PanelShell.vue'
   import FieldLabel from '@/Components/Editor/Fields/FieldLabel.vue'
   import ToggleSwitch from '@/Components/Editor/Fields/ToggleSwitch.vue'
   import TimeInput from '@/Components/Editor/Fields/TimeInput.vue'
   import {usePanelDraft} from '@/composables/usePanelDraft'
-  import {
-    hoursOf,
-    hoursPreview,
-    hoursRequest,
-    intervalOf,
-    SpecialDayDraft,
-    WEEKDAYS,
-  } from '@/editor/drafts'
+  import {HoursDraft, intervalOf, SpecialDayDraft, WEEKDAYS} from '@/editor/drafts'
+  import {intervalsProblem, specialDayProblem} from '@/editor/hours'
+  import {newKey} from '@/editor/lists'
   import {languageName, translated, translationsOf} from '@/editor/translations'
   import {useEditorStore} from '@/stores/editor'
 
@@ -31,15 +26,7 @@
   /** The most intervals a day. */
   const MAX_INTERVALS = 3
 
-  const restaurant = computed(() => editor.restaurant!)
-
-  const {draft, dirty, errors, saving, failed, discard, save, error} = usePanelDraft({
-    saved: () => hoursOf(restaurant.value),
-    save: async (hours) => (await updateEditorRestaurantHours(restaurant.value.id, hoursRequest(hours))).data.data,
-    preview: (hours, locale) => hoursPreview(hours, locale, editor.defaultLocale),
-    canSave: () => canSave.value,
-    lists: {exceptions: (hours) => hours.exceptions.map((day) => day.key)},
-  })
+  const {draft, errors, error} = usePanelDraft<HoursDraft>({section: 'hours', id: null})
 
   // the default language first
   const locales = computed(() => [...editor.locales]
@@ -81,31 +68,11 @@
 
   const minutes = (hour: number, minute: number) => hour * 60 + minute
 
-  /**
-   * What's wrong with the hours of a day: an interval closes when it opens, or two overlap
-   * (the same check as the server's).
-   */
+  /** What's wrong with the hours of a day: an interval closes when it opens, or two overlap. */
   function problemOf(intervals: EditorInterval[]): string | null {
-    const ranges: number[][] = []
+    const problem = intervalsProblem(intervals)
 
-    for (const interval of intervals) {
-      const beg = minutes(interval.beg_hour, interval.beg_minute)
-      const end = minutes(interval.end_hour, interval.end_minute)
-
-      if (beg === end) {
-        return t('editor.hours.same_time')
-      }
-
-      const range = [beg, end < beg ? end + 24 * 60 : end]
-
-      if (ranges.some((other) => range[0] < other[1] && other[0] < range[1])) {
-        return t('editor.hours.overlap')
-      }
-
-      ranges.push(range)
-    }
-
-    return null
+    return problem ? t('editor.hours.' + problem) : null
   }
 
   /** The first error of the day from saving, or what's wrong with it now. */
@@ -182,19 +149,12 @@
   // Special days
 
   const editingDay = ref<string | null>(null)
-  let newDays = 0
 
   /** What's wrong with the special day: no date, or the hours. */
   function specialProblem(day: SpecialDayDraft): string | null {
-    if (!day.starts_on) {
-      return t('editor.hours.pick_date')
-    }
+    const problem = specialDayProblem(day)
 
-    if (day.ends_on && day.ends_on < day.starts_on) {
-      return t('editor.hours.end_before_start')
-    }
-
-    return day.is_closed ? null : problemOf([day])
+    return problem ? t('editor.hours.' + problem) : null
   }
 
   function specialError(day: SpecialDayDraft): string | null {
@@ -206,7 +166,7 @@
   function addDay() {
     const tomorrow = DateTime.now().setZone(draft.value.timezone).plus({days: 1}).toISODate() as string
     const day: SpecialDayDraft = {
-      key: `new-${++newDays}`,
+      key: newKey(),
       id: null,
       starts_on: tomorrow,
       ends_on: tomorrow,
@@ -288,28 +248,14 @@
     return error('closed_until')
   })
 
-  const canSave = computed(() => !closureError.value
-    && WEEKDAYS.every((weekday) => !problemOf(draft.value.weekdays[weekday]))
-    && draft.value.exceptions.every((day) => !specialProblem(day)))
-
-  function onDiscard() {
-    editingDay.value = null
-    discard()
-  }
 </script>
 
 <template>
   <PanelShell :breadcrumbs="[{label: t('editor.panel.page_structure'), selection: null}]"
               :title="t('editor.sections.hours')"
               :subtitle="t('editor.subtitles.hours')"
-              :dirty="dirty"
-              :saving="saving"
-              :failed="failed"
-              :can-save="canSave"
               @navigate="editor.close()"
-              @close="editor.close()"
-              @discard="onDiscard"
-              @save="finishDay(); save()">
+              @close="editor.close()">
     <div class="flex flex-col gap-1.5">
       <FieldLabel target="hours-zone" :label="t('editor.hours.time_zone')"/>
 

@@ -8,10 +8,11 @@ import type {Dish, DishMenu, Restaurant} from '@/api'
 /** Select: clicks pick a part of the page to edit. Browse: the page works like for guests. */
 export type PreviewMode = 'select' | 'browse'
 
-/** Page shown in the preview: the restaurant page or one of its menus. */
+/** Page shown in the preview: the restaurant page, one of its menus, or a dish's page on it. */
 export interface PreviewPage {
-  page: 'restaurant' | 'menu'
+  page: 'restaurant' | 'menu' | 'dish'
   menuId: number | null
+  dishId?: number | null
 }
 
 /**
@@ -37,14 +38,17 @@ export const EDIT_KEY_ATTRIBUTE = 'data-edit-key'
 
 /** Editor → preview. */
 export type EditorMessage =
-  // names of the parts of the page for the outline chips, by kind ("category" for "category:12")
-  | { type: 'editor:labels', labels: Record<string, string>, hover: string }
+  // names of the parts of the page for the outline chips, by kind ("category" for "category:12"),
+  // and the chips of hovered and unsaved parts ("{label} · click to edit")
+  | { type: 'editor:labels', labels: Record<string, string>, hover: string, unsaved: string }
   | { type: 'editor:mode', mode: PreviewMode }
   | { type: 'editor:alt', held: boolean }
   // the part being edited (several keys: e.g. the restaurant's name and its contacts)
   | { type: 'editor:select', keys: string[], label: string | null }
   // a part to outline as hovered, while its row in the page structure is
   | { type: 'editor:hover', keys: string[] }
+  // parts with unsaved changes (drafts)
+  | { type: 'editor:unsaved', keys: string[] }
   // scroll to the first of the parts, which is on the page, or open the page of the first one
   | { type: 'editor:scrollTo', keys: string[] }
   | { type: 'editor:navigate', page: PreviewPage }

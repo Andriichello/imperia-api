@@ -4,12 +4,12 @@
   import {useEditorStore} from '@/stores/editor'
   import {usePreviewBridge} from '@/composables/usePreviewBridge'
   import type {PreviewMessage, PreviewPage} from '@/editor/protocol'
-  import {keysOf} from '@/editor/sections'
+  import {DISH_FIELDS, keysOf} from '@/editor/sections'
 
   /**
    * The public page in a phone-sized frame: it's the real page (`?editor=1`), which reports
    * the parts clicked in it and outlines the ones hovered and edited (see `previewBridge.ts`).
-   * It shows the unsaved changes too.
+   * It shows the drafts too, outlined in amber.
    */
   const props = defineProps({
     // the editor's preview: its page follows the page picker and the page structure
@@ -38,7 +38,15 @@
   function pageUrl(locale: string, page: PreviewPage): string {
     const base = `/${locale}/web/${editor.restaurant!.id}`
 
-    return (page.page === 'menu' && page.menuId ? `${base}/menu/${page.menuId}` : base) + '?editor=1'
+    if (page.page === 'restaurant' || !page.menuId) {
+      return `${base}?editor=1`
+    }
+
+    // a dish page is the dish's drawer on its menu page
+    const dish = page.page === 'dish' ? editor.findDish(page.dishId ?? null) : null
+    const hash = dish ? `#${dish.category_id}-${dish.id}-page` : ''
+
+    return `${base}/menu/${page.menuId}?editor=1${hash}`
   }
 
   // the page loaded in the frame: the next ones are opened inside it, without loading it again
@@ -92,6 +100,7 @@
 
   function postDraft() {
     post({type: 'editor:draft', patch: editor.previewPatch})
+    post({type: 'editor:unsaved', keys: editor.unsavedKeys})
   }
 
   function postBrand() {
@@ -102,8 +111,12 @@
   function sync() {
     post({
       type: 'editor:labels',
-      labels: Object.fromEntries(KINDS.map((kind) => [kind, t('editor.sections.' + kind)])),
+      labels: {
+        ...Object.fromEntries(KINDS.map((kind) => [kind, t('editor.sections.' + kind)])),
+        ...Object.fromEntries(DISH_FIELDS.map((field) => [`dish-${field}`, t('editor.dish_fields.' + field)])),
+      },
       hover: t('editor.preview.click_to_edit', {label: '{label}'}),
+      unsaved: t('editor.preview.unsaved', {label: '{label}'}),
     })
     post({type: 'editor:mode', mode: editor.mode})
     post({type: 'editor:alt', held: editor.altHeld})
@@ -126,7 +139,7 @@
   watch(() => editor.treeHover, (selection) => post({type: 'editor:hover', keys: keysOf(selection)}))
 
   // typing shows in the preview once it pauses
-  watch(() => editor.previewPatch, () => {
+  watch(() => [editor.previewPatch, editor.unsavedKeys], () => {
     if (draftTimer) {
       clearTimeout(draftTimer)
     }
@@ -137,6 +150,11 @@
   watch(() => [editor.previewBrand, editor.brand], postBrand, {deep: true})
 
   if (props.primary) {
+    // a part asked for before the preview was there (a link to it)
+    if (editor.reveal.count) {
+      pendingReveal = editor.reveal.keys
+    }
+
     watch(() => editor.reveal.count, () => {
       if (ready) {
         post({type: 'editor:scrollTo', keys: editor.reveal.keys})
@@ -178,7 +196,7 @@
 </script>
 
 <template>
-  <div class="w-[390px] flex-1 min-h-0 rounded-[28px] overflow-hidden bg-white shadow-[0_0_0_1px_#d4d4d8,0_24px_48px_-16px_rgba(24,24,27,0.35)]">
+  <div class="w-[390px] flex-1 min-h-0 overflow-hidden bg-white shadow-[0_0_0_1px_#d4d4d8,0_16px_40px_-20px_rgba(24,24,27,0.4)]">
     <iframe class="block w-full h-full border-0"
             ref="frame"
             :src="src"

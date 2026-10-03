@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import {computed, PropType, ref, watch} from 'vue'
+  import {computed, PropType, ref} from 'vue'
   import {useI18n} from 'vue-i18n'
   import {
     Archive,
@@ -18,25 +18,26 @@
   } from 'lucide-vue-next'
   import {VueDraggable} from 'vue-draggable-plus'
   import type {EditorDish, EditorMenu} from '@/api'
-  import {getEditorRestaurant, storeEditorCategory, updateEditorCategory} from '@/api'
   import PanelShell from '@/Components/Editor/PanelShell.vue'
   import GripHandle from '@/Components/Editor/Fields/GripHandle.vue'
   import {moveItem} from '@/editor/lists'
   import DropdownMenu from '@/Components/Editor/DropdownMenu.vue'
   import FieldLabel from '@/Components/Editor/Fields/FieldLabel.vue'
   import InfoBox from '@/Components/Editor/Fields/InfoBox.vue'
+  import UnsavedPill from '@/Components/Editor/UnsavedPill.vue'
+  import NewDraftRow from '@/Components/Editor/NewDraftRow.vue'
   import {usePanelDraft} from '@/composables/usePanelDraft'
   import {useContentLocale} from '@/composables/useContentLocale'
   import {useItemActions} from '@/composables/useItemActions'
-  import {applyCategory, CategoryDraft, categoryOf, isListed, menusPreview, textsRequest} from '@/editor/menuDrafts'
-  import type {Breadcrumb, Selection} from '@/editor/sections'
+  import {CategoryDraft, isListed} from '@/editor/menuDrafts'
+  import {Breadcrumb, isNewId, Selection} from '@/editor/sections'
   import {translated} from '@/editor/translations'
   import {priceFormatted, sizeWeightFormatted} from '@/helpers'
   import {useEditorStore} from '@/stores/editor'
 
   /**
    * A category: its name and description, and its dishes in their order. A new one is
-   * created in its menu on Save.
+   * created in its menu, when it's saved.
    */
   const props = defineProps({
     selection: {
@@ -50,38 +51,17 @@
   const actions = useItemActions()
 
   const restaurant = computed(() => editor.restaurant!)
-  const category = computed(() => props.selection.id ? editor.findCategory(props.selection.id) : null)
+  const isNew = computed(() => isNewId(props.selection.id))
+  const category = computed(() => isNew.value ? null : editor.findCategory(props.selection.id))
   const menu = computed(() => category.value
     ? editor.findMenu(category.value.menu_id)
     : editor.findMenu(props.selection.parent ?? null))
-  const isNew = computed(() => props.selection.id === null)
 
-  let created: number | null = null
-
-  const {draft, dirty, saving, failed, discard, save, error} = usePanelDraft<CategoryDraft>({
-    saved: () => categoryOf(category.value, editor.locales),
-    save: async (values) => {
-      if (category.value) {
-        await updateEditorCategory(category.value.id, {...textsRequest(values), dishes: values.dishes})
-      } else {
-        created = (await storeEditorCategory(menu.value!.id, textsRequest(values))).data.data.id
-      }
-
-      return (await getEditorRestaurant(restaurant.value.id)).data.data
-    },
-    canSave: () => canSave.value,
-    preview: (values, locale) => menusPreview(
-      applyCategory(restaurant.value.menus, props.selection.id, menu.value?.id ?? 0, values),
-      locale,
-      editor.defaultLocale,
-    ),
-  })
+  const {draft, error} = usePanelDraft<CategoryDraft>(props.selection)
 
   const {locale, languages, placeholder, textError} = useContentLocale(
     () => [draft.value.title, draft.value.description]
   )
-
-  const canSave = computed(() => !!menu.value && !!draft.value.title[editor.defaultLocale]?.trim())
 
   const name = (item: { title: EditorDish['title'] } | null) => item ? translated(item.title, editor.defaultLocale) : ''
 
@@ -134,31 +114,15 @@
     .filter((other) => isListed(other) && other.id !== menu.value?.id))
   const moving = ref(false)
 
-  async function onSave() {
-    if (await save() && created) {
-      editor.select({section: 'category', id: created}, true)
-    }
-  }
-
   async function move(target: EditorMenu) {
     if (category.value) {
       await actions.moveCategory(category.value.id, target.id, name(category.value), name(target))
     }
   }
 
-  /**
-   * Dishes changed right away (archived, restored, copied, moved, also from a toast's Undo):
-   * the draft's order stays, the ones, which are gone, are left out, new ones are at the end.
-   */
-  watch(() => categoryOf(category.value, editor.locales).dishes, (saved) => {
-    const kept = draft.value.dishes.filter((id) => saved.includes(id))
-
-    draft.value.dishes = [...kept, ...saved.filter((id) => !kept.includes(id))]
-  })
-
   async function archive() {
     if (category.value && await actions.archive('category', category.value.id, name(category.value))) {
-      editor.select(menu.value ? {section: 'menu', id: menu.value.id} : null, false, true)
+      editor.select(menu.value ? {section: 'menu', id: menu.value.id} : null, false, 'replace')
     }
   }
 
@@ -181,15 +145,8 @@
               :subtitle="menu ? t('editor.subtitles.category', {menu: name(menu)}) : null"
               :languages="languages"
               v-model:locale="locale"
-              :dirty="dirty || isNew"
-              :saving="saving"
-              :failed="failed"
-              :can-save="canSave"
-              :save-label="isNew ? t('editor.category.create') : null"
               @navigate="editor.select($event, !!$event)"
-              @close="editor.close()"
-              @discard="isNew ? editor.select(menu ? {section: 'menu', id: menu.id} : null, false, true) : discard()"
-              @save="onSave">
+              @close="editor.close()">
     <template #actions v-if="category">
       <DropdownMenu align="end">
         <template #trigger="{open, toggle}">
@@ -298,13 +255,16 @@
 
         <button type="button"
                 class="e-btn e-btn-secondary h-8 px-2.5"
-                @click="editor.select({section: 'dish', id: null, parent: category.id})">
+                @click="editor.add('dish', category.id)">
           <Plus class="size-[15px]"/>
           {{ t('editor.category.add_dish') }}
         </button>
       </div>
 
-      <p class="py-2 text-[13px] text-zinc-500" v-if="!dishes.length">{{ t('editor.category.no_dishes') }}</p>
+      <p class="py-2 text-[13px] text-zinc-500"
+         v-if="!dishes.length && !editor.newItems('dish', category.id).length">
+        {{ t('editor.category.no_dishes') }}
+      </p>
 
       <VueDraggable class="flex flex-col"
                     v-model="dishes"
@@ -345,6 +305,8 @@
               <span class="text-xs text-zinc-500">{{ dishMeta(dish) }}</span>
             </span>
 
+            <UnsavedPill v-if="editor.isUnsaved({section: 'dish', id: dish.id})"/>
+
             <span class="e-pill bg-zinc-100 text-zinc-600" v-if="dish.is_hidden">
               <EyeOff class="size-3"/>
               {{ t('editor.menus.hidden') }}
@@ -354,6 +316,11 @@
           </button>
         </div>
       </VueDraggable>
+
+      <div class="py-1 border-b border-[#f0f0f1]"
+           v-for="entry in editor.newItems('dish', category.id)" :key="entry.key">
+        <NewDraftRow :entry="entry"/>
+      </div>
 
       <template v-if="archived.length">
         <button type="button"

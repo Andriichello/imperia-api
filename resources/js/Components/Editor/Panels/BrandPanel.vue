@@ -1,8 +1,7 @@
 <script setup lang="ts">
-  import {computed, onBeforeUnmount, watch} from 'vue'
+  import {computed} from 'vue'
   import {useI18n} from 'vue-i18n'
   import {AlertTriangle, Check} from 'lucide-vue-next'
-  import {updateEditorRestaurant} from '@/api'
   import PanelShell from '@/Components/Editor/PanelShell.vue'
   import FieldLabel from '@/Components/Editor/Fields/FieldLabel.vue'
   import {usePanelDraft} from '@/composables/usePanelDraft'
@@ -26,16 +25,7 @@
   const editor = useEditorStore()
   const {t} = useI18n()
 
-  const restaurant = computed(() => editor.restaurant!)
-
-  const {draft, dirty, saving, failed, discard, save, error} = usePanelDraft<BrandColors>({
-    saved: () => ({...editor.brand}),
-    save: async (colors) => (await updateEditorRestaurant(restaurant.value.id, {
-      brand_primary: colors.primary.toLowerCase(),
-      brand_primary_content: colors.content.toLowerCase(),
-    })).data.data,
-    canSave: () => readable.value,
-  })
+  const {draft, error} = usePanelDraft<BrandColors>({section: 'brand', id: null})
 
   const valid = computed(() => isHex(draft.value.primary) && isHex(draft.value.content))
 
@@ -60,31 +50,14 @@
     draft.value[key] = hex.startsWith('#') ? hex : `#${hex}`
   }
 
-  // the previews show the colors (valid ones only), and the saved ones again when it's left
-  watch(draft, (colors) => {
-    if (isHex(colors.primary) && isHex(colors.content)) {
-      editor.previewBrand = {primary: colors.primary, content: colors.content}
-    }
-  }, {deep: true, immediate: true})
-
-  onBeforeUnmount(() => {
-    editor.previewBrand = null
-  })
 </script>
 
 <template>
   <PanelShell :breadcrumbs="[{label: t('editor.panel.page_structure'), selection: null}]"
               :title="t('editor.sections.brand')"
               :subtitle="t('editor.subtitles.brand')"
-              :dirty="dirty"
-              :saving="saving"
-              :failed="failed"
-              :can-save="readable"
-              :save-label="t('editor.brand.save')"
               @navigate="editor.close()"
-              @close="editor.close()"
-              @discard="discard"
-              @save="save">
+              @close="editor.close()">
     <section class="flex flex-col gap-1.5">
       <h3 class="e-section mb-0.5">{{ t('editor.brand.presets_title') }}</h3>
 

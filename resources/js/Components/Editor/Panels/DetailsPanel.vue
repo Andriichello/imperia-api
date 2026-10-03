@@ -2,12 +2,12 @@
   import {computed, ref} from 'vue'
   import {useI18n} from 'vue-i18n'
   import {Check, Copy, MapPin, Phone} from 'lucide-vue-next'
-  import {EditorRestaurantEstablishment, updateEditorRestaurant} from '@/api'
+  import {EditorRestaurantEstablishment} from '@/api'
   import PanelShell from '@/Components/Editor/PanelShell.vue'
   import FieldLabel from '@/Components/Editor/Fields/FieldLabel.vue'
   import {usePanelDraft} from '@/composables/usePanelDraft'
   import {useContentLocale} from '@/composables/useContentLocale'
-  import {detailsOf, detailsPreview, detailsRequest} from '@/editor/drafts'
+  import type {DetailsDraft} from '@/editor/drafts'
   import {useEditorStore} from '@/stores/editor'
 
   /**
@@ -18,19 +18,11 @@
 
   const restaurant = computed(() => editor.restaurant!)
 
-  const {draft, dirty, saving, failed, discard, save, error} = usePanelDraft({
-    saved: () => detailsOf(restaurant.value),
-    save: async (details) => (await updateEditorRestaurant(restaurant.value.id, detailsRequest(details))).data.data,
-    preview: (details, locale) => detailsPreview(details, locale, editor.defaultLocale),
-    canSave: () => canSave.value,
-  })
+  const {draft, error} = usePanelDraft<DetailsDraft>({section: 'details', id: null})
 
   const {locale, languages, placeholder, textError} = useContentLocale(
     () => [draft.value.name, draft.value.address]
   )
-
-  // the name is required in the default language
-  const canSave = computed(() => !!draft.value.name[editor.defaultLocale]?.trim())
 
   const TYPES = Object.values(EditorRestaurantEstablishment)
 
@@ -64,14 +56,8 @@
               :subtitle="t('editor.subtitles.details')"
               :languages="languages"
               v-model:locale="locale"
-              :dirty="dirty"
-              :saving="saving"
-              :failed="failed"
-              :can-save="canSave"
               @navigate="editor.close()"
-              @close="editor.close()"
-              @discard="discard"
-              @save="save">
+              @close="editor.close()">
     <section class="flex flex-col gap-3.5">
       <h3 class="e-section">{{ t('editor.details.name_and_type') }}</h3>
 

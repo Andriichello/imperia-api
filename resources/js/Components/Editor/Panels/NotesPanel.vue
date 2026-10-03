@@ -1,17 +1,16 @@
 <script setup lang="ts">
-  import {computed, nextTick, ref} from 'vue'
+  import {nextTick, ref} from 'vue'
   import {useI18n} from 'vue-i18n'
   import {Eye, EyeOff, GripVertical, Plus, Trash2} from 'lucide-vue-next'
   import {VueDraggable} from 'vue-draggable-plus'
-  import {updateEditorRestaurantNotes} from '@/api'
   import PanelShell from '@/Components/Editor/PanelShell.vue'
   import GripHandle from '@/Components/Editor/Fields/GripHandle.vue'
-  import {moveItem} from '@/editor/lists'
+  import {moveItem, newKey} from '@/editor/lists'
   import FieldLabel from '@/Components/Editor/Fields/FieldLabel.vue'
   import InfoBox from '@/Components/Editor/Fields/InfoBox.vue'
   import {usePanelDraft} from '@/composables/usePanelDraft'
   import {useContentLocale} from '@/composables/useContentLocale'
-  import {NoteDraft, notesOf, notesPreview, notesRequest} from '@/editor/drafts'
+  import type {NoteDraft} from '@/editor/drafts'
   import {translationsOf} from '@/editor/translations'
   import {useEditorStore} from '@/stores/editor'
 
@@ -26,28 +25,16 @@
   const MAX_LENGTH = 120
   const MAX_NOTES = 20
 
-  const restaurant = computed(() => editor.restaurant!)
-
-  const {draft, dirty, saving, failed, discard, save, error} = usePanelDraft({
-    saved: () => notesOf(restaurant.value),
-    save: async (notes) => (await updateEditorRestaurantNotes(restaurant.value.id, notesRequest(notes))).data.data,
-    preview: (notes, locale) => notesPreview(notes, locale, editor.defaultLocale),
-    canSave: () => canSave.value,
-    lists: {notes: (notes) => notes.map((note) => note.key)},
-  })
+  const {draft, error} = usePanelDraft<NoteDraft[]>({section: 'notes', id: null})
 
   const {locale, languages, placeholder, textError} = useContentLocale(
     () => draft.value.map((note) => note.text)
   )
 
-  // every note has its text in the default language
-  const canSave = computed(() => draft.value.every((note) => !!note.text[editor.defaultLocale]?.trim()))
-
   // the note being edited, and its text before
   const editing = ref<string | null>(null)
   let textBefore = ''
   let added = false
-  let newNotes = 0
 
   function edit(note: NoteDraft, isNew: boolean = false) {
     editing.value = note.key
@@ -116,7 +103,7 @@
 
   function add() {
     const note: NoteDraft = {
-      key: `new-${++newNotes}`,
+      key: newKey(),
       id: null,
       text: translationsOf(null, editor.locales),
       is_hidden: false,
@@ -137,14 +124,8 @@
               :subtitle="t('editor.subtitles.notes')"
               :languages="languages"
               v-model:locale="locale"
-              :dirty="dirty"
-              :saving="saving"
-              :failed="failed"
-              :can-save="canSave"
               @navigate="editor.close()"
-              @close="editor.close()"
-              @discard="editing = null; discard()"
-              @save="editing = null; save()">
+              @close="editor.close()">
     <section class="flex flex-col gap-2">
       <FieldLabel :label="t('editor.notes.label')"
                   :locale="locale">

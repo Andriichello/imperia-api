@@ -20,20 +20,33 @@ import {
  * The public page's side of the editor's preview: it's loaded only there (see `isEditorPreview`).
  *
  * In Select mode clicks pick the parts of the page marked with `editKey()` (and never open
- * anything), the hovered and selected parts are outlined. In Browse mode, or while Alt is held,
- * the page works like for guests. The outlines are one overlay on top of the page, so its
- * components keep their looks.
+ * anything); controls with nothing to edit (back, close, language, search) keep working. The
+ * hovered and selected parts are outlined, the ones with unsaved changes too. In Browse mode,
+ * or while Alt is held, the page works like for guests. The outlines are one overlay on top
+ * of the page, so its components keep their looks.
  */
 
-/** Colors of the editor's selection: its own ones, never the restaurant's brand colors. */
+/** Colors of the editor's selection and drafts: its own ones, never the restaurant's brand colors. */
 const BLUE = '#2563eb'
 const BLUE_TEXT = '#1d4ed8'
+const AMBER = '#f59e0b'
+const AMBER_BG = '#fffbeb'
+const AMBER_TEXT = '#92400e'
+
+/** Controls of the page, which work in Select mode too, unless they're in a part to edit. */
+const CONTROLS = 'button, a, [role="button"], input, select, textarea, label, summary'
+
+/** Parts of a dish on its page (its drawer covers the menu page under it). */
+const DISH_PART = 'dish-'
 
 /** Parts of the restaurant page; the other ones are on menu pages. */
 const RESTAURANT_KINDS = ['photos', 'details', 'notes', 'menus', 'hours', 'contact']
 
 /** How long to wait for a part after opening its page (dishes are loaded after it opens). */
 const WAIT_MS = 4000
+
+/** How long the dish's page takes to close. */
+const CLOSING_MS = 250
 
 /** Height of the outlines' label chips. */
 const CHIP_HEIGHT = 20
@@ -85,7 +98,10 @@ class PreviewBridge {
   protected altHeld = false
   protected labels: Record<string, string> = {}
   protected hoverTemplate = '{label}'
+  protected unsavedTemplate = '{label}'
   protected selectedKeys: string[] = []
+  // parts with unsaved changes
+  protected unsavedKeys: string[] = []
   protected selectedLabel: string | null = null
   // hovered with the pointer or focused with the keyboard
   protected hoverKey: string | null = null
@@ -179,6 +195,7 @@ class PreviewBridge {
       case 'editor:labels':
         this.labels = message.labels
         this.hoverTemplate = message.hover
+        this.unsavedTemplate = message.unsaved
         break
       case 'editor:mode':
         this.mode = message.mode
@@ -193,6 +210,9 @@ class PreviewBridge {
         break
       case 'editor:hover':
         this.treeHoverKeys = message.keys
+        break
+      case 'editor:unsaved':
+        this.unsavedKeys = message.keys
         break
       case 'editor:scrollTo':
         this.scrollTo(message.keys)
@@ -292,11 +312,16 @@ class PreviewBridge {
     return target.closest(`[${EDIT_KEY_ATTRIBUTE}]`)?.getAttribute(EDIT_KEY_ATTRIBUTE) ?? null
   }
 
+  /** A control, which isn't in a part to edit: it works in Select mode too. */
+  protected isFreeControl(target: EventTarget | null): boolean {
+    return target instanceof Element && !this.keyOf(target) && !!target.closest(CONTROLS)
+  }
+
   /** Select mode: a click picks the part of the page, and does nothing else. */
   protected onClick(event: MouseEvent): void {
     this.setAlt(event.altKey)
 
-    if (!this.selecting()) {
+    if (!this.selecting() || this.isFreeControl(event.target)) {
       return
     }
 
@@ -314,7 +339,7 @@ class PreviewBridge {
   protected onPress(event: MouseEvent | TouchEvent): void {
     this.setAlt(event.altKey)
 
-    if (this.selecting()) {
+    if (this.selecting() && !this.isFreeControl(event.target)) {
       event.stopPropagation()
     }
   }
@@ -330,10 +355,9 @@ class PreviewBridge {
     }
 
     const key = this.keyOf(event.target)
-    const control = event.target instanceof Element
-      && event.target.closest('button, a, [role="button"]')
 
-    if (!key && !control) {
+    // controls with nothing to edit work
+    if (!key) {
       return
     }
 
@@ -374,39 +398,59 @@ class PreviewBridge {
 
     // Browse mode works like the public page: no outlines
     if (this.selecting()) {
-      this.selectedKeys.forEach((key, index) => {
+      const selected = this.selectedKeys.filter((key) => this.isOnTop(key))
+
+      selected.forEach((key, index) => {
         const label = index === 0 ? (this.selectedLabel ?? this.labelOf(key)) : null
-        elements.push(...this.outline(key, true, label))
+        elements.push(...this.outline(key, 'selected', label))
       })
 
       const hovered = [...new Set([this.hoverKey, ...this.treeHoverKeys])]
-        .filter((key): key is string => !!key && !this.selectedKeys.includes(key))
+        .filter((key): key is string => !!key && !selected.includes(key) && this.isOnTop(key))
 
       for (const key of hovered) {
         const label = key === this.hoverKey
           ? this.hoverTemplate.replace('{label}', this.labelOf(key))
           : this.labelOf(key)
 
-        elements.push(...this.outline(key, false, label))
+        elements.push(...this.outline(key, 'hovered', label))
+      }
+
+      // the first one of each part with its label
+      for (const key of this.unsavedKeys) {
+        if (!selected.includes(key) && !hovered.includes(key) && this.isOnTop(key)) {
+          elements.push(...this.outline(key, 'unsaved', this.unsavedTemplate.replace('{label}', this.labelOf(key))))
+        }
       }
     }
 
     this.overlay.replaceChildren(...elements)
   }
 
+  /** Whether the part isn't under a dish's page (its drawer covers the menu page). */
+  protected isOnTop(key: string): boolean {
+    return this.page.page !== 'dish' || key.startsWith(DISH_PART)
+  }
+
   protected labelOf(key: string): string {
     return this.labels[key] ?? this.labels[keyKind(key)] ?? keyKind(key)
   }
 
-  /** Outline of the part (with its label), only the part of it, which isn't under the sticky menus. */
-  protected outline(key: string, selected: boolean, label: string | null): HTMLElement[] {
+  /**
+   * Outline of the part (with its label), only the part of it, which isn't under the sticky
+   * menus: solid when it's selected, dashed when it's hovered, amber when it has unsaved changes.
+   */
+  protected outline(key: string, state: 'selected' | 'hovered' | 'unsaved', label: string | null): HTMLElement[] {
     const rect = this.rectOf(key)
 
     if (!rect) {
       return []
     }
 
-    const clip = key === 'menu-tabs' ? 0 : this.stickyBottom()
+    const selected = state === 'selected'
+    const unsaved = state === 'unsaved'
+    // the dish page's drawer is over the sticky menus
+    const clip = key === 'menu-tabs' || key.startsWith(DISH_PART) ? 0 : this.stickyBottom()
     const top = Math.max(rect.top, clip)
     // within the page's width (some parts are nudged a bit out of it)
     const left = Math.max(rect.left, 0)
@@ -422,7 +466,7 @@ class PreviewBridge {
       top: `${top}px`,
       width: `${right - left}px`,
       height: `${rect.bottom - top}px`,
-      border: `2px ${selected ? 'solid' : 'dashed'} ${BLUE}`,
+      border: `2px ${selected ? 'solid' : 'dashed'} ${unsaved ? AMBER : BLUE}`,
       borderRadius: '2px',
       boxSizing: 'border-box',
     })
@@ -431,20 +475,24 @@ class PreviewBridge {
       return [box]
     }
 
-    // on the top edge, or inside when there's no room above it
+    // on the top edge, or inside when there's no room above it; on the right for drafts and
+    // the dish's parts, so it doesn't cover the chip of the part above
     const chipTop = top - CHIP_HEIGHT >= clip ? top - CHIP_HEIGHT + 2 : top + 2
+    const onRight = unsaved || key.startsWith(DISH_PART)
     const chip = styled('div', {
       position: 'fixed',
-      left: `${left + 8}px`,
+      ...(onRight
+        ? {right: `${document.documentElement.clientWidth - right + 8}px`}
+        : {left: `${left + 8}px`}),
       top: `${chipTop}px`,
       maxWidth: `${Math.max(right - left - 16, 40)}px`,
       height: `${CHIP_HEIGHT}px`,
       padding: '0 6px',
-      border: `1px solid ${BLUE}`,
+      border: `1px solid ${unsaved ? AMBER : BLUE}`,
       borderRadius: '4px',
       boxSizing: 'border-box',
-      background: selected ? BLUE : '#ffffff',
-      color: selected ? '#ffffff' : BLUE_TEXT,
+      background: selected ? BLUE : (unsaved ? AMBER_BG : '#ffffff'),
+      color: selected ? '#ffffff' : (unsaved ? AMBER_TEXT : BLUE_TEXT),
       font: `600 12px/${CHIP_HEIGHT - 2}px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`,
       whiteSpace: 'nowrap',
       overflow: 'hidden',
@@ -490,20 +538,33 @@ class PreviewBridge {
 
   /** Scroll to the first of the parts, which is on the page, or open the page of the first one. */
   protected async scrollTo(keys: string[]): Promise<void> {
+    // another part than the dish's: the menu page under the dish's page shows it
+    if (this.page.page === 'dish' && keys.length
+      && !keys.some((k) => k.startsWith(DISH_PART) || k === `dish:${this.page.dishId}`)) {
+      this.navigate({page: 'menu', menuId: this.page.menuId})
+      await new Promise((resolve) => setTimeout(resolve, CLOSING_MS))
+    }
+
     let key = keys.find((k) => this.rectOf(k))
 
+    // on another page, or not on the page yet (e.g. a new dish comes with the next draft)
     if (!key && keys.length) {
       const target = this.pageOf(keys[0])
 
-      if (!target) {
-        return
+      if (target) {
+        this.navigate(target.page, target.hash)
       }
 
-      this.navigate(target.page, target.hash)
       key = await this.waitFor(keys)
     }
 
     if (!key) {
+      return
+    }
+
+    // the parts of a dish's page scroll in its drawer
+    if (key.startsWith(DISH_PART)) {
+      document.querySelector(selectorOf(key))?.scrollIntoView({block: 'nearest', behavior: 'smooth'})
       return
     }
 
@@ -570,21 +631,55 @@ class PreviewBridge {
   protected currentPage(): PreviewPage {
     const match = window.location.pathname.match(/\/menu(?:\/(\d+))?\/?$/)
 
-    return match
-      ? {page: 'menu', menuId: match[1] ? parseInt(match[1]) : null}
-      : {page: 'restaurant', menuId: null}
+    if (!match) {
+      return {page: 'restaurant', menuId: null}
+    }
+
+    const menuId = match[1] ? parseInt(match[1]) : null
+    // a dish's page: its drawer is open over the menu page (`#{categoryId}-{dishId}-page`)
+    const dish = window.location.hash.match(/^#\d+-(\d+)-page$/)
+
+    return dish ? {page: 'dish', menuId, dishId: parseInt(dish[1])} : {page: 'menu', menuId}
   }
 
   /**
    * Open a page of the restaurant like the browser's back and forward buttons do: the page
    * follows its URL on `popstate`. The entry is replaced, so the editor's history stays as it is.
+   * A dish's page is its drawer over its menu page; going back from it to the menu page, the
+   * list shows the dish.
    */
   protected navigate(page: PreviewPage, hash: string = ''): void {
-    const menuId = page.page === 'menu' ? (page.menuId ?? this.app.menus?.[0]?.id ?? null) : null
+    const products: Dish[] = this.preview.products ?? []
+    const menuOf = (dish: Dish) => (this.app.menus ?? [])
+      .find((m: DishMenu) => (m.categories ?? []).some((c) => c.id === dish.category_id))?.id as number | undefined
+    let menuId = page.page === 'restaurant' ? null : (page.menuId ?? this.app.menus?.[0]?.id ?? null)
+    // the page scrolls to the top, or to the dish in the list
+    let scrollY: number | null = 0
+
+    if (page.page === 'dish') {
+      const dish = products.find((p) => p.id === page.dishId)
+
+      // guests don't see it, it has no page
+      if (!dish) {
+        return
+      }
+
+      menuId = menuOf(dish) ?? menuId
+      hash = `#${dish.category_id}-${dish.id}-page`
+      scrollY = null
+    } else if (page.page === 'menu' && !hash && this.page.page === 'dish' && this.page.menuId === menuId) {
+      const dish = products.find((p) => p.id === this.page.dishId)
+
+      if (dish) {
+        hash = `#${dish.category_id}-${dish.id}`
+        scrollY = null
+      }
+    }
+
     const base = window.location.pathname.replace(/\/menu(\/.*)?$/, '')
     const path = menuId ? `${base}/menu/${menuId}` : base
 
-    if (path === window.location.pathname) {
+    if (path + hash === window.location.pathname + window.location.hash) {
       return
     }
 
@@ -593,8 +688,8 @@ class PreviewBridge {
       menuId,
       categoryId: null,
       productId: null,
-      productPage: false,
-      scrollY: 0,
+      productPage: page.page === 'dish',
+      scrollY,
     }
 
     window.history.replaceState(state, '', path + window.location.search + hash)
@@ -606,7 +701,7 @@ class PreviewBridge {
     const report = () => {
       const page = this.currentPage()
 
-      if (page.page !== this.page.page || page.menuId !== this.page.menuId) {
+      if (page.page !== this.page.page || page.menuId !== this.page.menuId || page.dishId !== this.page.dishId) {
         this.page = page
         this.post({type: 'editor:navigate', page})
       }

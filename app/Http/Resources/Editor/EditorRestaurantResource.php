@@ -130,12 +130,14 @@ class EditorRestaurantResource extends JsonResource
      * @OA\Schema(
      *   schema="EditorRestaurantItem",
      *   description="Restaurant the user can edit.",
-     *   required={"id", "slug", "name", "default_locale"},
+     *   required={"id", "slug", "name", "default_locale", "photo"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="slug", type="string", example="smak"),
      *   @OA\Property(property="name", type="string", example="Smak",
      *     description="In the current language."),
      *   @OA\Property(property="default_locale", type="string", example="en"),
+     *   @OA\Property(property="photo", type="string", nullable=true,
+     *     example="https://example.com/storage/media/cover.jpg", description="Its cover."),
      * ),
      * @OA\Schema(
      *   schema="EditorRestaurant",
