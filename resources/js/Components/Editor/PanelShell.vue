@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import {PropType} from 'vue'
   import {useI18n} from 'vue-i18n'
-  import {ChevronLeft, ChevronRight, X} from 'lucide-vue-next'
+  import {ChevronRight, X} from 'lucide-vue-next'
   import type {Breadcrumb, LanguageTab, Selection} from '@/editor/sections'
 
   /**
@@ -64,9 +64,8 @@
 
             <button type="button"
                     class="h-6 inline-flex items-center rounded hover:text-zinc-900 e-focus min-w-0"
-                    :class="index === 0 ? 'gap-0.5 pr-1' : 'px-0.5'"
+                    :class="index === 0 ? 'pr-0.5' : 'px-0.5'"
                     @click="emits('navigate', crumb.selection)">
-              <ChevronLeft class="size-4 shrink-0" v-if="index === 0"/>
               <span class="truncate">{{ crumb.label }}</span>
             </button>
           </template>

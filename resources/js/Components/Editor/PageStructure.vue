@@ -7,7 +7,6 @@
   import {useEditorStore} from '@/stores/editor'
   import {isSameSelection, Section, selectionOf} from '@/editor/sections'
   import {isListed} from '@/editor/menuDrafts'
-  import {translated} from '@/editor/translations'
   import {openState} from '@/editor/hours'
   import {presetOf} from '@/editor/brand'
 
@@ -20,15 +19,6 @@
   const {t} = useI18n()
 
   const restaurant = computed(() => editor.restaurant!)
-
-  const name = computed(() => translated(restaurant.value.name, editor.defaultLocale))
-
-  // the cover: the first photo guests see
-  const cover = computed(() => {
-    const photo = (restaurant.value.photos ?? []).find((item) => !item.is_hidden)
-
-    return photo ? (photo.variants?.find((variant) => variant.extension === 'webp')?.url ?? photo.url) : null
-  })
 
   const status = computed(() => openState(restaurant.value))
 
@@ -114,17 +104,9 @@
               :subtitle="t('editor.structure.help')"
               :closable="false"
               body-class="px-2.5 pt-4 pb-6 gap-[18px]">
+    <!-- no breadcrumb, but its row stays: the title is where the other panels have it -->
     <template #breadcrumb>
-      <p class="h-6 flex items-center gap-1.5 text-[13px]/[18px] text-zinc-500">
-        <img class="size-4 rounded object-cover"
-             :src="cover"
-             alt=""
-             v-if="cover"/>
-        <span class="size-4 rounded bg-gradient-to-br from-[#efe2d2] to-[#c9ab8c]"
-              aria-hidden="true"
-              v-else/>
-        <span class="truncate">{{ name }}</span>
-      </p>
+      <div class="h-6" aria-hidden="true"/>
     </template>
 
     <section class="flex flex-col gap-0.5">

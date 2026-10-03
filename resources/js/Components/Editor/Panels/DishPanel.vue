@@ -81,6 +81,7 @@
 
   const breadcrumbs = computed<Breadcrumb[]>(() => [
     {label: t('editor.panel.page_structure'), selection: null},
+    {label: t('editor.sections.menus'), selection: {section: 'menus', id: null}},
     ...(menu.value ? [{label: name(menu.value), selection: {section: 'menu' as const, id: menu.value.id}}] : []),
     ...(category.value
       ? [{label: name(category.value), selection: {section: 'category' as const, id: category.value.id}}]
