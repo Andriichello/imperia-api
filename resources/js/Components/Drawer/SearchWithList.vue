@@ -310,14 +310,14 @@
 
           <div class="shrink-0 flex flex-col gap-2 pt-3 px-4 pb-5 border-t border-primary/40">
             <button type="button"
-                    class="w-full h-11 flex items-center justify-center rounded-lg border border-zinc-300 bg-base-100 text-base-content text-base font-semibold cursor-pointer disabled:cursor-default disabled:opacity-50"
-                    :disabled="!draft.length"
+                    class="w-full h-11 flex items-center justify-center rounded-lg border border-zinc-300 bg-base-100 text-base-content text-base font-semibold cursor-pointer"
                     @click="draft = []">
               {{ i18n.t('search.clear_all') }}
             </button>
 
+            <!-- looks like the selected category -->
             <button type="button"
-                    class="w-full h-13 flex items-center justify-center rounded-lg bg-primary-content text-base-100 text-base font-semibold cursor-pointer"
+                    class="w-full h-13 flex items-center justify-center rounded-lg border border-primary/40 bg-primary/20 text-primary-content text-base font-semibold cursor-pointer"
                     v-if="draftCount"
                     @click="applyFilters">
               {{ i18n.t('search.show_dishes', {count: draftCount}, draftCount) }}
