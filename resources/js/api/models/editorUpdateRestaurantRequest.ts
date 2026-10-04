@@ -23,4 +23,9 @@ export interface EditorUpdateRestaurantRequest {
   brand_primary?: string | null;
   /** @nullable */
   brand_primary_content?: string | null;
+  /**
+   * Of prices, none for the one between those two. Needs 3 : 1 contrast on the menu.
+   * @nullable
+   */
+  brand_accent?: string | null;
 }

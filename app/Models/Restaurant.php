@@ -59,6 +59,7 @@ use Illuminate\Support\Facades\DB;
  * @property string|null $establishment
  * @property string|null $brand_primary
  * @property string|null $brand_primary_content
+ * @property string|null $brand_accent
  *
  * @property Menu[]|Collection $menus
  * @property Product[]|Collection $products
@@ -128,6 +129,7 @@ class Restaurant extends BaseModel implements
         'closed_reason',
         'brand_primary',
         'brand_primary_content',
+        'brand_accent',
     ];
 
     /**
@@ -148,6 +150,7 @@ class Restaurant extends BaseModel implements
         'establishment',
         'brand_primary',
         'brand_primary_content',
+        'brand_accent',
     ];
 
     /**
@@ -613,6 +616,27 @@ class Restaurant extends BaseModel implements
     public function setBrandPrimaryContentAttribute(?string $color): void
     {
         $this->setToJson('metadata', 'brand_primary_content', $color ? strtolower($color) : null);
+    }
+
+    /**
+     * Accessor for the restaurant's accent color, of prices on its menu (none: the one
+     * between its brand color and the color of text, see `app.css`).
+     *
+     * @return string|null
+     */
+    public function getBrandAccentAttribute(): ?string
+    {
+        return $this->getFromJson('metadata', 'brand_accent');
+    }
+
+    /**
+     * Mutator for the restaurant's accent color.
+     *
+     * @param string|null $color
+     */
+    public function setBrandAccentAttribute(?string $color): void
+    {
+        $this->setToJson('metadata', 'brand_accent', $color ? strtolower($color) : null);
     }
 
     /**

@@ -44,7 +44,7 @@ import {
   textsOf,
   textsRequest,
 } from '@/editor/menuDrafts'
-import {BrandColors, brandOf, contrastOnTints, isHex, READABLE} from '@/editor/brand'
+import {BrandColors, brandOf, contrastOnList, contrastOnTints, isHex, PRICES_READABLE, READABLE} from '@/editor/brand'
 import {hoursValid} from '@/editor/hours'
 import {findCategory, findDish, findMenu} from '@/editor/find'
 import type {PreviewPatch} from '@/editor/protocol'
@@ -149,11 +149,13 @@ const hours: ItemKind<HoursDraft> = {
 const brand: ItemKind<BrandColors> = {
   saved: (restaurant) => ({...brandOf(restaurant)}),
   exists: () => true,
-  valid: (values) => isHex(values.primary) && isHex(values.content) && contrastOnTints(values) >= READABLE,
+  valid: (values) => isHex(values.primary) && isHex(values.content) && contrastOnTints(values) >= READABLE
+    && isHex(values.accent) && contrastOnList(values.accent) >= PRICES_READABLE,
   save: async (values, restaurant) => ({
     restaurant: (await updateEditorRestaurant(restaurant.id, {
       brand_primary: values.primary.toLowerCase(),
       brand_primary_content: values.content.toLowerCase(),
+      brand_accent: values.accent.toLowerCase(),
     })).data.data,
   }),
 }

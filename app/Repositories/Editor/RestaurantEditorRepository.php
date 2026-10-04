@@ -154,7 +154,13 @@ class RestaurantEditorRepository extends EditorRepository
     {
         $this->translate($restaurant, $data, ['name', 'address']);
 
-        $restaurant->fill(Arr::only($data, ['establishment', 'phone', 'brand_primary', 'brand_primary_content']));
+        $restaurant->fill(Arr::only($data, [
+            'establishment',
+            'phone',
+            'brand_primary',
+            'brand_primary_content',
+            'brand_accent',
+        ]));
         $restaurant->save();
 
         return $restaurant;

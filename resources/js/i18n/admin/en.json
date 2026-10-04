@@ -206,6 +206,7 @@
           "establishment": "type",
           "brand_primary": "brand colors",
           "brand_primary_content": "brand colors",
+          "brand_accent": "brand colors",
           "media": "photos",
           "flags": "tags and allergens",
           "price": "price",

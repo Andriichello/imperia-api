@@ -37,6 +37,8 @@ export interface EditorRestaurant {
   brand_primary: string | null;
   /** @nullable */
   brand_primary_content: string | null;
+  /** @nullable */
+  brand_accent: string | null;
   /**
    * Temporarily closed till this day.
    * @nullable

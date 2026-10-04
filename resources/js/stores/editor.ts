@@ -196,8 +196,8 @@ export const useEditorStore = defineStore('editor', {
     previewBrand(): PreviewBrand | null {
       const draft = this.unsaved.find((entry) => entry.key === 'brand')?.values as BrandColors | undefined
 
-      return draft && isHex(draft.primary) && isHex(draft.content)
-        ? {primary: draft.primary, content: draft.content}
+      return draft && isHex(draft.primary) && isHex(draft.content) && isHex(draft.accent)
+        ? {primary: draft.primary, content: draft.content, accent: draft.accent}
         : null
     },
 

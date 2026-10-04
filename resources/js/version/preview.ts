@@ -58,6 +58,7 @@ export function versionRestaurant(restaurant: EditorRestaurant, version: EditorV
           ...('phone' in values ? {phone: values.phone} : {}),
           ...('brand_primary' in values ? {brand_primary: values.brand_primary} : {}),
           ...('brand_primary_content' in values ? {brand_primary_content: values.brand_primary_content} : {}),
+          ...('brand_accent' in values ? {brand_accent: values.brand_accent} : {}),
           ...('media' in values ? {photos: photosOf(values.media, photos)} : {}),
         })
         break

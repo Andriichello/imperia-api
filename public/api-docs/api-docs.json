@@ -8822,6 +8822,12 @@
                         "type": "string",
                         "example": "#284625",
                         "nullable": true
+                    },
+                    "brand_accent": {
+                        "description": "Of prices, none for the one between those two. Needs 3 : 1 contrast on the menu.",
+                        "type": "string",
+                        "example": "#327e1e",
+                        "nullable": true
                     }
                 },
                 "type": "object"
@@ -10568,6 +10574,7 @@
                     "currency",
                     "brand_primary",
                     "brand_primary_content",
+                    "brand_accent",
                     "closed_until",
                     "closed_reason",
                     "notes",
@@ -10646,6 +10653,11 @@
                     "brand_primary_content": {
                         "type": "string",
                         "example": "#284625",
+                        "nullable": true
+                    },
+                    "brand_accent": {
+                        "type": "string",
+                        "example": "#327e1e",
                         "nullable": true
                     },
                     "closed_until": {
@@ -11751,7 +11763,8 @@
                     "closed_until",
                     "closed_reason",
                     "brand_primary",
-                    "brand_primary_content"
+                    "brand_primary_content",
+                    "brand_accent"
                 ],
                 "properties": {
                     "id": {
@@ -11882,6 +11895,12 @@
                         "description": "Color of text on tints of the primary one.",
                         "type": "string",
                         "example": "#284625",
+                        "nullable": true
+                    },
+                    "brand_accent": {
+                        "description": "Color of prices, none for the one between the primary and the text ones.",
+                        "type": "string",
+                        "example": "#327e1e",
                         "nullable": true
                     }
                 },

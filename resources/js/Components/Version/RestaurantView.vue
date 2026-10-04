@@ -32,17 +32,40 @@
   const phone = computed(() => field.value<string | null>('phone'))
   const primary = computed(() => field.value<string | null>('brand_primary'))
   const content = computed(() => field.value<string | null>('brand_primary_content'))
+  const accent = computed(() => field.value<string | null>('brand_accent'))
   const media = computed(() => field.value<{ id: number, is_hidden: boolean }[] | null>('media'))
 
   const typeLabel = (type: string | null) => type ? t(type === 'restaurant' ? 'restaurant.title' : `restaurant.${type}_title`) : t('admin.version.none')
 
-  /** Both colors together (the version takes them as a pair). */
-  function setColor(key: 'brand_primary' | 'brand_primary_content', value: string) {
-    const hex = value.trim().toLowerCase()
+  type ColorKey = 'brand_primary' | 'brand_primary_content' | 'brand_accent'
+
+  const COLOR_KEYS: ColorKey[] = ['brand_primary', 'brand_primary_content', 'brand_accent']
+
+  const colorField = (key: ColorKey) => ({brand_primary: primary, brand_primary_content: content, brand_accent: accent})[key].value
+
+  const COLOR_LABELS: Record<ColorKey, string> = {
+    brand_primary: 'editor.brand.primary',
+    brand_primary_content: 'editor.brand.content',
+    brand_accent: 'editor.brand.accent',
+  }
+
+  /** The primary and text colors together (the version takes them as a pair), the accent alone. */
+  function setColor(key: ColorKey, value: string) {
+    const typed = value.trim().toLowerCase()
+    const hex = typed.startsWith('#') ? typed : `#${typed}`
+
+    if (key === 'brand_accent') {
+      if (isHex(hex)) {
+        store.editFields(target.value, {brand_accent: hex})
+      }
+
+      return
+    }
+
     const colors = {
       brand_primary: primary.value.value,
       brand_primary_content: content.value.value,
-      [key]: hex.startsWith('#') ? hex : `#${hex}`,
+      [key]: hex,
     }
 
     if (isHex(colors.brand_primary ?? '') && isHex(colors.brand_primary_content ?? '')) {
@@ -116,28 +139,31 @@
   <TextRow :field="field('address')" :label="t('editor.details.address')"/>
 
   <PropRow :label="t('editor.sections.brand')"
-           :changed="primary.changed || content.changed"
-           :error="content.error"
-           @revert="store.revert(target, ['brand_primary', 'brand_primary_content'])">
+           :changed="primary.changed || content.changed || accent.changed"
+           :error="content.error ?? accent.error"
+           @revert="store.revert(target, COLOR_KEYS)">
     <template #live>
-      <span class="inline-flex items-center gap-1.5 uppercase tabular-nums" v-if="primary.live">
-        <span class="size-3.5 rounded-full" :style="{background: primary.live}"/>{{ primary.live }}
-        <span class="size-3.5 rounded-full" :style="{background: content.live ?? ''}"/>{{ content.live }}
+      <span class="inline-flex items-center gap-1.5 uppercase tabular-nums" v-if="primary.live || accent.live">
+        <template v-for="key in COLOR_KEYS" :key="key">
+          <template v-if="colorField(key).live">
+            <span class="size-3.5 rounded-full" :style="{background: colorField(key).live ?? ''}"/>{{ colorField(key).live }}
+          </template>
+        </template>
       </span>
       <span v-else>{{ t('admin.version.none') }}</span>
     </template>
 
     <span class="flex gap-2">
       <label class="relative flex-1 min-w-0 flex items-center gap-2"
-             v-for="key in (['brand_primary', 'brand_primary_content'] as const)" :key="key">
+             v-for="key in COLOR_KEYS" :key="key">
         <span class="size-9 shrink-0 rounded-md shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)]"
-              :style="{background: (key === 'brand_primary' ? primary : content).value ?? '#ffffff'}"/>
+              :style="{background: colorField(key).value ?? '#ffffff'}"/>
         <input class="e-input h-9 min-w-0 uppercase tabular-nums"
                type="text"
                maxlength="7"
-               :aria-label="t(key === 'brand_primary' ? 'editor.brand.primary' : 'editor.brand.content')"
-               :class="{'e-changed': (key === 'brand_primary' ? primary : content).changed}"
-               :value="(key === 'brand_primary' ? primary : content).value ?? ''"
+               :aria-label="t(COLOR_LABELS[key])"
+               :class="{'e-changed': colorField(key).changed}"
+               :value="colorField(key).value ?? ''"
                :disabled="store.readOnly"
                @change="setColor(key, ($event.target as HTMLInputElement).value)"/>
       </label>

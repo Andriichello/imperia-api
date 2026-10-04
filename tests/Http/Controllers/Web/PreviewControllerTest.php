@@ -226,6 +226,7 @@ class PreviewControllerTest extends TestCase
             'timezone' => 'Europe/Kyiv',
             'brand_primary' => '#6db0bb',
             'brand_primary_content' => '#295a5a',
+            'brand_accent' => '#4B858B',
             'closed_until' => '2026-10-14',
         ]);
         $this->restaurant->putTranslations('closed_reason', ['en' => 'Renovation', 'uk' => 'Ремонт']);
@@ -251,7 +252,10 @@ class PreviewControllerTest extends TestCase
 
         $response = $this->get($url)
             ->assertOk()
-            ->assertSee('style="--color-warning: #6db0bb; --color-warning-content: #295a5a;"', false);
+            ->assertSee(
+                'style="--color-warning: #6db0bb; --color-warning-content: #295a5a; --color-accent: #4b858b;"',
+                false
+            );
 
         $restaurant = $response->viewData('restaurant')->resolve();
 
@@ -260,10 +264,17 @@ class PreviewControllerTest extends TestCase
         $this->assertSame([$yesterday->id, $christmas->id], collect($restaurant['exceptions'])->pluck('id')->all());
         $this->assertSame('Святвечір', $restaurant['exceptions'][1]->resolve()['reason']);
 
-        // without brand colors, the page has the default ones
+        // without brand colors, the page has the default ones (and its accent)
         $this->restaurant->update(['brand_primary' => null, 'brand_primary_content' => null]);
 
-        $this->getRestaurantPage()->assertDontSee('--color-warning:', false);
+        $this->getRestaurantPage()
+            ->assertDontSee('--color-warning:', false)
+            ->assertSee('style="--color-accent: #4b858b;"', false);
+
+        // without an accent, the one of `app.css`
+        $this->restaurant->update(['brand_accent' => null]);
+
+        $this->getRestaurantPage()->assertDontSee('--color-accent:', false);
     }
 
     /**

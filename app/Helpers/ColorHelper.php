@@ -24,6 +24,20 @@ class ColorHelper
     public const READABLE = 4.5;
 
     /**
+     * Background of the menu list, which prices (in the accent color) are on.
+     *
+     * @var int[]
+     */
+    public const LIST_BACKGROUND = [249, 249, 249];
+
+    /**
+     * Contrast, which large bold text (like prices) needs to be readable (WCAG AA).
+     *
+     * @var float
+     */
+    public const READABLE_LARGE = 3.0;
+
+    /**
      * Whether the value is a hex color, e.g. `#3bb517`.
      *
      * @param mixed $value
@@ -125,5 +139,17 @@ class ColorHelper
         );
 
         return min($contrasts);
+    }
+
+    /**
+     * Contrast of the accent color (of prices) on the menu list.
+     *
+     * @param string $accent
+     *
+     * @return float
+     */
+    public static function contrastOnList(string $accent): float
+    {
+        return static::contrast(static::toRgb($accent), static::LIST_BACKGROUND);
     }
 }

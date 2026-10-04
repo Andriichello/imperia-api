@@ -110,7 +110,7 @@ const isClamped = computed<boolean>(() => lines.value > MAX_DESC_LINES);
       <!-- the price of the first size; the dish page has the others -->
       <div class="mt-0.5 flex flex-col items-start gap-1">
         <span class="inline-flex items-baseline gap-2 whitespace-nowrap">
-          <span class="text-xl/7 font-bold text-(--dish-price)">{{ price }}</span>
+          <span class="text-xl/7 font-bold text-accent">{{ price }}</span>
 
           <template v-if="weight">
             <span class="text-base/6 text-[#A3A2A7]" aria-hidden="true">·</span>

@@ -27,10 +27,11 @@ export interface PreviewPatch {
   products?: Dish[]
 }
 
-/** Brand colors of the public page: the primary one and the one of text on its tints. */
+/** Brand colors of the public page: the primary one, the one of text on its tints, the accent of prices. */
 export interface PreviewBrand {
   primary: string
   content: string
+  accent: string
 }
 
 /** Attribute of the parts of the public page, which can be selected (see `editKey()`). */

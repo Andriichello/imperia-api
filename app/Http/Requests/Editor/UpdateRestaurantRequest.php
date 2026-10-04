@@ -44,11 +44,13 @@ class UpdateRestaurantRequest extends EditorRequest
             // both colors, or neither
             'brand_primary' => ['nullable', 'string', $hex, 'required_with:brand_primary_content'],
             'brand_primary_content' => ['nullable', 'string', $hex, 'required_with:brand_primary'],
+            // of prices, none for the one between those two
+            'brand_accent' => ['nullable', 'string', $hex],
         ];
     }
 
     /**
-     * Text on the brand color's tints has to be readable.
+     * Text on the brand color's tints and prices in the accent color have to be readable.
      *
      * @return array
      */
@@ -77,6 +79,27 @@ class UpdateRestaurantRequest extends EditorRequest
                     );
                 }
             },
+            function (Validator $validator) {
+                $accent = $this->input('brand_accent');
+
+                if (!ColorHelper::isHex($accent)) {
+                    return;
+                }
+
+                $contrast = ColorHelper::contrastOnList($accent);
+
+                if ($contrast < ColorHelper::READABLE_LARGE) {
+                    $validator->errors()->add(
+                        'brand_accent',
+                        sprintf(
+                            'Prices have %.1f : 1 contrast on the menu, they need at least %.1f : 1. '
+                            . 'Pick a darker accent color.',
+                            floor($contrast * 10) / 10,
+                            ColorHelper::READABLE_LARGE
+                        )
+                    );
+                }
+            },
         ];
     }
 
@@ -93,6 +116,8 @@ class UpdateRestaurantRequest extends EditorRequest
      *   @OA\Property(property="brand_primary", type="string", nullable=true, example="#3bb517",
      *     description="Both colors or neither. Text on the color's tints needs 4.5 : 1 contrast."),
      *   @OA\Property(property="brand_primary_content", type="string", nullable=true, example="#284625"),
+     *   @OA\Property(property="brand_accent", type="string", nullable=true, example="#327e1e",
+     *     description="Of prices, none for the one between those two. Needs 3 : 1 contrast on the menu."),
      * ),
      */
 }

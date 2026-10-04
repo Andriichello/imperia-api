@@ -32,6 +32,11 @@
       $brand = isset($restaurant) && $restaurant->brand_primary && $restaurant->brand_primary_content
           ? "--color-warning: {$restaurant->brand_primary}; --color-warning-content: {$restaurant->brand_primary_content};"
           : null;
+
+      // and its accent of prices (without it, `app.css` mixes those two)
+      if (isset($restaurant) && $restaurant->brand_accent) {
+          $brand = trim("{$brand} --color-accent: {$restaurant->brand_accent};");
+      }
     @endphp
   </head>
 

@@ -83,6 +83,7 @@ trait VersionChangeRules
                 "$path.phone" => ['sometimes', 'nullable', 'string', 'max:30'],
                 "$path.brand_primary" => ['sometimes', 'string', $hex, "required_with:$path.brand_primary_content"],
                 "$path.brand_primary_content" => ['sometimes', 'string', $hex, "required_with:$path.brand_primary"],
+                "$path.brand_accent" => ['sometimes', 'nullable', 'string', $hex],
                 "$path.media" => ['sometimes', 'array', 'max:20'],
                 ...$this->photoRules("$path.media"),
             ],
@@ -165,19 +166,30 @@ trait VersionChangeRules
     {
         $primary = $this->input("$path.brand_primary");
         $text = $this->input("$path.brand_primary_content");
+        $accent = $this->input("$path.brand_accent");
 
-        if (!ColorHelper::isHex($primary) || !ColorHelper::isHex($text)) {
-            return;
+        if (ColorHelper::isHex($primary) && ColorHelper::isHex($text)) {
+            $contrast = ColorHelper::contrastOnTints($primary, $text);
+
+            if ($contrast < ColorHelper::READABLE) {
+                $validator->errors()->add("$path.brand_primary_content", sprintf(
+                    'Text on the tinted backgrounds has %.1f : 1 contrast, it needs at least %.1f : 1.',
+                    floor($contrast * 10) / 10,
+                    ColorHelper::READABLE
+                ));
+            }
         }
 
-        $contrast = ColorHelper::contrastOnTints($primary, $text);
+        if (ColorHelper::isHex($accent)) {
+            $contrast = ColorHelper::contrastOnList($accent);
 
-        if ($contrast < ColorHelper::READABLE) {
-            $validator->errors()->add("$path.brand_primary_content", sprintf(
-                'Text on the tinted backgrounds has %.1f : 1 contrast, it needs at least %.1f : 1.',
-                floor($contrast * 10) / 10,
-                ColorHelper::READABLE
-            ));
+            if ($contrast < ColorHelper::READABLE_LARGE) {
+                $validator->errors()->add("$path.brand_accent", sprintf(
+                    'Prices have %.1f : 1 contrast on the menu, they need at least %.1f : 1.',
+                    floor($contrast * 10) / 10,
+                    ColorHelper::READABLE_LARGE
+                ));
+            }
         }
     }
 }

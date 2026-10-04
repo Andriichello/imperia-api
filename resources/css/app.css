@@ -79,9 +79,9 @@ body {
   --color-primary: var(--color-warning);
   --color-primary-content: var(--color-warning-content);
 
-  /* Prices of dishes: the primary color made readable on the menu list (`applyPriceColor()` sets
-     the exact one of the brand color) */
-  --dish-price: color-mix(in srgb, var(--color-primary) 87%, black);
+  /* Prices: the restaurant's accent color, or the one between the text and the primary ones
+     (the editor's `accentOf()`) */
+  --color-accent: color-mix(in srgb, var(--color-primary-content) 50%, var(--color-primary));
 
   /*--color-warning: #6db0bb;*/
   /*--color-warning-content: #295a5a;*/

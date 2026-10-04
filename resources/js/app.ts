@@ -6,7 +6,6 @@ import {setI18n} from '@/i18n/utils';
 import {createWebRouter} from '@/router';
 import {useAppStore} from '@/stores/app';
 import {isEditorPreview} from '@/editor/editKey';
-import {applyPriceColor} from '@/editor/brand';
 import App from "@/App.vue";
 
 const element = document.getElementById('app');
@@ -30,9 +29,6 @@ app.use(i18n);
 
 // Create router
 app.use(createWebRouter());
-
-// The prices' color of the restaurant's brand color
-applyPriceColor();
 
 app.mount('#app');
 

@@ -65,6 +65,7 @@ class RestaurantResource extends JsonResource
             'closed_reason' => $this->closed_reason ?: null,
             'brand_primary' => $this->brand_primary,
             'brand_primary_content' => $this->brand_primary_content,
+            'brand_accent' => $this->brand_accent,
         ];
     }
 
@@ -90,7 +91,8 @@ class RestaurantResource extends JsonResource
      *   required = {"id", "type", "slug", "name", "country", "city", "place",
      *     "phone", "email", "website", "location", "timezone", "timezone_offset",
      *     "popularity", "locale", "currency", "establishment", "notes", "media", "schedules",
-     *     "exceptions", "closed_until", "closed_reason", "brand_primary", "brand_primary_content"},
+     *     "exceptions", "closed_until", "closed_reason", "brand_primary", "brand_primary_content",
+     *     "brand_accent"},
      *   @OA\Property(property="id", type="integer", example=1),
      *   @OA\Property(property="type", type="string", example="restaurants"),
      *   @OA\Property(property="slug", type="string", example="first"),
@@ -126,6 +128,8 @@ class RestaurantResource extends JsonResource
      *   @OA\Property(property="brand_primary", type="string", nullable=true, example="#3bb517"),
      *   @OA\Property(property="brand_primary_content", type="string", nullable=true, example="#284625",
      *     description="Color of text on tints of the primary one."),
+     *   @OA\Property(property="brand_accent", type="string", nullable=true, example="#327e1e",
+     *     description="Color of prices, none for the one between the primary and the text ones."),
      * )
      */
 }

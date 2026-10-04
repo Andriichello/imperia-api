@@ -59,4 +59,9 @@ export interface Restaurant {
    * @nullable
    */
   brand_primary_content: string | null;
+  /**
+   * Color of prices, none for the one between the primary and the text ones.
+   * @nullable
+   */
+  brand_accent: string | null;
 }

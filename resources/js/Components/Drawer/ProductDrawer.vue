@@ -157,7 +157,7 @@ const closePopup = () => {
                  v-bind="editKey('dish-sizes')"
                  v-if="sizes.length === 1">
               <div class="flex flex-wrap items-baseline gap-x-2">
-                <span class="text-[22px]/[30px] font-bold whitespace-nowrap text-(--dish-price)">{{ price(sizes[0]) }}</span>
+                <span class="text-[22px]/[30px] font-bold whitespace-nowrap text-accent">{{ price(sizes[0]) }}</span>
 
                 <template v-if="sizeWeightFormatted(sizes[0])">
                   <span class="text-[17px]/6 text-[#A3A2A7]" aria-hidden="true">·</span>
@@ -220,7 +220,7 @@ const closePopup = () => {
                   </span>
                 </div>
 
-                <span class="text-[22px]/[30px] font-bold whitespace-nowrap text-(--dish-price)">{{ price(size) }}</span>
+                <span class="text-[22px]/[30px] font-bold whitespace-nowrap text-accent">{{ price(size) }}</span>
               </div>
             </div>
           </section>

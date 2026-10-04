@@ -88,6 +88,7 @@ function brand(draft: BrandColors, saved: BrandColors, restaurant: EditorRestaur
   const fields = same(draft, saved) ? {} : {
     brand_primary: draft.primary.toLowerCase(),
     brand_primary_content: draft.content.toLowerCase(),
+    brand_accent: draft.accent.toLowerCase(),
   }
 
   return {changes: change('restaurants', restaurant.id, fields), rest: null}

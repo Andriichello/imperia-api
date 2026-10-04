@@ -228,6 +228,36 @@ class RestaurantEditorTest extends EditorTestCase
     }
 
     /**
+     * Test that the accent color is saved only when prices in it are readable on the menu,
+     * and that it can be cleared (the page mixes the brand colors then).
+     *
+     * @return void
+     */
+    public function testAccentColorNeedsReadablePrices()
+    {
+        $url = "/api/editor/restaurants/{$this->restaurant->id}";
+
+        $this->patchJson($url, ['brand_accent' => '#4B858B'])
+            ->assertOk()
+            ->assertJsonPath('data.brand_accent', '#4b858b');
+
+        // light green prices on the light gray menu are hard to read
+        $this->patchJson($url, ['brand_accent' => '#71d855'])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['brand_accent']);
+
+        $this->patchJson($url, ['brand_accent' => 'teal'])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['brand_accent']);
+
+        $this->assertSame('#4b858b', $this->restaurant->fresh()->brand_accent);
+
+        $this->patchJson($url, ['brand_accent' => null])
+            ->assertOk()
+            ->assertJsonPath('data.brand_accent', null);
+    }
+
+    /**
      * Test that notes are replaced in their order, and the website shows only visible ones.
      *
      * @return void

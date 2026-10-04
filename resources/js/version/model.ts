@@ -153,6 +153,7 @@ export function liveOf(type: TargetType, item: unknown, restaurant: EditorRestau
         phone: restaurant.phone,
         brand_primary: restaurant.brand_primary,
         brand_primary_content: restaurant.brand_primary_content,
+        brand_accent: restaurant.brand_accent,
         media: media(restaurant.photos),
       }
   }

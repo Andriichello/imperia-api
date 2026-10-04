@@ -206,6 +206,7 @@
           "establishment": "тип",
           "brand_primary": "кольори",
           "brand_primary_content": "кольори",
+          "brand_accent": "кольори",
           "media": "фото",
           "flags": "теги й алергени",
           "price": "ціна",

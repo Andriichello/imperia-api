@@ -121,6 +121,7 @@ abstract class EditorRequest extends BaseRequest
             'establishment' => 'type',
             'brand_primary' => 'primary color',
             'brand_primary_content' => 'text color',
+            'brand_accent' => 'accent color',
             'notes' => 'notes',
             'notes.*.id' => 'note',
             'notes.*.text' => 'note',

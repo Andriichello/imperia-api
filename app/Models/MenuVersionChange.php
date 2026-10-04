@@ -103,6 +103,7 @@ class MenuVersionChange extends BaseModel
                 'phone' => self::KIND_VALUE,
                 'brand_primary' => self::KIND_VALUE,
                 'brand_primary_content' => self::KIND_VALUE,
+                'brand_accent' => self::KIND_VALUE,
                 'media' => self::KIND_MEDIA,
             ],
             'parent' => null,

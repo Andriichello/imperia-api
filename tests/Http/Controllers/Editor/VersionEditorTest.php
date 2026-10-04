@@ -259,6 +259,15 @@ class VersionEditorTest extends EditorTestCase
             ->assertUnprocessable()
             ->assertJsonValidationErrors(['fields.brand_primary_content']);
 
+        // and prices in the accent color
+        $this->putChange($version, [
+            'target_type' => 'restaurants',
+            'target_id' => $this->restaurant->id,
+            'fields' => ['brand_accent' => '#71d855'],
+        ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['fields.brand_accent']);
+
         $this->assertSame(0, MenuVersionChange::query()->count());
     }
 
