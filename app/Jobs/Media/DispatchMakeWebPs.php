@@ -5,6 +5,7 @@ namespace App\Jobs\Media;
 use App\Jobs\AsyncJob;
 use App\Models\Morphs\Media;
 use Exception;
+use Illuminate\Support\Collection;
 
 /**
  * Class DispatchMakeWebPs.
@@ -36,12 +37,10 @@ class DispatchMakeWebPs extends AsyncJob
      */
     public function handle(): void
     {
-        /* @phpstan-ignore-next-line  */
-        $collection = \App\Models\Morphs\Media::query()
-            ->whereNull('original_id')
-            ->whereNotNull('extension')
-            ->whereIn('extension', ['image/jpeg', 'image/png', 'image/x-png'])
-            ->doesntHave('variants')
+        /** @var Collection<int, Media> $collection */
+        $collection = Media::query()
+            ->withoutCopies()
+            ->orderBy('id')
             ->limit($this->limit)
             ->get();
 

@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import {Dish, Media} from "@/api";
+import {Dish} from "@/api";
 import {Splide, SplideSlide} from "@splidejs/vue-splide";
 import {ref, computed, PropType} from "vue";
 import {DishSize, getDishSizes, priceFormatted, sizeWeightFormatted} from "@/helpers";
+import {photoSources} from "@/photos";
 import {Timer, Flame, TriangleAlert} from "lucide-vue-next";
 import {type DishTag, getAllergenLabel, getAllergens, getDishTags} from "@/flags";
 import { useI18n } from "vue-i18n";
@@ -36,12 +37,8 @@ const handleProductClick = () => {
   emit('productClick', props.product);
 };
 
-const media = computed<Media[]>(() => {
-  return (props.product.media ?? []).map((m: Media) => {
-    const webp = m?.variants?.find((v: Media) => v.extension === 'webp');
-    return webp ?? m;
-  })
-});
+// the copies of the photos, which are just big enough for the list
+const photos = computed(() => (props.product.media ?? []).map(photoSources));
 
 const sizes = computed<DishSize[]>(() => getDishSizes(props.product));
 
@@ -105,10 +102,11 @@ const allergenNames = computed<string>(
         </div>
 
         <div class="size-28 shrink-0 self-start relative rounded-lg overflow-hidden border border-base-300 bg-base-200/20"
-             v-if="media.length">
+             v-if="photos.length">
           <!-- a list shows the first photo only: no slider for it (a list has many of them) -->
           <img class="w-full h-28 object-cover object-center"
-               :src="media[0].url" alt=""
+               :src="photos[0].src" :srcset="photos[0].srcset" sizes="112px" alt=""
+               loading="lazy" decoding="async"
                v-if="preview"/>
 
           <Splide class="size-full" v-else :options="{
@@ -120,9 +118,9 @@ const allergenNames = computed<string>(
                   arrows: false,
                   pagination: true,
                 }">
-            <SplideSlide v-for="(m, index) in media" :key="m.id">
+            <SplideSlide v-for="(photo, index) in photos" :key="photo.src">
               <img class="w-full h-28 object-cover object-center"
-                   :src="m.url" alt=""
+                   :src="photo.src" :srcset="photo.srcset" sizes="112px" alt=""
                    :loading="index === 0 ? 'eager' : 'lazy'"/>
             </SplideSlide>
           </Splide>

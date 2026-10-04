@@ -2,6 +2,7 @@
   import {computed, PropType, ref} from "vue";
   import {DateTime} from "luxon";
   import {Splide, SplideSlide} from '@splidejs/vue-splide';
+  import {photoSources} from "@/photos";
   import {
     Copy,
     CalendarClock,
@@ -11,7 +12,7 @@
     MapPin,
     Phone,
   } from 'lucide-vue-next';
-  import {DishMenu, Media, Restaurant} from "@/api";
+  import {DishMenu, Restaurant} from "@/api";
   import Schedule from "@/Components/Restaurant/Schedule.vue";
   import {getScheduleInfo, ScheduleInfo, time} from "@/helpers";
   import {editKey} from "@/editor/editKey";
@@ -34,12 +35,8 @@
 
   const i18n = useI18n();
 
-  const media = computed<Media[]>(() => {
-    return props.restaurant.media.map((m: Media) => {
-      const webp = m?.variants?.find((v: Media) => v.extension === 'webp');
-      return webp ?? m;
-    })
-  });
+  // the copies of the photos, which are just big enough for the page
+  const photos = computed(() => (props.restaurant.media ?? []).map(photoSources));
 
   // follows the photos (they change in the editor's preview)
   const slideOptions = computed(() => ({
@@ -47,8 +44,8 @@
     perMove: 1,
     rewind: false,
     rewindByDrag: false,
-    drag: (media.value?.length ?? 0) > 1,
-    arrows: (media.value?.length ?? 0) > 1,
+    drag: photos.value.length > 1,
+    arrows: photos.value.length > 1,
     pagination: true,
   }));
 
@@ -183,10 +180,10 @@
     <div class="w-full max-w-md flex-1 flex flex-col justify-start items-center relative">
       <Splide class="w-full h-75" :options="slideOptions"
               v-bind="editKey('photos')"
-              v-if="media?.length > 0">
-        <SplideSlide v-for="(m, index) in media ?? []" :key="m.id">
+              v-if="photos.length > 0">
+        <SplideSlide v-for="(photo, index) in photos" :key="photo.src">
           <img class="w-full h-75 object-cover object-center"
-               :src="m.url" alt=""
+               :src="photo.src" :srcset="photo.srcset" sizes="(min-width: 28rem) 28rem, 100vw" alt=""
                :loading="index === 0 ? 'eager' : 'lazy'"/>
         </SplideSlide>
       </Splide>

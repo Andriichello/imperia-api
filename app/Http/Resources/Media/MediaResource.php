@@ -39,6 +39,9 @@ class MediaResource extends JsonResource
             'is_hidden' => (bool) data_get($this->resource, 'pivot.is_hidden', false),
             'url' => $this->url,
             'metadata' => $this->metadata,
+            // of a smaller copy (WebP), which pages load instead of a bigger one, when it's enough
+            'width' => $this->getFromJson('metadata', 'width'),
+            'height' => $this->getFromJson('metadata', 'height'),
             'variants' => new MediaCollection($this->whenLoaded('variants')),
         ];
     }
@@ -71,6 +74,10 @@ class MediaResource extends JsonResource
      *   @OA\Property(property="url", type="string", example="http://localhost/storage/drinks.svg"),
      *   @OA\Property(property="metadata", nullable=true,
      *     ref ="#/components/schemas/MediaMetadata"),
+     *   @OA\Property(property="width", type="integer", nullable=true, example=360,
+     *     description="Of a smaller copy (WebP) of a photo."),
+     *   @OA\Property(property="height", type="integer", nullable=true, example=480,
+     *     description="Of a smaller copy (WebP) of a photo."),
      *   @OA\Property(property="variants", type="array",
      *     @OA\Items(ref ="#/components/schemas/Media")),
      * )

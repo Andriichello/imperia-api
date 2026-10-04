@@ -21,6 +21,7 @@
   import PanelShell from '@/Components/Editor/PanelShell.vue'
   import GripHandle from '@/Components/Editor/Fields/GripHandle.vue'
   import {moveItem} from '@/editor/lists'
+  import {photoUrl} from '@/photos'
   import DropdownMenu from '@/Components/Editor/DropdownMenu.vue'
   import FieldLabel from '@/Components/Editor/Fields/FieldLabel.vue'
   import InfoBox from '@/Components/Editor/Fields/InfoBox.vue'
@@ -126,7 +127,7 @@
   function thumbnail(dish: EditorDish): string | null {
     const photo = (dish.photos ?? []).find((item) => !item.is_hidden)
 
-    return photo ? (photo.variants?.find((variant) => variant.extension === 'webp')?.url ?? photo.url) : null
+    return photo ? photoUrl(photo) : null
   }
 
   // the menus, which it can be moved to

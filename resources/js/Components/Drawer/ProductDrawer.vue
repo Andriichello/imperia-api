@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { Dish, Media } from "@/api";
+import { Dish } from "@/api";
 import { Splide, SplideSlide } from "@splidejs/vue-splide";
 import { computed, PropType, ref, watch } from "vue";
 import { DishSize, getDishSizes, priceFormatted, sizeWeightFormatted } from "@/helpers";
+import { isWidePhoto, photoSources, photoUrl } from "@/photos";
 import DiagonalPattern from "@/Components/Base/DiagonalPattern.vue";
 import { Timer, Flame, TriangleAlert } from "lucide-vue-next";
 import DishTags from "@/Components/Menu/DishTags.vue";
@@ -36,29 +37,35 @@ const props = defineProps({
 
 const emit = defineEmits(['close']);
 
-const media = computed<Media[]>(() => {
-  return props.product?.media?.map((m: Media) => {
-    const webp = m?.variants?.find((v: Media) => v.extension === 'webp');
-    return webp ?? m;
-  }) ?? [];
-});
+// the copies of the photos, which are just big enough for the page
+const photos = computed(() => (props.product?.media ?? []).map(photoSources));
 
 // The photos are square, when the first one is at least as tall as it's wide (most are, taken by
 // a phone): a square crops it a little. A wider one is in a shorter strip, which crops it less.
 // Until its size is known, they're square. Either is at most 40% of the screen's height.
 const isFirstPhotoWide = ref(false);
 
-watch(() => media.value[0]?.url, (url) => {
+watch(() => props.product?.media?.[0] ?? null, (photo) => {
   isFirstPhotoWide.value = false;
 
-  if (!url) {
+  if (!photo) {
     return;
   }
 
-  // a photo the list has shown is known right away
+  // the copies say it
+  const isWide = isWidePhoto(photo);
+
+  if (isWide !== null) {
+    isFirstPhotoWide.value = isWide;
+
+    return;
+  }
+
+  // a photo without them, once it's loaded (one the list has shown is known right away)
+  const url = photoUrl(photo);
   const probe = new Image();
   const measure = () => {
-    if (media.value[0]?.url === url && probe.naturalWidth) {
+    if (props.product?.media?.[0]?.id === photo.id && probe.naturalWidth) {
       isFirstPhotoWide.value = probe.naturalWidth > probe.naturalHeight;
     }
   };
@@ -89,7 +96,7 @@ const closePopup = () => {
       <template v-if="product">
         <div class="w-full shrink-0 relative overflow-hidden border-b border-base-300"
              v-bind="editKey('dish-photos')"
-             v-if="media.length">
+             v-if="photos.length">
           <div class="absolute inset-0 overflow-hidden flex flex-col justify-center">
             <DiagonalPattern class="scale-165 text-primary-content/50"
                              :establishment="establishment ?? 'restaurant'"/>
@@ -100,14 +107,14 @@ const closePopup = () => {
                     perMove: 1,
                     rewind: false,
                     rewindByDrag: false,
-                    drag: media.length > 1,
-                    arrows: media.length > 1,
-                    pagination: media.length > 1,
+                    drag: photos.length > 1,
+                    arrows: photos.length > 1,
+                    pagination: photos.length > 1,
                   }">
-            <SplideSlide v-for="(m, index) in media" :key="m.id">
+            <SplideSlide v-for="(photo, index) in photos" :key="photo.src">
               <img class="w-full max-h-[40dvh] object-cover object-center"
                    :class="photoSize"
-                   :src="m.url" alt=""
+                   :src="photo.src" :srcset="photo.srcset" sizes="(min-width: 28rem) 28rem, 100vw" alt=""
                    :loading="index === 0 ? 'eager' : 'lazy'"/>
             </SplideSlide>
           </Splide>

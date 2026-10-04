@@ -82,11 +82,12 @@ class MediaRepository extends CrudRepository
     /**
      * @param Media $original
      * @param mixed $variant
+     * @param array $metadata e.g. the size of a smaller copy
      *
      * @return Media
      * @throws FileNotFoundException
      */
-    public function createVariant(Media $original, mixed $variant): Media
+    public function createVariant(Media $original, mixed $variant, array $metadata = []): Media
     {
         $attributes = [
             'original_id' => $original->id,
@@ -95,6 +96,7 @@ class MediaRepository extends CrudRepository
             'title' => $original->title,
             'description' => $original->description,
             'folder' => $original->folder,
+            'metadata' => $metadata,
         ];
 
         if (is_resource($variant)) {

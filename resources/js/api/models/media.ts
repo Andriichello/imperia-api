@@ -29,5 +29,15 @@ export interface Media {
   is_hidden?: boolean;
   url: string;
   metadata: MediaMetadata | null;
+  /**
+   * Of a smaller copy (WebP) of a photo.
+   * @nullable
+   */
+  width?: number | null;
+  /**
+   * Of a smaller copy (WebP) of a photo.
+   * @nullable
+   */
+  height?: number | null;
   variants?: Media[];
 }

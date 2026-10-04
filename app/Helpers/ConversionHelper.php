@@ -14,19 +14,36 @@ use Intervention\Image\Interfaces\ImageInterface;
 class ConversionHelper implements ConversionHelperInterface
 {
     /**
-     * Convert given media to WebP format.
+     * Convert given media to WebP format, scaled down (never up) to the width, or so that its
+     * shorter side is the given length.
      *
      * @param Media|string $media
      * @param int $quality
+     * @param int|null $width
+     * @param int|null $shorterSide
      *
      * @return false|resource
      */
-    public function toWebP(Media|string $media, int $quality = 90): mixed
-    {
-        $image = $this->read($media)
-            ->encode(new WebpEncoder($quality));
+    public function toWebP(
+        Media|string $media,
+        int $quality = 90,
+        ?int $width = null,
+        ?int $shorterSide = null,
+    ): mixed {
+        $image = $this->read($media);
 
-        $image->save(pathOf($file = tmpfile()));
+        if ($width) {
+            $image->scaleDown(width: $width);
+        }
+
+        if ($shorterSide) {
+            $image->width() < $image->height()
+                ? $image->scaleDown(width: $shorterSide)
+                : $image->scaleDown(height: $shorterSide);
+        }
+
+        $image->encode(new WebpEncoder($quality))
+            ->save(pathOf($file = tmpfile()));
 
         return $file;
     }

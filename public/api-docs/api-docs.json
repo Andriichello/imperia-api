@@ -11215,6 +11215,18 @@
                         ],
                         "nullable": true
                     },
+                    "width": {
+                        "description": "Of a smaller copy (WebP) of a photo.",
+                        "type": "integer",
+                        "example": 360,
+                        "nullable": true
+                    },
+                    "height": {
+                        "description": "Of a smaller copy (WebP) of a photo.",
+                        "type": "integer",
+                        "example": 480,
+                        "nullable": true
+                    },
                     "variants": {
                         "type": "array",
                         "items": {

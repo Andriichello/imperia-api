@@ -8,6 +8,7 @@
   import {uploadEditorRestaurantPhoto} from '@/api'
   import GripHandle from '@/Components/Editor/Fields/GripHandle.vue'
   import {moveItem} from '@/editor/lists'
+  import {photoUrl} from '@/photos'
   import {useEditorStore} from '@/stores/editor'
 
   /**
@@ -99,7 +100,7 @@
 
   /** The WebP version, when there's one. */
   function thumbnail(photo: Media): string {
-    return photo.variants?.find((variant) => variant.extension === 'webp')?.url ?? photo.url
+    return photoUrl(photo)
   }
 
   /** "1 · Cover", "2", …: the cover is the first photo guests see. */

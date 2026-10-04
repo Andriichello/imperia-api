@@ -6,6 +6,7 @@
   import type {Media} from '@/api'
   import {uploadEditorRestaurantPhoto} from '@/api'
   import PropRow from '@/Components/Version/PropRow.vue'
+  import {photoUrl} from '@/photos'
   import type {VersionField} from '@/version/fields'
   import {useVersionStore} from '@/stores/version'
 
@@ -44,7 +45,7 @@
   const thumbnail = (id: number) => {
     const item = media(id)
 
-    return item ? (item.variants?.find((variant) => variant.extension === 'webp')?.url ?? item.url) : null
+    return item ? photoUrl(item) : null
   }
   const nameOf = (id: number) => media(id)?.title ?? ''
 

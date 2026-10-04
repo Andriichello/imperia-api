@@ -2,6 +2,7 @@
 
 namespace App\Queries;
 
+use App\Jobs\Media\MakeWebP;
 use App\Models\BaseModel;
 use App\Models\Morphs\Media;
 use App\Models\User;
@@ -126,6 +127,26 @@ class MediaQueryBuilder extends BaseQueryBuilder
         if (!empty($ids)) {
             $this->whereIn($this->model->getTable() . '.restaurant_id', $ids);
         }
+
+        return $this;
+    }
+
+    /**
+     * Only photos, which lack any of their smaller copies (see `MakeWebP::SIZES`).
+     *
+     * @return static
+     */
+    public function withoutCopies(): static
+    {
+        $this->whereNull('original_id')
+            ->whereIn('extension', MakeWebP::TYPES)
+            ->where(function ($query) {
+                foreach (array_keys(MakeWebP::SIZES) as $name) {
+                    $query->orWhereDoesntHave('variants', function ($variants) use ($name) {
+                        $variants->where('metadata->variant', $name);
+                    });
+                }
+            });
 
         return $this;
     }

@@ -379,7 +379,11 @@ class MenuSnapshotTest extends TestCase
     protected function webpOf(Media $photo): Media
     {
         /** @var Media $webp */
-        $webp = MediaFactory::new()->create(['original_id' => $photo->id, 'extension' => 'image/webp']);
+        $webp = MediaFactory::new()->create([
+            'original_id' => $photo->id,
+            'extension' => 'image/webp',
+            'metadata' => json_encode(['variant' => 'small', 'width' => 360, 'height' => 480]),
+        ]);
 
         return $webp;
     }
@@ -399,6 +403,8 @@ class MenuSnapshotTest extends TestCase
         $this->assertSame([$photo->id], array_column($media, 'id'));
         $this->assertSame([$webp->id], array_column($media[0]['variants'], 'id'));
         $this->assertSame('webp', $media[0]['variants'][0]['extension']);
+        // so pages load the smallest copy, which is enough
+        $this->assertSame([360, 480], [$media[0]['variants'][0]['width'], $media[0]['variants'][0]['height']]);
     }
 
     /**

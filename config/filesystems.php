@@ -70,7 +70,9 @@ return [
             'apiEndpoint' => env('GOOGLE_CLOUD_URL'),
             'visibility' => 'public',
             'visibility_handler' => UniformBucketLevelAccessVisibility::class,
-            'metadata' => ['cacheControl' => 'public,max-age=86400'],
+            // a year: every upload gets a new file name (a changed photo too), so a file never
+            // changes (menu snapshots give their own caching)
+            'metadata' => ['cacheControl' => 'public, max-age=31536000, immutable'],
         ],
 
         'backups' => [
