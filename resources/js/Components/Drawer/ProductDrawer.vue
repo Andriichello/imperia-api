@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Dish, Media } from "@/api";
 import { Splide, SplideSlide } from "@splidejs/vue-splide";
-import { computed, PropType } from "vue";
+import { computed, PropType, ref, watch } from "vue";
 import { DishSize, getDishSizes, priceFormatted, sizeWeightFormatted } from "@/helpers";
 import DiagonalPattern from "@/Components/Base/DiagonalPattern.vue";
 import { Timer, Flame, TriangleAlert } from "lucide-vue-next";
@@ -43,6 +43,36 @@ const media = computed<Media[]>(() => {
   }) ?? [];
 });
 
+// The photos are square, when the first one is at least as tall as it's wide (most are, taken by
+// a phone): a square crops it a little. A wider one is in a shorter strip, which crops it less.
+// Until its size is known, they're square. Either is at most 40% of the screen's height.
+const isFirstPhotoWide = ref(false);
+
+watch(() => media.value[0]?.url, (url) => {
+  isFirstPhotoWide.value = false;
+
+  if (!url) {
+    return;
+  }
+
+  // a photo the list has shown is known right away
+  const probe = new Image();
+  const measure = () => {
+    if (media.value[0]?.url === url && probe.naturalWidth) {
+      isFirstPhotoWide.value = probe.naturalWidth > probe.naturalHeight;
+    }
+  };
+
+  probe.onload = measure;
+  probe.src = url;
+
+  if (probe.complete) {
+    measure();
+  }
+}, { immediate: true });
+
+const photoSize = computed(() => isFirstPhotoWide.value ? 'h-65' : 'aspect-square');
+
 const allergens = computed<string[]>(() => getAllergens(props.product?.flags));
 
 // In the same order as in the list
@@ -57,7 +87,7 @@ const closePopup = () => {
   <BaseDrawer :open="open" :padding-top="false" :restaurant-button="false" @close="closePopup">
     <div class="w-full h-full flex flex-col overflow-auto">
       <template v-if="product">
-        <div class="w-full h-65 shrink-0 relative overflow-hidden border-b border-base-300"
+        <div class="w-full shrink-0 relative overflow-hidden border-b border-base-300"
              v-bind="editKey('dish-photos')"
              v-if="media.length">
           <div class="absolute inset-0 overflow-hidden flex flex-col justify-center">
@@ -65,7 +95,7 @@ const closePopup = () => {
                              :establishment="establishment ?? 'restaurant'"/>
           </div>
 
-          <Splide id="product-media" class="w-full h-65" :options="{
+          <Splide id="product-media" class="w-full" :options="{
                     perPage: 1,
                     perMove: 1,
                     rewind: false,
@@ -75,7 +105,8 @@ const closePopup = () => {
                     pagination: media.length > 1,
                   }">
             <SplideSlide v-for="(m, index) in media" :key="m.id">
-              <img class="w-full h-65 object-cover object-center"
+              <img class="w-full max-h-[40dvh] object-cover object-center"
+                   :class="photoSize"
                    :src="m.url" alt=""
                    :loading="index === 0 ? 'eager' : 'lazy'"/>
             </SplideSlide>
