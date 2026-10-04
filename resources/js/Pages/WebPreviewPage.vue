@@ -956,7 +956,6 @@
                           :products="products ?? []"
                           :closed="false"
                           :currency="restaurant?.currency ?? 'uah'"
-                          :establishment="restaurant?.establishment ?? 'restaurant'"
                           @switch-menu="onSwitchMenu"
                           @switch-category="onSwitchCategory"
                           @open-product="({product, category, menu}) => onOpenProduct({product, category, menu: menu ?? selectedMenu})">

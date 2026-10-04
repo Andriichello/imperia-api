@@ -16,10 +16,6 @@
       type: Array as PropType<Dish[]>,
       required: true,
     },
-    establishment: {
-      type: String as PropType<string | null>,
-      default: 'restaurant',
-    },
     preview: {
       type: Boolean as PropType<boolean>,
       default: false,
@@ -68,7 +64,6 @@
                        :product="product"
                        :preview="true"
                        :currency="currency"
-                       :establishment="establishment"
                        @product-click="onProductClick"/>
 
         <div class="h-px mx-2 bg-[#e8e8e8]"/>

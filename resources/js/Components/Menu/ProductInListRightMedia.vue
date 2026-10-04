@@ -3,7 +3,6 @@ import {Dish, Media} from "@/api";
 import {Splide, SplideSlide} from "@splidejs/vue-splide";
 import {ref, computed, PropType} from "vue";
 import {DishSize, getDishSizes, priceFormatted, sizeWeightFormatted} from "@/helpers";
-import DiagonalPattern from "@/Components/Base/DiagonalPattern.vue";
 import {Timer, Flame, TriangleAlert} from "lucide-vue-next";
 import {type DishTag, getAllergenLabel, getAllergens, getDishTags} from "@/flags";
 import { useI18n } from "vue-i18n";
@@ -19,10 +18,6 @@ const props = defineProps({
     type: String as PropType<string | null>,
     required: false,
     default: null,
-  },
-  establishment: {
-    type: String as PropType<string | null>,
-    default: 'restaurant',
   },
   preview: {
     type: Boolean as PropType<boolean>,
@@ -111,21 +106,21 @@ const allergenNames = computed<string>(
 
         <div class="size-28 shrink-0 self-start relative rounded-lg overflow-hidden border border-base-300 bg-base-200/20"
              v-if="media.length">
-          <div class="absolute inset-0 overflow-hidden flex flex-col justify-center">
-            <DiagonalPattern class="scale-165 text-primary-content/50"
-                             :establishment="establishment ?? 'restaurant'"/>
-          </div>
+          <!-- a list shows the first photo only: no slider for it (a list has many of them) -->
+          <img class="w-full h-28 object-cover object-center"
+               :src="media[0].url" alt=""
+               v-if="preview"/>
 
-          <Splide class="size-full" :options="{
+          <Splide class="size-full" v-else :options="{
                   perPage: 1,
                   perMove: 1,
                   rewind: false,
                   rewindByDrag: false,
                   drag: false,
                   arrows: false,
-                  pagination: !preview,
+                  pagination: true,
                 }">
-            <SplideSlide v-for="(m, index) in (preview ? [media[0]] : media)" :key="m.id">
+            <SplideSlide v-for="(m, index) in media" :key="m.id">
               <img class="w-full h-28 object-cover object-center"
                    :src="m.url" alt=""
                    :loading="index === 0 ? 'eager' : 'lazy'"/>

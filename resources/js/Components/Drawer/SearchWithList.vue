@@ -438,7 +438,6 @@
                                        :preview="true"
                                        :flush="true"
                                        :currency="currency"
-                                       :establishment="restaurant?.establishment ?? 'restaurant'"
                                        @click="openProduct(product)"/>
 
               <div class="h-px bg-[#e8e8e8]"/>

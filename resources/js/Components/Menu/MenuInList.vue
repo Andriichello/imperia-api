@@ -25,10 +25,6 @@
       type: Boolean,
       default: false,
     },
-    establishment: {
-      type: String as PropType<string | null>,
-      default: 'restaurant',
-    },
     currency: {
       type: String as PropType<string | null>,
       required: false,
@@ -69,7 +65,6 @@
         <CategoryInList :category="category"
                         :products="categoryProducts(menu, category)"
                         :currency="currency"
-                        :establishment="establishment"
                         @switch-category="switchCategory"
                         @open-product="openProduct"
                         v-for="category in menu.categories.slice(0, -1)" :key="category.id"/>
@@ -80,7 +75,6 @@
           <CategoryInList :category="lastCategory"
                           :products="categoryProducts(menu, lastCategory)"
                           :currency="currency"
-                          :establishment="establishment"
                           :key="lastCategory.id"
                           @switch-category="switchCategory"
                           @open-product="openProduct"/>
