@@ -2,17 +2,26 @@ import {DateTime} from "luxon";
 import {Dish, DishVariant, Restaurant, Schedule, ScheduleException, ScheduleWeekday} from "@/api";
 import { t } from "@/i18n/utils";
 
+const NBSP = '\u00A0';
+
+/** The text with non-breaking spaces, so it stays on one line (e.g. "20 хв"). */
+export function nbsp(text: string): string {
+    return text.replace(/ /g, NBSP);
+}
+
+/** The price with its currency, thousands grouped, on one line: "1 900 ₴". */
 export function priceFormatted(price: number | null, currencyCode: string = 'uah'): string | null {
     if (price === null || price === undefined) {
         return null;
     }
 
-    const formattedPrice = Number.isInteger(price) ? price.toString() : price.toFixed(2);
+    const formattedPrice = (Number.isInteger(price) ? price.toString() : price.toFixed(2))
+        .replace(/\B(?=(\d{3})+(?!\d))/g, NBSP);
 
     // Get the currency symbol from translations
     const currencySymbol = t(`currency_symbol.${currencyCode.toLowerCase()}`) || currencyCode;
 
-  return t('format.currency', {price: formattedPrice, currency: currencySymbol});
+  return nbsp(t('format.currency', {price: formattedPrice, currency: currencySymbol}));
 }
 
 /**
@@ -46,13 +55,13 @@ export function getDishSizes(dish: Dish): DishSize[] {
     return [...dish.variants].sort((a, b) => a.price - b.price);
 }
 
-/** Weight of a dish size with its unit, e.g. "300 g", or an empty string. */
+/** Weight of a dish size with its unit on one line, e.g. "300 g" or "1000/150 g", or an empty string. */
 export function sizeWeightFormatted(size: DishSize): string {
     if (size.weight === null || size.weight === undefined || size.weight === '') {
         return '';
     }
 
-    return `${size.weight} ${size.weight_unit ? weightUnitFormatted(size.weight_unit) : ''}`.trim();
+    return nbsp(`${size.weight} ${size.weight_unit ? weightUnitFormatted(size.weight_unit) : ''}`.trim());
 }
 
 /** Days of the week, from Monday. */

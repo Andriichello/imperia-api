@@ -564,7 +564,7 @@
              :aria-label="t(`editor.dish.tag_groups.${group}`)"
              v-for="group in TAG_GROUPS" :key="group">
           <p class="text-xs/4 font-semibold text-zinc-600">
-            {{ t(`editor.dish.tag_groups.${group}`) }}<span class="font-normal text-zinc-500" v-if="group !== 'diet'"> · {{ t(`editor.dish.tag_hints.${group}`) }}</span>
+            {{ t(`editor.dish.tag_groups.${group}`) }}<span class="font-normal text-zinc-500" v-if="group === 'spiciness' || group === 'nutrition'"> · {{ t(`editor.dish.tag_hints.${group}`) }}</span>
           </p>
 
           <div class="flex flex-wrap gap-1.5">

@@ -65,9 +65,10 @@
         <CategoryInList :category="category"
                         :products="categoryProducts(menu, category)"
                         :currency="currency"
+                        :first="index === 0"
                         @switch-category="switchCategory"
                         @open-product="openProduct"
-                        v-for="category in menu.categories.slice(0, -1)" :key="category.id"/>
+                        v-for="(category, index) in menu.categories.slice(0, -1)" :key="category.id"/>
 
         <!-- The last category and what's after it fill the screen below the sticky menus (92px tall,
              plus a 10px gap), so it can be scrolled up under them -->
@@ -75,6 +76,7 @@
           <CategoryInList :category="lastCategory"
                           :products="categoryProducts(menu, lastCategory)"
                           :currency="currency"
+                          :first="menu.categories.length === 1"
                           :key="lastCategory.id"
                           @switch-category="switchCategory"
                           @open-product="openProduct"/>

@@ -24,7 +24,9 @@
     "empty_category": "Unfortunately, this category is empty",
     "go_to_top": "Go to top",
     "loading_failed": "The menu couldn't be loaded. Check your connection and try again.",
-    "try_again": "Try again"
+    "try_again": "Try again",
+    "more_sizes": "More sizes",
+    "allergens": "Allergens:"
   },
   "search": {
     "placeholder": "Search",
@@ -41,6 +43,7 @@
     "clear_all": "Clear all",
     "edit_filters": "Edit filters",
     "remove_filter": "Remove filter: {name}",
+    "highlight": "Popular",
     "diet": "Diet",
     "spiciness": "Spiciness",
     "nutrition": "Nutrition",
@@ -113,7 +116,8 @@
   },
   "badges": {
     "time": "{minutes} min",
-    "calories": "{calories} cal",
+    "calories": "{calories} kcal",
+    "hit": "Hit",
     "low_calorie": "Low calorie",
     "high_calorie": "High calorie",
     "vegan": "Vegan",
@@ -151,6 +155,7 @@
   "product": {
     "no_media": "No media",
     "sizes": "Sizes",
+    "features": "Features",
     "contains_allergens": "Contains allergens"
   },
   "drawer": {

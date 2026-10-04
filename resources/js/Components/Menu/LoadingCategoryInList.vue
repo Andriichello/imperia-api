@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import LoadingProductInListRightMedia from "@/Components/Menu/LoadingProductInListRightMedia.vue";
+  import LoadingDishCard from "@/Components/Menu/LoadingDishCard.vue";
 
   const props = defineProps({
     // Number of placeholder dishes
@@ -18,7 +18,7 @@
 
     <div class="w-full flex flex-col">
       <template v-for="n in count" :key="n">
-        <LoadingProductInListRightMedia/>
+        <LoadingDishCard/>
 
         <div class="h-px mx-2 bg-[#e8e8e8]"/>
       </template>

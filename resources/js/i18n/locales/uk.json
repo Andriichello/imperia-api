@@ -24,7 +24,9 @@
     "empty_category": "На жаль, ця категорія порожня",
     "go_to_top": "На початок",
     "loading_failed": "Не вдалося завантажити меню. Перевірте з'єднання та спробуйте ще раз.",
-    "try_again": "Спробувати ще раз"
+    "try_again": "Спробувати ще раз",
+    "more_sizes": "Більше розмірів",
+    "allergens": "Алергени:"
   },
   "search": {
     "placeholder": "Пошук",
@@ -41,6 +43,7 @@
     "clear_all": "Очистити все",
     "edit_filters": "Змінити фільтри",
     "remove_filter": "Прибрати фільтр: {name}",
+    "highlight": "Популярне",
     "diet": "Дієта",
     "spiciness": "Гострота",
     "nutrition": "Поживність",
@@ -113,7 +116,8 @@
   },
   "badges": {
     "time": "{minutes} хв",
-    "calories": "{calories} кал",
+    "calories": "{calories} ккал",
+    "hit": "Хіт",
     "low_calorie": "Низькокалорійне",
     "high_calorie": "Висококалорійне",
     "vegan": "Веганське",
@@ -151,6 +155,7 @@
   "product": {
     "no_media": "Немає зображень",
     "sizes": "Розміри",
+    "features": "Особливості",
     "contains_allergens": "Містить алергени"
   },
   "drawer": {

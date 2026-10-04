@@ -275,6 +275,7 @@
       "tags": "Tags",
       "tags_help": "Shown on the menu in your brand color. Guests can filter by them in search.",
       "tag_groups": {
+        "highlight": "Popular",
         "diet": "Diet",
         "spiciness": "Spiciness",
         "nutrition": "Nutrition"

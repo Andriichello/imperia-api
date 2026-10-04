@@ -1,14 +1,35 @@
 import type {Component} from "vue";
-import {Droplet, Dumbbell, Feather, Flame, Leaf, MilkOff, Salad, Sprout, Zap} from "lucide-vue-next";
+import {createLucideIcon, Droplet, Dumbbell, Feather, Leaf, MilkOff, Salad, Sprout, Star, Zap} from "lucide-vue-next";
 
 /**
  * Tags and allergens of dishes, stored in their `flags` (see `App\Enums\ProductFlag`).
  */
 
-/** Groups of tags, in this order. */
-export type TagGroup = 'diet' | 'spiciness' | 'nutrition';
+/** A chili pepper: spicy dishes (a flame is their calories). */
+export const Chili = createLucideIcon('chili', [
+  ['path', {d: 'M14 7c0-2 1.2-3.6 3-4', key: 'stem'}],
+  ['path', {d: 'M11 7.5c2-1.3 5-1 6 1.5.8 2-.2 5-2.5 7.5C12 19 8 20.5 4 21c2.5-2 4-4.5 4.8-7.5.5-2 .8-4.6 2.2-6z', key: 'pod'}],
+]);
 
-export const TAG_GROUPS: TagGroup[] = ['diet', 'spiciness', 'nutrition'];
+/** Groups of tags, in this order. */
+export type TagGroup = 'highlight' | 'diet' | 'spiciness' | 'nutrition';
+
+export const TAG_GROUPS: TagGroup[] = ['highlight', 'diet', 'spiciness', 'nutrition'];
+
+/**
+ * Colors of a tag's circle on the dish card and page: popular, spicy, plant-based, dairy,
+ * nutrition, and the one of allergens (one circle for all of them on the card).
+ */
+export type TagTone = 'hit' | 'spicy' | 'veg' | 'nolactose' | 'protein' | 'allergen';
+
+export const TAG_TONES: Record<TagTone, { bg: string, fg: string }> = {
+  hit: {bg: '#FDF1D8', fg: '#8A5A00'},
+  spicy: {bg: '#FDE9E5', fg: '#A3261A'},
+  veg: {bg: '#E5F1E1', fg: '#2C6425'},
+  nolactose: {bg: '#E3EDF8', fg: '#1E4D86'},
+  protein: {bg: '#E9E8F2', fg: '#3D3A6B'},
+  allergen: {bg: '#FDEAD7', fg: '#C2410C'},
+};
 
 export interface DishTag {
   /** The flag */
@@ -17,27 +38,29 @@ export interface DishTag {
   label: string,
   icon: Component,
   group: TagGroup,
+  tone: TagTone,
   /** Level of hotness, from 1 (mild) to 4 (extra hot); none for spicy without a level */
   level?: number,
 }
 
 /** Tags shown on dishes and offered in search, in this order. Allergens are listed separately. */
 export const DISH_TAGS: DishTag[] = [
-  {key: 'vegan', label: 'badges.vegan', icon: Leaf, group: 'diet'},
-  {key: 'vegetarian', label: 'badges.vegetarian', icon: Salad, group: 'diet'},
-  {key: 'lactose-free', label: 'badges.lactose_free', icon: MilkOff, group: 'diet'},
-  {key: 'dairy-free', label: 'badges.dairy_free', icon: MilkOff, group: 'diet'},
-  {key: 'plant-milk', label: 'badges.plant_milk', icon: Sprout, group: 'diet'},
-  {key: 'hotness', label: 'badges.hot', icon: Flame, group: 'spiciness'},
-  {key: 'low-hotness', label: 'badges.low_hot', icon: Flame, group: 'spiciness', level: 1},
-  {key: 'medium-hotness', label: 'badges.medium_hot', icon: Flame, group: 'spiciness', level: 2},
-  {key: 'high-hotness', label: 'badges.high_hot', icon: Flame, group: 'spiciness', level: 3},
-  {key: 'extreme-hotness', label: 'badges.extreme_hot', icon: Flame, group: 'spiciness', level: 4},
-  {key: 'low-calorie', label: 'badges.low_calorie', icon: Feather, group: 'nutrition'},
-  {key: 'high-calorie', label: 'badges.high_calorie', icon: Zap, group: 'nutrition'},
-  {key: 'high-protein', label: 'badges.high_protein', icon: Dumbbell, group: 'nutrition'},
-  {key: 'low-fat', label: 'badges.low_fat', icon: Droplet, group: 'nutrition'},
-  {key: 'high-fat', label: 'badges.high_fat', icon: Droplet, group: 'nutrition'},
+  {key: 'hit', label: 'badges.hit', icon: Star, group: 'highlight', tone: 'hit'},
+  {key: 'vegan', label: 'badges.vegan', icon: Leaf, group: 'diet', tone: 'veg'},
+  {key: 'vegetarian', label: 'badges.vegetarian', icon: Salad, group: 'diet', tone: 'veg'},
+  {key: 'lactose-free', label: 'badges.lactose_free', icon: MilkOff, group: 'diet', tone: 'nolactose'},
+  {key: 'dairy-free', label: 'badges.dairy_free', icon: MilkOff, group: 'diet', tone: 'nolactose'},
+  {key: 'plant-milk', label: 'badges.plant_milk', icon: Sprout, group: 'diet', tone: 'nolactose'},
+  {key: 'hotness', label: 'badges.hot', icon: Chili, group: 'spiciness', tone: 'spicy'},
+  {key: 'low-hotness', label: 'badges.low_hot', icon: Chili, group: 'spiciness', tone: 'spicy', level: 1},
+  {key: 'medium-hotness', label: 'badges.medium_hot', icon: Chili, group: 'spiciness', tone: 'spicy', level: 2},
+  {key: 'high-hotness', label: 'badges.high_hot', icon: Chili, group: 'spiciness', tone: 'spicy', level: 3},
+  {key: 'extreme-hotness', label: 'badges.extreme_hot', icon: Chili, group: 'spiciness', tone: 'spicy', level: 4},
+  {key: 'low-calorie', label: 'badges.low_calorie', icon: Feather, group: 'nutrition', tone: 'protein'},
+  {key: 'high-calorie', label: 'badges.high_calorie', icon: Zap, group: 'nutrition', tone: 'protein'},
+  {key: 'high-protein', label: 'badges.high_protein', icon: Dumbbell, group: 'nutrition', tone: 'protein'},
+  {key: 'low-fat', label: 'badges.low_fat', icon: Droplet, group: 'nutrition', tone: 'protein'},
+  {key: 'high-fat', label: 'badges.high_fat', icon: Droplet, group: 'nutrition', tone: 'protein'},
 ];
 
 /** Hotness flags: spicy, then its levels from the mildest. */

@@ -5,6 +5,7 @@ namespace App\Enums;
 /**
  * Enum ProductFlag.
  *
+ * @method static ProductFlag Hit()
  * @method static ProductFlag Vegan()
  * @method static ProductFlag Vegetarian()
  * @method static ProductFlag LactoseFree()
@@ -36,6 +37,9 @@ namespace App\Enums;
  */
 class ProductFlag extends Enum
 {
+    /** Popular */
+    public const Hit = 'hit';
+
     /** Vegan - Vegetarian */
     public const Vegan = 'vegan';
     public const Vegetarian = 'vegetarian';
@@ -84,6 +88,7 @@ class ProductFlag extends Enum
     public static function getTagLabels(): array
     {
         return [
+            self::Hit => 'Hit',
             self::Vegan => 'Vegan',
             self::Vegetarian => 'Vegetarian',
             self::LactoseFree => 'Lactose-free',

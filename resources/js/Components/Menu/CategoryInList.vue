@@ -2,7 +2,7 @@
   import {Dish, DishCategory} from "@/api";
   import {PropType} from "vue";
   import {useI18n} from "vue-i18n";
-  import ProductInListRightMedia from "@/Components/Menu/ProductInListRightMedia.vue";
+  import DishCard from "@/Components/Menu/DishCard.vue";
   import {editKey} from "@/editor/editKey";
 
   const emits = defineEmits(['switch-category', 'open-product']);
@@ -25,6 +25,11 @@
       required: false,
       default: null,
     },
+    // The first one is closer to what's above it than categories are to each other
+    first: {
+      type: Boolean as PropType<boolean>,
+      default: false,
+    },
   });
 
   const i18n = useI18n();
@@ -35,9 +40,10 @@
 </script>
 
 <template>
-  <section class="w-full flex flex-col px-2 mt-4"
+  <section class="w-full flex flex-col px-2"
+           :class="first ? 'mt-4' : 'mt-6'"
            :id="'category-' + category.id">
-    <div class="w-full flex flex-col text-center py-2.5 px-3 bg-primary/20 border border-primary/60 rounded-t-xl cursor-pointer"
+    <div class="w-full flex flex-col text-center py-2.5 px-3 bg-primary/18 border border-primary/45 rounded-t-xl cursor-pointer"
          v-bind="editKey('category:' + category.id)"
          @click="emits('switch-category', category)">
       <h2 class="text-[22px]/[30px] font-semibold text-primary-content">
@@ -59,12 +65,11 @@
          :id="'category-' + category.id + '-products'"
          v-else>
       <template v-for="product in products" :key="product.id">
-        <ProductInListRightMedia class="cursor-pointer"
-                       v-bind="editKey('dish:' + product.id)"
-                       :product="product"
-                       :preview="true"
-                       :currency="currency"
-                       @product-click="onProductClick"/>
+        <DishCard class="cursor-pointer"
+                  v-bind="editKey('dish:' + product.id)"
+                  :product="product"
+                  :currency="currency"
+                  @click="onProductClick(product)"/>
 
         <div class="h-px mx-2 bg-[#e8e8e8]"/>
       </template>

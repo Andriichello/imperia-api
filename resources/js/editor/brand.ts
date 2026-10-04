@@ -149,3 +149,42 @@ export function nearAllergens(colors: BrandColors): boolean {
 
   return Math.min(distance, 360 - distance) <= 12 && color.saturation >= 0.5
 }
+
+/** The background of the menu list, which prices are on. */
+const LIST_BACKGROUND = [249, 249, 249]
+
+/** The lowest contrast of prices (large bold text, WCAG AA). */
+const PRICE_CONTRAST = 3
+
+/**
+ * Color of the dishes' prices: the primary color, made only as much darker as it takes to be
+ * readable on the menu list (the darkest is 30% of it).
+ */
+export function priceColor(primary: string): string {
+  const rgb = toRgb(primary)
+  let darker = rgb
+
+  for (let percent = 100; percent >= 30; percent--) {
+    darker = rgb.map((channel) => Math.round(channel * percent / 100))
+
+    if (contrast(darker, LIST_BACKGROUND) >= PRICE_CONTRAST) {
+      break
+    }
+  }
+
+  return `rgb(${darker.join(' ')})`
+}
+
+/**
+ * Sets the prices' color (`--dish-price`) of the page's primary color, or of the given one
+ * (`app.css` darkens it by a fixed amount, when it isn't a hex color).
+ */
+export function applyPriceColor(primary?: string): void {
+  const color = primary ?? getComputedStyle(document.body).getPropertyValue('--color-primary').trim()
+
+  if (isHex(color)) {
+    document.body.style.setProperty('--dish-price', priceColor(color))
+  } else {
+    document.body.style.removeProperty('--dish-price')
+  }
+}

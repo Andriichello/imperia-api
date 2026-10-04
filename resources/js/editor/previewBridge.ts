@@ -2,6 +2,7 @@ import type {Pinia} from 'pinia'
 import {watch} from 'vue'
 import type {Dish, DishMenu} from '@/api'
 import {useAppStore} from '@/stores/app'
+import {applyPriceColor} from '@/editor/brand'
 import {usePreviewStore} from '@/stores/preview'
 import {
   EDIT_KEY_ATTRIBUTE,
@@ -271,6 +272,7 @@ class PreviewBridge {
   protected applyBrand(brand: PreviewBrand): void {
     document.body.style.setProperty('--color-warning', brand.primary)
     document.body.style.setProperty('--color-warning-content', brand.content)
+    applyPriceColor(brand.primary)
   }
 
   /** Whether clicks select parts of the page now (Select mode, Alt isn't held). */

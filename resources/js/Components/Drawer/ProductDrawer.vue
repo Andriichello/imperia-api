@@ -2,12 +2,12 @@
 import { Dish } from "@/api";
 import { Splide, SplideSlide } from "@splidejs/vue-splide";
 import { computed, PropType, ref, watch } from "vue";
-import { DishSize, getDishSizes, priceFormatted, sizeWeightFormatted } from "@/helpers";
+import { DishSize, getDishSizes, nbsp, priceFormatted, sizeWeightFormatted } from "@/helpers";
 import { isWidePhoto, photoSources, photoUrl } from "@/photos";
 import DiagonalPattern from "@/Components/Base/DiagonalPattern.vue";
 import { Timer, Flame, TriangleAlert } from "lucide-vue-next";
-import DishTags from "@/Components/Menu/DishTags.vue";
-import { getAllergenLabel, getAllergens } from "@/flags";
+import DishTagIcon from "@/Components/Menu/DishTagIcon.vue";
+import { type DishTag, getAllergenLabel, getAllergens, getDishTags } from "@/flags";
 import { useI18n } from "vue-i18n";
 import BaseDrawer from "@/Components/Drawer/BaseDrawer.vue";
 import { editKey } from "@/editor/editKey";
@@ -85,6 +85,14 @@ const allergens = computed<string[]>(() => getAllergens(props.product?.flags));
 // In the same order as in the list
 const sizes = computed<DishSize[]>(() => props.product ? getDishSizes(props.product) : []);
 
+const tags = computed<DishTag[]>(() => getDishTags(props.product?.flags));
+
+const price = (size: DishSize) => priceFormatted(size.price, props.currency?.toLowerCase() ?? 'uah');
+
+const time = (size: DishSize) => nbsp(i18n.t('badges.time', {minutes: size.preparation_time}));
+
+const kcal = (size: DishSize) => nbsp(i18n.t('badges.calories', {calories: size.calories}));
+
 const closePopup = () => {
   emit('close');
 };
@@ -130,78 +138,124 @@ const closePopup = () => {
           </div>
         </div>
 
-        <div class="w-full shrink-0 px-5 py-2.5 bg-primary/10 text-primary-content text-base/6 font-semibold"
-             v-bind="editKey('dish-badge')"
-             v-if="product.badge?.length">
-          {{ product.badge }}
-        </div>
+        <!-- Under the photos: everything in full -->
+        <div class="grow flex flex-col gap-6 pt-4 px-5 pb-8 bg-[#F9F9F9] text-[#1C1B1F]">
+          <header class="flex flex-col items-start gap-1.5"
+                  v-bind="editKey('dish-text')">
+            <span class="mb-0.5 px-2 py-0.5 rounded-md bg-primary/16 text-primary-content text-xs/[18px] font-bold"
+                  v-bind="editKey('dish-badge')"
+                  v-if="product.badge?.length">
+              {{ product.badge }}
+            </span>
 
-        <div class="flex flex-col gap-5 pt-4 px-5 pb-20">
-          <div class="flex flex-col items-start gap-2"
-               v-bind="editKey('dish-text')">
-            <h2 class="text-[22px]/[30px] font-semibold">
+            <h1 class="text-2xl/[30px] font-bold text-pretty">
               {{ product.title }}
-            </h2>
+            </h1>
 
-            <p class="text-base/6 text-base-content/72"
+            <!-- One size: its price, weight, time and calories (more sizes are in their table) -->
+            <div class="flex flex-col items-start gap-1.5"
+                 v-bind="editKey('dish-sizes')"
+                 v-if="sizes.length === 1">
+              <div class="flex flex-wrap items-baseline gap-x-2">
+                <span class="text-[22px]/[30px] font-bold whitespace-nowrap text-(--dish-price)">{{ price(sizes[0]) }}</span>
+
+                <template v-if="sizeWeightFormatted(sizes[0])">
+                  <span class="text-[17px]/6 text-[#A3A2A7]" aria-hidden="true">·</span>
+                  <span class="text-[17px]/6 font-semibold whitespace-nowrap text-[#3C3B3F]">{{ sizeWeightFormatted(sizes[0]) }}</span>
+                </template>
+              </div>
+
+              <div class="flex flex-wrap gap-x-4 gap-y-1 text-sm/5 text-[#6E6D71]"
+                   v-if="sizes[0].preparation_time || sizes[0].calories">
+                <span class="inline-flex items-center gap-[5px] whitespace-nowrap"
+                      v-if="sizes[0].preparation_time">
+                  <Timer class="size-[15px] shrink-0" aria-hidden="true"/>
+                  {{ time(sizes[0]) }}
+                </span>
+
+                <span class="inline-flex items-center gap-[5px] whitespace-nowrap"
+                      v-if="sizes[0].calories">
+                  <Flame class="size-[15px] shrink-0" aria-hidden="true"/>
+                  {{ kcal(sizes[0]) }}
+                </span>
+              </div>
+            </div>
+
+            <p class="mt-1.5 text-base/6 text-[#5F5E62]"
                v-if="product.description?.length">
               {{ product.description }}
             </p>
-          </div>
+          </header>
 
-          <div class="flex flex-col gap-2"
-               v-bind="editKey('dish-sizes')">
-            <h3 class="text-lg/7 font-semibold">
+          <section class="flex flex-col gap-2"
+                   v-bind="editKey('dish-sizes')"
+                   v-if="sizes.length > 1">
+            <h2 class="text-[13px]/[18px] font-bold uppercase tracking-[.04em] text-[#6E6D71]">
               {{ i18n.t('product.sizes') }}
-            </h3>
+            </h2>
 
-            <div class="flex items-center justify-between gap-3 px-3.5 py-3 rounded-lg border border-zinc-200"
-                 v-for="size in sizes" :key="size.id ?? 'base'">
-              <div class="flex flex-col gap-0.5">
-                <span class="text-[17px]/6 font-semibold"
-                      v-if="sizeWeightFormatted(size)">
-                  {{ sizeWeightFormatted(size) }}
-                </span>
-
-                <span class="flex flex-wrap items-center gap-x-3 text-sm/5 text-base-content/65"
-                      v-if="size.preparation_time || size.calories">
-                  <span class="flex items-center gap-1"
-                        v-if="size.preparation_time">
-                    <Timer class="size-3.5 shrink-0"/>
-                    {{ i18n.t('badges.time', { minutes: size.preparation_time }) }}
+            <!-- the 1px gaps between the rows are their dividers -->
+            <div class="flex flex-col gap-px rounded-xl overflow-hidden bg-[#EDEDED] shadow-[0_0_0_1px_#E5E5E5]">
+              <div class="min-h-14 flex items-center gap-3 px-3.5 py-2.5 bg-white"
+                   v-for="(size, index) in sizes" :key="size.id ?? index">
+                <div class="flex-1 min-w-0 flex flex-col gap-0.5">
+                  <span class="text-base/[22px] font-semibold text-[#3C3B3F]"
+                        v-if="sizeWeightFormatted(size)">
+                    {{ sizeWeightFormatted(size) }}
                   </span>
 
-                  <span class="flex items-center gap-1"
-                        v-if="size.calories">
-                    <Flame class="size-3.5 shrink-0"/>
-                    {{ i18n.t('badges.calories', { calories: size.calories }) }}
+                  <span class="flex flex-wrap gap-x-3 text-[13px]/5 text-[#6E6D71]"
+                        v-if="size.preparation_time || size.calories">
+                    <span class="inline-flex items-center gap-1 whitespace-nowrap"
+                          v-if="size.preparation_time">
+                      <Timer class="size-[13px] shrink-0" aria-hidden="true"/>
+                      {{ time(size) }}
+                    </span>
+
+                    <span class="inline-flex items-center gap-1 whitespace-nowrap"
+                          v-if="size.calories">
+                      <Flame class="size-[13px] shrink-0" aria-hidden="true"/>
+                      {{ kcal(size) }}
+                    </span>
                   </span>
-                </span>
+                </div>
+
+                <span class="text-[22px]/[30px] font-bold whitespace-nowrap text-(--dish-price)">{{ price(size) }}</span>
               </div>
+            </div>
+          </section>
 
-              <span class="text-xl/7 font-bold whitespace-nowrap">
-                {{ priceFormatted(size.price, currency?.toLowerCase() ?? 'uah') }}
+          <section class="flex flex-col gap-2.5"
+                   v-bind="editKey('dish-tags')"
+                   v-if="tags.length">
+            <h2 class="text-[13px]/[18px] font-bold uppercase tracking-[.04em] text-[#6E6D71]">
+              {{ i18n.t('product.features') }}
+            </h2>
+
+            <div class="flex flex-wrap gap-x-[18px] gap-y-2.5">
+              <span class="inline-flex items-center gap-2 text-[15px]/[22px] whitespace-nowrap text-[#3C3B3F]"
+                    v-for="tag in tags" :key="tag.key">
+                <DishTagIcon :icon="tag.icon" :tone="tag.tone" large/>
+                {{ i18n.t(tag.label) }}
               </span>
             </div>
-          </div>
+          </section>
 
-          <DishTags class="text-sm/5" icon-class="size-4" :flags="product.flags" v-bind="editKey('dish-tags')"/>
-
-          <div class="flex flex-col gap-1.5 p-2.5 rounded-lg bg-orange-700/6 border border-orange-700/25"
-               v-bind="editKey('dish-allergens')"
-               v-if="allergens.length">
-            <h3 class="flex items-center gap-1 text-sm/5 font-semibold text-orange-700">
-              <TriangleAlert class="size-4 shrink-0"/>
+          <section class="flex flex-col gap-2 px-3.5 py-3 rounded-xl bg-[#FDF4EE] border border-[#F2D3BF]"
+                   v-bind="editKey('dish-allergens')"
+                   v-if="allergens.length">
+            <h2 class="flex items-center gap-1.5 text-sm/5 font-bold text-[#B4410C]">
+              <TriangleAlert class="size-4 shrink-0" aria-hidden="true"/>
               {{ i18n.t('product.contains_allergens') }}
-            </h3>
+            </h2>
 
             <div class="flex flex-wrap gap-1.5">
-              <span class="px-2 py-0.5 rounded bg-base-100 border border-orange-700/35 text-orange-700 text-[13px]/5 font-semibold"
+              <span class="px-[9px] py-[3px] rounded-md bg-white border border-[#EDC3A7] text-[#A33B0B] text-[13px]/[18px] font-semibold"
                     v-for="allergen in allergens" :key="allergen">
                 {{ i18n.t(getAllergenLabel(allergen)) }}
               </span>
             </div>
-          </div>
+          </section>
         </div>
       </template>
 

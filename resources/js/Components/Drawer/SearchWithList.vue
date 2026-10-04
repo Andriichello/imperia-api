@@ -4,8 +4,8 @@
   import {Check, ChevronDown, ChevronUp, Flame, Funnel, Search, X} from "lucide-vue-next";
   import {useI18n} from "vue-i18n";
   import Deferred from "@/Components/Deferred.vue";
-  import ProductInListRightMedia from "@/Components/Menu/ProductInListRightMedia.vue";
-  import LoadingProductInListRightMedia from "@/Components/Menu/LoadingProductInListRightMedia.vue";
+  import DishCard from "@/Components/Menu/DishCard.vue";
+  import LoadingDishCard from "@/Components/Menu/LoadingDishCard.vue";
   import {type DishTag, findTag, HOTNESS, matchesTag, OPPOSITE_TAGS, TAG_GROUPS, tagsOf} from "@/flags";
 
   const props = defineProps({
@@ -419,7 +419,7 @@
               <h3 class="text-base/6 font-bold">{{ i18n.t('search.products') }}</h3>
 
               <template v-for="n in 2" :key="n">
-                <LoadingProductInListRightMedia class="px-0!"/>
+                <LoadingDishCard class="px-0!"/>
 
                 <div class="h-px bg-[#e8e8e8]"/>
               </template>
@@ -433,12 +433,11 @@
             </h3>
 
             <template v-for="product in filteredProducts" :key="`product-${product.id}`">
-              <ProductInListRightMedia class="cursor-pointer"
-                                       :product="product"
-                                       :preview="true"
-                                       :flush="true"
-                                       :currency="currency"
-                                       @click="openProduct(product)"/>
+              <DishCard class="cursor-pointer"
+                        :product="product"
+                        :flush="true"
+                        :currency="currency"
+                        @click="openProduct(product)"/>
 
               <div class="h-px bg-[#e8e8e8]"/>
             </template>
