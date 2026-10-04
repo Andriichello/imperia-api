@@ -87,15 +87,20 @@ const isClamped = computed<boolean>(() => lines.value > MAX_DESC_LINES);
 </script>
 
 <template>
-  <article class="w-full flex flex-col text-start text-[#1C1B1F]"
+  <!-- the padding on top keeps it from the dish above -->
+  <article class="w-full flex flex-col pt-3.5 text-start text-[#1C1B1F]"
            :id="'product-' + product.id">
 
-    <div class="p-2 bg-primary/10 text-primary-content text-base/6 font-semibold"
+    <!-- a row of its own, above the title and the photo (the dish page's label) -->
+    <div class="flex mb-2"
+         :class="{'px-2': !flush}"
          v-if="product.badge?.length">
-      {{ product.badge }}
+      <span class="max-w-full truncate px-2 py-0.5 rounded-md bg-primary/16 text-primary-content text-xs/[18px] font-bold">
+        {{ product.badge }}
+      </span>
     </div>
 
-    <div class="flow-root py-3.5"
+    <div class="flow-root pb-3.5"
          :class="{'px-2': !flush}">
       <!-- first, so the lines after it wrap beside it -->
       <img class="float-right ml-3 mb-2 size-28 rounded-lg border border-[#E5E5E5] object-cover bg-[#E8E2D6]"
@@ -107,8 +112,9 @@ const isClamped = computed<boolean>(() => lines.value > MAX_DESC_LINES);
         {{ product.title }}
       </h3>
 
-      <!-- the price of the first size; the dish page has the others -->
-      <div class="mt-0.5 flex flex-col items-start gap-1">
+      <!-- The price of the first size; the dish page has the others. Their number is after the
+           weight, or on the next line when it doesn't fit -->
+      <div class="mt-0.5 flex flex-wrap items-center gap-x-3.5 gap-y-1">
         <span class="inline-flex items-baseline gap-2 whitespace-nowrap">
           <span class="text-xl/7 font-bold text-accent">{{ price }}</span>
 
@@ -121,7 +127,7 @@ const isClamped = computed<boolean>(() => lines.value > MAX_DESC_LINES);
         <span class="inline-flex items-center gap-1 h-[22px] px-2 rounded-full border border-primary/45 text-primary-content text-xs/4 font-semibold whitespace-nowrap"
               v-if="sizes.length > 1">
           <Layers class="size-3 shrink-0" aria-hidden="true"/>
-          {{ i18n.t('menu.more_sizes') }}
+          {{ nbsp(i18n.t('menu.more_sizes', {count: sizes.length - 1}, sizes.length - 1)) }}
         </span>
       </div>
 

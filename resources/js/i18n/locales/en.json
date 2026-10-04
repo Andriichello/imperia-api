@@ -25,7 +25,7 @@
     "go_to_top": "Go to top",
     "loading_failed": "The menu couldn't be loaded. Check your connection and try again.",
     "try_again": "Try again",
-    "more_sizes": "More sizes",
+    "more_sizes": "+{count} size | +{count} sizes",
     "allergens": "Allergens:"
   },
   "search": {
