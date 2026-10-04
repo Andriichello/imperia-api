@@ -8,11 +8,14 @@ use App\Models\Dish;
 use App\Models\DishCategory;
 use App\Models\DishMenu;
 use App\Models\MenuSnapshot;
+use App\Models\Morphs\Media;
 use App\Models\Restaurant;
 use App\Models\User;
+use Database\Factories\Morphs\MediaFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Testing\TestResponse;
 use Laravel\Sanctum\Sanctum;
@@ -344,5 +347,79 @@ class MenuSnapshotTest extends TestCase
         $this->disk->assertMissing($old->path);
         $this->assertSame(1, MenuSnapshot::query()->count());
         $this->assertTrue(Carbon::now()->isAfter($kept->created_at));
+    }
+
+    /**
+     * A photo of the dish.
+     *
+     * @return Media
+     */
+    protected function photoOfTheDish(): Media
+    {
+        /** @var Media $photo */
+        $photo = MediaFactory::new()->create(['extension' => 'image/jpeg']);
+
+        DB::table('mediables')->insert([
+            'media_id' => $photo->id,
+            'mediable_id' => $this->dish->id,
+            'mediable_type' => $this->dish->getMorphClass(),
+            'order' => 1,
+        ]);
+
+        return $photo;
+    }
+
+    /**
+     * A smaller copy (WebP) of the photo.
+     *
+     * @param Media $photo
+     *
+     * @return Media
+     */
+    protected function webpOf(Media $photo): Media
+    {
+        /** @var Media $webp */
+        $webp = MediaFactory::new()->create(['original_id' => $photo->id, 'extension' => 'image/webp']);
+
+        return $webp;
+    }
+
+    /**
+     * Test that the dishes' photos come with their smaller copies, which pages show.
+     *
+     * @return void
+     */
+    public function testPhotosHaveTheirWebPs()
+    {
+        $photo = $this->photoOfTheDish();
+        $webp = $this->webpOf($photo);
+
+        $media = $this->dataOf($this->dishes()->assertOk())[0]['media'];
+
+        $this->assertSame([$photo->id], array_column($media, 'id'));
+        $this->assertSame([$webp->id], array_column($media[0]['variants'], 'id'));
+        $this->assertSame('webp', $media[0]['variants'][0]['extension']);
+    }
+
+    /**
+     * Test that a copy of a photo made after its upload gets a new snapshot, which has it,
+     * and a photo, which nothing shows, doesn't.
+     *
+     * @return void
+     */
+    public function testWebPMadeLaterGetsANewSnapshot()
+    {
+        $photo = $this->photoOfTheDish();
+
+        $this->assertSame([], $this->dataOf($this->dishes())[0]['media'][0]['variants']);
+        $version = $this->restaurant->fresh()->content_version;
+
+        $webp = $this->webpOf($photo);
+
+        $this->assertSame($version + 1, $this->restaurant->fresh()->content_version);
+        $this->assertSame([$webp->id], array_column($this->dataOf($this->dishes())[0]['media'][0]['variants'], 'id'));
+
+        $this->webpOf(MediaFactory::new()->create(['extension' => 'image/jpeg']));
+        $this->assertSame($version + 1, $this->restaurant->fresh()->content_version);
     }
 }

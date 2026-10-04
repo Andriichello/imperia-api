@@ -200,7 +200,8 @@ class MenuSnapshotRepository
             $dishes = Dish::query()
                 ->withRestaurant($restaurant->id)
                 ->withVisibleParents()
-                ->with(['variants' => fn ($query) => $query->orderBy('dish_variants.id'), 'media'])
+                // with the photos' smaller copies (WebP), which pages show instead of the originals
+                ->with(['variants' => fn ($query) => $query->orderBy('dish_variants.id'), 'media.variants'])
                 ->orderByDesc('dishes.popularity')
                 ->orderBy('dishes.id')
                 ->get();
