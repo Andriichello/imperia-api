@@ -175,13 +175,14 @@ class CopyOldMenuToDishesTest extends TestCase
             ->expectsOutputToContain('"Bread" in menu "Kitchen" has no category')
             ->assertSuccessful();
 
-        // menus: kitchen + lunch (archived), not the deleted one or the one without a restaurant
+        // menus: kitchen + lunch (archived, so hidden now), not the deleted one or the one without a restaurant
         $menus = DishMenu::query()->withoutGlobalScopes()->orderBy('id')->get();
         $this->assertSame(['Kitchen', 'Lunch'], $menus->pluck('title')->all());
         $this->assertSame($this->restaurant->id, $menus[0]->restaurant_id);
         $this->assertSame('kitchen', $menus[0]->slug);
         $this->assertEquals(10, $menus[0]->popularity);
-        $this->assertTrue((bool) $menus[1]->archived);
+        $this->assertTrue($menus[1]->is_hidden);
+        $this->assertFalse((bool) $menus[1]->archived);
 
         // the soups category exists once per menu
         $categories = DishCategory::query()->withoutGlobalScopes()->get();
@@ -206,7 +207,8 @@ class CopyOldMenuToDishesTest extends TestCase
 
         $bread = $this->dishOf($this->uncategorized, $this->kitchen);
         $this->assertNull($bread->category_id);
-        $this->assertTrue((bool) $bread->archived);
+        $this->assertTrue($bread->is_hidden);
+        $this->assertFalse((bool) $bread->archived);
 
         // sizes: the product's own one and its variants (the deleted one isn't copied)
         $this->assertSame(5, DishVariant::query()->withoutGlobalScopes()->count());
@@ -317,5 +319,28 @@ class CopyOldMenuToDishesTest extends TestCase
         $this->artisan('dishes:copy-old-menu', ['--restaurant' => $other->id])->assertSuccessful();
 
         $this->assertSame(['Other'], DishMenu::query()->withoutGlobalScopes()->pluck('title')->all());
+    }
+
+    /**
+     * Test that the texts are written in the default language of their restaurant.
+     *
+     * @return void
+     */
+    public function testWritesTextsInTheRestaurantsLanguage()
+    {
+        $this->restaurant->locale = 'uk';
+        $this->restaurant->save();
+
+        $this->artisan('dishes:copy-old-menu')->assertSuccessful();
+
+        /** @var DishMenu $menu */
+        $menu = DishMenu::query()->withoutGlobalScopes()->orderBy('id')->firstOrFail();
+        /** @var DishCategory $category */
+        $category = DishCategory::query()->withoutGlobalScopes()->orderBy('id')->firstOrFail();
+        $dish = $this->dishOf($this->borscht, $this->kitchen);
+
+        $this->assertSame(['uk' => 'Kitchen'], $menu->getTranslations('title'));
+        $this->assertSame(['uk' => 'Soups'], $category->getTranslations('title'));
+        $this->assertSame(['uk' => 'Borscht'], $dish->getTranslations('title'));
     }
 }

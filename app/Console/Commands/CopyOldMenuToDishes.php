@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Enums\Hotness;
 use App\Enums\ProductFlag;
+use App\Helpers\ContentLocale;
 use App\Models\BaseModel;
 use App\Models\Dish;
 use App\Models\DishCategory;
@@ -31,7 +32,8 @@ use Throwable;
  * - each product becomes a dish in every menu it belongs to, under its most popular category;
  * - categories are created per menu, for the categories its dishes use;
  * - product variants, image links, flags and pending scheduled changes are copied too;
- * - archived records stay archived, deleted ones are skipped.
+ * - texts are written in the default language of their restaurant;
+ * - archived records become hidden from guests (what archived meant before), deleted ones are skipped.
  *
  * It's safe to run repeatedly: copies remember their source in `metadata.copied_from`
  * and are skipped on the next run (also when they were deleted in the meantime).
@@ -154,6 +156,9 @@ class CopyOldMenuToDishes extends Command
         $this->counts = $this->warnings = $this->previous = $this->processed = [];
         $this->menus = $this->categories = $this->dishes = [];
 
+        // like the migration, which made the content translatable, did with the existing texts
+        ContentLocale::instance()->useDefaults();
+
         $this->loadPreviousCopies();
 
         DB::beginTransaction();
@@ -258,7 +263,7 @@ class CopyOldMenuToDishes extends Command
                 'slug' => $this->uniqueMenuSlug($old),
                 'title' => $old->title,
                 'description' => $old->description,
-                'archived' => $old->archived,
+                'is_hidden' => (bool) $old->archived,
                 'popularity' => $old->popularity,
             ]);
             $menu->setToJson('metadata', 'copied_from', ['type' => 'menus', 'id' => $old->id]);
@@ -339,7 +344,7 @@ class CopyOldMenuToDishes extends Command
             'weight_unit' => $product->weight_unit,
             'calories' => $product->calories,
             'preparation_time' => $product->preparation_time,
-            'archived' => $product->archived,
+            'is_hidden' => (bool) $product->archived,
             'popularity' => $product->popularity,
             'flags' => $this->flags($product),
         ]);
@@ -398,7 +403,7 @@ class CopyOldMenuToDishes extends Command
             'slug' => $source->slug,
             'title' => $source->title,
             'description' => $source->description,
-            'archived' => (bool) $source->archived,
+            'is_hidden' => (bool) $source->archived,
             'popularity' => $source->popularity,
         ]);
         $category->setToJson('metadata', 'copied_from', [
