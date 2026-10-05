@@ -292,4 +292,25 @@ class PreviewControllerTest extends TestCase
         $this->get($this->menuUrl() . '?editor=1&archived=with')
             ->assertRedirect($this->menuUrl($menu->id) . '?editor=1');
     }
+
+    /**
+     * Test that the short link opens the restaurant page in its default language and by its slug.
+     *
+     * @return void
+     */
+    public function testShortLinkOpensTheRestaurantPage()
+    {
+        $this->restaurant->update(['slug' => 'smak', 'locale' => 'uk']);
+
+        $url = route('web.restaurant.preview', ['locale' => 'uk', 'restaurant_id' => 'smak']);
+
+        $this->get('/preview/' . $this->restaurant->id)
+            ->assertRedirect($url);
+
+        $this->get('/preview/smak?editor=1')
+            ->assertRedirect($url . '?editor=1');
+
+        $this->get('/preview/999')
+            ->assertNotFound();
+    }
 }

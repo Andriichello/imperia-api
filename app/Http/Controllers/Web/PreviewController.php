@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Helpers\RestaurantHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Web\Traits\LoadsAndCachesTrait;
 use App\Http\Controllers\Web\Traits\SharesPropsTrait;
@@ -90,6 +91,30 @@ class PreviewController extends Controller
             'reviews' => $this->reviews->summary($restaurant),
             // where the dishes are loaded from: the current snapshot, or the API, which builds it
             'dishes_url' => $this->snapshots->pageUrl($restaurant, App::getLocale()),
+        ]);
+    }
+
+    /**
+     * Redirects a short link (`/preview/{restaurant_id}`) to the restaurant page,
+     * in the restaurant's default language and by its slug.
+     *
+     * @param Request $request
+     *
+     * @return RedirectResponse
+     */
+    public function redirect(Request $request): RedirectResponse
+    {
+        $restaurant = RestaurantHelper::find($request->route('restaurant_id'));
+
+        if (!$restaurant) {
+            abort(404);
+        }
+
+        // the query is kept (e.g. `?editor=1` of the editor's preview)
+        return redirect()->route('web.restaurant.preview', [
+            ...$request->query(),
+            'locale' => $restaurant->getDefaultLocale(),
+            'restaurant_id' => $restaurant->slug ?: $restaurant->id,
         ]);
     }
 }

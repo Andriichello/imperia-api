@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Http\Controllers\Web\PreviewController;
 use App\Http\Middleware\SetLocaleFromUrl;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
@@ -43,6 +44,11 @@ class RouteServiceProvider extends ServiceProvider
                 ->prefix('admin')
                 ->name('admin.')
                 ->group(base_path('routes/admin.php'));
+
+            // a short link to the restaurant page, which redirects to its address
+            Route::middleware('web')
+                ->get('/preview/{restaurant_id}', [PreviewController::class, 'redirect'])
+                ->name('preview');
 
             Route::middleware('web')
                 ->namespace($this->namespace)
