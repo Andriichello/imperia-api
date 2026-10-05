@@ -32,6 +32,11 @@ app.use(createWebRouter());
 
 app.mount('#app');
 
+// No pinch zoom in Safari on iOS, which ignores `user-scalable=no` of the viewport
+for (const type of ['gesturestart', 'gesturechange']) {
+  document.addEventListener(type, (event) => event.preventDefault());
+}
+
 // In the editor's preview, connect to the editor (a chunk of its own, guests never load it)
 if (isEditorPreview) {
   import(/* webpackChunkName: "editor-preview" */ '@/editor/previewBridge')

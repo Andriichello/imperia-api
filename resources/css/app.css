@@ -8,6 +8,8 @@
 
 html, body {
   overscroll-behavior: none;
+  /* No pinch or double-tap zoom, the page only scrolls */
+  touch-action: pan-x pan-y;
 }
 
 /* Horizontal lists that scroll without a visible scrollbar */
